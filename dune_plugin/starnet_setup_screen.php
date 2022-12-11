@@ -266,6 +266,14 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         Control_Factory::add_vgap($defs, 20);
 
         //////////////////////////////////////
+        // autoplay
+        $autoplay_ops = array();
+        $autoplay_ops[0] = 'Нет';
+        $autoplay_ops[1] = 'Да';
+        $autoplay = isset($plugin_cookies->autoplay) ? $plugin_cookies->autoplay : 0;
+        Control_Factory::add_combobox($defs, $this, null, 'autoplay', 'Автостарт воспроизведения:', $autoplay, $autoplay_ops, 0);
+
+        //////////////////////////////////////
         // select server
         $servers = $this->plugin->config->get_servers($plugin_cookies);
         if (!empty($servers)) {
@@ -617,6 +625,9 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
                 case self::ACTION_STREAMING_APPLY: // handle streaming settings dialog result
                     $plugin_cookies->buf_time = $user_input->buf_time;
+                    hd_print("Buffering time: $plugin_cookies->buf_time");
+                    $plugin_cookies->autoplay = $user_input->autoplay;
+                    hd_print("Autoplay: $plugin_cookies->autoplay");
 
                     if (isset($user_input->stream_format)) {
                         $plugin_cookies->format = $user_input->stream_format;
