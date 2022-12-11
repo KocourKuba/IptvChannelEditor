@@ -266,12 +266,17 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         Control_Factory::add_vgap($defs, 20);
 
         //////////////////////////////////////
-        // autoplay
+        // auto play
         $autoplay_ops = array();
-        $autoplay_ops[0] = 'Нет';
-        $autoplay_ops[1] = 'Да';
-        $autoplay = isset($plugin_cookies->autoplay) ? $plugin_cookies->autoplay : 0;
-        Control_Factory::add_combobox($defs, $this, null, 'autoplay', 'Автостарт воспроизведения:', $autoplay, $autoplay_ops, 0);
+        $autoplay_ops[SetupControlSwitchDefs::switch_off] = 'Нет';
+        $autoplay_ops[SetupControlSwitchDefs::switch_on] = 'Да';
+        $auto_play = isset($plugin_cookies->auto_play) ? $plugin_cookies->auto_play : SetupControlSwitchDefs::switch_off;
+        Control_Factory::add_combobox($defs, $this, null, 'auto_play', 'Автостарт воспроизведения:', $auto_play, $autoplay_ops, 0);
+
+        //////////////////////////////////////
+        // auto resume
+        $auto_resume = isset($plugin_cookies->auto_resume) ? $plugin_cookies->auto_resume : SetupControlSwitchDefs::switch_on;
+        Control_Factory::add_combobox($defs, $this, null, 'auto_resume', 'Возобновление просмотра:', $auto_resume, $autoplay_ops, 0);
 
         //////////////////////////////////////
         // select server
@@ -626,8 +631,12 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 case self::ACTION_STREAMING_APPLY: // handle streaming settings dialog result
                     $plugin_cookies->buf_time = $user_input->buf_time;
                     hd_print("Buffering time: $plugin_cookies->buf_time");
-                    $plugin_cookies->autoplay = $user_input->autoplay;
-                    hd_print("Autoplay: $plugin_cookies->autoplay");
+
+                    $plugin_cookies->auto_play = $user_input->auto_play;
+                    hd_print("Auto play: $plugin_cookies->auto_play");
+
+                    $plugin_cookies->auto_resume = $user_input->auto_resume;
+                    hd_print("Auto resume: $plugin_cookies->auto_resume");
 
                     if (isset($user_input->stream_format)) {
                         $plugin_cookies->format = $user_input->stream_format;

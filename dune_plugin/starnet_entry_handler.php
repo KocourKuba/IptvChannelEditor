@@ -57,7 +57,8 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 clearstatcache();
                 switch ($user_input->action_id) {
                     case 'launch':
-                        if ((int)$user_input->mandatory_playback === 1 || (int)$plugin_cookies->autoplay === 1) {
+                        //hd_print("auto_play: $plugin_cookies->auto_play");
+                        if ((int)$user_input->mandatory_playback === 1 || $plugin_cookies->auto_play === SetupControlSwitchDefs::switch_on) {
                             hd_print("action: launch play");
 
                             $media_url = null;
@@ -79,6 +80,26 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         }
 
                         return $action;
+
+                    case 'auto_resume':
+                        //hd_print("auto_resume: $plugin_cookies->auto_resume");
+                        if ((int)$user_input->mandatory_playback !== 1
+                            || (isset($plugin_cookies->auto_resume) && $plugin_cookies->auto_resume === SetupControlSwitchDefs::switch_off)) break;
+
+                        $media_url = null;
+                        if (file_exists('/config/resume_state.properties')) {
+                            $resume_state = parse_ini_file('/config/resume_state.properties', 0, INI_SCANNER_RAW);
+
+                            if (strpos($resume_state['plugin_name'], get_plugin_name()) !== false) {
+                                $media_url = MediaURL::decode();
+                                $media_url->is_favorite = $resume_state['plugin_tv_is_favorite'];
+                                $media_url->group_id = $resume_state['plugin_tv_is_favorite'] ? Starnet_Tv_Favorites_Screen::ID : $resume_state['plugin_tv_group'];
+                                $media_url->channel_id = $resume_state['plugin_tv_channel'];
+                                $media_url->archive_tm = ((time() - $resume_state['plugin_tv_archive_tm']) < 259200) ? $resume_state['plugin_tv_archive_tm'] : -1;
+                            }
+                        }
+
+                        return Action_Factory::tv_play($media_url);
 
                     case 'update_epfs':
                         hd_print("action: update_epfs");
