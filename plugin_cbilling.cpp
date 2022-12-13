@@ -57,7 +57,7 @@ void plugin_cbilling::load_default()
 	vod_support = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://247on.cc/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
+	info.pl_template = "http://248on.com/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
