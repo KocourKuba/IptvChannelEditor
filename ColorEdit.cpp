@@ -16,7 +16,7 @@ END_MESSAGE_MAP()
 
 CColorEdit::CColorEdit()
 {
-	m_crBkColor = ::GetSysColor(COLOR_3DFACE);
+	m_crBkColor = ::GetSysColor(COLOR_WINDOW);
 	m_crTextColor = RGB(0, 0, 0);
 	m_brBkgnd.CreateSolidBrush(m_crBkColor);
 }
