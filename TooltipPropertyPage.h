@@ -24,6 +24,8 @@ public:
 protected:
 
 	void AddTooltip(UINT ctrlID, UINT textID);
+	void AllowSave(bool val = true);
+	CPluginConfigPropertySheet* GetPropertySheet();
 
 protected:
 	CToolTipCtrl m_wndToolTipCtrl;

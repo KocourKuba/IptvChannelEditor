@@ -26,6 +26,7 @@ public:
 public:
 	BOOL OnInitDialog() override;
 	INT_PTR DoModal() override;
+	BOOL PreTranslateMessage(MSG* pMsg) override;
 
 	std::wstring GetSelectedConfig();
 	void UpdateControls();
@@ -34,6 +35,7 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 
+	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -43,6 +45,7 @@ protected:
 	afx_msg void OnBnClickedButtonSaveAsConfig();
 
 protected:
+	void AddTooltip(UINT ctrlID, UINT textID);
 	void SetupDynamicLayout();
 	void FillConfigs();
 
@@ -63,4 +66,7 @@ protected:
 	CRect m_min_rc;
 	CString m_posKey;
 	int m_gapHeight = 30;
+
+	CToolTipCtrl m_wndToolTipCtrl;
+	std::map<CWnd*, std::wstring> m_tooltips_info;
 };

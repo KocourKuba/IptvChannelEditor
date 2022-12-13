@@ -229,8 +229,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_URL, &CIPTVChannelEditorDlg::OnBnClickedCheckShowUrl)
 	ON_BN_CLICKED(IDC_BUTTON_VOD, &CIPTVChannelEditorDlg::OnBnClickedButtonVod)
 
-	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
-	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CIPTVChannelEditorDlg::OnToolTipText)
+	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CIPTVChannelEditorDlg::OnToolTipText)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_ARCHIVE_URL, &CIPTVChannelEditorDlg::OnEnChangeEditStreamArchiveUrl)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist)
@@ -344,9 +343,7 @@ BOOL CIPTVChannelEditorDlg::PreTranslateMessage(MSG* pMsg)
 	if (m_hAccel && ::TranslateAccelerator(m_hWnd, m_hAccel, pMsg))
 		return(TRUE);
 
-	if (pMsg->message == WM_LBUTTONDOWN
-		|| pMsg->message == WM_LBUTTONUP
-		|| pMsg->message == WM_MOUSEMOVE)
+	if (pMsg->message == WM_MOUSEMOVE)
 	{
 		HWND hWnd = pMsg->hwnd;
 		LPARAM lParam = pMsg->lParam;
@@ -358,11 +355,14 @@ BOOL CIPTVChannelEditorDlg::PreTranslateMessage(MSG* pMsg)
 		for (auto& pair : m_tooltips_info)
 		{
 			auto& wnd = pair.first;
+			if (!wnd->IsWindowVisible() || wnd->IsWindowEnabled()) continue;
+
 			CRect rect;
 			wnd->GetWindowRect(&rect);
 			ScreenToClient(&rect);
 
-			if (rect.PtInRect(pt)) {
+			if (rect.PtInRect(pt))
+			{
 				pMsg->hwnd = wnd->m_hWnd;
 
 				ClientToScreen(&pt);
@@ -373,7 +373,6 @@ BOOL CIPTVChannelEditorDlg::PreTranslateMessage(MSG* pMsg)
 		}
 
 		m_wndToolTipCtrl.RelayEvent(pMsg);
-		m_wndToolTipCtrl.Activate(TRUE);
 
 		pMsg->hwnd = hWnd;
 		pMsg->lParam = lParam;
@@ -599,8 +598,11 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 void CIPTVChannelEditorDlg::AddTooltip(UINT ctrlID, UINT textID)
 {
 	CWnd* wnd = GetDlgItem(ctrlID);
-	m_tooltips_info.emplace(wnd, load_string_resource(textID));
-	m_wndToolTipCtrl.AddTool(wnd, LPSTR_TEXTCALLBACK);
+	if (wnd)
+	{
+		m_tooltips_info.emplace(wnd, load_string_resource(textID));
+		m_wndToolTipCtrl.AddTool(wnd, LPSTR_TEXTCALLBACK);
+	}
 }
 
 BOOL CIPTVChannelEditorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)

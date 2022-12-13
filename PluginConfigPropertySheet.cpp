@@ -27,6 +27,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPropertySheet, CMFCPropertySheet)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
+	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CPluginConfigPropertySheet::OnToolTipText)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_CONFIG, &CPluginConfigPropertySheet::OnCbnSelchangeComboPluginConfig)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE_CONFIG, &CPluginConfigPropertySheet::OnBnClickedButtonSaveConfig)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE_AS_CONFIG, &CPluginConfigPropertySheet::OnBnClickedButtonSaveAsConfig)
@@ -35,6 +36,11 @@ END_MESSAGE_MAP()
 BOOL CPluginConfigPropertySheet::OnInitDialog()
 {
 	BOOL bResult = __super::OnInitDialog();
+
+	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
+	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
+	m_wndToolTipCtrl.SetMaxTipWidth(300);
+	m_wndToolTipCtrl.Activate(TRUE);
 
 	GetWindowRect(m_min_rc);
 
@@ -99,6 +105,10 @@ BOOL CPluginConfigPropertySheet::OnInitDialog()
 	SetButtonImage(IDB_PNG_SAVE, m_wndBtnSaveConf);
 	SetButtonImage(IDB_PNG_SAVE_AS, m_wndBtnSaveAsConf);
 
+	AddTooltip(IDC_COMBO_PLUGIN_CONFIG, IDS_STRING_COMBO_CONFIG);
+	AddTooltip(IDC_BUTTON_SAVE_CONFIG, IDS_STRING_BUTTON_SAVE_CONFIG);
+	AddTooltip(IDC_BUTTON_SAVE_AS_CONFIG, IDS_STRING_BUTTON_SAVE_AS_CONFIG);
+
 	FillConfigs();
 
 	SetupDynamicLayout();
@@ -111,6 +121,47 @@ BOOL CPluginConfigPropertySheet::OnInitDialog()
 
 	return bResult;
 }
+
+BOOL CPluginConfigPropertySheet::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_MOUSEMOVE)
+	{
+		HWND hWnd = pMsg->hwnd;
+		LPARAM lParam = pMsg->lParam;
+
+		POINT pt{};
+		pt.x = LOWORD(pMsg->lParam);  // horizontal position of cursor
+		pt.y = HIWORD(pMsg->lParam);  // vertical position of cursor
+
+		for (auto& pair : m_tooltips_info)
+		{
+			auto& wnd = pair.first;
+			if (!wnd->IsWindowVisible() || wnd->IsWindowEnabled()) continue;
+
+			CRect rect;
+			wnd->GetWindowRect(&rect);
+			ScreenToClient(&rect);
+
+			if (rect.PtInRect(pt))
+			{
+				pMsg->hwnd = wnd->m_hWnd;
+
+				ClientToScreen(&pt);
+				wnd->ScreenToClient(&pt);
+				pMsg->lParam = MAKELPARAM(pt.x, pt.y);
+				break;
+			}
+		}
+
+		m_wndToolTipCtrl.RelayEvent(pMsg);
+
+		pMsg->hwnd = hWnd;
+		pMsg->lParam = lParam;
+	}
+
+	return __super::PreTranslateMessage(pMsg);
+}
+
 
 void CPluginConfigPropertySheet::OnDestroy()
 {
@@ -150,6 +201,12 @@ int CPluginConfigPropertySheet::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CRect rcSaveAs(0, 0, 19, 14);
 	m_wndBtnSaveAsConf.Create(_T("SAS"), WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_BITMAP,
 							  rcSaveAs, this, IDC_BUTTON_SAVE_AS_CONFIG);
+
+	if (!m_wndToolTipCtrl.Create(this, TTS_ALWAYSTIP))
+	{
+		TRACE(_T("Unable To create ToolTip\n"));
+		return 1;
+	}
 
 	return 0;
 }
@@ -283,5 +340,50 @@ void CPluginConfigPropertySheet::SetupDynamicLayout()
 				pManager->AddItem(child->GetSafeHwnd(), CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100, 100));
 			}
 		}
+	}
+}
+
+BOOL CPluginConfigPropertySheet::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// if there is a top level routing frame then let it handle the message
+	if (GetRoutingFrame() != nullptr)
+		return FALSE;
+
+	// to be thorough we will need to handle UNICODE versions of the message also !!
+
+	UINT nID = pNMHDR->idFrom;
+	TOOLTIPTEXT* pTTT = (TOOLTIPTEXT*)pNMHDR;
+
+	if (pNMHDR->code == TTN_NEEDTEXT && (pTTT->uFlags & TTF_IDISHWND))
+	{
+		// idFrom is actually the HWND of the tool
+		nID = ::GetDlgCtrlID((HWND)nID);
+	}
+
+	if (nID != 0) // will be zero on a separator
+	{
+		const auto& pair = std::find_if(m_tooltips_info.begin(), m_tooltips_info.end(), [nID](auto& pair)
+										{
+											return pair.first->GetDlgCtrlID() == nID;
+										});
+
+		if (pair != m_tooltips_info.end())
+		{
+			pTTT->lpszText = pair->second.data();
+			*pResult = 0;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+void CPluginConfigPropertySheet::AddTooltip(UINT ctrlID, UINT textID)
+{
+	CWnd* wnd = GetDlgItem(ctrlID);
+	if (wnd)
+	{
+		m_tooltips_info.emplace(wnd, load_string_resource(textID));
+		m_wndToolTipCtrl.AddTool(wnd, LPSTR_TEXTCALLBACK);
 	}
 }

@@ -27,7 +27,6 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "MenuEdit.h"
 #include "TooltipPropertyPage.h"
-#include "PluginConfigPropertySheet.h"
 
 class CPluginConfigPage : public CTooltipPropertyPage
 {
@@ -70,16 +69,6 @@ protected:
 
 private:
 	void UpdateControls();
-
-	void AllowSave(bool val = true)
-	{
-		GetPropertySheet()->AllowSave(val);
-	}
-
-	CPluginConfigPropertySheet* GetPropertySheet()
-	{
-		return DYNAMIC_DOWNCAST(CPluginConfigPropertySheet, GetParent());
-	}
 
 protected:
 

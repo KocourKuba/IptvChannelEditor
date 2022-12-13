@@ -4,8 +4,7 @@
 IMPLEMENT_DYNAMIC(CTooltipPropertyPage, CMFCPropertyPage)
 
 BEGIN_MESSAGE_MAP(CTooltipPropertyPage, CMFCPropertyPage)
-	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CTooltipPropertyPage::OnToolTipText)
-	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CTooltipPropertyPage::OnToolTipText)
+	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CTooltipPropertyPage::OnToolTipText)
 END_MESSAGE_MAP()
 
 BOOL CTooltipPropertyPage::OnInitDialog()
@@ -28,9 +27,7 @@ BOOL CTooltipPropertyPage::OnInitDialog()
 
 BOOL CTooltipPropertyPage::PreTranslateMessage(MSG* pMsg)
 {
-	if (pMsg->message == WM_LBUTTONDOWN
-		|| pMsg->message == WM_LBUTTONUP
-		|| pMsg->message == WM_MOUSEMOVE)
+	if (pMsg->message == WM_MOUSEMOVE)
 	{
 		HWND hWnd = pMsg->hwnd;
 		LPARAM lParam = pMsg->lParam;
@@ -42,11 +39,14 @@ BOOL CTooltipPropertyPage::PreTranslateMessage(MSG* pMsg)
 		for (auto& pair : m_tooltips_info)
 		{
 			auto& wnd = pair.first;
+			if (!wnd->IsWindowVisible() || wnd->IsWindowEnabled()) continue;
+
 			CRect rect;
 			wnd->GetWindowRect(&rect);
 			ScreenToClient(&rect);
 
-			if (rect.PtInRect(pt)) {
+			if (rect.PtInRect(pt))
+			{
 				pMsg->hwnd = wnd->m_hWnd;
 
 				ClientToScreen(&pt);
@@ -57,7 +57,6 @@ BOOL CTooltipPropertyPage::PreTranslateMessage(MSG* pMsg)
 		}
 
 		m_wndToolTipCtrl.RelayEvent(pMsg);
-		m_wndToolTipCtrl.Activate(TRUE);
 
 		pMsg->hwnd = hWnd;
 		pMsg->lParam = lParam;
@@ -109,6 +108,19 @@ BOOL CTooltipPropertyPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 void CTooltipPropertyPage::AddTooltip(UINT ctrlID, UINT textID)
 {
 	CWnd* wnd = GetDlgItem(ctrlID);
-	m_tooltips_info.emplace(wnd, load_string_resource(textID));
-	m_wndToolTipCtrl.AddTool(wnd, LPSTR_TEXTCALLBACK);
+	if (wnd)
+	{
+		m_tooltips_info.emplace(wnd, load_string_resource(textID));
+		m_wndToolTipCtrl.AddTool(wnd, LPSTR_TEXTCALLBACK);
+	}
+}
+
+void CTooltipPropertyPage::AllowSave(bool val /*= true*/)
+{
+	GetPropertySheet()->AllowSave(val);
+}
+
+CPluginConfigPropertySheet* CTooltipPropertyPage::GetPropertySheet()
+{
+	return DYNAMIC_DOWNCAST(CPluginConfigPropertySheet, GetParent());
 }
