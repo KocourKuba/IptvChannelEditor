@@ -254,6 +254,7 @@ void CPluginConfigPropertySheet::OnBnClickedButtonSaveAsConfig()
 		m_configs.emplace_back(new_conf);
 		FillConfigs();
 		m_wndPluginConfigs.SetCurSel((int)m_configs.size() - 1);
+		UpdateControls();
 	}
 }
 
