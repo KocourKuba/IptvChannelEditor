@@ -198,7 +198,6 @@ protected:
 	afx_msg void OnBnDropDownSplitButtonUpdateChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedCheckShowEpg();
 	afx_msg void OnBnClickedButtonReloadIcon();
-
 	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnSwitchPlugin(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
@@ -272,6 +271,7 @@ private:
 	bool CheckForSave();
 	void SaveStreamInfo();
 	void UpdateWindowTitle();
+	void UpdateIconInfo(const std::wstring& url);
 
 protected:
 	CFont m_largeFont;
