@@ -409,20 +409,20 @@ int update_app(UpdateInfo& info)
 					LogProtocol(fmt::format(L"{:s} is up to date", item.name));
 					continue;
 				}
-			}
 
-			LogProtocol(fmt::format(L"rename: {:s} to {:s}", target_file, bak_file));
-			if (std::filesystem::exists(bak_file))
-			{
-				std::filesystem::remove_all(bak_file, err);
-			}
+				LogProtocol(fmt::format(L"rename: {:s} to {:s}", target_file, bak_file));
+				if (std::filesystem::exists(bak_file))
+				{
+					std::filesystem::remove_all(bak_file, err);
+				}
 
-			std::filesystem::rename(target_file, bak_file, err);
-			if (err.value() != 0)
-			{
-				LogProtocol(fmt::format(L"Unable to rename {:s}", target_file));
-				success = false;
-				continue;
+				std::filesystem::rename(target_file, bak_file, err);
+				if (err.value() != 0)
+				{
+					LogProtocol(fmt::format(L"Unable to rename {:s}", target_file));
+					success = false;
+					continue;
+				}
 			}
 		}
 
