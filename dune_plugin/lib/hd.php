@@ -465,7 +465,7 @@ class HD
             $items = $json ? json_decode($contents, true) : unserialize($contents);
             $items = is_null($items) ? array() : $items;
         } else {
-            hd_print("$path not exist");
+            //hd_print("$path not exist");
             $items = array();
         }
 

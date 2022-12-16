@@ -202,8 +202,7 @@ abstract class Abstract_Vod implements Vod
      */
     public function get_vod_stream_url($playback_url, &$plugin_cookies)
     {
-        hd_print('AbstractVod::get_vod_stream_url Not implemented.');
-        return '';
+        return $playback_url;
     }
 
     ///////////////////////////////////////////////////////////////////////
