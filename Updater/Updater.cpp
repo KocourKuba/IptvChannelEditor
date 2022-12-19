@@ -315,28 +315,22 @@ int update_app(UpdateInfo& info)
 	{
 		LogProtocol("Try to close app...");
 		CloseHandle(hAppRunningMutex);
-		HWND hwnd = ::FindWindow(nullptr, L"IPTV Channel Editor");
-		if (hwnd)
-			::PostMessage(hwnd, WM_CLOSE, 0, 0);
+		hAppRunningMutex = nullptr;
 
 		if (i > 20)
 		{
-			CloseHandle(hAppRunningMutex);
-			hAppRunningMutex = nullptr;
 			LogProtocol("Unable to close IPTV Channel Editor. Aborting update.");
 			return err_no_updates;
 		}
+
+		HWND hwnd = ::FindWindow(nullptr, L"IPTV Channel Editor");
+		if (hwnd)
+			::PostMessage(hwnd, WM_CLOSE, 0, 0);
 
 		LogProtocol("Waiting for closing IPTV Channel Editor.");
 		hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
 		Sleep(500);
 		i++;
-	}
-
-	if (hAppRunningMutex)
-	{
-		CloseHandle(hAppRunningMutex);
-		hAppRunningMutex = nullptr;
 	}
 
 	int ret = download_update(info);
