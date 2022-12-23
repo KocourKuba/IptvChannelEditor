@@ -94,6 +94,11 @@ public:
 			convert_https();
 	}
 
+	bool empty() const
+	{
+		return !icon_uri.is_valid();
+	}
+
 private:
 	uri_base icon_uri;
 	std::wstring root_path;

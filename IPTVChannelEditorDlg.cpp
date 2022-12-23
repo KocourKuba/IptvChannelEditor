@@ -1217,7 +1217,7 @@ LRESULT CIPTVChannelEditorDlg::OnLoadChannelImage(WPARAM wParam /*= 0*/, LPARAM 
 	if (!channel)
 		return 0;
 
-	UpdateIconInfo(channel->get_icon_absolute_path());
+	UpdateIconInfo(*channel);
 
 	return 0;
 }
@@ -1750,7 +1750,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	// Update icon
 	if (m_iconUrl != channel->get_icon_uri().get_uri().c_str())
 	{
-		UpdateIconInfo(channel->get_icon_absolute_path());
+		UpdateIconInfo(*channel);
 	}
 
 	UpdateData(FALSE);
@@ -2564,7 +2564,7 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 			const auto& category = GetCategory(hSelected);
 			if (category)
 			{
-				UpdateIconInfo(category->get_icon_absolute_path());
+				UpdateIconInfo(*category);
 			}
 		}
 	}
@@ -3650,7 +3650,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 
 	if (save)
 	{
-		UpdateIconInfo(info->get_icon_absolute_path());
+		UpdateIconInfo(*info);
 		UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
 		CheckForExistingPlaylist();
 		set_allow_save();
@@ -5223,37 +5223,39 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist()
 void CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon()
 {
 	HTREEITEM hItem = m_wndChannelsTree.GetSelectedItem();
-	std::wstring url;
+	IconContainer icon;
 	if (IsCategory(hItem))
 	{
 		if (const auto& category = FindCategory(hItem); category != nullptr)
-			url = category->get_icon_absolute_path();
+		{
+			icon = *category;
+		}
 	}
 	else if (IsChannel(hItem))
 	{
 		if (auto channel = FindChannel(hItem); channel != nullptr)
 		{
-			url = channel->get_icon_absolute_path();
+			icon = *channel;
 		}
 	}
 
-	UpdateIconInfo(url);
+	UpdateIconInfo(icon);
 }
 
-void CIPTVChannelEditorDlg::UpdateIconInfo(const std::wstring& url)
+void CIPTVChannelEditorDlg::UpdateIconInfo(const IconContainer& icon)
 {
 	CString str;
 	CImage img;
-	if (!url.empty())
+	if (!icon.empty())
 	{
-		img = GetIconCache().get_icon(url, true);
+		m_iconUrl = icon.get_icon_uri().get_uri().c_str();
+		img = GetIconCache().get_icon(icon.get_icon_absolute_path(), true);
 		if (img != nullptr)
 		{
 			str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
 		}
 	}
 
-	m_iconUrl = url.c_str();
 	SetImageControl(img, m_wndChannelIcon);
 	GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
 	UpdateData(FALSE);
