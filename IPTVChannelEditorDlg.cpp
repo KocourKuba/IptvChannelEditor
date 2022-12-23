@@ -1750,7 +1750,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	// Update icon
 	if (m_iconUrl != channel->get_icon_uri().get_uri().c_str())
 	{
-		UpdateIconInfo(channel->get_icon_uri().get_uri());
+		UpdateIconInfo(channel->get_icon_absolute_path());
 	}
 
 	UpdateData(FALSE);
@@ -2564,7 +2564,7 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 			const auto& category = GetCategory(hSelected);
 			if (category)
 			{
-				UpdateIconInfo(category->get_icon_uri().get_uri());
+				UpdateIconInfo(category->get_icon_absolute_path());
 			}
 		}
 	}
