@@ -632,7 +632,7 @@
       <Filter>Resource Files\PNG</Filter>
     </Image>
     <Image Include="res\reload.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\PNG</Filter>
     </Image>
   </ItemGroup>
 </Project>
