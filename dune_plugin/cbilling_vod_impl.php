@@ -45,21 +45,21 @@ abstract class Cbilling_Vod_Impl extends default_config
             ''// budget
         );
 
-        $domain = $this->account_data['server'];
-
+        $domain = $this->account_data['domain'];
+        $token = $this->account_data['token'];
         $vod_url = 'http://%s%s?token=%s';
         if (isset($movieData->seasons)) {
             foreach ($movieData->seasons as $season) {
                 $movie->add_season_data($season->number, !empty($season->name) ? $season->name : "Сезон $season->number", '');
                 foreach ($season->series as $episode) {
                     $name = "Серия $episode->number" . (empty($episode->name) ? "" : " $episode->name");
-                    $playback_url = sprintf($vod_url, $domain, $episode->files[0]->url, $this->account_data['private_token']);
+                    $playback_url = sprintf($vod_url, $domain, $episode->files[0]->url, $token);
                     //hd_print("episode playback_url: $playback_url");
                     $movie->add_series_data($episode->id, $name, '', $playback_url, $season->number);
                 }
             }
         } else {
-            $playback_url = sprintf($vod_url, $domain, $movieData->files[0]->url, $this->account_data['private_token']);
+            $playback_url = sprintf($vod_url, $domain, $movieData->files[0]->url, $token);
             //hd_print("movie playback_url: $playback_url");
             $movie->add_series_data($movie_id, $movieData->name, '', $playback_url);
         }
