@@ -67,6 +67,7 @@ void plugin_sharaclub::load_default()
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
 	info.pl_template = "http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
+	info.pl_parse_regex = R"(https?:\/\/[^\/]+\/tv-m3u8\/(?<login>[^-]+)-(?<password>.+)$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
 	playlist_templates.emplace_back(info);
 

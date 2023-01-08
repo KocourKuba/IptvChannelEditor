@@ -116,11 +116,11 @@ public:
 	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
 	void set_name(UINT ID) { name = utils::utf16_to_utf8(load_string_resource(ID)); }
 
-	std::wstring get_template() const { return utils::utf8_to_utf16(pl_template); }
-	void set_template(const std::wstring& val) { pl_template = utils::utf16_to_utf8(val); }
+	std::wstring get_pl_template() const { return utils::utf8_to_utf16(pl_template); }
+	void set_pl_template(const std::wstring& val) { pl_template = utils::utf16_to_utf8(val); }
 
-	std::wstring get_parse_regex() const { return utils::utf8_to_utf16(parse_regex); }
-	void set_parse_regex(const std::wstring& val) { parse_regex = utils::utf16_to_utf8(val); }
+	std::wstring get_pl_parse_regex() const { return utils::utf8_to_utf16(pl_parse_regex); }
+	void set_pl_parse_regex(const std::wstring& val) { pl_parse_regex = utils::utf16_to_utf8(val); }
 
 	std::wstring get_tag_id_match() const { return utils::utf8_to_utf16(tag_id_match); }
 	void set_tag_id_match(const std::wstring& val) { tag_id_match = utils::utf16_to_utf8(val); }
@@ -129,6 +129,7 @@ public:
 	{
 		SERIALIZE_STRUCT(j, c, name);
 		SERIALIZE_STRUCT(j, c, pl_template);
+		SERIALIZE_STRUCT(j, c, pl_parse_regex);
 		SERIALIZE_STRUCT(j, c, parse_regex);
 		SERIALIZE_STRUCT(j, c, tag_id_match);
 	}
@@ -137,12 +138,14 @@ public:
 	{
 		DESERIALIZE_STRUCT(j, c, name);
 		DESERIALIZE_STRUCT(j, c, pl_template);
+		DESERIALIZE_STRUCT(j, c, pl_parse_regex);
 		DESERIALIZE_STRUCT(j, c, parse_regex);
 		DESERIALIZE_STRUCT(j, c, tag_id_match);
 	}
 
 	std::string name;
 	std::string pl_template;
+	std::string pl_parse_regex;
 	std::string parse_regex;
 	std::string tag_id_match;
 	bool is_custom = false;
@@ -365,8 +368,8 @@ public:
 	/// <summary>
 	/// property playlist template
 	/// </summary>
-	std::wstring get_playlist_template(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_template() : L""; }
-	void set_playlist_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_template(val); }
+	std::wstring get_playlist_template(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_pl_template() : L""; }
+	void set_playlist_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_pl_template(val); }
 
 	/// <summary>
 	/// property playlist templates
@@ -384,8 +387,8 @@ public:
 	/// <summary>
 	/// property uri parse template
 	/// </summary>
-	std::wstring get_uri_parse_pattern(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_parse_regex() : L""; }
-	void set_uri_parse_pattern(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_parse_regex(val); }
+	std::wstring get_uri_parse_pattern(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_pl_parse_regex() : L""; }
+	void set_uri_parse_pattern(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_pl_parse_regex(val); }
 
 	/// <summary>
 	/// property current parse pattern
@@ -444,8 +447,8 @@ public:
 	/// vod url template
 	/// </summary>
 	/// <returns>wstring</returns>
-	std::wstring get_vod_template(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_template() : L""; }
-	void set_vod_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_template(val); }
+	std::wstring get_vod_template(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_pl_template() : L""; }
+	void set_vod_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_pl_template(val); }
 
 	/// <summary>
 	/// active vod template
@@ -456,8 +459,8 @@ public:
 	/// regex for parsing title
 	/// </summary>
 	/// <returns>wstring</returns>
-	std::wstring get_vod_parse_regex(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_parse_regex() : L""; }
-	void set_vod_parse_regex(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_parse_regex(val); }
+	std::wstring get_vod_parse_regex(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_pl_parse_regex() : L""; }
+	void set_vod_parse_regex(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_pl_parse_regex(val); }
 
 	/// <summary>
 	/// property square icons, php GUI setting

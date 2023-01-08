@@ -355,7 +355,6 @@ void CAccessInfoPage::CreateAccountsList()
 	m_wndAccounts.GetClientRect(&rect);
 	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 22;
 
-	m_wndNewFromUrl.EnableWindow(FALSE);
 	int last = 0;
 	m_wndAccounts.InsertColumn(last++, L"", LVCFMT_LEFT, 22, 0);
 	switch (m_plugin->get_access_type())
@@ -374,10 +373,12 @@ void CAccessInfoPage::CreateAccountsList()
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_DOMAIN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
-			m_wndNewFromUrl.EnableWindow(TRUE);
 			break;
 		default: break;
 	}
+
+	std::vector<PluginType> allow_add_from_url = { PluginType::enEdem, PluginType::enGlanz, PluginType::enCbilling, PluginType::enSharaclub };
+	m_wndNewFromUrl.EnableWindow(std::find(allow_add_from_url.begin(), allow_add_from_url.end(), m_plugin->get_plugin_type()) != allow_add_from_url.end());
 
 	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_COMMENT).c_str(), LVCFMT_LEFT, vWidth, 0);
 
@@ -659,42 +660,94 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 	{
 		CWaitCursor cur;
 		m_status.Empty();
-		std::stringstream data;
-		std::wstring url = dlg.m_url.GetString();
-		if (!utils::DownloadFile(url, data))
+		switch (m_plugin->get_plugin_type())
 		{
-			std::ifstream instream(url);
-			data << instream.rdbuf();
-		}
-
-		std::istringstream stream(data.str());
-		if (!stream.good()) return;
-
-		Credentials cred;
-		auto playlist = std::make_unique<Playlist>();
-		auto entry = std::make_unique<PlaylistEntry>(m_plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
-		std::string line;
-		while (std::getline(stream, line))
-		{
-			utils::string_rtrim(line, "\r");
-			if (!entry->Parse(line)) continue;
-
-			const auto& access_key = entry->get_token();
-			const auto& subdomain = entry->get_subdomain();
-			if (!access_key.empty() && !subdomain.empty() && access_key != L"00000000000000" && subdomain != L"localhost")
+			case PluginType::enEdem:
 			{
-				int cnt = m_wndAccounts.GetItemCount();
+				std::stringstream data;
+				std::wstring url = dlg.m_url.GetString();
+				if (!utils::DownloadFile(url, data))
+				{
+					std::ifstream instream(url);
+					data << instream.rdbuf();
+				}
 
-				m_wndAccounts.InsertItem(cnt, L"", 0);
-				m_wndAccounts.SetItemText(cnt, 1, access_key.c_str());
-				m_wndAccounts.SetItemText(cnt, 2, subdomain.c_str());
+				std::istringstream stream(data.str());
+				if (!stream.good()) return;
 
 				Credentials cred;
-				cred.token = get_utf8(access_key);
-				cred.subdomain = get_utf8(subdomain);
-				m_all_credentials.emplace_back(cred);
-				break;
+				auto playlist = std::make_unique<Playlist>();
+				auto entry = std::make_unique<PlaylistEntry>(m_plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
+				std::string line;
+				while (std::getline(stream, line))
+				{
+					utils::string_rtrim(line, "\r");
+					if (!entry->Parse(line)) continue;
+
+					const auto& access_key = entry->get_token();
+					const auto& subdomain = entry->get_subdomain();
+					if (!access_key.empty() && !subdomain.empty() && access_key != L"00000000000000" && subdomain != L"localhost")
+					{
+						int cnt = m_wndAccounts.GetItemCount();
+
+						m_wndAccounts.InsertItem(cnt, L"", 0);
+						m_wndAccounts.SetItemText(cnt, 1, access_key.c_str());
+						m_wndAccounts.SetItemText(cnt, 2, subdomain.c_str());
+
+						Credentials cred;
+						cred.token = get_utf8(access_key);
+						cred.subdomain = get_utf8(subdomain);
+						m_all_credentials.emplace_back(cred);
+						break;
+					}
+				}
 			}
+			break;
+
+			case PluginType::enGlanz:
+			{
+				const auto& info = m_plugin->get_playlist_info(0);
+				boost::wregex re(info.get_pl_parse_regex());
+				std::wstring url = dlg.m_url.GetString();
+
+				boost::wsmatch m;
+				if (boost::regex_match(url, m, re))
+				{
+					int cnt = m_wndAccounts.GetItemCount();
+					m_wndAccounts.InsertItem(cnt, L"", 0);
+					m_wndAccounts.SetItemText(cnt, 1, m[1].str().c_str());
+					m_wndAccounts.SetItemText(cnt, 2, m[2].str().c_str());
+
+					Credentials cred;
+					cred.login = get_utf8(m[1].str());
+					cred.password = get_utf8(m[2].str());
+					m_all_credentials.emplace_back(cred);
+				}
+			}
+			break;
+
+			case PluginType::enCbilling:
+			case PluginType::enSharaclub:
+			{
+				const auto& info = m_plugin->get_playlist_info(0);
+				boost::wregex re(info.get_pl_parse_regex());
+				std::wstring url = dlg.m_url.GetString();
+
+				boost::wsmatch m;
+				if (boost::regex_match(url, m, re))
+				{
+					int cnt = m_wndAccounts.GetItemCount();
+					m_wndAccounts.InsertItem(cnt, L"", 0);
+					m_wndAccounts.SetItemText(cnt, 1, m[1].str().c_str());
+
+					Credentials cred;
+					cred.password = get_utf8(m[2].str());
+					m_all_credentials.emplace_back(cred);
+				}
+			}
+			break;
+			default:
+				break;
 		}
 	}
 }

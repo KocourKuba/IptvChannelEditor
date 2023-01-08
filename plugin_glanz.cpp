@@ -56,6 +56,7 @@ void plugin_glanz::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://pl.ottg.cc/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
+	info.pl_parse_regex = R"(^https?:\/\/.+\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/.+\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>.+)&req_host=(?<host>.+)$)";
 	playlist_templates.emplace_back(info);
 
