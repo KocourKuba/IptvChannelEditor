@@ -421,11 +421,21 @@ class sharaclub_config extends default_config
             $category_id = $arr[0];
         }
 
-        foreach ($jsonItems as $item) {
-            if ($category_id === $item->category) {
-                $movies[] = self::CreateShortMovie($item);
+        $current_offset = $this->get_next_page($query_id, 0);
+        $pos = 0;
+        foreach ($jsonItems as $movie) {
+            if ($pos++ < $current_offset) continue;
+
+            $category = $movie->category;
+            if (empty($category)) {
+                $category = "Без категории";
+            }
+
+            if ($category_id === Vod_Category::FLAG_ALL || $category_id === $category) {
+                $movies[] = self::CreateShortMovie($movie);
             }
         }
+        $this->get_next_page($query_id, $pos - $current_offset);
 
         hd_print("Movies read for query: $query_id - " . count($movies));
         return $movies;

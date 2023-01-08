@@ -151,7 +151,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
     {
         hd_print("get_short_movie_range: '$media_url->category_id', from_idx: $from_ndx");
         $this->plugin->config->try_reset_pages();
-        if (empty($media_url->genre_id)) {
+        if (empty($media_url->genre_id) || $media_url->category_id === Vod_Category::FLAG_ALL) {
             $key = $media_url->category_id;
         } else {
             $key = $media_url->category_id . "_" . $media_url->genre_id;
@@ -165,8 +165,6 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
             }
         } else if ($media_url->category_id === Vod_Category::FLAG_FILTER) {
             $movies = $this->plugin->config->getFilterList($media_url->genre_id, $plugin_cookies);
-        } else if ($media_url->category_id === Vod_Category::FLAG_ALL || empty($media_url->genre_id)) {
-            $movies = $this->plugin->config->getMovieList($media_url->category_id, $plugin_cookies);
         } else {
             $movies = $this->plugin->config->getMovieList($key, $plugin_cookies);
         }

@@ -785,7 +785,7 @@ class default_config extends dynamic_config
 
         $vod_pattern = $this->get_vod_parse_pattern($plugin_cookies);
         $max = count($indexes);
-        $ubound = min($max, $current_offset + 100);
+        $ubound = min($max, $current_offset + 5000);
         hd_print("Read from: $current_offset to $ubound");
 
         $pos = $current_offset;

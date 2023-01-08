@@ -187,7 +187,11 @@ class glanz_config extends default_config
         $arr = explode("_", $query_id);
         $category_id = ($arr === false) ? $query_id : $arr[0];
 
+        $current_offset = $this->get_next_page($query_id, 0);
+        $pos = 0;
         foreach ($jsonItems as $movie) {
+            if ($pos++ < $current_offset) continue;
+
             $category = $movie->category;
             if (empty($category)) {
                 $category = "Без категории";
@@ -197,6 +201,7 @@ class glanz_config extends default_config
                 $movies[] = self::CreateShortMovie($movie);
             }
         }
+        $this->get_next_page($query_id, $pos - $current_offset);
 
         hd_print("Movies read for query: $query_id - " . count($movies));
         return $movies;
