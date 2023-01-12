@@ -740,12 +740,6 @@ bool PackPlugin(const PluginType plugin_type,
 			std::filesystem::remove(dir_entry.path(), err);
 	}
 
-	// remove cbilling_vod base class
-	if (plugin_type != PluginType::enAntifriz && plugin_type != PluginType::enCbilling)
-	{
-		std::filesystem::remove(packFolder + L"cbilling_vod_impl.php", err);
-	}
-
 	std::filesystem::path plugin_logo;
 	std::filesystem::path plugin_bgnd;
 	if (!noCustom)

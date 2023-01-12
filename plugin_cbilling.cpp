@@ -58,6 +58,7 @@ void plugin_cbilling::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://248on.com/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<token>.+)_otp_dev.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
@@ -120,6 +121,8 @@ bool plugin_cbilling::parse_access_info(TemplateParams& params, std::list<Accoun
 			put_account_info("server", js_data, info_list);
 			put_account_info("vod", js_data, info_list);
 			put_account_info("ssl", js_data, info_list);
+			put_account_info("public_token", js_data, info_list);
+			put_account_info("private_token", js_data, info_list);
 
 			return true;
 		}
