@@ -122,6 +122,9 @@ public:
 	std::wstring get_pl_parse_regex() const { return utils::utf8_to_utf16(pl_parse_regex); }
 	void set_pl_parse_regex(const std::wstring& val) { pl_parse_regex = utils::utf16_to_utf8(val); }
 
+	std::wstring get_parse_regex() const { return utils::utf8_to_utf16(parse_regex); }
+	void set_parse_regex(const std::wstring& val) { parse_regex = utils::utf16_to_utf8(val); }
+
 	std::wstring get_tag_id_match() const { return utils::utf8_to_utf16(tag_id_match); }
 	void set_tag_id_match(const std::wstring& val) { tag_id_match = utils::utf16_to_utf8(val); }
 
@@ -387,8 +390,8 @@ public:
 	/// <summary>
 	/// property uri parse template
 	/// </summary>
-	std::wstring get_uri_parse_pattern(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_pl_parse_regex() : L""; }
-	void set_uri_parse_pattern(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_pl_parse_regex(val); }
+	std::wstring get_uri_parse_pattern(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_parse_regex() : L""; }
+	void set_uri_parse_pattern(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_parse_regex(val); }
 
 	/// <summary>
 	/// property current parse pattern
