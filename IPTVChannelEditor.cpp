@@ -693,7 +693,39 @@ bool PackPlugin(const PluginType plugin_type,
 	// load plugin settings
 	plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config));
 
-	const auto& packed_plugin_name = fmt::format(utils::DUNE_PLUGIN_NAME, plugin->get_short_name(), (cred.suffix.empty() || noCustom) ? "mod" : cred.suffix);
+	COleDateTime cur_dt = COleDateTime::GetCurrentTime();
+	std::string version_index;
+	if (cred.custom_increment && !cred.version_id.empty())
+	{
+		version_index = cred.version_id;
+	}
+	else
+	{
+		version_index = fmt::format("{:d}{:02d}{:02d}{:02d}", cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour());
+	}
+
+	std::string suffix;
+	if (cred.suffix.empty() || noCustom)
+	{
+		suffix = "mod";
+	}
+	else
+	{
+		suffix = cred.suffix;
+		CTime st(cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour(), cur_dt.GetMinute(), cur_dt.GetSecond());
+		std::tm lt = fmt::localtime(st.GetTime());
+
+		utils::string_replace_inplace<char>(suffix, "{YEAR}", std::to_string(cur_dt.GetYear()));
+		utils::string_replace_inplace<char>(suffix, "{MONTH}", std::to_string(cur_dt.GetMonth()));
+		utils::string_replace_inplace<char>(suffix, "{DAY}", std::to_string(cur_dt.GetDay()));
+		utils::string_replace_inplace<char>(suffix, "{HOUR}", std::to_string(cur_dt.GetHour()));
+		utils::string_replace_inplace<char>(suffix, "{MIN}", std::to_string(cur_dt.GetMinute()));
+		utils::string_replace_inplace<char>(suffix, "{TIMESTAMP}", std::to_string(std::mktime(&lt)));
+		utils::string_replace_inplace<char>(suffix, "{VERSION}", STRPRODUCTVER);
+		utils::string_replace_inplace<char>(suffix, "{VERSION_INDEX}", version_index);
+	}
+
+	const auto& packed_plugin_name = fmt::format(utils::DUNE_PLUGIN_NAME, plugin->get_short_name(), suffix);
 
 	if (make_web_update && (cred.update_url.empty() || cred.update_package_url.empty()))
 	{
@@ -777,17 +809,6 @@ bool PackPlugin(const PluginType plugin_type,
 
 	const auto& logo_subst = fmt::format("plugin_file://icons/{:s}", plugin_logo.filename().string());
 	const auto& bg_subst = fmt::format("plugin_file://icons/{:s}", plugin_bgnd.filename().string());
-
-	std::string version_index;
-	if (cred.custom_increment && !cred.version_id.empty())
-	{
-		version_index = cred.version_id;
-	}
-	else
-	{
-		COleDateTime date = COleDateTime::GetCurrentTime();
-		version_index = fmt::format("{:d}{:02d}{:02d}{:02d}", date.GetYear(), date.GetMonth(), date.GetDay(), date.GetHour());
-	}
 
 	std::string update_name;
 	if (cred.custom_update_name && !cred.update_name.empty())

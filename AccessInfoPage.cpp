@@ -214,6 +214,19 @@ BOOL CAccessInfoPage::OnInitDialog()
 		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
 	}
 
+	std::vector<std::wstring> suffix_params =
+	{
+		L"{YEAR}",
+		L"{MONTH}",
+		L"{DAY}",
+		L"{HOUR}",
+		L"{MIN}",
+		L"{TIMESTAMP}",
+		L"{VERSION}",
+		L"{VERSION_INDEX}",
+	};
+	m_wndSuffix.SetTemplateParams(suffix_params);
+
 	FillConfigs();
 	CreateAccountsList();
 	CreateAccountInfo();

@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE.
 #include "TooltipPropertyPage.h"
 #include "Credentials.h"
 #include "uri_stream.h"
+#include "MenuEdit.h"
 
 class CAccessInfoPage : public CTooltipPropertyPage
 {
@@ -118,7 +119,7 @@ protected:
 	CComboBox m_wndQualities;
 	CComboBox m_wndProfiles;
 	CComboBox m_wndConfigs;
-	CEdit m_wndSuffix;
+	CMenuEdit m_wndSuffix;
 	CEdit m_wndCaption;
 	CMFCEditBrowseCtrlEx m_wndLogo;
 	CMFCEditBrowseCtrlEx m_wndBackground;
