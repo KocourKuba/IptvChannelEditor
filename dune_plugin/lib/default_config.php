@@ -124,13 +124,14 @@ class default_config extends dynamic_config
     {
         $embedded_acc = $this->get_embedded_account();
         if (isset($embedded_acc, $embedded_acc->server_id)) {
-            $plugin_cookies->server = $embedded_acc->server_id;
+            $server = $embedded_acc->server_id;
         }
 
         $servers = $this->get_servers($plugin_cookies);
         reset($servers);
         $first = key($servers);
-        return isset($plugin_cookies->server, $servers[$plugin_cookies->server]) ? $plugin_cookies->server : $first;
+        // first from cookies, second - embedded, last - top of list
+        return isset($plugin_cookies->server, $servers[$plugin_cookies->server]) ? $plugin_cookies->server : (isset($server) ? $server : $first);
     }
 
     /**
@@ -482,23 +483,27 @@ class default_config extends dynamic_config
         $ext_params[Stream_Params::CU_OFFSET] = $now - $archive_ts;
         $ext_params[Stream_Params::CU_STOP] = $archive_ts + $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
         $ext_params[Stream_Params::CU_DURATION] = $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
+        $ext_params[Ext_Params::M_DEVICE_ID] = $this->get_device_id($plugin_cookies);
+        $ext_params[Ext_Params::M_SERVER_ID] = $this->get_server_id($plugin_cookies);
 
         $replaces = array(
-            Plugin_Constants::CHANNEL_ID  => '{ID}',
-            Stream_Params::CU_START    => '{START}',
-            Stream_Params::CU_NOW      => '{NOW}',
-            Stream_Params::CU_DURATION => '{DURATION}',
-            Stream_Params::CU_STOP     => '{STOP}',
-            Stream_Params::CU_OFFSET   => '{OFFSET}',
-            Ext_Params::M_SUBDOMAIN    => '{SUBDOMAIN}',
-            Ext_Params::M_DOMAIN       => '{DOMAIN}',
-            Ext_Params::M_PORT         => '{PORT}',
-            Ext_Params::M_LOGIN        => '{LOGIN}',
-            Ext_Params::M_PASSWORD     => '{PASSWORD}',
-            Ext_Params::M_TOKEN        => '{TOKEN}',
-            Ext_Params::M_INT_ID       => '{INT_ID}',
-            Ext_Params::M_HOST         => '{HOST}',
-            Ext_Params::M_QUALITY      => '{QUALITY_ID}',
+            Plugin_Constants::CHANNEL_ID => '{ID}',
+            Stream_Params::CU_START      => '{START}',
+            Stream_Params::CU_NOW        => '{NOW}',
+            Stream_Params::CU_DURATION   => '{DURATION}',
+            Stream_Params::CU_STOP       => '{STOP}',
+            Stream_Params::CU_OFFSET     => '{OFFSET}',
+            Ext_Params::M_SUBDOMAIN      => '{SUBDOMAIN}',
+            Ext_Params::M_DOMAIN         => '{DOMAIN}',
+            Ext_Params::M_PORT           => '{PORT}',
+            Ext_Params::M_LOGIN          => '{LOGIN}',
+            Ext_Params::M_PASSWORD       => '{PASSWORD}',
+            Ext_Params::M_TOKEN          => '{TOKEN}',
+            Ext_Params::M_INT_ID         => '{INT_ID}',
+            Ext_Params::M_HOST           => '{HOST}',
+            Ext_Params::M_QUALITY_ID     => '{QUALITY_ID}',
+            Ext_Params::M_DEVICE_ID      => '{DEVICE_ID}',
+            Ext_Params::M_SERVER_ID      => '{SERVER_ID}',
         );
 
         $channel_custom_url = $channel->get_custom_url();

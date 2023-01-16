@@ -58,7 +58,8 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 switch ($user_input->action_id) {
                     case 'launch':
                         //hd_print("auto_play: $plugin_cookies->auto_play");
-                        if ((int)$user_input->mandatory_playback === 1 || $plugin_cookies->auto_play === SetupControlSwitchDefs::switch_on) {
+                        if ((int)$user_input->mandatory_playback === 1
+                            || (isset($plugin_cookies->auto_play) && $plugin_cookies->auto_play === SetupControlSwitchDefs::switch_on)) {
                             hd_print("action: launch play");
 
                             $media_url = null;

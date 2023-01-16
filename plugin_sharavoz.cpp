@@ -48,16 +48,16 @@ void plugin_sharavoz::load_default()
 	provider_url = "https://www.sharavoz.tv/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://www.spr24.net/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
+	info.pl_template = "http://www.spr24.net/iptv/p/{PASSWORD}/Playlist.navigator-ott.m3u";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
-	streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].uri_template = "http://{SERVER_ID}/{ID}/index.m3u8?token={TOKEN}";
+	streams_config[0].uri_arc_template = "http://{SERVER_ID}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_template = "http://{SERVER_ID}/{ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "http://{SERVER_ID}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	auto& params1 = epg_params[0];
 	params1.epg_url = "http://api.program.spr24.net/api/program?epg={ID}&date={DATE}";
@@ -66,4 +66,25 @@ void plugin_sharavoz::load_default()
 	auto& params2 = epg_params[1];
 	params2.epg_url = "http://epg.arlekino.tv/api/program?epg={ID}&date={DATE}";
 	params2.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
+
+	static_servers = true;
+	fill_servers_list(TemplateParams());
+}
+
+void plugin_sharavoz::fill_servers_list(TemplateParams& /*params*/)
+{
+	if (!get_servers_list().empty())
+		return;
+
+	std::vector<DynamicParamsInfo> servers =
+	{
+		{ "ru01.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P1)) },
+		{ "ru02.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P2)) },
+		{ "nl01.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P3)) },
+		{ "am01.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P4)) },
+		{ "fr01.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P5)) },
+		{ "ch01.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P6)) },
+	};
+
+	set_servers_list(servers);
 }

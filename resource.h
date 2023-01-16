@@ -318,6 +318,12 @@
 #define IDS_STRING_MYMAGIC_P4           489
 #define IDS_STRING_MYMAGIC_P5           490
 #define IDS_STRING_MYMAGIC_P6           491
+#define IDS_STRING_SHARAVOZ_P1          495
+#define IDS_STRING_SHARAVOZ_P2          496
+#define IDS_STRING_SHARAVOZ_P3          497
+#define IDS_STRING_SHARAVOZ_P4          498
+#define IDS_STRING_SHARAVOZ_P5          499
+#define IDS_STRING_SHARAVOZ_P6          500
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -592,7 +598,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280
