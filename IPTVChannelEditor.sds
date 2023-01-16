@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="211" scanned="20221208212551" built="20221208212638" lang="ru" pane="TLogPane" col="3">
+<desktop scan="214" scanned="20230116163311" built="20230116163424" lang="ru" pane="TLogPane" col="4" row="Strings.31.IDS_STRING_SHARAVOZ_P1">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>
