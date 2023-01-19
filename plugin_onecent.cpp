@@ -57,7 +57,9 @@ void plugin_onecent::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}&utc={START}&lutc={NOW}";
 
-	auto& params1 = epg_params[0];
+	epg_params[1].epg_url = "http://epg.drm-play.ml/iptvx.one/epg/{EPG_ID}.json";
+
+	auto& params1 = epg_params[1];
 	params1.epg_url = "http://epg.iptvx.one/api/id/{EPG_ID}.json";
 	params1.epg_root = "ch_programme";
 	params1.epg_name = "title";
@@ -66,6 +68,4 @@ void plugin_onecent::load_default()
 	params1.epg_end = "";
 	params1.epg_time_format = "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}"; // "%d-%m-%Y %H:%M";
 	params1.epg_timezone = 3; // iptvx.one uses moscow time (UTC+3)
-
-	epg_params[1].epg_url = "http://epg.drm-play.ml/iptvx.one/epg/{EPG_ID}.json";
 }
