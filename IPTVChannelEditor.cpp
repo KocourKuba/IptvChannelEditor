@@ -737,19 +737,29 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	// collect plugin channels list;
-	std::vector<std::wstring> channels_list;
+	std::map<std::string, std::string> channels_list;
 	const auto& playlistPath = fmt::format(L"{:s}{:s}\\", lists_path, short_name_w);
 	std::filesystem::directory_iterator dir_iter(playlistPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
-		const auto& path = dir_entry.path();
-		if (path.extension() == L".xml")
+		const auto& channels = dir_entry.path().filename().string();
+		if (dir_entry.path().filename().extension() == L".xml"
+			&& (noCustom || std::find(cred.ch_list.begin(), cred.ch_list.end(), channels) != cred.ch_list.end()))
 		{
-			if (noCustom || cred.ch_list.empty() || std::find(cred.ch_list.begin(), cred.ch_list.end(), path.filename().string()) != cred.ch_list.end())
+			std::string link;
+			if (const auto& pair = cred.m_direct_links.find(channels); pair != cred.m_direct_links.end())
 			{
-				channels_list.emplace_back(path.filename().wstring());
+				link = pair->second;
 			}
+			channels_list.emplace(channels, link);
 		}
+	}
+
+	if (channels_list.empty())
+	{
+		if (showMessage)
+			AfxMessageBox(IDS_STRING_ERR_NO_CHANNELS_SEL, MB_OK | MB_ICONSTOP);
+		return false;
 	}
 
 	// remove previous packed folder if exist
@@ -890,7 +900,26 @@ bool PackPlugin(const PluginType plugin_type,
 		d_node->first_node("version")->value(STRPRODUCTVER);
 		d_node->first_node("release_date")->value(RELEASEDATE);
 		if (!noCustom)
-			d_node->first_node("channels_url_path")->value(cred.ch_web_path.c_str());
+		{
+			if (!cred.ch_web_path.empty())
+			{
+				d_node->first_node("channels_url_path")->value(cred.ch_web_path.c_str());
+			}
+
+			if (!cred.m_direct_links.empty())
+			{
+				auto node = d_node->first_node("channels_direct_links");
+				for (const auto& channels : channels_list)
+				{
+					if (channels.second.empty()) continue;
+
+					auto links = doc->allocate_node(rapidxml::node_element, "links_info");
+					links->append_node(rapidxml::alloc_node(*doc, "list", channels.first.c_str()));
+					links->append_node(rapidxml::alloc_node(*doc, "link", channels.second.c_str()));
+					node->append_node(links);
+				}
+			}
+		}
 
 		auto cu_node = d_node->first_node("check_update");
 		const auto& update_url = noCustom ? "" : fmt::format("{:s}{:s}", cred.update_url, update_name);
@@ -929,7 +958,8 @@ bool PackPlugin(const PluginType plugin_type,
 	// copy channel lists
 	for(const auto& item : channels_list)
 	{
-		std::filesystem::copy_file(playlistPath + item, packFolder + item, std::filesystem::copy_options::overwrite_existing, err);
+		const auto& channels = utils::utf8_to_utf16(item.first);
+		std::filesystem::copy_file(playlistPath + channels, packFolder + channels, std::filesystem::copy_options::overwrite_existing, err);
 	}
 
 	// copy embedded info
@@ -1101,8 +1131,7 @@ bool PackPlugin(const PluginType plugin_type,
 			version_info->append_node(rapidxml::alloc_node(*doc, "version", STRPRODUCTVER));
 			version_info->append_node(rapidxml::alloc_node(*doc, "beta", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "critical", "no"));
-			version_info->append_node(rapidxml::alloc_node(*doc, "url",
-														   fmt::format("{:s}{:s}.tar.gz", cred.update_package_url, package_plugin_name).c_str()));
+			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}.tar.gz", cred.update_package_url, package_plugin_name).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "md5", utils::md5_hash_file(packed_file).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "size", std::to_string(plugin_installed_size).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "caption", plugin_caption.c_str()));

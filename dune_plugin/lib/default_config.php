@@ -273,6 +273,10 @@ class default_config extends dynamic_config
                 hd_print("Channels source: url");
                 $channels_list_path = get_install_path();
                 break;
+            case 3: // direct url
+                hd_print("Channels source: direct url");
+                $channels_list_path = get_install_path();
+                break;
             default:
                 return array();
         }

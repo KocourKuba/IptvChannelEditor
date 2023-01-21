@@ -1284,6 +1284,16 @@ function get_plugin_manifest_info()
         throw new Exception("Empty plugin manifest!");
     }
 
+    $direct_links = array();
+    foreach ($xml->channels_direct_links->children() as $links_info) {
+        if ($links_info->getName() !== 'links_info') {
+            $error_string = "Error: unexpected node '{$links_info->getName()}'. Expected: 'links_info'";
+            hd_print($error_string);
+        }
+
+        $direct_links[(string)$links_info->list] = (string)$links_info->link;
+    }
+
     $result = array(
         'app_name' => (string)$xml->name,
         'app_caption' => (string)$xml->caption,
@@ -1294,7 +1304,8 @@ function get_plugin_manifest_info()
         'app_release_date' => (string)$xml->release_date,
         'app_logo' => (string)$xml->icon_url,
         'app_background' => (string)$xml->background,
-        'app_channels_url_path' => (string)$xml->channels_url_path
+        'app_channels_url_path' => (string)$xml->channels_url_path,
+        'app_direct_links' => $direct_links,
     );
 
     foreach(func_get_args() as $node_name) {

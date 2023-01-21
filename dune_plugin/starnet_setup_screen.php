@@ -101,6 +101,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $folder_icon = $this->plugin->get_image_path('folder.png');
         $setting_icon = $this->plugin->get_image_path('settings.png');
         $web_icon = $this->plugin->get_image_path('web.png');
+        $link_icon = $this->plugin->get_image_path('link.png');
 
         //////////////////////////////////////
         // Show in main screen
@@ -110,7 +111,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // ott or token dialog
-        if ($this->plugin->config->get_embedded_account() === null) {
+        if ($this->plugin->config->get_embedded_account() !== null) {
+            Control_Factory::add_image_button($defs, $this, null, self::ACTION_MOVE_ACCOUNT,
+                'Встроенные данные для просмотра:', 'Переместить в память Dune', $setting_icon);
+        } else {
             switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
                 case Plugin_Constants::ACCOUNT_OTT_KEY:
                     Control_Factory::add_image_button($defs, $this, null, self::ACTION_OTTKEY_DLG,
@@ -125,15 +129,13 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                         'Данные для просмотра:', 'Введите ключ доступа', $text_icon);
                     break;
             }
-        } else {
-            Control_Factory::add_image_button($defs, $this, null, self::ACTION_MOVE_ACCOUNT,
-                'Встроенные данные для просмотра:', 'Переместить в память Dune', $setting_icon);
         }
 
         //////////////////////////////////////
         // channels list source
         $source_ops[1] = 'Локальная или сетевая папки';
-        $source_ops[2] = 'Интернет/Интранет ссылка';
+        $source_ops[2] = 'Интернет/Интранет папка';
+        $source_ops[3] = 'Прямая Интернет ссылка';
         $channels_source = isset($plugin_cookies->channels_source) ? (int)$plugin_cookies->channels_source : 1;
 
         Control_Factory::add_combobox($defs, $this, null, self::ACTION_CHANNELS_SOURCE,
@@ -152,6 +154,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             case 2: // internet url
                 Control_Factory::add_image_button($defs, $this, null, self::ACTION_CHANNELS_URL_DLG,
                     'Задать ссылку со списками каналов:', 'Изменить ссылку', $web_icon, self::CONTROLS_WIDTH);
+                break;
+            case 3: // direct internet url
+                Control_Factory::add_image_button($defs, $this, null, self::ACTION_CHANNELS_URL_DLG,
+                    'Задать ссылку на список каналов:', 'Изменить ссылку', $link_icon, self::CONTROLS_WIDTH);
                 break;
         }
 
@@ -236,10 +242,20 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         hd_print("do_get_channels_url_control_defs");
         $defs = array();
 
-        if (isset($plugin_cookies->channels_url) && !empty($plugin_cookies->channels_url)) {
-            $url_path = $plugin_cookies->channels_url;
-        } else {
-            $url_path = $this->plugin->plugin_info['app_channels_url_path'];
+        $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
+        $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
+        $url_path = '';
+        switch ($source) {
+            case 2:
+                $url_path = $this->plugin->plugin_info['app_channels_url_path'];
+                break;
+            case 3:
+                if (isset($this->plugin->plugin_info['app_direct_links'][$channels_list])) {
+                    $url_path = $this->plugin->plugin_info['app_direct_links'][$channels_list];
+                }
+                break;
+            default:
+                break;
         }
 
         Control_Factory::add_vgap($defs, 20);
@@ -615,10 +631,17 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
                 case self::ACTION_CHANNELS_URL_APPLY: // handle streaming settings dialog result
                     if (isset($user_input->channels_url_path)) {
-                        if (substr($user_input->channels_url_path, -1) !== '/')
-                            $plugin_cookies->channels_url = $user_input->channels_url_path . '/';
-                        else
-                            $plugin_cookies->channels_url = $user_input->channels_url_path;
+                        $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
+
+                        switch ($source) {
+                            case 2:
+                                $plugin_cookies->channels_url = $user_input->channels_url_path;
+                                break;
+                            case 3:
+                                $plugin_cookies->channels_direct_url = $user_input->channels_url_path;
+
+                                break;
+                        }
 
                         hd_print("Selected channels path: $plugin_cookies->channels_url");
                     }

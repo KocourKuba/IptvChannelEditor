@@ -284,6 +284,7 @@
 #define IDS_STRING_VOD_MIN              364
 #define IDS_STRING_VOD_HOUR_MIN         365
 #define IDS_STRING_EDIT_DUNE_PARAMS     366
+#define IDS_STRING_ERR_NO_CHANNELS_SEL  367
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -516,8 +517,10 @@
 #define IDC_COMBO_PLUGIN_CONFIG         1180
 #define IDC_EDIT_TITLE                  1181
 #define IDC_COMBO_ACCESS_TYPE           1182
+#define IDC_EDIT_PLUGIN_CHANNELS_DIRECT 1183
 #define IDC_BUTTON_EDIT_CONFIG          1184
 #define IDC_EDIT_PROVIDER_URL           1185
+#define IDC_BUTTON_EDIT_LINK            1185
 #define IDC_EDIT_PARSE_PATTERN          1186
 #define IDC_EDIT_STREAM_TEMPLATE        1187
 #define IDC_EDIT_STREAM_ARC_TEMPLATE    1188
@@ -604,7 +607,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280
 #define _APS_NEXT_COMMAND_VALUE         32806
-#define _APS_NEXT_CONTROL_VALUE         1225
+#define _APS_NEXT_CONTROL_VALUE         1226
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

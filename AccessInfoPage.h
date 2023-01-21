@@ -64,6 +64,7 @@ protected:
 	afx_msg void OnBnClickedButtonRemove();
 	afx_msg void OnBnClickedButtonNewFromUrl();
 	afx_msg void OnBnClickedCheckEmbed();
+	afx_msg void OnBnClickedButtonEditLink();
 	afx_msg void OnCbnSelchangeComboConfigs();
 	afx_msg void OnCbnSelchangeComboServerId();
 	afx_msg void OnCbnSelchangeComboDeviceId();
@@ -90,6 +91,7 @@ public:
 
 private:
 	int GetCheckedAccountIdx();
+	int GetSelectedList();
 	void GetAccountInfo();
 	void CreateAccountInfo();
 	void CreateChannelsList();
@@ -114,6 +116,7 @@ protected:
 	CButton m_wndNewFromUrl;
 	CButton m_wndEmbed;
 	CButton m_wndEditConfig;
+	CButton m_wndEditLink;
 	CComboBox m_wndServers;
 	CComboBox m_wndDevices;
 	CComboBox m_wndQualities;
@@ -130,6 +133,7 @@ protected:
 	CButton m_wndAutoIncrement;
 	CButton m_wndCustomPackageName;
 	CButton m_wndCustomUpdateName;
+	CEdit m_wndDirectLink;
 	CEdit m_wndUpdateUrl;
 	CEdit m_wndUpdatePackageUrl;
 	CEdit m_wndVersionID;

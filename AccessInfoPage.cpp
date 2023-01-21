@@ -61,6 +61,16 @@ inline std::string get_utf8(const wchar_t* value)
 	return utils::utf16_to_utf8(std::wstring_view(value));
 }
 
+inline std::wstring get_utf16(const std::string& value)
+{
+	return utils::utf8_to_utf16(value);
+}
+
+inline std::wstring get_utf16(const char* value)
+{
+	return utils::utf8_to_utf16(std::string_view(value));
+}
+
 // CAccessDlg dialog
 
 IMPLEMENT_DYNAMIC(CAccessInfoPage, CTooltipPropertyPage)
@@ -93,6 +103,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CTooltipPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_PACKAGE_NAME, &CAccessInfoPage::OnEnChangeEditPluginPackageName)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, &CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CAccessInfoPage::OnBnClickedButtonEditConfig)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_LINK, &CAccessInfoPage::OnBnClickedButtonEditLink)
 END_MESSAGE_MAP()
 
 
@@ -125,6 +136,8 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_wndBackground);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_background);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, m_channelsWebPath);
+	DDX_Control(pDX, IDC_EDIT_PLUGIN_CHANNELS_DIRECT, m_wndDirectLink);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_LINK, m_wndEditLink);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_URL, m_updateInfoUrl);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_UPDATE_URL, m_wndUpdateUrl);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_FILE_URL, m_updatePackageUrl);
@@ -174,6 +187,9 @@ BOOL CAccessInfoPage::OnInitDialog()
 	std::wstring provider_url = m_plugin->get_provider_url();
 	m_wndProviderLink.SetURL(provider_url.c_str());
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
+
+	m_wndDirectLink.EnableWindow(FALSE);
+	m_wndEditLink.EnableWindow(FALSE);
 
 	CString logo_filter(_T("PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
 	m_wndLogo.EnableFileBrowseButton(nullptr,
@@ -480,21 +496,9 @@ void CAccessInfoPage::FillChannelsList()
 	m_wndChLists.DeleteAllItems();
 	for (const auto& channel : m_all_channels_lists)
 	{
-		bool check = all;
-		if (!check)
-		{
-			for (const auto& item : ch_list)
-			{
-				if (item == get_utf8(channel))
-				{
-					check = true;
-					break;
-				}
-			}
-		}
 		m_wndChLists.InsertItem(idx, L"", 0);
 		m_wndChLists.SetItemText(idx, 1, channel.c_str());
-		m_wndChLists.SetCheck(idx++, check);
+		m_wndChLists.SetCheck(idx++, (!all && std::find(ch_list.begin(), ch_list.end(), get_utf8(channel)) != ch_list.end()));
 	}
 
 	m_wndChLists.EnableWindow(TRUE);
@@ -911,6 +915,26 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 		if (selected.not_valid)
 			return;
 
+		if (pNMLV->uOldState == 0 && pNMLV->uNewState & LVIS_SELECTED)
+		{
+			if (const auto& pair = selected.m_direct_links.find(get_utf8(m_all_channels_lists[pNMLV->iItem])); pair != selected.m_direct_links.end())
+			{
+				m_wndDirectLink.SetWindowText(get_utf16(pair->second).c_str());
+			}
+			else
+			{
+				m_wndDirectLink.SetWindowText(L"");
+			}
+
+			m_wndDirectLink.EnableWindow(TRUE);
+			m_wndEditLink.EnableWindow(TRUE);
+		}
+		else if (pNMLV->uNewState == 0 && pNMLV->uOldState & LVIS_SELECTED)
+		{
+			m_wndDirectLink.EnableWindow(FALSE);
+			m_wndEditLink.EnableWindow(FALSE);
+		}
+
 		int cnt = m_wndChLists.GetItemCount();
 		std::vector<std::string> ch_list;
 		for (int nItem = 0; nItem < cnt; nItem++)
@@ -919,11 +943,6 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 			{
 				ch_list.emplace_back(get_utf8(m_all_channels_lists[nItem]));
 			}
-		}
-
-		if (ch_list.size() == m_all_channels_lists.size())
-		{
-			ch_list.clear();
 		}
 
 		selected.ch_list.swap(ch_list);
@@ -1084,6 +1103,12 @@ int CAccessInfoPage::GetCheckedAccountIdx()
 	}
 
 	return -1;
+}
+
+int CAccessInfoPage::GetSelectedList()
+{
+	POSITION pos = m_wndChLists.GetFirstSelectedItemPosition();
+	return (pos == nullptr) ? -1 : m_wndChLists.GetNextSelectedItem(pos);
 }
 
 void CAccessInfoPage::OnCbnSelchangeComboConfigs()
@@ -1250,7 +1275,7 @@ void CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath()
 	UpdateData(TRUE);
 
 	auto& selected = GetCheckedAccount();
-	selected.ch_web_path = get_utf8(m_channelsWebPath);
+	selected.set_ch_web_path(m_channelsWebPath.GetString());
 }
 
 void CAccessInfoPage::OnBnClickedButtonEditConfig()
@@ -1291,5 +1316,45 @@ void CAccessInfoPage::OnBnClickedButtonEditConfig()
 	{
 		m_plugin->copy(pSheet->m_plugin.get());
 		CreateAccountsList();
+	}
+}
+
+void CAccessInfoPage::OnBnClickedButtonEditLink()
+{
+	auto& selectedAccount = GetCheckedAccount();
+	if (selectedAccount.not_valid)
+		return;
+
+	int selectedList = GetSelectedList();
+	if (selectedList == -1)
+		return;
+
+	CUrlDlg dlg;
+	m_wndDirectLink.GetWindowText(dlg.m_url);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	const auto& ch_list = get_utf8(m_all_channels_lists[selectedList]);
+	if (dlg.m_url.IsEmpty())
+	{
+		selectedAccount.m_direct_links.erase(ch_list);
+	}
+	else
+	{
+		if (dlg.m_url.Find(L"www.dropbox.com") != -1)
+		{
+			int pos = dlg.m_url.Find('?');
+			if (pos != -1)
+			{
+				dlg.m_url = dlg.m_url.Mid(0, pos);
+			}
+			dlg.m_url.Replace(L"www.dropbox.com", L"dl.dropboxusercontent.com");
+			selectedAccount.m_direct_links[ch_list] = get_utf8(dlg.m_url);
+			m_wndDirectLink.SetWindowText(dlg.m_url);
+		}
+		else
+		{
+			selectedAccount.m_direct_links[ch_list] = get_utf8(dlg.m_url);
+		}
 	}
 }

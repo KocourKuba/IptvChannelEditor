@@ -317,16 +317,39 @@ class Starnet_Tv implements Tv, User_Input_Handler
                         $url_path = $this->plugin->plugin_info['app_channels_url_path'];
                     }
 
+                    if (substr($url_path, -1) !== '/') {
+                        $url_path .= '/';
+                    }
+
+                    $url_path .= $channels_list;
+                    hd_print("load link: $url_path");
                     $channels_list_path = get_temp_path($channels_list);
                     if (!file_exists($channels_list_path)) {
-                        file_put_contents($channels_list_path, HD::http_get_document($url_path . $channels_list));
+                        file_put_contents($channels_list_path, HD::http_get_document($url_path));
                     }
+                    break;
+                case 3:
+                    if (isset($plugin_cookies->channels_direct_url) && !empty($plugin_cookies->channels_direct_url)) {
+                        $url_path = $plugin_cookies->channels_direct_url;
+                    } else {
+                        if (!isset($this->plugin->plugin_info['app_direct_links'][$channels_list])) {
+                            throw new Exception();
+                        }
+                        $url_path = $this->plugin->plugin_info['app_direct_links'][$channels_list];
+                    }
+
+                    hd_print("load direct link: $url_path");
+                    $channels_list_path = get_temp_path(hash('crc32', $url_path));
+                    if (!file_exists($channels_list_path)) {
+                        file_put_contents($channels_list_path, HD::http_get_document($url_path));
+                    }
+
                     break;
             }
 
             $xml = HD::parse_xml_file($channels_list_path);
         } catch (Exception $ex) {
-            hd_print("Can't fetch channel_list $channels_list_path");
+            hd_print("Can't fetch channel_list $channels_list_path " . $ex->getMessage());
             return;
         }
 

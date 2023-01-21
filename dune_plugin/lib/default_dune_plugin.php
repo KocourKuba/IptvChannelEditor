@@ -100,21 +100,26 @@ class Default_Dune_Plugin implements DunePlugin
         print_sysinfo();
 
         hd_print("----------------------------------------------------");
-        hd_print("Plugin ID:        " . $this->plugin_info['app_short_name']);
-        hd_print("Plugin name:      " . $this->plugin_info['app_caption']);
-        hd_print("Plugin version:   " . $this->plugin_info['app_version'] . '.' . $this->plugin_info['app_version_idx']);
-        hd_print("Plugin date:      " . $this->plugin_info['app_release_date']);
-        hd_print("Account type:     " . $this->config->get_feature(Plugin_Constants::ACCESS_TYPE));
-        hd_print("TV fav:           " . ($this->config->get_feature(Plugin_Constants::TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
-        hd_print("VOD page:         " . ($this->config->get_feature(Plugin_Constants::VOD_SUPPORTED) ? "yes" : "no"));
-        hd_print("LocalTime         " . format_datetime('Y-m-d H:i', time()));
-        hd_print("TimeZone          " . getTimeZone());
-        hd_print("Daylight          " . (date('I') ? 'yes' : 'no'));
-        hd_print("Icon              " . $this->plugin_info['app_logo']);
-        hd_print("Background        " . $this->plugin_info['app_background']);
-        hd_print("New UI support    " . ($this->new_ui_support ? "yes" : "no"));
-        hd_print("History support   " . ($this->history_support ? "yes" : "no"));
-        hd_print("Channels path     " . $this->plugin_info['app_channels_url_path']);
+        hd_print("Plugin ID:           " . $this->plugin_info['app_short_name']);
+        hd_print("Plugin name:         " . $this->plugin_info['app_caption']);
+        hd_print("Plugin version:      " . $this->plugin_info['app_version'] . '.' . $this->plugin_info['app_version_idx']);
+        hd_print("Plugin date:         " . $this->plugin_info['app_release_date']);
+        hd_print("Account type:        " . $this->config->get_feature(Plugin_Constants::ACCESS_TYPE));
+        hd_print("TV fav:              " . ($this->config->get_feature(Plugin_Constants::TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
+        hd_print("VOD page:            " . ($this->config->get_feature(Plugin_Constants::VOD_SUPPORTED) ? "yes" : "no"));
+        hd_print("LocalTime            " . format_datetime('Y-m-d H:i', time()));
+        hd_print("TimeZone             " . getTimeZone());
+        hd_print("Daylight             " . (date('I') ? 'yes' : 'no'));
+        hd_print("Icon                 " . $this->plugin_info['app_logo']);
+        hd_print("Background           " . $this->plugin_info['app_background']);
+        hd_print("New UI support       " . ($this->new_ui_support ? "yes" : "no"));
+        hd_print("History support      " . ($this->history_support ? "yes" : "no"));
+        hd_print("Channels path        " . $this->plugin_info['app_channels_url_path']);
+        if (!empty($this->plugin_info['app_direct_links'])) {
+            foreach ($this->plugin_info['app_direct_links'] as $item) {
+                hd_print("Channels direct link " . $item);
+            }
+        }
         hd_print("----------------------------------------------------");
     }
 

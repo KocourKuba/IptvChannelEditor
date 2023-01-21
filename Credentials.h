@@ -32,6 +32,7 @@ public:
 	void set_caption(const std::wstring& value) { caption = utils::utf16_to_utf8(value); }
 	void set_logo(const std::wstring& value) { logo = utils::utf16_to_utf8(value); }
 	void set_background(const std::wstring& value) { background = utils::utf16_to_utf8(value); }
+	void set_ch_web_path(const std::wstring& value) { ch_web_path = utils::utf16_to_utf8(value); }
 
 	friend void to_json(nlohmann::json& j, const Credentials& c)
 	{
@@ -61,6 +62,7 @@ public:
 		SERIALIZE_STRUCT(j, c, quality_id);
 		SERIALIZE_STRUCT(j, c, embed);
 		SERIALIZE_STRUCT(j, c, ch_list);
+		SERIALIZE_STRUCT(j, c, m_direct_links);
 	}
 
 	friend void from_json(const nlohmann::json& j, Credentials& c)
@@ -91,6 +93,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, quality_id);
 		DESERIALIZE_STRUCT(j, c, embed);
 		DESERIALIZE_STRUCT(j, c, ch_list);
+		DESERIALIZE_STRUCT(j, c, m_direct_links);
 	}
 
 public:
@@ -120,5 +123,6 @@ public:
 	int quality_id = 0; // zero based index
 	int embed = 0;
 	std::vector<std::string> ch_list;
+	std::map<std::string, std::string> m_direct_links;
 	bool not_valid = false;
 };
