@@ -52,6 +52,10 @@ void plugin_sharavoz::load_default()
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
+	info.set_name(IDS_STRING_SHARAVOZ_DIRECT);
+	info.pl_template = "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
+	playlist_templates.emplace_back(info);
+
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "http://{SERVER_ID}/{ID}/index.m3u8?token={TOKEN}";
 	streams_config[0].uri_arc_template = "http://{SERVER_ID}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";

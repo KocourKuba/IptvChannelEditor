@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="215" scanned="20230121164542" built="20230121164635" lang="ru" pane="TLogPane" col="2" row="Dialogs.131.STATIC_Direct_link.Text">
+<desktop scan="217" scanned="20230125105741" built="20230121164635" lang="ru" pane="TLogPane" col="3" row="Strings.24.IDS_STRING_SHARAVOZ_DIRECT">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>

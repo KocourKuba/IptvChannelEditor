@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20230121164632" scan="215" scanned="20230121164542">
+<document created="20211012165442" version="4.0.374" date="20230125105749" scan="217" scanned="20230125105741">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230121154434" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230125095736" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -4928,6 +4928,12 @@
           <lang id="ru" date="20221110221304">\b Год: \b0 {:s}\par </lang>
         </row>
       </node>
+      <node class="TWindowsStringNode" name="24" state="0" created="20230125105440" resid="24" langid="1033">
+        <row id="IDS_STRING_SHARAVOZ_DIRECT" changed="20230125105741">
+          <native>Secondary</native>
+          <lang id="ru" date="20230125105602">Вторичный</lang>
+        </row>
+      </node>
       <node class="TWindowsStringNode" name="26" created="20220730092432" resid="26" langid="1033">
         <row id="IDS_STRING_FILMAX_P1">
           <native>Germany</native>
@@ -5143,28 +5149,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20230121164542">
-          <prev>6.1.1408, 16 Jan 2023</prev>
-          <native>6.1.1415, 19 Jan 2023</native>
+        <row id="FileVersion" locked="1" state="3" changed="20230125105440">
+          <prev>6.1.1415, 19 Jan 2023</prev>
+          <native>6.2.1418, 21 Jan 2023</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
-        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20221122210423">1</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230121164542">
-          <prev>1408</prev>
-          <native>1415</native>
+        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230125105440">
+          <prev>1</prev>
+          <native>2</native>
+        </row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230125105440">
+          <prev>1415</prev>
+          <native>1418</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20230121164542">
-          <prev>6.1.1408</prev>
-          <native>6.1.1415</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20230125105440">
+          <prev>6.1.1415</prev>
+          <native>6.2.1418</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
-        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20221122210423">1</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230121164542">
-          <prev>1408</prev>
-          <native>1415</native>
+        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230125105440">
+          <prev>1</prev>
+          <native>2</native>
+        </row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230125105440">
+          <prev>1415</prev>
+          <native>1418</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
