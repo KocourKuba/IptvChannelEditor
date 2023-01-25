@@ -8,31 +8,23 @@ public:
 	Credentials() = default;
 	void Clear();
 
-	std::wstring get_login() const { return utils::utf8_to_utf16(login); }
-	std::wstring get_password() const { return utils::utf8_to_utf16(password); }
-	std::wstring get_token() const { return utils::utf8_to_utf16(token); }
-	std::wstring get_subdomain() const { return utils::utf8_to_utf16(subdomain); }
-	std::wstring get_portal() const { return utils::utf8_to_utf16(portal); }
-	std::wstring get_comment() const { return utils::utf8_to_utf16(comment); }
-	std::wstring get_config() const { return utils::utf8_to_utf16(config); }
-	std::wstring get_suffix() const { return utils::utf8_to_utf16(suffix); }
-	std::wstring get_caption() const { return utils::utf8_to_utf16(caption); }
-	std::wstring get_logo() const { return utils::utf8_to_utf16(logo); }
-	std::wstring get_background() const { return utils::utf8_to_utf16(background); }
-	std::wstring get_ch_web_path() const { return utils::utf8_to_utf16(ch_web_path); }
-
-	void set_login(const std::wstring& value) { login = utils::utf16_to_utf8(value); }
-	void set_password(const std::wstring& value) { password = utils::utf16_to_utf8(value); }
-	void set_token(const std::wstring& value) { token = utils::utf16_to_utf8(value); }
-	void set_subdomain(const std::wstring& value) { subdomain = utils::utf16_to_utf8(value); }
-	void set_portal(const std::wstring& value) { portal = utils::utf16_to_utf8(value); }
-	void set_comment(const std::wstring& value) { comment = utils::utf16_to_utf8(value); }
-	void set_config(const std::wstring& value) { config = utils::utf16_to_utf8(value); }
-	void set_suffix(const std::wstring& value) { suffix = utils::utf16_to_utf8(value); }
-	void set_caption(const std::wstring& value) { caption = utils::utf16_to_utf8(value); }
-	void set_logo(const std::wstring& value) { logo = utils::utf16_to_utf8(value); }
-	void set_background(const std::wstring& value) { background = utils::utf16_to_utf8(value); }
-	void set_ch_web_path(const std::wstring& value) { ch_web_path = utils::utf16_to_utf8(value); }
+	MAKE_ACCESSORS(login);
+	MAKE_ACCESSORS(password);
+	MAKE_ACCESSORS(token);
+	MAKE_ACCESSORS(subdomain);
+	MAKE_ACCESSORS(portal);
+	MAKE_ACCESSORS(comment);
+	MAKE_ACCESSORS(config);
+	MAKE_ACCESSORS(suffix);
+	MAKE_ACCESSORS(caption);
+	MAKE_ACCESSORS(logo);
+	MAKE_ACCESSORS(background);
+	MAKE_ACCESSORS(update_url);
+	MAKE_ACCESSORS(update_package_url);
+	MAKE_ACCESSORS(version_id);
+	MAKE_ACCESSORS(update_name);
+	MAKE_ACCESSORS(package_name);
+	MAKE_ACCESSORS(ch_web_path);
 
 	friend void to_json(nlohmann::json& j, const Credentials& c)
 	{
@@ -114,6 +106,7 @@ public:
 	std::string update_name;
 	std::string package_name;
 	std::string ch_web_path;
+
 	int custom_increment = 0;
 	int custom_update_name = 0;
 	int custom_package_name = 0;
@@ -122,7 +115,9 @@ public:
 	int profile_id = 0; // zero based index
 	int quality_id = 0; // zero based index
 	int embed = 0;
+
+	bool not_valid = false;
+
 	std::vector<std::string> ch_list;
 	std::map<std::string, std::string> m_direct_links;
-	bool not_valid = false;
 };

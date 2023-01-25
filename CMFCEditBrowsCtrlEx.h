@@ -30,6 +30,16 @@ DEALINGS IN THE SOFTWARE.
 class CMFCEditBrowseCtrlEx : public CMFCEditBrowseCtrl
 {
 public:
+	void OnBrowse() override
+	{
+		if (GetMode() == BrowseMode_Default && GetParent() != nullptr)
+		{
+			GetParent()->SendMessage(WM_COMMAND, MAKEWPARAM(GetDlgCtrlID(), WM_CUSTOM_MFC_BROWSE), (LPARAM)m_hWnd);
+		}
+
+		__super::OnBrowse();
+	}
+
 	void OnDrawBrowseButton(CDC* pDC, CRect rect, BOOL bIsButtonPressed, BOOL bIsButtonHot) override
 	{
 		CMemDC dc(*pDC, rect);

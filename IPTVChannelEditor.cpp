@@ -639,6 +639,8 @@ bool PackPlugin(const PluginType plugin_type,
 	if (output_path.back() != '\\')
 		output_path += '\\';
 
+	BOOL useDropbox = GetConfig().get_int(false, REG_USE_DROPBOX);
+
 	std::error_code err;
 	std::filesystem::create_directory(output_path, err);
 
@@ -727,7 +729,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 	const auto& packed_plugin_name = fmt::format(utils::DUNE_PLUGIN_NAME, plugin->get_short_name(), suffix);
 
-	if (make_web_update && (cred.update_url.empty() || cred.update_package_url.empty()))
+	if (make_web_update && !useDropbox && (cred.update_url.empty() || cred.update_package_url.empty()))
 	{
 		// revert back to previous state
 		GetConfig().set_plugin_type(old_plugin_type);

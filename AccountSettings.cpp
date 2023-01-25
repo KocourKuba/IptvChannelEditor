@@ -89,6 +89,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_ACCOUNT_DATA,
 	REG_ACTIVE_ACCOUNT,
 	REG_ACTIVE_CH_LIST,
+	REG_USE_DROPBOX,
 };
 
 static std::vector<PluginType> all_plugins = {

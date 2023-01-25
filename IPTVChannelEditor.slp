@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20230125105749" scan="217" scanned="20230125105741">
+<document created="20211012165442" version="4.0.374" date="20230126181007" scan="219" scanned="20230126180934">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230125095736" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230126170722" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -1805,9 +1805,9 @@
             <prev>397</prev>
             <native>535</native>
           </row>
-          <row id="CY" state="3" created="20211209210449" changed="20230121164542">
-            <prev>357</prev>
-            <native>314</native>
+          <row id="CY" state="3" created="20211209210449" changed="20230126180934">
+            <prev>314</prev>
+            <native>303</native>
           </row>
           <row id="Font" created="20211209210449">MS Shell Dlg,8</row>
           <row id="Text">
@@ -1821,9 +1821,9 @@
               <prev>383</prev>
               <native>521</native>
             </row>
-            <row id="CY" state="3" changed="20230121164542">
-              <prev>77</prev>
-              <native>80</native>
+            <row id="CY" state="3" changed="20230126180934">
+              <prev>80</prev>
+              <native>69</native>
             </row>
             <row id="Text">
               <native>Plugin Web Update</native>
@@ -2094,6 +2094,32 @@
               <native>192</native>
             </row>
           </component>
+          <component class="TVisLabel" name="STATIC_Direct_link" state="0" created="20230121164542" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">213</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Direct link to Channels List</native>
+              <lang id="ru" date="20230121164553">Прямая ссылка на список каналов</lang>
+            </row>
+            <row id="X" state="0">270</row>
+            <row id="Y" state="0">192</row>
+          </component>
+          <component class="TVisBasicControl" name="1229" state="0" created="20230125213336" type="MfcEditBrowse">
+            <row id="CX" state="0">258</row>
+            <row id="CY" state="0">13</row>
+            <row id="X" state="0">270</row>
+            <row id="Y" state="0">203</row>
+          </component>
+          <component class="TVisCheckBox" name="1176" state="0" created="20230126180934" type="button">
+            <row id="CX" state="0">123</row>
+            <row id="CY" state="0">13</row>
+            <row id="Text" state="0">
+              <native>Use Dropbox update</native>
+              <lang id="ru" date="20230126181002">Обновления через Dropbox</lang>
+            </row>
+            <row id="X" state="0">12</row>
+            <row id="Y" state="0">236</row>
+          </component>
           <component class="TVisCheckBox" name="1172" created="20220730092432" type="button">
             <row id="CX" state="3" changed="20230121164542">
               <prev>129</prev>
@@ -2104,10 +2130,13 @@
               <native>Custom Version Index</native>
               <lang id="ru" date="20220730092901">Произвольный индекс версии</lang>
             </row>
-            <row id="X">12</row>
-            <row id="Y" state="3" changed="20230121164542">
-              <prev>283</prev>
-              <native>238</native>
+            <row id="X" state="3" changed="20230126180934">
+              <prev>12</prev>
+              <native>270</native>
+            </row>
+            <row id="Y" state="3" changed="20230126180934">
+              <prev>238</prev>
+              <native>236</native>
             </row>
           </component>
           <component class="TVisLabel" name="STATIC_Update_description" created="20220730092432" type="static" unnamed="1" autosize="0" wordwrap="1">
@@ -2122,6 +2151,18 @@
               <prev>297</prev>
               <native>251</native>
             </row>
+          </component>
+          <component class="TVisBasicControl" name="1231" state="0" created="20230125213336" type="MfcEditBrowse">
+            <row id="CX" state="3" changed="20230126180934">
+              <prev>258</prev>
+              <native>253</native>
+            </row>
+            <row id="CY" state="0">13</row>
+            <row id="X" state="3" changed="20230126180934">
+              <prev>7</prev>
+              <native>12</native>
+            </row>
+            <row id="Y" state="0">262</row>
           </component>
           <component class="TVisLabel" name="STATIC_Update_package" created="20220730092432" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX" changed="20220730093453">189</row>
@@ -2139,6 +2180,12 @@
               <native>251</native>
             </row>
           </component>
+          <component class="TVisBasicControl" name="1230" state="0" created="20230125213336" type="MfcEditBrowse">
+            <row id="CX" state="0">258</row>
+            <row id="CY" state="0">13</row>
+            <row id="X" state="0">270</row>
+            <row id="Y" state="0">262</row>
+          </component>
           <component class="TVisCheckBox" name="1175" created="20220730092432" type="button">
             <row id="CX" state="3" changed="20230121164542">
               <prev>132</prev>
@@ -2153,9 +2200,9 @@
               <prev>254</prev>
               <native>12</native>
             </row>
-            <row id="Y" state="3" changed="20230121164542">
-              <prev>295</prev>
-              <native>278</native>
+            <row id="Y" state="3" changed="20230126180934">
+              <prev>278</prev>
+              <native>279</native>
             </row>
           </component>
           <component class="TVisCheckBox" name="1177" created="20220730092432" type="button">
@@ -2172,46 +2219,10 @@
               <prev>254</prev>
               <native>270</native>
             </row>
-            <row id="Y" state="3" changed="20230121164542">
-              <prev>322</prev>
-              <native>277</native>
+            <row id="Y" state="3" changed="20230126180934">
+              <prev>277</prev>
+              <native>279</native>
             </row>
-          </component>
-          <component class="TVisLabel" name="STATIC_txt" created="20220730092432" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX">23</row>
-            <row id="CY">8</row>
-            <row id="Text" locked="1">.txt</row>
-            <row id="X" state="3" changed="20230121164542">
-              <prev>363</prev>
-              <native>101</native>
-            </row>
-            <row id="Y" state="3" changed="20230121164542">
-              <prev>309</prev>
-              <native>293</native>
-            </row>
-          </component>
-          <component class="TVisLabel" name="STATIC_targz" created="20220730092432" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX">23</row>
-            <row id="CY">8</row>
-            <row id="Text" locked="1">.tar.gz</row>
-            <row id="X" state="3" changed="20230121164542">
-              <prev>363</prev>
-              <native>360</native>
-            </row>
-            <row id="Y" state="3" changed="20230121164542">
-              <prev>335</prev>
-              <native>291</native>
-            </row>
-          </component>
-          <component class="TVisLabel" name="STATIC_Direct_link" state="0" created="20230121164542" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX" state="0">213</row>
-            <row id="CY" state="0">8</row>
-            <row id="Text" state="0">
-              <native>Direct link to Channels List</native>
-              <lang id="ru" date="20230121164553">Прямая ссылка на список каналов</lang>
-            </row>
-            <row id="X" state="0">270</row>
-            <row id="Y" state="0">192</row>
           </component>
           <component class="TVisComboBox" name="1123" created="20221001005006" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
             <row id="CX" state="3" changed="20230121164542">
@@ -2322,82 +2333,49 @@
             </row>
           </component>
           <component class="TVisEdit" name="1171" created="20220730092432" type="edit" enabled="0">
-            <row id="CX" state="3" changed="20230121164542">
-              <prev>69</prev>
-              <native>62</native>
+            <row id="CX" state="3" changed="20230126180934">
+              <prev>62</prev>
+              <native>70</native>
             </row>
             <row id="CY">12</row>
-            <row id="X" state="3" changed="20230121164542">
-              <prev>154</prev>
-              <native>139</native>
+            <row id="X" state="3" changed="20230126180934">
+              <prev>139</prev>
+              <native>397</native>
             </row>
-            <row id="Y" state="3" changed="20230121164542">
-              <prev>283</prev>
-              <native>238</native>
-            </row>
-          </component>
-          <component class="TVisEdit" name="1169" created="20220730092432" type="edit">
-            <row id="CX" state="3" changed="20230121164542">
+            <row id="Y" state="3" changed="20230126180934">
               <prev>238</prev>
-              <native>253</native>
-            </row>
-            <row id="CY">12</row>
-            <row id="X">12</row>
-            <row id="Y" state="3" changed="20230121164542">
-              <prev>308</prev>
-              <native>262</native>
-            </row>
-          </component>
-          <component class="TVisEdit" name="1170" created="20220730092432" type="edit">
-            <row id="CX" state="3" changed="20230121164542">
-              <prev>238</prev>
-              <native>258</native>
-            </row>
-            <row id="CY">12</row>
-            <row id="X" state="3" changed="20230121164542">
-              <prev>12</prev>
-              <native>270</native>
-            </row>
-            <row id="Y" state="3" changed="20230121164542">
-              <prev>334</prev>
-              <native>262</native>
+              <native>237</native>
             </row>
           </component>
           <component class="TVisEdit" name="1173" created="20220730092432" type="edit" enabled="0">
-            <row id="CX" state="3" changed="20230121164542">
-              <prev>107</prev>
-              <native>86</native>
+            <row id="CX" state="3" changed="20230126180934">
+              <prev>122</prev>
+              <native>132</native>
             </row>
             <row id="CY">12</row>
-            <row id="X" state="3" changed="20230121164542">
-              <prev>254</prev>
-              <native>12</native>
+            <row id="X" state="3" changed="20230126180934">
+              <prev>12</prev>
+              <native>133</native>
             </row>
-            <row id="Y" state="3" changed="20230121164542">
-              <prev>308</prev>
-              <native>291</native>
+            <row id="Y" state="3" changed="20230126180934">
+              <prev>291</prev>
+              <native>279</native>
             </row>
           </component>
           <component class="TVisEdit" name="1174" created="20220730092432" type="edit" enabled="0">
-            <row id="CX" state="3" changed="20230121164542">
-              <prev>107</prev>
-              <native>86</native>
+            <row id="CX" state="3" changed="20230125213336">
+              <prev>86</prev>
+              <native>122</native>
             </row>
             <row id="CY">12</row>
-            <row id="X" state="3" changed="20230121164542">
-              <prev>254</prev>
-              <native>270</native>
+            <row id="X" state="3" changed="20230126180934">
+              <prev>270</prev>
+              <native>406</native>
             </row>
-            <row id="Y" state="3" changed="20230121164542">
-              <prev>334</prev>
-              <native>290</native>
+            <row id="Y" state="3" changed="20230126180934">
+              <prev>290</prev>
+              <native>279</native>
             </row>
-          </component>
-          <component class="TVisEdit" name="1183" state="0" created="20230121164542" type="edit" readonly="1">
-            <row id="CX" state="0">236</row>
-            <row id="CY" state="0">12</row>
-            <row id="X" state="0">270</row>
-            <row id="Y" state="0">203</row>
           </component>
           <component class="TVisButton" name="1133" created="20220320143227" type="button">
             <row id="CX" state="3" changed="20230121164542">
@@ -2459,13 +2437,6 @@
               <prev>200</prev>
               <native>174</native>
             </row>
-          </component>
-          <component class="TVisButton" name="1185" state="0" created="20230121164542" type="button" picture="1">
-            <row id="CX" state="0">19</row>
-            <row id="CY" state="0">15</row>
-            <row id="Text" locked="1" state="0">...</row>
-            <row id="X" state="0">509</row>
-            <row id="Y" state="0">202</row>
           </component>
         </form>
       </node>
@@ -4929,6 +4900,14 @@
         </row>
       </node>
       <node class="TWindowsStringNode" name="24" state="0" created="20230125105440" resid="24" langid="1033">
+        <row id="IDS_STRING_ERR_WRONG_UPLOADED_NAME" state="0" created="20230125213336">
+          <native>Link to file at dropbox and local file name not match!</native>
+          <lang id="ru" date="20230125213423">Ссылка на файл в dropbox и локальное имя файла не совпадают!</lang>
+        </row>
+        <row id="IDS_STRING_ERR_WRONG_URL" state="0" created="20230125213336">
+          <native>Malformed URL!</native>
+          <lang id="ru" date="20230125213347">Неправильная ссылка!</lang>
+        </row>
         <row id="IDS_STRING_SHARAVOZ_DIRECT" changed="20230125105741">
           <native>Secondary</native>
           <lang id="ru" date="20230125105602">Вторичный</lang>
@@ -5149,34 +5128,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20230125105440">
-          <prev>6.1.1415, 19 Jan 2023</prev>
-          <native>6.2.1418, 21 Jan 2023</native>
+        <row id="FileVersion" locked="1" state="3" changed="20230125213336">
+          <prev>6.2.1418, 21 Jan 2023</prev>
+          <native>6.2.1420, 25 Jan 2023</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230125105440">
           <prev>1</prev>
           <native>2</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230125105440">
-          <prev>1415</prev>
-          <native>1418</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230125213336">
+          <prev>1418</prev>
+          <native>1420</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20230125105440">
-          <prev>6.1.1415</prev>
-          <native>6.2.1418</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20230125213336">
+          <prev>6.2.1418</prev>
+          <native>6.2.1420</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230125105440">
           <prev>1</prev>
           <native>2</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230125105440">
-          <prev>1415</prev>
-          <native>1418</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230125213336">
+          <prev>1418</prev>
+          <native>1420</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

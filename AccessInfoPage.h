@@ -64,7 +64,9 @@ protected:
 	afx_msg void OnBnClickedButtonRemove();
 	afx_msg void OnBnClickedButtonNewFromUrl();
 	afx_msg void OnBnClickedCheckEmbed();
-	afx_msg void OnBnClickedButtonEditLink();
+	afx_msg void OnBnClickedButtonBrowseDirectLink();
+	afx_msg void OnBnClickedButtonBrowseUpdateDesc();
+	afx_msg void OnBnClickedButtonBrowseUpdateFile();
 	afx_msg void OnCbnSelchangeComboConfigs();
 	afx_msg void OnCbnSelchangeComboServerId();
 	afx_msg void OnCbnSelchangeComboDeviceId();
@@ -75,10 +77,8 @@ protected:
 	afx_msg void OnEnChangeMfceditbrowsePluginLogo();
 	afx_msg void OnEnChangeMfceditbrowsePluginBgnd();
 	afx_msg void OnEnChangeEditPluginUpdateVersion();
-	afx_msg void OnEnChangeEditPluginUpdateUrl();
 	afx_msg void OnEnChangeEditPluginUpdateName();
 	afx_msg void OnEnChangeEditPluginPackageName();
-	afx_msg void OnEnChangeEditPluginUpdateFileUrl();
 	afx_msg void OnEnChangeEditPluginChannelsWebPath();
 	afx_msg void OnBnClickedCheckAutoincrementVersion();
 	afx_msg void OnBnClickedCheckCustomUpdateName();
@@ -98,6 +98,8 @@ private:
 	void FillChannelsList();
 	void FillConfigs();
 	void SetWebUpdate();
+	bool TransformDropboxPath(std::wstring& dropbox_link, const std::wstring& file);
+
 
 public:
 	CString m_status;
@@ -116,7 +118,7 @@ protected:
 	CButton m_wndNewFromUrl;
 	CButton m_wndEmbed;
 	CButton m_wndEditConfig;
-	CButton m_wndEditLink;
+	CButton m_wndUseDropboxUpdate;
 	CComboBox m_wndServers;
 	CComboBox m_wndDevices;
 	CComboBox m_wndQualities;
@@ -133,9 +135,9 @@ protected:
 	CButton m_wndAutoIncrement;
 	CButton m_wndCustomPackageName;
 	CButton m_wndCustomUpdateName;
-	CEdit m_wndDirectLink;
-	CEdit m_wndUpdateUrl;
-	CEdit m_wndUpdatePackageUrl;
+	CMFCEditBrowseCtrlEx m_wndDirectLink;
+	CMFCEditBrowseCtrlEx m_wndUpdateUrl;
+	CMFCEditBrowseCtrlEx m_wndUpdatePackageUrl;
 	CEdit m_wndVersionID;
 	CEdit m_wndUpdateName;
 	CEdit m_wndPackageName;
@@ -147,10 +149,8 @@ private:
 	CString m_background;
 	CString m_suffix;
 	CString m_caption;
-	CString m_updateInfoUrl;
-	CString m_updatePackageUrl;
-	CString m_updateInfoName;
-	CString m_packageName;
+	CString m_updateDescription;
+	CString m_updatePackage;
 	CString m_versionIdx;
 	CString m_channelsWebPath;
 
@@ -159,4 +159,6 @@ private:
 	std::vector<DynamicParamsInfo> m_profiles;
 	std::vector<DynamicParamsInfo> m_qualities;
 	std::vector<Credentials> m_all_credentials;
+public:
+	afx_msg void OnBnClickedCheckUseDropbox();
 };

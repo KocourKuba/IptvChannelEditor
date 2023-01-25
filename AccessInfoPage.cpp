@@ -93,17 +93,18 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CTooltipPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoPage::OnEnChangeEditPluginCaption)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_LOGO, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_BGND, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginBgnd)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, &CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath)
+	ON_WM_CUSTOM_MFC_BROWSE(IDC_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT, &CAccessInfoPage::OnBnClickedButtonBrowseDirectLink)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_VERSION, &CAccessInfoPage::OnEnChangeEditPluginUpdateVersion)
 	ON_BN_CLICKED(IDC_CHECK_AUTOINCREMENT_VERSION, &CAccessInfoPage::OnBnClickedCheckAutoincrementVersion)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_URL, &CAccessInfoPage::OnEnChangeEditPluginUpdateUrl)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_FILE_URL, &CAccessInfoPage::OnEnChangeEditPluginUpdateFileUrl)
+	ON_WM_CUSTOM_MFC_BROWSE(IDC_MFCEDITBROWSE_PLUGIN_UPDATE_URL, &CAccessInfoPage::OnBnClickedButtonBrowseUpdateDesc)
+	ON_WM_CUSTOM_MFC_BROWSE(IDC_MFCEDITBROWSE_PLUGIN_UPDATE_FILE_URL, &CAccessInfoPage::OnBnClickedButtonBrowseUpdateFile)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_UPDATE_NAME, &CAccessInfoPage::OnBnClickedCheckCustomUpdateName)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PACKAGE_NAME, &CAccessInfoPage::OnBnClickedCheckCustomPackageName)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_NAME, &CAccessInfoPage::OnEnChangeEditPluginUpdateName)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_PACKAGE_NAME, &CAccessInfoPage::OnEnChangeEditPluginPackageName)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, &CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CAccessInfoPage::OnBnClickedButtonEditConfig)
-	ON_BN_CLICKED(IDC_BUTTON_EDIT_LINK, &CAccessInfoPage::OnBnClickedButtonEditLink)
+	ON_BN_CLICKED(IDC_CHECK_USE_DROPBOX, &CAccessInfoPage::OnBnClickedCheckUseDropbox)
 END_MESSAGE_MAP()
 
 
@@ -136,22 +137,20 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_wndBackground);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_background);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, m_channelsWebPath);
-	DDX_Control(pDX, IDC_EDIT_PLUGIN_CHANNELS_DIRECT, m_wndDirectLink);
-	DDX_Control(pDX, IDC_BUTTON_EDIT_LINK, m_wndEditLink);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_URL, m_updateInfoUrl);
-	DDX_Control(pDX, IDC_EDIT_PLUGIN_UPDATE_URL, m_wndUpdateUrl);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_FILE_URL, m_updatePackageUrl);
-	DDX_Control(pDX, IDC_EDIT_PLUGIN_UPDATE_FILE_URL, m_wndUpdatePackageUrl);
+	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT, m_wndDirectLink);
+	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_UPDATE_URL, m_wndUpdateUrl);
+	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_UPDATE_FILE_URL, m_wndUpdatePackageUrl);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_VERSION, m_versionIdx);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_UPDATE_VERSION, m_wndVersionID);
 	DDX_Control(pDX, IDC_CHECK_AUTOINCREMENT_VERSION, m_wndAutoIncrement);
 	DDX_Control(pDX, IDC_CHECK_CUSTOM_UPDATE_NAME, m_wndCustomUpdateName);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_UPDATE_NAME, m_wndUpdateName);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_NAME, m_updateInfoName);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_NAME, m_updateDescription);
 	DDX_Control(pDX, IDC_CHECK_CUSTOM_PACKAGE_NAME, m_wndCustomPackageName);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_PACKAGE_NAME, m_wndPackageName);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_PACKAGE_NAME, m_packageName);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_PACKAGE_NAME, m_updatePackage);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndEditConfig);
+	DDX_Control(pDX, IDC_CHECK_USE_DROPBOX, m_wndUseDropboxUpdate);
 }
 
 BOOL CAccessInfoPage::OnInitDialog()
@@ -171,8 +170,8 @@ BOOL CAccessInfoPage::OnInitDialog()
 	AddTooltip(IDC_EDIT_PLUGIN_SUFFIX, IDS_STRING_EDIT_SUFFIX);
 	AddTooltip(IDC_EDIT_PLUGIN_CAPTION, IDS_STRING_EDIT_CAPTION);
 	AddTooltip(IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, IDS_STRING_EDIT_PLUGIN_CHANNELS_WEB_PATH);
-	AddTooltip(IDC_EDIT_PLUGIN_UPDATE_URL, IDS_STRING_EDIT_PLUGIN_UPDATE_URL);
-	AddTooltip(IDC_EDIT_PLUGIN_UPDATE_FILE_URL, IDS_STRING_EDIT_PLUGIN_UPDATE_FILE_URL);
+	AddTooltip(IDC_MFCEDITBROWSE_PLUGIN_UPDATE_URL, IDS_STRING_EDIT_PLUGIN_UPDATE_URL);
+	AddTooltip(IDC_MFCEDITBROWSE_PLUGIN_UPDATE_FILE_URL, IDS_STRING_EDIT_PLUGIN_UPDATE_FILE_URL);
 	AddTooltip(IDC_CHECK_AUTOINCREMENT_VERSION, IDS_STRING_CHECK_AUTOINCREMENT_VERSION);
 	AddTooltip(IDC_EDIT_PLUGIN_UPDATE_VERSION, IDS_STRING_EDIT_PLUGIN_UPDATE_VERSION);
 	AddTooltip(IDC_CHECK_CUSTOM_UPDATE_NAME, IDS_STRING_CHECK_CUSTOM_UPDATE_NAME);
@@ -187,9 +186,7 @@ BOOL CAccessInfoPage::OnInitDialog()
 	std::wstring provider_url = m_plugin->get_provider_url();
 	m_wndProviderLink.SetURL(provider_url.c_str());
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
-
 	m_wndDirectLink.EnableWindow(FALSE);
-	m_wndEditLink.EnableWindow(FALSE);
 
 	CString logo_filter(_T("PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
 	m_wndLogo.EnableFileBrowseButton(nullptr,
@@ -250,6 +247,7 @@ BOOL CAccessInfoPage::OnInitDialog()
 
 	m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
 	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
+	m_wndUseDropboxUpdate.SetCheck(GetConfig().get_int(false, REG_USE_DROPBOX));
 
 	UpdateData(FALSE);
 
@@ -519,31 +517,31 @@ void CAccessInfoPage::SetWebUpdate()
 	m_wndPackageName.EnableWindow(selected.custom_package_name);
 
 	const auto& short_name_w = utils::utf8_to_utf16(m_plugin->get_short_name());
-	const auto& suffix = utils::utf8_to_utf16(selected.suffix);
+	const auto& suffix = selected.get_suffix();
 
 	if (selected.custom_update_name)
 	{
-		m_updateInfoName = selected.update_name.c_str();
+		m_updateDescription = selected.get_update_name().c_str();
 	}
 	else
 	{
-		m_updateInfoName = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
-		m_updateInfoName += L".txt";
+		m_updateDescription = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
+		m_updateDescription += L".xml";
 	}
 
 	if (selected.custom_package_name)
 	{
-		m_packageName = selected.package_name.c_str();
+		m_updatePackage = selected.get_package_name().c_str();
 	}
 	else
 	{
-		m_packageName = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
-		m_packageName += L".tar.gz";
+		m_updatePackage = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
+		m_updatePackage += L".tar.gz";
 	}
 
 	if (selected.custom_increment)
 	{
-		m_versionIdx = selected.version_id.c_str();
+		m_versionIdx = selected.get_version_id().c_str();
 	}
 	else
 	{
@@ -551,8 +549,8 @@ void CAccessInfoPage::SetWebUpdate()
 		m_versionIdx = fmt::format(L"{:d}{:02d}{:02d}{:02d}", date.GetYear(), date.GetMonth(), date.GetDay(), date.GetHour()).c_str();
 	}
 
-	m_updatePackageUrl = selected.update_package_url.c_str();
-	m_updateInfoUrl = selected.update_url.c_str();
+	m_wndUpdatePackageUrl.SetWindowText(selected.get_update_package_url().c_str());
+	m_wndUpdateUrl.SetWindowText(selected.get_update_url().c_str());
 
 	UpdateData(FALSE);
 }
@@ -574,9 +572,9 @@ BOOL CAccessInfoPage::OnApply()
 	}
 
 	TemplateParams params;
-	params.login = utils::utf8_to_utf16(selected.login);
-	params.password = utils::utf8_to_utf16(selected.password);
-	params.subdomain = utils::utf8_to_utf16(selected.subdomain);
+	params.login = selected.get_login();
+	params.password = selected.get_password();
+	params.subdomain = selected.get_subdomain();
 	params.server_idx = selected.server_id;
 	params.device_idx = selected.device_id;
 	params.profile_idx = selected.profile_id;
@@ -605,23 +603,20 @@ BOOL CAccessInfoPage::OnApply()
 	selected.custom_increment = m_wndAutoIncrement.GetCheck();
 	if (selected.custom_increment)
 	{
-		selected.version_id = get_utf8(m_versionIdx);
+		selected.set_version_id(m_versionIdx);
 	}
 
 	selected.custom_update_name = m_wndCustomUpdateName.GetCheck();
 	if (selected.custom_update_name)
 	{
-		selected.update_name = get_utf8(m_updateInfoName);
+		selected.set_update_name(m_updateDescription);
 	}
 
 	selected.custom_package_name = m_wndCustomPackageName.GetCheck();
 	if (selected.custom_package_name)
 	{
-		selected.package_name = get_utf8(m_packageName);
+		selected.set_package_name(m_updatePackage);
 	}
-
-	selected.update_package_url = get_utf8(m_updatePackageUrl);
-	selected.update_url = get_utf8(m_updateInfoUrl);
 
 	GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, GetCheckedAccountIdx());
 
@@ -712,8 +707,8 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 						m_wndAccounts.SetItemText(cnt, 2, subdomain.c_str());
 
 						Credentials cred;
-						cred.token = get_utf8(access_key);
-						cred.subdomain = get_utf8(subdomain);
+						cred.set_token(access_key);
+						cred.set_subdomain(subdomain);
 						m_all_credentials.emplace_back(cred);
 						break;
 					}
@@ -736,8 +731,8 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 					m_wndAccounts.SetItemText(cnt, 2, m[2].str().c_str());
 
 					Credentials cred;
-					cred.login = get_utf8(m[1].str());
-					cred.password = get_utf8(m[2].str());
+					cred.set_login(m[1].str());
+					cred.set_password(m[2].str());
 					m_all_credentials.emplace_back(cred);
 				}
 			}
@@ -758,7 +753,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 					m_wndAccounts.SetItemText(cnt, 1, m[1].str().c_str());
 
 					Credentials cred;
-					cred.password = get_utf8(m[2].str());
+					cred.set_password(m[2].str());
 					m_all_credentials.emplace_back(cred);
 				}
 			}
@@ -801,10 +796,10 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.password = get_utf8(dispinfo->item.pszText);
+					cred.set_password(CString(dispinfo->item.pszText));
 					break;
 				case 2:
-					cred.comment = get_utf8(dispinfo->item.pszText);
+					cred.set_comment(CString(dispinfo->item.pszText));
 					break;
 				default:
 					break;
@@ -815,13 +810,13 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.login = get_utf8(dispinfo->item.pszText);
+					cred.set_login(CString(dispinfo->item.pszText));
 					break;
 				case 2:
-					cred.password = get_utf8(dispinfo->item.pszText);
+					cred.set_password(CString(dispinfo->item.pszText));
 					break;
 				case 3:
-					cred.comment = get_utf8(dispinfo->item.pszText);
+					cred.set_comment(CString(dispinfo->item.pszText));
 					break;
 				default:
 					break;
@@ -832,16 +827,16 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.token = get_utf8(dispinfo->item.pszText);
+					cred.set_token(CString(dispinfo->item.pszText));
 					break;
 				case 2:
-					cred.subdomain = get_utf8(dispinfo->item.pszText);
+					cred.set_subdomain(CString(dispinfo->item.pszText));
 					break;
 				case 3:
-					cred.portal = get_utf8(dispinfo->item.pszText);
+					cred.set_portal(CString(dispinfo->item.pszText));
 					break;
 				case 4:
-					cred.comment = get_utf8(dispinfo->item.pszText);
+					cred.set_comment(CString(dispinfo->item.pszText));
 					break;
 				default:
 					break;
@@ -927,12 +922,12 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 			}
 
 			m_wndDirectLink.EnableWindow(TRUE);
-			m_wndEditLink.EnableWindow(TRUE);
+			//m_wndEditLink.EnableWindow(TRUE);
 		}
 		else if (pNMLV->uNewState == 0 && pNMLV->uOldState & LVIS_SELECTED)
 		{
 			m_wndDirectLink.EnableWindow(FALSE);
-			m_wndEditLink.EnableWindow(FALSE);
+			//m_wndEditLink.EnableWindow(FALSE);
 		}
 
 		int cnt = m_wndChLists.GetItemCount();
@@ -980,18 +975,18 @@ void CAccessInfoPage::GetAccountInfo()
 	switch (m_plugin->get_access_type())
 	{
 		case AccountAccessType::enPin:
-			password = utils::utf8_to_utf16(selected_cred.password);
+			password = selected_cred.get_password();
 			break;
 
 		case AccountAccessType::enLoginPass:
-			login = utils::utf8_to_utf16(selected_cred.login);
-			password = utils::utf8_to_utf16(selected_cred.password);
+			login = selected_cred.get_login();
+			password = selected_cred.get_password();
 			break;
 
 		case AccountAccessType::enOtt:
-			token = utils::utf8_to_utf16(selected_cred.token);
-			domain = utils::utf8_to_utf16(selected_cred.subdomain);
-			portal = utils::utf8_to_utf16(selected_cred.portal);
+			token = selected_cred.get_token();
+			domain = selected_cred.get_subdomain();
+			portal = selected_cred.get_portal();
 			break;
 
 		case AccountAccessType::enNone:
@@ -1027,7 +1022,7 @@ void CAccessInfoPage::GetAccountInfo()
 			// currently supported only in sharaclub, oneott use this to obtain token
 			if (it->name == (L"token"))
 			{
-				selected_cred.token = get_utf8(it->value);
+				selected_cred.set_token(it->value);
 				it = acc_info.erase(it);
 			}
 			else if (it->name == (L"url"))
@@ -1060,8 +1055,8 @@ void CAccessInfoPage::GetAccountInfo()
 					// do not override fake ott and domain for edem
 					if (m_plugin->get_access_type() != AccountAccessType::enOtt)
 					{
-						selected_cred.token = get_utf8(entry->get_token());
-						selected_cred.subdomain = get_utf8(entry->get_domain());
+						selected_cred.set_token(entry->get_token());
+						selected_cred.set_subdomain(entry->get_domain());
 					}
 					m_status = _T("Ok");
 					break;
@@ -1123,7 +1118,7 @@ void CAccessInfoPage::OnCbnSelchangeComboConfigs()
 	{
 		CString value;
 		m_wndConfigs.GetLBText(idx, value);
-		selected.set_config(value.GetString());
+		selected.set_config(value);
 	}
 }
 
@@ -1164,7 +1159,7 @@ void CAccessInfoPage::OnEnChangeEditPluginSuffix()
 	m_suffix.Trim();
 	if (utils::is_ascii(m_suffix.GetString()))
 	{
-		selected.suffix = get_utf8(m_suffix);
+		selected.set_suffix(m_suffix);
 	}
 	else
 	{
@@ -1179,7 +1174,7 @@ void CAccessInfoPage::OnEnChangeEditPluginCaption()
 	UpdateData(TRUE);
 	m_caption.Trim();
 	auto& selected = GetCheckedAccount();
-	selected.caption = get_utf8(m_caption);
+	selected.set_caption(m_caption);
 }
 
 void CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo()
@@ -1189,7 +1184,7 @@ void CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo()
 	m_logo.Trim();
 	if (utils::is_ascii(std::filesystem::path(m_logo.GetString()).filename().wstring().c_str()))
 	{
-		selected.logo = get_utf8(m_logo);
+		selected.set_logo(m_logo);
 	}
 	else
 	{
@@ -1206,7 +1201,7 @@ void CAccessInfoPage::OnEnChangeMfceditbrowsePluginBgnd()
 	m_background.Trim();
 	if (utils::is_ascii(std::filesystem::path(m_background.GetString()).filename().wstring().c_str()))
 	{
-		selected.background = get_utf8(m_background);
+		selected.set_background(m_background);
 	}
 	else
 	{
@@ -1220,26 +1215,12 @@ void CAccessInfoPage::OnEnChangeEditPluginUpdateVersion()
 {
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
-	selected.version_id = get_utf8(m_versionIdx);
+	selected.set_version_id(m_versionIdx);
 }
 
 void CAccessInfoPage::OnBnClickedCheckAutoincrementVersion()
 {
 	m_wndVersionID.EnableWindow(m_wndAutoIncrement.GetCheck());
-}
-
-void CAccessInfoPage::OnEnChangeEditPluginUpdateUrl()
-{
-	UpdateData(TRUE);
-	auto& selected = GetCheckedAccount();
-	selected.update_url = get_utf8(m_updateInfoUrl);
-}
-
-void CAccessInfoPage::OnEnChangeEditPluginUpdateFileUrl()
-{
-	UpdateData(TRUE);
-	auto& selected = GetCheckedAccount();
-	selected.update_package_url = get_utf8(m_updatePackageUrl);
 }
 
 void CAccessInfoPage::OnBnClickedCheckCustomUpdateName()
@@ -1255,7 +1236,7 @@ void CAccessInfoPage::OnBnClickedCheckCustomPackageName()
 void CAccessInfoPage::OnEnChangeEditPluginUpdateName()
 {
 	UpdateData(TRUE);
-	if (!utils::is_ascii(m_updateInfoName.GetString()))
+	if (!utils::is_ascii(m_updateDescription.GetString()))
 	{
 		AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
 	}
@@ -1264,7 +1245,7 @@ void CAccessInfoPage::OnEnChangeEditPluginUpdateName()
 void CAccessInfoPage::OnEnChangeEditPluginPackageName()
 {
 	UpdateData(TRUE);
-	if (!utils::is_ascii(m_packageName.GetString()))
+	if (!utils::is_ascii(m_updatePackage.GetString()))
 	{
 		AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
 	}
@@ -1275,7 +1256,7 @@ void CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath()
 	UpdateData(TRUE);
 
 	auto& selected = GetCheckedAccount();
-	selected.set_ch_web_path(m_channelsWebPath.GetString());
+	selected.set_ch_web_path(m_channelsWebPath);
 }
 
 void CAccessInfoPage::OnBnClickedButtonEditConfig()
@@ -1319,7 +1300,7 @@ void CAccessInfoPage::OnBnClickedButtonEditConfig()
 	}
 }
 
-void CAccessInfoPage::OnBnClickedButtonEditLink()
+void CAccessInfoPage::OnBnClickedButtonBrowseDirectLink()
 {
 	auto& selectedAccount = GetCheckedAccount();
 	if (selectedAccount.not_valid)
@@ -1357,4 +1338,71 @@ void CAccessInfoPage::OnBnClickedButtonEditLink()
 			selectedAccount.m_direct_links[ch_list] = get_utf8(dlg.m_url);
 		}
 	}
+}
+
+void CAccessInfoPage::OnBnClickedButtonBrowseUpdateDesc()
+{
+	auto& selectedAccount = GetCheckedAccount();
+	if (selectedAccount.not_valid)
+		return;
+
+	CUrlDlg dlg;
+	m_wndUpdateUrl.GetWindowText(dlg.m_url);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	std::wstring url(dlg.m_url.GetString());
+	if (!TransformDropboxPath(url, m_updateDescription.GetString()))
+		return;
+
+	m_wndUpdateUrl.SetWindowText(url.c_str());
+	selectedAccount.set_update_url(url);
+}
+
+void CAccessInfoPage::OnBnClickedButtonBrowseUpdateFile()
+{
+	auto& selectedAccount = GetCheckedAccount();
+	if (selectedAccount.not_valid)
+		return;
+
+	CUrlDlg dlg;
+	m_wndUpdatePackageUrl.GetWindowText(dlg.m_url);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	std::wstring url(dlg.m_url.GetString());
+	if (!TransformDropboxPath(url, m_updatePackage.GetString()))
+		return;
+
+	m_wndUpdatePackageUrl.SetWindowText(url.c_str());
+	selectedAccount.set_update_package_url(url);
+}
+
+bool CAccessInfoPage::TransformDropboxPath(std::wstring& dropbox_link, const std::wstring& file)
+{
+	utils::CrackedUrl cracked;
+	if (!dropbox_link.empty() && !utils::CrackUrl(dropbox_link, cracked))
+	{
+		AfxMessageBox(IDS_STRING_ERR_WRONG_URL, MB_ICONERROR | MB_OK);
+		return false;
+	}
+
+	if (cracked.host == L"www.dropbox.com" || cracked.host == L"dl.dropboxusercontent.com")
+	{
+		cracked.host = L"dl.dropboxusercontent.com";
+		std::filesystem::path file_path(cracked.path);
+		if (file_path.filename() != file)
+		{
+			AfxMessageBox(IDS_STRING_ERR_WRONG_UPLOADED_NAME, MB_ICONERROR | MB_OK);
+			return false;
+		}
+		dropbox_link = fmt::format(L"{:s}://{:s}{:s}/", cracked.scheme, cracked.host, file_path.parent_path().wstring());
+	}
+
+	return true;
+}
+
+void CAccessInfoPage::OnBnClickedCheckUseDropbox()
+{
+	GetConfig().set_int(false, REG_USE_DROPBOX, m_wndUseDropboxUpdate.GetCheck());
 }
