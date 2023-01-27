@@ -187,6 +187,9 @@ BOOL CAccessInfoPage::OnInitDialog()
 	m_wndProviderLink.SetURL(provider_url.c_str());
 	m_wndProviderLink.SetWindowText(provider_url.c_str());
 	m_wndDirectLink.EnableWindow(FALSE);
+	m_wndDirectLink.EnableBrowseButton();
+	m_wndUpdateUrl.EnableBrowseButton();
+	m_wndUpdatePackageUrl.EnableBrowseButton();
 
 	CString logo_filter(_T("PNG file(*.png)|*.png|All Files (*.*)|*.*||"));
 	m_wndLogo.EnableFileBrowseButton(nullptr,
