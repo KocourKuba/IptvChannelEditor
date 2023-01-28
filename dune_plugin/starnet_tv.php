@@ -306,9 +306,11 @@ class Starnet_Tv implements Tv, User_Input_Handler
         try {
             $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
             $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
+            hd_print("Load channels list using source: $source");
             switch ($source) {
                 case 1:
                     $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . $channels_list;
+                    hd_print("load from: $channels_list_path");
                     break;
                 case 2:
                     if (isset($plugin_cookies->channels_url) && !empty($plugin_cookies->channels_url)) {
@@ -322,11 +324,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     }
 
                     $url_path .= $channels_list;
-                    hd_print("load link: $url_path");
-                    $channels_list_path = get_temp_path($channels_list);
-                    if (!file_exists($channels_list_path)) {
-                        file_put_contents($channels_list_path, HD::http_get_document($url_path));
-                    }
+                    hd_print("load folder link: $url_path");
                     break;
                 case 3:
                     if (isset($plugin_cookies->channels_direct_url) && !empty($plugin_cookies->channels_direct_url)) {
@@ -339,12 +337,19 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     }
 
                     hd_print("load direct link: $url_path");
-                    $channels_list_path = get_temp_path(hash('crc32', $url_path));
-                    if (!file_exists($channels_list_path)) {
-                        file_put_contents($channels_list_path, HD::http_get_document($url_path));
-                    }
-
                     break;
+            }
+
+            if (!empty($url_path)) {
+                try {
+                    $channels_list_path = get_data_path(hash('crc32', $url_path));
+                    file_put_contents($channels_list_path, HD::http_get_document($url_path));
+                } catch (Exception $ex) {
+                    if (!file_exists($channels_list_path)) {
+                        hd_print("Can't fetch channel_list from $url_path" . $ex->getMessage());
+                        return;
+                    }
+                }
             }
 
             $xml = HD::parse_xml_file($channels_list_path);
@@ -453,12 +458,13 @@ class Starnet_Tv implements Tv, User_Input_Handler
             if ($this->channels->has($hash)) {
                 $channel = $this->channels->get($hash);
                 if ($tv_category_id !== $fav_category_id) {
-                    hd_print("$tv_category_id !== $fav_category_id");
-                    hd_print("Channel $xml_tv_channel->caption ($channel_id) already exist in category $tv_category_id");
+                    foreach($channel->get_groups() as $group) {
+                        if ($group->get_id() !== $fav_category_id) {
+                            hd_print("Channel $xml_tv_channel->caption ($channel_id) already exist in category: " . $group->get_title() . "(" . $group->get_id() . ")");
+                        }
+                    }
                 }
             } else {
-                // https not supported for old players
-                // $icon_url = str_replace("https://", "http://", (string)$xml_tv_channel->icon_url);
                 $icon_url = (string)$xml_tv_channel->icon_url;
                 $number = $num;
 
