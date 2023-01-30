@@ -1229,8 +1229,7 @@ LRESULT CIPTVChannelEditorDlg::OnLoadPlaylistImage(WPARAM wParam /*= 0*/, LPARAM
 	if (!entry)
 		return 0;
 
-	const auto& img = GetIconCache().get_icon(entry->get_icon_absolute_path());
-	SetImageControl(img, m_wndPlIcon);
+	SetImageControl(GetIconCache().get_icon(entry->get_icon_absolute_path()), m_wndPlIcon);
 
 	return 0;
 }
@@ -5246,19 +5245,22 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon()
 void CIPTVChannelEditorDlg::UpdateIconInfo(const IconContainer& icon)
 {
 	CString str;
-	CImage img;
-	if (!icon.empty())
+	if (icon.empty())
 	{
-		m_iconUrl = icon.get_icon_uri().get_uri().c_str();
-		img = GetIconCache().get_icon(icon.get_icon_absolute_path(), true);
-		if (img != nullptr)
-		{
-			str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
-		}
+		m_wndChannelIcon.SetBitmap(nullptr);
+		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
+		UpdateData(FALSE);
+		return;
+	}
+
+	m_iconUrl = icon.get_icon_uri().get_uri().c_str();
+	const auto& img = GetIconCache().get_icon(icon.get_icon_absolute_path(), true);
+	if (img != nullptr)
+	{
+		str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
 	}
 
 	SetImageControl(img, m_wndChannelIcon);
-	GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
 	UpdateData(FALSE);
 }
 
