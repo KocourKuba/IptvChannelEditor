@@ -48,12 +48,12 @@ void plugin_sharavoz::load_default()
 	provider_url = "https://www.sharavoz.tv/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://www.spr24.net/iptv/p/{PASSWORD}/Playlist.navigator-ott.m3u";
+	info.pl_template = "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_SHARAVOZ_DIRECT);
-	info.pl_template = "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
+	info.pl_template = "http://www.spr24.net/iptv/p/{PASSWORD}/Playlist.navigator-ott.m3u";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
