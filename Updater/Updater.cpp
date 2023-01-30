@@ -309,6 +309,7 @@ int download_update(UpdateInfo& info)
 
 int update_app(UpdateInfo& info)
 {
+	LogProtocol("Checking for an application present in memory.");
 	int i = 0;
 	HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
 	while(hAppRunningMutex != nullptr)
@@ -404,16 +405,21 @@ int update_app(UpdateInfo& info)
 					continue;
 				}
 
-				LogProtocol(fmt::format(L"rename: {:s} to {:s}", target_file, bak_file));
 				if (std::filesystem::exists(bak_file))
 				{
-					std::filesystem::remove_all(bak_file, err);
+					LogProtocol(fmt::format(L"remove old backup file: {:s}", bak_file));
+					if (!std::filesystem::remove(bak_file, err) && err.value() != 0)
+					{
+						LogProtocol(fmt::format(L"Error with delete old backup file {:s}. Error code: {:d}", bak_file, err.value()));
+						err.clear();
+					}
 				}
 
+				LogProtocol(fmt::format(L"rename: {:s} to {:s}", target_file, bak_file));
 				std::filesystem::rename(target_file, bak_file, err);
 				if (err.value() != 0)
 				{
-					LogProtocol(fmt::format(L"Unable to rename {:s}", target_file));
+					LogProtocol(fmt::format(L"Unable to rename {:s}. Error code: {:d}", target_file, err.value()));
 					success = false;
 					continue;
 				}
