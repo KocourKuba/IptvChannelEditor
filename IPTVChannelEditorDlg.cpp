@@ -3,7 +3,7 @@ IPTV Channel Editor
 
 The MIT License (MIT)
 
-Author and copyright (2021-2022): sharky72 (https://github.com/KocourKuba)
+Author and copyright (2021-2023): sharky72 (https://github.com/KocourKuba)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -1096,8 +1096,6 @@ void CIPTVChannelEditorDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	__super::OnTimer(nIDEvent);
-	return;
-
 }
 
 LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)

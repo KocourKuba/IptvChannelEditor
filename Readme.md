@@ -1,6 +1,6 @@
 ﻿# IptvChannelEditor
 Редактор списков каналов и генератор плагинов для плейеров Dune HD.  
-Для сборки используется VS2019, VS2022. Плагины используют PHP 5.4 не старше.
+Для сборки используется VS2022. Плагины используют PHP 5.3 не старше.
 Поддерживаемые провайдеры:  
 [Antifriz](https://antifriztv.com)  
 [Cbilling (Gomelsat)](https://cbilling.live)  
@@ -14,11 +14,16 @@
 [1 CENT](https://1cent.tv)  
 [1 OTT](http://1ott.net)  
 [1 USD](https://1usd.tv)  
+[Kineskop](http://kineskop.club/)  
+[MyMagic](http://mymagic.tv/)  
 [ottclub](https://www.ottclub.cc)  
+[Ping TV](http://ping-tv.com/)  
+[Russkoe TV](https://russkoetv.tv/)  
 [Shara Club](https://shara.club)  
 [Shara TV](https://shara.tv)  
 [Sharavoz](https://sharavoz.ru)  
 [Shura TB](http://shura.tv)  
+[Smile TV](http://smile-tv.live/)  
 [TV Club](https://tvclub.cc)  
 [TV Team](http://tv.team)  
 [Vidok TV](https://vidok.tv)  
@@ -28,7 +33,7 @@
 
 The MIT License (MIT)
 
-Author and copyright (2021-2022): sharky72 (https://github.com/KocourKuba)
+Author and copyright (2021-2023): sharky72 (https://github.com/KocourKuba)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
