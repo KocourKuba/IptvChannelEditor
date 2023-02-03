@@ -36,6 +36,10 @@ class PlaylistEntry;
 class Playlist
 {
 public:
+	std::string epg_url;
+	std::string catchup_source;
+	CatchupType catchup = CatchupType::cu_not_set;
+	bool per_channel_catchup = true;
 	std::string logo_root;
 	std::map<int, std::shared_ptr<ChannelCategory>> categories;
 	std::vector<std::shared_ptr<PlaylistEntry>> m_entries;
@@ -66,8 +70,9 @@ protected:
 	void search_group(const m3u_tags& tags);
 	void search_archive(const m3u_tags& tags);
 	void search_epg(const m3u_tags& tags);
-	void search_logo(const m3u_tags& tags);
-	void search_catchup(const m3u_tags& tags);
+	std::string search_logo(const m3u_tags& tags);
+	std::string search_catchup_source(const m3u_tags& tags);
+	CatchupType search_catchup(const m3u_tags& tags);
 	void check_adult(const m3u_tags& tags, const std::string& category);
 
 protected:

@@ -145,8 +145,11 @@ public:
 	int get_time_shift_hours() const { return time_shift_hours; }
 	void set_time_shift_hours(int val) { time_shift_hours = val; }
 
-	const std::wstring& get_catchup_id() const { return catchup_id; }
-	void set_catchup_id(const std::wstring& val) { catchup_id = val; }
+	CatchupType get_catchup() const { return catchup; }
+	void set_catchup(const CatchupType& val) { catchup = val; }
+
+	const std::string& get_catchup_source() const { return catchup_source; }
+	void set_catchup_source(const std::string& val) { catchup_source = val; }
 
 	const std::wstring& get_custom_archive_url() const { return custom_archive_url; }
 	void set_custom_archive_url(const std::wstring& val) { custom_archive_url = val; }
@@ -212,7 +215,8 @@ protected:
 
 	// parsed #EXTINF variables
 	std::wstring title;
-	std::wstring catchup_id;
+	CatchupType catchup;
+	std::string catchup_source;
 	std::array<std::wstring, 2> epg_id; // epg id
 	int time_shift_hours = 0;
 	int adult = 0;

@@ -107,7 +107,7 @@ uri_stream& uri_stream::operator=(const uri_stream& src)
 		host = src.host;
 
 		title = src.title;
-		catchup_id = src.catchup_id;
+		catchup = src.catchup;
 		custom_archive_url = src.custom_archive_url;
 		epg_id = src.epg_id;
 		time_shift_hours = src.time_shift_hours;

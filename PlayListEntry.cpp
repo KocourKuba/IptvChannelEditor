@@ -61,6 +61,18 @@ static std::array<m3u_entry::info_tags, 6> archive_search_tags =
 	m3u_entry::info_tags::tag_tvg_rec,
 };
 
+static std::array<m3u_entry::info_tags, 2> catchup_tags =
+{
+	m3u_entry::info_tags::tag_catchup,
+	m3u_entry::info_tags::tag_catchup_type,
+};
+
+static std::array<m3u_entry::info_tags, 2> catchup_source_tags =
+{
+	m3u_entry::info_tags::tag_catchup_source,
+	m3u_entry::info_tags::tag_catchup_template,
+};
+
 bool PlaylistEntry::Parse(const std::string& str)
 {
 	if (str.empty()) return false;
@@ -72,12 +84,27 @@ bool PlaylistEntry::Parse(const std::string& str)
 	{
 		case m3u_entry::directives::ext_header:
 		{
+			if (!playlist) break;
+
 			const auto& tags = m3uEntry.get_tags();
-			if (const auto& pair = tags.find(m3u_entry::info_tags::tag_url_logo); pair != tags.end())
+
+			if (const auto& root = search_logo(tags); !root.empty())
 			{
-				if (playlist)
-					playlist->logo_root = pair->second;
+				playlist->logo_root = root;
 			}
+
+			if (const auto& pair = tags.find(m3u_entry::info_tags::tag_url_tvg); pair != tags.end())
+			{
+				playlist->epg_url = pair->second;
+			}
+
+			if (auto value = search_catchup(tags); value != CatchupType::cu_not_set)
+			{
+				playlist->catchup = value;
+				playlist->per_channel_catchup = false;
+			}
+
+			playlist->catchup_source = search_catchup_source(tags);
 			break;
 		}
 		case m3u_entry::directives::ext_pathname:
@@ -116,8 +143,24 @@ bool PlaylistEntry::Parse(const std::string& str)
 			search_group(tags);
 			search_archive(tags);
 			search_epg(tags);
-			search_logo(tags);
-			search_catchup(tags);
+			if (auto logo = search_logo(tags); !logo.empty())
+			{
+				if (parent_plugin->get_plugin_type() == PluginType::enEdem)
+				{
+					logo = utils::string_replace<char>(logo, "//epg.it999.ru/img/", "//epg.it999.ru/img2/");
+				}
+				else if (playlist && !playlist->logo_root.empty())
+				{
+					logo = playlist->logo_root + logo;
+				}
+
+				set_icon_uri(utils::utf8_to_utf16(logo));
+			}
+
+			if (auto value = search_catchup(tags); value != CatchupType::cu_not_set)
+			{
+				set_catchup(value);
+			}
 			break;
 		}
 		case m3u_entry::directives::ext_vlcopt:
@@ -228,30 +271,51 @@ void PlaylistEntry::search_epg(const m3u_tags& tags)
 	}
 }
 
-void PlaylistEntry::search_logo(const m3u_tags& tags)
+std::string PlaylistEntry::search_logo(const m3u_tags& tags)
 {
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_logo); pair != tags.end())
 	{
-		std::string icon_uri;
-
-		if (playlist)
-		{
-			if (playlist->logo_root.empty())
-				icon_uri = utils::string_replace<char>(pair->second, "//epg.it999.ru/img/", "//epg.it999.ru/img2/");
-			else
-				icon_uri = playlist->logo_root + pair->second;
-		}
-
-		set_icon_uri(utils::utf8_to_utf16(icon_uri));
+		return pair->second;
 	}
+
+	return "";
 }
 
-void PlaylistEntry::search_catchup(const m3u_tags& tags)
+std::string PlaylistEntry::search_catchup_source(const m3u_tags& tags)
 {
-	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup); pair != tags.end())
+	for (const auto& tag : catchup_source_tags)
 	{
-		set_catchup_id(utils::utf8_to_utf16(pair->second));
+		if (const auto& pair = tags.find(tag); pair != tags.end())
+		{
+			return pair->second;
+		}
 	}
+
+	return "";
+}
+
+CatchupType PlaylistEntry::search_catchup(const m3u_tags& tags)
+{
+	for (const auto& tag : catchup_tags)
+	{
+		const auto& pair = tags.find(tag);
+		if (pair != tags.end() && !pair->second.empty())
+		{
+			if (pair->second == "append")
+				return CatchupType::cu_append;
+
+			if (pair->second == "shift")
+				return CatchupType::cu_shift;
+
+			if (pair->second == "flussonic")
+				return CatchupType::cu_flussonic;
+
+			if (pair->second == "default")
+				return CatchupType::cu_default;
+		}
+	}
+
+	return CatchupType::cu_not_set;
 }
 
 void PlaylistEntry::check_adult(const m3u_tags& tags, const std::string& category)

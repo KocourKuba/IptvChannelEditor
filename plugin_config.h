@@ -47,6 +47,8 @@ enum class CatchupType {
 	cu_shift,
 	cu_append,
 	cu_flussonic,
+	cu_default,
+	cu_not_set,
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(CatchupType,

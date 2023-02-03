@@ -88,6 +88,11 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 						}
 					}
 				}
+
+				if (entry->get_m3u_entry().get_directive() == m3u_entry::directives::ext_header)
+				{
+					entry = std::make_shared<PlaylistEntry>(m_parent_plugin, playlist, m_config.m_rootPath);
+				}
 			}
 		}
 	}
