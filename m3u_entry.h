@@ -65,6 +65,7 @@ public:
 		tag_catchup_source,
 		tag_http_user_agent,
 		tag_parent_code,
+		tag_censored,
 	};
 
 public:
@@ -79,11 +80,14 @@ public:
 
 	directives get_directive() const { return ext_name; }
 
-	const std::map<info_tags, std::string>& get_tags() const { return ext_tags; }
+	const std::map<std::string, std::string>& get_tags() const { return ext_tags; }
+	const std::map<info_tags, std::string>& get_tags_map() const { return tags_map; }
 
 	std::string get_dvalue() const { return ext_value; }
 
 	std::string get_dir_title() const { return dir_title; }
+
+	static const std::string& get_str_tag(info_tags tag);
 
 protected:
 	void parse_directive_tags(std::string_view str);
@@ -92,5 +96,6 @@ protected:
 	directives ext_name = directives::ext_unknown;
 	std::string ext_value;
 	std::string dir_title;
-	std::map<info_tags, std::string> ext_tags;
+	std::map<info_tags, std::string> tags_map;
+	std::map<std::string, std::string> ext_tags;
 };

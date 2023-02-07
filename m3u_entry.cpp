@@ -44,7 +44,7 @@ static std::map<std::string_view, m3u_entry::directives> s_ext_directives = {
 	{ "#EXTVLCOPT" , m3u_entry::directives::ext_vlcopt   },
 };
 
-static std::map<std::string_view, m3u_entry::info_tags> s_tags = {
+static std::map<std::string_view, m3u_entry::info_tags> str_tags = {
 	{ "url-tvg",          m3u_entry::info_tags::tag_url_tvg          },
 	{ "url-logo",         m3u_entry::info_tags::tag_url_logo         },
 	{ "channel-id",       m3u_entry::info_tags::tag_channel_id       },
@@ -67,6 +67,33 @@ static std::map<std::string_view, m3u_entry::info_tags> s_tags = {
 	{ "catchup-source",   m3u_entry::info_tags::tag_catchup_source   },
 	{ "http-user-agent",  m3u_entry::info_tags::tag_http_user_agent  },
 	{ "parent-code",      m3u_entry::info_tags::tag_parent_code      },
+	{ "censored",         m3u_entry::info_tags::tag_censored         },
+};
+
+static std::map<m3u_entry::info_tags, std::string> tags_str = {
+	{ m3u_entry::info_tags::tag_url_tvg,          "url-tvg"           },
+	{ m3u_entry::info_tags::tag_url_logo,         "url-logo"          },
+	{ m3u_entry::info_tags::tag_channel_id,       "channel-id"        },
+	{ m3u_entry::info_tags::tag_cuid,             "CUID"              },
+	{ m3u_entry::info_tags::tag_group_title,      "group-title"       },
+	{ m3u_entry::info_tags::tag_tvg_id,           "tvg-id"            },
+	{ m3u_entry::info_tags::tag_tvg_chno,         "tvg-chno"          },
+	{ m3u_entry::info_tags::tag_tvg_logo,         "tvg-logo"          },
+	{ m3u_entry::info_tags::tag_tvg_rec,          "tvg-rec"           },
+	{ m3u_entry::info_tags::tag_tvg_name,         "tvg-name"          },
+	{ m3u_entry::info_tags::tag_tvg_shift,        "tvg-shift"         },
+	{ m3u_entry::info_tags::tag_timeshift,        "timeshift"         },
+	{ m3u_entry::info_tags::tag_arc_timeshift,    "arc-timeshift"     },
+	{ m3u_entry::info_tags::tag_arc_time,         "arc-time"          },
+	{ m3u_entry::info_tags::tag_catchup,          "catchup"           },
+	{ m3u_entry::info_tags::tag_catchup_days,     "catchup-days"      },
+	{ m3u_entry::info_tags::tag_catchup_time,     "catchup-time"      },
+	{ m3u_entry::info_tags::tag_catchup_type,     "catchup-type"      },
+	{ m3u_entry::info_tags::tag_catchup_template, "catchup-template"  },
+	{ m3u_entry::info_tags::tag_catchup_source,   "catchup-source"    },
+	{ m3u_entry::info_tags::tag_http_user_agent,  "http-user-agent"   },
+	{ m3u_entry::info_tags::tag_parent_code,      "parent-code"       },
+	{ m3u_entry::info_tags::tag_censored,         "censored"          },
 };
 
 std::string_view match_view(const boost::cmatch::value_type& sm)
@@ -147,7 +174,7 @@ void m3u_entry::parse(const std::string_view& str)
 				duration = utils::char_to_int(m[1].str());
 				dir_title = m[3].str();
 				// put title to directive for tvg parsing
-				ext_tags.emplace(info_tags::tag_directive_title, dir_title);
+				tags_map.emplace(info_tags::tag_directive_title, dir_title);
 
 				if (m[2].matched)
 				{
@@ -166,6 +193,14 @@ void m3u_entry::parse(const std::string_view& str)
 	}
 }
 
+const std::string& m3u_entry::get_str_tag(info_tags tag)
+{
+	static std::string empty_tag;
+	const auto& pair = tags_str.find(tag);
+
+	return (pair == tags_str.end()) ? empty_tag : pair->second;
+}
+
 void m3u_entry::parse_directive_tags(std::string_view str)
 {
 	static boost::regex re(R"(([^=" ]+)=("(?:\\\"|[^"])*"|(?:\\\"|[^=" ])+))");
@@ -180,10 +215,10 @@ void m3u_entry::parse_directive_tags(std::string_view str)
 			utils::string_trim(value, " \"\'");
 			if (!value.empty())
 			{
-				const auto& pair = s_tags.find(tag);
-				if (pair != s_tags.end())
+				ext_tags.emplace(tag, value);
+				if (const auto& pair = str_tags.find(tag); pair != str_tags.end())
 				{
-					ext_tags.emplace(pair->second, value);
+					tags_map.emplace(pair->second, value);
 				}
 			}
 		}

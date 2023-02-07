@@ -673,6 +673,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_plugin->load_plugin_parameters(m_cur_account.get_config());
 	BOOL useDropbox = GetConfig().get_int(false, REG_USE_DROPBOX);
 
+	m_wndBtnExportM3u.EnableWindow(FALSE);
 	BOOL showWebUpdate = (!m_cur_account.update_url.empty() && !m_cur_account.update_package_url.empty() || useDropbox);
 	m_wndMakeWebUpdate.EnableWindow(showWebUpdate);
 	if (!showWebUpdate)
@@ -1178,6 +1179,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_wndBtnAccountSetting.EnableWindow(TRUE);
 	m_wndBtnDownloadPlaylist.EnableWindow(TRUE);
 	m_wndPlaylist.EnableWindow(TRUE);
+	m_wndBtnExportM3u.EnableWindow(!m_playlistMap.empty() && !m_channelsMap.empty());
 
 	AfxGetApp()->EndWaitCursor();
 
@@ -3835,6 +3837,169 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckShowChangedCh()
 
 void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 {
+	if (!m_playlistEntries || m_playlistEntries->m_entries.empty())
+	{
+		AfxMessageBox(IDS_STRING_ERR_EMPTY_PLAYLIST, MB_OK | MB_ICONEXCLAMATION);
+		return;
+	}
+
+	TemplateParams params;
+	params.subdomain = m_cur_account.get_subdomain();
+	params.token = m_cur_account.get_token();
+	params.login = m_cur_account.get_login();
+	params.password = m_cur_account.get_password();
+	params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
+	params.server_idx = m_cur_account.server_id;
+
+
+	CFileDialog dlg(FALSE);
+
+	std::filesystem::path curPath = GetAppPath();
+	std::filesystem::path filename;
+	int lst_idx = m_wndChannels.GetCurSel();
+	if (lst_idx == CB_ERR)
+	{
+		filename = L"playlist.m3u8";
+	}
+	else
+	{
+		filename = m_all_channels_lists[lst_idx];
+		filename.replace_extension(L"m3u8");
+	}
+
+	if (params.streamSubtype == StreamType::enMPEGTS)
+	{
+		filename = filename.stem();
+		filename += L"_mpeg.m3u8";
+	}
+	curPath.append(filename.wstring());
+
+	CString filter;
+	filter.LoadString(IDS_STRING_LOAD_PLAYLIST);
+	filter.Replace('|', '\0');
+
+	CString title;
+	title.LoadString(IDS_STRING_EXPORT_PLAYLIST);
+
+	CString file(curPath.c_str());
+	OPENFILENAME& oFN = dlg.GetOFN();
+	oFN.lpstrFilter = filter.GetString();
+	oFN.nMaxFile = MAX_PATH;
+	oFN.nFilterIndex = 0;
+	oFN.lpstrFile = file.GetBuffer(MAX_PATH);
+	oFN.lpstrTitle = title.GetString();
+	oFN.lpstrInitialDir = curPath.root_directory().c_str();
+	oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
+	oFN.Flags |= OFN_NONETWORKBUTTON | OFN_DONTADDTORECENT | OFN_NODEREFERENCELINKS;
+
+	dlg.ApplyOFNToShellDialog();
+	INT_PTR nResult = dlg.DoModal();
+	if (nResult != IDOK)
+		return;
+
+	file.ReleaseBuffer();
+
+	std::ofstream os(file, std::ofstream::binary);
+
+	// Create M3U header
+	// Fill all parsed tags from original playlist and verify is catchup type for new playlist is correctly set
+	os << "#EXTM3U";
+	const auto& header_tags = m_playlistEntries->m3u_header.get_tags();
+	for (const auto& pair_tags : header_tags)
+	{
+		os << " " << pair_tags.first << "=\"" << pair_tags.second << "\"";
+	}
+
+	const auto& header_tags_map = m_playlistEntries->m3u_header.get_tags_map();
+	if (!m_playlistEntries->per_channel_catchup)
+	{
+		const auto& pair = std::find_if(header_tags_map.begin(), header_tags_map.end(), [](const auto& pair)
+										{
+											return pair.first == m3u_entry::info_tags::tag_catchup || pair.first == m3u_entry::info_tags::tag_catchup_type;
+										});
+		if (pair == header_tags_map.end())
+		{
+			// set from plugin
+			std::string catchup;
+			switch (m_plugin->get_supported_stream(0).cu_type)
+			{
+				case CatchupType::cu_default:
+					catchup = "default";
+					break;
+				case CatchupType::cu_shift:
+					catchup = "shift";
+					break;
+				case CatchupType::cu_append:
+					catchup = "append";
+					break;
+				case CatchupType::cu_flussonic:
+					catchup = "flussonic";
+					break;
+			}
+
+			if (!catchup.empty())
+			{
+				os << " catchup=\"" << catchup << "\"";
+			}
+		}
+	}
+
+	os << "\r\n";
+
+	static m3u_tags empty_tags_map;
+
+	// Now fill playlist entries based on our order
+	// Categories sorted by it's numeric ID
+	for (auto& pair : m_categoriesMap)
+	{
+		if (pair.first == ID_ADD_TO_FAVORITE) continue;
+
+		for (const auto& channel : pair.second.category->get_channels())
+		{
+			const auto& found = m_playlistMap.find(channel->get_id());
+			m3u_tags m3uTags = (found != m_playlistMap.end()) ? found->second->get_m3u_entry().get_tags_map() : empty_tags_map;
+
+			os << "#EXTINF:-1";
+			os << " tvg-id=\"" << utils::utf16_to_utf8(channel->get_id()) << "\"";
+			os << " group-title=\"" << utils::utf16_to_utf8(pair.second.category->get_title()) << "\"";
+
+			if (!channel->get_icon_uri().is_local())
+			{
+				os << " tvg-logo=\"" << utils::utf16_to_utf8(channel->get_icon_uri().get_uri()) << "\"";
+			}
+			else if (const auto& tag_pair = m3uTags.find(m3u_entry::info_tags::tag_tvg_logo); tag_pair != m3uTags.end())
+			{
+				os << " tvg-logo=\"" << tag_pair->second << "\"";
+			}
+
+			os << " catchup-days=\"" << channel->get_archive_days() << "\"";
+			os << " tvg-rec=\"" << channel->get_archive_days() << "\"";
+
+			if (const auto& tag_pair = m3uTags.find(m3u_entry::info_tags::tag_catchup); tag_pair != m3uTags.end())
+			{
+				os << " catchup=\"" << tag_pair->second << "\"";
+			}
+
+			if (const auto& tag_pair = m3uTags.find(m3u_entry::info_tags::tag_catchup_source); tag_pair != m3uTags.end())
+			{
+				os << " catchup-source=\"" << tag_pair->second << "\"";
+			}
+
+			if (channel->get_adult())
+			{
+				os << " censored=\"1\"";
+				os << " parent-code=\"0000\"";
+			}
+
+			os << ", " << utils::utf16_to_utf8(channel->get_title()) << "\r\n";
+			auto baseInfo = dynamic_cast<uri_stream*>(channel.get());
+
+			UpdateExtToken(baseInfo);
+			const auto& url = m_plugin->get_play_stream(params, baseInfo);
+
+			os << utils::utf16_to_utf8(url) << "\r\n";
+		}
+	}
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded()

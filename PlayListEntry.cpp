@@ -35,44 +35,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static std::map<std::wstring, m3u_entry::info_tags> id_tags = {
-	{ L"channel-id", m3u_entry::info_tags::tag_channel_id      },
-	{ L"CUID",       m3u_entry::info_tags::tag_cuid            },
-	{ L"tvg-chno",   m3u_entry::info_tags::tag_tvg_chno        },
-	{ L"tvg-id",     m3u_entry::info_tags::tag_tvg_id          },
-	{ L"tvg-name",   m3u_entry::info_tags::tag_tvg_name        },
-	{ L"name",       m3u_entry::info_tags::tag_directive_title },
-};
-
-static std::array<m3u_entry::info_tags, 3> epg_search_tags =
-{
-	m3u_entry::info_tags::tag_tvg_id,
-	m3u_entry::info_tags::tag_tvg_name,
-	m3u_entry::info_tags::tag_directive_title,
-};
-
-static std::array<m3u_entry::info_tags, 6> archive_search_tags =
-{
-	m3u_entry::info_tags::tag_catchup_days,
-	m3u_entry::info_tags::tag_catchup_time,
-	m3u_entry::info_tags::tag_timeshift,
-	m3u_entry::info_tags::tag_arc_timeshift,
-	m3u_entry::info_tags::tag_arc_time,
-	m3u_entry::info_tags::tag_tvg_rec,
-};
-
-static std::array<m3u_entry::info_tags, 2> catchup_tags =
-{
-	m3u_entry::info_tags::tag_catchup,
-	m3u_entry::info_tags::tag_catchup_type,
-};
-
-static std::array<m3u_entry::info_tags, 2> catchup_source_tags =
-{
-	m3u_entry::info_tags::tag_catchup_source,
-	m3u_entry::info_tags::tag_catchup_template,
-};
-
 bool PlaylistEntry::Parse(const std::string& str)
 {
 	if (str.empty()) return false;
@@ -86,22 +48,16 @@ bool PlaylistEntry::Parse(const std::string& str)
 		{
 			if (!playlist) break;
 
-			const auto& tags = m3uEntry.get_tags();
+			playlist->m3u_header = m3uEntry;
 
+			const auto& tags = m3uEntry.get_tags_map();
 			if (const auto& root = search_logo(tags); !root.empty())
 			{
 				playlist->logo_root = root;
 			}
-
-			if (const auto& pair = tags.find(m3u_entry::info_tags::tag_url_tvg); pair != tags.end())
-			{
-				playlist->epg_url = pair->second;
-			}
-
 			if (auto value = search_catchup(tags); value != CatchupType::cu_not_set)
 			{
 				playlist->catchup = value;
-				playlist->per_channel_catchup = false;
 			}
 
 			playlist->catchup_source = search_catchup_source(tags);
@@ -122,13 +78,13 @@ bool PlaylistEntry::Parse(const std::string& str)
 			if (category.empty())
 			{
 				category = m3uEntry.get_dvalue();
-				check_adult(m3uEntry.get_tags(), category);
+				check_adult(m3uEntry.get_tags_map(), category);
 			}
 			break;
 		}
 		case m3u_entry::directives::ext_info:
 		{
-			const auto& tags = m3uEntry.get_tags();
+			const auto& tags = m3uEntry.get_tags_map();
 
 			// #EXTINF:-1 timeshift="14" catchup-days="14" catchup-type="flussonic" tvg-id="pervy"  group-title="Общие" tvg-logo="http://pl.ottglanz.tv:80/icon/2214.png",Первый HD
 			// #EXTINF:0 tvg-name="ch002" tvg-logo="http://1usd.tv/images/chIcons/2.png" timeshift="4", Россия 1 HD
@@ -160,6 +116,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 			if (auto value = search_catchup(tags); value != CatchupType::cu_not_set)
 			{
 				set_catchup(value);
+				playlist->per_channel_catchup = true;
 			}
 			break;
 		}
@@ -213,7 +170,16 @@ bool PlaylistEntry::Parse(const std::string& str)
 
 void PlaylistEntry::search_id(const std::wstring& search_tag)
 {
-	const m3u_tags& tags = m3uEntry.get_tags();
+	static std::map<std::wstring, m3u_entry::info_tags> id_tags = {
+		{ L"channel-id", m3u_entry::info_tags::tag_channel_id      },
+		{ L"CUID",       m3u_entry::info_tags::tag_cuid            },
+		{ L"tvg-chno",   m3u_entry::info_tags::tag_tvg_chno        },
+		{ L"tvg-id",     m3u_entry::info_tags::tag_tvg_id          },
+		{ L"tvg-name",   m3u_entry::info_tags::tag_tvg_name        },
+		{ L"name",       m3u_entry::info_tags::tag_directive_title },
+	};
+
+	const m3u_tags& tags = m3uEntry.get_tags_map();
 	if (const auto& pair = id_tags.find(search_tag); pair != id_tags.end())
 	{
 		if (const auto& tag_pair = tags.find(pair->second); tag_pair != tags.end())
@@ -243,10 +209,19 @@ void PlaylistEntry::search_group(const m3u_tags& tags)
 void PlaylistEntry::search_archive(const m3u_tags& tags)
 {
 	// priority -> catchup_days -> catchup_time -> tag_timeshift ... -> tvg_rec
+	static std::array<m3u_entry::info_tags, 6> archive_search_tags =
+	{
+		m3u_entry::info_tags::tag_catchup_days,
+		m3u_entry::info_tags::tag_catchup_time,
+		m3u_entry::info_tags::tag_timeshift,
+		m3u_entry::info_tags::tag_arc_timeshift,
+		m3u_entry::info_tags::tag_arc_time,
+		m3u_entry::info_tags::tag_tvg_rec,
+	};
+
 	for (const auto& tag : archive_search_tags)
 	{
-		const auto& pair = tags.find(tag);
-		if (pair != tags.end() && !pair->second.empty())
+		if (const auto& pair = tags.find(tag); pair != tags.end() && !pair->second.empty())
 		{
 			int day = utils::char_to_int(pair->second);
 			if (tag == m3u_entry::info_tags::tag_catchup_time)
@@ -260,10 +235,16 @@ void PlaylistEntry::search_archive(const m3u_tags& tags)
 void PlaylistEntry::search_epg(const m3u_tags& tags)
 {
 	// priority -> tvg_id -> tvg_name -> title
+	static std::array<m3u_entry::info_tags, 3> epg_search_tags =
+	{
+		m3u_entry::info_tags::tag_tvg_id,
+		m3u_entry::info_tags::tag_tvg_name,
+		m3u_entry::info_tags::tag_directive_title,
+	};
+
 	for (const auto& tag : epg_search_tags)
 	{
-		const auto& pair = tags.find(tag);
-		if (pair != tags.end() && !pair->second.empty())
+		if (const auto& pair = tags.find(tag); pair != tags.end() && !pair->second.empty())
 		{
 			set_epg_id(0, utils::utf8_to_utf16(pair->second));
 			break;
@@ -273,16 +254,19 @@ void PlaylistEntry::search_epg(const m3u_tags& tags)
 
 std::string PlaylistEntry::search_logo(const m3u_tags& tags)
 {
-	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_logo); pair != tags.end())
-	{
-		return pair->second;
-	}
+	const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_logo);
 
-	return "";
+	return pair != tags.end() ? pair->second : "";
 }
 
 std::string PlaylistEntry::search_catchup_source(const m3u_tags& tags)
 {
+	static std::array<m3u_entry::info_tags, 2> catchup_source_tags =
+	{
+		m3u_entry::info_tags::tag_catchup_source,
+		m3u_entry::info_tags::tag_catchup_template,
+	};
+
 	for (const auto& tag : catchup_source_tags)
 	{
 		if (const auto& pair = tags.find(tag); pair != tags.end())
@@ -296,10 +280,15 @@ std::string PlaylistEntry::search_catchup_source(const m3u_tags& tags)
 
 CatchupType PlaylistEntry::search_catchup(const m3u_tags& tags)
 {
+	static std::array<m3u_entry::info_tags, 2> catchup_tags =
+	{
+		m3u_entry::info_tags::tag_catchup,
+		m3u_entry::info_tags::tag_catchup_type,
+	};
+
 	for (const auto& tag : catchup_tags)
 	{
-		const auto& pair = tags.find(tag);
-		if (pair != tags.end() && !pair->second.empty())
+		if (const auto& pair = tags.find(tag); pair != tags.end() && !pair->second.empty())
 		{
 			if (pair->second == "append")
 				return CatchupType::cu_append;
@@ -320,21 +309,29 @@ CatchupType PlaylistEntry::search_catchup(const m3u_tags& tags)
 
 void PlaylistEntry::check_adult(const m3u_tags& tags, const std::string& category)
 {
-	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_parent_code); pair != tags.end())
+	static std::array<m3u_entry::info_tags, 2> adult_tags =
 	{
-		set_adult(1);
-	}
-	else
+		m3u_entry::info_tags::tag_parent_code,
+		m3u_entry::info_tags::tag_censored,
+	};
+
+	for (const auto& tag : adult_tags)
 	{
-		std::wstring lowcase(utils::utf8_to_utf16(category));
-		utils::wstring_tolower(lowcase);
-		if (lowcase.find(L"зрослы") != std::wstring::npos
-			|| lowcase.find(L"adult") != std::wstring::npos
-			|| lowcase.find(L"18+") != std::wstring::npos
-			|| lowcase.find(L"xxx") != std::wstring::npos)
+		if (const auto& pair = tags.find(tag); pair != tags.end() && !pair->second.empty())
 		{
-			// Channel for adult
 			set_adult(1);
+			return;
 		}
+	}
+
+	std::wstring lowcase(utils::utf8_to_utf16(category));
+	utils::wstring_tolower(lowcase);
+	if (lowcase.find(L"зрослы") != std::wstring::npos
+		|| lowcase.find(L"adult") != std::wstring::npos
+		|| lowcase.find(L"18+") != std::wstring::npos
+		|| lowcase.find(L"xxx") != std::wstring::npos)
+	{
+		// Channel for adult
+		set_adult(1);
 	}
 }

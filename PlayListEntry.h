@@ -36,11 +36,11 @@ class PlaylistEntry;
 class Playlist
 {
 public:
-	std::string epg_url;
 	std::string catchup_source;
 	CatchupType catchup = CatchupType::cu_not_set;
-	bool per_channel_catchup = true;
+	bool per_channel_catchup = false;
 	std::string logo_root;
+	m3u_entry m3u_header;
 	std::map<int, std::shared_ptr<ChannelCategory>> categories;
 	std::vector<std::shared_ptr<PlaylistEntry>> m_entries;
 };
