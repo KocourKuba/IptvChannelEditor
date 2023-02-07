@@ -24,6 +24,7 @@
 #define IDB_PNG_OPEN                    66
 #define IDB_PNG_VOD                     67
 #define IDB_PNG_RELOAD                  68
+#define IDB_PNG_EXPORT_M3U              69
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
 #define IDD_CUSTOM_URL                  104
@@ -288,6 +289,7 @@
 #define IDS_STRING_SHARAVOZ_DIRECT      368
 #define IDS_STRING_ERR_WRONG_URL        369
 #define IDS_STRING_ERR_WRONG_UPLOADED_NAME 370
+#define IDS_STRING_EXPORT_M3U           371
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -340,6 +342,7 @@
 #define IDC_BUTTON_IMPORT               1010
 #define IDC_BUTTON_ADD_NEW_CHANNELS_LIST 1011
 #define IDC_BUTTON_ACCOUNT_SETTINGS     1012
+#define IDC_BUTTON_EXPORT_M3U           1013
 #define IDC_BUTTON_PL_FILTER            1014
 #define IDC_BUTTON_PL_SEARCH_NEXT       1015
 #define IDC_BUTTON_SAVE                 1017

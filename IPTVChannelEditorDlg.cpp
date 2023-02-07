@@ -134,6 +134,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_SPLIT_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED_CH, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChangedCh)
+	ON_BN_CLICKED(IDC_BUTTON_EXPORT_M3U, &CIPTVChannelEditorDlg::OnBnClickedExportM3U)
 
 	ON_EN_CHANGE(IDC_EDIT_EPG1_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID)
 	ON_EN_CHANGE(IDC_EDIT_EPG2_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID)
@@ -259,6 +260,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_BUTTON_ADD_NEW_CHANNELS_LIST, m_wndBtnAddNewChannelsList);
+	DDX_Control(pDX, IDC_BUTTON_EXPORT_M3U, m_wndBtnExportM3u);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndBtnEditConfig);
 	DDX_Control(pDX, IDC_COMBO_PLUGIN_TYPE, m_wndPluginType);
 	DDX_Check(pDX, IDC_CHECK_ARCHIVE, m_isArchive);
@@ -513,6 +515,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	AddTooltip(IDC_BUTTON_STOP, IDS_STRING_BUTTON_STOP);
 	AddTooltip(IDC_SPLIT_BUTTON_UPDATE_CHANGED, IDS_STRING_BUTTON_UPDATE_CHANGED);
 	AddTooltip(IDC_BUTTON_ADD_PLAYLIST, IDS_STRING_BUTTON_ADD_PLAYLIST);
+	AddTooltip(IDC_BUTTON_EXPORT_M3U, IDS_STRING_EXPORT_M3U);
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
@@ -540,6 +543,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	// load button images;
 	SetButtonImage(IDB_PNG_NEW, m_wndBtnAddNewChannelsList);
+	SetButtonImage(IDB_PNG_EXPORT_M3U, m_wndBtnExportM3u);
 	SetButtonImage(IDB_PNG_FIND_NEXT, m_wndBtnSearchNext);
 	SetButtonImage(IDB_PNG_CHANGED, m_wndShowChangedCh);
 	SetButtonImage(IDB_PNG_CHANGED, m_wndShowChanged);
@@ -3827,6 +3831,10 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckShowChangedCh()
 {
 	SetButtonImage(m_wndShowChangedCh.GetCheck() ? IDB_PNG_NOT_CHANGED : IDB_PNG_CHANGED, m_wndShowChangedCh);
 	FillTreeChannels();
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
+{
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded()

@@ -147,6 +147,7 @@ protected:
 	afx_msg void OnBnClickedCheckNotAdded();
 	afx_msg void OnBnClickedCheckShowUnknown();
 	afx_msg void OnBnClickedCheckShowUrl();
+	afx_msg void OnBnClickedExportM3U();
 
 	afx_msg void OnBnClickedCheckCustomUrl();
 	afx_msg void OnBnClickedCheckCustomArchive();
@@ -309,6 +310,7 @@ protected:
 	CButton m_wndBtnSearchNext;
 	CButton m_wndBtnPlSearchNext;
 	CButton m_wndBtnAddNewChannelsList;
+	CButton m_wndBtnExportM3u;
 	CButton m_wndShowUrl;
 	CButton m_wndBtnFilter;
 	CButton m_wndShowUnknown;

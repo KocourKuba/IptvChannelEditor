@@ -634,5 +634,8 @@
     <Image Include="res\reload.png">
       <Filter>Resource Files\PNG</Filter>
     </Image>
+    <Image Include="res\export_m3u.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
