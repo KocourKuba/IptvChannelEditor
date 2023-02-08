@@ -3935,6 +3935,8 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 				case CatchupType::cu_flussonic:
 					catchup = "flussonic";
 					break;
+				default:
+					break;
 			}
 
 			if (!catchup.empty())

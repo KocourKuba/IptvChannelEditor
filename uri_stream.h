@@ -215,7 +215,7 @@ protected:
 
 	// parsed #EXTINF variables
 	std::wstring title;
-	CatchupType catchup;
+	CatchupType catchup = CatchupType::cu_not_set;
 	std::string catchup_source;
 	std::array<std::wstring, 2> epg_id; // epg id
 	int time_shift_hours = 0;
