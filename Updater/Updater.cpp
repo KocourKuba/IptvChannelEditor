@@ -466,7 +466,7 @@ int main(int argc, char* argv[])
 	bool printHelp = false;
 
 	// First configure all possible command line options.
-	CommandLine args("IPTV Channel Editor Updater 1.2\n(c) Pavel Abakanov (aka sharky72 at forum.hdtv.ru)\n");
+	CommandLine args("IPTV Channel Editor Updater 1.3\n(c) Pavel Abakanov (aka sharky72 at forum.hdtv.ru)\n");
 
 	args.addArgument({ "check" }, &check, "Check for update");
 	args.addArgument({ "download" }, &download, "Download update");
