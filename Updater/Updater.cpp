@@ -80,8 +80,8 @@ constexpr auto err_parse         = 200;
 struct update_node
 {
 	std::wstring name;
-	uint32_t crc;
-	bool opt;
+	uint32_t crc{};
+	bool opt = false;
 };
 
 struct UpdateInfo
@@ -272,8 +272,6 @@ int download_update(UpdateInfo& info)
 
 		for (const auto& item : info.update_files)
 		{
-			auto& str = fmt::format(L"checking file: {:s}", item.name);
-
 			const auto& loaded_file = fmt::format(L"{:s}{:s}", info.update_path, item.name);
 			if (std::filesystem::exists(loaded_file))
 			{
@@ -281,8 +279,11 @@ int download_update(UpdateInfo& info)
 				std::vector<unsigned char> file_data;
 				file_data.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
 				uint32_t crc = crc32_bitwise(file_data.data(), file_data.size());
-				LogProtocol(str + L" Ok");
-				if (item.crc == crc) continue;
+				if (item.crc == crc)
+				{
+					LogProtocol(fmt::format(L"file: {:s} already downloaded, skip download", item.name));
+					continue;
+				}
 			}
 
 			std::stringstream file_data;
@@ -301,6 +302,7 @@ int download_update(UpdateInfo& info)
 				ret = err_save_pkg; // Unable to save update package!
 				break;
 			}
+			LogProtocol(fmt::format(L"saved to: {:s}", loaded_file));
 		}
 	} while (false);
 
@@ -397,6 +399,7 @@ int update_app(UpdateInfo& info)
 				std::vector<unsigned char> file_data;
 				file_data.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
 				uint32_t crc = crc32_bitwise(file_data.data(), file_data.size());
+				stream.close();
 
 				// if file already the same skip it
 				if (crc == item.crc)
@@ -410,7 +413,7 @@ int update_app(UpdateInfo& info)
 					LogProtocol(fmt::format(L"remove old backup file: {:s}", bak_file));
 					if (!std::filesystem::remove(bak_file, err) && err.value() != 0)
 					{
-						LogProtocol(fmt::format(L"Error with delete old backup file {:s}. Error code: {:d}", bak_file, err.value()));
+						LogProtocol(fmt::format(L"Error with delete old backup file {:s} Error code: {:d}", bak_file, err.value()));
 						err.clear();
 					}
 				}
@@ -419,7 +422,8 @@ int update_app(UpdateInfo& info)
 				std::filesystem::rename(target_file, bak_file, err);
 				if (err.value() != 0)
 				{
-					LogProtocol(fmt::format(L"Unable to rename {:s}. Error code: {:d}", target_file, err.value()));
+					LogProtocol(fmt::format(L"Unable to rename {:s} Error code: {:d}", target_file, err.value()));
+					LogProtocol(err.message());
 					success = false;
 					continue;
 				}
