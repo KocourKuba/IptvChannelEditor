@@ -3958,6 +3958,8 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 
 		for (const auto& channel : pair.second.category->get_channels())
 		{
+			if (channel->is_disabled()) continue;
+
 			const auto& found = m_playlistMap.find(channel->get_id());
 			m3u_tags m3uTags = (found != m_playlistMap.end()) ? found->second->get_m3u_entry().get_tags_map() : empty_tags_map;
 
