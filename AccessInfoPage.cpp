@@ -846,7 +846,16 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			}
 			break;
 
-		default:break;
+		default:
+			switch (dispinfo->item.iSubItem)
+			{
+				case 1:
+					cred.set_comment(CString(dispinfo->item.pszText));
+					break;
+				default:
+					break;
+			}
+			break;
 	}
 
 	if (dispinfo->item.iItem == GetCheckedAccountIdx())
