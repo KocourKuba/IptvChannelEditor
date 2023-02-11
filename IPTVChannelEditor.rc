@@ -1963,7 +1963,8 @@ BEGIN
     IDS_STRING_VOD_HOUR_MIN "\\b Time: \\b0 {:d} hour(s) {:d} min"
     IDS_STRING_EDIT_DUNE_PARAMS 
                             "Additional Dune player parameters separated by comma for information see: Dune SDK"
-    IDS_STRING_ERR_NO_CHANNELS_SEL "No Channels List selected!"
+    IDS_STRING_ERR_NO_CHANNELS_SEL 
+                            "No Channels List selected! Please select channels list in the account settings."
 END
 
 #endif    // English (United States) resources
