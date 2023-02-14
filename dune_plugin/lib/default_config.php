@@ -547,13 +547,13 @@ class default_config extends dynamic_config
             $custom_stream_type = $channel->get_custom_url_type();
         }
 
-        // hd_print("play template: $play_template_url");
-        // foreach($ext_params as $key => $value) {hd_print("ext_params: key: $key, value: $value");}
+        //hd_print("play template: $play_template_url");
+        //foreach($ext_params as $key => $value) { hd_print("ext_params: key: $key, value: $value"); }
 
         // replace all macros
         foreach ($replaces as $key => $value)
         {
-            if (isset($ext_params[$key]) && !empty($ext_params[$key])) {
+            if (isset($ext_params[$key])) {
                 $play_template_url = str_replace($value, $ext_params[$key], $play_template_url);
             }
         }
@@ -567,7 +567,7 @@ class default_config extends dynamic_config
      * Get information from the account
      * @param &$plugin_cookies
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool | array[] information collected and status valid otherwise - false
+     * @return bool | array[] | string[] information collected and status valid otherwise - false
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
