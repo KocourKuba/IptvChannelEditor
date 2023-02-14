@@ -51,16 +51,36 @@ void plugin_yosso::load_default()
 	provider_url = "https://streaming-elbrus.su/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "https://streaming-elbrus.su/playlist/{LOGIN}/{PASSWORD}/RHLS/playlist.m3u8";
-	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
+	info.pl_template = "https://streaming-elbrus.su/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}/playlist.m3u8";
+	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>\d+)\/(?<var1>.+\/)?(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/{INT_ID}/{ID}/video.m3u8?token={TOKEN}";
-	streams_config[0].uri_arc_template = "http://{DOMAIN}:{PORT}/{INT_ID}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/{VAR1}{ID}/video.m3u8?token={TOKEN}";
+	streams_config[0].uri_arc_template = "http://{DOMAIN}:{PORT}/{VAR1}{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}";
 
 	auto& params1 = epg_params[0];
 	epg_params[0].epg_url = "http://epg.drm-play.ml/yosso/epg/{EPG_ID}.json";
+
+	static_servers = true;
+	fill_devices_list();
+}
+
+void plugin_yosso::fill_servers_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_servers_list().empty())
+		return;
+
+	std::vector<DynamicParamsInfo> servers;
+	for (int i = 0; i <= IDS_STRING_YOSSO_ID10 - IDS_STRING_YOSSO_ID1; i++)
+	{
+		DynamicParamsInfo info;
+		info.set_id(utils::string_trim(load_string_resource(1049, IDS_STRING_YOSSO_ID1 + i)));
+		info.set_name(load_string_resource(1049, IDS_STRING_YOSSO_P1 + i));
+		servers.emplace_back(info);
+	}
+
+	set_servers_list(servers);
 }

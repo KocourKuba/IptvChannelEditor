@@ -273,7 +273,7 @@ void CAccessInfoPage::UpdateOptionalControls()
 	params.profile_idx = selected.profile_id;
 	params.quality_idx = selected.quality_id;
 
-	m_plugin->fill_servers_list(params);
+	m_plugin->fill_servers_list(&params);
 	m_servers = m_plugin->get_servers_list();
 	m_wndServers.ResetContent();
 	m_wndServers.EnableWindow(!m_servers.empty());
@@ -293,7 +293,7 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndServers.SetCurSel(params.server_idx);
 	}
 
-	m_plugin->fill_devices_list(params);
+	m_plugin->fill_devices_list(&params);
 	m_devices = m_plugin->get_devices_list();
 	m_wndDevices.EnableWindow(!m_devices.empty());
 	m_wndDevices.ResetContent();
@@ -312,7 +312,7 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndDevices.SetCurSel(params.device_idx);
 	}
 
-	m_plugin->fill_qualities_list(params);
+	m_plugin->fill_qualities_list(&params);
 	m_qualities = m_plugin->get_qualities_list();
 	m_wndQualities.EnableWindow(!m_qualities.empty());
 	m_wndQualities.ResetContent();
@@ -331,7 +331,7 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndQualities.SetCurSel(params.quality_idx);
 	}
 
-	m_plugin->fill_profiles_list(params);
+	m_plugin->fill_profiles_list(&params);
 	m_profiles = m_plugin->get_profiles_list();
 	m_wndProfiles.EnableWindow(!m_profiles.empty());
 	m_wndProfiles.ResetContent();

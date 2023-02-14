@@ -574,7 +574,7 @@ public:
 	/// returns list of servers
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	virtual void fill_servers_list(TemplateParams& /*params*/) {}
+	virtual void fill_servers_list(TemplateParams* params = nullptr) {}
 
 	/// <summary>
 	/// set server
@@ -599,7 +599,7 @@ public:
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<QualityInfo></returns>
-	virtual void fill_devices_list(TemplateParams& /*params*/) {}
+	virtual void fill_devices_list(TemplateParams* params = nullptr) {}
 
 	/// <summary>
 	/// set device
@@ -619,7 +619,7 @@ public:
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<QualityInfo></returns>
-	virtual void fill_qualities_list(TemplateParams& /*params*/) {}
+	virtual void fill_qualities_list(TemplateParams* params = nullptr) {}
 
 	/// <summary>
 	/// set quality
@@ -644,7 +644,7 @@ public:
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<QualityInfo></returns>
-	virtual void fill_profiles_list(TemplateParams& /*params*/) {}
+	virtual void fill_profiles_list(TemplateParams* params = nullptr) {}
 
 	/// <summary>
 	/// set profile

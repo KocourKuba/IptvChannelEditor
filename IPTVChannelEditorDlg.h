@@ -268,6 +268,7 @@ private:
 	void LoadTimerEPG();
 	void FillEPG();
 	void UpdateExtToken(uri_stream* uri) const;
+	void UpdateVars(uri_stream* uri) const;
 	void UpdateControlsForItem(HTREEITEM hSelected = nullptr);
 	bool CheckForSave();
 	void SaveStreamInfo();

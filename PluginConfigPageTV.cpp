@@ -176,7 +176,6 @@ void CPluginConfigPageTV::AssignMacros()
 						   L"{HOST}",
 						   L"{VAR1}",
 						   L"{VAR2}",
-						   L"{VAR3}",
 					   });
 
 	m_wndStreamTemplate.SetTemplateParams(strm_params);

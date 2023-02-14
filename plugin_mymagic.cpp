@@ -64,11 +64,11 @@ void plugin_mymagic::load_default()
 
 	static_servers = true;
 	static_qualities = true;
-	fill_servers_list(TemplateParams());
-	fill_qualities_list(TemplateParams());
+	fill_servers_list();
+	fill_qualities_list();
 }
 
-void plugin_mymagic::fill_servers_list(TemplateParams& /*params*/)
+void plugin_mymagic::fill_servers_list(TemplateParams* params /*= nullptr*/)
 {
 	if (!get_servers_list().empty())
 		return;
@@ -85,7 +85,7 @@ void plugin_mymagic::fill_servers_list(TemplateParams& /*params*/)
 	set_servers_list(servers);
 }
 
-void plugin_mymagic::fill_qualities_list(TemplateParams& /*params*/)
+void plugin_mymagic::fill_qualities_list(TemplateParams* params /*= nullptr*/)
 {
 	if (!get_qualities_list().empty())
 		return;

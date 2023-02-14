@@ -65,10 +65,10 @@ void plugin_shuratv::load_default()
 	params1.epg_end = "stop";
 
 	static_servers = true;
-	fill_servers_list(TemplateParams());
+	fill_servers_list();
 }
 
-void plugin_shuratv::fill_servers_list(TemplateParams& /*params*/)
+void plugin_shuratv::fill_servers_list(TemplateParams* params /*= nullptr*/)
 {
 	if (!get_servers_list().empty())
 		return;

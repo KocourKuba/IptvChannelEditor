@@ -35,9 +35,9 @@ public:
 
 	std::wstring get_playlist_url(TemplateParams& params, std::wstring url = L"") override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
-	void fill_servers_list(TemplateParams& params) override;
+	void fill_servers_list(TemplateParams* params = nullptr) override;
 	bool set_server(TemplateParams& params) override;
-	void fill_profiles_list(TemplateParams& params) override;
+	void fill_profiles_list(TemplateParams* params = nullptr) override;
 	bool set_profile(TemplateParams& params) override;
 
 protected:

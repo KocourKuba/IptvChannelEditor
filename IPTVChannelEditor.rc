@@ -1853,6 +1853,34 @@ BEGIN
     IDS_STRING_SHARAVOZ_P4  "Amsterdam (AM01)"
     IDS_STRING_SHARAVOZ_P5  "France (FR01)"
     IDS_STRING_SHARAVOZ_P6  "Zurich (CH01)"
+    IDS_STRING_YOSSO_ID1    " "
+    IDS_STRING_YOSSO_ID2    "kfc"
+    IDS_STRING_YOSSO_ID3    "OSTHLS"
+    IDS_STRING_YOSSO_ID4    "KRDHLS"
+    IDS_STRING_YOSSO_ID5    "bn"
+    IDS_STRING_YOSSO_ID6    "BYHLS"
+    IDS_STRING_YOSSO_ID7    "de"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_YOSSO_ID8    "kz"
+    IDS_STRING_YOSSO_ID9    "gn"
+    IDS_STRING_YOSSO_ID10   "RHLS"
+    IDS_STRING_YOSSO_P1     "RU (Russia, Moscow)"
+    IDS_STRING_YOSSO_P2     "KFC (Russia, Moscow)"
+    IDS_STRING_YOSSO_P3     "OSTHLS (Russia, Moscow)"
+    IDS_STRING_YOSSO_P4     "KRDHLS (Russia, Krasnodar)"
+    IDS_STRING_YOSSO_P5     "BN (Russia, Saint-Petersburg)"
+    IDS_STRING_YOSSO_P6     "BYHLS (Belarus, Minsk)"
+    IDS_STRING_YOSSO_P7     "DE (Germany, Frankfurt/Netherlands, Amsterdam)"
+    IDS_STRING_YOSSO_P8     "KZ (Kazakhstan, Almaty/Russia, Samara)"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_YOSSO_P9     "GN (Ukraine, Kiev)"
+    IDS_STRING_YOSSO_P10    "RHLS (GlobalCache CDN)"
 END
 
 STRINGTABLE

@@ -33,7 +33,7 @@ public:
 
 	plugin_viplime();
 
-	void fill_qualities_list(TemplateParams& /*params*/) override;
+	void fill_qualities_list(TemplateParams* params = nullptr) override;
 
 protected:
 	void load_default() override;

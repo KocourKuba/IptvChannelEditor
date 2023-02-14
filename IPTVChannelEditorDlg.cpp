@@ -573,7 +573,6 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 						  L"{INT_ID}",
 						  L"{VAR1}",
 						  L"{VAR2}",
-						  L"{VAR3}",
 					   });
 	m_wndStreamUrl.SetTemplateParams(strm_params);
 
@@ -1716,6 +1715,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	params.profile_idx = m_cur_account.profile_id;
 
 	UpdateExtToken(channel.get());
+	UpdateVars(channel.get());
 
 	m_streamID = channel->get_id().c_str();
 
@@ -3076,6 +3076,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		dlg.m_params.server_idx = m_cur_account.server_id;
 
 		UpdateExtToken(info);
+		UpdateVars(info);
 		dlg.m_info = info;
 
 
@@ -3172,6 +3173,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
 
 		UpdateExtToken(info);
+		UpdateVars(info);
 		const auto& url = m_plugin->get_play_stream(params, info);
 
 		TRACE(L"\nTest URL: %s\n", url.c_str());
@@ -3999,10 +4001,11 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 			}
 
 			os << ", " << utils::utf16_to_utf8(channel->get_title()) << "\r\n";
-			auto baseInfo = dynamic_cast<uri_stream*>(channel.get());
+			auto info = dynamic_cast<uri_stream*>(channel.get());
 
-			UpdateExtToken(baseInfo);
-			const auto& url = m_plugin->get_play_stream(params, baseInfo);
+			UpdateExtToken(info);
+			UpdateVars(info);
+			const auto& url = m_plugin->get_play_stream(params, info);
 
 			os << utils::utf16_to_utf8(url) << "\r\n";
 		}
@@ -4343,6 +4346,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	for (auto& item : *container)
 	{
 		UpdateExtToken(item);
+		UpdateVars(item);
 	}
 
 	m_wndPluginType.EnableWindow(FALSE);
@@ -5306,6 +5310,16 @@ void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri) const
 	if (pair != m_playlistMap.end())
 	{
 		uri->set_token(pair->second->get_token());
+	}
+}
+
+void CIPTVChannelEditorDlg::UpdateVars(uri_stream* uri) const
+{
+	const auto& pair = m_playlistMap.find(uri->get_id());
+	if (pair != m_playlistMap.end())
+	{
+		uri->set_var1(pair->second->get_var1());
+		uri->set_var2(pair->second->get_var2());
 	}
 }
 

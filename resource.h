@@ -332,6 +332,26 @@
 #define IDS_STRING_SHARAVOZ_P4          498
 #define IDS_STRING_SHARAVOZ_P5          499
 #define IDS_STRING_SHARAVOZ_P6          500
+#define IDS_STRING_YOSSO_ID1            505
+#define IDS_STRING_YOSSO_ID2            506
+#define IDS_STRING_YOSSO_ID3            507
+#define IDS_STRING_YOSSO_ID4            508
+#define IDS_STRING_YOSSO_ID5            509
+#define IDS_STRING_YOSSO_ID6            510
+#define IDS_STRING_YOSSO_ID7            511
+#define IDS_STRING_YOSSO_ID8            512
+#define IDS_STRING_YOSSO_ID9            513
+#define IDS_STRING_YOSSO_ID10           514
+#define IDS_STRING_YOSSO_P1             520
+#define IDS_STRING_YOSSO_P2             521
+#define IDS_STRING_YOSSO_P3             522
+#define IDS_STRING_YOSSO_P4             523
+#define IDS_STRING_YOSSO_P5             524
+#define IDS_STRING_YOSSO_P6             525
+#define IDS_STRING_YOSSO_P7             526
+#define IDS_STRING_YOSSO_P8             527
+#define IDS_STRING_YOSSO_P9             528
+#define IDS_STRING_YOSSO_P10            529
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -612,7 +632,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

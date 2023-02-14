@@ -60,10 +60,10 @@ void plugin_kineskop::load_default()
 	epg_params[0].epg_url = "http://epg.esalecrm.net/kineskop/epg/{EPG_ID}.json";
 
 	static_servers = true;
-	fill_servers_list(TemplateParams());
+	fill_servers_list();
 }
 
-void plugin_kineskop::fill_servers_list(TemplateParams& /*params*/)
+void plugin_kineskop::fill_servers_list(TemplateParams* params /*= nullptr*/)
 {
 	if (!get_servers_list().empty())
 		return;

@@ -37,7 +37,7 @@ public:
 
 	std::wstring get_api_token(const Credentials& creds) const override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
-	void fill_servers_list(TemplateParams& params) override;
+	void fill_servers_list(TemplateParams* params = nullptr) override;
 	bool set_server(TemplateParams& params) override;
 
 protected:

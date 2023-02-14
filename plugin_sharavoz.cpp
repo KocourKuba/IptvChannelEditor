@@ -72,10 +72,10 @@ void plugin_sharavoz::load_default()
 	params2.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 
 	static_servers = true;
-	fill_servers_list(TemplateParams());
+	fill_servers_list();
 }
 
-void plugin_sharavoz::fill_servers_list(TemplateParams& /*params*/)
+void plugin_sharavoz::fill_servers_list(TemplateParams* params /*= nullptr*/)
 {
 	if (!get_servers_list().empty())
 		return;

@@ -111,7 +111,7 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 
-	fill_servers_list(params);
+	fill_servers_list(&params);
 	if (!servers_list.empty())
 	{
 		int server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
@@ -119,21 +119,21 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[server].get_id());
 	}
 
-	fill_devices_list(params);
+	fill_devices_list(&params);
 	if (!devices_list.empty())
 	{
 		int device = (params.device_idx >= (int)devices_list.size()) ? devices_list.size() - 1 : params.device_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[device].get_id());
 	}
 
-	fill_qualities_list(params);
+	fill_qualities_list(&params);
 	if (!qualities_list.empty())
 	{
 		int quality = (params.quality_idx >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.quality_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[quality].get_id());
 	}
 
-	fill_profiles_list(params);
+	fill_profiles_list(&params);
 	if (!profiles_list.empty())
 	{
 		int profile = (params.profile_idx >= (int)profiles_list.size()) ? profiles_list.size() - 1 : params.profile_idx;
@@ -153,29 +153,14 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 	if (params.shift_back)
 		utils::string_replace_inplace<wchar_t>(url, REPL_LIVE_URL, live_url);
 
-	if (!info->domain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, info->domain);
-
-	if (!info->port.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PORT, info->port);
-
-	if (!info->get_id().empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_ID, info->get_id());
-
-	if (!info->token.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, info->token);
-
-	if (!info->int_id.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, info->int_id);
-
-	if (!info->host.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, info->host);
-
-	if (!info->var1.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_VAR1, info->var1);
-
-	if (!info->var2.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_VAR2, info->var2);
+	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, info->domain);
+	utils::string_replace_inplace<wchar_t>(url, REPL_PORT, info->port);
+	utils::string_replace_inplace<wchar_t>(url, REPL_ID, info->get_id());
+	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, info->token);
+	utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, info->int_id);
+	utils::string_replace_inplace<wchar_t>(url, REPL_HOST, info->host);
+	utils::string_replace_inplace<wchar_t>(url, REPL_VAR1, info->var1);
+	utils::string_replace_inplace<wchar_t>(url, REPL_VAR2, info->var2);
 
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);

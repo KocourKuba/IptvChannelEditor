@@ -89,7 +89,7 @@ std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wst
 	auto& url = get_playlist_template(params.playlist_idx);
 	if (params.profile_idx != 0)
 	{
-		fill_profiles_list(params);
+		fill_profiles_list(&params);
 		const auto& profiles = get_profiles_list();
 		url += L"/" + profiles[params.profile_idx].get_id();
 	}
@@ -133,18 +133,18 @@ bool plugin_sharaclub::parse_access_info(TemplateParams& params, std::list<Accou
 	return false;
 }
 
-void plugin_sharaclub::fill_servers_list(TemplateParams& params)
+void plugin_sharaclub::fill_servers_list(TemplateParams* params /*= nullptr*/)
 {
-	if (params.login.empty() || params.password.empty() || !get_servers_list().empty())
+	if (!params, params->login.empty() || params->password.empty() || !get_servers_list().empty())
 		return;
 
 	std::vector<DynamicParamsInfo> servers;
 
 	const auto& url = fmt::format(API_COMMAND_GET_URL,
-									params.subdomain,
+									params->subdomain,
 									L"ch_cdn",
-									params.login,
-									params.password);
+									params->login,
+									params->password);
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -155,7 +155,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 			const auto& parsed_json = nlohmann::json::parse(data.str());
 			if (utils::get_json_int("status", parsed_json) == 1)
 			{
-				params.server_idx = utils::get_json_int("current", parsed_json);
+				params->server_idx = utils::get_json_int("current", parsed_json);
 				const auto& js_data = parsed_json["allow_nums"];
 				for (const auto& item : js_data.items())
 				{
@@ -175,7 +175,7 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 {
 	if (servers_list.empty())
 	{
-		fill_servers_list(params);
+		fill_servers_list(&params);
 	}
 
 	if (!servers_list.empty())
@@ -204,12 +204,12 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 	return false;
 }
 
-void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
+void plugin_sharaclub::fill_profiles_list(TemplateParams* params /*= nullptr*/)
 {
-	if (!get_profiles_list().empty() || params.login.empty() || params.password.empty())
+	if (!get_profiles_list().empty() || !params || params->login.empty() || params->password.empty())
 		return;
 
-	const auto& url = fmt::format(API_COMMAND_GET_URL, params.subdomain, L"list_profiles", params.login, params.password);
+	const auto& url = fmt::format(API_COMMAND_GET_URL, params->subdomain, L"list_profiles", params->login, params->password);
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -234,7 +234,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 					info.set_id(utils::get_json_wstring("id", profile));
 					info.set_name(utils::get_json_wstring("name", profile));
 					if (info.get_id() == current)
-						params.profile_idx = profiles.size();
+						params->profile_idx = profiles.size();
 
 					profiles.emplace_back(info);
 				}

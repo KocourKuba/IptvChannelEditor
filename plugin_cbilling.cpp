@@ -73,10 +73,10 @@ void plugin_cbilling::load_default()
 	params1.epg_root = "";
 
 	static_devices = true;
-	fill_devices_list(TemplateParams());
+	fill_devices_list();
 }
 
-void plugin_cbilling::fill_devices_list(TemplateParams& /*params*/)
+void plugin_cbilling::fill_devices_list(TemplateParams* params /*= nullptr*/)
 {
 	if (!get_devices_list().empty())
 		return;

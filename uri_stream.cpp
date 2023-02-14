@@ -44,6 +44,8 @@ void uri_stream::clear()
 	int_id.clear();
 	quality.clear();
 	host.clear();
+	var1.clear();
+	var2.clear();
 
 	clear_hash();
 }
@@ -105,6 +107,8 @@ uri_stream& uri_stream::operator=(const uri_stream& src)
 		int_id = src.int_id;
 		quality = src.quality;
 		host = src.host;
+		var1 = src.var1;
+		var2 = src.var2;
 
 		title = src.title;
 		catchup = src.catchup;

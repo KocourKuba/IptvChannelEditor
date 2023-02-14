@@ -36,7 +36,7 @@ public:
 	plugin_cbilling();
 
 public:
-	void fill_devices_list(TemplateParams& /*params*/) override;
+	void fill_devices_list(TemplateParams* params = nullptr) override;
 	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
 
 protected:

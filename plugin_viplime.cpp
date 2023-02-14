@@ -62,10 +62,10 @@ void plugin_viplime::load_default()
 	epg_params[0].epg_url = "http://epg.drm-play.ml/viplime/epg/{EPG_ID}.json";
 
 	static_qualities = true;
-	fill_qualities_list(TemplateParams());
+	fill_qualities_list();
 }
 
-void plugin_viplime::fill_qualities_list(TemplateParams& /*params*/)
+void plugin_viplime::fill_qualities_list(TemplateParams* params /*= nullptr*/)
 {
 	if (!get_qualities_list().empty())
 		return;
