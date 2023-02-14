@@ -55,6 +55,8 @@ void plugin_yosso::load_default()
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
+	square_icons = true;
+
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/{INT_ID}/{ID}/video.m3u8?token={TOKEN}";
 	streams_config[0].uri_arc_template = "http://{DOMAIN}:{PORT}/{INT_ID}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}";
