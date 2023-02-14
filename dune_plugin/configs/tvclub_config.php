@@ -58,7 +58,7 @@ class tvclub_config extends default_config
      * Get information from the account
      * @param &$plugin_cookies
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool | array[] information collected and status valid otherwise - false
+     * @return bool | array[] | string[] information collected and status valid otherwise - false
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
