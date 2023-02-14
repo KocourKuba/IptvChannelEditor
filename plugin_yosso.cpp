@@ -65,7 +65,7 @@ void plugin_yosso::load_default()
 	epg_params[0].epg_url = "http://epg.drm-play.ml/yosso/epg/{EPG_ID}.json";
 
 	static_servers = true;
-	fill_devices_list();
+	fill_servers_list();
 }
 
 void plugin_yosso::fill_servers_list(TemplateParams* params /*= nullptr*/)
