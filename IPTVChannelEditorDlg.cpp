@@ -571,6 +571,9 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 						  L"{PORT}",
 						  L"{ID}",
 						  L"{INT_ID}",
+						  L"{VAR1}",
+						  L"{VAR2}",
+						  L"{VAR3}",
 					   });
 	m_wndStreamUrl.SetTemplateParams(strm_params);
 

@@ -171,6 +171,12 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 	if (!info->host.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_HOST, info->host);
 
+	if (!info->var1.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_VAR1, info->var1);
+
+	if (!info->var2.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_VAR2, info->var2);
+
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 

@@ -324,6 +324,9 @@
     <ClInclude Include="PluginConfigPropertySheet.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_yosso.h">
+      <Filter>Header Files\plugin\flussionic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -553,6 +556,9 @@
     </ClCompile>
     <ClCompile Include="PluginConfigPropertySheet.cpp">
       <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_yosso.cpp">
+      <Filter>Source Files\plugin\flussonic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

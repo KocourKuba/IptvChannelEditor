@@ -147,7 +147,9 @@ void CPluginConfigPageTV::AssignMacros()
 		L"(?<token>)",
 		L"(?<int_id>)",
 		L"(?<quality>)",
-		L"(?<host>)"
+		L"(?<host>)",
+		L"(?<var1>)",
+		L"(?<var2>)",
 	};
 	m_wndParseStream.SetTemplateParams(stream_params);
 
@@ -172,6 +174,9 @@ void CPluginConfigPageTV::AssignMacros()
 						   L"{ID}",
 						   L"{INT_ID}",
 						   L"{HOST}",
+						   L"{VAR1}",
+						   L"{VAR2}",
+						   L"{VAR3}",
 					   });
 
 	m_wndStreamTemplate.SetTemplateParams(strm_params);

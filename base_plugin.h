@@ -70,6 +70,8 @@ public:
 	static constexpr auto REPL_DEVICE_ID  = L"{DEVICE_ID}";  // device id (read from settings)
 	static constexpr auto REPL_QUALITY_ID = L"{QUALITY_ID}"; // quality id (set from settings)
 	static constexpr auto REPL_PROFILE_ID = L"{PROFILE_ID}"; // profile id (read from settings)
+	static constexpr auto REPL_VAR1       = L"{VAR1}";       // Custom capture group variable
+	static constexpr auto REPL_VAR2       = L"{VAR2}";       // Custom capture group variable
 
 	static constexpr auto REPL_EPG_ID     = L"{EPG_ID}";     // epg id (set from playlist)
 	static constexpr auto REPL_START      = L"{START}";      // EPG archive start time (unix timestamp)

@@ -508,6 +508,8 @@ class default_config extends dynamic_config
             Ext_Params::M_QUALITY_ID     => '{QUALITY_ID}',
             Ext_Params::M_DEVICE_ID      => '{DEVICE_ID}',
             Ext_Params::M_SERVER_ID      => '{SERVER_ID}',
+            Ext_Params::M_VAR1           => '{VAR1}',
+            Ext_Params::M_VAR2           => '{VAR2}',
         );
 
         $channel_custom_url = $channel->get_custom_url();

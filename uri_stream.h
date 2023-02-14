@@ -93,6 +93,12 @@ public:
 	const std::wstring& get_host() const { return host; }
 	void set_host(const std::wstring& val) { host = val; }
 
+	const std::wstring& get_var1() const { return var1; }
+	void set_var1(const std::wstring& val) { var1 = val; }
+
+	const std::wstring& get_var2() const { return var2; }
+	void set_var2(const std::wstring& val) { var2 = val; }
+
 	/// <summary>
 	/// is uri template
 	/// </summary>
@@ -186,6 +192,8 @@ public:
 		{L"int_id"   , &uri_stream::set_int_id},
 		{L"quality"  , &uri_stream::set_quality},
 		{L"host"     , &uri_stream::set_host},
+		{L"var1"     , &uri_stream::set_var1},
+		{L"var2"     , &uri_stream::set_var2},
 	};
 
 protected:
@@ -212,6 +220,8 @@ protected:
 	std::wstring int_id;
 	std::wstring quality;
 	std::wstring host;
+	std::wstring var1;
+	std::wstring var2;
 
 	// parsed #EXTINF variables
 	std::wstring title;

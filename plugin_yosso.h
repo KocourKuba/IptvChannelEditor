@@ -25,37 +25,16 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+#include "base_plugin.h"
 
-enum class PluginType
+// API documentation http://protected-api.com/api/documentation
+
+class plugin_yosso : public base_plugin
 {
-	enCustom = -1000,
-	enBase = -1,
-	enAntifriz,
-	enCbilling,
-	enEdem,
-	enFilmax,
-	enFox,
-	enGlanz,
-	enIptvOnline,
-	enItv,
-	enKineskop,
-	enLightIptv,
-	enMymagic,
-	enOneCent,
-	enOneOtt,
-	enOneUsd,
-	enOttclub,
-	enPing,
-	enRusskoeTV,
-	enSharaTV,
-	enSharaclub,
-	enSharavoz,
-	enShuraTV,
-	enSmile,
-	enTVClub,
-	enTvTeam,
-	enVidok,
-	enVipLime,
-	enYossoTV,
-	enLast,
+public:
+
+	plugin_yosso();
+
+protected:
+	void load_default() override;
 };
