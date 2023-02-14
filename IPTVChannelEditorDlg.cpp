@@ -5422,11 +5422,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon()
 
 void CIPTVChannelEditorDlg::UpdateIconInfo(const IconContainer& icon)
 {
-	CString str;
 	if (icon.empty())
 	{
 		m_wndChannelIcon.SetBitmap(nullptr);
-		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(str);
+		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(L"");
 		UpdateData(FALSE);
 		return;
 	}
@@ -5435,7 +5434,7 @@ void CIPTVChannelEditorDlg::UpdateIconInfo(const IconContainer& icon)
 	const auto& img = GetIconCache().get_icon(icon.get_icon_absolute_path(), true);
 	if (img != nullptr)
 	{
-		str.Format(_T("%d x %d px"), img.GetWidth(), img.GetHeight());
+		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(fmt::format(L"{:d} x {:d} px", img.GetWidth(), img.GetHeight()).c_str());
 	}
 
 	SetImageControl(img, m_wndChannelIcon);
