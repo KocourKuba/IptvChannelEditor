@@ -77,8 +77,8 @@ void plugin_yosso::fill_servers_list(TemplateParams* params /*= nullptr*/)
 	for (int i = 0; i <= IDS_STRING_YOSSO_ID10 - IDS_STRING_YOSSO_ID1; i++)
 	{
 		DynamicParamsInfo info;
-		info.set_id(utils::string_trim(load_string_resource(1049, IDS_STRING_YOSSO_ID1 + i)));
-		info.set_name(load_string_resource(1049, IDS_STRING_YOSSO_P1 + i));
+		info.set_id(utils::string_trim(load_string_resource(1033, IDS_STRING_YOSSO_ID1 + i)));
+		info.set_name(load_string_resource(1033, IDS_STRING_YOSSO_P1 + i));
 		servers.emplace_back(info);
 	}
 
