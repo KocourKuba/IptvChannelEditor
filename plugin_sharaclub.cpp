@@ -135,7 +135,7 @@ bool plugin_sharaclub::parse_access_info(TemplateParams& params, std::list<Accou
 
 void plugin_sharaclub::fill_servers_list(TemplateParams* params /*= nullptr*/)
 {
-	if (!params, params->login.empty() || params->password.empty() || !get_servers_list().empty())
+	if (!params || params->login.empty() || params->password.empty() || !get_servers_list().empty())
 		return;
 
 	std::vector<DynamicParamsInfo> servers;
