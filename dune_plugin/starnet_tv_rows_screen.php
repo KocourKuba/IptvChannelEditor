@@ -351,11 +351,14 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             PaneParams::vod_width, PaneParams::vod_height
         );
 
+        $icon_width = $this->plugin->config->get_feature(Plugin_Constants::SQUARE_ICONS) ? RowsItemsParams::icon_width_sq : RowsItemsParams::icon_width;
+        $icon_prop = $icon_width / RowsItemsParams::icon_height;
+
         $def_params = Rows_Factory::variable_params(
             RowsItemsParams::width,
             RowsItemsParams::height,
             0,
-            RowsItemsParams::icon_width,
+            $icon_width,
             RowsItemsParams::icon_height,
             5,
             RowsItemsParams::caption_dy,
@@ -363,14 +366,12 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             RowsItemsParams::caption_font_size
         );
 
-        $icon_dx = RowsItemsParams::icon_width / RowsItemsParams::icon_height;
-        $icon_width = RowsItemsParams::icon_width + 12;
         $sel_params = Rows_Factory::variable_params(
             RowsItemsParams::width,
             RowsItemsParams::height,
             5,
-            $icon_width,
-            round($icon_width / $icon_dx),
+            $icon_width + 12,
+            round(($icon_width + 12) / $icon_prop),
             0,
             RowsItemsParams::caption_dy + 10,
             RowsItemsParams::sel_caption_color,
@@ -378,11 +379,12 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         );
 
         $width = round((RowsItemsParams::width * 7 - 350) / 7);
-        $icon_width = round((RowsItemsParams::icon_width * 7 - 350) / 7) + round((RowsItemsParams::width - RowsItemsParams::icon_width) / $icon_dx);
+        $inactive_icon_width = round(($icon_width * 7 - 350) / 7) + round((RowsItemsParams::width - $icon_width) / $icon_prop);
         $inactive_params = Rows_Factory::variable_params(
-            $width, round($width / RowsItemsParams::width * RowsItemsParams::height), 0,
-            $icon_width,
-            round($icon_width / $icon_dx),
+            $width,
+            round($width / RowsItemsParams::width * RowsItemsParams::height), 0,
+            $inactive_icon_width,
+            round($inactive_icon_width / $icon_prop),
             0,
             RowsItemsParams::caption_dy,
             RowsItemsParams::inactive_caption_color,

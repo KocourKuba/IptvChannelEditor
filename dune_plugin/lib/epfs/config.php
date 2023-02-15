@@ -71,7 +71,8 @@ class RowsItemsParams
 	const width						= 250;
 	const height					= 230;
 	const icon_width				= 230;
-	const icon_height				= 142;
+    const icon_width_sq				= 158;
+	const icon_height				= 140;
     const caption_dy				= 0;
     const caption_max_num_lines		= 2;
     const caption_line_spacing		= 0;
