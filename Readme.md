@@ -28,6 +28,7 @@
 [TV Team](http://tv.team)  
 [Vidok TV](https://vidok.tv)  
 [Viplime](http://viplime.fun)  
+[Yosso TV](https://streaming-elbrus.su/)  
 
 ## License and copyright
 
