@@ -192,7 +192,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         }
 
         // separator line
-        $defs[] = GComps_Factory::get_rect_def(GComp_Geom::place_top_left(510, 4, 0, 590), null, '#1919BE9F');
+        $defs[] = GComps_Factory::get_rect_def(GComp_Geom::place_top_left(510, 4, 0, 590), null, PaneParams::separator_line_color);
 
         $dy_icon = 530;
         $dy_txt = $dy_icon - 4;
@@ -200,7 +200,9 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         if ($group_id !== Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID) {
 
             // blue button image (D)
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), null, PaneParams::fav_button_blue);
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(PaneParams::fav_btn_width, PaneParams::fav_btn_height, $dx, $dy_icon),
+                null,
+                PaneParams::fav_button_blue);
 
             $dx += 55;
             $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
@@ -215,7 +217,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             $fav_channels = $this->plugin->tv->get_fav_channel_ids($plugin_cookies);
             $is_first_channel = ($channel_id === reset($fav_channels));
             // green button image (B) 52x50
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon),
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(PaneParams::fav_btn_width, PaneParams::fav_btn_height, $dx, $dy_icon),
                 null,
                 PaneParams::fav_button_green,
                 false,
@@ -238,7 +240,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             $is_last_channel = ($channel_id === end($fav_channels));
             $dx += 105;
             // yellow button image (C)
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon),
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(PaneParams::fav_btn_width, PaneParams::fav_btn_height, $dx, $dy_icon),
                 null,
                 PaneParams::fav_button_yellow,
                 1,
@@ -261,7 +263,9 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
             $dx += 105;
             // blue button image (D)
-            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(52, 50, $dx, $dy_icon), null, PaneParams::fav_button_blue);
+            $defs[] = GComps_Factory::get_image_def(GComp_Geom::place_top_left(PaneParams::fav_btn_width, PaneParams::fav_btn_height, $dx, $dy_icon),
+                null,
+                PaneParams::fav_button_blue);
 
             $dx += 55;
             // blue button text
@@ -378,8 +382,10 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             RowsItemsParams::caption_font_size
         );
 
-        $width = round((RowsItemsParams::width * 7 - 350) / 7);
-        $inactive_icon_width = round(($icon_width * 7 - 350) / 7) + round((RowsItemsParams::width - $icon_width) / $icon_prop);
+        $width = round((RowsItemsParams::width * PaneParams::max_items_in_row - PaneParams::group_list_width) / PaneParams::max_items_in_row);
+        $inactive_icon_width = round(($icon_width * PaneParams::max_items_in_row - PaneParams::group_list_width) / PaneParams::max_items_in_row)
+            + round((RowsItemsParams::width - $icon_width) / $icon_prop);
+
         $inactive_params = Rows_Factory::variable_params(
             $width,
             round($width / RowsItemsParams::width * RowsItemsParams::height), 0,
@@ -612,22 +618,26 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     if (!empty($item['program_icon_url'])) {
                         // add small channel logo
                         $rect = Rows_Factory::r(129, 0, 100, 64);
-                        Rows_Factory::add_regular_sticker_rect($stickers, "#FFFFFFFF", $rect);
+                        Rows_Factory::add_regular_sticker_rect($stickers, RowsItemsParams::fav_sticker_logo_bg_color, $rect);
                         Rows_Factory::add_regular_sticker_image($stickers, $channel->get_icon_url(), $rect);
                     }
 
                     // add progress indicator
-                    $progress_y = RowsItemsParams::height - 96;
-                    $progress_w = RowsItemsParams::width - 22;
                     Rows_Factory::add_regular_sticker_rect(
                         $stickers,
-                        "#6A6A6ACF",
-                        Rows_Factory::r(0, $progress_y, $progress_w, 8)); // total
+                        RowsItemsParams::view_total_color,
+                        Rows_Factory::r(0,
+                            RowsItemsParams::fav_progress_dy,
+                            RowsItemsParams::view_progress_width,
+                            RowsItemsParams::view_progress_height)); // total
 
                     Rows_Factory::add_regular_sticker_rect(
                         $stickers,
-                        "#EFAA16FF",
-                        Rows_Factory::r(0, $progress_y, round($progress_w * $item['view_progress']), 8)); // viewed
+                        RowsItemsParams::view_viewed_color,
+                        Rows_Factory::r(0,
+                            RowsItemsParams::fav_progress_dy,
+                            round(RowsItemsParams::view_progress_width * $item['view_progress']),
+                            RowsItemsParams::view_progress_height)); // viewed
                 }
 
                 Rows_Factory::add_regular_item(
@@ -733,12 +743,20 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             Rows_Factory::add_regular_sticker_rect(
                 $fav_stickers,
                 RowsItemsParams::fav_sticker_bg_color,
-                Rows_Factory::r(229 - 40, 0, 40, 40));
+                Rows_Factory::r(
+                    RowsItemsParams::width - RowsItemsParams::fav_sticker_bg_width - 21,
+                    0,
+                    RowsItemsParams::fav_sticker_bg_width,
+                    RowsItemsParams::fav_sticker_bg_width));
 
             Rows_Factory::add_regular_sticker_image(
                 $fav_stickers,
                 $this->images_path . RowsItemsParams::fav_sticker_icon_url,
-                Rows_Factory::r(229 - 38, 2, 36, 36));
+                Rows_Factory::r(
+                    RowsItemsParams::width - RowsItemsParams::fav_sticker_icon_width - 23,
+                    2,
+                    RowsItemsParams::fav_sticker_icon_width,
+                    RowsItemsParams::fav_sticker_icon_height));
 
             foreach ($group->get_group_channels() as $channel) {
                 $is_in_fav = in_array($channel->get_id(), $fav_channel_ids) ? $fav_stickers : null;

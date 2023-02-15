@@ -12,6 +12,7 @@ class PaneParams
 	const info_dy					    = 40;
     const pane_width                    = 1790;
     const pane_height                   = 640;
+    const group_list_width              = 350;
 	const info_width				    = 700;
 	const info_height				    = 640;
 	const vod_width				        = 1120;
@@ -28,6 +29,9 @@ class PaneParams
 	const prog_item_font_color		    = '#AFAFA0FF';
 	const prog_item_font_size		    = 30; # size in pt
 	const prog_item_height			    = 60;
+    const separator_line_color		    = '#1919BE9F';
+    const fav_btn_width      		    = 52;
+    const fav_btn_height      		    = 50;
     const fav_btn_font_size 		    = 26; # size in pt
     const fav_btn_font_color	    	= '#E0E0E0FF';
     const fav_btn_disabled_font_color	= '#808080FF';
@@ -83,5 +87,15 @@ class RowsItemsParams
     const icon_loading_url			= '/loading.png';
     const icon_loading_failed_url	= '/unset.png';
     const fav_sticker_icon_url		= '/star.png';
+    const fav_sticker_bg_width		= 40;
+    const fav_sticker_bg_height		= 40;
+    const fav_sticker_icon_width	= 36;
+    const fav_sticker_icon_height	= 36;
     const fav_sticker_bg_color		= '#000000FF';
+    const fav_sticker_logo_bg_color	= '#FFFFFFFF';
+    const fav_progress_dy           = 134;
+    const view_progress_width       = 228;
+    const view_progress_height      = 8;
+    const view_total_color	        = '#6A6A6ACF';
+    const view_viewed_color	        = '#EFAA16FF';
 }
