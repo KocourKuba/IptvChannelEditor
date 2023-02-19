@@ -41,6 +41,8 @@ plugin_oneusd::plugin_oneusd()
 
 void plugin_oneusd::load_default()
 {
+	base_plugin::load_default();
+
 	title = "1USD TV";
 	name = "oneusd.tv";
 	access_type = AccountAccessType::enPin;

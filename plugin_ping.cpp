@@ -41,6 +41,8 @@ plugin_ping::plugin_ping()
 
 void plugin_ping::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Ping TV";
 	name = "ping.tv";
 	access_type = AccountAccessType::enLoginPass;

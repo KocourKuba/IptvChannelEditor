@@ -41,6 +41,8 @@ plugin_onecent::plugin_onecent()
 
 void plugin_onecent::load_default()
 {
+	base_plugin::load_default();
+
 	title = "1CENT TV";
 	name = "onecent.tv";
 	access_type = AccountAccessType::enPin;

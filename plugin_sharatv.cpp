@@ -41,6 +41,8 @@ plugin_sharatv::plugin_sharatv()
 
 void plugin_sharatv::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Shara TV";
 	name = "shara.tv";
 	access_type = AccountAccessType::enLoginPass;

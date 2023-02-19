@@ -56,6 +56,7 @@ bool CrackUrl(const std::wstring& url, CrackedUrl& cracked);
 #ifdef _USE_CURL
 bool CurlDownload(const std::wstring& url,
 				  std::stringstream& vData,
+				  LPCWSTR user_agent = nullptr,
 				  int cache_ttl = 0,
 				  std::vector<std::string>* pHeaders = nullptr,
 				  bool verb_post = false,
@@ -64,6 +65,7 @@ bool CurlDownload(const std::wstring& url,
 
 bool WinHttpDownload(const std::wstring& url,
 				  std::stringstream& vData,
+				  LPCWSTR user_agent = nullptr,
 				  int cache_ttl = 0,
 				  std::vector<std::string>* pHeaders = nullptr,
 				  bool verb_post = false,

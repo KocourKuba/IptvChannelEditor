@@ -46,6 +46,8 @@ plugin_itv::plugin_itv()
 
 void plugin_itv::load_default()
 {
+	base_plugin::load_default();
+
 	title = "ITV Live TV";
 	name = "itv-live.tv";
 	access_type = AccountAccessType::enPin;
@@ -80,7 +82,7 @@ bool plugin_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo
 {
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.password), data))
+	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.password), data, get_user_agent().c_str()))
 	{
 		return false;
 	}

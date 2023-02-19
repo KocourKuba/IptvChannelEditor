@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="227" scanned="20230214231128" built="20230214231150" lang="ru" pane="TLogPane" col="3">
+<desktop scan="228" scanned="20230219213153" built="20230214231150" lang="ru" pane="TLogPane" col="3" row="Dialogs.134.STATIC_User_Agent.Text">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>

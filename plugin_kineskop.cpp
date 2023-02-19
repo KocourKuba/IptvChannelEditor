@@ -41,6 +41,8 @@ plugin_kineskop::plugin_kineskop()
 
 void plugin_kineskop::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Kineskop.Club";
 	name = "kineskop";
 	access_type = AccountAccessType::enLoginPass;

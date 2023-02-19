@@ -58,6 +58,7 @@ protected:
 
 	afx_msg void OnEnChangeEditPluginName();
 	afx_msg void OnEnChangeEditTitle();
+	afx_msg void OnEnChangeEditUserAgent();
 	afx_msg void OnEnChangeEditProviderUrl();
 
 	afx_msg void OnCbnSelchangeComboAccessType();
@@ -76,6 +77,7 @@ protected:
 
 	CEdit m_wndName;
 	CEdit m_wndTitle;
+	CEdit m_wndUserAgent;
 	CEdit m_wndProviderUrl;
 
 	CComboBox m_wndAccessType;
@@ -91,5 +93,6 @@ protected:
 
 	CString m_Name;
 	CString m_Title;
+	CString m_UserAgent;
 	CString m_ProviderUrl;
 };

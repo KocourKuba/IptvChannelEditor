@@ -41,6 +41,8 @@ plugin_smile::plugin_smile()
 
 void plugin_smile::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Smile TV";
 	name = "smiletv";
 	access_type = AccountAccessType::enLoginPass;

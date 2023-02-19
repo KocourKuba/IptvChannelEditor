@@ -41,6 +41,8 @@ plugin_fox::plugin_fox()
 
 void plugin_fox::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Fox TV";
 	name = "fox-fun.tv";
 	access_type = AccountAccessType::enLoginPass;

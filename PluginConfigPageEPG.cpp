@@ -274,7 +274,7 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (utils::DownloadFile(url, data))
+	if (utils::DownloadFile(url, data, GetPropertySheet()->m_plugin->get_user_agent().c_str()))
 	{
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;

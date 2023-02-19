@@ -41,6 +41,8 @@ plugin_antifriz::plugin_antifriz()
 
 void plugin_antifriz::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Antifriz TV";
 	name = "antifriz.tv";
 	access_type = AccountAccessType::enPin;

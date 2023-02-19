@@ -43,16 +43,16 @@ base_plugin::base_plugin(const base_plugin& src)
 	*this = src;
 }
 
-void base_plugin::clear()
-{
-	plugin_config::clear();
-	regex_uri_template = L"";
-}
-
 void base_plugin::load_default()
 {
+	plugin_config::load_default();
+
 	title = "Custom";
 	name = "custom.iptv";
+	user_agent = "DuneHD/1.0";
+
+	regex_uri_template.empty();
+
 	provider_url = "http://dune-hd.com/";
 	access_type = AccountAccessType::enNone;
 
@@ -306,7 +306,7 @@ const std::map<std::wstring, std::wstring>& base_plugin::get_epg_id_mapper(int e
 	{
 		CWaitCursor cur;
 		std::stringstream data;
-		if (utils::DownloadFile(params.epg_mapper_url, data))
+		if (utils::DownloadFile(params.epg_mapper_url, data, get_user_agent().c_str()))
 		{
 			JSON_ALL_TRY
 			{
@@ -348,7 +348,7 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<ti
 	CWaitCursor cur;
 	std::stringstream data;
 	const auto& url = compile_epg_url(epg_idx, epg_id, for_time, info);
-	if (!utils::DownloadFile(url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL)))
+	if (!utils::DownloadFile(url, data, get_user_agent().c_str(), GetConfig().get_int(true, REG_MAX_CACHE_TTL)))
 		return false;
 
 	const auto& params = epg_params[epg_idx];

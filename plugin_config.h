@@ -320,14 +320,9 @@ protected:
 	/// <summary>
 	/// load default settings
 	/// </summary>
-	virtual void load_default() {}
+	virtual void load_default();
 
 public:
-	/// <summary>
-	/// clear all parameters
-	/// </summary>
-	virtual void clear();
-
 	/// <summary>
 	/// save plugin parameters to file
 	/// </summary>
@@ -371,6 +366,12 @@ public:
 	/// </summary>
 	std::wstring get_title() const { return utils::utf8_to_utf16(title); }
 	void set_title(const std::wstring& val) { title = utils::utf16_to_utf8(val); }
+
+	/// <summary>
+	/// property user-agent
+	/// </summary>
+	std::wstring get_user_agent() const { return utils::utf8_to_utf16(user_agent); }
+	void set_user_agent(const std::wstring& val) { user_agent = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// property plugin name
@@ -663,8 +664,9 @@ public:
 	{
 		SERIALIZE_STRUCT(j, c, access_type);
 		SERIALIZE_STRUCT(j, c, short_name);
-		SERIALIZE_STRUCT(j, c, title);
 		SERIALIZE_STRUCT(j, c, name);
+		SERIALIZE_STRUCT(j, c, title);
+		SERIALIZE_STRUCT(j, c, user_agent);
 		SERIALIZE_STRUCT(j, c, provider_url);
 		SERIALIZE_STRUCT(j, c, playlist_templates);
 		SERIALIZE_STRUCT(j, c, playlist_template_index);
@@ -692,8 +694,9 @@ public:
 	{
 		DESERIALIZE_STRUCT(j, c, access_type);
 		DESERIALIZE_STRUCT(j, c, short_name);
-		DESERIALIZE_STRUCT(j, c, title);
 		DESERIALIZE_STRUCT(j, c, name);
+		DESERIALIZE_STRUCT(j, c, title);
+		DESERIALIZE_STRUCT(j, c, user_agent);
 		DESERIALIZE_STRUCT(j, c, provider_url);
 		DESERIALIZE_STRUCT(j, c, playlist_templates);
 		DESERIALIZE_STRUCT(j, c, playlist_template_index);
@@ -731,6 +734,8 @@ protected:
 	AccountAccessType access_type = AccountAccessType::enNone;
 	// plugin title
 	std::string title;
+	// plugin user-agent
+	std::string user_agent;
 	// plugin internal name (used by Dune)
 	std::string name;
 	// url to provider account

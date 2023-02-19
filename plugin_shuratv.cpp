@@ -41,6 +41,8 @@ plugin_shuratv::plugin_shuratv()
 
 void plugin_shuratv::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Shura TV";
 	name = "shura.tv";
 	access_type = AccountAccessType::enPin;

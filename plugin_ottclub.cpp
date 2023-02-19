@@ -41,6 +41,8 @@ plugin_ottclub::plugin_ottclub()
 
 void plugin_ottclub::load_default()
 {
+	base_plugin::load_default();
+
 	title = "OttClub";
 	name = "ottclub";
 	access_type = AccountAccessType::enPin;

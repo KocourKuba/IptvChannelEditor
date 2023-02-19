@@ -50,6 +50,8 @@ plugin_sharaclub::plugin_sharaclub()
 
 void plugin_sharaclub::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Sharaclub TV";
 	name = "sharaclub.tv";
 	access_type = AccountAccessType::enLoginPass;
@@ -103,7 +105,7 @@ bool plugin_sharaclub::parse_access_info(TemplateParams& params, std::list<Accou
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!utils::DownloadFile(url, data))
+	if (!utils::DownloadFile(url, data, get_user_agent().c_str()))
 	{
 		return false;
 	}
@@ -148,7 +150,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams* params /*= nullptr*/)
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (utils::DownloadFile(url, data))
+	if (utils::DownloadFile(url, data, get_user_agent().c_str()))
 	{
 		JSON_ALL_TRY;
 		{
@@ -190,7 +192,7 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 
 		CWaitCursor cur;
 		std::stringstream data;
-		if (utils::DownloadFile(url, data))
+		if (utils::DownloadFile(url, data, get_user_agent().c_str()))
 		{
 			JSON_ALL_TRY;
 			{
@@ -213,7 +215,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams* params /*= nullptr*/)
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!utils::DownloadFile(url, data))
+	if (!utils::DownloadFile(url, data, get_user_agent().c_str()))
 		return;
 
 	JSON_ALL_TRY;
@@ -259,7 +261,7 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 
 		CWaitCursor cur;
 		std::stringstream data;
-		if (utils::DownloadFile(url, data))
+		if (utils::DownloadFile(url, data, get_user_agent().c_str()))
 		{
 			JSON_ALL_TRY;
 			{

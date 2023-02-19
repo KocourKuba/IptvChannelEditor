@@ -41,6 +41,8 @@ plugin_filmax::plugin_filmax()
 
 void plugin_filmax::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Filmax TV";
 	name = "filmax";
 	access_type = AccountAccessType::enLoginPass;

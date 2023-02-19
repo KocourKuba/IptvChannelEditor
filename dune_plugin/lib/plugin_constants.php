@@ -28,6 +28,7 @@ class Plugin_Constants
     const /* (char *) */ ACCESS_TYPE = 'access_type';
     const /* (char *) */ SHORT_NAME = 'short_name';
     const /* (bool)   */ SQUARE_ICONS = 'square_icons';
+    const /* (char*)  */ USER_AGENT = 'user_agent';
     const /* (array ) */ PLAYLIST_TEMPLATES = 'playlist_templates';
     const /* (int )   */ PLAYLIST_TEMPLATE_INDEX = 'playlist_template_index';
 

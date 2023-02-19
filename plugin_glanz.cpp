@@ -41,6 +41,8 @@ plugin_glanz::plugin_glanz()
 
 void plugin_glanz::load_default()
 {
+	base_plugin::load_default();
+
 	title = "glanz TV";
 	name = "glanz.tv";
 	access_type = AccountAccessType::enLoginPass;

@@ -109,7 +109,6 @@ protected:
 	void load_default() override;
 
 public:
-	void clear() override;
 
 	/// <summary>
 	/// save plugin parameters to file

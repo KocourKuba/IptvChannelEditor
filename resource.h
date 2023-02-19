@@ -549,6 +549,8 @@
 #define IDC_EDIT_PROVIDER_URL           1185
 #define IDC_BUTTON_EDIT_LINK            1185
 #define IDC_EDIT_PARSE_PATTERN          1186
+#define IDC_EDIT_PROVIDER_URL2          1186
+#define IDC_EDIT_USER_AGENT             1186
 #define IDC_EDIT_STREAM_TEMPLATE        1187
 #define IDC_EDIT_STREAM_ARC_TEMPLATE    1188
 #define IDC_EDIT_PLAYLIST_TEMPLATE      1190
@@ -632,7 +634,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

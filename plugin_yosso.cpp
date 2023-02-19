@@ -44,6 +44,8 @@ plugin_yosso::plugin_yosso()
 
 void plugin_yosso::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Yosso TV";
 	name = "yossotv";
 	access_type = AccountAccessType::enLoginPass;

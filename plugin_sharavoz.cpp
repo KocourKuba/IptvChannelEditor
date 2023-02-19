@@ -41,6 +41,8 @@ plugin_sharavoz::plugin_sharavoz()
 
 void plugin_sharavoz::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Sharavoz TV";
 	name = "sharavoz.tv";
 	access_type = AccountAccessType::enPin;

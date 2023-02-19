@@ -28,11 +28,13 @@ class dynamic_config
 
         $this->features[Plugin_Constants::ACCESS_TYPE] = Plugin_Constants::ACCOUNT_UNKNOWN;
         $this->features[Plugin_Constants::SQUARE_ICONS] = false;
+        $this->features[Plugin_Constants::USER_AGENT] = "DuneHD/1.0";
         $this->features[Plugin_Constants::VOD_SUPPORTED] = false;
         $this->features[Plugin_Constants::VOD_M3U] = false;
 
         $this->features[Plugin_Constants::PLAYLIST_TEMPLATE_INDEX] = 0;
         $this->features[Plugin_Constants::VOD_TEMPLATES_INDEX] = 0;
+
 
         // load defaults
         $default_streams = array();
@@ -84,6 +86,8 @@ class dynamic_config
         $this->set_feature(Plugin_Constants::VOD_SUPPORTED, $settings[Plugin_Constants::VOD_SUPPORTED]);
         $this->set_feature(Plugin_Constants::VOD_M3U, $settings[Plugin_Constants::VOD_M3U]);
         $this->set_feature(Plugin_Constants::VOD_TEMPLATES, $settings[Plugin_Constants::VOD_TEMPLATES]);
+
+        HD::set_dune_user_agent($settings[Plugin_Constants::USER_AGENT]);
 
         foreach ($settings[Plugin_Constants::STREAMS_CONFIG] as $config) {
             $param_idx = $config[Stream_Params::STREAM_TYPE];

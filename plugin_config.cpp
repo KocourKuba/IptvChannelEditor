@@ -30,7 +30,23 @@ DEALINGS IN THE SOFTWARE.
 #include "Constants.h"
 #include "IPTVChannelEditor.h"
 
-void plugin_config::clear()
+void plugin_config::set_plugin_defaults(PluginType val)
+{
+	plugin_type = val;
+	load_default();
+}
+
+const PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx) const
+{
+	if (idx != -1 && idx >= (int)playlist_templates.size())
+	{
+		idx = 0;
+	}
+
+	return playlist_templates[idx];
+}
+
+void plugin_config::load_default()
 {
 	title = "Custom";
 	name = "custom";
@@ -73,23 +89,6 @@ void plugin_config::clear()
 	epg_params = { params, params };
 	epg_params[0].epg_param = "first";
 	epg_params[1].epg_param = "second";
-}
-
-void plugin_config::set_plugin_defaults(PluginType val)
-{
-	plugin_type = val;
-	clear();
-	load_default();
-}
-
-const PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx) const
-{
-	if (idx != -1 && idx >= (int)playlist_templates.size())
-	{
-		idx = 0;
-	}
-
-	return playlist_templates[idx];
 }
 
 bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
@@ -136,10 +135,9 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool us
 
 void plugin_config::load_plugin_parameters(const std::wstring& filename)
 {
-	clear();
+	load_default();
 	if (filename.empty())
 	{
-		load_default();
 		return;
 	}
 

@@ -41,6 +41,8 @@ plugin_lightiptv::plugin_lightiptv()
 
 void plugin_lightiptv::load_default()
 {
+	base_plugin::load_default();
+
 	title = "LightIPTV";
 	name = "lightiptv";
 	access_type = AccountAccessType::enPin;

@@ -41,6 +41,8 @@ plugin_iptvonline::plugin_iptvonline()
 
 void plugin_iptvonline::load_default()
 {
+	base_plugin::load_default();
+
 	title = "IPTV Online";
 	name = "iptvonline";
 	access_type = AccountAccessType::enPin;

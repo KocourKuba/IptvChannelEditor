@@ -689,7 +689,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	{
 		CWaitCursor cur;
 		std::stringstream data;
-		if (utils::DownloadFile(provider_api_url, data))
+		if (utils::DownloadFile(provider_api_url, data, m_plugin->get_user_agent().c_str()))
 		{
 			JSON_ALL_TRY;
 			const auto& parsed_json = nlohmann::json::parse(data.str());
@@ -1009,7 +1009,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	else if (utils::CrackUrl(url, cracked))
 	{
 		CWaitCursor cur;
-		if (!utils::DownloadFile(url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL)))
+		if (!utils::DownloadFile(url, data, m_plugin->get_user_agent().c_str(), GetConfig().get_int(true, REG_MAX_CACHE_TTL)))
 		{
 			AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 			OnEndLoadPlaylist(0);

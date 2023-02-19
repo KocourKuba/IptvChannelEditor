@@ -41,6 +41,8 @@ plugin_russkoetv::plugin_russkoetv()
 
 void plugin_russkoetv::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Russkoe TV";
 	name = "russkoetv";
 	access_type = AccountAccessType::enPin;

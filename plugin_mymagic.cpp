@@ -41,6 +41,8 @@ plugin_mymagic::plugin_mymagic()
 
 void plugin_mymagic::load_default()
 {
+	base_plugin::load_default();
+
 	title = "MyMagic TV";
 	name = "mymagic";
 	access_type = AccountAccessType::enLoginPass;

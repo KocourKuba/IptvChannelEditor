@@ -13,6 +13,8 @@ class HD
      */
     private static $user_agent;
 
+    private static $plugin_user_agent;
+
     ///////////////////////////////////////////////////////////////////////
 
     /**
@@ -147,7 +149,10 @@ class HD
                 $extra_useragent .= ")";
         }
 
-        self::$user_agent = "DuneHD/1.0" . $extra_useragent;
+        if (empty(self::$plugin_user_agent)) {
+            self::$plugin_user_agent = "DuneHD/1.0";
+        }
+        self::$user_agent = self::$plugin_user_agent . $extra_useragent;
         hd_print("HTTP UserAgent: " . self::$user_agent);
     }
 
@@ -157,6 +162,12 @@ class HD
             self::http_init();
 
         return self::$user_agent;
+    }
+
+    public static function set_dune_user_agent($user_agent)
+    {
+        self::$plugin_user_agent = $user_agent;
+        self::$user_agent = '';
     }
 
     /**

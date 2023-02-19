@@ -681,7 +681,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			{
 				std::stringstream data;
 				std::wstring url = dlg.m_url.GetString();
-				if (!utils::DownloadFile(url, data))
+				if (!utils::DownloadFile(url, data, m_plugin->get_user_agent().c_str()))
 				{
 					std::ifstream instream(url);
 					data << instream.rdbuf();
@@ -1051,7 +1051,7 @@ void CAccessInfoPage::GetAccountInfo()
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!pl_url.empty() && utils::DownloadFile(pl_url, data))
+	if (!pl_url.empty() && utils::DownloadFile(pl_url, data, m_plugin->get_user_agent().c_str()))
 	{
 		std::istringstream stream(data.str());
 

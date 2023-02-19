@@ -218,6 +218,7 @@ bool CrackUrl(const std::wstring& url, CrackedUrl& cracked)
 #ifdef _USE_CURL
 bool CurlDownload(const std::wstring& url,
 				  std::stringstream& vData,
+				  LPCWSTR user_agent /*= nullptr*/,
 				  int cache_ttl /*= 0*/,
 				  std::vector<std::string>* pHeaders /*= nullptr*/,
 				  bool verb_post /*= false*/,
@@ -270,7 +271,11 @@ bool CurlDownload(const std::wstring& url,
 		easy.add<CURLOPT_SSL_VERIFYHOST>(0);
 		easy.add<CURLOPT_CONNECTTIMEOUT>(30);
 		easy.add<CURLOPT_TIMEOUT>(60);
-		easy.add<CURLOPT_USERAGENT>("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.35");
+		if (user_agent == nullptr)
+			easy.add<CURLOPT_USERAGENT>("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.35");
+		else
+			easy.add<CURLOPT_USERAGENT>(utils::utf16_to_utf8(user_agent).c_str());
+
 
 		curl::curl_header headers;
 		if (pHeaders)
@@ -314,6 +319,7 @@ bool CurlDownload(const std::wstring& url,
 
 bool WinHttpDownload(const std::wstring& url,
 					 std::stringstream& vData,
+					 LPCWSTR user_agent /*= nullptr*/,
 					 int cache_ttl /*= 0*/,
 					 std::vector<std::string>* pHeaders /*= nullptr*/,
 					 bool verb_post /*= false*/,
@@ -359,9 +365,14 @@ bool WinHttpDownload(const std::wstring& url,
 			break;
 		}
 
-		std::wstring user_agent(L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.35");
+		std::wstring useragent;
+		if (user_agent == nullptr)
+			useragent = L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.35";
+		else
+			useragent = user_agent;
+
 		// Use WinHttpOpen to obtain a session handle.
-		CAutoHinternet hSession = WinHttpOpen(user_agent.c_str(),
+		CAutoHinternet hSession = WinHttpOpen(useragent.c_str(),
 											  WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
 											  WINHTTP_NO_PROXY_NAME,
 											  WINHTTP_NO_PROXY_BYPASS, 0);

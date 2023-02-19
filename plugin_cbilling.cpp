@@ -44,6 +44,8 @@ plugin_cbilling::plugin_cbilling()
 
 void plugin_cbilling::load_default()
 {
+	base_plugin::load_default();
+
 	title = "Cbilling TV";
 	name = "cbillingtv";
 	access_type = AccountAccessType::enPin;
@@ -103,7 +105,7 @@ bool plugin_cbilling::parse_access_info(TemplateParams& params, std::list<Accoun
 	headers.emplace_back("accept: */*");
 	headers.emplace_back(fmt::format(ACCOUNT_HEADER_TEMPLATE, utils::utf16_to_utf8(params.password)));
 	std::stringstream data;
-	if (!utils::DownloadFile(ACCOUNT_TEMPLATE, data, 0, &headers))
+	if (!utils::DownloadFile(ACCOUNT_TEMPLATE, data, get_user_agent().c_str(), 0, &headers))
 	{
 		return false;
 	}

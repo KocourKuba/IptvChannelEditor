@@ -52,6 +52,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_CHECK_SQUARE_ICONS, &CPluginConfigPage::OnBnClickedCheckSquareIcons)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_NAME, &CPluginConfigPage::OnEnChangeEditPluginName)
 	ON_EN_CHANGE(IDC_EDIT_TITLE, &CPluginConfigPage::OnEnChangeEditTitle)
+	ON_EN_CHANGE(IDC_EDIT_USER_AGENT, &CPluginConfigPage::OnEnChangeEditUserAgent)
 	ON_EN_CHANGE(IDC_EDIT_PROVIDER_URL, &CPluginConfigPage::OnEnChangeEditProviderUrl)
 END_MESSAGE_MAP()
 
@@ -67,6 +68,8 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_NAME, m_Name);
 	DDX_Control(pDX, IDC_EDIT_TITLE, m_wndTitle);
 	DDX_Text(pDX, IDC_EDIT_TITLE, m_Title);
+	DDX_Control(pDX, IDC_EDIT_USER_AGENT, m_wndUserAgent);
+	DDX_Text(pDX, IDC_EDIT_USER_AGENT, m_UserAgent);
 	DDX_Control(pDX, IDC_EDIT_PROVIDER_URL, m_wndProviderUrl);
 	DDX_Text(pDX, IDC_EDIT_PROVIDER_URL, m_ProviderUrl);
 	DDX_Control(pDX, IDC_COMBO_ACCESS_TYPE, m_wndAccessType);
@@ -133,6 +136,7 @@ void CPluginConfigPage::UpdateControls()
 	// common
 	m_wndName.EnableWindow(enable);
 	m_wndTitle.EnableWindow(enable);
+	m_wndUserAgent.EnableWindow(enable);
 	m_wndProviderUrl.EnableWindow(enable);
 	m_wndChkSquareIcons.EnableWindow(enable);
 	m_wndAccessType.EnableWindow(enable && custom);
@@ -168,6 +172,7 @@ void CPluginConfigPage::FillControls()
 
 	m_Name = plugin->get_name().c_str();
 	m_Title = plugin->get_title().c_str();
+	m_UserAgent = plugin->get_user_agent().c_str();
 	m_ProviderUrl = plugin->get_provider_url().c_str();
 
 	UpdateData(FALSE);
@@ -284,6 +289,13 @@ void CPluginConfigPage::OnEnChangeEditTitle()
 	UpdateData(TRUE);
 	AllowSave();
 	GetPropertySheet()->m_plugin->set_title(m_Title.GetString());
+}
+
+void CPluginConfigPage::OnEnChangeEditUserAgent()
+{
+	UpdateData(TRUE);
+	AllowSave();
+	GetPropertySheet()->m_plugin->set_user_agent(m_UserAgent.GetString());
 }
 
 void CPluginConfigPage::OnEnChangeEditProviderUrl()

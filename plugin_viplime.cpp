@@ -41,6 +41,8 @@ plugin_viplime::plugin_viplime()
 
 void plugin_viplime::load_default()
 {
+	base_plugin::load_default();
+
 	title = "VipLime TV";
 	name = "viplime.fun.tv";
 	access_type = AccountAccessType::enPin;

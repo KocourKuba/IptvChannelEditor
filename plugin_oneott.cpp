@@ -44,6 +44,8 @@ plugin_oneott::plugin_oneott()
 
 void plugin_oneott::load_default()
 {
+	base_plugin::load_default();
+
 	title = "1OTT TV";
 	name = "oneott.tv";
 	access_type = AccountAccessType::enLoginPass;
@@ -80,7 +82,7 @@ bool plugin_oneott::parse_access_info(TemplateParams& params, std::list<AccountI
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data))
+	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data, get_user_agent().c_str()))
 	{
 		return false;
 	}

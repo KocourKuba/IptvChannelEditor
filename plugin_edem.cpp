@@ -40,6 +40,8 @@ plugin_edem::plugin_edem()
 
 void plugin_edem::load_default()
 {
+	base_plugin::load_default();
+
 	vod_support = true;
 	vod_filter = true;
 

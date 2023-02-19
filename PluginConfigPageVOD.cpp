@@ -193,7 +193,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	CWaitCursor cur;
 	const auto& url = GetPropertySheet()->m_plugin->get_vod_url(params);
 	std::stringstream data;
-	if (utils::DownloadFile(url, data))
+	if (utils::DownloadFile(url, data, GetPropertySheet()->m_plugin->get_user_agent().c_str()))
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"vod.m3u8";
 

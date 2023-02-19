@@ -41,6 +41,8 @@ plugin_tvteam::plugin_tvteam()
 
 void plugin_tvteam::load_default()
 {
+	base_plugin::load_default();
+
 	title = "TV Team";
 	name = "tv.team";
 	access_type = AccountAccessType::enPin;

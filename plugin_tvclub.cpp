@@ -49,6 +49,8 @@ plugin_tvclub::plugin_tvclub()
 
 void plugin_tvclub::load_default()
 {
+	base_plugin::load_default();
+
 	title = "TV Club";
 	name = "tv_club";
 	access_type = AccountAccessType::enLoginPass;
@@ -90,7 +92,7 @@ bool plugin_tvclub::parse_access_info(TemplateParams& params, std::list<AccountI
 	const auto& url = fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(creds));
 
 	CWaitCursor cur;
-	if (!utils::DownloadFile(url, data))
+	if (!utils::DownloadFile(url, data, get_user_agent().c_str()))
 	{
 		return false;
 	}
@@ -153,7 +155,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams* params /*= nullptr*/)
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (utils::DownloadFile(url, data))
+	if (utils::DownloadFile(url, data, get_user_agent().c_str()))
 	{
 		JSON_ALL_TRY;
 		{
@@ -201,7 +203,7 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 
 		CWaitCursor cur;
 		std::stringstream data;
-		if (utils::DownloadFile(url, data))
+		if (utils::DownloadFile(url, data, get_user_agent().c_str()))
 		{
 			JSON_ALL_TRY;
 			{
