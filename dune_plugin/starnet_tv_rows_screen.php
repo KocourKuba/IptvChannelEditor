@@ -390,7 +390,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             $width,
             round($width / RowsItemsParams::width * RowsItemsParams::height), 0,
             $inactive_icon_width,
-            round($inactive_icon_width / $icon_prop),
+            round($inactive_icon_width / $icon_prop) - 10,
             0,
             RowsItemsParams::caption_dy,
             RowsItemsParams::inactive_caption_color,
