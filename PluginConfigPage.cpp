@@ -131,7 +131,7 @@ void CPluginConfigPage::UpdateControls()
 
 	const auto& plugin = GetPropertySheet()->m_plugin;
 	bool custom = plugin->get_plugin_type() == PluginType::enCustom;
-	bool enable = !GetPropertySheet()->GetSelectedConfig().empty();
+	bool enable = true;
 
 	// common
 	m_wndName.EnableWindow(enable);

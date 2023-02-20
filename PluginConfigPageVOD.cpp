@@ -130,7 +130,7 @@ void CPluginConfigPageVOD::UpdateControls()
 {
 	UpdateData(TRUE);
 
-	bool enable = !GetPropertySheet()->GetSelectedConfig().empty();
+	bool enable = true;
 
 	bool enableVod = m_wndChkEnableVOD.GetCheck() != 0;
 	bool enableM3U = m_wndChkVodM3U.GetCheck() != 0;

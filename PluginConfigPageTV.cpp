@@ -205,7 +205,7 @@ void CPluginConfigPageTV::UpdateControls()
 {
 	UpdateData(TRUE);
 
-	bool enable = !GetPropertySheet()->GetSelectedConfig().empty();
+	bool enable = true;
 
 	// common
 	m_wndPlaylistTemplates.EnableWindow(enable);

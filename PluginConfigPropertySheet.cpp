@@ -290,7 +290,7 @@ void CPluginConfigPropertySheet::AllowSave(bool val /*= true*/)
 	if (m_wndBtnSaveConf.GetSafeHwnd())
 		m_wndBtnSaveConf.EnableWindow(val);
 
-	GetDlgItem(IDOK)->EnableWindow(!val);
+	GetDlgItem(IDOK)->EnableWindow(!val && !GetSelectedConfig().empty());
 }
 
 void CPluginConfigPropertySheet::OnCbnSelchangeComboPluginConfig()
