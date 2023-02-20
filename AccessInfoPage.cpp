@@ -1131,6 +1131,8 @@ void CAccessInfoPage::OnCbnSelchangeComboConfigs()
 		CString value;
 		m_wndConfigs.GetLBText(idx, value);
 		selected.set_config(value);
+		m_plugin->load_plugin_parameters(selected.get_config());
+		CreateAccountsList();
 	}
 }
 
