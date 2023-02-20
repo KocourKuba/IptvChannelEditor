@@ -269,19 +269,16 @@ struct StreamParameters
 	int cu_duration = 10800;
 
 	std::string uri_template;
-	std::string uri_addon;
 	std::string uri_arc_template;
 	std::string uri_custom_arc_template;
 	std::string dune_params;
 
 	std::wstring get_stream_template() const { return utils::utf8_to_utf16(uri_template); }
-	std::wstring get_uri_addon() const { return utils::utf8_to_utf16(uri_addon); }
 	std::wstring get_stream_arc_template() const { return utils::utf8_to_utf16(uri_arc_template); }
 	std::wstring get_custom_stream_arc_template() const { return utils::utf8_to_utf16(uri_custom_arc_template); }
 	std::wstring get_dune_params() const { return utils::utf8_to_utf16(dune_params); }
 
 	void set_uri_template(const std::wstring& value) { uri_template = utils::utf16_to_utf8(value); }
-	void set_uri_addon(const std::wstring& value) { uri_addon = utils::utf16_to_utf8(value); }
 	void set_uri_arc_template(const std::wstring& value) { uri_arc_template = utils::utf16_to_utf8(value); }
 	void set_uri_custom_arc_template(const std::wstring& value) { uri_custom_arc_template = utils::utf16_to_utf8(value); }
 	void set_dune_params(const std::wstring& value) { dune_params = utils::utf16_to_utf8(value); }
@@ -290,7 +287,6 @@ struct StreamParameters
 	{
 		SERIALIZE_STRUCT(j, c, stream_type);
 		SERIALIZE_STRUCT(j, c, uri_template);
-		SERIALIZE_STRUCT(j, c, uri_addon);
 		SERIALIZE_STRUCT(j, c, uri_arc_template);
 		SERIALIZE_STRUCT(j, c, uri_custom_arc_template);
 		SERIALIZE_STRUCT(j, c, cu_type);
@@ -302,7 +298,6 @@ struct StreamParameters
 	{
 		DESERIALIZE_STRUCT(j, c, stream_type);
 		DESERIALIZE_STRUCT(j, c, uri_template);
-		DESERIALIZE_STRUCT(j, c, uri_addon);
 		DESERIALIZE_STRUCT(j, c, uri_arc_template);
 		DESERIALIZE_STRUCT(j, c, uri_custom_arc_template);
 		DESERIALIZE_STRUCT(j, c, cu_type);
