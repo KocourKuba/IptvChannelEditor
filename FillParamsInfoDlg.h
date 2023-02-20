@@ -48,6 +48,7 @@ public:
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
+	BOOL DestroyWindow() override;
 	void OnOK() override;
 
 	DECLARE_MESSAGE_MAP()
@@ -57,6 +58,7 @@ protected:
 	afx_msg void OnBnClickedButtonAdd();
 	afx_msg void OnBnClickedButtonRemove();
 	afx_msg void OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 
 public:
 	int m_type = 0;

@@ -27,12 +27,14 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "IPTVChannelEditor.h"
 #include "FillParamsInfoDlg.h"
+#include "Constants.h"
 
 // CFillParamsInfo dialog
 
 IMPLEMENT_DYNAMIC(CFillParamsInfoDlg, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CFillParamsInfoDlg, CDialogEx)
+	ON_WM_GETMINMAXINFO()
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_INFO, &CFillParamsInfoDlg::OnNMDblclkListInfo)
 	ON_MESSAGE(WM_NOTIFY_END_EDIT, &CFillParamsInfoDlg::OnNotifyEndEdit)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, &CFillParamsInfoDlg::OnBnClickedButtonAdd)
@@ -60,6 +62,8 @@ void CFillParamsInfoDlg::DoDataExchange(CDataExchange* pDX)
 BOOL CFillParamsInfoDlg::OnInitDialog()
 {
 	__super::OnInitDialog();
+
+	RestoreWindowPos(GetSafeHwnd(), REG_FILL_INFO_WINDOW_POS);
 
 	m_wndListParams.SetExtendedStyle(m_wndListParams.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
 
@@ -113,6 +117,22 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void CFillParamsInfoDlg::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI)
+{
+	CMFCDynamicLayout* layout = GetDynamicLayout();
+
+	if (layout)
+	{
+		CSize size = layout->GetMinSize();
+		CRect rect(0, 0, size.cx, size.cy);
+		AdjustWindowRect(&rect, GetStyle(), FALSE);
+		lpMMI->ptMinTrackSize.x = rect.Width();
+		lpMMI->ptMinTrackSize.y = rect.Height();
+	}
+
+	__super::OnGetMinMaxInfo(lpMMI);
 }
 
 void CFillParamsInfoDlg::OnNMDblclkListInfo(NMHDR* pNMHDR, LRESULT* pResult)
@@ -187,4 +207,11 @@ void CFillParamsInfoDlg::OnOK()
 	}
 
 	__super::OnOK();
+}
+
+BOOL CFillParamsInfoDlg::DestroyWindow()
+{
+	SaveWindowPos(GetSafeHwnd(), REG_FILL_INFO_WINDOW_POS);
+
+	return __super::DestroyWindow();
 }

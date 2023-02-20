@@ -42,6 +42,7 @@ constexpr auto REG_VOD_WINDOW_POS	     = _T("VodWindowPos");
 constexpr auto REG_ACC_WINDOW_POS	     = _T("AccountWindowPos");
 constexpr auto REG_PLUGIN_CFG_WINDOW_POS = _T("PluginConfigWindowPos");
 constexpr auto REG_CONFIG_WINDOW_POS     = _T("ConfigWindowPos");
+constexpr auto REG_FILL_INFO_WINDOW_POS	 = _T("FillInfoWindowPos");
 
 // app
 constexpr auto REG_NEXT_UPDATE         = _T("NextUpdate");
