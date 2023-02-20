@@ -55,9 +55,6 @@ void base_plugin::load_default()
 
 	provider_url = "http://dune-hd.com/";
 	access_type = AccountAccessType::enNone;
-
-	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	playlist_templates.emplace_back(info);
 }
 
 bool base_plugin::save_plugin_parameters(const std::wstring& filename, bool use_full_path /*= false*/)
