@@ -367,6 +367,11 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		{
 			if (IDYES == AfxMessageBox(IDS_STRING_UPDATE_AVAILABLE, MB_YESNO))
 			{
+				// clear cache before update.
+				std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
+				std::error_code err;
+				std::filesystem::remove_all(cache_file, err);
+
 				cmd = L"update";
 				if (GetConfig().get_int(true, REG_UPDATE_PL))
 					cmd += L" --optional";
