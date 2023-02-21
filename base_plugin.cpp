@@ -72,7 +72,7 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 	info->set_uri(url);
 
 	boost::wsmatch m;
-	if (!boost::regex_match(url, m, regex_uri_template))
+	if (regex_uri_template.empty() || !boost::regex_match(url, m, regex_uri_template))
 	{
 		info->set_is_template(false);
 		return;
