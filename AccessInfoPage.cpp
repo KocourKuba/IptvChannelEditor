@@ -137,6 +137,7 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_wndBackground);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_background);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, m_channelsWebPath);
+	DDX_Control(pDX, IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, m_wndChannelsWebPath);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT, m_wndDirectLink);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_UPDATE_URL, m_wndUpdateUrl);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_UPDATE_FILE_URL, m_wndUpdatePackageUrl);
@@ -372,6 +373,48 @@ void CAccessInfoPage::UpdateOptionalControls()
 
 	m_channelsWebPath = selected.get_ch_web_path().c_str();
 
+	m_wndAutoIncrement.SetCheck(selected.custom_increment);
+
+	m_wndVersionID.EnableWindow(selected.custom_increment);
+	m_wndUpdateName.EnableWindow(selected.custom_update_name);
+	m_wndPackageName.EnableWindow(selected.custom_package_name);
+
+	const auto& short_name_w = utils::utf8_to_utf16(m_plugin->get_short_name());
+	const auto& suffix = selected.get_suffix();
+
+	if (selected.custom_update_name)
+	{
+		m_updateDescription = selected.get_update_name().c_str();
+	}
+	else
+	{
+		m_updateDescription = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
+		m_updateDescription += L".xml";
+	}
+
+	if (selected.custom_package_name)
+	{
+		m_updatePackage = selected.get_package_name().c_str();
+	}
+	else
+	{
+		m_updatePackage = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
+		m_updatePackage += L".tar.gz";
+	}
+
+	if (selected.custom_increment)
+	{
+		m_versionIdx = selected.get_version_id().c_str();
+	}
+	else
+	{
+		COleDateTime date = COleDateTime::GetCurrentTime();
+		m_versionIdx = fmt::format(L"{:d}{:02d}{:02d}{:02d}", date.GetYear(), date.GetMonth(), date.GetDay(), date.GetHour()).c_str();
+	}
+
+	m_wndUpdatePackageUrl.SetWindowText(selected.get_update_package_url().c_str());
+	m_wndUpdateUrl.SetWindowText(selected.get_update_url().c_str());
+
 	UpdateData(FALSE);
 }
 
@@ -466,7 +509,7 @@ void CAccessInfoPage::CreateChannelsList()
 
 	CRect rect;
 	m_wndChLists.GetClientRect(&rect);
-	int vWidth = rect.Width() - 22;
+	int vWidth = rect.Width() - 30;
 
 	m_wndChLists.InsertColumn(0, L"", LVCFMT_LEFT, 22, 0);
 	m_wndChLists.InsertColumn(1, load_string_resource(IDS_STRING_COL_CHANNEL_NAME).c_str(), LVCFMT_LEFT, vWidth, 0);
@@ -869,47 +912,60 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-
-	if ((pNMLV->uChanged & LVIF_STATE))
-	{
-		m_wndRemove.EnableWindow(pNMLV->uNewState & LVIS_SELECTED);
-
-		if ((pNMLV->uNewState & 0x2000) && (pNMLV->uOldState & 0x1000))
-		{
-			int cnt = m_wndAccounts.GetItemCount();
-			for (int nItem = 0; nItem < cnt; nItem++)
-			{
-				if (nItem != pNMLV->iItem)
-				{
-					m_wndAccounts.SetCheck(nItem, FALSE);
-				}
-			}
-
-			m_plugin->clear_device_list();
-			m_plugin->clear_profiles_list();
-			GetAccountInfo();
-			FillChannelsList();
-			GetParent()->GetDlgItem(IDOK)->EnableWindow(TRUE);
-		}
-		else if ((pNMLV->uNewState & 0x1000) && (pNMLV->uOldState & 0x2000))
-		{
-			m_wndInfo.DeleteAllItems();
-			m_wndChLists.EnableWindow(FALSE);
-			m_wndServers.EnableWindow(FALSE);
-			m_wndProfiles.EnableWindow(FALSE);
-			m_wndEmbed.EnableWindow(FALSE);
-			m_wndLogo.EnableWindow(FALSE);
-			m_wndBackground.EnableWindow(FALSE);
-			m_wndSuffix.EnableWindow(FALSE);
-			m_wndCaption.EnableWindow(FALSE);
-			GetParent()->GetDlgItem(IDOK)->EnableWindow(FALSE);
-		}
-
-		UpdateOptionalControls();
-		SetWebUpdate();
-	}
-
 	*pResult = 0;
+
+	if (!(pNMLV->uChanged & LVIF_STATE))
+		return;
+
+	BOOL enable = FALSE;
+	if ((pNMLV->uNewState & 0x2000) && (pNMLV->uOldState & 0x1000))
+	{
+		int cnt = m_wndAccounts.GetItemCount();
+		for (int nItem = 0; nItem < cnt; nItem++)
+		{
+			m_wndAccounts.SetCheck(nItem, nItem == pNMLV->iItem);
+		}
+
+		m_plugin->clear_device_list();
+		m_plugin->clear_profiles_list();
+		FillChannelsList();
+		enable = TRUE;
+	}
+	//else if ((pNMLV->uNewState & 0x1000) && (pNMLV->uOldState & 0x2000)) {}
+
+	m_wndRemove.EnableWindow(pNMLV->uNewState & LVIS_SELECTED);
+
+	m_wndConfigs.EnableWindow(enable);
+	m_wndEditConfig.EnableWindow(enable);
+	m_wndChLists.EnableWindow(enable);
+	m_wndServers.EnableWindow(enable);
+	m_wndProfiles.EnableWindow(enable);
+	m_wndEmbed.EnableWindow(enable);
+	m_wndLogo.EnableWindow(enable);
+	m_wndBackground.EnableWindow(enable);
+	m_wndSuffix.EnableWindow(enable);
+	m_wndCaption.EnableWindow(enable);
+	m_wndUseDropboxUpdate.EnableWindow(enable);
+	m_wndDirectLink.EnableWindow(enable);
+	m_wndVersionID.EnableWindow(enable);
+	m_wndUpdateName.EnableWindow(enable);
+	m_wndPackageName.EnableWindow(enable);
+	m_wndUpdatePackageUrl.EnableWindow(enable);
+	m_wndUpdateUrl.EnableWindow(enable);
+	m_wndChannelsWebPath.EnableWindow(enable);
+	m_wndAutoIncrement.EnableWindow(enable);
+	m_wndCustomPackageName.EnableWindow(enable);
+	m_wndCustomUpdateName.EnableWindow(enable);
+
+	GetParent()->GetDlgItem(IDOK)->EnableWindow(enable);
+
+	UpdateOptionalControls();
+
+	m_wndInfo.DeleteAllItems();
+	if (enable)
+	{
+		GetAccountInfo();
+	}
 }
 
 void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResult)
@@ -934,12 +990,10 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 			}
 
 			m_wndDirectLink.EnableWindow(TRUE);
-			//m_wndEditLink.EnableWindow(TRUE);
 		}
 		else if (pNMLV->uNewState == 0 && pNMLV->uOldState & LVIS_SELECTED)
 		{
 			m_wndDirectLink.EnableWindow(FALSE);
-			//m_wndEditLink.EnableWindow(FALSE);
 		}
 
 		int cnt = m_wndChLists.GetItemCount();
@@ -962,7 +1016,7 @@ void CAccessInfoPage::GetAccountInfo()
 {
 	UpdateData(TRUE);
 
-	m_status.LoadString(IDS_STRING_STATUS_TEXT);
+	m_status = load_string_resource(IDS_STRING_STATUS_TEXT).c_str();
 	m_wndProfiles.ResetContent();
 	m_wndProfiles.EnableWindow(FALSE);
 	m_wndInfo.DeleteAllItems();
@@ -1133,6 +1187,7 @@ void CAccessInfoPage::OnCbnSelchangeComboConfigs()
 		selected.set_config(value);
 		m_plugin->load_plugin_parameters(selected.get_config());
 		CreateAccountsList();
+		m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
 	}
 }
 
@@ -1311,6 +1366,7 @@ void CAccessInfoPage::OnBnClickedButtonEditConfig()
 	{
 		m_plugin->copy(pSheet->m_plugin.get());
 		CreateAccountsList();
+		m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
 	}
 }
 

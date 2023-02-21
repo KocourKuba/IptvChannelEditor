@@ -138,6 +138,7 @@ protected:
 	CMFCEditBrowseCtrlEx m_wndDirectLink;
 	CMFCEditBrowseCtrlEx m_wndUpdateUrl;
 	CMFCEditBrowseCtrlEx m_wndUpdatePackageUrl;
+	CEdit m_wndChannelsWebPath;
 	CEdit m_wndVersionID;
 	CEdit m_wndUpdateName;
 	CEdit m_wndPackageName;
