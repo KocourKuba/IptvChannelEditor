@@ -57,6 +57,7 @@ protected:
 	afx_msg LRESULT OnNotifyEndEdit(WPARAM, LPARAM);
 	afx_msg void OnBnClickedButtonAdd();
 	afx_msg void OnBnClickedButtonRemove();
+	afx_msg void OnBnClickedButtonCopy();
 	afx_msg void OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 
@@ -69,4 +70,5 @@ protected:
 	CEditableListCtrl m_wndListParams;
 	CButton m_wndAdd;
 	CButton m_wndRemove;
+	CButton m_wndCopy;
 };

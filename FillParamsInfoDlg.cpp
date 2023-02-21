@@ -40,6 +40,7 @@ BEGIN_MESSAGE_MAP(CFillParamsInfoDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, &CFillParamsInfoDlg::OnBnClickedButtonAdd)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CFillParamsInfoDlg::OnBnClickedButtonRemove)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_INFO, &CFillParamsInfoDlg::OnLvnItemchangedListInfo)
+	ON_BN_CLICKED(IDC_BUTTON_COPY, &CFillParamsInfoDlg::OnBnClickedButtonCopy)
 END_MESSAGE_MAP()
 
 
@@ -55,6 +56,7 @@ void CFillParamsInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_INFO, m_wndListParams);
 	DDX_Control(pDX, IDC_BUTTON_ADD, m_wndAdd);
 	DDX_Control(pDX, IDC_BUTTON_REMOVE, m_wndRemove);
+	DDX_Control(pDX, IDC_BUTTON_COPY, m_wndCopy);
 }
 
 // FillParamsInfo message handlers
@@ -112,6 +114,7 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 
 	m_wndAdd.EnableWindow(!m_readonly);
 	m_wndRemove.EnableWindow(FALSE);
+	m_wndCopy.EnableWindow(FALSE);
 
 	GetDlgItem(IDOK)->EnableWindow(!m_readonly);
 
@@ -183,12 +186,27 @@ void CFillParamsInfoDlg::OnBnClickedButtonRemove()
 	}
 }
 
+void CFillParamsInfoDlg::OnBnClickedButtonCopy()
+{
+	POSITION pos = m_wndListParams.GetFirstSelectedItemPosition();
+	if (pos != nullptr)
+	{
+		int selected = m_wndListParams.GetNextSelectedItem(pos);
+		const CString& data = m_wndListParams.GetItemText(selected, 1);
+		int cnt = m_wndListParams.GetItemCount();
+		m_wndListParams.InsertItem(cnt, std::to_wstring(cnt + 1).c_str(), 0);
+		m_wndListParams.SetItemText(cnt, 1, data.GetString());
+	}
+}
+
 void CFillParamsInfoDlg::OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	if ((pNMLV->uChanged & LVIF_STATE))
 	{
-		m_wndRemove.EnableWindow(!m_readonly && pNMLV->uNewState & LVIS_SELECTED);
+		BOOL enable = (!m_readonly && pNMLV->uNewState & LVIS_SELECTED);
+		m_wndRemove.EnableWindow(enable);
+		m_wndCopy.EnableWindow(enable);
 	}
 
 	*pResult = 0;
