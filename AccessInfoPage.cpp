@@ -509,7 +509,7 @@ void CAccessInfoPage::CreateChannelsList()
 
 	CRect rect;
 	m_wndChLists.GetClientRect(&rect);
-	int vWidth = rect.Width() - 30;
+	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL) - 24;
 
 	m_wndChLists.InsertColumn(0, L"", LVCFMT_LEFT, 22, 0);
 	m_wndChLists.InsertColumn(1, load_string_resource(IDS_STRING_COL_CHANNEL_NAME).c_str(), LVCFMT_LEFT, vWidth, 0);
