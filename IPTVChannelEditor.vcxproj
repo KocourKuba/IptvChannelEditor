@@ -238,6 +238,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="AccountSettings.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Credentials.h" />
+    <ClInclude Include="IconsSourceParseThread.h" />
     <ClInclude Include="PluginConfigPageEPG.h" />
     <ClInclude Include="PluginConfigPageTV.h" />
     <ClInclude Include="PluginConfigPageVOD.h" />
@@ -245,7 +246,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="plugin_yosso.h" />
     <ClInclude Include="TooltipPropertyPage.h" />
     <ClInclude Include="PluginDefines.h" />
-    <ClInclude Include="ThreadConfig.h" />
+    <ClInclude Include="BaseThread.h" />
     <ClInclude Include="uri_stream.h" />
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />
@@ -336,6 +337,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="IconCache.cpp" />
     <ClCompile Include="IconLinkDlg.cpp" />
     <ClCompile Include="IconsListDlg.cpp" />
+    <ClCompile Include="IconsSourceParseThread.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="InPlaceEdit.cpp" />
     <ClCompile Include="m3u_entry.cpp" />
@@ -355,7 +357,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="TooltipPropertyPage.cpp" />
     <ClCompile Include="ResizedPropertySheet.cpp" />
     <ClCompile Include="StreamContainer.cpp" />
-    <ClCompile Include="ThreadConfig.cpp" />
+    <ClCompile Include="BaseThread.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
     <ClCompile Include="CustomPlaylistDlg.cpp" />

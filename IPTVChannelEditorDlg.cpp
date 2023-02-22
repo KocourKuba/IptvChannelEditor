@@ -540,6 +540,8 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndIconSource.AddString(load_string_resource(IDS_STRING_URL).c_str());
 	m_wndIconSource.AddString(_T("it999.ru"));
 	m_wndIconSource.AddString(_T("it999.ru (square)"));
+	m_wndIconSource.AddString(_T("iptvx.one"));
+	m_wndIconSource.AddString(_T("wink"));
 
 	// load button images;
 	SetButtonImage(IDB_PNG_NEW, m_wndBtnAddNewChannelsList);
@@ -1058,7 +1060,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_evtStop.ResetEvent();
 	m_evtThreadExit.ResetEvent();
 
-	ThreadConfig cfg;
+	CBaseThread::ThreadConfig cfg;
 	cfg.m_parent = this;
 	cfg.m_data = std::move(data);
 	cfg.m_hStop = m_evtStop;
@@ -3568,93 +3570,28 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 
 	bool save = false;
 	int idx = m_wndIconSource.GetCurSel();
-	if (idx == 0)
+	switch (idx)
 	{
-		CFileDialog dlg(TRUE);
-		CString curPath = GetAppPath(IsChannel(hCur) ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
-		CString file(curPath);
-		file.Replace('/', '\\');
-
-		CString filter;
-		filter.LoadString(IDS_STRING_LOAD_ICON);
-		filter.Replace('|', '\0');
-
-		CString title;
-		title.LoadString(IDS_STRING_LOAD_ICONS_TITLE);
-
-		OPENFILENAME& oFN = dlg.GetOFN();
-		oFN.lpstrFilter = filter.GetString();
-		oFN.nMaxFile = MAX_PATH;
-		oFN.nFilterIndex = 0;
-		oFN.lpstrFile = file.GetBuffer(MAX_PATH);
-		oFN.lpstrTitle = title.GetString();
-		oFN.lpstrInitialDir = curPath.GetString();
-		oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
-		oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT | OFN_NODEREFERENCELINKS;
-
-		dlg.ApplyOFNToShellDialog();
-		INT_PTR nResult = dlg.DoModal();
-		file.ReleaseBuffer();
-
-		if (nResult == IDOK)
-		{
-			if (!utils::is_ascii(oFN.lpstrFileTitle))
-			{
-				AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
-				return;
-			}
-
-			std::filesystem::path newPath(file.GetString());
-			if (curPath.CompareNoCase(newPath.parent_path().wstring().c_str()) != 0)
-			{
-				curPath += oFN.lpstrFileTitle;
-				std::error_code err;
-				std::filesystem::copy_file(file.GetString(), curPath.GetString(), std::filesystem::copy_options::overwrite_existing, err);
-				SetImageControl(GetIconCache().get_icon(curPath.GetString()), m_wndChannelIcon);
-			}
-
-			m_iconUrl = uri_base::PLUGIN_SCHEME;
-			m_iconUrl += IsChannel(hCur) ? utils::CHANNELS_LOGO_URL : utils::CATEGORIES_LOGO_URL;
-			m_iconUrl += oFN.lpstrFileTitle;
-
-			if (m_iconUrl != info->get_icon_uri().get_uri().c_str())
-			{
-				info->set_icon_uri(m_iconUrl.GetString());
-				save = true;
-			}
-		}
-	}
-	else if (idx == 1)
-	{
-		CIconLinkDlg dlg;
-		dlg.m_url = info->get_icon_absolute_path().c_str();
-		if (dlg.DoModal() == IDOK)
-		{
-			if (dlg.m_url != info->get_icon_uri().get_uri().c_str())
-			{
-				info->set_icon_uri(dlg.m_url.GetString());
-				save = true;
-			}
-		}
-	}
-	else if (idx == 2 || idx == 3)
-	{
-		CIconsListDlg dlg(m_Icons, L"http://epg.it999.ru/edem_epg_ico.m3u8");
-		dlg.m_selected = m_lastIconSelected;
-		dlg.m_search = info->get_title().c_str();
-		dlg.m_parent_plugin = m_plugin;
-		dlg.m_use_square = (idx == 3);
-
-		if (dlg.DoModal() == IDOK)
-		{
-			const auto& choosed = m_Icons->m_entries[dlg.m_selected];
-			if (m_iconUrl != choosed->get_icon_uri().get_uri().c_str())
-			{
-				info->set_icon_uri(choosed->get_icon_uri());
-				m_lastIconSelected = dlg.m_selected;
-				save = true;
-			}
-		}
+		case 0:
+			save = ChooseIconFromFile(IsChannel(hCur), info);
+			break;
+		case 1:
+			save = ChooseIconFromLink(info);
+			break;
+		case 2:
+			save = ChooseIconFromLib(idx, L"https://epg.drm-play.ml/?prov=edem", info);
+			break;
+		case 3:
+			save = ChooseIconFromLib(idx, L"http://epg.it999.ru/edem_epg_ico.m3u8", info, false, true);
+			break;
+		case 4:
+			save = ChooseIconFromLib(idx, L"https://epg.drm-play.ml/?prov=iptvx.one", info);
+			break;
+		case 5:
+			save = ChooseIconFromLib(idx, L"https://epg.drm-play.ml/?prov=wink", info);
+			break;
+		default:
+			break;
 	}
 
 	if (save)
@@ -3666,6 +3603,105 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	}
 
 	UpdateData(FALSE);
+}
+
+bool CIPTVChannelEditorDlg::ChooseIconFromLink(uri_stream* info)
+{
+	bool save = false;
+	CIconLinkDlg dlg;
+	dlg.m_url = info->get_icon_absolute_path().c_str();
+	if (dlg.DoModal() == IDOK)
+	{
+		if (dlg.m_url != info->get_icon_uri().get_uri().c_str())
+		{
+			info->set_icon_uri(dlg.m_url.GetString());
+			save = true;
+		}
+	}
+	return save;
+}
+
+bool CIPTVChannelEditorDlg::ChooseIconFromLib(int idx, LPCWSTR source, uri_stream* info, bool isHtml /*= true*/, bool isSquare /*= false*/)
+{
+	CIconsListDlg dlg(m_Icons[idx], source);
+	dlg.m_selected = m_lastIconSelected;
+	dlg.m_search = info->get_title().c_str();
+	dlg.m_parent_plugin = m_plugin;
+	dlg.m_force_square = isSquare;
+	dlg.m_isHtmlParser = isHtml;
+
+	bool save = false;
+	if (dlg.DoModal() == IDOK)
+	{
+		const auto& choosed = m_Icons[idx]->at(dlg.m_selected);
+		if (m_iconUrl != choosed.logo_path.c_str())
+		{
+			info->set_icon_uri(choosed.logo_path);
+			m_lastIconSelected = dlg.m_selected;
+			save = true;
+		}
+	}
+	return save;
+}
+
+bool CIPTVChannelEditorDlg::ChooseIconFromFile(bool isChannel, uri_stream* info)
+{
+	CFileDialog dlg(TRUE);
+	CString curPath = GetAppPath(isChannel ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
+	CString file(curPath);
+	file.Replace('/', '\\');
+
+	CString filter;
+	filter.LoadString(IDS_STRING_LOAD_ICON);
+	filter.Replace('|', '\0');
+
+	CString title;
+	title.LoadString(IDS_STRING_LOAD_ICONS_TITLE);
+
+	OPENFILENAME& oFN = dlg.GetOFN();
+	oFN.lpstrFilter = filter.GetString();
+	oFN.nMaxFile = MAX_PATH;
+	oFN.nFilterIndex = 0;
+	oFN.lpstrFile = file.GetBuffer(MAX_PATH);
+	oFN.lpstrTitle = title.GetString();
+	oFN.lpstrInitialDir = curPath.GetString();
+	oFN.Flags |= OFN_EXPLORER | OFN_NOREADONLYRETURN | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
+	oFN.Flags |= OFN_FILEMUSTEXIST | OFN_NONETWORKBUTTON | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT | OFN_NODEREFERENCELINKS;
+
+	dlg.ApplyOFNToShellDialog();
+	INT_PTR nResult = dlg.DoModal();
+	file.ReleaseBuffer();
+
+	bool save = false;
+	if (nResult == IDOK)
+	{
+		if (!utils::is_ascii(oFN.lpstrFileTitle))
+		{
+			AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+			return save;
+		}
+
+		std::filesystem::path newPath(file.GetString());
+		if (curPath.CompareNoCase(newPath.parent_path().wstring().c_str()) != 0)
+		{
+			curPath += oFN.lpstrFileTitle;
+			std::error_code err;
+			std::filesystem::copy_file(file.GetString(), curPath.GetString(), std::filesystem::copy_options::overwrite_existing, err);
+			SetImageControl(GetIconCache().get_icon(curPath.GetString()), m_wndChannelIcon);
+		}
+
+		m_iconUrl = uri_base::PLUGIN_SCHEME;
+		m_iconUrl += isChannel ? utils::CHANNELS_LOGO_URL : utils::CATEGORIES_LOGO_URL;
+		m_iconUrl += oFN.lpstrFileTitle;
+
+		if (m_iconUrl != info->get_icon_uri().get_uri().c_str())
+		{
+			info->set_icon_uri(m_iconUrl.GetString());
+			save = true;
+		}
+	}
+
+	return save;
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedCheckShowUrl()

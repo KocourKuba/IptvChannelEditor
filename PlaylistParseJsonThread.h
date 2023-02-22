@@ -27,31 +27,18 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 
 #include "base_plugin.h"
-#include "ThreadConfig.h"
+#include "BaseThread.h"
 
-class CPlaylistParseJsonThread : public CWinThread
+class CPlaylistParseJsonThread : public CBaseThread
 {
 	DECLARE_DYNCREATE(CPlaylistParseJsonThread)
 
-protected:
-	CPlaylistParseJsonThread() { m_bAutoDelete = TRUE; }
-
-public:
-	virtual ~CPlaylistParseJsonThread() = default;
-
 public:
 	BOOL InitInstance() override;
-
-	void SetData(ThreadConfig& config) { m_config = std::move(config); };
-	void SetPlugin(std::shared_ptr<base_plugin>& parent_plugin) { m_parent_plugin = parent_plugin; };
 
 protected:
 	void ParseSharaclub();
 	void ParseCbilling();
 	void ParseEdem();
 	void ParseGlanz();
-
-protected:
-	ThreadConfig m_config;
-	std::shared_ptr<base_plugin> m_parent_plugin;
 };

@@ -245,7 +245,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 		return;
 	}
 
-	ThreadConfig cfg;
+	CBaseThread::ThreadConfig cfg;
 	cfg.m_parent = this;
 	cfg.m_hStop = m_evtStop;
 	cfg.m_url = std::move(url);
@@ -338,7 +338,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 		return;
 	}
 
-	ThreadConfig cfg;
+	CBaseThread::ThreadConfig cfg;
 	cfg.m_parent = this;
 	cfg.m_data = std::move(data);
 	cfg.m_hStop = m_evtStop;

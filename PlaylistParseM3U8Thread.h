@@ -27,26 +27,15 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 
 #include "base_plugin.h"
-#include "ThreadConfig.h"
+#include "BaseThread.h"
 
-class CPlaylistParseM3U8Thread : public CWinThread
+class CPlaylistParseM3U8Thread : public CBaseThread
 {
 	DECLARE_DYNCREATE(CPlaylistParseM3U8Thread)
-
-protected:
-	CPlaylistParseM3U8Thread() { m_bAutoDelete = TRUE; }
-
-public:
-	virtual ~CPlaylistParseM3U8Thread() = default;
 
 public:
 	BOOL InitInstance() override;
 
-	void SetData(ThreadConfig& config) { m_config = std::move(config); };
-	void SetPlugin(std::shared_ptr<base_plugin>& parent_plugin) { m_parent_plugin = parent_plugin; };
-
 protected:
-	ThreadConfig m_config;
-	std::shared_ptr<base_plugin> m_parent_plugin{};
 	boost::wregex m_re;
 };

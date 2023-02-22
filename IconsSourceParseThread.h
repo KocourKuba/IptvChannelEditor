@@ -25,41 +25,14 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "ImageContainer.h"
 
-class CIconCache
+#include "base_plugin.h"
+#include "BaseThread.h"
+
+class CIconsSourceParseThread : public CBaseThread
 {
+	DECLARE_DYNCREATE(CIconsSourceParseThread)
+
 public:
-	static CIconCache* Instance()
-	{
-		static CIconCache* _instance = new CIconCache();
-		return _instance;
-	}
-
-#ifdef _DEBUG
-	static void DestroyInstance()
-	{
-		delete Instance();
-	}
-#endif // _DEBUG
-
-	const CImage& get_icon(const std::wstring& path, bool force = false);
-
-protected:
-	CIconCache() = default;
-	virtual ~CIconCache() = default;
-
-private:
-	CIconCache(const CIconCache& source) = delete;
-	std::map<int, std::unique_ptr<ImageContainer>> m_imageMap;
+	BOOL InitInstance() override;
 };
-
-class CIconSourceData
-{
-public:
-	std::wstring logo_path;
-	std::wstring logo_name;
-	std::wstring logo_id;
-};
-
-inline CIconCache& GetIconCache() { return *CIconCache::Instance(); }

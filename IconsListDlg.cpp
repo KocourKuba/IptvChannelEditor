@@ -29,8 +29,8 @@ DEALINGS IN THE SOFTWARE.
 #include "IconsListDlg.h"
 #include "IPTVChannelEditor.h"
 #include "PlaylistParseM3U8Thread.h"
-#include "IconCache.h"
-#include "ThreadConfig.h"
+#include "IconsSourceParseThread.h"
+#include "PlayListEntry.h"
 #include "Constants.h"
 
 #include "UtilsLib\inet_utils.h"
@@ -56,7 +56,7 @@ BEGIN_MESSAGE_MAP(CIconsListDlg, CDialogEx)
 	ON_MESSAGE(WM_END_LOAD_PLAYLIST, &CIconsListDlg::OnEndLoadPlaylist)
 END_MESSAGE_MAP()
 
-CIconsListDlg::CIconsListDlg(std::shared_ptr<Playlist>& icons,
+CIconsListDlg::CIconsListDlg(std::shared_ptr<std::vector<CIconSourceData>>& icons,
 							 const std::wstring& iconSource,
 							 CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_ICONS_LIST, pParent)
@@ -79,6 +79,7 @@ void CIconsListDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PROGRESS_LOAD, m_wndProgress);
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, m_wndSearch);
+	DDX_Control(pDX, IDC_EDIT_ICON_PATH, m_wndIconPath);
 }
 
 BOOL CIconsListDlg::OnInitDialog()
@@ -99,14 +100,13 @@ BOOL CIconsListDlg::OnInitDialog()
 
 	// Set up list control
 	// Nothing special here.  Just some columns for the report view.
-	m_wndIconsList.InsertColumn(0, load_string_resource(IDS_STRING_COL_ICON).c_str(), LVCFMT_LEFT, 170);
-	m_wndIconsList.InsertColumn(1, load_string_resource(IDS_STRING_COL_CHANNEL_NAME).c_str(), LVCFMT_LEFT, 200);
-	m_wndIconsList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP /*| LVS_EX_FLATSB*/);
+	m_wndIconsList.SetExtendedStyle(m_wndIconsList.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP);
 
-	// Short (OTTPplay.es) format
-	// #EXTM3U
-	// #EXTINF:0 group-title="םמגמסעט" tvg-id="743" tvg-logo="http://epg.it999.ru/img/743.png" tvg-rec="3",ÐÁÊ-ÒÂ
-	// http://localhost/iptv/00000000000000/106/index.m3u8
+	m_wndIconsList.InsertColumn(0, load_string_resource(IDS_STRING_COL_ICON).c_str(), LVCFMT_CENTER, 170);
+	m_wndIconsList.InsertColumn(1, load_string_resource(IDS_STRING_COL_CHANNEL_NAME).c_str(), LVCFMT_LEFT, 280);
+
+	// https://epg.drm-play.ml/?prov=iptvx.one
+	// /<img src='(?<link>[^']+)'.+><\/td><td>(?<name>[^<].+)<\/td><td>(?<id>[^<].+)<\/td><td>/gm
 
 	if (m_Icons)
 	{
@@ -119,7 +119,27 @@ BOOL CIconsListDlg::OnInitDialog()
 		std::stringstream data;
 		if (utils::DownloadFile(m_iconSource, data))
 		{
-			auto* pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+			const auto& str = data.str();
+			int lines = (int)std::count(str.begin(), str.end(), '\n');
+
+			CBaseThread::ThreadConfig cfg;
+			cfg.m_parent = this;
+			cfg.m_data = std::move(data);
+			cfg.m_hStop = m_evtStop;
+
+			CBaseThread* pThread = nullptr;
+			if (m_isHtmlParser)
+			{
+				cfg.nparam = R"(^<tr><td><img src='(?<link>[^']+)'.+><\/td><td>(?<name>[^<].+)<\/td><td>(?<id>[^<].+)<\/td><td>.*$)";
+				pThread = (CBaseThread*)AfxBeginThread(RUNTIME_CLASS(CIconsSourceParseThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+			}
+			else
+			{
+				cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
+				pThread = (CBaseThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+				lines /= 2;
+			}
+
 			if (pThread)
 			{
 				m_evtStop.ResetEvent();
@@ -127,17 +147,9 @@ BOOL CIconsListDlg::OnInitDialog()
 				GetDlgItem(IDOK)->EnableWindow(FALSE);
 				GetDlgItem(IDC_EDIT_SEARCH)->ShowWindow(SW_HIDE);
 				GetDlgItem(IDC_BUTTON_SEARCH_NEXT)->ShowWindow(SW_HIDE);
-				const auto& str = data.str();
-				m_wndProgress.SetRange32(0, (int)std::count(str.begin(), str.end(), '\n') / 2);
+				m_wndProgress.SetRange32(0, lines);
 				m_wndProgress.SetPos(0);
 				m_wndProgress.ShowWindow(SW_SHOW);
-
-				ThreadConfig cfg;
-				cfg.m_parent = this;
-				cfg.m_data = std::move(data);
-				cfg.m_hStop = m_evtStop;
-				cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
-
 				pThread->SetData(cfg);
 				pThread->SetPlugin(m_parent_plugin);
 				pThread->ResumeThread();
@@ -208,10 +220,10 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 	//Which item number?
 	size_t nItem = pItem->iItem;
 
-	if (!m_Icons || nItem >= m_Icons->m_entries.size())
+	if (!m_Icons || nItem >= m_Icons->size())
 		return; // Just to be safe
 
-	const auto& entry = m_Icons->m_entries[nItem];
+	const auto& entry = m_Icons->at(nItem);
 
 	//Do we need text information?
 	if (pItem->mask & LVIF_TEXT)
@@ -219,7 +231,7 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 		CString csText;
 		//Which column?
 		if (pItem->iSubItem == 1) // Column 1
-			csText = m_Icons->m_entries[nItem]->get_title().c_str();
+			csText = m_Icons->at(nItem).logo_name.c_str();
 
 		//Copy the text to the LV_ITEM structure
 		//Maximum number of characters is in pItem->cchTextMax
@@ -229,7 +241,7 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 	//Does the list need image information?
 	if (pItem->mask & LVIF_IMAGE)
 	{
-		const auto& image = GetIconCache().get_icon(entry->get_icon_absolute_path());
+		const auto& image = GetIconCache().get_icon(entry.logo_path);
 
 		if (image)
 		{
@@ -244,8 +256,9 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 
 			// 2/3 of original size
 			CRect rc(0, 0, 162, 92);
-			if (m_use_square)
-				rc.right = 92;
+			CRect rc_img(rc);
+			if ((image.GetWidth() - image.GetHeight()) < 10)
+				rc_img.right = 92;
 
 			CDC dcDest;
 			dcDest.CreateCompatibleDC(pDesktopDC);
@@ -253,7 +266,7 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 			CBitmap bmpDest;
 			bmpDest.CreateCompatibleBitmap(pDesktopDC, rc.Width(), rc.Height());
 			CBitmap* pOldDestBitmap = dcDest.SelectObject(&bmpDest);
-			dcDest.StretchBlt(0, 0, rc.Width(), rc.Height(), &dcOrig, 0, 0, image.GetWidth(), image.GetHeight(), SRCCOPY);
+			dcDest.StretchBlt((rc.Width() - rc_img.Width()) / 2, 0, rc_img.Width(), rc_img.Height(), &dcOrig, 0, 0, image.GetWidth(), image.GetHeight(), SRCCOPY);
 			dcDest.SelectObject(pOldDestBitmap);
 
 			pDesktopWindow->ReleaseDC(pDesktopDC);
@@ -282,23 +295,39 @@ LRESULT CIconsListDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
 	m_wndProgress.ShowWindow(SW_HIDE);
 
 	m_wndIconsList.DeleteAllItems();
-	m_Icons.reset((Playlist*)wParam);
-	if (m_Icons)
+	if (m_isHtmlParser)
 	{
-		std::sort(m_Icons->m_entries.begin(), m_Icons->m_entries.end(), [](const auto& left, const auto& right)
-				  {
-					  return left->get_title() < right->get_title();
-				  });
-
-		if (m_use_square)
+		m_Icons.reset((std::vector<CIconSourceData>*)wParam);
+	}
+	else
+	{
+		std::unique_ptr<Playlist> playlist((Playlist*)wParam);
+		if (playlist)
 		{
-			for (auto& entry : m_Icons->m_entries)
+			m_Icons = std::make_shared<std::vector<CIconSourceData>>();
+
+			for (const auto& pl_entry : playlist->m_entries)
 			{
-				auto path = entry->get_icon_uri().get_path();
-				utils::string_replace_inplace(path, L"epg.it999.ru/img2/", L"epg.it999.ru/img/");
-				entry->get_icon_uri().set_path(path);
+				CIconSourceData entry;
+				if (m_force_square)
+					entry.logo_path = utils::string_replace<wchar_t>(pl_entry->get_icon_absolute_path(), L"//epg.it999.ru/img2/", L"//epg.it999.ru/img/");
+				else
+					entry.logo_path = pl_entry->get_icon_absolute_path();
+
+				entry.logo_name = pl_entry->get_title();
+				entry.logo_id = pl_entry->get_id();
+				m_Icons->emplace_back(entry);
 			}
 		}
+	}
+
+	if (m_Icons)
+	{
+		std::sort(m_Icons->begin(), m_Icons->end(), [](const auto& left, const auto& right)
+				  {
+					  return left.logo_name < right.logo_name;
+				  });
+
 		UpdateListCtrl();
 	}
 
@@ -324,6 +353,14 @@ void CIconsListDlg::OnNMClickListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 
 	m_selected = pNMItemActivate->iItem;
+	if (m_selected != -1 && m_selected < (int)m_Icons->size())
+	{
+		m_wndIconPath.SetWindowText(m_Icons->at(m_selected).logo_path.c_str());
+	}
+	else
+	{
+		m_wndIconPath.SetWindowText(L"");
+	}
 
 	*pResult = 0;
 }
@@ -350,13 +387,14 @@ void CIconsListDlg::OnBnClickedButtonSearchNext()
 	int idx = m_lastFound + 1;
 	for (;;)
 	{
-		if (idx >= (int)m_Icons->m_entries.size())
+		if (idx >= (int)m_Icons->size())
 			idx = 0;
 
 		if (idx == m_lastFound) break;
 
-		if (StrStrI(m_Icons->m_entries[idx]->get_title().c_str(), m_search.GetString()) != nullptr)
+		if (StrStrI(m_Icons->at(idx).logo_name.c_str(), m_search.GetString()) != nullptr)
 		{
+			m_wndIconPath.SetWindowText(m_Icons->at(idx).logo_path.c_str());
 			m_wndIconsList.SetItemState(idx, LVIS_SELECTED, LVIS_SELECTED);
 			m_wndIconsList.EnsureVisible(idx, TRUE);
 			m_lastFound = idx;
@@ -372,7 +410,7 @@ void CIconsListDlg::UpdateListCtrl()
 {
 	if (m_Icons)
 	{
-		m_wndIconsList.SetItemCountEx((int)m_Icons->m_entries.size(), LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL);
+		m_wndIconsList.SetItemCountEx((int)m_Icons->size(), LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL);
 		OnBnClickedButtonSearchNext();
 	}
 }

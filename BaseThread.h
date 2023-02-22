@@ -25,41 +25,38 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "ImageContainer.h"
+#include "base_plugin.h"
 
-class CIconCache
+class CBaseThread : public CWinThread
 {
 public:
-	static CIconCache* Instance()
+	class ThreadConfig
 	{
-		static CIconCache* _instance = new CIconCache();
-		return _instance;
-	}
+	public:
+		void SendNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+		void PostNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 
-#ifdef _DEBUG
-	static void DestroyInstance()
-	{
-		delete Instance();
-	}
-#endif // _DEBUG
-
-	const CImage& get_icon(const std::wstring& path, bool force = false);
+		std::stringstream m_data;
+		void* m_parent = nullptr;
+		HANDLE m_hStop = nullptr;
+		HANDLE m_hExit = nullptr;
+		std::wstring m_rootPath;
+		std::wstring m_url;
+		std::string nparam;
+		std::wstring wparam;
+		int m_cache_ttl = 0;
+	};
 
 protected:
-	CIconCache() = default;
-	virtual ~CIconCache() = default;
+	CBaseThread() { m_bAutoDelete = TRUE; }
 
-private:
-	CIconCache(const CIconCache& source) = delete;
-	std::map<int, std::unique_ptr<ImageContainer>> m_imageMap;
-};
-
-class CIconSourceData
-{
 public:
-	std::wstring logo_path;
-	std::wstring logo_name;
-	std::wstring logo_id;
-};
+	virtual ~CBaseThread() = default;
 
-inline CIconCache& GetIconCache() { return *CIconCache::Instance(); }
+	void SetData(ThreadConfig& config) { m_config = std::move(config); };
+	void SetPlugin(std::shared_ptr<base_plugin>& parent_plugin) { m_parent_plugin = parent_plugin; };
+
+protected:
+	ThreadConfig m_config;
+	std::shared_ptr<base_plugin> m_parent_plugin{};
+};

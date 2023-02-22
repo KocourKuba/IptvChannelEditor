@@ -25,7 +25,8 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "PlayListEntry.h"
+#include "IconCache.h"
+#include "base_plugin.h"
 
 // Data object handling class
 class CIconsListDlg : public CDialogEx
@@ -33,7 +34,7 @@ class CIconsListDlg : public CDialogEx
 	DECLARE_DYNAMIC(CIconsListDlg)
 
 public:
-	CIconsListDlg(std::shared_ptr<Playlist>& icons,
+	CIconsListDlg(std::shared_ptr<std::vector<CIconSourceData>>& icons,
 				  const std::wstring& iconSource,
 				  CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CIconsListDlg();
@@ -69,19 +70,20 @@ private:
 public:
 	int m_selected = 0;
 	int m_lastFound = 0;
-	bool m_use_square = false;
+	bool m_force_square = false;
+	bool m_isHtmlParser = false;
 	CString m_search; // m_wndSearch
 	std::shared_ptr<base_plugin> m_parent_plugin;
 
 protected:
 	std::wstring m_iconSource;
-	std::shared_ptr<Playlist>& m_Icons;
+	std::shared_ptr<std::vector<CIconSourceData>>& m_Icons;
 
 	CProgressCtrl m_wndProgress;
 	CListCtrl m_wndIconsList;
 	CImageList	m_imageList;
+	CEdit m_wndIconPath;
 	CEdit m_wndSearch;
-
 
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;

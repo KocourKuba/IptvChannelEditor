@@ -39,6 +39,7 @@ DEALINGS IN THE SOFTWARE.
 #include "ColorEdit.h"
 #include "MenuEdit.h"
 #include "vod_movie.h"
+#include "IconCache.h"
 
 #include "UtilsLib\json_wrapper.h"
 
@@ -237,6 +238,9 @@ private:
 	void RemoveOrphanChannels();
 	void UpdateChannelsTreeColors(HTREEITEM root = nullptr);
 	void CheckForExistingPlaylist();
+	bool ChooseIconFromFile(bool isChannel, uri_stream* info);
+	bool ChooseIconFromLink(uri_stream* info);
+	bool ChooseIconFromLib(int idx, LPCWSTR source, uri_stream* info, bool isHtml = true, bool isSquare = false);
 
 	std::shared_ptr<ChannelCategory> GetItemCategory(HTREEITEM hItem) const;
 	std::shared_ptr<ChannelCategory> GetCategory(HTREEITEM hItem) const;
@@ -414,7 +418,7 @@ private:
 
 	// Icons entries
 	// loaded when used icon resource list
-	std::shared_ptr<Playlist> m_Icons;
+	std::array<std::shared_ptr<std::vector<CIconSourceData>>, 6> m_Icons;
 
 	// Accounts
 	std::vector<Credentials> m_all_credentials;

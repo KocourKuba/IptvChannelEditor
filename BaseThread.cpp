@@ -24,42 +24,26 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-#pragma once
-#include "ImageContainer.h"
-
-class CIconCache
-{
-public:
-	static CIconCache* Instance()
-	{
-		static CIconCache* _instance = new CIconCache();
-		return _instance;
-	}
+#include "pch.h"
+#include "BaseThread.h"
 
 #ifdef _DEBUG
-	static void DestroyInstance()
-	{
-		delete Instance();
-	}
-#endif // _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
-	const CImage& get_icon(const std::wstring& path, bool force = false);
-
-protected:
-	CIconCache() = default;
-	virtual ~CIconCache() = default;
-
-private:
-	CIconCache(const CIconCache& source) = delete;
-	std::map<int, std::unique_ptr<ImageContainer>> m_imageMap;
-};
-
-class CIconSourceData
+void CBaseThread::ThreadConfig::SendNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
-public:
-	std::wstring logo_path;
-	std::wstring logo_name;
-	std::wstring logo_id;
-};
+	CWnd* parent = (CWnd*)m_parent;
+	if (parent->GetSafeHwnd())
+		parent->SendMessage(message, wParam, lParam);
 
-inline CIconCache& GetIconCache() { return *CIconCache::Instance(); }
+}
+
+void CBaseThread::ThreadConfig::PostNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+{
+	CWnd* parent = (CWnd*)m_parent;
+	if (parent->GetSafeHwnd())
+		parent->PostMessage(message, wParam, lParam);
+}

@@ -300,9 +300,6 @@
     <ClInclude Include="Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ThreadConfig.h">
-      <Filter>Header Files\Containers</Filter>
-    </ClInclude>
     <ClInclude Include="PluginDefines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -326,6 +323,12 @@
     </ClInclude>
     <ClInclude Include="plugin_yosso.h">
       <Filter>Header Files\plugin\flussionic</Filter>
+    </ClInclude>
+    <ClInclude Include="IconsSourceParseThread.h">
+      <Filter>Header Files\Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseThread.h">
+      <Filter>Header Files\Threads</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -530,7 +533,7 @@
     <ClCompile Include="Credentials.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadConfig.cpp">
+    <ClCompile Include="BaseThread.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
     <ClCompile Include="plugin_smile.cpp">
@@ -559,6 +562,9 @@
     </ClCompile>
     <ClCompile Include="plugin_yosso.cpp">
       <Filter>Source Files\plugin\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="IconsSourceParseThread.cpp">
+      <Filter>Source Files\Threads</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
