@@ -567,6 +567,11 @@ public:
 	void set_static_profiles(bool val) { static_profiles = val; }
 
 	/// <summary>
+	/// <summary>
+	/// clear servers list
+	/// </summary>
+	void clear_servers_list() { servers_list.clear(); }
+
 	/// returns list of servers
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
@@ -609,6 +614,11 @@ public:
 	/// <param name="params">Template parameters. Can be changed</param>
 	virtual const std::vector<DynamicParamsInfo>& get_devices_list() { return devices_list; }
 	virtual void set_devices_list(const std::vector<DynamicParamsInfo>& info) { devices_list = info; }
+
+	/// <summary>
+	/// clear qualities list
+	/// </summary>
+	void clear_qualities_list() { qualities_list.clear(); }
 
 	/// <summary>
 	/// returns list of quality variants

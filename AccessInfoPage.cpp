@@ -265,6 +265,15 @@ void CAccessInfoPage::UpdateOptionalControls()
 	if (selected.not_valid)
 		return;
 
+	auto it = std::find(m_configs.begin(), m_configs.end(), selected.get_config());
+	int sel_idx = 0;
+	if (it != m_configs.end())
+	{
+		sel_idx = std::distance(m_configs.begin(), it);
+		m_plugin->load_plugin_parameters(selected.get_config());
+	}
+	m_wndConfigs.SetCurSel(sel_idx);
+
 	TemplateParams params;
 	params.login = selected.get_login();
 	params.password = selected.get_password();
@@ -351,12 +360,6 @@ void CAccessInfoPage::UpdateOptionalControls()
 
 		m_wndProfiles.SetCurSel(params.profile_idx);
 	}
-
-	auto it = std::find(m_configs.begin(), m_configs.end(), selected.get_config());
-	int sel_idx = 0;
-	if (it != m_configs.end())
-		sel_idx = std::distance(m_configs.begin(), it);
-	m_wndConfigs.SetCurSel(sel_idx);
 
 	m_suffix = selected.get_suffix().c_str();
 	m_caption = selected.get_caption().c_str();
@@ -926,8 +929,10 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 			m_wndAccounts.SetCheck(nItem, nItem == pNMLV->iItem);
 		}
 
+		m_plugin->clear_servers_list();
 		m_plugin->clear_device_list();
 		m_plugin->clear_profiles_list();
+		m_plugin->clear_qualities_list();
 		FillChannelsList();
 		enable = TRUE;
 	}
