@@ -1717,6 +1717,7 @@ BEGIN
                             "Link to file at dropbox and local file name not match!"
     IDS_STRING_EXPORT_M3U   "Export channels list to M3U"
     IDS_STRING_EXPORT_PLAYLIST "Export to M3U playlist"
+    IDS_STRING_CURRENT      "Current"
 END
 
 STRINGTABLE

@@ -291,6 +291,7 @@
 #define IDS_STRING_ERR_WRONG_UPLOADED_NAME 370
 #define IDS_STRING_EXPORT_M3U           371
 #define IDS_STRING_EXPORT_PLAYLIST      372
+#define IDS_STRING_CURRENT              373
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402

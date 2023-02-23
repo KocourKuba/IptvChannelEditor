@@ -238,16 +238,23 @@ void CPluginConfigPageTV::FillControls()
 
 	m_wndPlaylistTemplates.ResetContent();
 	size_t idx = 0;
+	size_t current = 0;
 	for (const auto& entry : plugin->get_playlist_infos())
 	{
 		auto name = entry.get_name();
-		if (idx++ == plugin->get_playlist_template_idx())
-			name += L" (Current)";
+		if (idx == plugin->get_playlist_template_idx())
+		{
+			current = idx;
+			name += fmt::format(L" ({:s})", load_string_resource(IDS_STRING_CURRENT));
+		}
 
 		m_wndPlaylistTemplates.AddString(name.c_str());
+		idx++;
 	}
 
-	m_wndPlaylistTemplates.SetCurSel(plugin->get_playlist_template_idx());
+	plugin->set_playlist_template_idx(current);
+	m_wndPlaylistTemplates.SetCurSel(current);
+
 	FillPlaylistSettings();
 
 	m_wndStreamType.SetCurSel(0);
@@ -439,10 +446,12 @@ void CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate()
 
 void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()
 {
+	auto current_info = GetPropertySheet()->m_plugin->get_playlist_infos();
+
 	std::vector<DynamicParamsInfo> info;
-	for (const auto& item : GetPropertySheet()->m_plugin->get_playlist_infos())
+	for (const auto& item : current_info)
 	{
-		info.emplace_back(item.name, item.pl_template);
+		info.emplace_back(item.name, item.name);
 	}
 
 	CFillParamsInfoDlg dlg;
@@ -452,12 +461,24 @@ void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()
 
 	if (dlg.DoModal() == IDOK)
 	{
-		std::vector<PlaylistTemplateInfo> playlists;
+		std::vector <PlaylistTemplateInfo> new_info;
 		for (const auto& item : dlg.m_paramsList)
 		{
-			playlists.emplace_back(item.id, item.name);
+			auto it = std::find_if(current_info.begin(), current_info.end(), [&item](const auto& it)
+								   {
+									   return it.name == item.id;
+								   });
+			if (it != current_info.end())
+			{
+				it->name = item.name;
+				new_info.emplace_back(*it);
+			}
+			else
+			{
+				new_info.emplace_back(item.name);
+			}
 		}
-		GetPropertySheet()->m_plugin->set_playlist_infos(playlists);
+		GetPropertySheet()->m_plugin->set_playlist_infos(new_info);
 
 		FillControls();
 		AllowSave();

@@ -94,8 +94,9 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 			csName = L"{PROFILE}";
 			break;
 		case 4:
-			csID.LoadString(IDS_STRING_NAME);
-			csName.LoadString(IDS_STRING_TEMPLATE);
+			m_isFirstColEditable = false;
+			csID.LoadString(IDS_STRING_CURRENT);
+			csName.LoadString(IDS_STRING_NAME);
 			break;
 		default:
 			break;
@@ -142,6 +143,8 @@ void CFillParamsInfoDlg::OnNMDblclkListInfo(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	//LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 
+	*pResult = 0;
+
 	DWORD pos = GetMessagePos();
 	CPoint pt(LOWORD(pos), HIWORD(pos));
 	ScreenToClient(&pt);
@@ -153,9 +156,12 @@ void CFillParamsInfoDlg::OnNMDblclkListInfo(NMHDR* pNMHDR, LRESULT* pResult)
 	pt.x -= rect.left;
 	pt.y -= rect.top;
 
-	m_wndListParams.OnLButtonDown(MK_LBUTTON, pt);
+	int col = 0;
+	m_wndListParams.GetRowFromPoint(pt, &col);
+	if (!m_isFirstColEditable && col == 0)
+		return;
 
-	*pResult = 0;
+	m_wndListParams.OnLButtonDown(MK_LBUTTON, pt);
 }
 
 LRESULT CFillParamsInfoDlg::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)

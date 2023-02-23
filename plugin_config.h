@@ -128,6 +128,9 @@ class PlaylistTemplateInfo
 {
 public:
 	PlaylistTemplateInfo() = default;
+
+	PlaylistTemplateInfo(const std::string& _name) : name(_name) {}
+
 	PlaylistTemplateInfo(UINT ID)
 	{
 		set_name(load_string_resource(ID));

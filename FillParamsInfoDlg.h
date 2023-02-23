@@ -64,6 +64,7 @@ protected:
 public:
 	int m_type = 0;
 	bool m_readonly = true;
+	bool m_isFirstColEditable = true;
 	std::vector<DynamicParamsInfo> m_paramsList;
 
 protected:
