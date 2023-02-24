@@ -78,7 +78,8 @@ public:
 	static constexpr auto REPL_NOW        = L"{NOW}";        // EPG archive current time (unix timestamp)
 	static constexpr auto REPL_DATE       = L"{DATE}";       // EPG date (set by format)
 	static constexpr auto REPL_TIMESTAMP  = L"{TIMESTAMP}";  // EPG time, unix timestamp (set by format)
-	static constexpr auto REPL_OFFSET     = L"{OFFSET}";        // EPG archive current time (unix timestamp)
+	static constexpr auto REPL_OFFSET     = L"{OFFSET}";     // EPG archive current time (unix timestamp)
+	static constexpr auto REPL_DUNE_IP    = L"{DUNE_IP}";    // dune IP address. Useful for using My EPG Server plugin
 
 	static constexpr auto REPL_DURATION   = L"{DURATION}";   // archive duration (in second) in flussonic archive
 	static constexpr auto REPL_STOP       = L"{STOP}";       // archive end time (unix timestamp)

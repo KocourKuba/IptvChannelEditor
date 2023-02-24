@@ -3088,8 +3088,6 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEpg()
 {
-	bool firstEpg = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
-	m_wndBtnViewEPG.EnableWindow(firstEpg ? !m_epgID1.IsEmpty() : !m_epgID2.IsEmpty());
 	LoadTimerEPG();
 }
 

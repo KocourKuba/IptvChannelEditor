@@ -158,7 +158,7 @@ class HD
 
     public static function get_dune_user_agent()
     {
-        if (!isset(self::$user_agent))
+        if (empty(self::$user_agent))
             self::http_init();
 
         return self::$user_agent;

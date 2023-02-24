@@ -28,6 +28,8 @@ DEALINGS IN THE SOFTWARE.
 #include <iosfwd>
 #include "IPTVChannelEditor.h"
 #include "PluginConfigPageEPG.h"
+#include "AccountSettings.h"
+#include "Constants.h"
 
 #include "UtilsLib/inet_utils.h"
 
@@ -82,14 +84,13 @@ void CPluginConfigPageEPG::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_EPG_TZ, m_EpgTimezone);
 	DDX_Control(pDX, IDC_COMBO_EPG_TYPE, m_wndEpgType);
 	DDX_Control(pDX, IDC_BUTTON_EPG_SHOW, m_wndBtnEpgTest);
-	DDX_Control(pDX, IDC_EDIT_SET_ID, m_wndSetID);
 	DDX_Text(pDX, IDC_EDIT_SET_ID, m_SetID);
-	DDX_Control(pDX, IDC_EDIT_SET_TOKEN, m_wndToken);
 	DDX_Text(pDX, IDC_EDIT_SET_TOKEN, m_Token);
 	DDX_Control(pDX, IDC_CHECK_USE_DURATION, m_wndChkUseDuration);
 	DDX_Control(pDX, IDC_DATETIMEPICKER_DATE, m_wndDate);
 	DDX_DateTimeCtrl(pDX, IDC_DATETIMEPICKER_DATE, m_Date);
 	DDX_Text(pDX, IDC_EDIT_UTC, m_UTC);
+	DDX_Text(pDX, IDC_EDIT_SET_DUNE_IP, m_DuneIP);
 }
 
 BOOL CPluginConfigPageEPG::OnInitDialog()
@@ -119,9 +120,11 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 
 	m_wndEpgType.SetCurSel(0);
 
+	m_DuneIP = GetConfig().get_string(true, REG_DUNE_IP).c_str();
 	m_Token = GetPropertySheet()->m_selected_cred.get_token().c_str();
 	if (GetPropertySheet()->m_CurrentStream)
 	{
+		m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(0).c_str();
 		m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(0).c_str();
 	}
 
@@ -141,6 +144,15 @@ BOOL CPluginConfigPageEPG::OnSetActive()
 	return TRUE;
 }
 
+BOOL CPluginConfigPageEPG::OnApply()
+{
+	UpdateData(TRUE);
+
+	GetConfig().set_string(true, REG_DUNE_IP, m_DuneIP.GetString());
+
+	return TRUE;
+}
+
 void CPluginConfigPageEPG::AssignMacros()
 {
 	std::vector<std::wstring> epg_params =
@@ -151,6 +163,7 @@ void CPluginConfigPageEPG::AssignMacros()
 		L"{TOKEN}",
 		L"{TIMESTAMP}",
 		L"{DATE}",
+		L"{DUNE_IP}",
 	};
 	m_wndEpgUrl.SetTemplateParams(epg_params);
 
@@ -271,6 +284,7 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_MONTH, std::to_wstring(m_Date.GetMonth()));
 	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_DAY, std::to_wstring(m_Date.GetDay()));
 	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
+	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_DUNE_IP, m_DuneIP.GetString());
 
 	CWaitCursor cur;
 	std::stringstream data;

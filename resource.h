@@ -422,6 +422,8 @@
 #define IDC_EDIT_SET_TOKEN              1060
 #define IDC_EDIT_UTC                    1061
 #define IDC_EDIT_ARCHIVE_URL            1062
+#define IDC_EDIT_SET_TOKEN2             1062
+#define IDC_EDIT_SET_DUNE_IP            1062
 #define IDC_STATIC_APP_TITLE            1064
 #define IDC_STATIC_CHANNELS             1066
 #define IDC_STATIC_ICON                 1067

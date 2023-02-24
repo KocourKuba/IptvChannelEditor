@@ -83,6 +83,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_HOURS_BACK,
 	REG_NEXT_UPDATE,
 	REG_AVAIL_UPDATE,
+	REG_DUNE_IP,
 	REG_LOGIN,
 	REG_PASSWORD,
 	REG_TOKEN,

@@ -15,12 +15,18 @@ class Epg_Manager
     protected $cache_dir;
 
     /**
+     * @var string
+     */
+    protected $dune_ip;
+
+    /**
      * @param default_config $config
      */
     public function __construct(default_config $config)
     {
         $this->config = $config;
         $this->cache_dir = get_temp_path("epg");
+        $this->dune_ip = get_ip_address();
     }
 
     /**
@@ -67,7 +73,7 @@ class Epg_Manager
 
         hd_print("Try to load EPG ID: '$epg_id' for channel '$channel_id' ($channel_title)");
         $epg_id = str_replace(' ', '%20', $epg_id);
-        $epg_url = str_replace(array('{EPG_ID}', '{ID}'), array($epg_id, $channel_id), $params[Epg_Params::EPG_URL]);
+        $epg_url = str_replace(array('{EPG_ID}', '{ID}', '{DUNE_IP}'), array($epg_id, $channel_id, $this->dune_ip), $params[Epg_Params::EPG_URL]);
         if (strpos($epg_url, '{DATE}') !== false) {
             $date_format = str_replace(
                 array('{YEAR}', '{MONTH}', '{DAY}'),

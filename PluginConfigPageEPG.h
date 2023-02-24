@@ -47,6 +47,7 @@ protected:
 	BOOL OnInitDialog() override;
 
 	BOOL OnSetActive() override;
+	BOOL OnApply() override;
 
 	void AssignMacros();
 	void FillControls() override;
@@ -86,8 +87,6 @@ protected:
 	CMenuEdit m_wndDateFormat;
 	CMenuEdit m_wndEpgStartFormat;
 	CEdit m_wndEpgTimezone;
-	CEdit m_wndSetID;
-	CEdit m_wndToken;
 
 	CComboBox m_wndCatchupType;
 	CComboBox m_wndEpgType;
@@ -105,6 +104,7 @@ protected:
 	CString m_EpgTimeFormat;
 	CString m_Token;
 	CString m_SetID;
+	CString m_DuneIP;
 
 	COleDateTime m_Date;
 

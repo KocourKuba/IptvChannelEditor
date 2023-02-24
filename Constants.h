@@ -47,6 +47,7 @@ constexpr auto REG_FILL_INFO_WINDOW_POS	 = _T("FillInfoWindowPos");
 // app
 constexpr auto REG_NEXT_UPDATE         = _T("NextUpdate");
 constexpr auto REG_AVAIL_UPDATE        = _T("AvailableUpdate");
+constexpr auto REG_DUNE_IP             = _T("DuneIP");
 
 // settings dialog
 constexpr auto REG_PLAYER              = _T("Player");
