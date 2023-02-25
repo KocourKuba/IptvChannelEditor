@@ -7,13 +7,6 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
     const ID = 'search_screen';
     const SEARCH_ICON_PATH = 'plugin_file://icons/icon_search.png';
 
-    const ACTION_CREATE_SEARCH = 'create_search';
-    const ACTION_NEW_SEARCH = 'new_search';
-    const ACTION_RUN_SEARCH = 'run_search';
-    const ACTION_ITEM_UP = 'item_up';
-    const ACTION_ITEM_DOWN = 'item_down';
-    const ACTION_ITEM_DELETE = 'item_delete';
-
     const VOD_SEARCH_LIST = 'vod_search_items';
     const VOD_SEARCH_ITEM = 'vod_search_item';
 
@@ -55,22 +48,14 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
     {
         $actions = array();
         $add_params['search_actions'] = 'open';
-        $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_SEARCH, $add_params);
+        $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, null, $add_params);
 
         $add_params['search_actions'] = 'keyboard';
-        $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_SEARCH, $add_params);
 
-        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_UP);
-        $add_action['caption'] = 'Вверх';
-        $actions[GUI_EVENT_KEY_B_GREEN] = $add_action;
-
-        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DOWN);
-        $add_action['caption'] = 'Вниз';
-        $actions[GUI_EVENT_KEY_C_YELLOW] = $add_action;
-
-        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DELETE);
-        $add_action['caption'] = 'Удалить';
-        $actions[GUI_EVENT_KEY_D_BLUE] = $add_action;
+        $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, null, $add_params);
+        $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, 'Вверх');
+        $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, 'Вниз');
+        $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить');
 
         return $actions;
     }
@@ -100,7 +85,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
-            case self::ACTION_CREATE_SEARCH:
+            case ACTION_CREATE_SEARCH:
                 if (!isset($user_input->parent_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
@@ -116,18 +101,18 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 $defs = array();
                 Control_Factory::add_text_field($defs,
-                    $this, null, self::ACTION_NEW_SEARCH, '',
+                    $this, null, ACTION_NEW_SEARCH, '',
                     $search_string, false, false, true, true, 1300, false, true);
                 Control_Factory::add_vgap($defs, 500);
 
                 return Action_Factory::show_dialog('Поиск', $defs, true);
 
-            case self::ACTION_NEW_SEARCH:
+            case ACTION_NEW_SEARCH:
                 return Action_Factory::close_dialog_and_run(
-                    User_Input_Handler_Registry::create_action($this, self::ACTION_RUN_SEARCH));
+                    User_Input_Handler_Registry::create_action($this, ACTION_RUN_SEARCH));
 
-            case self::ACTION_RUN_SEARCH:
-                $search_string = $user_input->{self::ACTION_NEW_SEARCH};
+            case ACTION_RUN_SEARCH:
+                $search_string = $user_input->{ACTION_NEW_SEARCH};
                 hd_print("search string: $search_string");
                 HD::put_item(self::VOD_SEARCH_ITEM, $search_string);
                 $search_items = HD::get_items(self::VOD_SEARCH_LIST);
@@ -143,7 +128,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 return Action_Factory::invalidate_folders(array(self::ID), $action);
 
-            case self::ACTION_ITEM_UP:
+            case ACTION_ITEM_UP:
                 if (!isset($user_input->selected_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
@@ -159,7 +144,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 return $this->get_update_action($user_input, -1, $plugin_cookies);
 
-            case self::ACTION_ITEM_DOWN:
+            case ACTION_ITEM_DOWN:
                 if (!isset($user_input->selected_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
@@ -175,7 +160,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 return $this->get_update_action($user_input, 1, $plugin_cookies);
 
-            case self::ACTION_ITEM_DELETE:
+            case ACTION_ITEM_DELETE:
                 if (!isset($user_input->selected_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);

@@ -106,7 +106,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
 
         $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
         $right_button_caption = $this->plugin->vod->is_favorite_movie_id($movie->id) ? 'Удалить из Избранного' : 'Добавить в Избранное';
-        $right_button_action = User_Input_Handler_Registry::create_action($this, 'favorites', array('movie_id' => $movie->id));
+        $right_button_action = User_Input_Handler_Registry::create_action($this, 'favorites', null, array('movie_id' => $movie->id));
 
         $save_folder = HD::get_items('save_folder');
         if (isset($save_folder[$movie->id]))

@@ -5,11 +5,6 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
 {
     const ID = 'vod_series';
 
-    const ACTION_WATCHED = 'watched';
-    const ACTION_QUALITY = 'quality';
-    const ACTION_POPUP_MENU = 'popup_menu';
-    const ACTION_EXTERNAL_PLAYER = 'use_external_player';
-
     /**
      * @var array
      */
@@ -55,29 +50,22 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         // hd_print("get_action_map: " . $media_url->get_raw_string());
-        $actions = array();
-        $actions[GUI_EVENT_KEY_ENTER] = Action_Factory::vod_play();
-        $actions[GUI_EVENT_KEY_PLAY] = Action_Factory::vod_play();
-
-        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_WATCHED);
-        $add_action['caption'] = 'Просмотрено/Не просмотрено';
-        $actions[GUI_EVENT_KEY_B_GREEN] = $add_action;
+        $actions = array(
+            GUI_EVENT_KEY_ENTER   => Action_Factory::vod_play(),
+            GUI_EVENT_KEY_PLAY    => Action_Factory::vod_play(),
+            GUI_EVENT_KEY_B_GREEN => User_Input_Handler_Registry::create_action($this, ACTION_WATCHED, 'Просмотрено/Не просмотрено'),
+        );
 
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED)) {
             $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
             $variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : "auto";
-            if (!is_null($movie) && isset($movie->variants_list)) {
-
+            if (!is_null($movie) && isset($movie->variants_list) && count($movie->variants_list) > 1) {
                 $q_exist = (in_array($variant, $movie->variants_list) ? "" : "?");
-                $quality_action = User_Input_Handler_Registry::create_action($this, self::ACTION_QUALITY);
-                $quality_action['caption'] = "Качество - $variant$q_exist";
-                $actions[GUI_EVENT_KEY_D_BLUE] = $quality_action;
+                $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_QUALITY, "Качество - $variant$q_exist");
             }
         }
 
-        if (is_android()) {
-            $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
-        }
+        $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU);
 
         return $actions;
     }
@@ -93,30 +81,42 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
-            case self::ACTION_QUALITY:
+            case ACTION_QUALITY:
+                $media_url = MediaURL::decode($user_input->selected_media_url);
+                $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
+                if (is_null($movie)) break;
+
                 $menu_items = array();
                 if (!isset($this->variants) || count($this->variants) < 2) break;
 
+                $current_variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : 'auto';
+                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
+                    'auto', 'auto',
+                    $current_variant === 'auto' ? 'gui_skin://small_icons/video_settings.aai' : null
+                );
                 foreach ($this->variants as $key => $variant) {
-                    $add_action = User_Input_Handler_Registry::create_action($this, $key);
-                    $menu_items[] = array(GuiMenuItemDef::caption => $key, GuiMenuItemDef::action => $add_action);
+                    if ($key === "auto") continue;
+
+                    $icon = null;
+                    if ((string)$key === $current_variant) {
+                        $icon = 'gui_skin://small_icons/video_settings.aai';
+                    }
+                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, $key, $key, $icon);
                 }
+
                 return Action_Factory::show_popup_menu($menu_items);
 
-            case self::ACTION_WATCHED:
-                if (!isset($user_input->selected_media_url))
-                    return null;
+            case ACTION_WATCHED:
+                if (!isset($user_input->selected_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
-                if (is_null($movie)) {
-                    return null;
-                }
+                if (is_null($movie)) break;
 
                 $this->plugin->vod->ensure_history_loaded($plugin_cookies);
                 $viewed_items = $this->plugin->vod->get_history_movies();
 
-                if ((isset($user_input->{self::ACTION_WATCHED}) && $user_input->{self::ACTION_WATCHED} !== false)
+                if ((isset($user_input->{ACTION_WATCHED}) && $user_input->{ACTION_WATCHED} !== false)
                     || !isset($viewed_items[$media_url->movie_id][$user_input->sel_ndx])) {
                     $movie_info[Movie::WATCHED_FLAG] = true;
                 } else {
@@ -148,10 +148,10 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 //hd_print("range: " . json_encode($range));
                 return Action_Factory::update_regular_folder($range, true, $sel_ndx);
 
-            case self::ACTION_EXTERNAL_PLAYER:
+            case ACTION_EXTERNAL_PLAYER:
                 try {
-                    $add_params[self::ACTION_WATCHED] = true;
-                    $post_action = User_Input_Handler_Registry::create_action($this, self::ACTION_WATCHED, $add_params);
+                    $add_params[ACTION_WATCHED] = true;
+                    $post_action = User_Input_Handler_Registry::create_action($this, ACTION_WATCHED, null, $add_params);
                     $info = $this->plugin->get_vod_info($user_input->selected_media_url, $plugin_cookies);
                     if (isset($info[PluginVodInfo::initial_series_ndx], $info[PluginVodInfo::series][$info[PluginVodInfo::initial_series_ndx]])) {
                         $series = $info[PluginVodInfo::series];
@@ -169,10 +169,43 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 }
                 break;
 
-            case self::ACTION_POPUP_MENU:
-                $add_ext_player_action = User_Input_Handler_Registry::create_action($this, self::ACTION_EXTERNAL_PLAYER);
-                $caption = 'Проиграть внешним плейером';
-                $menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_ext_player_action);
+            case ACTION_POPUP_MENU:
+                $media_url = MediaURL::decode($user_input->selected_media_url);
+
+                $menu_items = array();
+                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_WATCHED, 'Просмотрено/Не просмотрено');
+
+                if ($this->plugin->config->get_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED)) {
+                    $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                    $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
+
+                    if (!is_null($movie) && isset($movie->variants_list)) {
+                        if (!isset($this->variants) || count($this->variants) < 2) break;
+
+                        $current_variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : 'auto';
+                        $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
+                            'auto', 'auto',
+                            $current_variant === 'auto' ? 'gui_skin://small_icons/video_settings.aai' : null
+                        );
+                        foreach ($this->variants as $key => $variant) {
+                            if ($key === "auto") continue;
+
+                            $icon = null;
+                            if ((string)$key === $current_variant) {
+                                $icon = 'gui_skin://small_icons/video_settings.aai';
+                            }
+                            $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, $key, $key, $icon);
+                        }
+                    }
+                }
+
+                $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
+                    ACTION_EXTERNAL_PLAYER,
+                    'Проиграть внешним плейером',
+                    'gui_skin://small_icons/playback.aai'
+                );
+
                 return Action_Factory::show_popup_menu($menu_items);
 
             default:

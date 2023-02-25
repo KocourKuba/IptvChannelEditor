@@ -198,8 +198,7 @@ class Movie implements User_Input_Handler
     protected function get_movie_actions()
     {
         User_Input_Handler_Registry::get_instance()->register_handler($this);
-        $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
-        return $actions;
+        return array(GUI_EVENT_PLAYBACK_STOP => User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP));
     }
 
     /**

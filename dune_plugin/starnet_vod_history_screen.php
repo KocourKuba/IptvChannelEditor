@@ -6,10 +6,6 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 {
     const ID = 'vod_history';
 
-    const ACTION_ADD_FAV = 'add_favorite';
-    const ACTION_POPUP_MENU = 'popup_menu';
-    const ACTION_ITEM_DELETE = 'item_delete';
-
     /**
      * @return false|string
      */
@@ -39,22 +35,13 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $actions = array();
-
-        $actions[GUI_EVENT_KEY_ENTER] = $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play();
-        $actions[GUI_EVENT_KEY_PLAY] = Action_Factory::vod_play();
-
-        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DELETE);
-        $add_action['caption'] = 'Удалить';
-        $actions[GUI_EVENT_KEY_B_GREEN] = $add_action;
-
-        $add_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ADD_FAV);
-        $add_favorite_action['caption'] = 'В Избранное';
-        $actions[GUI_EVENT_KEY_D_BLUE] = $add_favorite_action;
-
-        $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
-
-        return $actions;
+        return array(
+            GUI_EVENT_KEY_ENTER      => $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play(),
+            GUI_EVENT_KEY_PLAY       => Action_Factory::vod_play(),
+            GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить'),
+            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, 'В Избранное'),
+            GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU),
+        );
     }
 
     /**
@@ -84,7 +71,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 
         switch ($user_input->control_id)
 		{
-			case self::ACTION_ITEM_DELETE:
+			case ACTION_ITEM_DELETE:
 				$media_url = MediaURL::decode($user_input->selected_media_url);
                 //hd_print("Vod_History_Screen: Delete movie_id: $media_url->movie_id");
                 $this->plugin->vod->remove_movie_from_history($media_url->movie_id, $plugin_cookies);
@@ -95,13 +82,15 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 				$range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
 				return Action_Factory::update_regular_folder($range, true, $sel_ndx);
 
-			case self::ACTION_POPUP_MENU:
-				$add_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ADD_FAV);
-				$caption = $this->plugin->vod->is_favorite_movie_id($movie_id) ? 'Удалить из Избранного' : 'Добавить в избранное';
-				$menu_items[] = array(GuiMenuItemDef::caption => $caption, GuiMenuItemDef::action => $add_favorite_action);
+			case ACTION_POPUP_MENU:
+				$menu_items[] = User_Input_Handler_Registry::create_popup_item($this,ACTION_ADD_FAV,
+                    $this->plugin->vod->is_favorite_movie_id($movie_id) ? 'Удалить из Избранного' : 'Добавить в избранное');
+
+                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_ITEM_DELETE, 'Удалить');
+
 				return Action_Factory::show_popup_menu($menu_items);
 
-			case self::ACTION_ADD_FAV:
+			case ACTION_ADD_FAV:
 				$is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
 				$opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
 				$message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';

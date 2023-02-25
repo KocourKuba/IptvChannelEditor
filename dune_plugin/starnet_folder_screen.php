@@ -123,16 +123,11 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         //hd_print("StarnetFolderScreen: get_action_map: " . $media_url->get_raw_string());
         $actions = array();
         $fs_action = User_Input_Handler_Registry::create_action($this, 'fs_action');
-        $save_folder = User_Input_Handler_Registry::create_action($this, 'select_folder');
-        $save_folder['caption'] = "Выбрать папку";
-        $open_folder = User_Input_Handler_Registry::create_action($this, 'open_folder');
-        $open_folder['caption'] = "Открыть папку";
-        $create_folder = User_Input_Handler_Registry::create_action($this, 'create_folder');
-        $create_folder['caption'] = "Создать папку";
-        $reset_folder = User_Input_Handler_Registry::create_action($this, 'reset_folder');
-        $reset_folder['caption'] = "Сбросить по умолчанию";
-        $smb_setup = User_Input_Handler_Registry::create_action($this, 'smb_setup');
-        $smb_setup['caption'] = "Настройки SMB";
+        $save_folder = User_Input_Handler_Registry::create_action($this, 'select_folder', 'Выбрать папку');
+        $open_folder = User_Input_Handler_Registry::create_action($this, 'open_folder', 'Открыть папку');
+        $create_folder = User_Input_Handler_Registry::create_action($this, 'create_folder', 'Создать папку');
+        $reset_folder = User_Input_Handler_Registry::create_action($this, 'reset_folder', 'Сбросить по умолчанию');
+        $smb_setup = User_Input_Handler_Registry::create_action($this, 'smb_setup', 'Настройки SMB');
 
         $actions[GUI_EVENT_KEY_ENTER] = $fs_action;
         $actions[GUI_EVENT_KEY_PLAY] = $fs_action;

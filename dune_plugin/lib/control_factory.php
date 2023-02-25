@@ -84,7 +84,7 @@ class Control_Factory
     public static function add_button(&$defs, $handler, $add_params,
                                       $name, $title, $caption, $width, $caption_centered = false)
     {
-        $push_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
+        $push_action = User_Input_Handler_Registry::create_action($handler, $name, null, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -105,7 +105,7 @@ class Control_Factory
     public static function add_button_close(&$defs, $handler, $add_params,
                                             $name, $title, $caption, $width)
     {
-        $push_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
+        $push_action = User_Input_Handler_Registry::create_action($handler, $name, null, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -134,7 +134,7 @@ class Control_Factory
      */
     public static function add_image_button(&$defs, $handler, $add_params, $name, $title, $caption, $image, $width = 0)
     {
-        $push_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
+        $push_action = User_Input_Handler_Registry::create_action($handler, $name, null, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -185,7 +185,7 @@ class Control_Factory
      */
     public static function add_close_dialog_and_apply_button(&$defs, $handler, $add_params, $name, $caption, $width)
     {
-        $push_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
+        $push_action = User_Input_Handler_Registry::create_action($handler, $name, null, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -213,7 +213,7 @@ class Control_Factory
      */
     public static function add_close_dialog_and_apply_button_title(&$defs, $handler, $add_params, $name, $title, $caption, $width)
     {
-        $push_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
+        $push_action = User_Input_Handler_Registry::create_action($handler, $name, null, $add_params);
         $push_action['params']['action_type'] = 'apply';
 
         $defs[] = array
@@ -276,13 +276,13 @@ class Control_Factory
     {
         $apply_action = null;
         if ($need_apply) {
-            $apply_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
+            $apply_action = User_Input_Handler_Registry::create_action($handler, $name, null, $add_params);
             $apply_action['params']['action_type'] = 'apply';
         }
 
         $confirm_action = null;
         if ($need_confirm) {
-            $confirm_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
+            $confirm_action = User_Input_Handler_Registry::create_action($handler, $name, null, $add_params);
             $confirm_action['params']['action_type'] = 'confirm';
         }
 
@@ -324,13 +324,13 @@ class Control_Factory
     {
         $apply_action = null;
         if ($need_apply) {
-            $apply_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
+            $apply_action = User_Input_Handler_Registry::create_action($handler, $name, null, $add_params);
             $apply_action['params']['action_type'] = 'apply';
         }
 
         $confirm_action = null;
         if ($need_confirm) {
-            $confirm_action = User_Input_Handler_Registry::create_action($handler, $name, $add_params);
+            $confirm_action = User_Input_Handler_Registry::create_action($handler, $name, null, $add_params);
             $confirm_action['params']['action_type'] = 'confirm';
         }
 

@@ -65,6 +65,29 @@ const PLAYBACK_DEINITIALIZING = 'deinitializing';
 const PLAYBACK_PCR_DISCONTINUITY = 'pcr_discontinuity';
 const PLAYBACK_MEDIA_OPEN_FAILED = 'media_open_failed';
 
+# Common actions
+const ACTION_ITEM_UP = 'item_up';
+const ACTION_ITEM_DOWN = 'item_down';
+const ACTION_ITEM_DELETE = 'item_delete';
+const ACTION_ITEMS_CLEAR = 'items_clear';
+const ACTION_SETTINGS = 'settings';
+const ACTION_NEED_CONFIGURE = 'configure';
+const ACTION_BALANCE = 'balance';
+const ACTION_POPUP_MENU = 'popup_menu';
+const ACTION_INFO = 'info';
+const ACTION_ADD_FAV = 'add_favorite';
+const ACTION_JUMP_TO_CHANNEL = 'jump_to_channel';
+const ACTION_CREATE_SEARCH = 'create_search';
+const ACTION_NEW_SEARCH = 'new_search';
+const ACTION_RUN_SEARCH = 'run_search';
+const ACTION_RELOAD = 'reload';
+const ACTION_CHANGE_PLAYLIST = 'change_playlist';
+const ACTION_WATCHED = 'watched';
+const ACTION_QUALITY = 'quality';
+const ACTION_EXTERNAL_PLAYER = 'use_external_player';
+const ACTION_CREATE_FILTER = 'create_filter';
+const ACTION_RUN_FILTER = 'run_filter';
+
 # Mounted storages path
 const DUNE_MOUNTED_STORAGES_PATH = '/tmp/mnt/storage/';
 

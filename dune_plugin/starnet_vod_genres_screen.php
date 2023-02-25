@@ -34,13 +34,7 @@ class Starnet_Vod_Genres_Screen extends Abstract_Preloaded_Regular_Screen implem
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $select_genre_action =
-            User_Input_Handler_Registry::create_action($this, 'select_genre');
-
-        return array
-        (
-            GUI_EVENT_KEY_ENTER => $select_genre_action,
-        );
+        return array(GUI_EVENT_KEY_ENTER => User_Input_Handler_Registry::create_action($this, 'select_genre'));
     }
 
     /**

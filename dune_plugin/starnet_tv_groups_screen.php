@@ -6,10 +6,6 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
 {
     const ID = 'tv_groups';
 
-    const ACTION_SETTINGS = 'settings';
-    const ACTION_CONFIGURE = 'configure';
-    const ACTION_BALANCE = 'balance';
-
     ///////////////////////////////////////////////////////////////////////
 
     /**
@@ -48,27 +44,25 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         // if token not set force to open setup screen
         // hd_print('main_screen: get_action_map');
 
-        $add_settings = User_Input_Handler_Registry::create_action($this, self::ACTION_SETTINGS);
-        $add_settings['caption'] = 'Настройки плагина';
+        $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS, 'Настройки плагина');
 
         $actions = array(
-            GUI_EVENT_KEY_SETUP => $add_settings,
-            GUI_EVENT_KEY_B_GREEN => $add_settings,
-            GUI_EVENT_KEY_ENTER => Action_Factory::open_folder(),
-            GUI_EVENT_KEY_PLAY => Action_Factory::tv_play(),
+            GUI_EVENT_KEY_ENTER      => Action_Factory::open_folder(),
+            GUI_EVENT_KEY_PLAY       => Action_Factory::tv_play(),
+            GUI_EVENT_KEY_SETUP      => $action_settings,
+            GUI_EVENT_KEY_B_GREEN    => $action_settings,
+            GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU),
         );
 
         if ($this->IsSetupNeeds($plugin_cookies) !== false) {
             hd_print("Create setup action");
-            $configure = User_Input_Handler_Registry::create_action($this, self::ACTION_CONFIGURE);
+            $configure = User_Input_Handler_Registry::create_action($this, ACTION_NEED_CONFIGURE);
             $actions[GUI_EVENT_KEY_PLAY] = $configure;
             $actions[GUI_EVENT_KEY_ENTER] = $configure;
         }
 
         if ($this->plugin->config->get_feature(Plugin_Constants::BALANCE_SUPPORTED)) {
-            $add_balance = User_Input_Handler_Registry::create_action($this, self::ACTION_BALANCE);
-            $add_balance['caption'] = 'Подписка';
-            $actions[GUI_EVENT_KEY_C_YELLOW] = $add_balance;
+            $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_BALANCE, 'Подписка');
         }
 
         return $actions;
@@ -85,7 +79,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         //foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
-            case self::ACTION_CONFIGURE:
+            case ACTION_NEED_CONFIGURE:
                 if ($this->IsSetupNeeds($plugin_cookies)) {
                     hd_print("Setup required!");
                     return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
@@ -93,10 +87,10 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
 
                 return Action_Factory::open_folder($user_input->selected_media_url);
 
-            case self::ACTION_SETTINGS:
+            case ACTION_SETTINGS:
                 return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
 
-            case self::ACTION_BALANCE:
+            case ACTION_BALANCE:
                 $defs = array();
                 $this->plugin->config->AddSubscriptionUI($defs, $plugin_cookies);
                 Control_Factory::add_close_dialog_button($defs, 'OK', 150);
@@ -111,6 +105,19 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 }
 
                 return $post_action;
+
+            case ACTION_POPUP_MENU:
+                if ($this->plugin->config->get_feature(Plugin_Constants::BALANCE_SUPPORTED)) {
+                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_BALANCE,
+                        'Подписка','gui_skin://small_icons/premium_functions.aai');
+
+                    $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                }
+
+                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_SETTINGS,
+                    'Настройки плагина', 'gui_skin://small_icons/setup.aai');
+
+                return Action_Factory::show_popup_menu($menu_items);
         }
 
         return null;

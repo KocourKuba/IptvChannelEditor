@@ -6,11 +6,6 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
 {
     const ID = 'tv_favorites';
 
-    const ACTION_ITEM_UP = 'item_up';
-    const ACTION_ITEM_DOWN = 'item_down';
-    const ACTION_ITEM_DELETE = 'item_delete';
-    const ACTION_ITEMS_CLEAR = 'items_clear';
-
     /**
      * @return false|string
      */
@@ -43,32 +38,41 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_UP);
-        $move_backward_favorite_action['caption'] = 'Вверх';
+        $action_play = Action_Factory::tv_play();
 
-        $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DOWN);
-        $move_forward_favorite_action['caption'] = 'Вниз';
+        $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, 'Вверх');
+        $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, 'Вниз');
+        $remove_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить');
+        $remove_all_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR);
+        $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS);
 
-        $remove_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DELETE);
-        $remove_favorite_action['caption'] = 'Удалить';
+        $menu_items[] = array(
+            GuiMenuItemDef::caption => 'Удалить из Избранного',
+            GuiMenuItemDef::action => $remove_favorite_action
+        );
 
-        $remove_all_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEMS_CLEAR);
+        $menu_items[] = array(
+            GuiMenuItemDef::caption => 'Очистить Избранное',
+            GuiMenuItemDef::action => $remove_all_favorite_action);
 
-        $menu_items = array(
-            array(GuiMenuItemDef::caption => 'Удалить из Избранного', GuiMenuItemDef::action => $remove_favorite_action),
-            array(GuiMenuItemDef::caption => 'Очистить Избранное', GuiMenuItemDef::action => $remove_all_favorite_action),
+        $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+
+        $menu_items[] = array(
+            GuiMenuItemDef::caption => 'Настройки плагина',
+            GuiMenuItemDef::icon_url => 'gui_skin://small_icons/setup.aai',
+            GuiMenuItemDef::action => $action_settings
         );
 
         $popup_menu_action = Action_Factory::show_popup_menu($menu_items);
 
         return array
         (
-            GUI_EVENT_KEY_SETUP => Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина'),
-            GUI_EVENT_KEY_ENTER => Action_Factory::tv_play(),
-            GUI_EVENT_KEY_PLAY => Action_Factory::tv_play(),
-            GUI_EVENT_KEY_B_GREEN => $move_backward_favorite_action,
-            GUI_EVENT_KEY_C_YELLOW => $move_forward_favorite_action,
-            GUI_EVENT_KEY_D_BLUE => $remove_favorite_action,
+            GUI_EVENT_KEY_SETUP      => $action_settings,
+            GUI_EVENT_KEY_ENTER      => $action_play,
+            GUI_EVENT_KEY_PLAY       => $action_play,
+            GUI_EVENT_KEY_B_GREEN    => $move_backward_favorite_action,
+            GUI_EVENT_KEY_C_YELLOW   => $move_forward_favorite_action,
+            GUI_EVENT_KEY_D_BLUE     => $remove_favorite_action,
             GUI_EVENT_KEY_POPUP_MENU => $popup_menu_action,
         );
     }
@@ -133,22 +137,29 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
         }
 
         switch ($user_input->control_id) {
-            case self::ACTION_ITEM_UP:
+            case ACTION_ITEM_UP:
                 $fav_op_type = PLUGIN_FAVORITES_OP_MOVE_UP;
                 $inc = -1;
                 break;
-            case self::ACTION_ITEM_DOWN:
+
+            case ACTION_ITEM_DOWN:
                 $fav_op_type = PLUGIN_FAVORITES_OP_MOVE_DOWN;
                 $inc = 1;
                 break;
-            case self::ACTION_ITEM_DELETE:
+
+            case ACTION_ITEM_DELETE:
                 $fav_op_type = PLUGIN_FAVORITES_OP_REMOVE;
                 $inc = 0;
                 break;
-            case self::ACTION_ITEMS_CLEAR:
+
+            case ACTION_ITEMS_CLEAR:
                 $fav_op_type = 'clear_favorites';
                 $inc = 0;
                 break;
+
+            case ACTION_SETTINGS:
+                return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
+
             default:
                 return null;
         }

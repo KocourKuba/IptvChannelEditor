@@ -7,12 +7,6 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
     const ID = 'filter_screen';
     const FILTER_ICON_PATH = 'plugin_file://icons/icon_filter.png';
 
-    const ACTION_CREATE_FILTER = 'create_filter';
-    const ACTION_RUN_FILTER = 'run_filter';
-    const ACTION_ITEM_UP = 'item_up';
-    const ACTION_ITEM_DOWN = 'item_down';
-    const ACTION_ITEM_DELETE = 'item_delete';
-
     const VOD_FILTER_LIST = 'vod_filter_items';
     const VOD_FILTER_ITEM = 'vod_filter_item';
 
@@ -54,22 +48,29 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
     {
         $actions = array();
         $add_params['filter_actions'] = 'open';
-        $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_FILTER, $add_params);
+        $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_FILTER, null, $add_params);
 
         $add_params['filter_actions'] = 'keyboard';
-        $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, self::ACTION_CREATE_FILTER, $add_params);
+        $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_FILTER, null, $add_params);
 
-        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_UP);
-        $add_action['caption'] = 'Вверх';
-        $actions[GUI_EVENT_KEY_B_GREEN] = $add_action;
+        $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, 'Вверх');
+        $menu_items[] = array(
+            GuiMenuItemDef::caption => $actions[GUI_EVENT_KEY_B_GREEN]['caption'],
+            GuiMenuItemDef::action => $actions[GUI_EVENT_KEY_B_GREEN]
+        );
 
-        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DOWN);
-        $add_action['caption'] = 'Вниз';
-        $actions[GUI_EVENT_KEY_C_YELLOW] = $add_action;
+        $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, 'Вниз');
+        $menu_items[] = array(
+            GuiMenuItemDef::caption => $actions[GUI_EVENT_KEY_C_YELLOW]['caption'],
+            GuiMenuItemDef::action => $actions[GUI_EVENT_KEY_C_YELLOW]
+        );
 
-        $add_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DELETE);
-        $add_action['caption'] = 'Удалить';
-        $actions[GUI_EVENT_KEY_D_BLUE] = $add_action;
+        $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить');
+        $menu_items[] = array(
+            GuiMenuItemDef::caption => $actions[GUI_EVENT_KEY_D_BLUE]['caption'],
+            GuiMenuItemDef::action => $actions[GUI_EVENT_KEY_D_BLUE]
+        );
+        $actions[GUI_EVENT_KEY_POPUP_MENU] = Action_Factory::show_popup_menu($menu_items);
 
         return $actions;
     }
@@ -99,7 +100,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         switch ($user_input->control_id) {
-            case self::ACTION_CREATE_FILTER:
+            case ACTION_CREATE_FILTER:
                 if (!isset($user_input->parent_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
@@ -116,13 +117,13 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                 $defs = array();
                 if (false === $this->plugin->config->AddFilterUI($defs, $this, $filter_string)) break;
 
-                Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::ACTION_RUN_FILTER, 'Ok', 300);
+                Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, ACTION_RUN_FILTER, 'Ok', 300);
                 Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
                 Control_Factory::add_vgap($defs, 10);
 
                 return Action_Factory::show_dialog('Фильтр', $defs, true);
 
-            case self::ACTION_RUN_FILTER:
+            case ACTION_RUN_FILTER:
                 $filter_string = $this->plugin->config->CompileSaveFilterItem($user_input);
                 if (empty($filter_string)) break;
 
@@ -141,7 +142,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                         Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_FILTER, $filter_string),
                         "Фильтр: " . $filter_string));
 
-            case self::ACTION_ITEM_UP:
+            case ACTION_ITEM_UP:
                 if (!isset($user_input->selected_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
@@ -157,7 +158,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 return $this->get_update_action($user_input, -1, $plugin_cookies);
 
-            case self::ACTION_ITEM_DOWN:
+            case ACTION_ITEM_DOWN:
                 if (!isset($user_input->selected_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
@@ -173,7 +174,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 return $this->get_update_action($user_input, 1, $plugin_cookies);
 
-            case self::ACTION_ITEM_DELETE:
+            case ACTION_ITEM_DELETE:
                 if (!isset($user_input->selected_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);

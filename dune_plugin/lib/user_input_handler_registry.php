@@ -33,10 +33,11 @@ class User_Input_Handler_Registry
     /**
      * @param User_Input_Handler $handler
      * @param string $name
+     * @param string|null $caption
      * @param array|null $add_params
      * @return array
      */
-    public static function create_action(User_Input_Handler $handler, $name, $add_params = null)
+    public static function create_action(User_Input_Handler $handler, $name, $caption = null, $add_params = null)
     {
         $params = array(
             'handler_id' => $handler->get_handler_id(),
@@ -48,9 +49,26 @@ class User_Input_Handler_Registry
         return array
         (
             GuiAction::handler_string_id => PLUGIN_HANDLE_USER_INPUT_ACTION_ID,
-            GuiAction::caption => null,
+            GuiAction::caption => $caption,
             GuiAction::data => null,
             GuiAction::params => $params,
+        );
+    }
+
+    /**
+     * @param User_Input_Handler $handler
+     * @param string $name
+     * @param string $caption
+     * @param string|null $icon
+     * @param array|null $add_params
+     * @return array
+     */
+    public static function create_popup_item(User_Input_Handler $handler, $name, $caption, $icon = null, $add_params = null)
+    {
+        return array(
+            GuiMenuItemDef::caption => $caption,
+            GuiMenuItemDef::action => self::create_action($handler, $name, $caption, $add_params),
+            GuiMenuItemDef::icon_url => $icon,
         );
     }
 

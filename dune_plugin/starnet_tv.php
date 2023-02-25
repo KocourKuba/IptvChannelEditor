@@ -768,8 +768,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
     public function get_action_map()
     {
         if ($this->plugin->new_ui_support) {
-            $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
-            return $actions;
+            return array(GUI_EVENT_PLAYBACK_STOP => User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP));
         }
 
         return null;

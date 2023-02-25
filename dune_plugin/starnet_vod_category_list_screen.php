@@ -6,9 +6,6 @@ require_once 'starnet_vod_list_screen.php';
 class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_category_list';
-    const ACTION_RELOAD = 'reload';
-    const ACTION_POPUP_MENU = 'popup_menu';
-    const ACTION_CHANGE_PLAYLIST = 'change_playlist';
     const PARAM_PLAYLIST = 'playlist';
 
     /**
@@ -62,20 +59,19 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $actions = array();
-        $actions[GUI_EVENT_KEY_ENTER] = Action_Factory::open_folder();
-        $reload = User_Input_Handler_Registry::create_action($this, self::ACTION_RELOAD);
-        $reload['caption'] = 'Перечитать плейлист';
-        $actions[GUI_EVENT_KEY_C_YELLOW] = $reload;
+        $actions = array(
+            GUI_EVENT_KEY_ENTER => Action_Factory::open_folder(),
+            GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, ACTION_RELOAD, 'Перечитать плейлист'),
+        );
 
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_M3U)) {
             $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
             if (count($all_vod_lists) > 1) {
-                $change_playlist = User_Input_Handler_Registry::create_action($this, self::ACTION_POPUP_MENU);
-                $change_playlist['caption'] = 'Сменить плейлист';
-                $actions[GUI_EVENT_KEY_B_GREEN] = $change_playlist;
+                $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU, 'Сменить плейлист');
             }
         }
+
+        $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU);
 
         return $actions;
     }
@@ -96,14 +92,14 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         }
 
         switch ($user_input->control_id) {
-            case self::ACTION_RELOAD:
+            case ACTION_RELOAD:
                 hd_print("reload categories");
                 $this->clear_vod();
                 $media_url = MediaURL::decode($user_input->parent_media_url);
                 $range = $this->get_folder_range($media_url, 0, $plugin_cookies);
                 return Action_Factory::update_regular_folder($range, true, -1);
 
-            case self::ACTION_CHANGE_PLAYLIST:
+            case ACTION_CHANGE_PLAYLIST:
                 $current_idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
 
                 if (isset($user_input->{self::PARAM_PLAYLIST})
@@ -111,27 +107,23 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                     && $user_input->{self::PARAM_PLAYLIST} !== (int)$current_idx) {
                     $plugin_cookies->vod_idx = $user_input->{self::PARAM_PLAYLIST};
                     hd_print("change VOD playlist to: " . $user_input->{self::PARAM_PLAYLIST});
-                    return User_Input_Handler_Registry::create_action($this, self::ACTION_RELOAD);
+                    return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
                 }
                 break;
-            case self::ACTION_POPUP_MENU;
+            case ACTION_POPUP_MENU;
                 $menu_items = array();
                 $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
                 foreach ($all_vod_lists as $idx => $list) {
                     $add_param[self::PARAM_PLAYLIST] = $idx;
-                    $action = User_Input_Handler_Registry::create_action($this, self::ACTION_CHANGE_PLAYLIST, $add_param);
 
                     $icon_url = null;
                     if ($idx === (int)$current_idx) {
                         $icon_url = "gui_skin://small_icons/playlist_file.aai";
                     }
-                    $menu_items[] = array(
-                        GuiMenuItemDef::caption => $list,
-                        GuiMenuItemDef::action => $action,
-                        GuiMenuItemDef::icon_url => $icon_url,
-                    );
+                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_CHANGE_PLAYLIST, $list, $icon_url, $add_param);
                 }
-                if (count($menu_items) < 2) break;
+                $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_RELOAD, 'Перечитать плейлист');
 
                 return Action_Factory::show_popup_menu($menu_items);
         }

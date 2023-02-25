@@ -7,11 +7,6 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
 {
     const ID = 'vod_favorites';
 
-    const ACTION_ITEM_UP = 'item_up';
-    const ACTION_ITEM_DOWN = 'item_down';
-    const ACTION_ITEM_DELETE = 'item_delete';
-    const ACTION_ITEMS_CLEAR = 'items_clear';
-
     /**
      * @return false|string
      */
@@ -45,16 +40,10 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
     {
         $play_action = $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play();
 
-        $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_UP);
-        $move_backward_favorite_action['caption'] = 'Вверх';
-
-        $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DOWN);
-        $move_forward_favorite_action['caption'] = 'Вниз';
-
-        $remove_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEM_DELETE);
-        $remove_favorite_action['caption'] = 'Удалить';
-
-        $remove_all_favorite_action = User_Input_Handler_Registry::create_action($this, self::ACTION_ITEMS_CLEAR);
+        $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, 'Вверх');
+        $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, 'Вниз');
+        $remove_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить');
+        $remove_all_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR);
 
         $menu_items = array(
             array(GuiMenuItemDef::caption => 'Удалить из Избранного', GuiMenuItemDef::action => $remove_favorite_action),
@@ -65,11 +54,11 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
 
         return array
         (
-            GUI_EVENT_KEY_ENTER => $play_action,
-            GUI_EVENT_KEY_PLAY => $play_action,
-            GUI_EVENT_KEY_B_GREEN => $move_backward_favorite_action,
-            GUI_EVENT_KEY_C_YELLOW => $move_forward_favorite_action,
-            GUI_EVENT_KEY_D_BLUE => $remove_favorite_action,
+            GUI_EVENT_KEY_ENTER      => $play_action,
+            GUI_EVENT_KEY_PLAY       => $play_action,
+            GUI_EVENT_KEY_B_GREEN    => $move_backward_favorite_action,
+            GUI_EVENT_KEY_C_YELLOW   => $move_forward_favorite_action,
+            GUI_EVENT_KEY_D_BLUE     => $remove_favorite_action,
             GUI_EVENT_KEY_POPUP_MENU => $popup_menu_action,
         );
     }
@@ -97,19 +86,19 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
         }
 
         switch ($user_input->control_id) {
-            case self::ACTION_ITEM_UP:
+            case ACTION_ITEM_UP:
                 $fav_op_type = PLUGIN_FAVORITES_OP_MOVE_UP;
                 $inc = -1;
                 break;
-            case self::ACTION_ITEM_DOWN:
+            case ACTION_ITEM_DOWN:
                 $fav_op_type = PLUGIN_FAVORITES_OP_MOVE_DOWN;
                 $inc = 1;
                 break;
-            case self::ACTION_ITEM_DELETE:
+            case ACTION_ITEM_DELETE:
                 $fav_op_type = PLUGIN_FAVORITES_OP_REMOVE;
                 $inc = 0;
                 break;
-            case self::ACTION_ITEMS_CLEAR:
+            case ACTION_ITEMS_CLEAR:
                 $fav_op_type = 'clear_favorites';
                 $inc = 0;
                 break;
