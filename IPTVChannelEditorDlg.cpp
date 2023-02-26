@@ -1761,8 +1761,10 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	{
 		UpdateIconInfo(*channel);
 	}
-
-	UpdateData(FALSE);
+	else
+	{
+		UpdateData(FALSE);
+	}
 
 	LoadTimerEPG();
 }

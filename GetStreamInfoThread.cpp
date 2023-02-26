@@ -107,7 +107,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 	HANDLE hSelf = GetCurrentProcess();
 	if (!DuplicateHandle(hSelf, hChildStdoutRd, hSelf, &hStdoutRd, 0, FALSE, DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE))
 	{
-		TRACE(_T("Failed! Can't create stdout pipe to child process. Code: %u\n"), GetLastError());
+		TRACE(_T("Failed! Can't create stdout pipe to child process %d. Code: %u\n"), index, GetLastError());
 		return;
 	}
 
