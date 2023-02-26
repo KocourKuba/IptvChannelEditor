@@ -118,13 +118,16 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 
 	UpdateDateTimestamp(true);
 
-	m_wndEpgType.SetCurSel(0);
+	for (const auto& param : GetPropertySheet()->m_plugin->get_epg_parameters())
+	{
+		m_wndEpgType.AddString(utils::utf8_to_utf16(param.epg_param).c_str());
+	}
 
+	m_wndEpgType.SetCurSel(0);
 	m_DuneIP = GetConfig().get_string(true, REG_DUNE_IP).c_str();
 	m_Token = GetPropertySheet()->m_selected_cred.get_token().c_str();
 	if (GetPropertySheet()->m_CurrentStream)
 	{
-		m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(0).c_str();
 		m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(0).c_str();
 	}
 
@@ -206,6 +209,9 @@ void CPluginConfigPageEPG::UpdateControls()
 	m_wndEpgTimezone.EnableWindow(enable);
 	m_wndChkUseDuration.EnableWindow(enable);
 	m_wndBtnEpgTest.EnableWindow(!m_EpgUrl.IsEmpty());
+	m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(m_wndEpgType.GetCurSel()).c_str();
+
+	UpdateData(FALSE);
 }
 
 void CPluginConfigPageEPG::FillControls()

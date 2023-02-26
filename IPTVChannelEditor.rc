@@ -1446,15 +1446,6 @@ BEGIN
     0
 END
 
-IDD_DIALOG_PLUGIN_CONFIG_EPG DLGINIT
-BEGIN
-    IDC_COMBO_EPG_TYPE, 0x403, 8, 0
-0x7250, 0x6d69, 0x7261, 0x0079, 
-    IDC_COMBO_EPG_TYPE, 0x403, 10, 0
-0x6553, 0x6f63, 0x646e, 0x7261, 0x0079, 
-    0
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
