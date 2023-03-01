@@ -51,6 +51,7 @@ void plugin_sharavoz::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/iptv\/p\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 

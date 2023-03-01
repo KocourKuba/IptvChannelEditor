@@ -51,6 +51,7 @@ void plugin_tvteam::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/pl\/11\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 

@@ -453,8 +453,7 @@ void CAccessInfoPage::CreateAccountsList()
 		default: break;
 	}
 
-	std::vector<PluginType> allow_add_from_url = { PluginType::enEdem, PluginType::enGlanz, PluginType::enCbilling, PluginType::enSharaclub };
-	m_wndNewFromUrl.EnableWindow(std::find(allow_add_from_url.begin(), allow_add_from_url.end(), m_plugin->get_plugin_type()) != allow_add_from_url.end());
+	m_wndNewFromUrl.EnableWindow(!m_plugin->get_playlist_info(0).get_pl_parse_regex().empty());
 
 	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_COMMENT).c_str(), LVCFMT_LEFT, vWidth, 0);
 
@@ -721,6 +720,12 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 	{
 		CWaitCursor cur;
 		m_status.Empty();
+
+		const auto& info = m_plugin->get_playlist_info(0);
+		boost::wregex re(info.get_pl_parse_regex());
+		std::wstring url = dlg.m_url.GetString();
+		boost::wsmatch m;
+
 		switch (m_plugin->get_plugin_type())
 		{
 			case PluginType::enEdem:
@@ -765,13 +770,16 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			}
 			break;
 
+			// Login/Password
 			case PluginType::enGlanz:
+			case PluginType::enFilmax:
+			case PluginType::enFox:
+			case PluginType::enKineskop:
+			case PluginType::enMymagic:
+			case PluginType::enPing:
+			case PluginType::enSharaclub:
+			case PluginType::enYossoTV:
 			{
-				const auto& info = m_plugin->get_playlist_info(0);
-				boost::wregex re(info.get_pl_parse_regex());
-				std::wstring url = dlg.m_url.GetString();
-
-				boost::wsmatch m;
 				if (boost::regex_match(url, m, re))
 				{
 					int cnt = m_wndAccounts.GetItemCount();
@@ -787,14 +795,21 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			}
 			break;
 
+			// Pin
+			case PluginType::enAntifriz:
 			case PluginType::enCbilling:
-			case PluginType::enSharaclub:
+			case PluginType::enIptvOnline:
+			case PluginType::enItv:
+			case PluginType::enOneCent:
+			case PluginType::enTVClub:
+			case PluginType::enLightIptv:
+			case PluginType::enOneUsd:
+			case PluginType::enOttclub:
+			case PluginType::enRusskoeTV:
+			case PluginType::enSharavoz:
+			case PluginType::enVidok:
+			case PluginType::enVipLime:
 			{
-				const auto& info = m_plugin->get_playlist_info(0);
-				boost::wregex re(info.get_pl_parse_regex());
-				std::wstring url = dlg.m_url.GetString();
-
-				boost::wsmatch m;
 				if (boost::regex_match(url, m, re))
 				{
 					int cnt = m_wndAccounts.GetItemCount();

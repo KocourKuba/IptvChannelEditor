@@ -51,6 +51,7 @@ void plugin_filmax::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+)\/(?<password>.+)\/(?:hls|ts)\/(?<server>.+)\/playlist\.m3u8$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 	info.tag_id_match = "tvg-name";
 	playlist_templates.emplace_back(info);

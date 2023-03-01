@@ -52,6 +52,7 @@ void plugin_russkoetv::load_default()
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
 	info.pl_template = "http://russkoetv.tv/play/{PASSWORD}.m3u8";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<password>.+)\.m3u8?$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	playlist_templates.emplace_back(info);
 

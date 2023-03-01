@@ -51,6 +51,7 @@ void plugin_sharatv::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+):(?<password>.+)\/.+\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 

@@ -54,6 +54,7 @@ void plugin_yosso::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "https://streaming-elbrus.su/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}/playlist.m3u8";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<login>.+)\/(?<password>.+)\/(?<server>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>\d+)\/(?<var1>.+\/)?(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 

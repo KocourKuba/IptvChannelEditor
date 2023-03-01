@@ -51,6 +51,7 @@ void plugin_mymagic::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/srv\/(?<server>.+)\/(?<quality>.+)\/(?<login>.+)\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 	info.tag_id_match = "CUID";
 	playlist_templates.emplace_back(info);

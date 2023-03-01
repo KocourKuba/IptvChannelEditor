@@ -66,6 +66,7 @@ void plugin_ping::load_default()
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
 	info.pl_template = "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/tv.m3u";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+)\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 	info.tag_id_match = "CUID";
 	playlist_templates.emplace_back(info);

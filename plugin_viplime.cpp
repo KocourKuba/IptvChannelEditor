@@ -51,6 +51,7 @@ void plugin_viplime::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/.*\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
 	playlist_templates.emplace_back(info);
 

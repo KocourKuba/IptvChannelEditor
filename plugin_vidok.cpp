@@ -60,6 +60,7 @@ void plugin_vidok::load_default()
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://vidok.tv/p/{TOKEN}";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].cu_type = CatchupType::cu_append;

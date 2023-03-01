@@ -47,6 +47,7 @@ void plugin_edem::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://epg.it999.ru/edem_epg_ico.m3u8";
+	info.pl_parse_regex = R"(^http:\/.*\/playlists\/uplist\/.*\/playlist\.m3u8$)";
 	info.parse_regex = R"(^https?:\/\/(?<subdomain>.+)\/iptv\/(?<token>.+)\/(?<id>.+)\/.*\.m3u8$)";
 	playlist_templates.emplace_back(info);
 

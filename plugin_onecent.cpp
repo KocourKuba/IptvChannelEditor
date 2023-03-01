@@ -51,6 +51,7 @@ void plugin_onecent::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/pl\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 

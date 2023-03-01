@@ -51,6 +51,7 @@ void plugin_lightiptv::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u";
+	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/hls\/(?<password>.+)\.m3u8?$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
 	info.tag_id_match = "tvg-id";
 	playlist_templates.emplace_back(info);

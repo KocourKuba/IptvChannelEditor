@@ -52,6 +52,7 @@ void plugin_ottclub::load_default()
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
 	info.pl_template = "http://myott.top/playlist/{PASSWORD}/m3u";
+	info.pl_parse_regex= R"(^https?:\/\/.*\/playlist\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 
 	playlist_templates.emplace_back(info);
