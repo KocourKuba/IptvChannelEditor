@@ -65,6 +65,6 @@ void plugin_lightiptv::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{TOKEN}/timeshift_abs-{START}-{DURATION}.ts?token={PASSWORD}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.ml/lightiptv/epg/{EPG_ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.ml/lightiptv%2Fepg%2F{EPG_ID}.json";
 	epg_params[1].epg_url = "http://epg.ott-play.com/lightiptv/epg/{EPG_ID}.json";
 }

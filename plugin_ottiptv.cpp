@@ -66,5 +66,5 @@ void plugin_ottiptv::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{VAR1}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{VAR1}/{ID}/index-{START}-{DURATION}.ts?token={TOKEN}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.ml/ottiptv/epg/{EPG_ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.ml/ottiptv%2Fepg%2F{EPG_ID}.json";
 }
