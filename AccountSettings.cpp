@@ -147,6 +147,7 @@ static std::vector<PluginType> all_plugins = {
 	{ PluginType::enVidok,      },
 	{ PluginType::enVipLime,    },
 	{ PluginType::enYossoTV,    },
+	{ PluginType::enOttIptv,    },
 	{ PluginType::enCustom,     },
 };
 

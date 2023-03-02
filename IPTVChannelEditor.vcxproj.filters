@@ -330,6 +330,9 @@
     <ClInclude Include="BaseThread.h">
       <Filter>Header Files\Threads</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_ottiptv.h">
+      <Filter>Header Files\plugin\flussionic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -565,6 +568,9 @@
     </ClCompile>
     <ClCompile Include="IconsSourceParseThread.cpp">
       <Filter>Source Files\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_ottiptv.cpp">
+      <Filter>Source Files\plugin\flussonic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -53,6 +53,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_smile.h"
 #include "plugin_ping.h"
 #include "plugin_yosso.h"
+#include "plugin_ottiptv.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -175,6 +176,10 @@ std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 
 		case PluginType::enYossoTV:
 			plugin = std::make_shared<plugin_yosso>();
+			break;
+
+		case PluginType::enOttIptv:
+			plugin = std::make_shared<plugin_ottiptv>();
 			break;
 
 		default:

@@ -776,6 +776,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			case PluginType::enFox:
 			case PluginType::enKineskop:
 			case PluginType::enMymagic:
+			case PluginType::enOttIptv:
 			case PluginType::enPing:
 			case PluginType::enSharaclub:
 			case PluginType::enYossoTV:
