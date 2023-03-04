@@ -343,6 +343,9 @@ class Starnet_Tv implements Tv, User_Input_Handler
             if (!empty($url_path)) {
                 try {
                     $channels_list_path = get_data_path(hash('crc32', $url_path));
+                    if (is_file($channels_list_path)) {
+                        unlink($channels_list_path);
+                    }
                     file_put_contents($channels_list_path, HD::http_get_document($url_path));
                 } catch (Exception $ex) {
                     if (!file_exists($channels_list_path)) {
