@@ -127,8 +127,8 @@ class Movie implements User_Input_Handler
     public function __construct($id, $plugin)
     {
         if (is_null($id)) {
-            HD::print_backtrace();
-            throw new Exception("Movie::id is null");
+            hd_print("Movie::id is null, create dummy movie");
+            $id = -1;
         }
 
         $this->id = (string)$id;
