@@ -266,16 +266,14 @@ abstract class Abstract_Vod implements Vod
 
         switch ($fav_op_type) {
             case PLUGIN_FAVORITES_OP_ADD:
-                //hd_print("Try to add movie id: $movie_id");
+                hd_print("Try to add movie id: $movie_id");
                 if (!is_null($movie_id) && in_array($movie_id, $fav_movie_ids) === false) {
                     hd_print("Movie id: $movie_id added to favorites");
                     $fav_movie_ids[] = $movie_id;
                 }
                 break;
             case PLUGIN_FAVORITES_OP_REMOVE:
-                //hd_print("Try to remove movie id: $movie_id");
-                if (is_null($movie_id)) break;
-
+                hd_print("Try to remove movie id: $movie_id");
                 $k = array_search($movie_id, $fav_movie_ids);
                 if ($k !== false) {
                     hd_print("Movie id: $movie_id removed from favorites");
@@ -283,6 +281,7 @@ abstract class Abstract_Vod implements Vod
                 }
                 break;
             case 'clear_favorites':
+                hd_print("Movie favorites cleared");
                 $fav_movie_ids = array();
                 break;
             case PLUGIN_FAVORITES_OP_MOVE_UP:
