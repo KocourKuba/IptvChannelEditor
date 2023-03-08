@@ -49,17 +49,41 @@ class default_config extends dynamic_config
 
     public function load_embedded_account()
     {
-        $acc_file = get_install_path('account.dat');
-        if (file_exists($acc_file)) {
-            $data = file_get_contents($acc_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            if ($data !== false) {
-                hd_print("account data: $data");
-                $account = json_decode(base64_decode(substr($data, 5)));
-                if ($account !== false) {
-                    $this->embedded_account = $account;
-                    //foreach ($this->embedded_account as $key => $item) hd_print("Embedded info: $key => $item");
-                }
+        $plugin_account = get_install_path('account.dat');
+        $plugin_data = '';
+        if (file_exists($plugin_account)) {
+            $plugin_data = file_get_contents($plugin_account, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            hd_print("account data: $plugin_data");
+            if ($plugin_data !== false) {
+                $plugin_data = base64_decode(substr($plugin_data, 5));
             }
+        }
+
+        $backup_account = get_data_path('account.dat');
+        $backup_data = '';
+        if (file_exists($backup_account)) {
+            $backup_data = file_get_contents($backup_account, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        }
+
+        if (empty($plugin_data) && empty($backup_data))
+            return;
+
+        if (!empty($plugin_data)) {
+            if ($plugin_data !== $backup_data) {
+                hd_print("backup account data.");
+                $backup_data = $plugin_data;
+                file_put_contents($backup_account, $backup_data);
+            }
+        } else if (!empty($backup_data)) {
+            hd_print("using backup account data.");
+            $plugin_data = $backup_data;
+        }
+
+        $account = json_decode($plugin_data);
+        if ($account !== false) {
+            hd_print("account data loaded.");
+            $this->embedded_account = $account;
+            //foreach ($this->embedded_account as $key => $item) hd_print("Embedded info: $key => $item");
         }
     }
 

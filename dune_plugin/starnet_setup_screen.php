@@ -16,7 +16,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const SETUP_ACTION_LOGIN_APPLY = 'login_apply';
     const SETUP_ACTION_PIN_DLG = 'pin_dialog';
     const SETUP_ACTION_PIN_APPLY = 'pin_apply';
-    const SETUP_ACTION_MOVE_ACCOUNT = 'move_account';
+    const SETUP_ACTION_CLEAR_ACCOUNT = 'clear_account';
+    const SETUP_ACTION_CLEAR_ACCOUNT_APPLY = 'clear_account_apply';
     const SETUP_ACTION_CHANGE_LIST_PATH = 'change_list_path';
     const SETUP_ACTION_CHANGE_LIST = 'change_channels_list';
     const SETUP_ACTION_CHANNELS_SOURCE = 'channels_source';
@@ -112,8 +113,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // ott or token dialog
         if ($this->plugin->config->get_embedded_account() !== null) {
-            Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_MOVE_ACCOUNT,
-                'Встроенные данные для просмотра:', 'Переместить в память Dune', $setting_icon);
+            Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CLEAR_ACCOUNT,
+                'Данные для просмотра:', 'Удалить встроенные данные', $setting_icon);
         } else {
             switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
                 case Plugin_Constants::ACCOUNT_OTT_KEY:
@@ -572,29 +573,18 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
                     return $this->reload_channels($plugin_cookies);
 
-                case self::SETUP_ACTION_MOVE_ACCOUNT: // handle move account
-                    $embedded_account = $this->plugin->config->get_embedded_account();
-                    if ($embedded_account !== null) {
-                        switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
-                            case Plugin_Constants::ACCOUNT_OTT_KEY:
-                                $plugin_cookies->subdomain = $embedded_account->domain;
-                                $plugin_cookies->ott_key = $embedded_account->ott_key;
-                                $plugin_cookies->mediateka = $embedded_account->vportal;
-                                break;
-                            case Plugin_Constants::ACCOUNT_LOGIN:
-                                $plugin_cookies->login = $embedded_account->login;
-                                $plugin_cookies->password = $embedded_account->password;
-                                break;
-                            case Plugin_Constants::ACCOUNT_PIN:
-                                $plugin_cookies->password = $embedded_account->password;
-                                break;
-                        }
-                        exec('rm -rf ' . get_install_path('account.dat'));
-                        $this->plugin->config->set_embedded_account(null);
-                        $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
-                        return Action_Factory::show_title_dialog('Данные перенесены', $post_action);
-                    }
-                    break;
+                case self::SETUP_ACTION_CLEAR_ACCOUNT: // confirm clear account
+                    if ($this->plugin->config->get_embedded_account() === null) break;
+
+                    return Action_Factory::show_confirmation_dialog('Внимание!', $this, self::SETUP_ACTION_CLEAR_ACCOUNT_APPLY,
+                        'Вы действительно хотите удалить встроенные данные?');
+
+                case self::SETUP_ACTION_CLEAR_ACCOUNT_APPLY: // handle clear account
+                    exec('rm -rf ' . get_install_path('account.dat'));
+                    exec('rm -rf ' . get_data_path('account.dat'));
+                    $this->plugin->config->set_embedded_account(null);
+                    $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
+                    return Action_Factory::show_title_dialog('Данные удалены', $post_action);
 
                 case self::SETUP_ACTION_CHANGE_LIST_PATH:
                     $media_url = MediaURL::encode(

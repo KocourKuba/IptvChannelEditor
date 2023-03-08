@@ -185,6 +185,24 @@ class Action_Factory
     }
 
     /**
+     * Confirmation dialog
+     * @return array
+     */
+    public static function show_confirmation_dialog($title, $handler, $action, $multiline = null, $preferred_width = 0)
+    {
+        $defs = array();
+
+        if ($multiline !== null) {
+            Control_Factory::add_multiline_label($defs, '', $multiline, 15);
+        }
+
+        Control_Factory::add_close_dialog_and_apply_button($defs, $handler, null, $action, 'Да', 300);
+        Control_Factory::add_close_dialog_button($defs, 'Нет', 300);
+
+        return self::show_dialog($title, $defs, false, $preferred_width);
+    }
+
+    /**
      * @param int $delay_ms
      * @return array
      */
