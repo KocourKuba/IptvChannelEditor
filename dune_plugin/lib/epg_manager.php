@@ -1,6 +1,5 @@
 <?php
 require_once 'hd.php';
-require_once 'epg_xml_parser.php';
 
 class Epg_Manager
 {
@@ -265,56 +264,5 @@ class Epg_Manager
 
         ksort($day_epg);
         return $day_epg;
-    }
-
-    /**
-     * request server for XMLTV epg and parse xml or xml.gx response
-     * @param string $url
-     * @param int $day_start_ts
-     * @param string $epg_id
-     * @param string $cache_dir
-     * @return array
-     */
-    protected static function get_epg_xml($url, $day_start_ts, $epg_id, $cache_dir)
-    {
-        $epg = array();
-        // time in UTC+0
-        $epg_date_start = strtotime('-1 hour', $day_start_ts);
-        $epg_date_end = strtotime('+1 day', $day_start_ts);
-
-        try {
-            // checks if epg already loaded
-            preg_match('/^.*\/(.+)$/', $url, $match);
-            $epgCacheFile = sprintf("%s/%s_%s", $cache_dir, $match[1], $day_start_ts);
-            if (!file_exists($epgCacheFile)) {
-                hd_print("epg uri: $url");
-                $doc = HD::http_get_document($url);
-                if (!file_put_contents($epgCacheFile, $doc)) {
-                    hd_print("Writing to $epgCacheFile is not possible!");
-                }
-            }
-
-            // parse
-            $Parser = new Epg_Xml_Parser();
-            $Parser->setFile($epgCacheFile);
-            $Parser->setChannelfilter($epg_id);
-            $Parser->parseEpg();
-            $epg_data = $Parser->getEpgData();
-            if (empty($epg_data)) {
-                hd_print("No EPG data found");
-            } else {
-                foreach ($epg_data as $channel) {
-                    if ($channel->time >= $epg_date_start && $channel->time < $epg_date_end) {
-                        $epg[$channel->time][Epg_Params::EPG_NAME] = HD::unescape_entity_string($channel->name);
-                        $epg[$channel->time][Epg_Params::EPG_DESC] = HD::unescape_entity_string($channel->descr);
-                    }
-                }
-            }
-        } catch (Exception $ex) {
-            hd_print($ex->getMessage());
-            return $epg;
-        }
-
-        return $epg;
     }
 }

@@ -525,7 +525,6 @@ function format_timestamp($ts, $fmt = 'Y:m:d H:i:s')
  * @param string $fmt
  * @param int $ts
  * @return string
- * @throws Exception
  */
 function format_datetime($fmt, $ts)
 {
@@ -837,7 +836,7 @@ function get_segment_length_seconds()
 }
 
 /**
- * @return mixed|string
+ * @return string
  */
 function get_playback_url()
 {

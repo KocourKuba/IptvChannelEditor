@@ -104,7 +104,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
 
                 if (isset($user_input->{self::PARAM_PLAYLIST})
                     && $user_input->{self::PARAM_PLAYLIST} !== false
-                    && $user_input->{self::PARAM_PLAYLIST} !== (int)$current_idx) {
+                    && $user_input->{self::PARAM_PLAYLIST} !== $current_idx) {
                     $plugin_cookies->vod_idx = $user_input->{self::PARAM_PLAYLIST};
                     hd_print("change VOD playlist to: " . $user_input->{self::PARAM_PLAYLIST});
                     return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);

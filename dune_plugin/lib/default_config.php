@@ -14,6 +14,10 @@ class default_config extends dynamic_config
     protected $movie_counter = array();
     protected $filters = array();
     protected $embedded_account;
+
+    /**
+     * @var array
+     */
     protected $account_data;
 
     /**

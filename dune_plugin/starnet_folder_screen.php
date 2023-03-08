@@ -498,11 +498,11 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
     public static function get_file_icon($ref)
     {
         $file_icon = 'gui_skin://small_icons/unknown_file.aai';
-        $audio_pattern = '|\.(mp3|ac3|wma|ogg|ogm|m4a|aif|iff|mid|mpa|ra|wav|flac|ape|vorbis|aac|a52)$|i';
-        $video_pattern = '|\.(avi|mp4|mpg|mpeg|divx|m4v|3gp|asf|wmv|mkv|mov|ogv|vob|flv|ts|3g2|swf|asf|ps|qt|m2ts)$|i';
-        $image_pattern = '|\.(png|jpg|jpeg|bmp|gif|psd|pspimage|thm|tif|yuf|svg|aai|ico|djpg|dbmp|dpng|image_file.aai)$|i';
-        $play_list_pattern = '|\.(m3u|m3u8|pls|xml)$|i';
-        $torrent_pattern = '|\.torrent$|i';
+        $audio_pattern = '/\.(mp3|ac3|wma|ogg|ogm|m4a|aif|iff|mid|mpa|ra|wav|flac|ape|vorbis|aac|a52)$/i';
+        $video_pattern = '/\.(avi|mp4|mpg|mpeg|divx|m4v|3gp|asf|wmv|mkv|mov|ogv|vob|flv|ts|3g2|swf|asf|ps|qt|m2ts)$/i';
+        $image_pattern = '/\.(png|jpg|jpeg|bmp|gif|psd|pspimage|thm|tif|yuf|svg|aai|ico|djpg|dbmp|dpng|image_file.aai)$/i';
+        $play_list_pattern = '/\.(m3u|m3u8|pls|xml)$/i';
+        $torrent_pattern = '/\.torrent$/i';
         if (preg_match($audio_pattern, $ref)) {
             $file_icon = 'gui_skin://small_icons/audio_file.aai';
         }

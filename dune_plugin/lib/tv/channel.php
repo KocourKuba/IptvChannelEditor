@@ -106,7 +106,7 @@ interface Channel
     public function get_custom_archive_template();
 
     /**
-     * streaming url yype
+     * streaming url type
      * @return string
      */
     public function get_custom_url_type();

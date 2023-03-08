@@ -5,7 +5,7 @@ require_once 'lib/tv/all_channels_group.php';
 require_once 'lib/tv/favorites_group.php';
 require_once 'lib/tv/default_epg_item.php';
 require_once 'lib/hashed_array.php';
-require_once 'lib/epg_xml_parser.php';
+
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_vod_category_list_screen.php';
 
