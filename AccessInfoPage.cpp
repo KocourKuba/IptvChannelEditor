@@ -855,6 +855,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 	// Persist the selected attachment details upon updating its text
 	m_wndAccounts.SetItemText(dispinfo->item.iItem, dispinfo->item.iSubItem, dispinfo->item.pszText);
 	auto& cred = m_all_credentials[dispinfo->item.iItem];
+	bool changed = true;
 	switch (m_plugin->get_access_type())
 	{
 		case AccountAccessType::enPin:
@@ -867,6 +868,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 					cred.set_comment(CString(dispinfo->item.pszText));
 					break;
 				default:
+					changed = false;
 					break;
 			}
 			break;
@@ -884,6 +886,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 					cred.set_comment(CString(dispinfo->item.pszText));
 					break;
 				default:
+					changed = false;
 					break;
 			}
 			break;
@@ -904,6 +907,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 					cred.set_comment(CString(dispinfo->item.pszText));
 					break;
 				default:
+					changed = false;
 					break;
 			}
 			break;
@@ -915,6 +919,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 					cred.set_comment(CString(dispinfo->item.pszText));
 					break;
 				default:
+					changed = false;
 					break;
 			}
 			break;
@@ -924,6 +929,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 	{
 		GetAccountInfo();
 	}
+	GetParent()->GetDlgItem(IDOK)->EnableWindow(changed);
 
 	return 0;
 }
@@ -952,7 +958,6 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 		FillChannelsList();
 		enable = TRUE;
 	}
-	//else if ((pNMLV->uNewState & 0x1000) && (pNMLV->uOldState & 0x2000)) {}
 
 	m_wndRemove.EnableWindow(pNMLV->uNewState & LVIS_SELECTED);
 
