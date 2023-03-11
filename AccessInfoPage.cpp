@@ -89,22 +89,24 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoPage::OnCbnSelchangeComboProfile)
 	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CAccessInfoPage::OnCbnSelchangeComboQuality)
 	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoPage::OnBnClickedCheckEmbed)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_SUFFIX, &CAccessInfoPage::OnEnChangeEditPluginSuffix)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoPage::OnEnChangeEditPluginCaption)
+	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PLUGIN_NAME, &CAccessInfoPage::OnBnClickedCheckCustomPluginNameTemplate)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_ARCHIVE_TEMPLATE, &CAccessInfoPage::OnEnChangeEditPluginNameTemplate)
+	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PLUGIN_LOGO, &CAccessInfoPage::OnBnClickedCheckCustomPluginLogo)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_LOGO, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo)
-	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_BGND, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginBgnd)
+	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PLUGIN_BGND, &CAccessInfoPage::OnBnClickedCheckCustomPluginBackground)
+	ON_EN_CHANGE(IDC_MFCEDITBROWSE_PLUGIN_BGND, &CAccessInfoPage::OnEnChangeMfceditbrowsePluginBackground)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, &CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath)
 	ON_WM_CUSTOM_MFC_BROWSE(IDC_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT, &CAccessInfoPage::OnBnClickedButtonBrowseDirectLink)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_VERSION, &CAccessInfoPage::OnEnChangeEditPluginUpdateVersion)
 	ON_BN_CLICKED(IDC_CHECK_AUTOINCREMENT_VERSION, &CAccessInfoPage::OnBnClickedCheckAutoincrementVersion)
 	ON_WM_CUSTOM_MFC_BROWSE(IDC_MFCEDITBROWSE_PLUGIN_UPDATE_URL, &CAccessInfoPage::OnBnClickedButtonBrowseUpdateDesc)
 	ON_WM_CUSTOM_MFC_BROWSE(IDC_MFCEDITBROWSE_PLUGIN_UPDATE_FILE_URL, &CAccessInfoPage::OnBnClickedButtonBrowseUpdateFile)
-	ON_BN_CLICKED(IDC_CHECK_CUSTOM_UPDATE_NAME, &CAccessInfoPage::OnBnClickedCheckCustomUpdateName)
-	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PACKAGE_NAME, &CAccessInfoPage::OnBnClickedCheckCustomPackageName)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_NAME, &CAccessInfoPage::OnEnChangeEditPluginUpdateName)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_PACKAGE_NAME, &CAccessInfoPage::OnEnChangeEditPluginPackageName)
+	ON_BN_CLICKED(IDC_CHECK_CUSTOM_UPDATE_NAME, &CAccessInfoPage::OnBnClickedCheckCustomUpdateNameTemplate)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE, &CAccessInfoPage::OnEnChangeEditPluginUpdateNameTemplate)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CAccessInfoPage::OnBnClickedButtonEditConfig)
 	ON_BN_CLICKED(IDC_CHECK_USE_DROPBOX, &CAccessInfoPage::OnBnClickedCheckUseDropbox)
+	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PLUGIN_CAPTION, &CAccessInfoPage::OnBnClickedCheckCustomPluginCaption)
 END_MESSAGE_MAP()
 
 
@@ -128,12 +130,17 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_QUALITY, m_wndQualities);
 	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
 	DDX_Control(pDX, IDC_COMBO_CONFIGS, m_wndConfigs);
-	DDX_Control(pDX, IDC_EDIT_PLUGIN_SUFFIX, m_wndSuffix);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_SUFFIX, m_suffix);
+	DDX_Control(pDX, IDC_EDIT_PLUGIN_ARCHIVE_TEMPLATE, m_wndPluginNameTemplate);
+	DDX_Control(pDX, IDC_CHECK_CUSTOM_PLUGIN_NAME, m_wndCustomPluginName);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_ARCHIVE_NAME, m_pluginName);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_ARCHIVE_TEMPLATE, m_pluginNameTemplate);
+	DDX_Control(pDX, IDC_CHECK_CUSTOM_PLUGIN_CAPTION, m_wndCustomCaption);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_CAPTION, m_wndCaption);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CAPTION, m_caption);
+	DDX_Control(pDX, IDC_CHECK_CUSTOM_PLUGIN_LOGO, m_wndCustomLogo);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_LOGO, m_wndLogo);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_LOGO, m_logo);
+	DDX_Control(pDX, IDC_CHECK_CUSTOM_PLUGIN_BGND, m_wndCustomCaption);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_wndBackground);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_background);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, m_channelsWebPath);
@@ -145,11 +152,9 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_UPDATE_VERSION, m_wndVersionID);
 	DDX_Control(pDX, IDC_CHECK_AUTOINCREMENT_VERSION, m_wndAutoIncrement);
 	DDX_Control(pDX, IDC_CHECK_CUSTOM_UPDATE_NAME, m_wndCustomUpdateName);
-	DDX_Control(pDX, IDC_EDIT_PLUGIN_UPDATE_NAME, m_wndUpdateName);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_NAME, m_updateDescription);
-	DDX_Control(pDX, IDC_CHECK_CUSTOM_PACKAGE_NAME, m_wndCustomPackageName);
-	DDX_Control(pDX, IDC_EDIT_PLUGIN_PACKAGE_NAME, m_wndPackageName);
-	DDX_Text(pDX, IDC_EDIT_PLUGIN_PACKAGE_NAME, m_updatePackage);
+	DDX_Control(pDX, IDC_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE, m_wndUpdateNameTemplate);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE, m_updateNameTemplate);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_NAME, m_updateName);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndEditConfig);
 	DDX_Control(pDX, IDC_CHECK_USE_DROPBOX, m_wndUseDropboxUpdate);
 }
@@ -168,8 +173,11 @@ BOOL CAccessInfoPage::OnInitDialog()
 	AddTooltip(IDC_CHECK_EMBED, IDS_STRING_CHECK_EMBED);
 	AddTooltip(IDC_MFCEDITBROWSE_PLUGIN_LOGO, IDS_STRING_EDIT_ICON);
 	AddTooltip(IDC_MFCEDITBROWSE_PLUGIN_BGND, IDS_STRING_EDIT_BACKGROUND);
-	AddTooltip(IDC_EDIT_PLUGIN_SUFFIX, IDS_STRING_EDIT_SUFFIX);
 	AddTooltip(IDC_EDIT_PLUGIN_CAPTION, IDS_STRING_EDIT_CAPTION);
+	AddTooltip(IDC_CHECK_CUSTOM_PLUGIN_NAME, IDS_STRING_CHECK_CUSTOM_PLUGIN_NAME);
+	AddTooltip(IDC_EDIT_PLUGIN_ARCHIVE_TEMPLATE, IDS_STRING_EDIT_PLUGIN_ARCHIVE_TEMPLATE);
+	AddTooltip(IDC_EDIT_PLUGIN_ARCHIVE_NAME, IDS_STRING_EDIT_PLUGIN_ARCHIVE_NAME);
+	AddTooltip(IDC_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT, IDS_STRING_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT);
 	AddTooltip(IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, IDS_STRING_EDIT_PLUGIN_CHANNELS_WEB_PATH);
 	AddTooltip(IDC_MFCEDITBROWSE_PLUGIN_UPDATE_URL, IDS_STRING_EDIT_PLUGIN_UPDATE_URL);
 	AddTooltip(IDC_MFCEDITBROWSE_PLUGIN_UPDATE_FILE_URL, IDS_STRING_EDIT_PLUGIN_UPDATE_FILE_URL);
@@ -177,10 +185,9 @@ BOOL CAccessInfoPage::OnInitDialog()
 	AddTooltip(IDC_EDIT_PLUGIN_UPDATE_VERSION, IDS_STRING_EDIT_PLUGIN_UPDATE_VERSION);
 	AddTooltip(IDC_CHECK_CUSTOM_UPDATE_NAME, IDS_STRING_CHECK_CUSTOM_UPDATE_NAME);
 	AddTooltip(IDC_EDIT_PLUGIN_UPDATE_NAME, IDS_STRING_EDIT_PLUGIN_UPDATE_NAME);
-	AddTooltip(IDC_CHECK_CUSTOM_PACKAGE_NAME, IDS_STRING_CHECK_CUSTOM_PACKAGE_NAME);
-	AddTooltip(IDC_EDIT_PLUGIN_PACKAGE_NAME, IDS_STRING_EDIT_PLUGIN_PACKAGE_NAME);
 	AddTooltip(IDC_BUTTON_EDIT_CONFIG, IDS_STRING_BUTTON_EDIT_CONFIG);
 	AddTooltip(IDC_COMBO_CONFIGS, IDS_STRING_COMBO_CONFIGS);
+	AddTooltip(IDC_CHECK_USE_DROPBOX, IDS_STRING_CHECK_USE_DROPBOX);
 
 	SetButtonImage(IDB_PNG_EDIT, m_wndEditConfig);
 
@@ -231,18 +238,23 @@ BOOL CAccessInfoPage::OnInitDialog()
 		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
 	}
 
-	std::vector<std::wstring> suffix_params =
+	std::vector<std::wstring> macroses =
 	{
-		L"{YEAR}",
-		L"{MONTH}",
-		L"{DAY}",
-		L"{HOUR}",
-		L"{MIN}",
-		L"{TIMESTAMP}",
-		L"{VERSION}",
-		L"{VERSION_INDEX}",
+		base_plugin::REPL_TYPE,
+		base_plugin::REPL_NAME,
+		base_plugin::REPL_COMMENT,
+		base_plugin::REPL_YEAR,
+		base_plugin::REPL_MONTH,
+		base_plugin::REPL_DAY,
+		base_plugin::REPL_HOUR,
+		base_plugin::REPL_MIN,
+		base_plugin::REPL_TIMESTAMP,
+		base_plugin::REPL_VERSION,
+		base_plugin::REPL_VERSION_INDEX,
 	};
-	m_wndSuffix.SetTemplateParams(suffix_params);
+
+	m_wndPluginNameTemplate.SetTemplateParams(macroses);
+	m_wndUpdateNameTemplate.SetTemplateParams(macroses);
 
 	FillConfigs();
 	CreateAccountsList();
@@ -361,13 +373,28 @@ void CAccessInfoPage::UpdateOptionalControls()
 		m_wndProfiles.SetCurSel(params.profile_idx);
 	}
 
-	m_suffix = selected.get_suffix().c_str();
+	m_wndCustomCaption.SetCheck(selected.custom_caption);
+	m_wndCaption.EnableWindow(selected.custom_caption);
 	m_caption = selected.get_caption().c_str();
+
+	m_wndCustomPluginName.SetCheck(selected.custom_plugin_name);
+	m_wndPluginNameTemplate.EnableWindow(selected.custom_plugin_name);
+	m_pluginNameTemplate = (selected.custom_plugin_name ? selected.get_plugin_name().c_str() : utils::DUNE_PLUGIN_FILE_NAME);
+	if (m_pluginNameTemplate.IsEmpty())
+		m_pluginNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
+
+	m_pluginName = fmt::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
+
+	m_wndCustomLogo.SetCheck(selected.custom_logo);
+	m_wndLogo.EnableWindow(selected.custom_logo);
 
 	if (!selected.get_logo().empty() && std::filesystem::path(selected.get_logo()).parent_path().empty())
 		m_logo = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_logo()).c_str();
 	else
 		m_logo = selected.get_logo().c_str();
+
+	m_wndCustomBackground.SetCheck(selected.custom_background);
+	m_wndBackground.EnableWindow(selected.custom_background);
 
 	if (!selected.get_background().empty() && std::filesystem::path(selected.get_background()).parent_path().empty())
 		m_background = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_background()).c_str();
@@ -377,33 +404,16 @@ void CAccessInfoPage::UpdateOptionalControls()
 	m_channelsWebPath = selected.get_ch_web_path().c_str();
 
 	m_wndAutoIncrement.SetCheck(selected.custom_increment);
-
 	m_wndVersionID.EnableWindow(selected.custom_increment);
-	m_wndUpdateName.EnableWindow(selected.custom_update_name);
-	m_wndPackageName.EnableWindow(selected.custom_package_name);
 
-	const auto& short_name_w = utils::utf8_to_utf16(m_plugin->get_short_name());
-	const auto& suffix = selected.get_suffix();
+	m_wndCustomUpdateName.SetCheck(selected.custom_update_name);
+	m_wndUpdateNameTemplate.EnableWindow(selected.custom_update_name);
 
-	if (selected.custom_update_name)
-	{
-		m_updateDescription = selected.get_update_name().c_str();
-	}
-	else
-	{
-		m_updateDescription = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
-		m_updateDescription += L".xml";
-	}
+	m_updateNameTemplate = (selected.custom_update_name ? selected.get_update_name().c_str() : utils::DUNE_UPDATE_INFO_NAME);
+	if (m_updateNameTemplate.IsEmpty())
+		m_updateNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
 
-	if (selected.custom_package_name)
-	{
-		m_updatePackage = selected.get_package_name().c_str();
-	}
-	else
-	{
-		m_updatePackage = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
-		m_updatePackage += L".tar.gz";
-	}
+	m_updateName = m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected).c_str();
 
 	if (selected.custom_increment)
 	{
@@ -484,7 +494,6 @@ void CAccessInfoPage::CreateAccountsList()
 		}
 
 		m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_comment().c_str());
-		m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_suffix().c_str());
 
 		++idx;
 	}
@@ -550,59 +559,6 @@ void CAccessInfoPage::FillChannelsList()
 	m_wndChLists.EnableWindow(TRUE);
 }
 
-void CAccessInfoPage::SetWebUpdate()
-{
-	UpdateData(TRUE);
-
-	auto& selected = GetCheckedAccount();
-	if (selected.not_valid)
-		return;
-
-	m_wndAutoIncrement.SetCheck(selected.custom_increment);
-
-	m_wndVersionID.EnableWindow(selected.custom_increment);
-	m_wndUpdateName.EnableWindow(selected.custom_update_name);
-	m_wndPackageName.EnableWindow(selected.custom_package_name);
-
-	const auto& short_name_w = utils::utf8_to_utf16(m_plugin->get_short_name());
-	const auto& suffix = selected.get_suffix();
-
-	if (selected.custom_update_name)
-	{
-		m_updateDescription = selected.get_update_name().c_str();
-	}
-	else
-	{
-		m_updateDescription = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
-		m_updateDescription += L".xml";
-	}
-
-	if (selected.custom_package_name)
-	{
-		m_updatePackage = selected.get_package_name().c_str();
-	}
-	else
-	{
-		m_updatePackage = fmt::format(utils::DUNE_UPDATE_NAME, m_plugin->get_short_name(), (selected.suffix.empty()) ? "mod" : selected.suffix).c_str();
-		m_updatePackage += L".tar.gz";
-	}
-
-	if (selected.custom_increment)
-	{
-		m_versionIdx = selected.get_version_id().c_str();
-	}
-	else
-	{
-		COleDateTime date = COleDateTime::GetCurrentTime();
-		m_versionIdx = fmt::format(L"{:d}{:02d}{:02d}{:02d}", date.GetYear(), date.GetMonth(), date.GetDay(), date.GetHour()).c_str();
-	}
-
-	m_wndUpdatePackageUrl.SetWindowText(selected.get_update_package_url().c_str());
-	m_wndUpdateUrl.SetWindowText(selected.get_update_url().c_str());
-
-	UpdateData(FALSE);
-}
-
 BOOL CAccessInfoPage::OnApply()
 {
 	UpdateData(TRUE);
@@ -646,24 +602,6 @@ BOOL CAccessInfoPage::OnApply()
 	if (m_wndProfiles.GetCount())
 	{
 		m_plugin->set_profile(params);
-	}
-
-	selected.custom_increment = m_wndAutoIncrement.GetCheck();
-	if (selected.custom_increment)
-	{
-		selected.set_version_id(m_versionIdx);
-	}
-
-	selected.custom_update_name = m_wndCustomUpdateName.GetCheck();
-	if (selected.custom_update_name)
-	{
-		selected.set_update_name(m_updateDescription);
-	}
-
-	selected.custom_package_name = m_wndCustomPackageName.GetCheck();
-	if (selected.custom_package_name)
-	{
-		selected.set_package_name(m_updatePackage);
 	}
 
 	GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, GetCheckedAccountIdx());
@@ -967,21 +905,20 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 	m_wndServers.EnableWindow(enable);
 	m_wndProfiles.EnableWindow(enable);
 	m_wndEmbed.EnableWindow(enable);
-	m_wndLogo.EnableWindow(enable);
-	m_wndBackground.EnableWindow(enable);
-	m_wndSuffix.EnableWindow(enable);
-	m_wndCaption.EnableWindow(enable);
+	m_wndCustomLogo.EnableWindow(enable);
+	m_wndCustomBackground.EnableWindow(enable);
+	m_wndCustomCaption.EnableWindow(enable);
+	m_wndCustomPluginName.EnableWindow(enable);
+	m_wndPluginNameTemplate.EnableWindow(enable);
 	m_wndUseDropboxUpdate.EnableWindow(enable);
 	m_wndDirectLink.EnableWindow(enable);
-	m_wndVersionID.EnableWindow(enable);
-	m_wndUpdateName.EnableWindow(enable);
-	m_wndPackageName.EnableWindow(enable);
 	m_wndUpdatePackageUrl.EnableWindow(enable);
 	m_wndUpdateUrl.EnableWindow(enable);
 	m_wndChannelsWebPath.EnableWindow(enable);
 	m_wndAutoIncrement.EnableWindow(enable);
-	m_wndCustomPackageName.EnableWindow(enable);
+	m_wndVersionID.EnableWindow(enable);
 	m_wndCustomUpdateName.EnableWindow(enable);
+	m_wndUpdateNameTemplate.EnableWindow(enable);
 
 	GetParent()->GetDlgItem(IDOK)->EnableWindow(enable);
 
@@ -1053,10 +990,6 @@ void CAccessInfoPage::GetAccountInfo()
 
 	m_wndEmbed.SetCheck(selected_cred.embed);
 	m_wndEmbed.EnableWindow(TRUE);
-	m_wndLogo.EnableWindow(TRUE);
-	m_wndBackground.EnableWindow(TRUE);
-	m_wndSuffix.EnableWindow(TRUE);
-	m_wndCaption.EnableWindow(TRUE);
 
 	std::wstring login;
 	std::wstring password;
@@ -1247,21 +1180,12 @@ void CAccessInfoPage::OnBnClickedCheckEmbed()
 	selected.embed = m_wndEmbed.GetCheck();
 }
 
-void CAccessInfoPage::OnEnChangeEditPluginSuffix()
+void CAccessInfoPage::OnBnClickedCheckCustomPluginCaption()
 {
-	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
-	m_suffix.Trim();
-	if (utils::is_ascii(m_suffix.GetString()))
-	{
-		selected.set_suffix(m_suffix);
-	}
-	else
-	{
-		AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
-		m_suffix.Empty();
-		UpdateData(FALSE);
-	}
+	selected.custom_caption = m_wndCustomCaption.GetCheck();
+
+	m_wndCaption.EnableWindow(selected.custom_caption);
 }
 
 void CAccessInfoPage::OnEnChangeEditPluginCaption()
@@ -1270,6 +1194,45 @@ void CAccessInfoPage::OnEnChangeEditPluginCaption()
 	m_caption.Trim();
 	auto& selected = GetCheckedAccount();
 	selected.set_caption(m_caption);
+}
+
+void CAccessInfoPage::OnBnClickedCheckCustomPluginNameTemplate()
+{
+	auto& selected = GetCheckedAccount();
+	selected.custom_plugin_name = m_wndCustomPluginName.GetCheck();
+
+	m_wndPluginNameTemplate.EnableWindow(selected.custom_plugin_name);
+
+	OnEnChangeEditPluginNameTemplate();
+}
+
+void CAccessInfoPage::OnEnChangeEditPluginNameTemplate()
+{
+	UpdateData(TRUE);
+	auto& selected = GetCheckedAccount();
+	if (utils::is_ascii(m_pluginNameTemplate.GetString()))
+	{
+		m_pluginNameTemplate.Trim();
+		selected.set_plugin_name(m_pluginNameTemplate);
+	}
+	else
+	{
+		AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+
+		m_pluginNameTemplate = selected.get_plugin_name().c_str();
+	}
+
+	m_pluginName = fmt::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
+
+	UpdateData(FALSE);
+}
+
+void CAccessInfoPage::OnBnClickedCheckCustomPluginLogo()
+{
+	auto& selected = GetCheckedAccount();
+	selected.custom_logo = m_wndCustomLogo.GetCheck();
+
+	m_wndLogo.EnableWindow(selected.custom_logo);
 }
 
 void CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo()
@@ -1285,65 +1248,80 @@ void CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo()
 	{
 		AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
 		m_logo.Empty();
-		UpdateData(FALSE);
 	}
+	UpdateData(FALSE);
 }
 
-void CAccessInfoPage::OnEnChangeMfceditbrowsePluginBgnd()
+void CAccessInfoPage::OnBnClickedCheckCustomPluginBackground()
+{
+	auto& selected = GetCheckedAccount();
+	selected.custom_background = m_wndCustomBackground.GetCheck();
+
+	m_wndBackground.EnableWindow(selected.custom_background);
+}
+
+void CAccessInfoPage::OnEnChangeMfceditbrowsePluginBackground()
 {
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
-	m_background.Trim();
 	if (utils::is_ascii(std::filesystem::path(m_background.GetString()).filename().wstring().c_str()))
 	{
+		m_background.Trim();
 		selected.set_background(m_background);
 	}
 	else
 	{
 		AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
 		m_background.Empty();
-		UpdateData(FALSE);
 	}
+	UpdateData(FALSE);
+}
+
+void CAccessInfoPage::OnBnClickedCheckAutoincrementVersion()
+{
+	auto& selected = GetCheckedAccount();
+	selected.custom_increment = m_wndAutoIncrement.GetCheck();
+
+	m_wndVersionID.EnableWindow(selected.custom_increment);
 }
 
 void CAccessInfoPage::OnEnChangeEditPluginUpdateVersion()
 {
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
+
 	selected.set_version_id(m_versionIdx);
 }
 
-void CAccessInfoPage::OnBnClickedCheckAutoincrementVersion()
+void CAccessInfoPage::OnBnClickedCheckCustomUpdateNameTemplate()
 {
-	m_wndVersionID.EnableWindow(m_wndAutoIncrement.GetCheck());
+	auto& selected = GetCheckedAccount();
+	selected.custom_update_name = m_wndCustomUpdateName.GetCheck();
+
+	m_wndUpdateNameTemplate.EnableWindow(selected.custom_update_name);
+
+	OnEnChangeEditPluginUpdateNameTemplate();
 }
 
-void CAccessInfoPage::OnBnClickedCheckCustomUpdateName()
-{
-	m_wndUpdateName.EnableWindow(m_wndCustomUpdateName.GetCheck());
-}
-
-void CAccessInfoPage::OnBnClickedCheckCustomPackageName()
-{
-	m_wndPackageName.EnableWindow(m_wndCustomPackageName.GetCheck());
-}
-
-void CAccessInfoPage::OnEnChangeEditPluginUpdateName()
+void CAccessInfoPage::OnEnChangeEditPluginUpdateNameTemplate()
 {
 	UpdateData(TRUE);
-	if (!utils::is_ascii(m_updateDescription.GetString()))
-	{
-		AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
-	}
-}
 
-void CAccessInfoPage::OnEnChangeEditPluginPackageName()
-{
-	UpdateData(TRUE);
-	if (!utils::is_ascii(m_updatePackage.GetString()))
+	auto& selected = GetCheckedAccount();
+	if (utils::is_ascii(m_updateNameTemplate.GetString()))
+	{
+		m_updateNameTemplate.Trim();
+		selected.set_update_name(m_updateNameTemplate);
+	}
+	else
 	{
 		AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
+		m_updateNameTemplate = selected.get_update_name().c_str();
 	}
+
+	m_updateName = m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected).c_str();
+
+	UpdateData(FALSE);
 }
 
 void CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath()
@@ -1438,8 +1416,8 @@ void CAccessInfoPage::OnBnClickedButtonBrowseDirectLink()
 
 void CAccessInfoPage::OnBnClickedButtonBrowseUpdateDesc()
 {
-	auto& selectedAccount = GetCheckedAccount();
-	if (selectedAccount.not_valid)
+	auto& selected = GetCheckedAccount();
+	if (selected.not_valid)
 		return;
 
 	CUrlDlg dlg;
@@ -1448,17 +1426,17 @@ void CAccessInfoPage::OnBnClickedButtonBrowseUpdateDesc()
 		return;
 
 	std::wstring url(dlg.m_url.GetString());
-	if (!TransformDropboxPath(url, m_updateDescription.GetString()))
+	if (!TransformDropboxPath(url, m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected)))
 		return;
 
 	m_wndUpdateUrl.SetWindowText(url.c_str());
-	selectedAccount.set_update_url(url);
+	selected.set_update_url(url);
 }
 
 void CAccessInfoPage::OnBnClickedButtonBrowseUpdateFile()
 {
-	auto& selectedAccount = GetCheckedAccount();
-	if (selectedAccount.not_valid)
+	auto& selected = GetCheckedAccount();
+	if (selected.not_valid)
 		return;
 
 	CUrlDlg dlg;
@@ -1467,11 +1445,12 @@ void CAccessInfoPage::OnBnClickedButtonBrowseUpdateFile()
 		return;
 
 	std::wstring url(dlg.m_url.GetString());
-	if (!TransformDropboxPath(url, m_updatePackage.GetString()))
+	if (!TransformDropboxPath(url, m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected)))
 		return;
 
+	url += L".tar.gz";
 	m_wndUpdatePackageUrl.SetWindowText(url.c_str());
-	selectedAccount.set_update_package_url(url);
+	selected.set_update_package_url(url);
 }
 
 bool CAccessInfoPage::TransformDropboxPath(std::wstring& dropbox_link, const std::wstring& file)
@@ -1496,6 +1475,23 @@ bool CAccessInfoPage::TransformDropboxPath(std::wstring& dropbox_link, const std
 	}
 
 	return true;
+}
+
+void CAccessInfoPage::UpdateTemplatedFields(const Credentials& selected)
+{
+	m_pluginNameTemplate = (selected.custom_plugin_name ? selected.get_plugin_name().c_str() : utils::DUNE_PLUGIN_FILE_NAME);
+	if (m_pluginNameTemplate.IsEmpty())
+		m_pluginNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
+
+	m_pluginName = fmt::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
+
+	m_updateNameTemplate = (selected.custom_update_name ? selected.get_update_name().c_str() : utils::DUNE_UPDATE_INFO_NAME);
+	if (m_updateNameTemplate.IsEmpty())
+		m_updateNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
+
+	m_updateName = m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected).c_str();
+
+	UpdateData(FALSE);
 }
 
 void CAccessInfoPage::OnBnClickedCheckUseDropbox()

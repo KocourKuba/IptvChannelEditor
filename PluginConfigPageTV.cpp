@@ -155,13 +155,13 @@ void CPluginConfigPageTV::AssignMacros()
 
 	std::vector<std::wstring> pl_params =
 	{
-		L"{SUBDOMAIN}",
-		L"{LOGIN}",
-		L"{PASSWORD}",
-		L"{TOKEN}",
-		L"{SERVER_ID}",
-		L"{DEVICE_ID}",
-		L"{QUALITY_ID}",
+		base_plugin::REPL_SUBDOMAIN,
+		base_plugin::REPL_LOGIN,
+		base_plugin::REPL_PASSWORD,
+		base_plugin::REPL_TOKEN,
+		base_plugin::REPL_SERVER_ID,
+		base_plugin::REPL_DEVICE_ID,
+		base_plugin::REPL_QUALITY_ID,
 	};
 
 	m_wndPlaylistTemplate.SetTemplateParams(pl_params);
@@ -169,13 +169,13 @@ void CPluginConfigPageTV::AssignMacros()
 	std::vector<std::wstring> strm_params(std::move(pl_params));
 	strm_params.insert(strm_params.end(),
 					   {
-						   L"{DOMAIN}",
-						   L"{PORT}",
-						   L"{ID}",
-						   L"{INT_ID}",
-						   L"{HOST}",
-						   L"{VAR1}",
-						   L"{VAR2}",
+						   base_plugin::REPL_DOMAIN,
+						   base_plugin::REPL_PORT,
+						   base_plugin::REPL_ID,
+						   base_plugin::REPL_INT_ID,
+						   base_plugin::REPL_HOST,
+						   base_plugin::REPL_VAR1,
+						   base_plugin::REPL_VAR2,
 					   });
 
 	m_wndStreamTemplate.SetTemplateParams(strm_params);
@@ -183,12 +183,12 @@ void CPluginConfigPageTV::AssignMacros()
 	std::vector<std::wstring> arc_params(std::move(strm_params));
 	arc_params.insert(arc_params.end(),
 					  {
-						  L"{LIVE_URL}",
-						  L"{START}",
-						  L"{STOP}",
-						  L"{NOW}",
-						  L"{DURATION}",
-						  L"{OFFSET}",
+						  base_plugin::REPL_LIVE_URL,
+						  base_plugin::REPL_START,
+						  base_plugin::REPL_STOP,
+						  base_plugin::REPL_NOW,
+						  base_plugin::REPL_DURATION,
+						  base_plugin::REPL_OFFSET,
 					  });
 
 	m_wndStreamArchiveTemplate.SetTemplateParams(arc_params);

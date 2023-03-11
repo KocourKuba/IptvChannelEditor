@@ -41,7 +41,6 @@ void Credentials::Clear()
 	subdomain.clear();
 	portal.clear();
 	comment.clear();
-	suffix.clear();
 	caption.clear();
 	config.clear();
 	logo.clear();
@@ -55,7 +54,6 @@ void Credentials::Clear()
 	ch_list.clear();
 	custom_increment = 0;
 	custom_update_name = 0;
-	custom_package_name = 0;
 	server_id = 0;
 	profile_id = 0;
 	embed = 0;

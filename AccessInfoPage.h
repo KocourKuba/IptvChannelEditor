@@ -64,6 +64,7 @@ protected:
 	afx_msg void OnBnClickedButtonRemove();
 	afx_msg void OnBnClickedButtonNewFromUrl();
 	afx_msg void OnBnClickedCheckEmbed();
+	afx_msg void OnBnClickedButtonEditConfig();
 	afx_msg void OnBnClickedButtonBrowseDirectLink();
 	afx_msg void OnBnClickedButtonBrowseUpdateDesc();
 	afx_msg void OnBnClickedButtonBrowseUpdateFile();
@@ -72,18 +73,20 @@ protected:
 	afx_msg void OnCbnSelchangeComboDeviceId();
 	afx_msg void OnCbnSelchangeComboProfile();
 	afx_msg void OnCbnSelchangeComboQuality();
+	afx_msg void OnBnClickedCheckCustomPluginCaption();
 	afx_msg void OnEnChangeEditPluginCaption();
-	afx_msg void OnEnChangeEditPluginSuffix();
+	afx_msg void OnBnClickedCheckCustomPluginNameTemplate();
+	afx_msg void OnEnChangeEditPluginNameTemplate();
+	afx_msg void OnBnClickedCheckCustomPluginLogo();
 	afx_msg void OnEnChangeMfceditbrowsePluginLogo();
-	afx_msg void OnEnChangeMfceditbrowsePluginBgnd();
-	afx_msg void OnEnChangeEditPluginUpdateVersion();
-	afx_msg void OnEnChangeEditPluginUpdateName();
-	afx_msg void OnEnChangeEditPluginPackageName();
-	afx_msg void OnEnChangeEditPluginChannelsWebPath();
+	afx_msg void OnBnClickedCheckCustomPluginBackground();
+	afx_msg void OnEnChangeMfceditbrowsePluginBackground();
+	afx_msg void OnBnClickedCheckCustomUpdateNameTemplate();
+	afx_msg void OnEnChangeEditPluginUpdateNameTemplate();
 	afx_msg void OnBnClickedCheckAutoincrementVersion();
-	afx_msg void OnBnClickedCheckCustomUpdateName();
-	afx_msg void OnBnClickedCheckCustomPackageName();
-	afx_msg void OnBnClickedButtonEditConfig();
+	afx_msg void OnEnChangeEditPluginUpdateVersion();
+	afx_msg void OnBnClickedCheckUseDropbox();
+	afx_msg void OnEnChangeEditPluginChannelsWebPath();
 	afx_msg LRESULT OnNotifyEndEdit(WPARAM, LPARAM);
 
 public:
@@ -97,9 +100,8 @@ private:
 	void CreateChannelsList();
 	void FillChannelsList();
 	void FillConfigs();
-	void SetWebUpdate();
 	bool TransformDropboxPath(std::wstring& dropbox_link, const std::wstring& file);
-
+	void UpdateTemplatedFields(const Credentials& selected);
 
 public:
 	CString m_status;
@@ -124,34 +126,37 @@ protected:
 	CComboBox m_wndQualities;
 	CComboBox m_wndProfiles;
 	CComboBox m_wndConfigs;
-	CMenuEdit m_wndSuffix;
+	CButton m_wndCustomCaption;
 	CEdit m_wndCaption;
+	CMenuEdit m_wndPluginNameTemplate;
+	CButton m_wndCustomLogo;
 	CMFCEditBrowseCtrlEx m_wndLogo;
+	CButton m_wndCustomBackground;
 	CMFCEditBrowseCtrlEx m_wndBackground;
 	CEditableListCtrl m_wndAccounts;
 	CListCtrl m_wndInfo;
 	CListCtrl m_wndChLists;
 	CMFCLinkCtrl m_wndProviderLink;
+	CButton m_wndCustomPluginName;
 	CButton m_wndAutoIncrement;
-	CButton m_wndCustomPackageName;
-	CButton m_wndCustomUpdateName;
 	CMFCEditBrowseCtrlEx m_wndDirectLink;
 	CMFCEditBrowseCtrlEx m_wndUpdateUrl;
 	CMFCEditBrowseCtrlEx m_wndUpdatePackageUrl;
 	CEdit m_wndChannelsWebPath;
 	CEdit m_wndVersionID;
-	CEdit m_wndUpdateName;
-	CEdit m_wndPackageName;
+	CButton m_wndCustomUpdateName;
+	CMenuEdit m_wndUpdateNameTemplate;
 
 private:
 	int m_initial_config = 0;
 
 	CString m_logo;
 	CString m_background;
-	CString m_suffix;
 	CString m_caption;
-	CString m_updateDescription;
-	CString m_updatePackage;
+	CString m_pluginNameTemplate;
+	CString m_pluginName;
+	CString m_updateNameTemplate;
+	CString m_updateName;
 	CString m_versionIdx;
 	CString m_channelsWebPath;
 
@@ -160,6 +165,4 @@ private:
 	std::vector<DynamicParamsInfo> m_profiles;
 	std::vector<DynamicParamsInfo> m_qualities;
 	std::vector<Credentials> m_all_credentials;
-public:
-	afx_msg void OnBnClickedCheckUseDropbox();
 };

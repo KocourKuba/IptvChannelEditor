@@ -31,8 +31,8 @@ DEALINGS IN THE SOFTWARE.
 namespace utils
 {
 
-static constexpr auto DUNE_PLUGIN_NAME = "dune_plugin_{:s}_{:s}.zip";
-static constexpr auto DUNE_UPDATE_NAME = "update_{:s}_{:s}";
+static constexpr auto DUNE_PLUGIN_FILE_NAME = L"{TYPE}_mod";
+static constexpr auto DUNE_UPDATE_INFO_NAME = L"update_{TYPE}_mod";
 static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/channel_unset.png";
 static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 

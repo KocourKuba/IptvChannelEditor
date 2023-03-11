@@ -41,15 +41,14 @@ public:
 	MAKE_ACCESSORS(portal);
 	MAKE_ACCESSORS(comment);
 	MAKE_ACCESSORS(config);
-	MAKE_ACCESSORS(suffix);
 	MAKE_ACCESSORS(caption);
 	MAKE_ACCESSORS(logo);
 	MAKE_ACCESSORS(background);
 	MAKE_ACCESSORS(update_url);
 	MAKE_ACCESSORS(update_package_url);
 	MAKE_ACCESSORS(version_id);
+	MAKE_ACCESSORS(plugin_name);
 	MAKE_ACCESSORS(update_name);
-	MAKE_ACCESSORS(package_name);
 	MAKE_ACCESSORS(ch_web_path);
 
 	friend void to_json(nlohmann::json& j, const Credentials& c)
@@ -61,19 +60,22 @@ public:
 		SERIALIZE_STRUCT(j, c, portal);
 		SERIALIZE_STRUCT(j, c, comment);
 		SERIALIZE_STRUCT(j, c, config);
-		SERIALIZE_STRUCT(j, c, suffix);
 		SERIALIZE_STRUCT(j, c, caption);
 		SERIALIZE_STRUCT(j, c, logo);
 		SERIALIZE_STRUCT(j, c, background);
 		SERIALIZE_STRUCT(j, c, update_url);
 		SERIALIZE_STRUCT(j, c, update_package_url);
 		SERIALIZE_STRUCT(j, c, version_id);
+		SERIALIZE_STRUCT(j, c, plugin_name);
 		SERIALIZE_STRUCT(j, c, update_name);
 		SERIALIZE_STRUCT(j, c, package_name);
 		SERIALIZE_STRUCT(j, c, ch_web_path);
+		SERIALIZE_STRUCT(j, c, custom_caption);
+		SERIALIZE_STRUCT(j, c, custom_logo);
+		SERIALIZE_STRUCT(j, c, custom_background);
+		SERIALIZE_STRUCT(j, c, custom_plugin_name);
 		SERIALIZE_STRUCT(j, c, custom_increment);
 		SERIALIZE_STRUCT(j, c, custom_update_name);
-		SERIALIZE_STRUCT(j, c, custom_package_name);
 		SERIALIZE_STRUCT(j, c, server_id);
 		SERIALIZE_STRUCT(j, c, device_id);
 		SERIALIZE_STRUCT(j, c, profile_id);
@@ -92,19 +94,22 @@ public:
 		DESERIALIZE_STRUCT(j, c, portal);
 		DESERIALIZE_STRUCT(j, c, comment);
 		DESERIALIZE_STRUCT(j, c, config);
-		DESERIALIZE_STRUCT(j, c, suffix);
 		DESERIALIZE_STRUCT(j, c, caption);
 		DESERIALIZE_STRUCT(j, c, logo);
 		DESERIALIZE_STRUCT(j, c, background);
 		DESERIALIZE_STRUCT(j, c, update_url);
 		DESERIALIZE_STRUCT(j, c, update_package_url);
 		DESERIALIZE_STRUCT(j, c, version_id);
+		DESERIALIZE_STRUCT(j, c, plugin_name);
 		DESERIALIZE_STRUCT(j, c, update_name);
 		DESERIALIZE_STRUCT(j, c, package_name);
 		DESERIALIZE_STRUCT(j, c, ch_web_path);
+		DESERIALIZE_STRUCT(j, c, custom_caption);
+		DESERIALIZE_STRUCT(j, c, custom_logo);
+		DESERIALIZE_STRUCT(j, c, custom_background);
+		DESERIALIZE_STRUCT(j, c, custom_plugin_name);
 		DESERIALIZE_STRUCT(j, c, custom_increment);
 		DESERIALIZE_STRUCT(j, c, custom_update_name);
-		DESERIALIZE_STRUCT(j, c, custom_package_name);
 		DESERIALIZE_STRUCT(j, c, server_id);
 		DESERIALIZE_STRUCT(j, c, device_id);
 		DESERIALIZE_STRUCT(j, c, profile_id);
@@ -122,20 +127,23 @@ public:
 	std::string portal;
 	std::string comment;
 	std::string config;
-	std::string suffix;
 	std::string caption;
 	std::string logo;
 	std::string background;
 	std::string update_url;
 	std::string update_package_url;
 	std::string version_id;
+	std::string plugin_name;
 	std::string update_name;
 	std::string package_name;
 	std::string ch_web_path;
 
+	int custom_caption = 0;
+	int custom_logo = 0;
+	int custom_background = 0;
+	int custom_plugin_name = 0;
 	int custom_increment = 0;
 	int custom_update_name = 0;
-	int custom_package_name = 0;
 	int server_id = 0; // zero based index
 	int device_id = 0; // zero based index
 	int profile_id = 0; // zero based index

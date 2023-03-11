@@ -95,13 +95,13 @@ void CPluginConfigPageVOD::AssignMacros()
 {
 	std::vector<std::wstring> pl_params =
 	{
-		L"{SUBDOMAIN}",
-		L"{LOGIN}",
-		L"{PASSWORD}",
-		L"{TOKEN}",
-		L"{SERVER_ID}",
-		L"{DEVICE_ID}",
-		L"{QUALITY_ID}",
+		base_plugin::REPL_SUBDOMAIN,
+		base_plugin::REPL_LOGIN,
+		base_plugin::REPL_PASSWORD,
+		base_plugin::REPL_TOKEN,
+		base_plugin::REPL_SERVER_ID,
+		base_plugin::REPL_DEVICE_ID,
+		base_plugin::REPL_QUALITY_ID,
 	};
 
 	m_wndVodUrlTemplate.SetTemplateParams(pl_params);

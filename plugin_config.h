@@ -351,7 +351,6 @@ public:
 	/// plugin short name wide char
 	/// </summary>
 	std::wstring get_short_name_w() const { return utils::utf8_to_utf16(short_name); }
-	void set_short_name_w(const std::wstring& val) { short_name = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// returns link to provider api url

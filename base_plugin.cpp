@@ -349,15 +349,15 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<ti
 		return false;
 
 	const auto& params = epg_params[epg_idx];
-	std::string time_format = params.epg_time_format;
+	std::wstring time_format = utils::utf8_to_utf16(params.epg_time_format);
 	// replace to "%d-%m-%Y %H:%M"
 	if (!time_format.empty())
 	{
-		utils::string_replace_inplace<char>(time_format, REPL_YEAR_N, "%Y");
-		utils::string_replace_inplace<char>(time_format, REPL_MONTH_N, "%m");
-		utils::string_replace_inplace<char>(time_format, REPL_DAY_N, "%d");
-		utils::string_replace_inplace<char>(time_format, REPL_HOUR_N, "%H");
-		utils::string_replace_inplace<char>(time_format, REPL_MIN_N, "%M");
+		utils::string_replace_inplace<wchar_t>(time_format, REPL_YEAR, L"%Y");
+		utils::string_replace_inplace<wchar_t>(time_format, REPL_MONTH, L"%m");
+		utils::string_replace_inplace<wchar_t>(time_format, REPL_DAY, L"%d");
+		utils::string_replace_inplace<wchar_t>(time_format, REPL_HOUR, L"%H");
+		utils::string_replace_inplace<wchar_t>(time_format, REPL_MIN, L"%M");
 	}
 
 	JSON_ALL_TRY;
@@ -381,7 +381,7 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<ti
 			{
 				std::tm tm = {};
 				std::stringstream ss(utils::get_json_string_value(params.epg_start, val));
-				ss >> std::get_time(&tm, time_format.c_str());
+				ss >> std::get_time(&tm, utils::utf16_to_utf8(time_format).c_str());
 				epg_info.time_start = _mkgmtime(&tm); // parsed time assumed as UTC+00
 			}
 
@@ -510,4 +510,35 @@ void base_plugin::put_account_info(const std::string& name, const nlohmann::json
 		params.emplace_back(info);
 	}
 	JSON_ALL_CATCH;
+}
+
+std::wstring base_plugin::compile_name_template(std::wstring packed_name, const Credentials& cred) const
+{
+	COleDateTime cur_dt = COleDateTime::GetCurrentTime();
+	std::wstring version_index;
+	if (cred.custom_increment && !cred.version_id.empty())
+	{
+		version_index = utils::utf8_to_utf16(cred.version_id);
+	}
+	else
+	{
+		version_index = fmt::format(L"{:d}{:02d}{:02d}{:02d}", cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour());
+	}
+
+	CTime st(cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour(), cur_dt.GetMinute(), cur_dt.GetSecond());
+	std::tm lt = fmt::localtime(st.GetTime());
+
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_TYPE, utils::utf8_to_utf16(short_name));
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_NAME, utils::utf8_to_utf16(name));
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_YEAR, std::to_wstring(cur_dt.GetYear()));
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_MONTH, std::to_wstring(cur_dt.GetMonth()));
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_DAY, std::to_wstring(cur_dt.GetDay()));
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_HOUR, std::to_wstring(cur_dt.GetHour()));
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_MIN, std::to_wstring(cur_dt.GetMinute()));
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_TIMESTAMP, std::to_wstring(std::mktime(&lt)));
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_COMMENT, cred.get_comment());
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_VERSION, utils::utf8_to_utf16(std::string_view(STRPRODUCTVER)));
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_VERSION_INDEX, version_index);
+
+	return packed_name;
 }

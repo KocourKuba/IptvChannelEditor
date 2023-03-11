@@ -564,7 +564,6 @@ void ConvertAccounts()
 					}
 
 					cred.comment = get_array_value(creds, last);
-					cred.suffix = get_array_value(creds, last);
 					cred.server_id = device_id;
 					cred.profile_id = profile_id;
 					cred.quality_id = quality_id;
@@ -694,8 +693,8 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	const auto& cred = all_credentials[selected];
-	const auto& short_name_w = plugin->get_short_name_w();
-	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, short_name_w);
+	const auto& plugin_type_name = plugin->get_short_name_w();
+	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, plugin_type_name);
 
 	// load plugin settings
 	plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config));
@@ -711,29 +710,6 @@ bool PackPlugin(const PluginType plugin_type,
 		version_index = fmt::format("{:d}{:02d}{:02d}{:02d}", cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour());
 	}
 
-	std::string suffix;
-	if (cred.suffix.empty() || noCustom)
-	{
-		suffix = "mod";
-	}
-	else
-	{
-		suffix = cred.suffix;
-		CTime st(cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour(), cur_dt.GetMinute(), cur_dt.GetSecond());
-		std::tm lt = fmt::localtime(st.GetTime());
-
-		utils::string_replace_inplace<char>(suffix, "{YEAR}", std::to_string(cur_dt.GetYear()));
-		utils::string_replace_inplace<char>(suffix, "{MONTH}", std::to_string(cur_dt.GetMonth()));
-		utils::string_replace_inplace<char>(suffix, "{DAY}", std::to_string(cur_dt.GetDay()));
-		utils::string_replace_inplace<char>(suffix, "{HOUR}", std::to_string(cur_dt.GetHour()));
-		utils::string_replace_inplace<char>(suffix, "{MIN}", std::to_string(cur_dt.GetMinute()));
-		utils::string_replace_inplace<char>(suffix, "{TIMESTAMP}", std::to_string(std::mktime(&lt)));
-		utils::string_replace_inplace<char>(suffix, "{VERSION}", STRPRODUCTVER);
-		utils::string_replace_inplace<char>(suffix, "{VERSION_INDEX}", version_index);
-	}
-
-	const auto& packed_plugin_name = fmt::format(utils::DUNE_PLUGIN_NAME, plugin->get_short_name(), suffix);
-
 	if (make_web_update && !useDropbox && (cred.update_url.empty() || cred.update_package_url.empty()))
 	{
 		// revert back to previous state
@@ -745,7 +721,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 	// collect plugin channels list;
 	std::map<std::string, std::string> channels_list;
-	const auto& playlistPath = fmt::format(L"{:s}{:s}\\", lists_path, short_name_w);
+	const auto& playlistPath = fmt::format(L"{:s}{:s}\\", lists_path, plugin_type_name);
 	std::filesystem::directory_iterator dir_iter(playlistPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
@@ -793,20 +769,24 @@ bool PackPlugin(const PluginType plugin_type,
 	std::filesystem::path plugin_bgnd;
 	if (!noCustom)
 	{
-		if (!cred.logo.empty())
+		if (cred.custom_logo && !cred.logo.empty())
+		{
 			plugin_logo = cred.logo;
+		}
 
-		if (!cred.background.empty())
+		if (cred.custom_background && !cred.background.empty())
+		{
 			plugin_bgnd = cred.background;
+		}
 	}
 
 	if (plugin_logo.empty())
-		plugin_logo = fmt::format(LR"({:s}plugins_image\logo_{:s}.png)", plugin_root, short_name_w);
+		plugin_logo = fmt::format(LR"({:s}plugins_image\logo_{:s}.png)", plugin_root, plugin_type_name);
 	else if (!plugin_logo.has_parent_path())
 		plugin_logo = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_logo.wstring());
 
 	if (plugin_bgnd.empty())
-		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.png)", plugin_root, short_name_w);
+		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.png)", plugin_root, plugin_type_name);
 	else if (!plugin_bgnd.has_parent_path())
 		plugin_bgnd = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_bgnd.wstring());
 
@@ -827,26 +807,6 @@ bool PackPlugin(const PluginType plugin_type,
 	const auto& logo_subst = fmt::format("plugin_file://icons/{:s}", plugin_logo.filename().string());
 	const auto& bg_subst = fmt::format("plugin_file://icons/{:s}", plugin_bgnd.filename().string());
 
-	std::string update_name;
-	if (cred.custom_update_name && !cred.update_name.empty())
-	{
-		update_name = cred.update_name;
-	}
-	else
-	{
-		update_name = fmt::format(utils::DUNE_UPDATE_NAME, plugin->get_short_name(), (cred.suffix.empty()) ? "mod" : cred.suffix) + ".xml";
-	}
-
-	std::string package_plugin_name;
-	if (cred.custom_package_name && !cred.package_name.empty())
-	{
-		package_plugin_name = cred.package_name;
-	}
-	else
-	{
-		package_plugin_name = fmt::format(utils::DUNE_UPDATE_NAME, plugin->get_short_name(), (cred.suffix.empty()) ? "mod" : cred.suffix);
-	}
-
 	// save config
 	int idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	plugin->set_playlist_template_idx(idx);
@@ -856,7 +816,12 @@ bool PackPlugin(const PluginType plugin_type,
 	std::string config_data;
 	std::ifstream istream(plugin_root + L"dune_plugin.xml");
 	config_data.assign(std::istreambuf_iterator<char>(istream), std::istreambuf_iterator<char>());
-	const auto& plugin_caption = cred.caption.empty() ? utils::utf16_to_utf8(plugin->get_title()) : cred.caption;
+
+	std::string plugin_caption;
+	if (!cred.custom_caption || cred.caption.empty())
+		plugin_caption = utils::utf16_to_utf8(plugin->get_title());
+	else
+		plugin_caption = cred.caption;
 
 	// preprocess common values
 	utils::string_replace_inplace(config_data, "{name}", plugin->get_name().c_str());
@@ -867,7 +832,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 	// copy plugin config class if they exist
 	std::string class_name = fmt::format("{:s}_config", plugin->get_short_name());
-	const auto& src_config = short_name_w + L"_config.php";
+	const auto& src_config = plugin_type_name + L"_config.php";
 	const auto& src_path = fmt::format(LR"({:s}configs\{:s})", plugin_root, src_config);
 	if (std::filesystem::exists(src_path))
 	{
@@ -877,6 +842,9 @@ bool PackPlugin(const PluginType plugin_type,
 	{
 		class_name = "default_config";
 	}
+
+	const auto& package_info_name = plugin->compile_name_template((cred.custom_update_name && !cred.get_update_name().empty()
+																   ? cred.get_update_name() : utils::DUNE_UPDATE_INFO_NAME), cred);
 
 	// rewrite xml nodes
 	try
@@ -929,7 +897,7 @@ bool PackPlugin(const PluginType plugin_type,
 		}
 
 		auto cu_node = d_node->first_node("check_update");
-		const auto& update_url = noCustom ? "" : fmt::format("{:s}{:s}", cred.update_url, update_name);
+		const auto& update_url = noCustom ? "" : fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
 		cu_node->first_node("url")->value(update_url.c_str());
 
 		ostream << *doc;
@@ -1050,9 +1018,8 @@ bool PackPlugin(const PluginType plugin_type,
 	std::wstring packed_file;
 	if (make_web_update)
 	{
-		const auto& package_name = update_path + utils::utf8_to_utf16(package_plugin_name);
-		const auto& packed_tar = package_name + L".tar";
-		const auto& packed_gz = package_name + L".tar.gz";
+		auto packed_tar = update_path + package_info_name + L".tar";
+		auto packed_gz = update_path + package_info_name + L".tar.gz";
 		std::filesystem::remove(packed_tar, err);
 		std::filesystem::remove(packed_gz, err);
 
@@ -1065,7 +1032,7 @@ bool PackPlugin(const PluginType plugin_type,
 			res = compressor.AddFile(packed_file);
 			if (res)
 			{
-				packed_file = packed_gz;
+				packed_file.swap(packed_gz);
 				compressor.SetCompressionFormat(CompressionFormat::GZip);
 				res = archiver.CreateArchive(packed_file);
 				if (res)
@@ -1077,7 +1044,11 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 	else
 	{
-		packed_file = output_path + utils::utf8_to_utf16(packed_plugin_name);
+		packed_file = fmt::format(L"{:s}dune_plugin_{:s}.zip",
+								  output_path,
+								  plugin->compile_name_template((cred.custom_plugin_name && !cred.get_plugin_name().empty()
+																 ? cred.get_plugin_name() : utils::DUNE_PLUGIN_FILE_NAME), cred));
+
 		compressor.SetCompressionFormat(CompressionFormat::Zip);
 		res = archiver.CreateArchive(packed_file);
 	}
@@ -1138,7 +1109,7 @@ bool PackPlugin(const PluginType plugin_type,
 			version_info->append_node(rapidxml::alloc_node(*doc, "version", STRPRODUCTVER));
 			version_info->append_node(rapidxml::alloc_node(*doc, "beta", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "critical", "no"));
-			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}.tar.gz", cred.update_package_url, package_plugin_name).c_str()));
+			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}.xml", cred.update_package_url, utils::utf16_to_utf8(package_info_name)).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "md5", utils::md5_hash_file(packed_file).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "size", std::to_string(plugin_installed_size).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "caption", plugin_caption.c_str()));
@@ -1146,7 +1117,7 @@ bool PackPlugin(const PluginType plugin_type,
 			update_info->append_node(version_info);
 			doc->append_node(update_info);
 
-			std::ofstream os(update_path + utils::utf8_to_utf16(update_name), std::ofstream::binary);
+			std::ofstream os(update_path + package_info_name + L".xml", std::ofstream::binary);
 			os << *doc;
 
 		}

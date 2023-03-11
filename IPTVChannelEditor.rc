@@ -354,13 +354,13 @@ BEGIN
     EDITTEXT        IDC_EDIT_SEARCH,7,280,293,12,ES_AUTOHSCROLL
 END
 
-IDD_DIALOG_ACCESS_INFO DIALOGEX 0, 0, 539, 329
+IDD_DIALOG_ACCESS_INFO DIALOGEX 0, 0, 539, 353
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_THICKFRAME
 CAPTION "Account Info"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Provider",IDC_MFCLINK_PROVIDER,"MfcLink",WS_TABSTOP,7,2,157,11
-    CONTROL         "",IDC_LIST_ACCOUNTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_EDITLABELS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,16,525,51
+    CONTROL         "Provider",IDC_MFCLINK_PROVIDER,"MfcLink",WS_TABSTOP,7,2,157,10
+    CONTROL         "",IDC_LIST_ACCOUNTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_EDITLABELS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,15,525,52
     CONTROL         "Embed into the plugin",IDC_CHECK_EMBED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,70,120,10
     PUSHBUTTON      "Add",IDC_BUTTON_ADD,7,82,71,15
     PUSHBUTTON      "Remove",IDC_BUTTON_REMOVE,82,82,71,15
@@ -374,38 +374,47 @@ BEGIN
     LTEXT           "Profile",IDC_STATIC_PROFILE,388,98,57,8
     COMBOBOX        IDC_COMBO_PROFILE,388,109,144,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "",IDC_LIST_INFO,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,126,260,51
-    CONTROL         "",IDC_LIST_CHANNELS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,271,126,261,51
-    GROUPBOX        "Customize Plugin",IDC_STATIC,7,180,525,69
-    LTEXT           "Plugin configuration",IDC_STATIC,12,190,78,8
-    COMBOBOX        IDC_COMBO_CONFIGS,12,201,97,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "...",IDC_BUTTON_EDIT_CONFIG,113,200,19,15,BS_ICON
-    LTEXT           "Packed plugin suffix",IDC_STATIC,135,190,88,8
-    EDITTEXT        IDC_EDIT_PLUGIN_SUFFIX,135,201,96,13,ES_AUTOHSCROLL
-    LTEXT           "Plugin caption",IDC_STATIC,234,190,78,8
-    EDITTEXT        IDC_EDIT_PLUGIN_CAPTION,234,201,96,13,ES_AUTOHSCROLL
-    LTEXT           "Plugin logo",IDC_STATIC,332,190,78,8
-    CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_LOGO,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x80,332,201,96,13
-    LTEXT           "Plugin background",IDC_STATIC,430,190,78,8
-    CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_BGND,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x80,430,201,98,13
-    LTEXT           "Channels list web path (URL)",IDC_STATIC,12,218,213,8
-    EDITTEXT        IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH,12,229,253,12,ES_AUTOHSCROLL
-    LTEXT           "Direct link to Channels List",IDC_STATIC,270,218,213,8
+    CONTROL         "",IDC_LIST_CHANNELS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,270,126,262,51
+    CONTROL         "Custom Plugin Caption",IDC_CHECK_CUSTOM_PLUGIN_CAPTION,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,181,133,10
+    EDITTEXT        IDC_EDIT_PLUGIN_CAPTION,7,193,135,12,ES_AUTOHSCROLL
+    CONTROL         "Custom plugin file name",IDC_CHECK_CUSTOM_PLUGIN_NAME,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,147,181,138,10
+    LTEXT           "dune_plugin_",IDC_STATIC,147,195,41,8
+    EDITTEXT        IDC_EDIT_PLUGIN_ARCHIVE_TEMPLATE,190,193,157,12,ES_AUTOHSCROLL
+    LTEXT           "Plugin configuration",IDC_STATIC,7,98,92,8
+    COMBOBOX        IDC_COMBO_CONFIGS,7,109,113,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "...",IDC_BUTTON_EDIT_CONFIG,123,107,19,16,BS_ICON
+    LTEXT           ".zip",IDC_STATIC,348,195,15,8
+    EDITTEXT        IDC_EDIT_PLUGIN_ARCHIVE_NAME,365,193,167,12,ES_AUTOHSCROLL | WS_DISABLED
+    CONTROL         "Custom Plugin Logo",IDC_CHECK_CUSTOM_PLUGIN_LOGO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,209,249,8
+    CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_LOGO,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x80,7,220,259,12
+    CONTROL         "Custom Plugin Background",IDC_CHECK_CUSTOM_PLUGIN_BGND,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,270,209,253,8
+    CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_BGND,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x80,270,220,262,12
+    LTEXT           "Channels configuration",IDC_STATIC,7,237,111,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,121,240,412,1
+    LTEXT           "Channels list web path (URL)",IDC_STATIC,7,247,249,8
+    EDITTEXT        IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH,6,258,259,12,ES_AUTOHSCROLL
+    LTEXT           "Direct link to Channels List",IDC_STATIC,270,247,253,8
     CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT,
-                    "MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x880,270,229,258,13
-    GROUPBOX        "Plugin Web Update",IDC_STATIC,7,253,525,69
-    CONTROL         "Use Dropbox update",IDC_CHECK_USE_DROPBOX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,262,123,13
+                    "MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x880,270,258,262,12
+    LTEXT           "Plugin Web Update",IDC_STATIC,7,273,92,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,102,277,430,1
+    CONTROL         "Use Dropbox update",IDC_CHECK_USE_DROPBOX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,284,250,10
+    LTEXT           "Update description URL path",IDC_STATIC,7,296,249,8
+    CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_UPDATE_URL,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x880,7,307,259,12
     CONTROL         "Custom Version Index",IDC_CHECK_AUTOINCREMENT_VERSION,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,270,262,123,13
-    EDITTEXT        IDC_EDIT_PLUGIN_UPDATE_VERSION,396,263,70,12,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
-    LTEXT           "Update description URL path",IDC_STATIC,12,277,189,8
-    CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_UPDATE_URL,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x880,12,288,253,13
-    LTEXT           "Update package URL path",IDC_STATIC,270,277,189,8
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,270,284,123,10
+    EDITTEXT        IDC_EDIT_PLUGIN_UPDATE_VERSION,396,283,70,12,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
+    LTEXT           "Update package URL path",IDC_STATIC,270,296,255,8
     CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_UPDATE_FILE_URL,
-                    "MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x880,270,288,258,13
-    CONTROL         "Description name",IDC_CHECK_CUSTOM_UPDATE_NAME,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,305,109,12
-    EDITTEXT        IDC_EDIT_PLUGIN_UPDATE_NAME,133,305,132,12,ES_AUTOHSCROLL | WS_DISABLED
-    CONTROL         "Package name",IDC_CHECK_CUSTOM_PACKAGE_NAME,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,270,305,109,12
-    EDITTEXT        IDC_EDIT_PLUGIN_PACKAGE_NAME,396,305,132,12,ES_AUTOHSCROLL | WS_DISABLED
+                    "MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x880,270,307,258,12
+    CONTROL         "Custom Web Update Name",IDC_CHECK_CUSTOM_UPDATE_NAME,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,322,249,8
+    EDITTEXT        IDC_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE,7,334,259,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_PLUGIN_UPDATE_NAME,270,334,210,12,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           ".xml | .tar.gz",IDC_STATIC,482,336,45,8
 END
 
 IDD_DIALOG_ICON_LINK DIALOGEX 0, 0, 229, 93
@@ -720,7 +729,7 @@ BEGIN
         RIGHTMARGIN, 532
         VERTGUIDE, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 322
+        BOTTOMMARGIN, 346
     END
 
     IDD_DIALOG_ICON_LINK, DIALOG
@@ -984,34 +993,39 @@ BEGIN
     0, 50, 0, 0,
     0, 50, 50, 50,
     50, 50, 50, 50,
+    0, 100, 25, 0,
+    0, 100, 0, 0,
+    0, 100, 25, 0,
+    0, 100, 0, 0,
+    0, 100, 50, 0,
+    0, 50, 0, 0,
+    0, 50, 0, 0,
+    0, 50, 0, 0,
+    50, 100, 0, 0,
+    50, 100, 50, 0,
+    0, 100, 50, 0,
+    0, 100, 50, 0,
+    50, 100, 50, 0,
+    50, 100, 50, 0,
+    0, 100, 0, 0,
+    0, 100, 100, 0,
+    0, 100, 100, 0,
+    0, 100, 50, 0,
+    50, 100, 0, 0,
+    50, 100, 50, 0,
+    0, 100, 0, 0,
+    0, 100, 100, 0,
     0, 100, 100, 0,
     0, 100, 0, 0,
-    0, 100, 0, 0,
-    0, 100, 0, 0,
-    0, 100, 0, 0,
-    0, 100, 0, 0,
-    0, 100, 0, 0,
-    0, 100, 0, 0,
-    0, 100, 0, 0,
     0, 100, 50, 0,
+    50, 100, 0, 0,
+    50, 100, 50, 0,
     50, 100, 0, 0,
     50, 100, 50, 0,
     0, 100, 0, 0,
     0, 100, 50, 0,
-    50, 100, 0, 0,
     50, 100, 50, 0,
-    0, 100, 100, 0,
-    0, 100, 100, 0,
-    50, 100, 0, 0,
-    50, 100, 50, 0,
-    0, 100, 0, 0,
-    0, 100, 50, 0,
-    50, 100, 0, 0,
-    50, 100, 50, 0,
-    0, 100, 0, 0,
-    0, 100, 50, 0,
-    50, 100, 0, 0,
-    50, 100, 50, 0
+    100, 100, 0, 0
 END
 
 IDD_DIALOG_ICON_LINK AFX_DIALOG_LAYOUT
@@ -1583,8 +1597,7 @@ BEGIN
     IDS_STRING_WRN_NON_ASCII "Non ASCII symbols in the name is not allowed!"
     IDS_STRING_WRN_NON_ASCII_LIST 
                             "Non ASCII symbols in the channel list name is not allowed!"
-    IDS_STRING_INFO_CREATE_SUCCESS 
-                            "Plugin created in '%s'\nInstall it to the DUNE"
+    IDS_STRING_INFO_CREATE_SUCCESS "Plugin created in:\n%s"
     IDS_STRING_INFO_NOT_FOUND "Not found!"
     IDS_STRING_INFO_RESTART_NEED "Restart application to take effect"
     IDS_STRING_FMT_CHANNELS "Channels: {:d} ({:d} changed, {:d} unknown)"
@@ -1713,6 +1726,13 @@ BEGIN
     IDS_STRING_EXPORT_M3U   "Export channels list to M3U"
     IDS_STRING_EXPORT_PLAYLIST "Export to M3U playlist"
     IDS_STRING_CURRENT      "Current"
+    IDS_STRING_EDIT_PLUGIN_ARCHIVE_TEMPLATE 
+                            "Use Macroses to generate plugin file name or web update packages"
+    IDS_STRING_EDIT_PLUGIN_ARCHIVE_NAME "File name for generated plugin"
+    IDS_STRING_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT 
+                            "Direct internet link to the channels list"
+    IDS_STRING_CHECK_USE_DROPBOX 
+                            "Use DropBox service as server for web update"
 END
 
 STRINGTABLE
@@ -1786,33 +1806,10 @@ BEGIN
     IDS_STRING_CUSTOM_PLAYLIST "Custom"
     IDS_STRING_CHECK_EMBED  "Embed credentials into plugin to avoid enter it manually"
     IDS_STRING_COL_COMMENT  "Comment"
-    IDS_STRING_COL_SUFFIX   "Plugin suffix"
     IDS_STRING_COL_LIST     "Channels list"
-    IDS_STRING_ERR_SAME_SUFFIX 
-                            "The plugin name for an account has the same suffix.\nThe plugin will be overwritten. Continue?"
+    IDS_STRING_ERR_SAME_FILENAME 
+                            "The plugin file name for an account has the same name.\nThe plugin will be overwritten. Continue?"
     IDS_STRING_EDIT_CAPTION "The name of the plugin is shown by Dune.\nIf empty will use the default."
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_EDIT_PLUGIN_PACKAGE_NAME "Name of the update package"
-    IDS_STRING_BOTH_PATH_MUST_FILLED "Both URL paths must be filled!"
-    IDS_STRING_CUSTOM_ARCHIVE_URL "Custom archive url template"
-    IDS_STRING_COMBO_SERVER_ID "Available server"
-    IDS_STRING_COMBO_DEVICE_ID "Available device"
-    IDS_STRING_COMBO_PROFILE "Available profiles"
-    IDS_STRING_COMBO_QUALITY_ID "Available quality"
-    IDS_STRING_ERR_SAVE_CONFIG "Can't save config!"
-    IDS_STRING_COMBO_CONFIG "Selected plugin configuration."
-    IDS_STRING_NO_ADULT     "No Adults"
-    IDS_STRING_BUTTON_EDIT_CONFIG "Edit plugin configuration."
-    IDS_STRING_BUTTON_SAVE_CONFIG "Save configuration."
-    IDS_STRING_BUTTON_SAVE_AS_CONFIG "Save configuration to new file."
-    IDS_STRING_EDIT_PLUGIN_NAME 
-                            "Internal plugin name for Dune. Change if it conflicts with other plugins."
-    IDS_STRING_EDIT_TITLE   "Plugin title. Shows on the Dune Main Screen."
-    IDS_STRING_EDIT_SHORT_NAME 
-                            "Short plugin name. Used internally in Editor. Can be changed only for Custom plugin."
 END
 
 STRINGTABLE
@@ -1820,7 +1817,7 @@ BEGIN
     IDS_STRING_EDIT_ICON    "The logo of the plugin.\nUp to 250x250 px in png format.\nIf empty will use the default."
     IDS_STRING_EDIT_BACKGROUND 
                             "Background picture used by the plugin.\n1920x1080 px in jpg format.\nIf empty will use the default."
-    IDS_STRING_EDIT_SUFFIX  "Suffix to add to the packed plugin.\nIf empty will use the default - 'mod'."
+    IDS_STRING_CHECK_CUSTOM_PLUGIN_NAME "Custom generated plugin file name"
     IDS_STRING_INSERT_VARS  "Insert Macros"
     IDS_STRING_ERR_DLL_MISSING 
                             "7za.dll is missing! Please check the installation."
@@ -1839,9 +1836,29 @@ BEGIN
     IDS_STRING_CHECK_AUTOINCREMENT_VERSION "Automatic calculate Version Index"
     IDS_STRING_CHECK_CUSTOM_UPDATE_NAME 
                             "Set a custom name for the update description. Otherwise will be generated automatically"
-    IDS_STRING_EDIT_PLUGIN_UPDATE_NAME "Name of the update description"
-    IDS_STRING_CHECK_CUSTOM_PACKAGE_NAME 
-                            "Set a custom name for the update package. Otherwise will be generated automatically"
+    IDS_STRING_EDIT_PLUGIN_UPDATE_NAME 
+                            "Name of the update description and package"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_BOTH_PATH_MUST_FILLED "Both URL paths must be filled!"
+    IDS_STRING_CUSTOM_ARCHIVE_URL "Custom archive url template"
+    IDS_STRING_COMBO_SERVER_ID "Available server"
+    IDS_STRING_COMBO_DEVICE_ID "Available device"
+    IDS_STRING_COMBO_PROFILE "Available profiles"
+    IDS_STRING_COMBO_QUALITY_ID "Available quality"
+    IDS_STRING_ERR_SAVE_CONFIG "Can't save config!"
+    IDS_STRING_COMBO_CONFIG "Selected plugin configuration."
+    IDS_STRING_NO_ADULT     "No Adults"
+    IDS_STRING_BUTTON_EDIT_CONFIG "Edit plugin configuration."
+    IDS_STRING_BUTTON_SAVE_CONFIG "Save configuration."
+    IDS_STRING_BUTTON_SAVE_AS_CONFIG "Save configuration to new file."
+    IDS_STRING_EDIT_PLUGIN_NAME 
+                            "Internal plugin name for Dune. Change if it conflicts with other plugins."
+    IDS_STRING_EDIT_TITLE   "Plugin title. Shows on the Dune Main Screen."
+    IDS_STRING_EDIT_SHORT_NAME 
+                            "Short plugin name. Used internally in Editor. Can be changed only for Custom plugin."
 END
 
 STRINGTABLE

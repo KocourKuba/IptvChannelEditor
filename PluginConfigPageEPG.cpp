@@ -160,32 +160,32 @@ void CPluginConfigPageEPG::AssignMacros()
 {
 	std::vector<std::wstring> epg_params =
 	{
-		L"{ID}",
-		L"{DOMAIN}",
-		L"{EPG_ID}",
-		L"{TOKEN}",
-		L"{TIMESTAMP}",
-		L"{DATE}",
-		L"{DUNE_IP}",
+		base_plugin::REPL_ID,
+		base_plugin::REPL_DOMAIN,
+		base_plugin::REPL_EPG_ID,
+		base_plugin::REPL_TOKEN,
+		base_plugin::REPL_TIMESTAMP,
+		base_plugin::REPL_DATE,
+		base_plugin::REPL_DUNE_IP,
 	};
 	m_wndEpgUrl.SetTemplateParams(epg_params);
 
 	std::vector<std::wstring> date_fmt_params =
 	{
-		L"{YEAR}",
-		L"{MONTH}",
-		L"{DAY}",
+		base_plugin::REPL_YEAR,
+		base_plugin::REPL_MONTH,
+		base_plugin::REPL_DAY,
 	};
 	m_wndDateFormat.SetTemplateParams(date_fmt_params);
 
 	std::vector<std::wstring> epg_start_time_params =
 	{
-		L"{YEAR}",
-		L"{MONTH}",
-		L"{DAY}",
-		L"{HOUR}",
-		L"{MINUTE}",
-		L"{TIMESTAMP}",
+		base_plugin::REPL_YEAR,
+		base_plugin::REPL_MONTH,
+		base_plugin::REPL_DAY,
+		base_plugin::REPL_HOUR,
+		base_plugin::REPL_MIN,
+		base_plugin::REPL_TIMESTAMP,
 	};
 	m_wndEpgStartFormat.SetTemplateParams(epg_start_time_params);
 }
