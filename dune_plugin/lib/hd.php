@@ -124,6 +124,12 @@ class HD
         }
     }
 
+    public static function http_local_port()
+    {
+        $port = getenv("HD_HTTP_LOCAL_PORT");
+        return $port ? (int) $port : 80;
+    }
+
     public static function http_init()
     {
         if (!empty(self::$user_agent))

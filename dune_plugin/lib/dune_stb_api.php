@@ -270,18 +270,31 @@ class DuneIrControl
 ###############################################################################
 
 /**
+ * return is shell is APK.
+ * @return bool
+ */
+function is_apk(){
+    return (bool) getenv("HD_APK");
+}
+
+/**
  * return type of platform: android, 8670, etc.
  * @return string
  */
 function get_platform_kind()
 {
-    static $result = null;
-
-    if (is_null($result)) {
-        $result = trim(shell_exec('grep "platform_kind" /tmp/run/versions.txt | sed "s/^.*= *//"'));
+    static $platform_kind = null;
+    if (is_null($platform_kind)){
+        if (getenv("HD_APK")) {
+            $platform_kind = 'apk';
+        } else {
+            $ini_arr = parse_ini_file('/tmp/run/versions.txt');
+            if (isset($ini_arr['platform_kind'])) {
+                $platform_kind = $ini_arr['platform_kind'];
+            }
+        }
     }
-
-    return $result;
+    return $platform_kind;
 }
 
 function get_android_platform()
@@ -289,7 +302,14 @@ function get_android_platform()
     static $result = null;
 
     if (is_null($result)) {
-        $result = trim(shell_exec('grep "android_platform" /tmp/run/versions.txt | sed "s/^.*= *//"'));
+        if (getenv("HD_APK")) {
+            $result = 'apk';
+        } else {
+            $ini_arr = parse_ini_file('/tmp/run/versions.txt');
+            if (isset($ini_arr['android_platform'])) {
+                $result = $ini_arr['android_platform'];
+            }
+        }
     }
 
     return $result;
