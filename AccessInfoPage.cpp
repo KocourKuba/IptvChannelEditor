@@ -140,7 +140,7 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_CUSTOM_PLUGIN_LOGO, m_wndCustomLogo);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_LOGO, m_wndLogo);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_LOGO, m_logo);
-	DDX_Control(pDX, IDC_CHECK_CUSTOM_PLUGIN_BGND, m_wndCustomCaption);
+	DDX_Control(pDX, IDC_CHECK_CUSTOM_PLUGIN_BGND, m_wndCustomBackground);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_wndBackground);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGIN_BGND, m_background);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH, m_channelsWebPath);
