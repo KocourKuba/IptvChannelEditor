@@ -145,8 +145,15 @@ void m3u_entry::parse(const std::string_view& str)
 	// extarr[0] = #EXT_NAME
 	// extarr[1] = <EXT_VALUE>
 	boost::cmatch m_dir;
-	if (!boost::regex_match(str._Unchecked_begin(), str._Unchecked_end(), m_dir, re_dir))
+	try
+	{
+		if (!boost::regex_match(str._Unchecked_begin(), str._Unchecked_end(), m_dir, re_dir))
+			return;
+	}
+	catch (boost::regex_error& ex)
+	{
 		return;
+	}
 
 	auto pair = s_ext_directives.find(match_view(m_dir[1]));
 	if (pair == s_ext_directives.end())
@@ -169,8 +176,10 @@ void m3u_entry::parse(const std::string_view& str)
 		{
 			boost::cmatch m;
 			auto value = match_view(m_dir[2]);
-			if (boost::regex_match(value._Unchecked_begin(), value._Unchecked_end(), m, re_info))
+			try
 			{
+				if (!boost::regex_match(value._Unchecked_begin(), value._Unchecked_end(), m, re_info)) break;
+
 				duration = utils::char_to_int(m[1].str());
 				dir_title = m[3].str();
 				// put title to directive for tvg parsing
@@ -180,6 +189,9 @@ void m3u_entry::parse(const std::string_view& str)
 				{
 					parse_directive_tags(match_view(m[2]));
 				}
+			}
+			catch (boost::regex_error& ex)
+			{
 			}
 			break;
 		}
@@ -206,23 +218,29 @@ void m3u_entry::parse_directive_tags(std::string_view str)
 	static boost::regex re(R"(([^=" ]+)=("(?:\\\"|[^"])*"|(?:\\\"|[^=" ])+))");
 
 	boost::cmatch m;
-	while(boost::regex_search(str._Unchecked_begin(), str._Unchecked_end(), m, re))
+	try
 	{
-		auto tag = match_view(m[1]);
-		if (!tag.empty())
+		while (boost::regex_search(str._Unchecked_begin(), str._Unchecked_end(), m, re))
 		{
-			auto value = match_view(m[2]);
-			utils::string_trim(value, " \"\'");
-			if (!value.empty())
+			auto tag = match_view(m[1]);
+			if (!tag.empty())
 			{
-				ext_tags.emplace(tag, value);
-				if (const auto& pair = str_tags.find(tag); pair != str_tags.end())
+				auto value = match_view(m[2]);
+				utils::string_trim(value, " \"\'");
+				if (!value.empty())
 				{
-					tags_map.emplace(pair->second, value);
+					ext_tags.emplace(tag, value);
+					if (const auto& pair = str_tags.find(tag); pair != str_tags.end())
+					{
+						tags_map.emplace(pair->second, value);
+					}
 				}
 			}
-		}
 
-		str.remove_prefix(m.position() + m.length());
+			str.remove_prefix(m.position() + m.length());
+		}
+	}
+	catch (boost::regex_error& ex)
+	{
 	}
 }
