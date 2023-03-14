@@ -60,7 +60,6 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         if ($this->plugin->tv->is_favorites_supported()) {
             $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, 'В избранное');
-            $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU);
         }
 
         if (HD::rows_api_support()) {
@@ -98,23 +97,6 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         $channel = $this->plugin->tv->get_channels()->get($channel_id);
 
         switch ($user_input->control_id) {
-            case ACTION_POPUP_MENU:
-                if ($this->plugin->tv->is_favorites_supported()) {
-                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_ADD_FAV,
-                        $this->plugin->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? 'Удалить из Избранного' : 'Добавить в избранное');
-                }
-
-                if ((string)$media_url->group_id === Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID) {
-                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_CREATE_SEARCH, 'Поиск');
-                }
-
-                $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
-
-                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_SETTINGS,
-                    'Настройки плагина','gui_skin://small_icons/setup.aai');
-
-                return Action_Factory::show_popup_menu($menu_items);
-
             case ACTION_ADD_FAV:
                 $opt_type = $this->plugin->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $this->plugin->tv->change_tv_favorites($opt_type, $channel_id, $plugin_cookies);

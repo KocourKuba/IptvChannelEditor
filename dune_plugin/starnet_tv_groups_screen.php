@@ -51,7 +51,6 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             GUI_EVENT_KEY_PLAY       => Action_Factory::tv_play(),
             GUI_EVENT_KEY_SETUP      => $action_settings,
             GUI_EVENT_KEY_B_GREEN    => $action_settings,
-            GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU),
         );
 
         if ($this->IsSetupNeeds($plugin_cookies) !== false) {
@@ -105,19 +104,6 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 }
 
                 return $post_action;
-
-            case ACTION_POPUP_MENU:
-                if ($this->plugin->config->get_feature(Plugin_Constants::BALANCE_SUPPORTED)) {
-                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_BALANCE,
-                        'Подписка','gui_skin://small_icons/premium_functions.aai');
-
-                    $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
-                }
-
-                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_SETTINGS,
-                    'Настройки плагина', 'gui_skin://small_icons/setup.aai');
-
-                return Action_Factory::show_popup_menu($menu_items);
         }
 
         return null;

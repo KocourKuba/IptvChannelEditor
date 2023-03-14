@@ -161,7 +161,8 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                         $url =  $param_pos!== false ? substr($url, 0, $param_pos) : $url;
                         $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
                         hd_print("play movie in the external player: $cmd");
-                        exec($cmd);
+                        exec($cmd, $output);
+                        hd_print("external player exec result code" . HD::ArrayToStr($output));
                         return $post_action;
                     }
                 } catch (Exception $e) {
@@ -170,42 +171,14 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 break;
 
             case ACTION_POPUP_MENU:
-                $media_url = MediaURL::decode($user_input->selected_media_url);
-
                 $menu_items = array();
-                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_WATCHED, 'Просмотрено/Не просмотрено');
-
-                if ($this->plugin->config->get_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED)) {
-                    $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
-                    $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
-
-                    if (!is_null($movie) && isset($movie->variants_list)) {
-                        if (!isset($this->variants) || count($this->variants) < 2) break;
-
-                        $current_variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : 'auto';
-                        $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
-                            'auto', 'auto',
-                            $current_variant === 'auto' ? 'gui_skin://small_icons/video_settings.aai' : null
-                        );
-                        foreach ($this->variants as $key => $variant) {
-                            if ($key === "auto") continue;
-
-                            $icon = null;
-                            if ((string)$key === $current_variant) {
-                                $icon = 'gui_skin://small_icons/video_settings.aai';
-                            }
-                            $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, $key, $key, $icon);
-                        }
-                    }
+                if (!is_apk()) {
+                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
+                        ACTION_EXTERNAL_PLAYER,
+                        'Проиграть внешним плейером',
+                        'gui_skin://small_icons/playback.aai'
+                    );
                 }
-
-                $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
-                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
-                    ACTION_EXTERNAL_PLAYER,
-                    'Проиграть внешним плейером',
-                    'gui_skin://small_icons/playback.aai'
-                );
-
                 return Action_Factory::show_popup_menu($menu_items);
 
             default:

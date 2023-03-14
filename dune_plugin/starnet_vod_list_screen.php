@@ -60,7 +60,6 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
             GUI_EVENT_KEY_SEARCH     => $add_action,
             GUI_EVENT_KEY_C_YELLOW   => $add_action,
             GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, 'В Избранное'),
-            GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU),
         );
     }
 
@@ -110,13 +109,6 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
                     Action_Factory::open_folder(
                         static::get_media_url_str(Vod_Category::FLAG_SEARCH, $search_string),
                         "Поиск: " . $search_string));
-
-            case ACTION_POPUP_MENU:
-                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_CREATE_SEARCH, 'Поиск');
-                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_ADD_FAV,
-                    $this->plugin->vod->is_favorite_movie_id($movie_id) ? 'Удалить из Избранного' : 'Добавить в избранное');
-
-                return Action_Factory::show_popup_menu($menu_items);
 
             case ACTION_ADD_FAV:
                 $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
