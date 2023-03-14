@@ -1109,7 +1109,7 @@ bool PackPlugin(const PluginType plugin_type,
 			version_info->append_node(rapidxml::alloc_node(*doc, "version", STRPRODUCTVER));
 			version_info->append_node(rapidxml::alloc_node(*doc, "beta", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "critical", "no"));
-			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}.xml", cred.update_package_url, utils::utf16_to_utf8(package_info_name)).c_str()));
+			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}.tar.gz", cred.update_package_url, utils::utf16_to_utf8(package_info_name)).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "md5", utils::md5_hash_file(packed_file).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "size", std::to_string(plugin_installed_size).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "caption", plugin_caption.c_str()));

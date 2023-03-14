@@ -1426,7 +1426,8 @@ void CAccessInfoPage::OnBnClickedButtonBrowseUpdateDesc()
 		return;
 
 	std::wstring url(dlg.m_url.GetString());
-	if (!TransformDropboxPath(url, m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected)))
+	CString updateName = m_updateNameTemplate + L".xml";
+	if (!TransformDropboxPath(url, m_plugin->compile_name_template(updateName.GetString(), selected)))
 		return;
 
 	m_wndUpdateUrl.SetWindowText(url.c_str());
@@ -1445,10 +1446,10 @@ void CAccessInfoPage::OnBnClickedButtonBrowseUpdateFile()
 		return;
 
 	std::wstring url(dlg.m_url.GetString());
-	if (!TransformDropboxPath(url, m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected)))
+	CString updateName = m_updateNameTemplate + L".tar.gz";
+	if (!TransformDropboxPath(url, m_plugin->compile_name_template(updateName.GetString(), selected)))
 		return;
 
-	url += L".tar.gz";
 	m_wndUpdatePackageUrl.SetWindowText(url.c_str());
 	selected.set_update_package_url(url);
 }
