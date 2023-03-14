@@ -411,7 +411,8 @@ function get_ip_address()
  */
 function get_dns_address()
 {
-    if (get_platform_kind() === 'android') {
+    $platform = get_platform_kind();
+    if ($platform === 'android' || $platform === 'apk') {
         $dns = explode(PHP_EOL, shell_exec('getprop | grep "net.dns"'));
     } else {
         $dns = explode(PHP_EOL, shell_exec('cat /etc/resolv.conf | grep "nameserver"'));

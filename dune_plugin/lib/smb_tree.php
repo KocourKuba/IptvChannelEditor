@@ -46,6 +46,7 @@ class smb_tree
     private function execute($args = '')
     {
         $cmd = '/tango/firmware/bin/smbtree ' . $this->get_auth_options() . ' ' . $this->get_debug_level() . ' ' . $args;
+        //hd_print("smbtree exec: $cmd");
         $process = proc_open($cmd, $this->descriptor_spec, $pipes, '/tmp', $this->env);
 
         if (is_resource($process)) {
@@ -124,6 +125,13 @@ class smb_tree
         return $df_smb;
     }
 
+    public static function get_nmblookup_path()
+    {
+        return is_apk()
+            ? 'export LD_LIBRARY_PATH=$FS_PREFIX/lib:$LD_LIBRARY_PATH&&$FS_PREFIX/bin/nmblookup --configfile=$FS_PREFIX/etc/samba/smb.conf '
+            : 'export LD_LIBRARY_PATH=/firmware/lib:$LD_LIBRARY_PATH&&/firmware/bin/nmblookup';
+    }
+
     public static function get_network_folder_smb()
     {
         $d = array();
@@ -171,7 +179,7 @@ class smb_tree
         $network_folder_smb = self::get_network_folder_smb();
         foreach ($network_folder_smb as $k => $v) {
             if (!preg_match('/((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)/', $k)) {
-                $out = shell_exec('export LD_LIBRARY_PATH=/firmware/lib:$LD_LIBRARY_PATH&&/firmware/bin/nmblookup "' . $k . '" -S');
+                $out = shell_exec(self::get_nmblookup_path() . ' "' . $k . '" -S');
                 if (preg_match('/(.*) (.*)<00>/', $out, $matches)) {
                     $ip = '//' . $matches[1] . '/';
                     if ($matches[2] === (string)$k) {
@@ -195,7 +203,8 @@ class smb_tree
         $my_ip = get_ip_address();
         $server_shares_smb = $this->get_server_shares_smb();
         foreach ($server_shares_smb as $k => $v) {
-            $out = shell_exec('export LD_LIBRARY_PATH=/firmware/lib:$LD_LIBRARY_PATH&&/firmware/bin/nmblookup ' . $k . ' -R');
+            //hd_print("server shares: $k");
+            $out = shell_exec(self::get_nmblookup_path() . ' "' . $k . '" -R');
             if (preg_match('/(.*) (.*)<00>/', $out, $matches)) {
                 if ($my_ip === $matches[1]) {
                     continue;
@@ -496,13 +505,7 @@ class smb_tree
         static $bug_platform_kind = null;
 
         if (is_null($bug_platform_kind)) {
-            $arr = file('/tmp/run/versions.txt');
-            $v = '';
-            foreach ($arr as $line) {
-                if (stripos($line, 'platform_kind=') !== false) {
-                    $v = trim(substr($line, 14));
-                }
-            }
+            $v = get_platform_kind();
             $bug_platform_kind = ($v === '8672' || $v === '8673' || $v === '8758');
         }
         return $bug_platform_kind;

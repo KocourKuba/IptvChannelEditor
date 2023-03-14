@@ -331,11 +331,13 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 return Action_Factory::change_behaviour($actions, 1000, $invalidate);
 
             case 'fs_action':
+                //hd_print("smt_tree::fs_action: " . MediaUrl::encode($selected_url));
                 if ($selected_url->type !== 'folder') {
                     break;
                 }
 
                 $caption = $selected_url->caption;
+                //hd_print("smt_tree::fs_action: caption: $caption");
                 if ($selected_url->err === false) {
                     return Action_Factory::open_folder($user_input->selected_media_url, $caption);
                 }
@@ -365,6 +367,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
             case 'select_folder':
                 $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
+                //hd_print("smt_tree::select_folder: " . MediaUrl::encode($url));
                 smb_tree::set_folder_info($plugin_cookies, $url);
                 $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Setup_Screen::ID . "_handler");
                 $action = is_null($setup_handler) ? null : User_Input_Handler_Registry::create_action($setup_handler, 'reset_controls');
@@ -407,6 +410,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
             case 'open_folder':
                 $path = $parent_url->filepath;
+                hd_print("smt_tree::open_folder: $path");
                 if (preg_match('|^/tmp/mnt/storage/|', $path)) {
                     $path = preg_replace('|^/tmp/mnt/storage/|', 'storage_name://', $path);
                 } else if (isset($parent_url->ip_path)) {
@@ -422,10 +426,14 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                     }
                 }
                 $url = 'embedded_app://{name=file_browser}{url=' . $path . '}{caption=File Browser}';
+                //hd_print("smt_tree::open_folder launch url: $url");
                 return Action_Factory::launch_media_url($url);
 
             case 'new_smb_data':
-                $smb_shares = new smb_tree ();
+                $smb_shares = new smb_tree();
+                //hd_print("smt_tree::new_smb_data folder: $selected_url->caption");
+                //hd_print("smt_tree::new_smb_data folder: $selected_url->new_user");
+                //hd_print("smt_tree::new_smb_data folder: $selected_url->new_pass");
                 $new_ip_smb[$selected_url->ip_path]['foldername'] = $selected_url->caption;
                 $new_ip_smb[$selected_url->ip_path]['user'] = $user_input->new_user;
                 $new_ip_smb[$selected_url->ip_path]['password'] = $user_input->new_pass;
