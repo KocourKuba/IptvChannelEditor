@@ -457,7 +457,8 @@ class Movie implements User_Input_Handler
 
             $initial_start_array[$counter] = $pos * 1000;
             $playback_url = $this->plugin->config->UpdateDuneParams($playback_url, $plugin_cookies,Plugin_Constants::HLS);
-            hd_print("Start playback url ($variant): $playback_url from $initial_start_array[$counter]");
+            hd_print("Start playback movie $media_url->movie_id ($variant)");
+            hd_print("Url: $playback_url from $initial_start_array[$counter]");
             $series_array[] = array(
                 PluginVodSeriesInfo::name => $name,
                 PluginVodSeriesInfo::playback_url => $playback_url,

@@ -125,6 +125,8 @@ abstract class Abstract_Vod implements Vod
 
     public function clear_movie_cache()
     {
+        hd_print("Abstract_Vod::clear_movie_cache: movie cache cleared");
+
         $this->short_movie_by_id = array();
         $this->movie_by_id = array();
         $this->failed_movie_ids = array();
@@ -157,7 +159,11 @@ abstract class Abstract_Vod implements Vod
 
         $movie = $this->get_cached_movie($movie_id);
         if ($movie === null) {
+            hd_print("Movie $movie_id not in cache. Load info.");
             $this->try_load_movie($movie_id, $plugin_cookies);
+            hd_print("Movie $movie_id loaded");
+        } else {
+            hd_print("Movie $movie_id is in cache.");
         }
     }
 
