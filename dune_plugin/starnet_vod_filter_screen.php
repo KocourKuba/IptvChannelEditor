@@ -54,23 +54,9 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
         $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_FILTER, null, $add_params);
 
         $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, 'Вверх');
-        $menu_items[] = array(
-            GuiMenuItemDef::caption => $actions[GUI_EVENT_KEY_B_GREEN]['caption'],
-            GuiMenuItemDef::action => $actions[GUI_EVENT_KEY_B_GREEN]
-        );
-
         $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, 'Вниз');
-        $menu_items[] = array(
-            GuiMenuItemDef::caption => $actions[GUI_EVENT_KEY_C_YELLOW]['caption'],
-            GuiMenuItemDef::action => $actions[GUI_EVENT_KEY_C_YELLOW]
-        );
-
         $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить');
-        $menu_items[] = array(
-            GuiMenuItemDef::caption => $actions[GUI_EVENT_KEY_D_BLUE]['caption'],
-            GuiMenuItemDef::action => $actions[GUI_EVENT_KEY_D_BLUE]
-        );
-        $actions[GUI_EVENT_KEY_POPUP_MENU] = Action_Factory::show_popup_menu($menu_items);
+        $actions[GUI_EVENT_KEY_POPUP_MENU] = Action_Factory::show_popup_menu(array());
 
         return $actions;
     }
