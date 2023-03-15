@@ -149,8 +149,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 if (strlen($display_path) > 30) {
                     $display_path = "..." . substr($display_path, -30);
                 }
-                Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_LIST_PATH,
-                    'Задать папку со списками каналов: ', $display_path, $folder_icon);
+                if (is_apk())
+                    Control_Factory::add_label($defs, 'Папка со списками каналов:', $display_path);
+                else
+                    Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_LIST_PATH,
+                        'Задать папку со списками каналов:', $display_path, $folder_icon);
                 break;
             case 2: // internet url
                 Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANNELS_URL_DLG,
