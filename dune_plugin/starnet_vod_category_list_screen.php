@@ -67,7 +67,13 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_M3U)) {
             $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
             if (count($all_vod_lists) > 1) {
-                $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU, 'Сменить плейлист');
+                $change_playlist = User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU);
+                $change_playlist['caption'] = 'Сменить плейлист';
+                if (is_apk()) {
+                    $actions[GUI_EVENT_KEY_POPUP_MENU] = $change_playlist;
+                } else {
+                    $actions[GUI_EVENT_KEY_B_GREEN] = $change_playlist;
+                }
             }
         }
 
@@ -108,6 +114,21 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                     return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
                 }
                 break;
+
+            case ACTION_POPUP_MENU;
+                $menu_items = array();
+                $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
+                foreach ($all_vod_lists as $idx => $list) {
+                    $add_param[self::PARAM_PLAYLIST] = $idx;
+
+                    $icon_url = null;
+                    if ($idx === (int)$current_idx) {
+                        $icon_url = "gui_skin://small_icons/playlist_file.aai";
+                    }
+                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_CHANGE_PLAYLIST, $list, $icon_url, $add_param);
+                }
+
+                return Action_Factory::show_popup_menu($menu_items);
         }
 
         return null;
