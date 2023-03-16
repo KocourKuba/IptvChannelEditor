@@ -27,11 +27,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const SETUP_ACTION_CHANGE_VOD_LIST = 'change_vod_list';
     const SETUP_ACTION_STREAMING_DLG = 'streaming_dialog';
     const SETUP_ACTION_STREAMING_APPLY = 'streaming_apply';
-    const SETUP_ACTION_EPG_DLG = 'epg_dialog';
     const SETUP_ACTION_EPG_APPLY = 'epg_dialog_apply';
     const SETUP_ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
     const SETUP_ACTION_PASS_DLG = 'pass_dialog';
     const SETUP_ACTION_PASS_APPLY = 'pass_apply';
+    const SETUP_ACTION_SEND_LOG = 'send_log';
 
     private static $on_off_ops = array
     (
@@ -106,9 +106,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // Show in main screen
-        $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
-        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_SHOW_TV, 'Показывать в главном меню:',
-            self::$on_off_ops[$show_tv], $this->plugin->get_image_path(self::$on_off_img[$show_tv]), self::CONTROLS_WIDTH);
+        if (!is_apk()) {
+            $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
+            Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_SHOW_TV, 'Показывать в главном меню:',
+                self::$on_off_ops[$show_tv], $this->plugin->get_image_path(self::$on_off_img[$show_tv]), self::CONTROLS_WIDTH);
+        }
 
         //////////////////////////////////////
         // ott or token dialog
@@ -178,17 +180,19 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // streaming dialog
         Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_STREAMING_DLG,
-            'Настройки проигрывания:', 'Изменить настройки', $setting_icon, self::CONTROLS_WIDTH);
-
-        //////////////////////////////////////
-        // epg dialog
-        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_EPG_DLG,
-            'Настройки EPG:', 'Изменить настройки', $setting_icon, self::CONTROLS_WIDTH);
+            'Настройки EPG и проигрывания:', 'Изменить настройки', $setting_icon, self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // adult channel password
         Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_PASS_DLG,
             'Пароль для взрослых каналов:', 'Изменить пароль', $text_icon, self::CONTROLS_WIDTH);
+
+        Control_Factory::add_vgap($defs, 20);
+
+        //////////////////////////////////////
+        // adult channel password
+        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_SEND_LOG,
+            'Отправить лог разработчику:', 'Отправить', $setting_icon, self::CONTROLS_WIDTH);
 
         Control_Factory::add_vgap($defs, 10);
 
@@ -297,6 +301,33 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         // auto resume
         $auto_resume = isset($plugin_cookies->auto_resume) ? $plugin_cookies->auto_resume : SetupControlSwitchDefs::switch_on;
         Control_Factory::add_combobox($defs, $this, null, 'auto_resume', 'Возобновление просмотра:', $auto_resume, $autoplay_ops, 0);
+
+        //////////////////////////////////////
+        // clear epg cache
+        Control_Factory::add_button($defs, $this, null, self::SETUP_ACTION_CLEAR_EPG_CACHE, 'Очистить кэш EPG:', 'Очистить', 0);
+
+        //////////////////////////////////////
+        // EPG
+        $epg_params = $this->plugin->config->get_epg_params(Plugin_Constants::EPG_SECOND);
+        if (!empty($epg_params[Epg_Params::EPG_URL])) {
+            $epg_source_ops = array();
+            $epg_source_ops[SetupControlSwitchDefs::switch_epg1] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg1];
+            $epg_source_ops[SetupControlSwitchDefs::switch_epg2] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg2];
+
+            $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
+
+            Control_Factory::add_combobox($defs, $this, null,
+                'epg_source', 'Источник EPG:', $epg_source, $epg_source_ops, 0);
+        }
+
+        $epg_font_ops = array();
+        $epg_font_ops[SetupControlSwitchDefs::switch_small] = self::$on_off_ops[SetupControlSwitchDefs::switch_small];
+        $epg_font_ops[SetupControlSwitchDefs::switch_normal] = self::$on_off_ops[SetupControlSwitchDefs::switch_normal];
+
+        $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : SetupControlSwitchDefs::switch_normal;
+
+        Control_Factory::add_combobox($defs, $this, null,
+            'epg_font_size', 'Шрифт EPG:', $epg_font_size, $epg_font_ops, 0);
 
         //////////////////////////////////////
         // select server
@@ -529,7 +560,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     $plugin_cookies->show_tv = ($plugin_cookies->show_tv === SetupControlSwitchDefs::switch_on)
                         ? SetupControlSwitchDefs::switch_off
                         : SetupControlSwitchDefs::switch_on;
-                    return null;
+                    break;
 
                 case self::SETUP_ACTION_OTTKEY_DLG: // show ott key dialog
                     $defs = $this->do_get_ott_key_control_defs($plugin_cookies);
@@ -623,22 +654,29 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     return Action_Factory::show_dialog('Ссылка на списки каналов', $defs, true);
 
                 case self::SETUP_ACTION_CHANNELS_URL_APPLY: // handle streaming settings dialog result
+                    $need_reload = false;
                     if (isset($user_input->channels_url_path)) {
                         $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
 
                         switch ($source) {
                             case 2:
-                                $plugin_cookies->channels_url = $user_input->channels_url_path;
+                                if ($user_input->channels_url_path !== $plugin_cookies->channels_url) {
+                                    $plugin_cookies->channels_url = $user_input->channels_url_path;
+                                    $need_reload = true;
+                                }
                                 break;
                             case 3:
-                                $plugin_cookies->channels_direct_url = $user_input->channels_url_path;
-
+                                if ($user_input->channels_url_path !== $plugin_cookies->channels_direct_url) {
+                                    $plugin_cookies->channels_direct_url = $user_input->channels_url_path;
+                                    $need_reload = true;
+                                }
                                 break;
                         }
 
                         hd_print("Selected channels path: $plugin_cookies->channels_url");
                     }
-                    return $this->reload_channels($plugin_cookies);
+
+                    return $need_reload ? $this->reload_channels($plugin_cookies) : null;
 
                 case self::SETUP_ACTION_STREAMING_DLG: // show streaming settings dialog
                     $defs = $this->do_get_streaming_control_defs($plugin_cookies);
@@ -654,44 +692,45 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     $plugin_cookies->auto_resume = $user_input->auto_resume;
                     hd_print("Auto resume: $plugin_cookies->auto_resume");
 
-                    if (isset($user_input->stream_format)) {
-                        $plugin_cookies->format = $user_input->stream_format;
-                        hd_print("selected stream type: $plugin_cookies->format");
-                    }
-
-                    if (isset($user_input->server) && $this->plugin->config->get_server_id($plugin_cookies) !== $user_input->server) {
-                        $this->plugin->config->set_server_id($user_input->server, $plugin_cookies);
-                        hd_print("Selected server: id: $user_input->server name: '" . $this->plugin->config->get_server_name($plugin_cookies) . "'");
-                    }
-
-                    if (isset($user_input->quality) && $this->plugin->config->get_quality_id($plugin_cookies) !== $user_input->quality) {
-                        $this->plugin->config->set_quality_id($user_input->quality, $plugin_cookies);
-                        hd_print("Selected quality: id: $user_input->quality name: '" . $this->plugin->config->get_quality_name($plugin_cookies) . "'");
-                    }
-
-                    if (isset($user_input->device) && $this->plugin->config->get_device_id($plugin_cookies) !== $user_input->device) {
-                        $this->plugin->config->set_device_id($user_input->device, $plugin_cookies);
-                        hd_print("Selected device: id: $user_input->device name: '" . $this->plugin->config->get_device_name($plugin_cookies) . "'");
-                    }
-
-                    if (isset($user_input->profile) && $this->plugin->config->get_profile_id($plugin_cookies) !== $user_input->profile) {
-                        $this->plugin->config->set_profile_id($user_input->profile, $plugin_cookies);
-                        hd_print("Selected profile: id: $user_input->profile name: '" . $this->plugin->config->get_profile_name($plugin_cookies) . "'");
-                    }
-                    return $this->reload_channels($plugin_cookies);
-
-                case self::SETUP_ACTION_EPG_DLG: // show streaming settings dialog
-                    $defs = $this->do_get_epg_control_defs($plugin_cookies);
-                    return Action_Factory::show_dialog('Настройки EPG', $defs, true);
-
-                case self::SETUP_ACTION_EPG_APPLY: // handle streaming settings dialog result
                     if (isset($user_input->epg_source)) {
                         $plugin_cookies->epg_source = $user_input->epg_source;
                         hd_print("Selected epg source: $user_input->epg_source");
                     }
                     $plugin_cookies->epg_font_size = $user_input->epg_font_size;
                     hd_print("Selected epg font size: $user_input->epg_font_size");
-                    return null;
+
+                    $need_reload = false;
+                    if (isset($user_input->stream_format)) {
+                        $need_reload = true;
+                        $plugin_cookies->format = $user_input->stream_format;
+                        hd_print("selected stream type: $plugin_cookies->format");
+                    }
+
+                    if (isset($user_input->server) && $this->plugin->config->get_server_id($plugin_cookies) !== $user_input->server) {
+                        $need_reload = true;
+                        $this->plugin->config->set_server_id($user_input->server, $plugin_cookies);
+                        hd_print("Selected server: id: $user_input->server name: '" . $this->plugin->config->get_server_name($plugin_cookies) . "'");
+                    }
+
+                    if (isset($user_input->quality) && $this->plugin->config->get_quality_id($plugin_cookies) !== $user_input->quality) {
+                        $need_reload = true;
+                        $this->plugin->config->set_quality_id($user_input->quality, $plugin_cookies);
+                        hd_print("Selected quality: id: $user_input->quality name: '" . $this->plugin->config->get_quality_name($plugin_cookies) . "'");
+                    }
+
+                    if (isset($user_input->device) && $this->plugin->config->get_device_id($plugin_cookies) !== $user_input->device) {
+                        $need_reload = true;
+                        $this->plugin->config->set_device_id($user_input->device, $plugin_cookies);
+                        hd_print("Selected device: id: $user_input->device name: '" . $this->plugin->config->get_device_name($plugin_cookies) . "'");
+                    }
+
+                    if (isset($user_input->profile) && $this->plugin->config->get_profile_id($plugin_cookies) !== $user_input->profile) {
+                        $need_reload = true;
+                        $this->plugin->config->set_profile_id($user_input->profile, $plugin_cookies);
+                        hd_print("Selected profile: id: $user_input->profile name: '" . $this->plugin->config->get_profile_name($plugin_cookies) . "'");
+                    }
+
+                    return $need_reload ? $this->reload_channels($plugin_cookies) : null;
 
                 case self::SETUP_ACTION_CLEAR_EPG_CACHE: // clear epg cache
                     $epg_path = get_temp_path("epg/");
@@ -719,6 +758,34 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                         $plugin_cookies->pass_sex = $user_input->{'pass2'};
                         $msg = 'Пароль изменен!';
                     }
+                    return Action_Factory::show_title_dialog($msg);
+
+                case self::SETUP_ACTION_SEND_LOG: // send log to developer
+                    $msg = 'Лог не отправлен!';
+                    $handle = false;
+                    try {
+                        $file_template = get_serial_number() . "_" . format_datetime('Ymd_Hi', time());
+                        $log_file = $this->plugin->plugin_info['app_name'] . ".log";
+                        $filepath = "/tmp/run/$log_file";
+                        $handle = fopen($filepath, 'r');
+                        HD::http_put_document("http://iptv.esalecrm.net/upload/$file_template-$log_file", $handle, filesize($filepath));
+                        fclose($handle);
+                        hd_print("$log_file sent");
+
+                        $msg = 'Лог отправлен';
+                        // this is an optional log
+                        $filepath = "/tmp/run/shell.log";
+                        $handle = fopen($filepath, 'r');
+                        HD::http_put_document("http://iptv.esalecrm.net/upload/$file_template-shell.log", $handle, filesize($filepath));
+                        fclose($handle);
+                        hd_print("shell.log sent");
+                    } catch (Exception $ex) {
+                        hd_print("Unable to upload log: " . $ex->getMessage());
+                        if (is_resource($handle)) {
+                            fclose($handle);
+                        }
+                    }
+
                     return Action_Factory::show_title_dialog($msg);
             }
         }

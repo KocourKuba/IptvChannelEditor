@@ -213,14 +213,8 @@ class HD
             throw new Exception($err_msg);
         }
 
-        if ($http_code !== 200) {
+        if ($http_code !== 200 && $http_code !== 201) {
             $err_msg = "HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
-            hd_print($err_msg);
-            throw new Exception($err_msg);
-        }
-
-        if (empty($content)) {
-            $err_msg = "Empty content";
             hd_print($err_msg);
             throw new Exception($err_msg);
         }
@@ -325,6 +319,24 @@ class HD
             (
                 CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => $post_data
+            ));
+    }
+
+    /**
+     * @param string $url
+     * @param resource $in_file
+     * @param integer $in_file_size
+     * @return bool|string
+     * @throws Exception
+     */
+    public static function http_put_document($url, $in_file, $in_file_size)
+    {
+        return self::http_get_document($url,
+            array
+            (
+                CURLOPT_PUT => true,
+                CURLOPT_INFILE => $in_file,
+                CURLOPT_INFILESIZE => $in_file_size,
             ));
     }
 
