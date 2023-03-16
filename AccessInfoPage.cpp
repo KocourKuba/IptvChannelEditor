@@ -463,7 +463,7 @@ void CAccessInfoPage::CreateAccountsList()
 		default: break;
 	}
 
-	m_wndNewFromUrl.EnableWindow(!m_plugin->get_playlist_info(0).get_pl_parse_regex().empty());
+	m_wndNewFromUrl.EnableWindow(!m_plugin->get_playlist_infos().empty() && !m_plugin->get_playlist_info(0).get_pl_parse_regex().empty());
 
 	m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_COMMENT).c_str(), LVCFMT_LEFT, vWidth, 0);
 
