@@ -150,7 +150,7 @@ void m3u_entry::parse(const std::string_view& str)
 		if (!boost::regex_match(str._Unchecked_begin(), str._Unchecked_end(), m_dir, re_dir))
 			return;
 	}
-	catch (boost::regex_error& ex)
+	catch (boost::regex_error&)
 	{
 		return;
 	}
@@ -190,7 +190,7 @@ void m3u_entry::parse(const std::string_view& str)
 					parse_directive_tags(match_view(m[2]));
 				}
 			}
-			catch (boost::regex_error& ex)
+			catch (boost::regex_error&)
 			{
 			}
 			break;
@@ -240,7 +240,7 @@ void m3u_entry::parse_directive_tags(std::string_view str)
 			str.remove_prefix(m.position() + m.length());
 		}
 	}
-	catch (boost::regex_error& ex)
+	catch (boost::regex_error&)
 	{
 	}
 }

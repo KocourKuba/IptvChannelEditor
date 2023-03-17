@@ -261,7 +261,10 @@ BOOL CAccessInfoPage::OnInitDialog()
 	CreateAccountInfo();
 	CreateChannelsList();
 
-	m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
+	int account_idx = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
+	m_wndAccounts.SetCheck(account_idx, TRUE);
+	m_wndAccounts.SetItemState(account_idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	m_wndAccounts.EnsureVisible(account_idx, FALSE);
 	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
 	m_wndUseDropboxUpdate.SetCheck(GetConfig().get_int(false, REG_USE_DROPBOX));
 
@@ -880,7 +883,6 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 	if (!(pNMLV->uChanged & LVIF_STATE))
 		return;
 
-	BOOL enable = FALSE;
 	if ((pNMLV->uNewState & 0x2000) && (pNMLV->uOldState & 0x1000))
 	{
 		int cnt = m_wndAccounts.GetItemCount();
@@ -894,10 +896,13 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 		m_plugin->clear_profiles_list();
 		m_plugin->clear_qualities_list();
 		FillChannelsList();
-		enable = TRUE;
+
 	}
 
-	m_wndRemove.EnableWindow(pNMLV->uNewState & LVIS_SELECTED);
+	BOOL selected = (pNMLV->uNewState & LVIS_SELECTED);
+	BOOL enable = m_wndAccounts.GetCheck(pNMLV->iItem) && selected;
+
+	m_wndRemove.EnableWindow(selected);
 
 	m_wndConfigs.EnableWindow(enable);
 	m_wndEditConfig.EnableWindow(enable);
