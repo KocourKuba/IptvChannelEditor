@@ -30,10 +30,16 @@ class Starnet_Entry_Handler implements User_Input_Handler
         switch ($user_input->control_id) {
             case 'do_reboot':
                 hd_print("do reboot");
+                if (is_apk()) {
+                    return Action_Factory::show_title_dialog('Для этой приставки эта функция недоступна!');
+                }
                 return Action_Factory::restart(true);
 
             case 'power_off':
                 hd_print("do power off");
+                if (is_apk()) {
+                    return Action_Factory::show_title_dialog('Для этой приставки эта функция недоступна!');
+                }
                 return array(send_ir_code(GUI_EVENT_DISCRETE_POWER_OFF));
 
             case 'do_setup':
