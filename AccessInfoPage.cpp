@@ -883,26 +883,43 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 	if (!(pNMLV->uChanged & LVIF_STATE))
 		return;
 
-	if ((pNMLV->uNewState & 0x2000) && (pNMLV->uOldState & 0x1000))
+	if ((pNMLV->uNewState & LVIS_SELECTED) == LVIS_SELECTED)
 	{
-		int cnt = m_wndAccounts.GetItemCount();
-		for (int nItem = 0; nItem < cnt; nItem++)
+		m_wndAccounts.SetCheck(pNMLV->iItem, TRUE);
+	}
+	else if (pNMLV->uNewState == 0)
+	{
+		if (m_wndAccounts.GetItemState(pNMLV->iItem, LVIS_SELECTED) == 0)
 		{
-			m_wndAccounts.SetCheck(nItem, nItem == pNMLV->iItem);
+			m_wndAccounts.SetCheck(pNMLV->iItem, FALSE);
 		}
+	}
+	else
+	{
+		m_wndAccounts.SetItemState(pNMLV->iItem, m_wndAccounts.GetCheck(pNMLV->iItem) ? LVIS_SELECTED : 0, LVIS_SELECTED);
+	}
 
+	BOOL selected = m_wndAccounts.GetItemState(pNMLV->iItem, LVIS_SELECTED) == LVIS_SELECTED;
+	m_wndRemove.EnableWindow(selected);
+
+	if (selected)
+	{
 		m_plugin->clear_servers_list();
 		m_plugin->clear_device_list();
 		m_plugin->clear_profiles_list();
 		m_plugin->clear_qualities_list();
 		FillChannelsList();
 
+		UpdateOptionalControls();
 	}
 
-	BOOL selected = (pNMLV->uNewState & LVIS_SELECTED);
-	BOOL enable = m_wndAccounts.GetCheck(pNMLV->iItem) && selected;
+	BOOL enable = m_wndAccounts.GetCheck(pNMLV->iItem);
 
-	m_wndRemove.EnableWindow(selected);
+	if (enable)
+	{
+		m_wndInfo.DeleteAllItems();
+		GetAccountInfo();
+	}
 
 	m_wndConfigs.EnableWindow(enable);
 	m_wndEditConfig.EnableWindow(enable);
@@ -926,14 +943,6 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 	m_wndUpdateNameTemplate.EnableWindow(enable);
 
 	GetParent()->GetDlgItem(IDOK)->EnableWindow(enable);
-
-	UpdateOptionalControls();
-
-	m_wndInfo.DeleteAllItems();
-	if (enable)
-	{
-		GetAccountInfo();
-	}
 }
 
 void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResult)
@@ -946,7 +955,7 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 		if (selected.not_valid)
 			return;
 
-		if (pNMLV->uOldState == 0 && pNMLV->uNewState & LVIS_SELECTED)
+		if (pNMLV->uOldState == 0 && (pNMLV->uNewState & LVIS_SELECTED) == LVIS_SELECTED)
 		{
 			if (const auto& pair = selected.m_direct_links.find(get_utf8(m_all_channels_lists[pNMLV->iItem])); pair != selected.m_direct_links.end())
 			{
@@ -959,7 +968,7 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 
 			m_wndDirectLink.EnableWindow(TRUE);
 		}
-		else if (pNMLV->uNewState == 0 && pNMLV->uOldState & LVIS_SELECTED)
+		else if (pNMLV->uNewState == 0 && (pNMLV->uOldState & LVIS_SELECTED) == LVIS_SELECTED)
 		{
 			m_wndDirectLink.EnableWindow(FALSE);
 		}
