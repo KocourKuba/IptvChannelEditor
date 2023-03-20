@@ -189,6 +189,7 @@ class HD
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 2);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_USERAGENT, self::get_dune_user_agent());
@@ -213,7 +214,7 @@ class HD
             throw new Exception($err_msg);
         }
 
-        if ($http_code !== 200 && $http_code !== 201) {
+        if ($http_code >= 300) {
             $err_msg = "HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
             hd_print($err_msg);
             throw new Exception($err_msg);
@@ -335,12 +336,53 @@ class HD
             array
             (
                 CURLOPT_PUT => true,
+                CURLOPT_CUSTOMREQUEST => "PUT",
                 CURLOPT_INFILE => $in_file,
                 CURLOPT_INFILESIZE => $in_file_size,
+                CURLOPT_HTTPHEADER => array("accept: */*", "Expect: 100-continue", "Content-Type: application/zip"),
             ));
     }
 
     ///////////////////////////////////////////////////////////////////////
+
+    public static function send_log_to_developer()
+    {
+        $handle = false;
+        try {
+            $serial = get_serial_number();
+            if (empty($serial)) {
+                throw new Exception("Unable to get DUNE serial");
+            }
+
+            $timestamp = format_datetime('Ymd_His', time());
+            $zip_file_name = "{$serial}_$timestamp.zip";
+            hd_print("Prepare archive $zip_file_name for send");
+            $zip_file = get_temp_path($zip_file_name);
+            $zip = new ZipArchive();
+            $zip->open($zip_file, ZipArchive::CREATE);
+            $files = array("/tmp/run/" . get_plugin_name() . ".log", "/tmp/run/shell.log");
+            foreach ($files as $file) {
+                if (file_exists($file)) {
+                    $zip->addFile($file, "/" . basename($file));
+                }
+            }
+            $zip->close();
+
+            $handle = fopen($zip_file, 'rb');
+            self::http_put_document("http://iptv.esalecrm.net/upload/$zip_file_name", $handle, filesize($zip_file));
+            fclose($handle);
+            unlink($zip_file);
+            hd_print("Log file sent");
+            return true;
+        } catch (Exception $ex) {
+            hd_print("Unable to upload log: " . $ex->getMessage());
+            if (is_resource($handle)) {
+                fclose($handle);
+            }
+        }
+
+        return false;
+    }
 
     /**
      * @param string $doc
@@ -409,6 +451,13 @@ class HD
             'method' => $op_name,
             'params' => $params
         );
+    }
+
+    public static function compress_file($source, $dest)
+    {
+        $data = file_get_contents($source);
+        $gz_data = gzencode($data, -1);
+        return file_put_contents($dest, $gz_data);
     }
 
     ///////////////////////////////////////////////////////////////////////////

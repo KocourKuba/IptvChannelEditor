@@ -46,6 +46,11 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 hd_print("do setup");
                 return Action_Factory::open_folder('setup', 'Настройки ' . get_plugin_name());
 
+            case 'do_send_log':
+                hd_print("do_send_log");
+                $msg = HD::send_log_to_developer() ? "Лог отправлен!" : "Лог не отправлен!";
+                return Action_Factory::show_title_dialog($msg);
+
             case 'do_clear_epg':
                 $epg_path = get_temp_path("epg/");
                 hd_print("do clear epg: $epg_path");

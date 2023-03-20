@@ -761,31 +761,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     return Action_Factory::show_title_dialog($msg);
 
                 case self::SETUP_ACTION_SEND_LOG: // send log to developer
-                    $msg = 'Лог не отправлен!';
-                    $handle = false;
-                    try {
-                        $file_template = get_serial_number() . "_" . format_datetime('Ymd_Hi', time());
-                        $log_file = $this->plugin->plugin_info['app_name'] . ".log";
-                        $filepath = "/tmp/run/$log_file";
-                        $handle = fopen($filepath, 'r');
-                        HD::http_put_document("http://iptv.esalecrm.net/upload/$file_template-$log_file", $handle, filesize($filepath));
-                        fclose($handle);
-                        hd_print("$log_file sent");
-
-                        $msg = 'Лог отправлен';
-                        // this is an optional log
-                        $filepath = "/tmp/run/shell.log";
-                        $handle = fopen($filepath, 'r');
-                        HD::http_put_document("http://iptv.esalecrm.net/upload/$file_template-shell.log", $handle, filesize($filepath));
-                        fclose($handle);
-                        hd_print("shell.log sent");
-                    } catch (Exception $ex) {
-                        hd_print("Unable to upload log: " . $ex->getMessage());
-                        if (is_resource($handle)) {
-                            fclose($handle);
-                        }
-                    }
-
+                    $msg = HD::send_log_to_developer() ? "Лог отправлен!" : "Лог не отправлен!";
                     return Action_Factory::show_title_dialog($msg);
             }
         }
