@@ -700,6 +700,7 @@ bool PackPlugin(const PluginType plugin_type,
 	plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config));
 
 	COleDateTime cur_dt = COleDateTime::GetCurrentTime();
+	const auto& date_string = fmt::format("{:d}{:02d}{:02d}{:02d}", cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour());
 	std::string version_index;
 	if (cred.custom_increment && !cred.version_id.empty())
 	{
@@ -707,7 +708,7 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 	else
 	{
-		version_index = fmt::format("{:d}{:02d}{:02d}{:02d}", cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour());
+		version_index = date_string;
 	}
 
 	if (make_web_update && !useDropbox && (cred.update_url.empty() || cred.update_package_url.empty()))
@@ -846,6 +847,8 @@ bool PackPlugin(const PluginType plugin_type,
 	const auto& package_info_name = plugin->compile_name_template((cred.custom_update_name && !cred.get_update_name().empty()
 																   ? cred.get_update_name() : utils::DUNE_UPDATE_INFO_NAME), cred);
 
+	const auto& version_string = fmt::format("{:s}.{:s}", STRPRODUCTVER, date_string);
+
 	// rewrite xml nodes
 	try
 	{
@@ -872,7 +875,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 		d_node->first_node("class_name")->value(class_name.c_str());
 		d_node->first_node("version_index")->value(version_index.c_str());
-		d_node->first_node("version")->value(STRPRODUCTVER);
+		d_node->first_node("version")->value(version_string.c_str());
 		d_node->first_node("release_date")->value(RELEASEDATE);
 		if (!noCustom)
 		{
@@ -1106,7 +1109,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 			auto version_info = doc->allocate_node(rapidxml::node_element, "plugin_version_descriptor");
 			version_info->append_node(rapidxml::alloc_node(*doc, "version_index", version_index.c_str()));
-			version_info->append_node(rapidxml::alloc_node(*doc, "version", STRPRODUCTVER));
+			version_info->append_node(rapidxml::alloc_node(*doc, "version", version_string.c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "beta", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "critical", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}.tar.gz", cred.update_package_url, utils::utf16_to_utf8(package_info_name)).c_str()));
