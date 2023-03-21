@@ -48,7 +48,8 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
             case 'do_send_log':
                 hd_print("do_send_log");
-                $msg = HD::send_log_to_developer() ? "Лог отправлен!" : "Лог не отправлен!";
+                $error_msg = '';
+                $msg = HD::send_log_to_developer($error_msg) ? "Лог отправлен!" : "Лог не отправлен! $error_msg";
                 return Action_Factory::show_title_dialog($msg);
 
             case 'do_clear_epg':

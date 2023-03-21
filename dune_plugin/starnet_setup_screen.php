@@ -761,7 +761,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     return Action_Factory::show_title_dialog($msg);
 
                 case self::SETUP_ACTION_SEND_LOG: // send log to developer
-                    $msg = HD::send_log_to_developer() ? "Лог отправлен!" : "Лог не отправлен!";
+                    $error_msg = '';
+                    $msg = HD::send_log_to_developer($error_msg) ? "Лог отправлен!" : "Лог не отправлен! $error_msg";
                     return Action_Factory::show_title_dialog($msg);
             }
         }
