@@ -274,166 +274,6 @@ BOOL CAccessInfoPage::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CAccessInfoPage::UpdateOptionalControls()
-{
-	auto& selected = GetCheckedAccount();
-	if (selected.not_valid)
-		return;
-
-	auto it = std::find(m_configs.begin(), m_configs.end(), selected.get_config());
-	int sel_idx = 0;
-	if (it != m_configs.end())
-	{
-		sel_idx = std::distance(m_configs.begin(), it);
-		m_plugin->load_plugin_parameters(selected.get_config());
-	}
-	m_wndConfigs.SetCurSel(sel_idx);
-
-	TemplateParams params;
-	params.login = selected.get_login();
-	params.password = selected.get_password();
-	params.subdomain = (m_plugin->get_plugin_type() == PluginType::enSharaclub) ? m_list_domain : selected.get_subdomain();
-	params.server_idx = selected.server_id;
-	params.device_idx = selected.device_id;
-	params.profile_idx = selected.profile_id;
-	params.quality_idx = selected.quality_id;
-
-	m_plugin->fill_servers_list(&params);
-	m_servers = m_plugin->get_servers_list();
-	m_wndServers.ResetContent();
-	m_wndServers.EnableWindow(!m_servers.empty());
-
-	if (!m_servers.empty())
-	{
-		for (const auto& info : m_servers)
-		{
-			m_wndServers.AddString(info.get_name().c_str());
-		}
-
-		if (params.server_idx >= (int)m_servers.size())
-		{
-			params.server_idx = 0;
-		}
-
-		m_wndServers.SetCurSel(params.server_idx);
-	}
-
-	m_plugin->fill_devices_list(&params);
-	m_devices = m_plugin->get_devices_list();
-	m_wndDevices.EnableWindow(!m_devices.empty());
-	m_wndDevices.ResetContent();
-	if (!m_devices.empty())
-	{
-		for (const auto& info : m_devices)
-		{
-			m_wndDevices.AddString(info.get_name().c_str());
-		}
-
-		if (params.device_idx >= (int)m_devices.size())
-		{
-			params.device_idx = 0;
-		}
-
-		m_wndDevices.SetCurSel(params.device_idx);
-	}
-
-	m_plugin->fill_qualities_list(&params);
-	m_qualities = m_plugin->get_qualities_list();
-	m_wndQualities.EnableWindow(!m_qualities.empty());
-	m_wndQualities.ResetContent();
-	if (!m_qualities.empty())
-	{
-		for (const auto& info : m_qualities)
-		{
-			m_wndQualities.AddString(info.get_name().c_str());
-		}
-
-		if (params.quality_idx >= (int)m_qualities.size())
-		{
-			params.quality_idx = 0;
-		}
-
-		m_wndQualities.SetCurSel(params.quality_idx);
-	}
-
-	m_plugin->fill_profiles_list(&params);
-	m_profiles = m_plugin->get_profiles_list();
-	m_wndProfiles.EnableWindow(!m_profiles.empty());
-	m_wndProfiles.ResetContent();
-
-	if (!m_profiles.empty())
-	{
-		for (const auto& info : m_profiles)
-		{
-			m_wndProfiles.AddString(info.get_name().c_str());
-		}
-
-		if (params.profile_idx >= (int)m_profiles.size())
-		{
-			params.profile_idx = 0;
-		}
-
-		m_wndProfiles.SetCurSel(params.profile_idx);
-	}
-
-	m_wndCustomCaption.SetCheck(selected.custom_caption);
-	m_wndCaption.EnableWindow(selected.custom_caption);
-	m_caption = selected.get_caption().c_str();
-
-	m_wndCustomPluginName.SetCheck(selected.custom_plugin_name);
-	m_wndPluginNameTemplate.EnableWindow(selected.custom_plugin_name);
-	m_pluginNameTemplate = (selected.custom_plugin_name ? selected.get_plugin_name().c_str() : utils::DUNE_PLUGIN_FILE_NAME);
-	if (m_pluginNameTemplate.IsEmpty())
-		m_pluginNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
-
-	m_pluginName = fmt::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
-
-	m_wndCustomLogo.SetCheck(selected.custom_logo);
-	m_wndLogo.EnableWindow(selected.custom_logo);
-
-	if (!selected.get_logo().empty() && std::filesystem::path(selected.get_logo()).parent_path().empty())
-		m_logo = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_logo()).c_str();
-	else
-		m_logo = selected.get_logo().c_str();
-
-	m_wndCustomBackground.SetCheck(selected.custom_background);
-	m_wndBackground.EnableWindow(selected.custom_background);
-
-	if (!selected.get_background().empty() && std::filesystem::path(selected.get_background()).parent_path().empty())
-		m_background = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_background()).c_str();
-	else
-		m_background = selected.get_background().c_str();
-
-	m_channelsWebPath = selected.get_ch_web_path().c_str();
-
-	m_wndAutoIncrement.SetCheck(selected.custom_increment);
-	m_wndVersionID.EnableWindow(selected.custom_increment);
-
-	m_wndCustomUpdateName.SetCheck(selected.custom_update_name);
-	m_wndUpdateNameTemplate.EnableWindow(selected.custom_update_name);
-
-	m_updateNameTemplate = (selected.custom_update_name ? selected.get_update_name().c_str() : utils::DUNE_UPDATE_INFO_NAME);
-	if (m_updateNameTemplate.IsEmpty())
-		m_updateNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
-
-	m_updateName = m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected).c_str();
-
-	if (selected.custom_increment)
-	{
-		m_versionIdx = selected.get_version_id().c_str();
-	}
-	else
-	{
-		COleDateTime date = COleDateTime::GetCurrentTime();
-		m_versionIdx = fmt::format(L"{:d}{:02d}{:02d}{:02d}", date.GetYear(), date.GetMonth(), date.GetDay(), date.GetHour()).c_str();
-	}
-
-	m_wndUpdatePackageUrl.SetWindowText(selected.get_update_package_url().c_str());
-	m_wndUpdateUrl.SetWindowText(selected.get_update_url().c_str());
-
-	UpdateData(FALSE);
-}
-
 void CAccessInfoPage::CreateAccountsList()
 {
 	m_wndAccounts.DeleteAllItems();
@@ -909,8 +749,6 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 		m_plugin->clear_profiles_list();
 		m_plugin->clear_qualities_list();
 		FillChannelsList();
-
-		UpdateOptionalControls();
 	}
 
 	BOOL enable = m_wndAccounts.GetCheck(pNMLV->iItem);
@@ -919,6 +757,19 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 	{
 		m_wndInfo.DeleteAllItems();
 		GetAccountInfo();
+	}
+
+	UpdateOptionalControls(enable);
+
+	GetParent()->GetDlgItem(IDOK)->EnableWindow(enable);
+}
+
+void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
+{
+	auto& selected = GetCheckedAccount();
+	if (selected.not_valid)
+	{
+		enable = FALSE;
 	}
 
 	m_wndConfigs.EnableWindow(enable);
@@ -931,18 +782,181 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 	m_wndCustomBackground.EnableWindow(enable);
 	m_wndCustomCaption.EnableWindow(enable);
 	m_wndCustomPluginName.EnableWindow(enable);
-	m_wndPluginNameTemplate.EnableWindow(enable);
 	m_wndUseDropboxUpdate.EnableWindow(enable);
 	m_wndDirectLink.EnableWindow(enable);
 	m_wndUpdatePackageUrl.EnableWindow(enable);
 	m_wndUpdateUrl.EnableWindow(enable);
 	m_wndChannelsWebPath.EnableWindow(enable);
 	m_wndAutoIncrement.EnableWindow(enable);
-	m_wndVersionID.EnableWindow(enable);
 	m_wndCustomUpdateName.EnableWindow(enable);
-	m_wndUpdateNameTemplate.EnableWindow(enable);
 
-	GetParent()->GetDlgItem(IDOK)->EnableWindow(enable);
+	if (selected.not_valid)
+	{
+		m_wndServers.EnableWindow(FALSE);
+		m_wndDevices.EnableWindow(FALSE);
+		m_wndQualities.EnableWindow(FALSE);
+		m_wndProfiles.EnableWindow(FALSE);
+		m_wndCaption.EnableWindow(enable);
+		m_wndPluginNameTemplate.EnableWindow(FALSE);
+		m_wndLogo.EnableWindow(FALSE);
+		m_wndBackground.EnableWindow(FALSE);
+		m_wndVersionID.EnableWindow(FALSE);
+		m_wndUpdateNameTemplate.EnableWindow(FALSE);
+		return;
+	}
+
+	auto it = std::find(m_configs.begin(), m_configs.end(), selected.get_config());
+	int sel_idx = 0;
+	if (it != m_configs.end())
+	{
+		sel_idx = std::distance(m_configs.begin(), it);
+		m_plugin->load_plugin_parameters(selected.get_config());
+	}
+	m_wndConfigs.SetCurSel(sel_idx);
+
+	TemplateParams params;
+	params.login = selected.get_login();
+	params.password = selected.get_password();
+	params.subdomain = (m_plugin->get_plugin_type() == PluginType::enSharaclub) ? m_list_domain : selected.get_subdomain();
+	params.server_idx = selected.server_id;
+	params.device_idx = selected.device_id;
+	params.profile_idx = selected.profile_id;
+	params.quality_idx = selected.quality_id;
+
+	m_plugin->fill_servers_list(&params);
+	m_servers = m_plugin->get_servers_list();
+	m_wndServers.ResetContent();
+	m_wndServers.EnableWindow(!m_servers.empty() && enable);
+
+	if (!m_servers.empty())
+	{
+		for (const auto& info : m_servers)
+		{
+			m_wndServers.AddString(info.get_name().c_str());
+		}
+
+		if (params.server_idx >= (int)m_servers.size())
+		{
+			params.server_idx = 0;
+		}
+
+		m_wndServers.SetCurSel(params.server_idx);
+	}
+
+	m_plugin->fill_devices_list(&params);
+	m_devices = m_plugin->get_devices_list();
+	m_wndDevices.EnableWindow(!m_devices.empty() && enable);
+	m_wndDevices.ResetContent();
+	if (!m_devices.empty())
+	{
+		for (const auto& info : m_devices)
+		{
+			m_wndDevices.AddString(info.get_name().c_str());
+		}
+
+		if (params.device_idx >= (int)m_devices.size())
+		{
+			params.device_idx = 0;
+		}
+
+		m_wndDevices.SetCurSel(params.device_idx);
+	}
+
+	m_plugin->fill_qualities_list(&params);
+	m_qualities = m_plugin->get_qualities_list();
+	m_wndQualities.EnableWindow(!m_qualities.empty() && enable);
+	m_wndQualities.ResetContent();
+	if (!m_qualities.empty())
+	{
+		for (const auto& info : m_qualities)
+		{
+			m_wndQualities.AddString(info.get_name().c_str());
+		}
+
+		if (params.quality_idx >= (int)m_qualities.size())
+		{
+			params.quality_idx = 0;
+		}
+
+		m_wndQualities.SetCurSel(params.quality_idx);
+	}
+
+	m_plugin->fill_profiles_list(&params);
+	m_profiles = m_plugin->get_profiles_list();
+	m_wndProfiles.EnableWindow(!m_profiles.empty() && enable);
+	m_wndProfiles.ResetContent();
+
+	if (!m_profiles.empty())
+	{
+		for (const auto& info : m_profiles)
+		{
+			m_wndProfiles.AddString(info.get_name().c_str());
+		}
+
+		if (params.profile_idx >= (int)m_profiles.size())
+		{
+			params.profile_idx = 0;
+		}
+
+		m_wndProfiles.SetCurSel(params.profile_idx);
+	}
+
+	m_wndCustomCaption.SetCheck(selected.custom_caption);
+	m_wndCaption.EnableWindow(selected.custom_caption && enable);
+	m_caption = selected.get_caption().c_str();
+
+	m_wndCustomPluginName.SetCheck(selected.custom_plugin_name);
+	m_wndPluginNameTemplate.EnableWindow(selected.custom_plugin_name && enable);
+	m_pluginNameTemplate = (selected.custom_plugin_name ? selected.get_plugin_name().c_str() : utils::DUNE_PLUGIN_FILE_NAME);
+	if (m_pluginNameTemplate.IsEmpty())
+		m_pluginNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
+
+	m_pluginName = fmt::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
+
+	m_wndCustomLogo.SetCheck(selected.custom_logo);
+	m_wndLogo.EnableWindow(selected.custom_logo && enable);
+
+	if (!selected.get_logo().empty() && std::filesystem::path(selected.get_logo()).parent_path().empty())
+		m_logo = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_logo()).c_str();
+	else
+		m_logo = selected.get_logo().c_str();
+
+	m_wndCustomBackground.SetCheck(selected.custom_background);
+	m_wndBackground.EnableWindow(selected.custom_background && enable);
+
+	if (!selected.get_background().empty() && std::filesystem::path(selected.get_background()).parent_path().empty())
+		m_background = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_background()).c_str();
+	else
+		m_background = selected.get_background().c_str();
+
+	m_channelsWebPath = selected.get_ch_web_path().c_str();
+
+	m_wndAutoIncrement.SetCheck(selected.custom_increment);
+	m_wndVersionID.EnableWindow(selected.custom_increment && enable);
+
+	m_wndCustomUpdateName.SetCheck(selected.custom_update_name);
+	m_wndUpdateNameTemplate.EnableWindow(selected.custom_update_name && enable);
+
+	m_updateNameTemplate = (selected.custom_update_name ? selected.get_update_name().c_str() : utils::DUNE_UPDATE_INFO_NAME);
+	if (m_updateNameTemplate.IsEmpty())
+		m_updateNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
+
+	m_updateName = m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected).c_str();
+
+	if (selected.custom_increment)
+	{
+		m_versionIdx = selected.get_version_id().c_str();
+	}
+	else
+	{
+		COleDateTime date = COleDateTime::GetCurrentTime();
+		m_versionIdx = fmt::format(L"{:d}{:02d}{:02d}{:02d}", date.GetYear(), date.GetMonth(), date.GetDay(), date.GetHour()).c_str();
+	}
+
+	m_wndUpdatePackageUrl.SetWindowText(selected.get_update_package_url().c_str());
+	m_wndUpdateUrl.SetWindowText(selected.get_update_url().c_str());
+
+	UpdateData(FALSE);
 }
 
 void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResult)

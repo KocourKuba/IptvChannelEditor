@@ -50,9 +50,6 @@ public:
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL OnInitDialog() override;
-
-	void UpdateOptionalControls();
-
 	BOOL OnApply() override;
 
 	DECLARE_MESSAGE_MAP()
@@ -93,6 +90,7 @@ public:
 	void CreateAccountsList();
 
 private:
+	void UpdateOptionalControls(BOOL enable);
 	int GetCheckedAccountIdx();
 	int GetSelectedList();
 	void GetAccountInfo();
