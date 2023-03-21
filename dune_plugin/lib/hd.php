@@ -354,13 +354,24 @@ class HD
                 throw new Exception("Unable to get DUNE serial");
             }
 
+            // Detect plugin log location
+            // Using the last found log redirection message
+            $log_path = "/tmp/run/" . get_plugin_name() . ".log";
+            $lines = file($log_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach($lines as $line) {
+                if (preg_match("/Starting logging to '(.+\.log)'/", $line, $m)) {
+                    $log_path = $m[1];
+                }
+            }
+            hd_print("Plugin log location: $log_path");
+
             $timestamp = format_datetime('Ymd_His', time());
             $zip_file_name = "{$serial}_$timestamp.zip";
             hd_print("Prepare archive $zip_file_name for send");
             $zip_file = get_temp_path($zip_file_name);
             $zip = new ZipArchive();
             $zip->open($zip_file, ZipArchive::CREATE);
-            $files = array("/tmp/run/" . get_plugin_name() . ".log", "/tmp/run/shell.log");
+            $files = array($log_path, "/tmp/run/shell.log");
             foreach ($files as $file) {
                 if (file_exists($file)) {
                     $zip->addFile($file, "/" . basename($file));
