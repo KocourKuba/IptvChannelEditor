@@ -644,14 +644,16 @@ class default_config extends dynamic_config
             return $pl_entries;
         }
 
-        hd_print("Using parsing pattern: $parse_pattern");
+        hd_print("Parsing pattern: $parse_pattern");
         $parse_pattern = "/$parse_pattern/";
 
         $tag_id = isset($templates[$idx][Plugin_Constants::TAG_ID_MATCH]) ? $templates[$idx][Plugin_Constants::TAG_ID_MATCH] : '';
-        hd_print("Using matching tag: $tag_id");
+        if (!empty($tag_id)) {
+            hd_print("ID matching tag: $tag_id");
+        }
 
         $m3u_entries = $this->get_tv_m3u_entries();
-        hd_print("Parsing " . count($m3u_entries) . "playlist entries");
+        hd_print("Parsing " . count($m3u_entries) . " playlist entries");
 
         foreach ($m3u_entries as $entry) {
             if (!empty($tag_id)) {
@@ -671,10 +673,10 @@ class default_config extends dynamic_config
         }
 
         if (empty($pl_entries)) {
-            hd_print('No channels mapped. Empty provider playlist or no channels mapped to playlist entries');
+            hd_print('No mapped entries found. Empty provider playlist or wrong parsing pattern');
             $this->ClearPlaylistCache();
         } else {
-            hd_print("Channels mapped : " . count($pl_entries));
+            hd_print("Total mapped entries to ID : " . count($pl_entries));
         }
 
         return $pl_entries;
