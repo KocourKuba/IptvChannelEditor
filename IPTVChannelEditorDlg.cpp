@@ -663,7 +663,10 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	int selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
 	if (selected == -1 || selected >= (int)m_all_credentials.size())
+	{
 		selected = 0;
+		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, 0);
+	}
 
 	if (selected < (int)m_all_credentials.size())
 	{
@@ -844,6 +847,11 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	const auto& used_cfg = fmt::format(load_string_resource(IDS_STRING_USED_CONFIG),
 									   m_cur_account.config.empty() ? load_string_resource(IDS_STRING_STR_DEFAULT) : m_cur_account.get_config());
 	GetDlgItem(IDC_STATIC_CONFIG)->SetWindowText(used_cfg.c_str());
+
+	const auto& used_acc = fmt::format(load_string_resource(IDS_STRING_USED_ACCOUNT),
+									   m_cur_account.get_comment().empty() ? std::to_wstring(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT) + 1) : m_cur_account.get_comment());
+	GetDlgItem(IDC_STATIC_ACCOUNT)->SetWindowText(used_acc.c_str());
+
 	m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 100, nullptr);
 
 	UnlockWindowUpdate();

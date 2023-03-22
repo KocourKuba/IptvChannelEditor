@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="237" scanned="20230312173508" built="20230312174231" lang="ru" pane="TLogPane" col="2" row="Strings.10.IDS_STRING_INFO_CREATE_SUCCESS">
+<desktop scan="238" scanned="20230322213649" built="20230322213846" lang="ru" pane="TLogPane" col="4">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
+    <item class="TRemoveUnusedItemsTrigger" position="2"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>
     <columns>
       <item class="TFlagsColumn" width="38"/>
-      <item class="TPathColumn" width="262"/>
+      <item class="TPathColumn" width="287"/>
       <item class="TTranslationStatusColumn" width="93"/>
-      <item class="TOriginalColumn" width="524"/>
-      <item class="TTranslationColumn" lang="ru" width="530"/>
+      <item class="TOriginalColumn" width="575"/>
+      <item class="TTranslationColumn" lang="ru" width="582"/>
     </columns>
     <filters>
       <current>
