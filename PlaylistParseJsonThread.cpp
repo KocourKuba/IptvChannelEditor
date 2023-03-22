@@ -85,7 +85,7 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 	do
 	{
 		std::stringstream data;
-		if (!utils::DownloadFile(m_config.m_url, data, m_parent_plugin->get_user_agent().c_str(), m_config.m_cache_ttl)) break;
+		if (!utils::DownloadFile(m_config.m_url, data, m_parent_plugin->get_user_agent().c_str(), m_config.m_cache_ttl * 3600)) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
@@ -180,8 +180,9 @@ void CPlaylistParseJsonThread::ParseCbilling()
 
 	do
 	{
+		int cache_ttl = m_config.m_cache_ttl * 3600;
 		std::stringstream info;
-		if (!utils::DownloadFile(m_config.m_url, info, m_parent_plugin->get_user_agent().c_str(), m_config.m_cache_ttl)) break;
+		if (!utils::DownloadFile(m_config.m_url, info, m_parent_plugin->get_user_agent().c_str(), cache_ttl)) break;
 
 		int total = 0;
 		JSON_ALL_TRY;
@@ -214,7 +215,7 @@ void CPlaylistParseJsonThread::ParseCbilling()
 
 				std::stringstream data;
 				const auto& cat_url = fmt::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", m_config.m_url, category->id, page);
-				if (!utils::DownloadFile(cat_url, data, m_parent_plugin->get_user_agent().c_str(), m_config.m_cache_ttl) || data.bad())
+				if (!utils::DownloadFile(cat_url, data, m_parent_plugin->get_user_agent().c_str(), cache_ttl) || data.bad())
 				{
 					retry++;
 					continue;
@@ -299,6 +300,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 	all_category->name = all_name;
 	categories->set_back(all_name, all_category);
 
+	int cache_ttl = m_config.m_cache_ttl * 3600;
 	do
 	{
 		boost::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
@@ -319,7 +321,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 		const auto& post = json_request.dump();
 
 		std::stringstream data;
-		if (!utils::DownloadFile(url, data, m_parent_plugin->get_user_agent().c_str(), m_config.m_cache_ttl, &headers, true, post.c_str())) break;
+		if (!utils::DownloadFile(url, data, m_parent_plugin->get_user_agent().c_str(), cache_ttl, &headers, true, post.c_str())) break;
 
 		JSON_ALL_TRY;
 		nlohmann::json parsed_json = nlohmann::json::parse(data.str());
@@ -378,7 +380,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 			const auto& cat_post = json_request.dump();
 
 			std::stringstream cat_data;
-			if (!utils::DownloadFile(url, cat_data, m_parent_plugin->get_user_agent().c_str(), m_config.m_cache_ttl, &headers, true, cat_post.c_str())) break;
+			if (!utils::DownloadFile(url, cat_data, m_parent_plugin->get_user_agent().c_str(), cache_ttl, &headers, true, cat_post.c_str())) break;
 
 			const auto& data_str = cat_data.str();
 			nlohmann::json movie_json = nlohmann::json::parse(data_str);
@@ -436,7 +438,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 				ATLTRACE("\noffset: %d\n", offset);
 
 				std::stringstream mov_data;
-				if (!utils::DownloadFile(url, mov_data, m_parent_plugin->get_user_agent().c_str(), m_config.m_cache_ttl, &headers, true, json_request.dump().c_str())) break;
+				if (!utils::DownloadFile(url, mov_data, m_parent_plugin->get_user_agent().c_str(), cache_ttl, &headers, true, json_request.dump().c_str())) break;
 
 				movie_json = nlohmann::json::parse(mov_data.str());
 			}
@@ -464,7 +466,7 @@ void CPlaylistParseJsonThread::ParseGlanz()
 	do
 	{
 		std::stringstream data;
-		if (!utils::DownloadFile(m_config.m_url, data, m_parent_plugin->get_user_agent().c_str(), m_config.m_cache_ttl)) break;
+		if (!utils::DownloadFile(m_config.m_url, data, m_parent_plugin->get_user_agent().c_str(), m_config.m_cache_ttl * 3600)) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;

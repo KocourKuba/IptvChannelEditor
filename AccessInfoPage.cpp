@@ -46,6 +46,8 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
+constexpr int min_cache_ttl = 5;
+
 inline std::string get_utf8(const std::wstring& value)
 {
 	return utils::utf16_to_utf8(value);
@@ -513,7 +515,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			{
 				std::stringstream data;
 				std::wstring url = dlg.m_url.GetString();
-				if (!utils::DownloadFile(url, data, m_plugin->get_user_agent().c_str()))
+				if (!utils::DownloadFile(url, data, m_plugin->get_user_agent().c_str(), min_cache_ttl))
 				{
 					std::ifstream instream(url);
 					data << instream.rdbuf();
@@ -723,41 +725,41 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 	if (!(pNMLV->uChanged & LVIF_STATE))
 		return;
 
+	int selected = 0;
 	if ((pNMLV->uNewState & LVIS_SELECTED) == LVIS_SELECTED)
 	{
 		m_wndAccounts.SetCheck(pNMLV->iItem, TRUE);
+		selected = LVIS_SELECTED;
 	}
 	else if (pNMLV->uNewState == 0)
 	{
 		if (m_wndAccounts.GetItemState(pNMLV->iItem, LVIS_SELECTED) == 0)
 		{
-			m_wndAccounts.SetCheck(pNMLV->iItem, FALSE);
+			m_wndAccounts.SetCheck(pNMLV->iItem, 0);
+			selected = 0;
 		}
 	}
 	else
 	{
-		m_wndAccounts.SetItemState(pNMLV->iItem, m_wndAccounts.GetCheck(pNMLV->iItem) ? LVIS_SELECTED : 0, LVIS_SELECTED);
+		selected = m_wndAccounts.GetCheck(pNMLV->iItem) ? LVIS_SELECTED : 0;
+		m_wndAccounts.SetItemState(pNMLV->iItem, selected, LVIS_SELECTED);
 	}
 
-	BOOL selected = m_wndAccounts.GetItemState(pNMLV->iItem, LVIS_SELECTED) == LVIS_SELECTED;
-	m_wndRemove.EnableWindow(selected);
+	m_wndRemove.EnableWindow(selected != 0);
 
-	if (selected)
+	if (selected != 0)
 	{
 		m_plugin->clear_servers_list();
 		m_plugin->clear_device_list();
 		m_plugin->clear_profiles_list();
 		m_plugin->clear_qualities_list();
 		FillChannelsList();
-	}
 
-	BOOL enable = m_wndAccounts.GetCheck(pNMLV->iItem);
-
-	if (enable)
-	{
 		m_wndInfo.DeleteAllItems();
 		GetAccountInfo();
 	}
+
+	BOOL enable = m_wndAccounts.GetCheck(pNMLV->iItem);
 
 	UpdateOptionalControls(enable);
 
@@ -1092,7 +1094,7 @@ void CAccessInfoPage::GetAccountInfo()
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!pl_url.empty() && utils::DownloadFile(pl_url, data, m_plugin->get_user_agent().c_str()))
+	if (!pl_url.empty() && utils::DownloadFile(pl_url, data, m_plugin->get_user_agent().c_str(), min_cache_ttl))
 	{
 		std::istringstream stream(data.str());
 

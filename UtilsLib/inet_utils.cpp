@@ -219,7 +219,7 @@ bool CrackUrl(const std::wstring& url, CrackedUrl& cracked)
 bool CurlDownload(const std::wstring& url,
 				  std::stringstream& vData,
 				  LPCWSTR user_agent /*= nullptr*/,
-				  int cache_ttl /*= 0*/,
+				  int cache_ttl_sec /*= 0*/,
 				  std::vector<std::string>* pHeaders /*= nullptr*/,
 				  bool verb_post /*= false*/,
 				  const char* post_data /*= nullptr*/
@@ -235,7 +235,7 @@ bool CurlDownload(const std::wstring& url,
 	cache_file.append(fmt::format(L"{:08x}", xxh::xxhash<32>(hash_str)));
 	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
 
-	if (cache_ttl && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
+	if (cache_ttl_sec && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
 	{
 		ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
 		std::time_t file_time = to_time_t(std::filesystem::last_write_time(cache_file));
@@ -243,7 +243,7 @@ bool CurlDownload(const std::wstring& url,
 		int diff = int(now - file_time);
 		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n", diff / 3600, (diff - (diff / 3600 * 3600)) / 60, diff - diff / 60 * 60);
 		// cache ttl 1 day
-		if (diff < 60 * 60 * cache_ttl)
+		if (diff < cache_ttl_sec)
 		{
 			std::ifstream in_file(cache_file.c_str());
 			if (in_file.good())
@@ -320,7 +320,7 @@ bool CurlDownload(const std::wstring& url,
 bool WinHttpDownload(const std::wstring& url,
 					 std::stringstream& vData,
 					 LPCWSTR user_agent /*= nullptr*/,
-					 int cache_ttl /*= 0*/,
+					 int cache_ttl_sec /*= 0*/,
 					 std::vector<std::string>* pHeaders /*= nullptr*/,
 					 bool verb_post /*= false*/,
 					 const char* post_data /*= nullptr*/)
@@ -334,16 +334,16 @@ bool WinHttpDownload(const std::wstring& url,
 	cache_file.append(fmt::format(L"{:08x}", xxh::xxhash<32>(hash_str)));
 	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
 
-	if (cache_ttl && std::filesystem::exists(cache_file))
+	if (cache_ttl_sec && std::filesystem::exists(cache_file))
 	{
 		ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
 		std::time_t file_time = to_time_t(std::filesystem::last_write_time(cache_file));
 		std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 		int diff = int(now - file_time);
-		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n", diff / 3600, (diff - (diff / 3600 * 3600)) / 60, diff - diff / 60 * 60);
 		// cache ttl 1 day
-		if (diff < 60 * 60 * cache_ttl)
+		if (diff < cache_ttl_sec)
 		{
+			ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n", diff / 3600, (diff - (diff / 3600 * 3600)) / 60, diff - diff / 60 * 60);
 			std::ifstream in_file(cache_file.c_str());
 			if (in_file.good())
 			{
@@ -353,6 +353,12 @@ bool WinHttpDownload(const std::wstring& url,
 				ATLTRACE(L"\nloaded from cache: %d bytes\n", data_size);
 				return data_size != 0;
 			}
+		}
+		else
+		{
+			ATLTRACE(L"\nCache expired. Remove from cache\n");
+			std::error_code err_code;
+			std::filesystem::remove(cache_file, err_code);
 		}
 	}
 
@@ -561,10 +567,11 @@ bool WinHttpDownload(const std::wstring& url,
 			}
 		}
 
-		if (cache_ttl && vData.good() || bSaveBadCache)
+		if (cache_ttl_sec && vData.good() || bSaveBadCache)
 		{
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
 			out_stream << vData.rdbuf();
+			ATLTRACE("\nSave to cache for %d seconds\n", cache_ttl_sec);
 		}
 
 		return vData.tellp() != std::streampos(0);

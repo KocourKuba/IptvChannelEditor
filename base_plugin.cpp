@@ -303,7 +303,7 @@ const std::map<std::wstring, std::wstring>& base_plugin::get_epg_id_mapper(int e
 	{
 		CWaitCursor cur;
 		std::stringstream data;
-		if (utils::DownloadFile(params.epg_mapper_url, data, get_user_agent().c_str()))
+		if (utils::DownloadFile(params.epg_mapper_url, data, get_user_agent().c_str(), GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
 		{
 			JSON_ALL_TRY
 			{
@@ -345,7 +345,7 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::map<ti
 	CWaitCursor cur;
 	std::stringstream data;
 	const auto& url = compile_epg_url(epg_idx, epg_id, for_time, info);
-	if (!utils::DownloadFile(url, data, get_user_agent().c_str(), GetConfig().get_int(true, REG_MAX_CACHE_TTL)))
+	if (!utils::DownloadFile(url, data, get_user_agent().c_str(), GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
 		return false;
 
 	const auto& params = epg_params[epg_idx];
