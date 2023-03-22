@@ -394,9 +394,9 @@ function get_ip_address()
         $active_network_connection = parse_ini_file('/tmp/run/active_network_connection.txt', 0, INI_SCANNER_RAW);
         $ip = isset($active_network_connection['ip']) ? trim($active_network_connection['ip']) : '';
     } else {
-        $ip = trim(shell_exec('ifconfig eth0 | head -2 | tail -1 | sed "s/^.*inet addr:\([^ ]*\).*$/\1/"'));
+        $ip = trim(shell_exec('ifconfig eth0 2>/dev/null | head -2 | tail -1 | sed "s/^.*inet addr:\([^ ]*\).*$/\1/"'));
         if (!is_numeric(preg_replace('/\s|\./', '', $ip))) {
-            $ip = trim(shell_exec('ifconfig wlan0 | head -2 | tail -1 | sed "s/^.*inet addr:\([^ ]*\).*$/\1/"'));
+            $ip = trim(shell_exec('ifconfig wlan0 2>/dev/null | head -2 | tail -1 | sed "s/^.*inet addr:\([^ ]*\).*$/\1/"'));
             if (!is_numeric(preg_replace('/\s|\./', '', $ip))) {
                 $ip = '';
             }
@@ -436,7 +436,11 @@ function get_mac_address()
     static $mac_addr = null;
 
     if (is_null($mac_addr)) {
-        $mac_addr = trim(shell_exec('ifconfig  eth0 | head -1 | sed "s/^.*HWaddr //"'));
+        if (is_apk()) {
+            $mac_addr = file_exists('/tmp/run/dune_mac.txt') ? trim(shell_exec('cat $FS_PREFIX/tmp/run/dune_mac.txt')) : '';
+        } else {
+            $mac_addr = trim(shell_exec('ifconfig eth0 | head -1 | sed "s/^.*HWaddr //"'));
+        }
     }
 
     return $mac_addr;
