@@ -488,8 +488,8 @@ public:
 	/// regex for parsing title
 	/// </summary>
 	/// <returns>wstring</returns>
-	std::wstring get_vod_parse_regex(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_pl_parse_regex() : L""; }
-	void set_vod_parse_regex(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_pl_parse_regex(val); }
+	std::wstring get_vod_parse_regex(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_parse_regex() : L""; }
+	void set_vod_parse_regex(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_parse_regex(val); }
 
 	/// <summary>
 	/// property square icons, php GUI setting
