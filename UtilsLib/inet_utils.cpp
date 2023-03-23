@@ -144,9 +144,7 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 		}
 		else
 		{
-			ATLTRACE("\nCache expired. Remove from cache\n");
-			std::error_code err_code;
-			std::filesystem::remove(cache_file, err_code);
+			ATLTRACE("\nCache expired. Download again.\n");
 		}
 	}
 
@@ -160,6 +158,7 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 		}
 
 		// Use WinHttpOpen to obtain a session handle.
+		ATLTRACE(L"\nUserAgent: %s\n", m_user_agent.c_str());
 		CAutoHinternet hSession = WinHttpOpen(m_user_agent.c_str(),
 											  WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
 											  WINHTTP_NO_PROXY_NAME,
