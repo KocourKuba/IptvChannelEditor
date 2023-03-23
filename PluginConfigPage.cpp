@@ -131,35 +131,35 @@ void CPluginConfigPage::UpdateControls()
 
 	const auto& plugin = GetPropertySheet()->m_plugin;
 	bool custom = plugin->get_plugin_type() == PluginType::enCustom;
-	bool enable = true;
+	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	// common
-	m_wndName.EnableWindow(enable);
-	m_wndTitle.EnableWindow(enable);
-	m_wndUserAgent.EnableWindow(enable);
-	m_wndProviderUrl.EnableWindow(enable);
-	m_wndChkSquareIcons.EnableWindow(enable);
-	m_wndAccessType.EnableWindow(enable && custom);
+	m_wndName.SetReadOnly(readOnly);
+	m_wndTitle.SetReadOnly(readOnly);
+	m_wndUserAgent.SetReadOnly(readOnly);
+	m_wndProviderUrl.SetReadOnly(readOnly);
+	m_wndChkSquareIcons.EnableWindow(!readOnly);
+	m_wndAccessType.EnableWindow(custom);
 
 	// servers
 	m_wndChkStaticServers.SetCheck(plugin->get_static_servers());
-	m_wndChkStaticServers.EnableWindow(enable);
-	m_wndBtnServers.EnableWindow(enable && plugin->get_static_servers());
+	m_wndChkStaticServers.EnableWindow(!readOnly);
+	m_wndBtnServers.EnableWindow(plugin->get_static_servers());
 
 	// devices
 	m_wndChkStaticDevices.SetCheck(plugin->get_static_devices());
-	m_wndChkStaticDevices.EnableWindow(enable);
-	m_wndBtnDevices.EnableWindow(enable && plugin->get_static_devices());
+	m_wndChkStaticDevices.EnableWindow(!readOnly);
+	m_wndBtnDevices.EnableWindow(plugin->get_static_devices());
 
 	// qualities
 	m_wndChkStaticQualities.SetCheck(plugin->get_static_qualities());
-	m_wndChkStaticQualities.EnableWindow(enable);
-	m_wndBtnQualities.EnableWindow(enable && plugin->get_static_qualities());
+	m_wndChkStaticQualities.EnableWindow(!readOnly);
+	m_wndBtnQualities.EnableWindow(plugin->get_static_qualities());
 
 	// profiles
 	m_wndChkStaticProfiles.SetCheck(plugin->get_static_profiles());
-	m_wndChkStaticProfiles.EnableWindow(enable);
-	m_wndBtnProfiles.EnableWindow(enable && plugin->get_static_profiles());
+	m_wndChkStaticProfiles.EnableWindow(!readOnly);
+	m_wndBtnProfiles.EnableWindow(plugin->get_static_profiles());
 }
 
 void CPluginConfigPage::FillControls()

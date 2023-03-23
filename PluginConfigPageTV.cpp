@@ -205,28 +205,27 @@ void CPluginConfigPageTV::UpdateControls()
 {
 	UpdateData(TRUE);
 
-	bool enable = true;
+	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	// common
-	m_wndPlaylistTemplates.EnableWindow(enable);
-	m_wndBtnEditTemplates.EnableWindow(enable);
-	m_wndPlaylistTemplate.EnableWindow(enable);
-	m_wndChkPerChannelToken.EnableWindow(enable);
-	m_wndParseStream.EnableWindow(enable);
-	m_wndCheckMapTags.EnableWindow(enable);
-	m_wndTags.EnableWindow(enable && m_wndCheckMapTags.GetCheck() != 0);
+	m_wndPlaylistTemplates.EnableWindow(!readOnly);
+	m_wndPlaylistTemplate.SetReadOnly(readOnly);
+	m_wndChkPerChannelToken.EnableWindow(!readOnly);
+	m_wndParseStream.SetReadOnly(readOnly);
+	m_wndCheckMapTags.EnableWindow(!readOnly);
+	m_wndTags.EnableWindow(m_wndCheckMapTags.GetCheck() != 0);
 
 	// test
 	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
 
 	// streams
-	m_wndStreamType.EnableWindow(enable);
-	m_wndCatchupType.EnableWindow(enable);
-	m_wndDuration.EnableWindow(enable);
-	m_wndDuneParams.EnableWindow(enable);
-	m_wndStreamTemplate.EnableWindow(enable);
-	m_wndStreamArchiveTemplate.EnableWindow(enable);
-	m_wndCustomStreamArchiveTemplate.EnableWindow(enable);
+	m_wndStreamType.EnableWindow(!readOnly);
+	m_wndCatchupType.EnableWindow(!readOnly);
+	m_wndDuration.SetReadOnly(readOnly);
+	m_wndDuneParams.SetReadOnly(readOnly);
+	m_wndStreamTemplate.SetReadOnly(readOnly);
+	m_wndStreamArchiveTemplate.SetReadOnly(readOnly);
+	m_wndCustomStreamArchiveTemplate.SetReadOnly(readOnly);
 }
 
 void CPluginConfigPageTV::FillControls()

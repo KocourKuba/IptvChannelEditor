@@ -194,20 +194,20 @@ void CPluginConfigPageEPG::UpdateControls()
 {
 	UpdateData(TRUE);
 
-	bool enable = true;
+	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	// epg
-	m_wndEpgType.EnableWindow(enable);
-	m_wndEpgUrl.EnableWindow(enable);
-	m_wndEpgRoot.EnableWindow(enable);
-	m_wndEpgName.EnableWindow(enable);
-	m_wndEpgDesc.EnableWindow(enable);
-	m_wndEpgStart.EnableWindow(enable);
-	m_wndEpgEnd.EnableWindow(enable);
-	m_wndDateFormat.EnableWindow(enable);
-	m_wndEpgStartFormat.EnableWindow(enable);
-	m_wndEpgTimezone.EnableWindow(enable);
-	m_wndChkUseDuration.EnableWindow(enable);
+	m_wndEpgType.EnableWindow(!readOnly);
+	m_wndEpgUrl.SetReadOnly(readOnly);
+	m_wndEpgRoot.SetReadOnly(readOnly);
+	m_wndEpgName.SetReadOnly(readOnly);
+	m_wndEpgDesc.SetReadOnly(readOnly);
+	m_wndEpgStart.SetReadOnly(readOnly);
+	m_wndEpgEnd.SetReadOnly(readOnly);
+	m_wndDateFormat.SetReadOnly(readOnly);
+	m_wndEpgStartFormat.SetReadOnly(readOnly);
+	m_wndEpgTimezone.SetReadOnly(readOnly);
+	m_wndChkUseDuration.EnableWindow(!readOnly);
 	m_wndBtnEpgTest.EnableWindow(!m_EpgUrl.IsEmpty());
 	m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(m_wndEpgType.GetCurSel()).c_str();
 

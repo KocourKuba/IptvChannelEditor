@@ -130,18 +130,20 @@ void CPluginConfigPageVOD::UpdateControls()
 {
 	UpdateData(TRUE);
 
-	bool enable = true;
+	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	bool enableVod = m_wndChkEnableVOD.GetCheck() != 0;
 	bool enableM3U = m_wndChkVodM3U.GetCheck() != 0;
 
-	m_wndChkEnableVOD.EnableWindow(enable);
-	m_wndChkFilterSupport.EnableWindow(enable && enableVod);
-	m_wndChkVodM3U.EnableWindow(enable && enableVod);
-	m_wndVodTemplates.EnableWindow(enable && enableVod);
-	m_wndBtnEditVodTemplates.EnableWindow(enable && enableVod);
-	m_wndVodUrlTemplate.EnableWindow(enable && enableVod);
-	m_wndVodRegex.EnableWindow(enable && enableVod && enableM3U);
+	m_wndChkEnableVOD.EnableWindow(!readOnly);
+	m_wndChkFilterSupport.EnableWindow(!readOnly && enableVod);
+	m_wndChkVodM3U.EnableWindow(!readOnly && enableVod);
+	m_wndVodTemplates.EnableWindow(!readOnly && enableVod);
+	m_wndBtnEditVodTemplates.EnableWindow(!readOnly && enableVod);
+	m_wndVodUrlTemplate.EnableWindow(enableVod);
+	m_wndVodUrlTemplate.SetReadOnly(readOnly);
+	m_wndVodRegex.EnableWindow(enableVod && enableM3U);
+	m_wndVodRegex.SetReadOnly(readOnly);
 }
 
 void CPluginConfigPageVOD::FillControls()
