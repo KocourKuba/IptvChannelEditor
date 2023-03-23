@@ -254,8 +254,10 @@ int parse_info(UpdateInfo& info)
 int check_for_update(UpdateInfo& info)
 {
 	LogProtocol("Try to download update info...");
-	if (!utils::DownloadFile(fmt::format(L"{:s}/update.xml", g_szPath), info.update_info))
+	utils::CUrlDownload dl;
+	if (!dl.DownloadFile(fmt::format(L"{:s}/update.xml", g_szPath), info.update_info))
 	{
+		LogProtocol(fmt::format(L"{:s}", dl.GetLastErrorMessage()));
 		return err_download_info; // Unable to download update info!
 	}
 
@@ -270,6 +272,7 @@ int download_update(UpdateInfo& info)
 		ret = check_for_update(info);
 		if (ret != 0) break;
 
+		utils::CUrlDownload dl;
 		for (const auto& item : info.update_files)
 		{
 			const auto& loaded_file = fmt::format(L"{:s}{:s}", info.update_path, item.name);
@@ -289,9 +292,10 @@ int download_update(UpdateInfo& info)
 			std::stringstream file_data;
 			const auto& url = fmt::format(L"{:s}/{:s}/{:s}", g_szPath, info.version, item.name);
 			LogProtocol(fmt::format(L"download: {:s}", url));
-			if (!utils::DownloadFile(url, file_data))
+			if (!dl.DownloadFile(url, file_data))
 			{
 				ret = err_download_pkg; // Unable to download update package!
+				LogProtocol(fmt::format(L"{:s}", dl.GetLastErrorMessage()));
 				break;
 			}
 

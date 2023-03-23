@@ -82,7 +82,7 @@ bool plugin_oneott::parse_access_info(TemplateParams& params, std::list<AccountI
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data, get_user_agent().c_str()))
+	if (!download_url(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data))
 	{
 		return false;
 	}

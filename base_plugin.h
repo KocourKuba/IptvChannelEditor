@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_config.h"
 #include "uri_stream.h"
 #include "Credentials.h"
+#include "UtilsLib\inet_utils.h"
 
 class uri_stream;
 
@@ -110,6 +111,20 @@ protected:
 	void load_default() override;
 
 public:
+
+	bool download_url(const std::wstring& url,
+					  std::stringstream& vData,
+					  int cache_ttl = 0,
+					  std::vector<std::string>* pHeaders = nullptr,
+					  bool verb_post = false,
+					  const char* post_data = nullptr)
+	{
+		m_dl.SetUserAgent(get_user_agent());
+		m_dl.SetCacheTtl(cache_ttl);
+		return m_dl.DownloadFile(url, vData, pHeaders, verb_post, post_data);
+	}
+
+	const std::wstring& get_download_error() { return m_dl.GetLastErrorMessage(); }
 
 	/// <summary>
 	/// save plugin parameters to file
@@ -251,6 +266,7 @@ protected:
 	void put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const;
 
 protected:
+	utils::CUrlDownload m_dl;
 
 	// compiled regex for uri parse template
 	boost::wregex regex_uri_template;

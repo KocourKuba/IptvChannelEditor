@@ -30,17 +30,17 @@ DEALINGS IN THE SOFTWARE.
 #include <atlenc.h>
 #include <sstream>
 
-#ifdef _USE_CURL
-# define DownloadFile CurlDownload
-#else
-# define DownloadFile WinHttpDownload
-
-#endif
-
 namespace utils
 {
-struct CrackedUrl
+
+constexpr auto pc_user_agent = L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.44";
+
+class CrackedUrl
 {
+public:
+	bool CrackUrl(const std::wstring& url);
+
+public:
 	std::wstring scheme;
 	std::wstring user;
 	std::wstring password;
@@ -51,25 +51,28 @@ struct CrackedUrl
 	unsigned short nScheme = 1; // INTERNET_SCHEME_HTTP
 };
 
-bool CrackUrl(const std::wstring& url, CrackedUrl& cracked);
+class CUrlDownload
+{
 
-#ifdef _USE_CURL
-bool CurlDownload(const std::wstring& url,
-				  std::stringstream& vData,
-				  LPCWSTR user_agent = nullptr,
-				  int cache_ttl_sec = 0,
-				  std::vector<std::string>* pHeaders = nullptr,
-				  bool verb_post = false,
-				  const char* post_data = nullptr);
-#endif // _USE_CURL
+public:
+	CUrlDownload::CUrlDownload() = default;
 
-bool WinHttpDownload(const std::wstring& url,
-				  std::stringstream& vData,
-				  LPCWSTR user_agent = nullptr,
-				  int cache_ttl_sec = 0, // in seconds
-				  std::vector<std::string>* pHeaders = nullptr,
-				  bool verb_post = false,
-				  const char* post_data = nullptr);
+	bool DownloadFile(const std::wstring& url,
+					  std::stringstream& vData,
+					  std::vector<std::string>* pHeaders = nullptr,
+					  bool verb_post = false,
+					  const char* post_data = nullptr);
+
+
+	void SetUserAgent(const std::wstring& userAgent) { m_user_agent = userAgent; }
+	void SetCacheTtl(int cache_ttl) { m_cache_ttl_sec = cache_ttl; }
+	const std::wstring& GetLastErrorMessage() { return m_error_message; };
+
+private:
+	int m_cache_ttl_sec = 0;
+	std::wstring m_error_message;
+	std::wstring m_user_agent = pc_user_agent;
+};
 
 std::string entityDecrypt(const std::string& text);
 

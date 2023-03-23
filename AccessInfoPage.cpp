@@ -38,8 +38,6 @@ DEALINGS IN THE SOFTWARE.
 #include "PluginConfigPageEPG.h"
 #include "PluginConfigPageVOD.h"
 
-#include "UtilsLib\inet_utils.h"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -515,7 +513,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			{
 				std::stringstream data;
 				std::wstring url = dlg.m_url.GetString();
-				if (!utils::DownloadFile(url, data, m_plugin->get_user_agent().c_str(), min_cache_ttl))
+				if (!m_plugin->download_url(url, data))
 				{
 					std::ifstream instream(url);
 					data << instream.rdbuf();
@@ -1094,7 +1092,7 @@ void CAccessInfoPage::GetAccountInfo()
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!pl_url.empty() && utils::DownloadFile(pl_url, data, m_plugin->get_user_agent().c_str(), min_cache_ttl))
+	if (!pl_url.empty() && m_plugin->download_url(pl_url, data, min_cache_ttl))
 	{
 		std::istringstream stream(data.str());
 
@@ -1487,7 +1485,7 @@ void CAccessInfoPage::OnBnClickedButtonBrowseUpdateFile()
 bool CAccessInfoPage::TransformDropboxPath(std::wstring& dropbox_link, const std::wstring& file)
 {
 	utils::CrackedUrl cracked;
-	if (!dropbox_link.empty() && !utils::CrackUrl(dropbox_link, cracked))
+	if (!dropbox_link.empty() && !cracked.CrackUrl(dropbox_link))
 	{
 		AfxMessageBox(IDS_STRING_ERR_WRONG_URL, MB_ICONERROR | MB_OK);
 		return false;

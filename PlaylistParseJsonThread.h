@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "base_plugin.h"
 #include "BaseThread.h"
+#include "UtilsLib\inet_utils.h"
 
 class CPlaylistParseJsonThread : public CBaseThread
 {
@@ -41,4 +42,6 @@ protected:
 	void ParseCbilling();
 	void ParseEdem();
 	void ParseGlanz();
+
+	utils::CUrlDownload m_dl;
 };

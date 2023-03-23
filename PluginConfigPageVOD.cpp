@@ -195,7 +195,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	CWaitCursor cur;
 	const auto& url = GetPropertySheet()->m_plugin->get_vod_url(params);
 	std::stringstream data;
-	if (utils::DownloadFile(url, data, GetPropertySheet()->m_plugin->get_user_agent().c_str()))
+	if (GetPropertySheet()->m_plugin->download_url(url, data))
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"vod.m3u8";
 
@@ -214,7 +214,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	}
 	else
 	{
-		AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK|MB_ICONERROR);
+		AfxMessageBox(GetPropertySheet()->m_plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
 	}
 }
 

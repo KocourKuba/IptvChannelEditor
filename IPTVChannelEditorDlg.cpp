@@ -694,13 +694,17 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	{
 		CWaitCursor cur;
 		std::stringstream data;
-		if (utils::DownloadFile(provider_api_url, data, m_plugin->get_user_agent().c_str()))
+		if (m_plugin->download_url(provider_api_url, data))
 		{
 			JSON_ALL_TRY;
 			const auto& parsed_json = nlohmann::json::parse(data.str());
 			GetConfig().set_string(false, REG_LIST_DOMAIN, utils::utf8_to_utf16(parsed_json["listdomain"].get<std::string>()));
 			GetConfig().set_string(false, REG_EPG_DOMAIN, utils::utf8_to_utf16(parsed_json["jsonEpgDomain"].get<std::string>()));
 			JSON_ALL_CATCH;
+		}
+		else
+		{
+			AfxMessageBox(m_plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
 		}
 	}
 
@@ -1016,12 +1020,15 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		std::ifstream stream(url);
 		data << stream.rdbuf();
 	}
-	else if (utils::CrackUrl(url, cracked))
+	else if (cracked.CrackUrl(url))
 	{
 		CWaitCursor cur;
-		if (!utils::DownloadFile(url, data, m_plugin->get_user_agent().c_str(), GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
+		utils::CUrlDownload dl;
+		if (!m_plugin->download_url(url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
 		{
-			AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
+			CString msg;
+			msg.Format(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, m_plugin->get_download_error().c_str());
+			AfxMessageBox(msg, MB_OK | MB_ICONERROR);
 			OnEndLoadPlaylist(0);
 			return;
 		}
@@ -4215,7 +4222,12 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 
 		CWaitCursor cur;
 		std::stringstream image;
-		if (!utils::DownloadFile(channel->get_icon_uri().get_uri(), image)) continue;
+		utils::CUrlDownload dl;
+		if (!dl.DownloadFile(channel->get_icon_uri().get_uri(), image))
+		{
+			AfxMessageBox(dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+			continue;
+		}
 
 		channel->set_icon_uri(icon_uri.get_uri());
 

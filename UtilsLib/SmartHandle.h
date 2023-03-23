@@ -81,7 +81,6 @@ public:
 
 	HandleType* operator&() throw()
 	{
-		ASSERT(m_Handle == NULL_VALUE);
 		return &m_Handle;
 	}
 

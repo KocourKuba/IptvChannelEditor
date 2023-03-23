@@ -93,7 +93,7 @@ bool plugin_tvclub::parse_access_info(TemplateParams& params, std::list<AccountI
 	const auto& url = fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(creds));
 
 	CWaitCursor cur;
-	if (!utils::DownloadFile(url, data, get_user_agent().c_str()))
+	if (!download_url(url, data))
 	{
 		return false;
 	}
@@ -156,7 +156,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams* params /*= nullptr*/)
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (utils::DownloadFile(url, data, get_user_agent().c_str()))
+	if (download_url(url, data))
 	{
 		JSON_ALL_TRY;
 		{
@@ -204,7 +204,7 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 
 		CWaitCursor cur;
 		std::stringstream data;
-		if (utils::DownloadFile(url, data, get_user_agent().c_str()))
+		if (download_url(url, data))
 		{
 			JSON_ALL_TRY;
 			{

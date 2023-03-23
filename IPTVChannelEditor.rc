@@ -1576,7 +1576,7 @@ BEGIN
     IDS_STRING_PLUGIN_CONFIG "Plugin Configuration"
     IDS_STRING_FAVORITES    "Favorites"
     IDS_STRING_ERR_SOURCE_NOT_SET "Playlist source not set!"
-    IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST "Unable to download playlist!"
+    IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST "Unable to download playlist!\n%s"
     IDS_STRING_ERR_EMPTY_PLAYLIST "Empty playlist!"
     IDS_STRING_ERR_THREAD_NOT_START "Problem with starting thread!"
 END

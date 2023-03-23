@@ -1269,11 +1269,12 @@ BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 {
 	HRESULT hr = E_FAIL;
 	utils::CrackedUrl cracked;
-	if (utils::CrackUrl(fullPath, cracked))
+	if (cracked.CrackUrl(fullPath))
 	{
 		CWaitCursor cur;
 		std::stringstream data;
-		if (utils::DownloadFile(fullPath, data))
+		utils::CUrlDownload dl;
+		if (dl.DownloadFile(fullPath, data))
 		{
 			// Still not clear if this is making a copy internally
 			auto view = data.rdbuf()->_Get_buffer_view();

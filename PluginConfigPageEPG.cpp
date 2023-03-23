@@ -294,7 +294,7 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (utils::DownloadFile(url, data, GetPropertySheet()->m_plugin->get_user_agent().c_str()))
+	if (GetPropertySheet()->m_plugin->download_url(url, data))
 	{
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
@@ -317,6 +317,10 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 		CreateProcess(nullptr, csCmd.GetBuffer(0), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi);
 		CloseHandle(pi.hProcess);
 		CloseHandle(pi.hThread);
+	}
+	else
+	{
+		AfxMessageBox(GetPropertySheet()->m_plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
 	}
 }
 

@@ -345,7 +345,7 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 	CWaitCursor cur;
 	const auto& url = GetPropertySheet()->m_plugin->get_playlist_url(params);
 	std::stringstream data;
-	if (utils::DownloadFile(url, data, GetPropertySheet()->m_plugin->get_user_agent().c_str()))
+	if (GetPropertySheet()->m_plugin->download_url(url, data))
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.m3u8";
 
@@ -361,6 +361,10 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 		CreateProcess(nullptr, csCmd.GetBuffer(0), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi);
 		CloseHandle(pi.hProcess);
 		CloseHandle(pi.hThread);
+	}
+	else
+	{
+		AfxMessageBox(GetPropertySheet()->m_plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
 	}
 }
 

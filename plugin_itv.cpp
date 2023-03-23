@@ -83,7 +83,7 @@ bool plugin_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo
 {
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!utils::DownloadFile(fmt::format(ACCOUNT_TEMPLATE, params.password), data, get_user_agent().c_str()))
+	if (!download_url(fmt::format(ACCOUNT_TEMPLATE, params.password), data))
 	{
 		return false;
 	}

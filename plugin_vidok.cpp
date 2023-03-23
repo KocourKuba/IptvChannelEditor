@@ -91,7 +91,7 @@ bool plugin_vidok::parse_access_info(TemplateParams& params, std::list<AccountIn
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!utils::DownloadFile(fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(creds)), data, get_user_agent().c_str()))
+	if (!download_url(fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(creds)), data))
 	{
 		return false;
 	}
@@ -141,7 +141,7 @@ void plugin_vidok::fill_servers_list(TemplateParams* params /*= nullptr*/)
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (utils::DownloadFile(url, data, get_user_agent().c_str()))
+	if (download_url(url, data))
 	{
 		JSON_ALL_TRY;
 		{
@@ -190,7 +190,7 @@ bool plugin_vidok::set_server(TemplateParams& params)
 
 		CWaitCursor cur;
 		std::stringstream data;
-		if (utils::DownloadFile(url, data, get_user_agent().c_str()))
+		if (download_url(url, data))
 		{
 			JSON_ALL_TRY;
 			{
