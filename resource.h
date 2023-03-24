@@ -608,6 +608,7 @@
 #define IDC_COMBO_TAGS                  1226
 #define IDC_EDIT_ICON_PATH              1226
 #define IDC_CHECK_MAP_TAG_TO_ID         1227
+#define IDC_STATIC_LOGO                 1227
 #define IDC_CHECK_VOD_FILTER            1228
 #define IDC_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT 1229
 #define IDC_MFCEDITBROWSE_PLUGIN_UPDATE_FILE_URL 1230
@@ -645,12 +646,12 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280
 #define _APS_NEXT_COMMAND_VALUE         32806
-#define _APS_NEXT_CONTROL_VALUE         1227
+#define _APS_NEXT_CONTROL_VALUE         1228
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif
