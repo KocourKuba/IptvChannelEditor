@@ -312,6 +312,7 @@ protected:
 	CEdit m_wndSearch;
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
+	CButton m_wndBtnChangelog;
 	CButton m_wndBtnSearchNext;
 	CButton m_wndBtnPlSearchNext;
 	CButton m_wndBtnAddNewChannelsList;
@@ -485,4 +486,5 @@ private:
 	std::map<PluginType, std::map<std::wstring, vod_category_storage>> m_vod_categories;
 public:
 	afx_msg void OnBeginlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedButtonChangelog();
 };

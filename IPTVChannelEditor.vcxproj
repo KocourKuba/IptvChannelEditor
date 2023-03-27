@@ -427,6 +427,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <Image Include="res\export_m3u.png" />
     <Image Include="res\Filter.png" />
     <Image Include="res\FindNext.png" />
+    <Image Include="res\help.png" />
     <Image Include="res\IPTVChannelEditor.ico" />
     <Image Include="res\Known.png" />
     <Image Include="res\New.png" />

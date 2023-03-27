@@ -108,6 +108,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_TIMER()
 
+	ON_BN_CLICKED(IDC_BUTTON_CHANGELOG, &CIPTVChannelEditorDlg::OnBnClickedButtonChangelog)
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CIPTVChannelEditorDlg::OnBnClickedButtonAbout)
 	ON_BN_CLICKED(IDC_BUTTON_ACCOUNT_SETTINGS, &CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings)
 	ON_BN_CLICKED(IDC_BUTTON_PL_SEARCH_NEXT, &CIPTVChannelEditorDlg::OnBnClickedButtonPlSearchNext)
@@ -237,7 +238,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomArchive)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_ICON, &CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon)
-	END_MESSAGE_MAP()
+END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -259,6 +260,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
+	DDX_Control(pDX, IDC_BUTTON_CHANGELOG, m_wndBtnChangelog);
 	DDX_Control(pDX, IDC_BUTTON_ADD_NEW_CHANNELS_LIST, m_wndBtnAddNewChannelsList);
 	DDX_Control(pDX, IDC_BUTTON_EXPORT_M3U, m_wndBtnExportM3u);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndBtnEditConfig);
@@ -544,6 +546,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndIconSource.AddString(_T("wink"));
 
 	// load button images;
+	SetButtonImage(IDB_PNG_CHANGELOG, m_wndBtnChangelog);
 	SetButtonImage(IDB_PNG_NEW, m_wndBtnAddNewChannelsList);
 	SetButtonImage(IDB_PNG_EXPORT_M3U, m_wndBtnExportM3u);
 	SetButtonImage(IDB_PNG_FIND_NEXT, m_wndBtnSearchNext);
@@ -5528,4 +5531,20 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomArcStreamType()
 		channel->set_custom_archive_url_type(m_wndCustomArcStreamType.GetCurSel());
 		set_allow_save();
 	}
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonChangelog()
+{
+	STARTUPINFO			si;
+	PROCESS_INFORMATION pi;
+	GetStartupInfo(&si);
+	CString csCmd;
+#ifdef _DEBUG
+	csCmd.Format(_T("\"notepad.exe\" \"%s\\..\\Changelog.md\""), GetAppPath().c_str());
+#else
+	csCmd.Format(_T("\"notepad.exe\" \"%s\\Changelog.md\""), GetAppPath().c_str());
+#endif // _DEBUG
+	CreateProcess(nullptr, csCmd.GetBuffer(0), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
 }

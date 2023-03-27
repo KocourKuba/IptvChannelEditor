@@ -25,6 +25,7 @@
 #define IDB_PNG_VOD                     67
 #define IDB_PNG_RELOAD                  68
 #define IDB_PNG_EXPORT_M3U              69
+#define IDB_PNG_CHANGELOG               70
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
 #define IDD_CUSTOM_URL                  104
@@ -512,6 +513,7 @@
 #define IDC_LIST_MOVIES                 1142
 #define IDC_BUTTON_VOD                  1143
 #define IDC_RICHEDIT_DESCRIPTION        1144
+#define IDC_BUTTON_CHANGELOG            1144
 #define IDC_BUTTON_SEARCH               1145
 #define IDC_EDIT_TOTAL_MOVIES           1146
 #define IDC_COMBO_YEARS                 1147
