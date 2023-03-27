@@ -177,6 +177,14 @@ class Action_Factory
         $defs = array();
 
         if ($multiline !== null) {
+            if ($preferred_width === 0) {
+                foreach (explode("\n", $multiline) as $line) {
+                    $px = mb_strlen($line, 'UTF-8') * 21;
+                    if ($px > $preferred_width)
+                        $preferred_width = $px;
+                }
+            }
+
             Control_Factory::add_multiline_label($defs, '', $multiline, 15);
         }
         Control_Factory::add_custom_close_dialog_and_apply_buffon($defs, 'close_button', 'OK', 300, $post_action);
