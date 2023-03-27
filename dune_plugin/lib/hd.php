@@ -355,9 +355,17 @@ class HD
                 $serial = 'XX-XX-XX-XX-XX';
             }
 
+            $files[] = get_install_path("config.json");
             $files[] = "/tmp/run/shell.log";
-            $files[] = "/D/dune_plugin_logs/" . get_plugin_name() . ".log";
+            $files[] = "/tmp/run/shell.log.old";
             $files[] = "/tmp/run/" . get_plugin_name() . ".log";
+            $files[] = "/D/dune_plugin_logs/" . get_plugin_name() . ".log";
+            foreach (glob(get_temp_path("*.m3u?")) as $file) {
+                if (is_file($file)) {
+                    $files[] = $file;
+                }
+            }
+
             $timestamp = format_datetime('Ymd_His', time());
             $zip_file_name = "{$serial}_$timestamp.zip";
             hd_print("Prepare archive $zip_file_name for send");
