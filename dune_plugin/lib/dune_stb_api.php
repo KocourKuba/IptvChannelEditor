@@ -87,6 +87,8 @@ const ACTION_QUALITY = 'quality';
 const ACTION_EXTERNAL_PLAYER = 'use_external_player';
 const ACTION_CREATE_FILTER = 'create_filter';
 const ACTION_RUN_FILTER = 'run_filter';
+const ACTION_OPEN_FOLDER = 'open_folder';
+const ACTION_PLAY_FOLDER = 'play_folder';
 
 # Mounted storages path
 const DUNE_MOUNTED_STORAGES_PATH = '/tmp/mnt/storage/';

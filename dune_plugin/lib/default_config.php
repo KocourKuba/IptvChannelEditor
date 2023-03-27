@@ -14,6 +14,7 @@ class default_config extends dynamic_config
     protected $movie_counter = array();
     protected $filters = array();
     protected $embedded_account;
+    protected $last_error;
 
     /**
      * @var array
@@ -451,6 +452,22 @@ class default_config extends dynamic_config
     }
 
     /**
+     * @return string
+     */
+    public function get_last_error()
+    {
+        return $this->last_error;
+    }
+
+    /**
+     * @param string $error
+     */
+    public function set_last_error($error)
+    {
+        $this->last_error = $error;
+    }
+
+    /**
      * @param $tv
      * @param $plugin_cookies
      * @param bool $force
@@ -632,6 +649,7 @@ class default_config extends dynamic_config
      */
     public function GetPlaylistStreamsInfo()
     {
+        $this->last_error = '';
         $pl_entries = array();
         $templates = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
         $idx = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX);
@@ -639,12 +657,13 @@ class default_config extends dynamic_config
 
         $parse_pattern = isset($templates[$idx][Plugin_Constants::PARSE_REGEX]) ? $templates[$idx][Plugin_Constants::PARSE_REGEX] : '';
         if (empty($parse_pattern)) {
-            hd_print('Empty parse pattern. Unable to parse playlist');
+            $this->last_error = "Unable to parse playlist. Empty parse pattern.\nPossible error in plugin config?";
+            hd_print($this->last_error);
             $this->ClearPlaylistCache();
             return $pl_entries;
         }
 
-        hd_print("Parsing pattern: $parse_pattern");
+        //hd_print("Parsing pattern: $parse_pattern");
         $parse_pattern = "/$parse_pattern/";
 
         $tag_id = isset($templates[$idx][Plugin_Constants::TAG_ID_MATCH]) ? $templates[$idx][Plugin_Constants::TAG_ID_MATCH] : '';
@@ -653,7 +672,8 @@ class default_config extends dynamic_config
         }
 
         $m3u_entries = $this->get_tv_m3u_entries();
-        hd_print("Parsing " . count($m3u_entries) . " playlist entries");
+        $total = count($m3u_entries);
+        hd_print("Parsing $total playlist entries");
 
         foreach ($m3u_entries as $entry) {
             if (!empty($tag_id)) {
@@ -673,7 +693,8 @@ class default_config extends dynamic_config
         }
 
         if (empty($pl_entries)) {
-            hd_print('No mapped entries found. Empty provider playlist or wrong parsing pattern');
+            $this->last_error = "Total m3u entries: $total but no mapped to ID found.\nEmpty provider playlist or wrong parsing pattern";
+            hd_print($this->last_error);
             $this->ClearPlaylistCache();
         } else {
             hd_print("Total mapped entries to ID : " . count($pl_entries));
@@ -692,6 +713,7 @@ class default_config extends dynamic_config
         $this->tv_m3u_entries = null;
         hd_print("Clear playlist cache: $tmp_file");
         if (file_exists($tmp_file)) {
+            copy($tmp_file, $tmp_file . ".m3u");
             unlink($tmp_file);
         }
     }
@@ -703,8 +725,11 @@ class default_config extends dynamic_config
     public function ClearVodCache()
     {
         $tmp_file = get_temp_path($this->PluginShortName . "_playlist_vod.m3u8");
+        $bak_file = $tmp_file . ".bak";
+        copy($tmp_file, $bak_file);
         hd_print("Clear VOD cache: $tmp_file");
         if (file_exists($tmp_file)) {
+            copy($tmp_file, $tmp_file . ".m3u");
             unlink($tmp_file);
         }
         $this->vod_m3u_indexes = null;

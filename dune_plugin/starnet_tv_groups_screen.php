@@ -42,13 +42,13 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         // if token not set force to open setup screen
-        // hd_print('main_screen: get_action_map');
+        // hd_print('Starnet_Tv_Groups_Screen: get_action_map');
 
         $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS, 'Настройки плагина');
 
         $actions = array(
-            GUI_EVENT_KEY_ENTER      => Action_Factory::open_folder(),
-            GUI_EVENT_KEY_PLAY       => Action_Factory::tv_play(),
+            GUI_EVENT_KEY_ENTER      => User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER),
+            GUI_EVENT_KEY_PLAY       => User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER),
             GUI_EVENT_KEY_SETUP      => $action_settings,
             GUI_EVENT_KEY_B_GREEN    => $action_settings,
         );
@@ -81,10 +81,20 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             case ACTION_NEED_CONFIGURE:
                 if ($this->IsSetupNeeds($plugin_cookies)) {
                     hd_print("Setup required!");
-                    return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
+                    return Action_Factory::show_title_dialog("Отсутствуют данные доступа для просмотра!",
+                        Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина'));
                 }
 
                 return Action_Factory::open_folder($user_input->selected_media_url);
+
+            case ACTION_OPEN_FOLDER:
+            case ACTION_PLAY_FOLDER:
+                $has_error = $this->plugin->config->get_last_error();
+                if (!empty($has_error)) {
+                    return Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!", null, $has_error);
+                }
+
+                return $user_input->control_id === ACTION_OPEN_FOLDER ? Action_Factory::open_folder() : Action_Factory::tv_play();
 
             case ACTION_SETTINGS:
                 return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
