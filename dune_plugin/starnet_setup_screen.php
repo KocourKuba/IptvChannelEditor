@@ -95,7 +95,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // Plugin name
         Control_Factory::add_vgap($defs, -10);
-        $title = " v.{$this->plugin->plugin_info['app_version']}.{$this->plugin->plugin_info['app_version_idx']} [{$this->plugin->plugin_info['app_release_date']}]";
+        $title = " v.{$this->plugin->plugin_info['app_version']} [{$this->plugin->plugin_info['app_release_date']}]";
         Control_Factory::add_label($defs, "IPTV Channel Editor by sharky72", $title);
 
         $text_icon = $this->plugin->get_image_path('text.png');

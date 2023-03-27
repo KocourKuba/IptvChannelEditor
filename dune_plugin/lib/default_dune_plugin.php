@@ -102,7 +102,7 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("----------------------------------------------------");
         hd_print("Plugin ID:           " . $this->plugin_info['app_short_name']);
         hd_print("Plugin name:         " . $this->plugin_info['app_caption']);
-        hd_print("Plugin version:      " . $this->plugin_info['app_version'] . '.' . $this->plugin_info['app_version_idx']);
+        hd_print("Plugin version:      " . $this->plugin_info['app_version']);
         hd_print("Plugin date:         " . $this->plugin_info['app_release_date']);
         hd_print("Account type:        " . $this->config->get_feature(Plugin_Constants::ACCESS_TYPE));
         hd_print("TV fav:              " . ($this->config->get_feature(Plugin_Constants::TV_FAVORITES_SUPPORTED) ? "yes" : "no"));
