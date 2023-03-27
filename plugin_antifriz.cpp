@@ -56,7 +56,7 @@ void plugin_antifriz::load_default()
 	vod_support = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://antifriz.tv/playlist/{PASSWORD}.m3u8";
+	info.pl_template = "http://af-play.com/playlist/{PASSWORD}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<password>.+)\.m3u8?$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
 	playlist_templates.emplace_back(info);
