@@ -355,15 +355,20 @@ class HD
                 $serial = 'XX-XX-XX-XX-XX';
             }
 
-            $files[] = get_install_path("config.json");
-            $files[] = "/tmp/run/shell.log";
-            $files[] = "/tmp/run/shell.log.old";
-            $files[] = "/tmp/run/" . get_plugin_name() . ".log";
-            $files[] = "/D/dune_plugin_logs/" . get_plugin_name() . ".log";
-            foreach (glob(get_temp_path("*.m3u?")) as $file) {
-                if (is_file($file)) {
-                    $files[] = $file;
-                }
+            $apk_subst = getenv('FS_PREFIX');
+            $plugin_name = get_plugin_name() . ".*";
+
+            $paths = array(
+                get_install_path("config.json"),
+                get_temp_path("*.*"),
+                "$apk_subst/tmp/run/shell.*",
+                "$apk_subst/tmp/run/$plugin_name",
+                $apk_subst . ((is_android() || is_apk()) ? "/tmp/mnt" : "") . "/D/dune_plugin_logs/$plugin_name",
+            );
+
+            $files = array();
+            foreach ($paths as $path) {
+                self::collect_folder_files($path, $files);
             }
 
             $timestamp = format_datetime('Ymd_His', time());
@@ -373,9 +378,7 @@ class HD
             $zip = new ZipArchive();
             $zip->open($zip_file, ZipArchive::CREATE);
             foreach ($files as $key => $file) {
-                if (file_exists($file)) {
-                    $zip->addFile($file, "/$key." . basename($file));
-                }
+                $zip->addFile($file, "/$key." . basename($file));
             }
             $zip->close();
 
@@ -397,6 +400,18 @@ class HD
         }
 
         return false;
+    }
+
+    public static function collect_folder_files($path, &$files)
+    {
+        //hd_print("search in $path");
+        foreach (glob($path) as $file) {
+            //hd_print("file: $file");
+            if (is_file($file) && filesize($file) > 10) {
+                //hd_print("file found: $file");
+                $files[] = $file;
+            }
+        }
     }
 
     /**
