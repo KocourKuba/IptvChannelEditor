@@ -347,34 +347,35 @@ class HD
 
     public static function send_log_to_developer(&$error = null)
     {
+        $serial = get_serial_number();
+        if (empty($serial)) {
+            hd_print("Unable to get DUNE serial.");
+            $serial = 'XX-XX-XX-XX-XX';
+        }
+        $timestamp = format_datetime('Ymd_His', time());
+        $zip_file_name = "{$serial}_$timestamp.zip";
+        hd_print("Prepare archive $zip_file_name for send");
+        $zip_file = get_temp_path($zip_file_name);
+        $apk_subst = getenv('FS_PREFIX');
+        $plugin_name = get_plugin_name() . ".*";
+
+        $paths = array(
+            get_install_path("config.json"),
+            get_temp_path("*.json"),
+            get_temp_path("*.m3u?"),
+            "$apk_subst/tmp/run/shell.*",
+            "$apk_subst/tmp/run/$plugin_name",
+            $apk_subst . ((is_android() || is_apk()) ? "/tmp/mnt" : "") . "/D/dune_plugin_logs/$plugin_name",
+        );
+
+        $files = array();
+        foreach ($paths as $path) {
+            self::collect_folder_files($path, $files);
+        }
+
         $handle = false;
+        $ret = false;
         try {
-            $serial = get_serial_number();
-            if (empty($serial)) {
-                hd_print("Unable to get DUNE serial.");
-                $serial = 'XX-XX-XX-XX-XX';
-            }
-
-            $apk_subst = getenv('FS_PREFIX');
-            $plugin_name = get_plugin_name() . ".*";
-
-            $paths = array(
-                get_install_path("config.json"),
-                get_temp_path("*.*"),
-                "$apk_subst/tmp/run/shell.*",
-                "$apk_subst/tmp/run/$plugin_name",
-                $apk_subst . ((is_android() || is_apk()) ? "/tmp/mnt" : "") . "/D/dune_plugin_logs/$plugin_name",
-            );
-
-            $files = array();
-            foreach ($paths as $path) {
-                self::collect_folder_files($path, $files);
-            }
-
-            $timestamp = format_datetime('Ymd_His', time());
-            $zip_file_name = "{$serial}_$timestamp.zip";
-            hd_print("Prepare archive $zip_file_name for send");
-            $zip_file = get_temp_path($zip_file_name);
             $zip = new ZipArchive();
             $zip->open($zip_file, ZipArchive::CREATE);
             foreach ($files as $key => $file) {
@@ -383,23 +384,25 @@ class HD
             $zip->close();
 
             $handle = fopen($zip_file, 'rb');
-            self::http_put_document("http://iptv.esalecrm.net/upload/$zip_file_name", $handle, filesize($zip_file));
-            fclose($handle);
-            unlink($zip_file);
-            hd_print("Log file sent");
-            return true;
+            if (is_resource($handle)) {
+                self::http_put_document("http://iptv.esalecrm.net/upload/$zip_file_name", $handle, filesize($zip_file));
+                hd_print("Log file sent");
+                $ret = true;
+            }
         } catch (Exception $ex) {
             $msg = "Unable to upload log: " . $ex->getMessage();
             hd_print($msg);
             if ($error !== null) {
                 $error = $msg;
             }
-            if (is_resource($handle)) {
-                fclose($handle);
-            }
         }
 
-        return false;
+        if (is_resource($handle)) {
+            fclose($handle);
+        }
+        unlink($zip_file);
+
+        return $ret;
     }
 
     public static function collect_folder_files($path, &$files)
