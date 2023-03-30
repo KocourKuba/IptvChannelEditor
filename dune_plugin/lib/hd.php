@@ -135,30 +135,34 @@ class HD
         if (!empty(self::$user_agent))
             return;
 
-        $extra_useragent = "";
+        if (empty(self::$plugin_user_agent) || self::$plugin_user_agent === "DuneHD/1.0") {
+            self::$plugin_user_agent = "DuneHD/1.0";
 
-        $sysinfo = file("/tmp/sysinfo.txt", FILE_IGNORE_NEW_LINES);
-        if ($sysinfo !== false) {
-            foreach ($sysinfo as $line) {
-                if (preg_match("/product_id:/", $line) ||
-                    preg_match("/firmware_version:/", $line)) {
-                    if (empty($extra_useragent))
-                        $extra_useragent = " (";
-                    else
-                        $extra_useragent .= "; ";
+            $extra_useragent = "";
+            $sysinfo = file("/tmp/sysinfo.txt", FILE_IGNORE_NEW_LINES);
+            if ($sysinfo !== false) {
+                foreach ($sysinfo as $line) {
+                    if (preg_match("/product_id:/", $line) ||
+                        preg_match("/firmware_version:/", $line)) {
+                        $line = trim($line);
 
-                    $extra_useragent .= $line;
+                        if (empty($extra_useragent))
+                            $extra_useragent = " (";
+                        else
+                            $extra_useragent .= "; ";
+
+                        $extra_useragent .= $line;
+                    }
                 }
+
+                if (!empty($extra_useragent))
+                    $extra_useragent .= ")";
             }
 
-            if (!empty($extra_useragent))
-                $extra_useragent .= ")";
+            self::$plugin_user_agent .= $extra_useragent;
         }
 
-        if (empty(self::$plugin_user_agent)) {
-            self::$plugin_user_agent = "DuneHD/1.0";
-        }
-        self::$user_agent = self::$plugin_user_agent . $extra_useragent;
+        self::$user_agent = self::$plugin_user_agent;
         hd_print("HTTP UserAgent: " . self::$user_agent);
     }
 
