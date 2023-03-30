@@ -534,14 +534,14 @@ class Starnet_Tv implements Tv, User_Input_Handler
      * @param string $protect_code
      * @param $plugin_cookies
      * @return string
-     * @throws Exception
      */
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
     {
         hd_print("get_tv_playback_url: channel: $channel_id archive_ts: $archive_ts");
-        $this->ensure_channels_loaded($plugin_cookies);
 
         try {
+            $this->ensure_channels_loaded($plugin_cookies);
+
             $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
             // get channel by hash
             $channel = $this->get_channel($channel_id);
@@ -549,18 +549,19 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 hd_print('Wrong adult password');
                 throw new Exception('Wrong adult password');
             }
+
+            if ($this->plugin->history_support && !$channel->is_protected()) {
+                Playback_Points::push($channel_id, ($archive_ts !== -1 ? $archive_ts : ($channel->has_archive() ? time() : 0)));
+            }
+
+            // update url if play archive or different type of the stream
+            $url = $this->plugin->config->GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
+            hd_print("get_tv_playback_url: $url");
         } catch (Exception $ex) {
-            hd_print("get_tv_playback_url: Exception " . $ex->getMessage());
-            return '';
+            hd_print("get_tv_playback_url: Exception: " . $ex->getMessage());
+            $url = '';
         }
 
-        if ($this->plugin->history_support && !$channel->is_protected()) {
-            Playback_Points::push($channel_id, ($archive_ts !== -1 ? $archive_ts : ($channel->has_archive() ? time() : 0)));
-        }
-
-        // update url if play archive or different type of the stream
-        $url = $this->plugin->config->GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
-        hd_print("get_tv_playback_url: $url");
         return $url;
     }
 

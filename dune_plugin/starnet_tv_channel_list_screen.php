@@ -42,7 +42,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
     {
         //hd_print("TvChannelListScreen get_action_map: " . $media_url->get_raw_string());
 
-        $action_play = Action_Factory::tv_play();
+        $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER);
         $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS);
 
         $actions = array(
@@ -97,6 +97,19 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         $channel = $this->plugin->tv->get_channels()->get($channel_id);
 
         switch ($user_input->control_id) {
+            case ACTION_PLAY_FOLDER:
+                try {
+                    $this->plugin->config->GenerateStreamUrl($plugin_cookies, -1, $channel);
+                } catch (Exception $ex) {
+                    return Action_Factory::show_title_dialog('Канал не может быть запущен',
+                        null,
+                        "Отсутствуют или неполные данные для формирования ссылки.\n" .
+                        "Возможно не введены данные для просмотра или канал отсутствует в подписке.\n" .
+                        $ex->getMessage());
+                }
+
+                return Action_Factory::tv_play();
+
             case ACTION_ADD_FAV:
                 $opt_type = $this->plugin->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $this->plugin->tv->change_tv_favorites($opt_type, $channel_id, $plugin_cookies);

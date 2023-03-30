@@ -519,6 +519,7 @@ class default_config extends dynamic_config
      * @param int $archive_ts
      * @param Channel $channel
      * @return string
+     * @throws Exception
      */
     public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
@@ -596,10 +597,15 @@ class default_config extends dynamic_config
         //foreach($ext_params as $key => $value) { hd_print("ext_params: key: $key, value: $value"); }
 
         // replace all macros
-        foreach ($replaces as $key => $value)
-        {
+        foreach ($replaces as $key => $value) {
             if (isset($ext_params[$key])) {
                 $play_template_url = str_replace($value, $ext_params[$key], $play_template_url);
+            }
+        }
+
+        foreach ($replaces as $value) {
+            if (strpos($play_template_url, $value) !== false) {
+                throw new Exception("Template $value not replaced. Url not generated.");
             }
         }
 

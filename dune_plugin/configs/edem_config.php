@@ -17,6 +17,7 @@ class edem_config extends default_config
      * @param int $archive_ts
      * @param Channel $channel
      * @return string
+     * @throws Exception
      */
     public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
     {
