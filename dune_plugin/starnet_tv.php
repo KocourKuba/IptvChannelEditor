@@ -331,7 +331,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                         $url_path = $plugin_cookies->channels_direct_url;
                     } else {
                         if (!isset($this->plugin->plugin_info['app_direct_links'][$channels_list])) {
-                            throw new Exception();
+                            throw new Exception("Direct link not set!");
                         }
                         $url_path = $this->plugin->plugin_info['app_direct_links'][$channels_list];
                     }
@@ -349,7 +349,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     file_put_contents($channels_list_path, HD::http_get_document($url_path));
                 } catch (Exception $ex) {
                     if (!file_exists($channels_list_path)) {
-                        hd_print("Can't fetch channel_list from $url_path" . $ex->getMessage());
+                        hd_print("Can't fetch channel_list from $url_path " . $ex->getMessage());
                         return;
                     }
                 }
