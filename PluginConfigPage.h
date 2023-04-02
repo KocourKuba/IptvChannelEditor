@@ -81,6 +81,7 @@ protected:
 	CEdit m_wndProviderUrl;
 
 	CComboBox m_wndAccessType;
+	CButton m_wndBtnScripts;
 	CButton m_wndChkStaticServers;
 	CButton m_wndBtnServers;
 	CButton m_wndChkStaticDevices;
@@ -95,4 +96,6 @@ protected:
 	CString m_Title;
 	CString m_UserAgent;
 	CString m_ProviderUrl;
+public:
+	afx_msg void OnBnClickedButtonEditScripts();
 };

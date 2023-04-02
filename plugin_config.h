@@ -569,6 +569,13 @@ public:
 	void set_static_profiles(bool val) { static_profiles = val; }
 
 	/// <summary>
+	/// property list of servers
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	virtual const std::vector<DynamicParamsInfo>& get_scripts_list() { return scripts_list; }
+	virtual void set_scripts_list(const std::vector<DynamicParamsInfo>& info) { scripts_list = info; }
+
+	/// <summary>
 	/// <summary>
 	/// clear servers list
 	/// </summary>
@@ -691,6 +698,7 @@ public:
 		SERIALIZE_STRUCT(j, c, static_profiles); //-V601
 		SERIALIZE_STRUCT(j, c, streams_config);
 		SERIALIZE_STRUCT(j, c, epg_params);
+		SERIALIZE_STRUCT(j, c, scripts_list);
 		SERIALIZE_STRUCT(j, c, servers_list);
 		SERIALIZE_STRUCT(j, c, qualities_list);
 		SERIALIZE_STRUCT(j, c, devices_list);
@@ -721,6 +729,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, static_profiles);
 		DESERIALIZE_STRUCT(j, c, streams_config);
 		DESERIALIZE_STRUCT(j, c, epg_params);
+		DESERIALIZE_STRUCT(j, c, scripts_list);
 		DESERIALIZE_STRUCT(j, c, servers_list);
 		DESERIALIZE_STRUCT(j, c, qualities_list);
 		DESERIALIZE_STRUCT(j, c, devices_list);
@@ -778,6 +787,7 @@ protected:
 	std::array<StreamParameters, 2> streams_config;
 	// setting for parsing json EPG
 	std::array<EpgParameters, 2> epg_params;
+	std::vector<DynamicParamsInfo> scripts_list;
 	std::vector<DynamicParamsInfo> servers_list;
 	std::vector<DynamicParamsInfo> qualities_list;
 	std::vector<DynamicParamsInfo> devices_list;

@@ -753,10 +753,17 @@ bool PackPlugin(const PluginType plugin_type,
 	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
 
 	std::filesystem::copy(plugin_root, packFolder, std::filesystem::copy_options::none, err);
-	std::filesystem::copy(plugin_root + L"bin", packFolder + L"bin", std::filesystem::copy_options::recursive, err);
 	std::filesystem::copy(plugin_root + L"lib", packFolder + L"lib", std::filesystem::copy_options::recursive, err);
 	std::filesystem::copy(plugin_root + L"img", packFolder + L"img", std::filesystem::copy_options::recursive, err);
 	std::filesystem::copy(plugin_root + L"icons", packFolder + L"icons", std::filesystem::copy_options::recursive, err);
+
+	std::filesystem::create_directory(packFolder + L"bin", err);
+	std::filesystem::copy_file(plugin_root + L"bin\\update_suppliers", packFolder + L"bin\\update_suppliers", std::filesystem::copy_options::none, err);
+	for (const auto& item : plugin->get_scripts_list())
+	{
+		std::wstring filename = L"bin\\" + item.get_name();
+		std::filesystem::copy_file(plugin_root + filename, packFolder + filename, std::filesystem::copy_options::none, err);
+	}
 
 	// remove if old logo and backgrounds still exists in icons folder
 	boost::wregex regExpName { LR"(^(?:bg|logo)_.*\.(?:jpg|png)$)" };

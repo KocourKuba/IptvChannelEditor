@@ -54,6 +54,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CTooltipPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_TITLE, &CPluginConfigPage::OnEnChangeEditTitle)
 	ON_EN_CHANGE(IDC_EDIT_USER_AGENT, &CPluginConfigPage::OnEnChangeEditUserAgent)
 	ON_EN_CHANGE(IDC_EDIT_PROVIDER_URL, &CPluginConfigPage::OnEnChangeEditProviderUrl)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_SCRIPTS, &CPluginConfigPage::OnBnClickedButtonEditScripts)
 END_MESSAGE_MAP()
 
 CPluginConfigPage::CPluginConfigPage() : CTooltipPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
@@ -74,6 +75,7 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PROVIDER_URL, m_ProviderUrl);
 	DDX_Control(pDX, IDC_COMBO_ACCESS_TYPE, m_wndAccessType);
 	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndChkSquareIcons);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_SCRIPTS, m_wndBtnScripts);
 	DDX_Control(pDX, IDC_CHECK_STATIC_SERVERS, m_wndChkStaticServers);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_SERVERS, m_wndBtnServers);
 	DDX_Control(pDX, IDC_CHECK_STATIC_DEVICES, m_wndChkStaticDevices);
@@ -92,6 +94,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	AddTooltip(IDC_EDIT_TITLE, IDS_STRING_EDIT_TITLE);
 	AddTooltip(IDC_EDIT_PROVIDER_URL, IDS_STRING_EDIT_PROVIDER_URL);
 	AddTooltip(IDC_CHECK_SQUARE_ICONS, IDS_STRING_CHECK_SQUARE_ICONS);
+	AddTooltip(IDC_BUTTON_EDIT_SCRIPTS, IDS_STRING_BUTTON_EDIT_SCRIPTS);
 	AddTooltip(IDC_CHECK_STATIC_SERVERS, IDS_STRING_CHECK_STATIC_SERVERS);
 	AddTooltip(IDC_BUTTON_EDIT_SERVERS, IDS_STRING_BUTTON_EDIT_SERVERS);
 	AddTooltip(IDC_CHECK_STATIC_DEVICES, IDS_STRING_CHECK_STATIC_DEVICES);
@@ -102,6 +105,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	AddTooltip(IDC_BUTTON_EDIT_PROFILES, IDS_STRING_BUTTON_EDIT_PROFILES);
 	AddTooltip(IDC_COMBO_ACCESS_TYPE, IDS_STRING_COMBO_ACCESS_TYPE);
 
+	SetButtonImage(IDB_PNG_EDIT, m_wndBtnScripts);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnServers);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnDevices);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnQualities);
@@ -185,6 +189,20 @@ void CPluginConfigPage::OnCbnSelchangeComboAccessType()
 	GetPropertySheet()->m_plugin->set_access_type((AccountAccessType)m_wndAccessType.GetCurSel());
 	AllowSave();
 	FillControls();
+}
+
+void CPluginConfigPage::OnBnClickedButtonEditScripts()
+{
+	CFillParamsInfoDlg dlg;
+	dlg.m_type = 4;
+	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_scripts_list();
+	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
+
+	if (dlg.DoModal() == IDOK)
+	{
+		AllowSave();
+		GetPropertySheet()->m_plugin->set_scripts_list(dlg.m_paramsList);
+	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditServers()
