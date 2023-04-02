@@ -56,19 +56,18 @@ class glanz_config extends default_config
                 '',           // length_min,
                 $item->year,            // year,
                 $item->director,        // director_str,
-                '',           // scenario_str,
+                '',         // scenario_str,
                 $item->actors,          // actors_str,
                 $genres_str,            // genres_str,
-                '',            // rate_imdb,
-                '',         // rate_kinopoisk,
-                '',            // rate_mpaa,
+                '',           // rate_imdb,
+                '',        // rate_kinopoisk,
+                '',           // rate_mpaa,
                 $item->country,         // country,
                 ''               // budget
             );
 
-            $playback_url = str_replace("https://", "http://", $item->url);
-            hd_print("movie playback_url: $playback_url");
-            $movie->add_series_data($movie_id, $item->name, '', $playback_url);
+            hd_print("movie playback_url: $item->url");
+            $movie->add_series_data($movie_id, $item->name, '', $item->url);
             break;
         }
 

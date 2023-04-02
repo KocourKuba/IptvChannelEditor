@@ -286,15 +286,13 @@ class sharaclub_config extends default_config
                 foreach ($item->seasons as $season) {
                     $movie->add_season_data($season->season, !empty($season->info->name) ? $season->info->name : "Сезон $season->season", '');
                     foreach ($season->episodes as $episode) {
-                        $playback_url = str_replace("https://", "http://", $episode->video);
-                        hd_print("movie playback_url: $playback_url");
-                        $movie->add_series_data($episode->id, "Серия $episode->episode", '', $playback_url, $season->season);
+                        hd_print("movie playback_url: $episode->video");
+                        $movie->add_series_data($episode->id, "Серия $episode->episode", '', $episode->video, $season->season);
                     }
                 }
             } else {
-                $playback_url = str_replace("https://", "http://", $item->video);
-                hd_print("movie playback_url: $playback_url");
-                $movie->add_series_data($movie_id, $item->name, '', $playback_url);
+                hd_print("movie playback_url: $item->video");
+                $movie->add_series_data($movie_id, $item->name, '', $item->video);
             }
 
             break;

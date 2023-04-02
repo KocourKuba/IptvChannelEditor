@@ -27,6 +27,9 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const SETUP_ACTION_CHANGE_VOD_LIST = 'change_vod_list';
     const SETUP_ACTION_STREAMING_DLG = 'streaming_dialog';
     const SETUP_ACTION_STREAMING_APPLY = 'streaming_apply';
+    const SETUP_ACTION_AUTO_RESUME = 'auto_resume';
+    const SETUP_ACTION_AUTO_PLAY = 'auto_play';
+    const SETUP_ACTION_STRIP_HTTPS = 'strip_https';
     const SETUP_ACTION_EPG_APPLY = 'epg_dialog_apply';
     const SETUP_ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
     const SETUP_ACTION_PASS_DLG = 'pass_dialog';
@@ -291,16 +294,21 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // auto play
-        $autoplay_ops = array();
-        $autoplay_ops[SetupControlSwitchDefs::switch_off] = 'Нет';
-        $autoplay_ops[SetupControlSwitchDefs::switch_on] = 'Да';
+        $on_off_ops = array();
+        $on_off_ops[SetupControlSwitchDefs::switch_off] = 'Нет';
+        $on_off_ops[SetupControlSwitchDefs::switch_on] = 'Да';
         $auto_play = isset($plugin_cookies->auto_play) ? $plugin_cookies->auto_play : SetupControlSwitchDefs::switch_off;
-        Control_Factory::add_combobox($defs, $this, null, 'auto_play', 'Автостарт воспроизведения:', $auto_play, $autoplay_ops, 0);
+        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_AUTO_PLAY, 'Автостарт воспроизведения:', $auto_play, $on_off_ops, 0);
 
         //////////////////////////////////////
         // auto resume
         $auto_resume = isset($plugin_cookies->auto_resume) ? $plugin_cookies->auto_resume : SetupControlSwitchDefs::switch_on;
-        Control_Factory::add_combobox($defs, $this, null, 'auto_resume', 'Возобновление просмотра:', $auto_resume, $autoplay_ops, 0);
+        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_AUTO_RESUME, 'Возобновление просмотра:', $auto_resume, $on_off_ops, 0);
+
+        //////////////////////////////////////
+        // strip https
+        $strip_https = isset($plugin_cookies->strip_https) ? $plugin_cookies->strip_https : SetupControlSwitchDefs::switch_off;
+        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_STRIP_HTTPS, 'Заменять https на http:', $strip_https, $on_off_ops, 0);
 
         //////////////////////////////////////
         // clear epg cache
@@ -691,6 +699,9 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
                     $plugin_cookies->auto_resume = $user_input->auto_resume;
                     hd_print("Auto resume: $plugin_cookies->auto_resume");
+
+                    $plugin_cookies->strip_https = $user_input->strip_https;
+                    hd_print("Strip https: $plugin_cookies->strip_https");
 
                     if (isset($user_input->epg_source)) {
                         $plugin_cookies->epg_source = $user_input->epg_source;

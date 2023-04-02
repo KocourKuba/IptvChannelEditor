@@ -74,24 +74,14 @@ public:
 
 	std::wstring get_icon_absolute_path() const { return get_icon_uri().get_filesystem_path(root_path); };
 
-	void convert_https()
-	{
-		if (icon_uri.get_schema() == L"https://")
-			icon_uri.set_schema(L"http://");
-	}
-
-	void set_icon_uri(const uri_base& val, bool make_http = true)
+	void set_icon_uri(const uri_base& val)
 	{
 		icon_uri = val;
-		if (make_http)
-			convert_https();
 	}
 
-	void set_icon_uri(const std::wstring& val, bool make_http = true)
+	void set_icon_uri(const std::wstring& val)
 	{
 		icon_uri.set_uri(val);
-		if (make_http)
-			convert_https();
 	}
 
 	bool empty() const
