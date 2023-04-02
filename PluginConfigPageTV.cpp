@@ -169,6 +169,7 @@ void CPluginConfigPageTV::AssignMacros()
 	std::vector<std::wstring> strm_params(std::move(pl_params));
 	strm_params.insert(strm_params.end(),
 					   {
+						   base_plugin::REPL_CGI_BIN,
 						   base_plugin::REPL_DOMAIN,
 						   base_plugin::REPL_PORT,
 						   base_plugin::REPL_ID,

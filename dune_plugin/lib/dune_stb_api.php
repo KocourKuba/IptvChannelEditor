@@ -1312,6 +1312,16 @@ function get_install_path($path = '')
     return DuneSystem::$properties['install_dir_path'] . '/' . $path;
 }
 
+function get_cgi_bin_url($path = '')
+{
+    return DuneSystem::$properties['plugin_cgi_url'] . $path;
+}
+
+function get_plugin_www_url($path = '')
+{
+    return DuneSystem::$properties['plugin_www_url'] . $path;
+}
+
 function get_plugin_name()
 {
     return DuneSystem::$properties['plugin_name'];

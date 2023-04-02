@@ -57,6 +57,7 @@ class base_plugin : public plugin_config
 {
 public:
 	static constexpr auto REPL_LIVE_URL      = L"{LIVE_URL}";      // live url, used in archive template substitution
+	static constexpr auto REPL_CGI_BIN       = L"{CGI_BIN}";       // Url points to plugin cgi_bin folder
 	static constexpr auto REPL_DOMAIN        = L"{DOMAIN}";        // stream url domain (set from playlist)
 	static constexpr auto REPL_PORT          = L"{PORT}";          // stream url port (set from playlist)
 	static constexpr auto REPL_ID            = L"{ID}";            // id (set from playlist)

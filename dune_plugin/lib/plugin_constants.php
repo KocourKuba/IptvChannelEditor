@@ -24,6 +24,7 @@ class Plugin_Constants
     // parameters loaded from external config
 
     // common
+    const /* (char *) */ CGI_BIN = 'cgi_bin';
     const /* (char *) */ CHANNEL_ID = 'id';
     const /* (char *) */ ACCESS_TYPE = 'access_type';
     const /* (char *) */ SHORT_NAME = 'short_name';
