@@ -45,12 +45,14 @@ public:
 	std::vector<std::shared_ptr<PlaylistEntry>> m_entries;
 };
 
-class PlaylistEntry : public uri_stream
+class PlaylistEntry : public uri_stream, public IconContainer
 {
 public:
 	PlaylistEntry() = delete;
 	PlaylistEntry(std::shared_ptr<base_plugin>& plugin, std::unique_ptr<Playlist>& m3u_playlist, std::wstring root_path = L"")
-		: uri_stream(InfoType::enPlEntry, plugin, root_path), playlist(m3u_playlist)
+		: uri_stream(InfoType::enPlEntry, plugin)
+		, IconContainer(root_path)
+		, playlist(m3u_playlist)
 	{}
 
 	bool Parse(const std::string& str);

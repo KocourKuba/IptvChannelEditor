@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "base_plugin.h"
-#include "IconContainer.h"
+#include "uri_base.h"
 
 #include "UtilsLib\json_wrapper.h"
 
@@ -37,7 +37,7 @@ class uri_stream;
 typedef const std::wstring& (uri_stream::*pointer_to_getter)();
 typedef void (uri_stream::*pointer_to_setter)(const std::wstring&);
 
-class uri_stream : public uri_base, public IconContainer
+class uri_stream : public uri_base
 {
 	friend class base_plugin;
 
@@ -48,9 +48,8 @@ public:
 		*this = src;
 	}
 
-	uri_stream(InfoType type, std::shared_ptr<base_plugin> plugin, std::wstring root_path)
-		: IconContainer(root_path)
-		, base_type(type)
+	uri_stream(InfoType type, std::shared_ptr<base_plugin> plugin/*, std::wstring root_path*/)
+		: base_type(type)
 		, parent_plugin(plugin)
 	{};
 

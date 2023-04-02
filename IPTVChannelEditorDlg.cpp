@@ -1244,7 +1244,7 @@ LRESULT CIPTVChannelEditorDlg::OnLoadChannelImage(WPARAM wParam /*= 0*/, LPARAM 
 	if (!channel)
 		return 0;
 
-	UpdateIconInfo(*channel);
+	UpdateIconInfo(channel);
 
 	return 0;
 }
@@ -1777,7 +1777,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	// Update icon
 	if (m_iconUrl != channel->get_icon_uri().get_uri().c_str())
 	{
-		UpdateIconInfo(*channel);
+		UpdateIconInfo(channel.get());
 	}
 	else
 	{
@@ -2590,11 +2590,7 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 			m_wndEpg.SetWindowText(L"");
 
 			m_wndChannelIcon.EnableWindow(TRUE);
-			const auto& category = GetCategory(hSelected);
-			if (category)
-			{
-				UpdateIconInfo(*category);
-			}
+			UpdateIconInfo(GetCategory(hSelected).get());
 		}
 	}
 
@@ -3614,7 +3610,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 
 	if (save)
 	{
-		UpdateIconInfo(*info);
+		UpdateIconInfo(info);
 		UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
 		CheckForExistingPlaylist();
 		set_allow_save();
@@ -3625,22 +3621,31 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 
 bool CIPTVChannelEditorDlg::ChooseIconFromLink(uri_stream* info)
 {
+	auto icon = dynamic_cast<IconContainer*>(info);
+	if (!icon)
+		return false;
+
 	bool save = false;
 	CIconLinkDlg dlg;
-	dlg.m_url = info->get_icon_absolute_path().c_str();
+	dlg.m_url = icon->get_icon_absolute_path().c_str();
 	if (dlg.DoModal() == IDOK)
 	{
-		if (dlg.m_url != info->get_icon_uri().get_uri().c_str())
+		if (dlg.m_url != icon->get_icon_uri().get_uri().c_str())
 		{
-			info->set_icon_uri(dlg.m_url.GetString());
+			icon->set_icon_uri(dlg.m_url.GetString());
 			save = true;
 		}
 	}
+
 	return save;
 }
 
 bool CIPTVChannelEditorDlg::ChooseIconFromLib(int idx, LPCWSTR source, uri_stream* info, bool isHtml /*= true*/, bool isSquare /*= false*/)
 {
+	auto icon = dynamic_cast<IconContainer*>(info);
+	if (!icon)
+		return false;
+
 	CIconsListDlg dlg(m_Icons[idx], source);
 	dlg.m_selected = m_lastIconSelected;
 	dlg.m_search = info->get_title().c_str();
@@ -3654,16 +3659,21 @@ bool CIPTVChannelEditorDlg::ChooseIconFromLib(int idx, LPCWSTR source, uri_strea
 		const auto& choosed = m_Icons[idx]->at(dlg.m_selected);
 		if (m_iconUrl != choosed.logo_path.c_str())
 		{
-			info->set_icon_uri(choosed.logo_path);
+			icon->set_icon_uri(choosed.logo_path);
 			m_lastIconSelected = dlg.m_selected;
 			save = true;
 		}
 	}
+
 	return save;
 }
 
 bool CIPTVChannelEditorDlg::ChooseIconFromFile(bool isChannel, uri_stream* info)
 {
+	auto icon = dynamic_cast<IconContainer*>(info);
+	if (!icon)
+		return false;
+
 	CFileDialog dlg(TRUE);
 	CString curPath = GetAppPath(isChannel ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
 	CString file(curPath);
@@ -3712,9 +3722,9 @@ bool CIPTVChannelEditorDlg::ChooseIconFromFile(bool isChannel, uri_stream* info)
 		m_iconUrl += isChannel ? utils::CHANNELS_LOGO_URL : utils::CATEGORIES_LOGO_URL;
 		m_iconUrl += oFN.lpstrFileTitle;
 
-		if (m_iconUrl != info->get_icon_uri().get_uri().c_str())
+		if (m_iconUrl != icon->get_icon_uri().get_uri().c_str())
 		{
-			info->set_icon_uri(m_iconUrl.GetString());
+			icon->set_icon_uri(m_iconUrl.GetString());
 			save = true;
 		}
 	}
@@ -5475,28 +5485,32 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist()
 void CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon()
 {
 	HTREEITEM hItem = m_wndChannelsTree.GetSelectedItem();
-	IconContainer icon;
+	uri_stream* uri = nullptr;
 	if (IsCategory(hItem))
 	{
 		if (const auto& category = FindCategory(hItem); category != nullptr)
 		{
-			icon = *category;
+			uri = dynamic_cast<uri_stream*>(category.get());
 		}
 	}
 	else if (IsChannel(hItem))
 	{
 		if (auto channel = FindChannel(hItem); channel != nullptr)
 		{
-			icon = *channel;
+			uri = dynamic_cast<uri_stream*>(channel.get());
 		}
 	}
 
-	UpdateIconInfo(icon);
+	UpdateIconInfo(uri);
 }
 
-void CIPTVChannelEditorDlg::UpdateIconInfo(const IconContainer& icon)
+void CIPTVChannelEditorDlg::UpdateIconInfo(uri_stream* info)
 {
-	if (icon.empty())
+	auto icon = dynamic_cast<IconContainer*>(info);
+	if (!icon)
+		return;
+
+	if (icon->empty())
 	{
 		m_wndChannelIcon.SetBitmap(nullptr);
 		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(L"");
@@ -5504,8 +5518,8 @@ void CIPTVChannelEditorDlg::UpdateIconInfo(const IconContainer& icon)
 		return;
 	}
 
-	m_iconUrl = icon.get_icon_uri().get_uri().c_str();
-	const auto& img = GetIconCache().get_icon(icon.get_icon_absolute_path(), true);
+	m_iconUrl = icon->get_icon_uri().get_uri().c_str();
+	const auto& img = GetIconCache().get_icon(icon->get_icon_absolute_path(), true);
 	if (img != nullptr)
 	{
 		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(fmt::format(L"{:d} x {:d} px", img.GetWidth(), img.GetHeight()).c_str());

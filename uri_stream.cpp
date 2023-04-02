@@ -92,7 +92,6 @@ uri_stream& uri_stream::operator=(const uri_stream& src)
 {
 	if (this != &src)
 	{
-		IconContainer::operator=(src);
 		base_type = src.base_type;
 		parent_plugin = src.parent_plugin;
 

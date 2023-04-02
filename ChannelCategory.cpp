@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "ChannelCategory.h"
-#include "StreamContainer.h"
 
 #include "UtilsLib\rapidxml_value.hpp"
 
@@ -37,7 +36,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 ChannelCategory::ChannelCategory(const std::wstring& root_path)
-	: uri_stream(InfoType::enCategory, nullptr, root_path)
+	: uri_stream(InfoType::enCategory, nullptr)
+	, IconContainer(root_path)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);
 }

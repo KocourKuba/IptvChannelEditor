@@ -277,7 +277,7 @@ private:
 	bool CheckForSave();
 	void SaveStreamInfo();
 	void UpdateWindowTitle();
-	void UpdateIconInfo(const IconContainer& icon);
+	void UpdateIconInfo(uri_stream* uri);
 
 protected:
 	CFont m_largeFont;

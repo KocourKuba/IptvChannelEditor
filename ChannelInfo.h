@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "uri_stream.h"
+#include "IconContainer.h"
 
 #include "UtilsLib\rapidxml.hpp"
 
@@ -46,7 +47,7 @@ DEALINGS IN THE SOFTWARE.
 
 class ChannelCategory;
 
-class ChannelInfo : public uri_stream
+class ChannelInfo : public uri_stream, public IconContainer
 {
 public:
 	ChannelInfo() = delete;

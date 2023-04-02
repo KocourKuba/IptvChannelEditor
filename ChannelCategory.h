@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "ChannelInfo.h"
+#include "IconContainer.h"
 
 #include "UtilsLib\rapidxml.hpp"
 
@@ -35,7 +36,7 @@ DEALINGS IN THE SOFTWARE.
 //   <icon_url>plugin_file://icons/1.png</icon_url>
 // </tv_category>
 
-class ChannelCategory : public uri_stream
+class ChannelCategory : public uri_stream, public IconContainer
 {
 public:
 	ChannelCategory() = delete;
