@@ -759,10 +759,20 @@ bool PackPlugin(const PluginType plugin_type,
 
 	std::filesystem::create_directory(packFolder + L"bin", err);
 	std::filesystem::copy_file(plugin_root + L"bin\\update_suppliers", packFolder + L"bin\\update_suppliers", std::filesystem::copy_options::none, err);
-	for (const auto& item : plugin->get_scripts_list())
+	for (const auto& item : plugin->get_files_list())
 	{
 		std::wstring filename = L"bin\\" + item.get_name();
 		std::filesystem::copy_file(plugin_root + filename, packFolder + filename, std::filesystem::copy_options::none, err);
+	}
+
+	if (!plugin->get_scripts_list().empty())
+	{
+		std::filesystem::create_directory(packFolder + L"www", err);
+		for (const auto& item : plugin->get_scripts_list())
+		{
+			std::wstring filename = L"www\\" + item.get_name();
+			std::filesystem::copy_file(plugin_root + filename, packFolder + filename, std::filesystem::copy_options::none, err);
+		}
 	}
 
 	// remove if old logo and backgrounds still exists in icons folder
@@ -770,7 +780,9 @@ bool PackPlugin(const PluginType plugin_type,
 	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
 	{
 		if (!dir_entry.is_directory() && boost::regex_match(dir_entry.path().filename().wstring(), regExpName))
+		{
 			std::filesystem::remove(dir_entry.path(), err);
+		}
 	}
 
 	std::filesystem::path plugin_logo;

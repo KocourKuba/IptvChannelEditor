@@ -63,6 +63,8 @@ protected:
 
 	afx_msg void OnCbnSelchangeComboAccessType();
 
+	afx_msg void OnBnClickedButtonEditExtScripts();
+	afx_msg void OnBnClickedButtonEditExtFiles();
 	afx_msg void OnBnClickedCheckStaticServers();
 	afx_msg void OnBnClickedCheckStaticDevices();
 	afx_msg void OnBnClickedCheckStaticQualities();
@@ -81,7 +83,8 @@ protected:
 	CEdit m_wndProviderUrl;
 
 	CComboBox m_wndAccessType;
-	CButton m_wndBtnScripts;
+	CButton m_wndBtnExtFiles;
+	CButton m_wndBtnExtScripts;
 	CButton m_wndChkStaticServers;
 	CButton m_wndBtnServers;
 	CButton m_wndChkStaticDevices;
@@ -97,5 +100,4 @@ protected:
 	CString m_UserAgent;
 	CString m_ProviderUrl;
 public:
-	afx_msg void OnBnClickedButtonEditScripts();
 };
