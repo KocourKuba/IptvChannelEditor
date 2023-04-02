@@ -658,5 +658,8 @@
     <Image Include="res\help.png">
       <Filter>Resource Files\PNG</Filter>
     </Image>
+    <Image Include="res\update.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
   </ItemGroup>
 </Project>

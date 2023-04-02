@@ -123,6 +123,8 @@ IDB_PNG_EXPORT_M3U      PNG                     "res\\export_m3u.png"
 
 IDB_PNG_CHANGELOG       PNG                     "res\\help.png"
 
+IDB_PNG_UPDATE          PNG                     "res\\update.png"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -155,6 +157,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_PLUGIN_TYPE,206,7,98,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "...",IDC_BUTTON_ACCOUNT_SETTINGS,309,4,22,19,BS_BITMAP | BS_MULTILINE | BS_FLAT
     PUSHBUTTON      "View Video on Demand",IDC_BUTTON_VOD,357,4,22,19,BS_BITMAP | BS_FLAT
+    PUSHBUTTON      "Update",IDC_BUTTON_CHECK_UPDATE,434,4,22,19,BS_BITMAP | BS_FLAT
     PUSHBUTTON      "Changelog",IDC_BUTTON_CHANGELOG,459,4,22,19,BS_BITMAP | BS_FLAT
     PUSHBUTTON      "Edit Plugin Config",IDC_BUTTON_EDIT_CONFIG,333,4,22,19,BS_BITMAP | BS_FLAT
     PUSHBUTTON      "Donate to author",IDC_BUTTON_ABOUT,483,4,97,19
@@ -833,6 +836,7 @@ BEGIN
     50, 0, 0, 0,
     50, 0, 0, 0,
     50, 0, 0, 0,
+    100, 0, 0, 0,
     100, 0, 0, 0,
     50, 0, 0, 0,
     100, 0, 0, 0,
@@ -1744,6 +1748,9 @@ BEGIN
                             "Add additional scripts into plugin \\www folder"
     IDS_STRING_BUTTON_EDIT_EXT_FILES 
                             "Add additional files into plugin \\bin folder"
+    IDS_STRING_BUTTON_CHECK_UPDATE "Check for update"
+    IDS_STRING_BUTTON_CHANGELOG "View change log"
+    IDS_STRING_NOUPDATE_AVAILABLE "Application is up to date"
 END
 
 STRINGTABLE

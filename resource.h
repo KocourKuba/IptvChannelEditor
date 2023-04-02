@@ -26,6 +26,7 @@
 #define IDB_PNG_RELOAD                  68
 #define IDB_PNG_EXPORT_M3U              69
 #define IDB_PNG_CHANGELOG               70
+#define IDB_PNG_UPDATE                  71
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
 #define IDD_CUSTOM_URL                  104
@@ -297,6 +298,9 @@
 #define IDS_STRING_USED_ACCOUNT         378
 #define IDS_STRING_BUTTON_EDIT_EXT_SCRIPTS 379
 #define IDS_STRING_BUTTON_EDIT_EXT_FILES 380
+#define IDS_STRING_BUTTON_CHECK_UPDATE  381
+#define IDS_STRING_BUTTON_CHANGELOG     382
+#define IDS_STRING_NOUPDATE_AVAILABLE   383
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -517,6 +521,7 @@
 #define IDC_RICHEDIT_DESCRIPTION        1144
 #define IDC_BUTTON_CHANGELOG            1144
 #define IDC_BUTTON_SEARCH               1145
+#define IDC_BUTTON_CHECK_UPDATE         1145
 #define IDC_EDIT_TOTAL_MOVIES           1146
 #define IDC_COMBO_YEARS                 1147
 #define IDC_COMBO_GENRES                1148
@@ -652,7 +657,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

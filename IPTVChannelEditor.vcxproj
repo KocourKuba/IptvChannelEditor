@@ -440,6 +440,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <Image Include="res\SaveAs.png" />
     <Image Include="res\Settings.png" />
     <Image Include="res\Unknown.png" />
+    <Image Include="res\update.png" />
     <Image Include="res\Vod.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -108,6 +108,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_TIMER()
 
+	ON_BN_CLICKED(IDC_BUTTON_CHECK_UPDATE, &CIPTVChannelEditorDlg::OnBnClickedButtonCheckUpdate)
 	ON_BN_CLICKED(IDC_BUTTON_CHANGELOG, &CIPTVChannelEditorDlg::OnBnClickedButtonChangelog)
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, &CIPTVChannelEditorDlg::OnBnClickedButtonAbout)
 	ON_BN_CLICKED(IDC_BUTTON_ACCOUNT_SETTINGS, &CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings)
@@ -261,6 +262,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_BUTTON_CHANGELOG, m_wndBtnChangelog);
+	DDX_Control(pDX, IDC_BUTTON_CHECK_UPDATE, m_wndBtnCheckUpdate);
 	DDX_Control(pDX, IDC_BUTTON_ADD_NEW_CHANNELS_LIST, m_wndBtnAddNewChannelsList);
 	DDX_Control(pDX, IDC_BUTTON_EXPORT_M3U, m_wndBtnExportM3u);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndBtnEditConfig);
@@ -478,6 +480,8 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndPlaylistTree.GetToolTips()->SetMaxTipWidth(100);
 
 	AddTooltip(IDC_COMBO_PLUGIN_TYPE, IDS_STRING_COMBO_PLUGIN_TYPE);
+	AddTooltip(IDC_BUTTON_CHECK_UPDATE, IDS_STRING_BUTTON_CHECK_UPDATE);
+	AddTooltip(IDC_BUTTON_CHANGELOG, IDS_STRING_BUTTON_CHANGELOG);
 	AddTooltip(IDC_BUTTON_VOD, IDS_STRING_BUTTON_VOD);
 	AddTooltip(IDC_BUTTON_ABOUT, IDS_STRING_BUTTON_ABOUT);
 	AddTooltip(IDC_COMBO_CHANNELS, IDS_STRING_COMBO_CHANNELS);
@@ -547,6 +551,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	// load button images;
 	SetButtonImage(IDB_PNG_CHANGELOG, m_wndBtnChangelog);
+	SetButtonImage(IDB_PNG_UPDATE, m_wndBtnCheckUpdate);
 	SetButtonImage(IDB_PNG_NEW, m_wndBtnAddNewChannelsList);
 	SetButtonImage(IDB_PNG_EXPORT_M3U, m_wndBtnExportM3u);
 	SetButtonImage(IDB_PNG_FIND_NEXT, m_wndBtnSearchNext);
@@ -5561,4 +5566,24 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonChangelog()
 	CreateProcess(nullptr, csCmd.GetBuffer(0), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi);
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonCheckUpdate()
+{
+	std::wstring cmd = L"check";
+	if (RequestToUpdateServer(cmd) != 0)
+	{
+		AfxMessageBox(IDS_STRING_NOUPDATE_AVAILABLE, MB_OK);
+	}
+	else if (IDYES == AfxMessageBox(IDS_STRING_UPDATE_AVAILABLE, MB_YESNO) && CheckForSave())
+	{
+		cmd = L"update";
+		if (GetConfig().get_int(true, REG_UPDATE_PL))
+		{
+			cmd += L" --optional";
+		}
+
+		RequestToUpdateServer(cmd, false);
+		PostMessage(WM_CLOSE);
+	}
 }

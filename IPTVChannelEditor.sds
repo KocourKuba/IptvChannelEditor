@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="242" scanned="20230402134453" built="20230330110612" lang="ru" pane="TLogPane" col="4" row="Dialogs.134.STATIC_External_bin.Text">
+<desktop scan="243" scanned="20230402185811" built="20230330110612" lang="ru" pane="TLogPane" col="3" row="Strings.24.IDS_STRING_NOUPDATE_AVAILABLE">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="7"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>

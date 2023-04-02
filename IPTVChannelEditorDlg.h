@@ -313,6 +313,7 @@ protected:
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
 	CButton m_wndBtnChangelog;
+	CButton m_wndBtnCheckUpdate;
 	CButton m_wndBtnSearchNext;
 	CButton m_wndBtnPlSearchNext;
 	CButton m_wndBtnAddNewChannelsList;
@@ -487,4 +488,5 @@ private:
 public:
 	afx_msg void OnBeginlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedButtonChangelog();
+	afx_msg void OnBnClickedButtonCheckUpdate();
 };
