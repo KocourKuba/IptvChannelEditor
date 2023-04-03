@@ -60,6 +60,8 @@ protected:
 	afx_msg void OnBnClickedCheckVodSupport();
 	afx_msg void OnBnClickedCheckVodM3U();
 	afx_msg void OnBnClickedCheckVodFilter();
+	afx_msg void OnEnChangeEditVodPrefix();
+	afx_msg void OnEnChangeEditVodParams();
 
 private:
 	void UpdateControls();
@@ -67,6 +69,8 @@ private:
 protected:
 	CMenuEdit m_wndVodUrlTemplate;
 	CMenuEdit m_wndVodRegex;
+	CMenuEdit m_wndVodUrlPrefix;
+	CMenuEdit m_wndVodUrlParams;
 
 	CComboBox m_wndVodTemplates;
 
@@ -79,4 +83,6 @@ protected:
 
 	CString m_VodPlaylistTemplate;
 	CString m_VodParseRegex;
+	CString m_VodUrlPrefix;
+	CString m_VodUrlParams;
 };

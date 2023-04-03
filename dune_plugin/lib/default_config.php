@@ -956,6 +956,26 @@ class default_config extends dynamic_config
     /**
      * @param string $url
      * @param $plugin_cookies
+     * @return string
+     */
+    public function UpdateVodUrlParams($url, $plugin_cookies)
+    {
+        $url_prefix = str_replace('{CGI_BIN}', get_cgi_bin_url(), $this->get_vod_url_prefix($plugin_cookies));
+        if (!empty($url_prefix)) {
+            $url = $url_prefix . $url;
+        }
+
+        $url_params = $this->get_vod_url_params($plugin_cookies);
+        if ($url_params) {
+            $url .= $url_params;
+        }
+
+        return $url;
+    }
+
+    /**
+     * @param string $url
+     * @param $plugin_cookies
      * @param int $custom_type
      * @return string
      */
@@ -1169,5 +1189,19 @@ class default_config extends dynamic_config
             $vod_pattern = "/$vod_pattern/";
 
         return $vod_pattern;
+    }
+
+    protected function get_vod_url_prefix($plugin_cookies)
+    {
+        $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
+        return isset($vod_templates[$idx][Plugin_Constants::URL_PREFIX]) ? $vod_templates[$idx][Plugin_Constants::URL_PREFIX] : '';
+    }
+
+    protected function get_vod_url_params($plugin_cookies)
+    {
+        $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
+        return isset($vod_templates[$idx][Plugin_Constants::URL_PARAMS]) ? $vod_templates[$idx][Plugin_Constants::URL_PARAMS] : '';
     }
 }

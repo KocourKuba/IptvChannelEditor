@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="243" scanned="20230402185811" built="20230330110612" lang="ru" pane="TLogPane" col="3" row="Strings.24.IDS_STRING_NOUPDATE_AVAILABLE">
+<desktop scan="244" scanned="20230403230234" built="20230330110612" lang="ru" pane="TLogPane" col="4" row="Dialogs.138.STATIC_VOD_url_prefix.Text">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>

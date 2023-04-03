@@ -156,6 +156,12 @@ public:
 	std::wstring get_parse_regex() const { return utils::utf8_to_utf16(parse_regex); }
 	void set_parse_regex(const std::wstring& val) { parse_regex = utils::utf16_to_utf8(val); }
 
+	std::wstring get_url_prefix() const { return utils::utf8_to_utf16(url_prefix); }
+	void set_url_prefix(const std::wstring& val) { url_prefix = utils::utf16_to_utf8(val); }
+
+	std::wstring get_url_params() const { return utils::utf8_to_utf16(url_params); }
+	void set_url_params(const std::wstring& val) { url_params = utils::utf16_to_utf8(val); }
+
 	std::wstring get_tag_id_match() const { return utils::utf8_to_utf16(tag_id_match); }
 	void set_tag_id_match(const std::wstring& val) { tag_id_match = utils::utf16_to_utf8(val); }
 
@@ -165,6 +171,8 @@ public:
 		SERIALIZE_STRUCT(j, c, pl_template);
 		SERIALIZE_STRUCT(j, c, pl_parse_regex);
 		SERIALIZE_STRUCT(j, c, parse_regex);
+		SERIALIZE_STRUCT(j, c, url_prefix);
+		SERIALIZE_STRUCT(j, c, url_params);
 		SERIALIZE_STRUCT(j, c, tag_id_match);
 	}
 
@@ -174,6 +182,8 @@ public:
 		DESERIALIZE_STRUCT(j, c, pl_template);
 		DESERIALIZE_STRUCT(j, c, pl_parse_regex);
 		DESERIALIZE_STRUCT(j, c, parse_regex);
+		DESERIALIZE_STRUCT(j, c, url_prefix);
+		DESERIALIZE_STRUCT(j, c, url_params);
 		DESERIALIZE_STRUCT(j, c, tag_id_match);
 	}
 
@@ -181,6 +191,8 @@ public:
 	std::string pl_template;
 	std::string pl_parse_regex;
 	std::string parse_regex;
+	std::string url_prefix;
+	std::string url_params;
 	std::string tag_id_match;
 	bool is_custom = false;
 };
@@ -490,6 +502,20 @@ public:
 	/// <returns>wstring</returns>
 	std::wstring get_vod_parse_regex(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_parse_regex() : L""; }
 	void set_vod_parse_regex(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_parse_regex(val); }
+
+	/// <summary>
+	/// url prefix
+	/// </summary>
+	/// <returns>wstring</returns>
+	std::wstring get_vod_url_prefix(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_url_prefix() : L""; }
+	void set_vod_url_prefix(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_url_prefix(val); }
+
+	/// <summary>
+	/// url parameters
+	/// </summary>
+	/// <returns>wstring</returns>
+	std::wstring get_vod_url_params(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_url_params() : L""; }
+	void set_vod_url_params(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_url_params(val); }
 
 	/// <summary>
 	/// property square icons, php GUI setting

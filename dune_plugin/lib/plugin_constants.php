@@ -42,6 +42,8 @@ class Plugin_Constants
     const /* (char *) */ URI_TEMPLATE = 'pl_template';
     const /* (char *) */ PARSE_REGEX = 'parse_regex';
     const /* (char *) */ TAG_ID_MATCH = 'tag_id_match';
+    const /* (char*)  */ URL_PREFIX = 'url_prefix';
+    const /* (char*)  */ URL_PARAMS = 'url_params';
 
     // streams parameters
     const /* array */ STREAMS_CONFIG = 'streams_config';
