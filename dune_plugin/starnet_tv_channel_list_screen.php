@@ -85,8 +85,8 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Starnet_Tv_Channel_List_Screen: handle_user_input:');
-        foreach($user_input as $key => $value) hd_print("  $key => $value");
+        //hd_print('Starnet_Tv_Channel_List_Screen: handle_user_input:');
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
             return null;
