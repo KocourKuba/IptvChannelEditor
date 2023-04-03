@@ -307,8 +307,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // strip https
-        $strip_https = isset($plugin_cookies->strip_https) ? $plugin_cookies->strip_https : SetupControlSwitchDefs::switch_off;
-        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_STRIP_HTTPS, 'Заменять https на http:', $strip_https, $on_off_ops, 0);
+        //$strip_https = isset($plugin_cookies->strip_https) ? $plugin_cookies->strip_https : SetupControlSwitchDefs::switch_off;
+        //Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_STRIP_HTTPS, 'Заменять https на http:', $strip_https, $on_off_ops, 0);
 
         //////////////////////////////////////
         // clear epg cache
@@ -700,8 +700,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     $plugin_cookies->auto_resume = $user_input->auto_resume;
                     hd_print("Auto resume: $plugin_cookies->auto_resume");
 
-                    $plugin_cookies->strip_https = $user_input->strip_https;
-                    hd_print("Strip https: $plugin_cookies->strip_https");
+                    //$plugin_cookies->strip_https = $user_input->strip_https;
+                    //hd_print("Strip https: $plugin_cookies->strip_https");
 
                     if (isset($user_input->epg_source)) {
                         $plugin_cookies->epg_source = $user_input->epg_source;
