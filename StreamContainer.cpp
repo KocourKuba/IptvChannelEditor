@@ -54,6 +54,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_ping.h"
 #include "plugin_yosso.h"
 #include "plugin_ottiptv.h"
+#include "plugin_bcumedia.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -72,6 +73,10 @@ std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 
 		case PluginType::enAntifriz:
 			plugin = std::make_shared<plugin_antifriz>();
+			break;
+
+		case PluginType::enBcuMedia:
+			plugin = std::make_shared<plugin_bcumedia>();
 			break;
 
 		case PluginType::enEdem:

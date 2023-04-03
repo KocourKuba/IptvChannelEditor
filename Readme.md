@@ -3,6 +3,7 @@
 Для сборки используется VS2022. Плагины используют PHP 5.3 не старше.
 Поддерживаемые провайдеры:  
 [Antifriz](https://antifriztv.com)  
+[BCU Media](https://bcumedia.pro)  
 [Cbilling (Gomelsat)](https://cbilling.live)  
 [iEdem](https://iedem.tv)/[iLook](https://ilook.tv)  
 [Fox TV](http://fox-tv.fun)  

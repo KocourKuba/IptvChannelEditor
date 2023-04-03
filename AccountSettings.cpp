@@ -121,6 +121,7 @@ static std::set<std::wstring> all_settings_keys = {
 
 static std::vector<PluginType> all_plugins = {
 	{ PluginType::enAntifriz,   },
+	{ PluginType::enBcuMedia,   },
 	{ PluginType::enCbilling,   },
 	{ PluginType::enEdem,       },
 	{ PluginType::enFilmax,     },

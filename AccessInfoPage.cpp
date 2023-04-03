@@ -579,6 +579,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 
 			// Pin
 			case PluginType::enAntifriz:
+			case PluginType::enBcuMedia:
 			case PluginType::enCbilling:
 			case PluginType::enIptvOnline:
 			case PluginType::enItv:
