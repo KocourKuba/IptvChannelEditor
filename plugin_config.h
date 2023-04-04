@@ -344,6 +344,11 @@ public:
 	virtual void load_plugin_parameters(const std::wstring& filename);
 
 	/// <summary>
+	/// set path used to send logs to developer
+	/// </summary>
+	void set_dev_path(const std::string& path) { dev_code = path; }
+
+	/// <summary>
 	/// load default plugin parameters and set default values for templates
 	/// </summary>
 	void set_plugin_defaults(PluginType val);
@@ -713,6 +718,7 @@ public:
 		SERIALIZE_STRUCT(j, c, short_name);
 		SERIALIZE_STRUCT(j, c, name);
 		SERIALIZE_STRUCT(j, c, title);
+		SERIALIZE_STRUCT(j, c, dev_code);
 		SERIALIZE_STRUCT(j, c, user_agent);
 		SERIALIZE_STRUCT(j, c, provider_url);
 		SERIALIZE_STRUCT(j, c, playlist_templates);
@@ -791,6 +797,8 @@ protected:
 	std::string name;
 	// url to provider account
 	std::string provider_url;
+	// developer url
+	std::string dev_code;
 
 	// enable vod
 	bool vod_support = false;

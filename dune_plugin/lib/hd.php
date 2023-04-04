@@ -15,6 +15,8 @@ class HD
 
     private static $plugin_user_agent;
 
+    private static $dev_code;
+
     ///////////////////////////////////////////////////////////////////////
 
     /**
@@ -178,6 +180,11 @@ class HD
     {
         self::$plugin_user_agent = $user_agent;
         self::$user_agent = '';
+    }
+
+    public static function set_plugin_dev_code($code)
+    {
+        self::$dev_code = $code;
     }
 
     /**
@@ -389,7 +396,7 @@ class HD
 
             $handle = fopen($zip_file, 'rb');
             if (is_resource($handle)) {
-                self::http_put_document("http://iptv.esalecrm.net/upload/$zip_file_name", $handle, filesize($zip_file));
+                self::http_put_document(base64_decode(self::$dev_code, true) . $zip_file_name, $handle, filesize($zip_file));
                 hd_print("Log file sent");
                 $ret = true;
             }

@@ -88,6 +88,7 @@ class dynamic_config
         $this->set_feature(Plugin_Constants::VOD_TEMPLATES, $settings[Plugin_Constants::VOD_TEMPLATES]);
 
         HD::set_dune_user_agent($settings[Plugin_Constants::USER_AGENT]);
+        HD::set_plugin_dev_code($settings[Plugin_Constants::DEV_CODE]);
 
         foreach ($settings[Plugin_Constants::STREAMS_CONFIG] as $config) {
             $param_idx = $config[Stream_Params::STREAM_TYPE];
