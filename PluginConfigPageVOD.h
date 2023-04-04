@@ -55,6 +55,7 @@ protected:
 	afx_msg void OnCbnDropdownComboVodTemplate();
 	afx_msg void OnBnClickedButtonEditVodTemplates();
 	afx_msg void OnBnClickedButtonVodTemplate();
+	afx_msg void OnBnClickedButtonVodParse();
 	afx_msg void OnEnChangeEditProviderVodUrl();
 	afx_msg void OnEnChangeEditVodRegex();
 	afx_msg void OnBnClickedCheckVodSupport();

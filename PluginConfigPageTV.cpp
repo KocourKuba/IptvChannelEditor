@@ -371,7 +371,8 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 
 void CPluginConfigPageTV::OnBnClickedButtonStreamRegexTest()
 {
-	ShellExecute(nullptr, _T("open"), L"https://regex101.com/", nullptr, nullptr, SW_SHOWDEFAULT);
+	const auto& url = fmt::format(L"https://regex101.com/?regex={:s}", m_ParseStream.GetString());
+	ShellExecute(nullptr, _T("open"), url.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 }
 
 void CPluginConfigPageTV::OnEnChangeEditParsePattern()

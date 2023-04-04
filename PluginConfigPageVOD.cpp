@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPageVOD, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_VOD_TEMPLATES, &CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates)
 	ON_EN_CHANGE(IDC_EDIT_PROVIDER_VOD_URL, &CPluginConfigPageVOD::OnEnChangeEditProviderVodUrl)
 	ON_BN_CLICKED(IDC_BUTTON_VOD_TEMPLATE, &CPluginConfigPageVOD::OnBnClickedButtonVodTemplate)
+	ON_BN_CLICKED(IDC_BUTTON_VOD_PARSE, &CPluginConfigPageVOD::OnBnClickedButtonVodParse)
 	ON_EN_CHANGE(IDC_EDIT_VOD_REGEX, &CPluginConfigPageVOD::OnEnChangeEditVodRegex)
 	ON_BN_CLICKED(IDC_CHECK_VOD_SUPPORT, &CPluginConfigPageVOD::OnBnClickedCheckVodSupport)
 	ON_BN_CLICKED(IDC_CHECK_VOD_M3U, &CPluginConfigPageVOD::OnBnClickedCheckVodM3U)
@@ -234,6 +235,12 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	{
 		AfxMessageBox(GetPropertySheet()->m_plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
 	}
+}
+
+void CPluginConfigPageVOD::OnBnClickedButtonVodParse()
+{
+	const auto& url = fmt::format(L"https://regex101.com/?regex={:s}", m_VodParseRegex.GetString());
+	ShellExecute(nullptr, _T("open"), url.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 }
 
 void CPluginConfigPageVOD::OnEnChangeEditProviderVodUrl()
