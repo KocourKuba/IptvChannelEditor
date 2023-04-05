@@ -370,13 +370,19 @@ class HD
         $apk_subst = getenv('FS_PREFIX');
         $plugin_name = get_plugin_name() . ".*";
 
+        if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name")) {
+            $redirected = "$apk_subst/D/dune_plugin_logs/$plugin_name";
+        } else {
+            $redirected = "$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name";
+        }
+
         $paths = array(
             get_install_path("config.json"),
             get_temp_path("*.json"),
             get_temp_path("*.m3u?"),
             "$apk_subst/tmp/run/shell.*",
             "$apk_subst/tmp/run/$plugin_name",
-            $apk_subst . ((is_android() || is_apk()) ? "/tmp/mnt" : "") . "/D/dune_plugin_logs/$plugin_name",
+            $redirected,
         );
 
         $files = array();
