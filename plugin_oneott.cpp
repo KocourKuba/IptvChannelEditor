@@ -39,7 +39,8 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_oneott::plugin_oneott()
 {
-	short_name = "oneott";
+	type_name = "oneott";
+	class_name = "oneott_config";
 }
 
 void plugin_oneott::load_default()

@@ -301,6 +301,7 @@
 #define IDS_STRING_BUTTON_CHECK_UPDATE  381
 #define IDS_STRING_BUTTON_CHANGELOG     382
 #define IDS_STRING_NOUPDATE_AVAILABLE   383
+#define IDS_STRING_EDIT_PLUGIN_CLASS_NAME 384
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -629,6 +630,7 @@
 #define IDC_BUTTON_EDIT_EXT_SCRIPTS     1236
 #define IDC_EDIT_VOD_PREFIX             1237
 #define IDC_EDIT_VOD_PARAMS             1238
+#define IDC_EDIT_PLUGIN_CLASS_NAME      1239
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -659,12 +661,12 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280
 #define _APS_NEXT_COMMAND_VALUE         32806
-#define _APS_NEXT_CONTROL_VALUE         1239
+#define _APS_NEXT_CONTROL_VALUE         1240
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

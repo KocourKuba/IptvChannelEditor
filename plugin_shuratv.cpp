@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_shuratv::plugin_shuratv()
 {
-	short_name = "shuratv";
+	type_name = "shuratv";
 }
 
 void plugin_shuratv::load_default()

@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_ping::plugin_ping()
 {
-	short_name = "ping";
+	type_name = "ping";
 }
 
 void plugin_ping::load_default()

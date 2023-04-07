@@ -44,7 +44,8 @@ static constexpr auto API_COMMAND_SET_URL = L"http://{:s}/api/players.php?a={:s}
 
 plugin_sharaclub::plugin_sharaclub()
 {
-	short_name = "sharaclub";
+	type_name = "sharaclub";
+	class_name = "sharaclub_config";
 	provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";;
 }
 

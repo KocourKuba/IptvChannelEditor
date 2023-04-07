@@ -1354,10 +1354,10 @@ function get_plugin_manifest_info()
     }
 
     $result = array(
+        'app_type_name' => (string)$xml->type_name,
         'app_name' => (string)$xml->name,
         'app_caption' => (string)$xml->caption,
         'app_class_name' => (string)$xml->class_name,
-        'app_short_name' => (string)$xml->short_name,
         'app_version' => (string)$xml->version,
         'app_version_idx' => isset($xml->version_index) ? (string)$xml->version_index : '0',
         'app_release_date' => (string)$xml->release_date,

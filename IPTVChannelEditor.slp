@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20230403230302" scan="244" scanned="20230403230234">
+<document created="20211012165442" version="4.0.374" date="20230407232036" scan="245" scanned="20230407231756">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230403210142" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230407211642" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -2401,7 +2401,10 @@
           <row id="X">0</row>
           <row id="Y">0</row>
           <component class="TVisLabel" name="STATIC_Name" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX" changed="20221001011502">82</row>
+            <row id="CX" state="3" changed="20230407231756">
+              <prev>82</prev>
+              <native>72</native>
+            </row>
             <row id="CY">8</row>
             <row id="Text">
               <native>Name</native>
@@ -2411,13 +2414,19 @@
             <row id="Y" changed="20221128180652">8</row>
           </component>
           <component class="TVisLabel" name="STATIC_Caption" created="20221018224522" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX">82</row>
+            <row id="CX" state="3" changed="20230407231756">
+              <prev>82</prev>
+              <native>72</native>
+            </row>
             <row id="CY">8</row>
             <row id="Text">
               <native>Caption</native>
               <lang id="ru" date="20221018230935">Название</lang>
             </row>
-            <row id="X" changed="20221018233214">95</row>
+            <row id="X" state="3" changed="20230407231756">
+              <prev>95</prev>
+              <native>86</native>
+            </row>
             <row id="Y" changed="20221128180652">8</row>
           </component>
           <component class="TVisLabel" name="STATIC_Provider_URL" type="static" unnamed="1" autosize="0" wordwrap="1">
@@ -2427,8 +2436,24 @@
               <native>Provider URL</native>
               <lang id="ru" date="20221001005512">Ссылка на провайдера</lang>
             </row>
-            <row id="X" changed="20221126021421">187</row>
-            <row id="Y" changed="20221128180652">7</row>
+            <row id="X" state="3" changed="20230407231756">
+              <prev>187</prev>
+              <native>166</native>
+            </row>
+            <row id="Y" state="3" changed="20230407231756">
+              <prev>7</prev>
+              <native>8</native>
+            </row>
+          </component>
+          <component class="TVisLabel" name="STATIC_Class_Name" state="0" created="20230407231756" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">72</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Class Name</native>
+              <lang id="ru" date="20230407231804">Имя класса</lang>
+            </row>
+            <row id="X" state="0">293</row>
+            <row id="Y" state="0">8</row>
           </component>
           <component class="TVisLabel" name="STATIC_User_Agent" created="20230219213153" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX">108</row>
@@ -2533,22 +2558,43 @@
             </row>
           </component>
           <component class="TVisEdit" name="1198" type="edit">
-            <row id="CX" changed="20221018233214">84</row>
+            <row id="CX" state="3" changed="20230407231756">
+              <prev>84</prev>
+              <native>76</native>
+            </row>
             <row id="CY">12</row>
             <row id="X">7</row>
             <row id="Y" changed="20221128180652">18</row>
           </component>
           <component class="TVisEdit" name="1181" type="edit">
-            <row id="CX" changed="20221001011502">87</row>
+            <row id="CX" state="3" changed="20230407231756">
+              <prev>87</prev>
+              <native>76</native>
+            </row>
             <row id="CY">12</row>
-            <row id="X" changed="20221018233214">95</row>
+            <row id="X" state="3" changed="20230407231756">
+              <prev>95</prev>
+              <native>86</native>
+            </row>
             <row id="Y" changed="20221128180652">18</row>
           </component>
           <component class="TVisEdit" name="1185" type="edit">
-            <row id="CX" changed="20221126021421">113</row>
+            <row id="CX" state="3" changed="20230407231756">
+              <prev>113</prev>
+              <native>123</native>
+            </row>
             <row id="CY">12</row>
-            <row id="X" changed="20221126021421">187</row>
+            <row id="X" state="3" changed="20230407231756">
+              <prev>187</prev>
+              <native>166</native>
+            </row>
             <row id="Y" changed="20221128180652">18</row>
+          </component>
+          <component class="TVisEdit" name="1239" state="0" created="20230407231756" type="edit">
+            <row id="CX" state="0">77</row>
+            <row id="CY" state="0">12</row>
+            <row id="X" state="0">293</row>
+            <row id="Y" state="0">18</row>
           </component>
           <component class="TVisEdit" name="1186" created="20230219213153" type="edit">
             <row id="CX">363</row>
@@ -4611,6 +4657,12 @@
           <lang id="ru" date="20230322213731">Аккаунт: {:s}</lang>
         </row>
       </node>
+      <node class="TWindowsStringNode" name="25" state="0" created="20230407231756" resid="25" langid="1033">
+        <row id="IDS_STRING_EDIT_PLUGIN_CLASS_NAME" state="0">
+          <native>PHP class name used to override default_config class methods. In case when need to write our own implementation of base methods for the plugin. PHP script must be placed in the 'dune_plugin\configs' folder. By default used 'default_config' class name.</native>
+          <lang id="ru" date="20230407232029">Имя класса PHP используемое для замены методов класса 'default_config'. Для случаев когода надо написать свою реализацию методов плагина. Скрипт PHP должен находиться в папке 'dune_plugin\configs'. По умолчанию используется базовый класс 'dune_config'</lang>
+        </row>
+      </node>
       <node class="TWindowsStringNode" name="26" created="20220730092432" resid="26" langid="1033">
         <row id="IDS_STRING_FILMAX_P1">
           <native>Germany</native>
@@ -4850,34 +4902,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20230403230234">
-          <prev>6.5.1559, 2 Apr 2023</prev>
-          <native>6.6.1566, 3 Apr 2023</native>
+        <row id="FileVersion" locked="1" state="3" changed="20230407231756">
+          <prev>6.6.1566, 3 Apr 2023</prev>
+          <native>6.6.1574, 5 Apr 2023</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
-          <prev>1559</prev>
-          <native>1566</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230407231756">
+          <prev>1566</prev>
+          <native>1574</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20230403230234">
-          <prev>6.5.1559</prev>
-          <native>6.6.1566</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20230407231756">
+          <prev>6.6.1566</prev>
+          <native>6.6.1574</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
-          <prev>1559</prev>
-          <native>1566</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230407231756">
+          <prev>1566</prev>
+          <native>1574</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

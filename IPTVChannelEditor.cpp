@@ -693,8 +693,7 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	const auto& cred = all_credentials[selected];
-	const auto& plugin_type_name = plugin->get_short_name_w();
-	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, plugin_type_name);
+	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, plugin->get_type_name());
 
 	// load plugin settings
 	plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config));
@@ -722,7 +721,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 	// collect plugin channels list;
 	std::map<std::string, std::string> channels_list;
-	const auto& playlistPath = fmt::format(L"{:s}{:s}\\", lists_path, plugin_type_name);
+	const auto& playlistPath = lists_path + plugin->get_type_name() + L"\\";
 	std::filesystem::directory_iterator dir_iter(playlistPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
@@ -801,12 +800,12 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	if (plugin_logo.empty())
-		plugin_logo = fmt::format(LR"({:s}plugins_image\logo_{:s}.png)", plugin_root, plugin_type_name);
+		plugin_logo = fmt::format(LR"({:s}plugins_image\logo_{:s}.png)", plugin_root, plugin->get_type_name());
 	else if (!plugin_logo.has_parent_path())
 		plugin_logo = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_logo.wstring());
 
 	if (plugin_bgnd.empty())
-		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.png)", plugin_root, plugin_type_name);
+		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.png)", plugin_root, plugin->get_type_name());
 	else if (!plugin_bgnd.has_parent_path())
 		plugin_bgnd = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_bgnd.wstring());
 
@@ -849,22 +848,16 @@ bool PackPlugin(const PluginType plugin_type,
 
 	// preprocess common values
 	utils::string_replace_inplace(config_data, "{name}", plugin->get_name().c_str());
-	utils::string_replace_inplace(config_data, "{short_name}", plugin->get_short_name().c_str());
 	utils::string_replace_inplace(config_data, "{plugin_caption}", plugin_caption.c_str());
 	utils::string_replace_inplace(config_data, "{plugin_logo}", logo_subst.c_str());
 	utils::string_replace_inplace(config_data, "{plugin_bg}", bg_subst.c_str());
 
 	// copy plugin config class if they exist
-	std::string class_name = fmt::format("{:s}_config", plugin->get_short_name());
-	const auto& src_config = plugin_type_name + L"_config.php";
-	const auto& src_path = fmt::format(LR"({:s}configs\{:s})", plugin_root, src_config);
+	const auto& src_config_file = utils::utf8_to_utf16(plugin->get_class_name() + ".php");
+	const auto& src_path = fmt::format(LR"({:s}configs\{:s})", plugin_root, src_config_file);
 	if (std::filesystem::exists(src_path))
 	{
-		std::filesystem::copy_file(src_path, packFolder + src_config, std::filesystem::copy_options::overwrite_existing, err);
-	}
-	else
-	{
-		class_name = "default_config";
+		std::filesystem::copy_file(src_path, packFolder + src_config_file, std::filesystem::copy_options::overwrite_existing, err);
 	}
 
 	const auto& package_info_name = plugin->compile_name_template((cred.custom_update_name && !cred.get_update_name().empty()
@@ -883,9 +876,9 @@ bool PackPlugin(const PluginType plugin_type,
 		// change values
 
 		// <dune_plugin>
+		//    <type_name>{type_name}</type_name>
 		//    <name>{plugin_name}</name>
 		//    <caption>{plugin_title}</caption>
-		//    <short_name>{plugin_short_name}</short_name>
 		//    <class_name>{plugin_class_name}</class_name>
 		//    <icon_url>{plugin_logo}</icon_url>
 		//    <background>{plugin_background}</background>
@@ -896,7 +889,8 @@ bool PackPlugin(const PluginType plugin_type,
 
 		auto d_node = doc->first_node("dune_plugin");
 
-		d_node->first_node("class_name")->value(class_name.c_str());
+		d_node->first_node("type_name")->value(plugin->get_type_name_a().c_str());
+		d_node->first_node("class_name")->value(plugin->get_class_name().c_str());
 		d_node->first_node("version_index")->value(version_index.c_str());
 		d_node->first_node("version")->value(version_string.c_str());
 		d_node->first_node("release_date")->value(RELEASEDATE);
@@ -1494,15 +1488,14 @@ uintmax_t calc_folder_size(const std::wstring& path)
 	return total_size;
 }
 
-std::wstring GetPluginShortNameW(const PluginType plugin_type, bool bCamel /*= false*/)
+std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel /*= false*/)
 {
 	std::wstring plugin_name;
 	auto plugin = StreamContainer::get_instance(plugin_type);
 	if (plugin != nullptr)
 	{
-		const auto& short_name = plugin->get_short_name();
 		// convert to wstring or string
-		plugin_name.assign(short_name.begin(), short_name.end());
+		plugin_name = plugin->get_type_name();
 		if (bCamel)
 		{
 			plugin_name[0] = std::toupper(plugin_name[0]);
@@ -1512,14 +1505,14 @@ std::wstring GetPluginShortNameW(const PluginType plugin_type, bool bCamel /*= f
 	return plugin_name;
 }
 
-std::string GetPluginShortNameA(const PluginType plugin_type, bool bCamel /*= false*/)
+std::string GetPluginTypeNameA(const PluginType plugin_type, bool bCamel /*= false*/)
 {
 	std::string plugin_name;
 	auto plugin = StreamContainer::get_instance(plugin_type);
 	if (plugin != nullptr)
 	{
 		// convert to wstring or string
-		plugin_name = plugin->get_short_name();
+		plugin_name = utils::utf16_to_utf8(plugin->get_type_name());
 		if (bCamel)
 		{
 			plugin_name[0] = std::toupper(plugin_name[0]);

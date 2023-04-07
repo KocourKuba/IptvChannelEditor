@@ -105,7 +105,7 @@ std::string load_string_resource_a(unsigned int cp, unsigned int id);
 
 uintmax_t calc_folder_size(const std::wstring& path);
 
-std::wstring GetPluginShortNameW(const PluginType plugin_type, bool bCamel = false);
-std::string  GetPluginShortNameA(const PluginType plugin_type, bool bCamel = false);
+std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel = false);
+std::string  GetPluginTypeNameA(const PluginType plugin_type, bool bCamel = false);
 
 extern CIPTVChannelEditorApp theApp;

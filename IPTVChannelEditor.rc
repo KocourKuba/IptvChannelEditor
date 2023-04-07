@@ -510,12 +510,14 @@ EXSTYLE WS_EX_TOOLWINDOW
 CAPTION "Plugin Configuration"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "Name",IDC_STATIC,7,8,82,8
-    EDITTEXT        IDC_EDIT_PLUGIN_NAME,7,18,84,12,ES_AUTOHSCROLL
-    LTEXT           "Caption",IDC_STATIC,95,8,82,8
-    EDITTEXT        IDC_EDIT_TITLE,95,18,87,12,ES_AUTOHSCROLL
-    LTEXT           "Provider URL",IDC_STATIC,187,7,108,8
-    EDITTEXT        IDC_EDIT_PROVIDER_URL,187,18,113,12,ES_AUTOHSCROLL
+    LTEXT           "Name",IDC_STATIC,7,8,72,8
+    EDITTEXT        IDC_EDIT_PLUGIN_NAME,7,18,76,12,ES_AUTOHSCROLL
+    LTEXT           "Caption",IDC_STATIC,86,8,72,8
+    EDITTEXT        IDC_EDIT_TITLE,86,18,76,12,ES_AUTOHSCROLL
+    LTEXT           "Provider URL",IDC_STATIC,166,8,108,8
+    EDITTEXT        IDC_EDIT_PROVIDER_URL,166,18,123,12,ES_AUTOHSCROLL
+    LTEXT           "Class Name",IDC_STATIC,293,8,72,8
+    EDITTEXT        IDC_EDIT_PLUGIN_CLASS_NAME,293,18,77,12,ES_AUTOHSCROLL
     LTEXT           "User-Agent",IDC_STATIC,7,33,108,8
     EDITTEXT        IDC_EDIT_USER_AGENT,7,44,363,12,ES_AUTOHSCROLL
     LTEXT           "Access Type",IDC_STATIC,7,59,83,8
@@ -1110,6 +1112,8 @@ END
 IDD_DIALOG_PLUGIN_CONFIG AFX_DIALOG_LAYOUT
 BEGIN
     0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
@@ -2057,6 +2061,12 @@ BEGIN
                             "Additional Dune player parameters separated by comma for information see: Dune SDK"
     IDS_STRING_ERR_NO_CHANNELS_SEL 
                             "No Channels List selected! Please select channels list in the account settings."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_EDIT_PLUGIN_CLASS_NAME 
+                            "PHP class name used to override default_config class methods. In case when need to write our own implementation of base methods for the plugin. PHP script must be placed in the 'dune_plugin\\configs' folder. By default used 'default_config' class name."
 END
 
 #endif    // English (United States) resources

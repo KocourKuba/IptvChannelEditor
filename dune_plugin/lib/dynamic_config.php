@@ -2,7 +2,8 @@
 
 class dynamic_config
 {
-    protected $PluginShortName;
+    // info
+    public $plugin_info;
 
     // features constants
     private $features = array();
@@ -78,7 +79,6 @@ class dynamic_config
         $settings = HD::parse_json_file(get_install_path('config.json'), true);
         hd_print("Load plugin settings");
 
-        $this->PluginShortName = $settings[Plugin_Constants::SHORT_NAME];
         $this->set_feature(Plugin_Constants::ACCESS_TYPE, $settings[Plugin_Constants::ACCESS_TYPE]);
         $this->set_feature(Plugin_Constants::SQUARE_ICONS, $settings[Plugin_Constants::SQUARE_ICONS]);
         $this->set_feature(Plugin_Constants::PLAYLIST_TEMPLATES, $settings[Plugin_Constants::PLAYLIST_TEMPLATES]);

@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_oneusd::plugin_oneusd()
 {
-	short_name = "oneusd";
+	type_name = "oneusd";
 }
 
 void plugin_oneusd::load_default()

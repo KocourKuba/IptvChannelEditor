@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_tvteam::plugin_tvteam()
 {
-	short_name = "tvteam";
+	type_name = "tvteam";
 }
 
 void plugin_tvteam::load_default()

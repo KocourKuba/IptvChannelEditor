@@ -36,7 +36,8 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_glanz::plugin_glanz()
 {
-	short_name = "glanz";
+	type_name = "glanz";
+	class_name = "glanz_config";
 }
 
 void plugin_glanz::load_default()

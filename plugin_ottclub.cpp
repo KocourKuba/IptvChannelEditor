@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_ottclub::plugin_ottclub()
 {
-	short_name = "ottclub";
+	type_name = "ottclub";
 }
 
 void plugin_ottclub::load_default()

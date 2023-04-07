@@ -39,7 +39,8 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_cbilling::plugin_cbilling()
 {
-	short_name = "cbilling";
+	type_name = "cbilling";
+	class_name = "cbilling_config";
 }
 
 void plugin_cbilling::load_default()

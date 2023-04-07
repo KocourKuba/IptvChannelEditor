@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_smile::plugin_smile()
 {
-	short_name = "smile";
+	type_name = "smile";
 }
 
 void plugin_smile::load_default()

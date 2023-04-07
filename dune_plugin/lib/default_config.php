@@ -285,7 +285,7 @@ class default_config extends dynamic_config
     public function get_channel_list($plugin_cookies, &$used_list)
     {
         if (empty($plugin_cookies->channels_list)) {
-            $plugin_cookies->channels_list = sprintf('%s_channel_list.xml', $this->PluginShortName);
+            $plugin_cookies->channels_list = sprintf('%s_channel_list.xml', $this->plugin_info['app_type_name']);
         }
         $used_list = $plugin_cookies->channels_list;
 
@@ -717,7 +717,7 @@ class default_config extends dynamic_config
      */
     public function ClearPlaylistCache()
     {
-        $tmp_file = get_temp_path($this->PluginShortName . "_playlist_tv.m3u8");
+        $tmp_file = get_temp_path($this->plugin_info['app_type_name'] . "_playlist_tv.m3u8");
         $this->tv_m3u_entries = null;
         hd_print("Clear playlist cache: $tmp_file");
         if (file_exists($tmp_file)) {
@@ -732,7 +732,7 @@ class default_config extends dynamic_config
      */
     public function ClearVodCache()
     {
-        $tmp_file = get_temp_path($this->PluginShortName . "_playlist_vod.m3u8");
+        $tmp_file = get_temp_path($this->plugin_info['app_type_name'] . "_playlist_vod.m3u8");
         $bak_file = $tmp_file . ".bak";
         copy($tmp_file, $bak_file);
         hd_print("Clear VOD cache: $tmp_file");
@@ -1011,7 +1011,7 @@ class default_config extends dynamic_config
      */
     protected function FetchTvM3U($plugin_cookies, $force = false)
     {
-        $m3u_file = get_temp_path($this->PluginShortName . "_playlist_tv.m3u8");
+        $m3u_file = get_temp_path($this->plugin_info['app_type_name'] . "_playlist_tv.m3u8");
         if ($force === false) {
             if (file_exists($m3u_file)) {
                 $mtime = filemtime($m3u_file);
@@ -1048,7 +1048,7 @@ class default_config extends dynamic_config
      */
     protected function FetchVodM3U($plugin_cookies, $force = false)
     {
-        $m3u_file = get_temp_path($this->PluginShortName . "_playlist_vod.m3u8");
+        $m3u_file = get_temp_path($this->plugin_info['app_type_name'] . "_playlist_vod.m3u8");
         if ($force === false) {
             if (file_exists($m3u_file)) {
                 $mtime = filemtime($m3u_file);

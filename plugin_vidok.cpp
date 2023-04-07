@@ -43,8 +43,8 @@ static constexpr auto API_COMMAND_SET_URL = L"http://sapi.ott.st/v2.4/json/{:s}?
 
 plugin_vidok::plugin_vidok()
 {
-	short_name = "vidok";
-	requested_token = true;
+	type_name = "vidok";
+	class_name = "vidok_config";
 }
 
 void plugin_vidok::load_default()
@@ -62,6 +62,8 @@ void plugin_vidok::load_default()
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
 	playlist_templates.emplace_back(info);
+
+	requested_token = true;
 
 	streams_config[0].cu_type = CatchupType::cu_append;
 	streams_config[0].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";

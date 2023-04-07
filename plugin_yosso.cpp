@@ -39,7 +39,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_yosso::plugin_yosso()
 {
-	short_name = "yosso";
+	type_name = "yosso";
 }
 
 void plugin_yosso::load_default()

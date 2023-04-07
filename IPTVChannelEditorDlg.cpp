@@ -782,7 +782,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndPlaylist.EnableWindow(TRUE);
 
 	// Load channel lists
-	const auto& plugin_name = GetPluginShortNameW(m_plugin_type);
+	const auto& plugin_name = GetPluginTypeNameW(m_plugin_type);
 	const auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), plugin_name);
 	const auto& default_tv_name = fmt::format(L"{:s}_channel_list.xml", plugin_name);
 	const auto& default_vod_name = fmt::format(L"{:s}_mediateka_list.xml", plugin_name);
@@ -874,7 +874,7 @@ void CIPTVChannelEditorDlg::ReloadConfigs()
 	m_all_configs_lists.clear();
 	m_all_configs_lists.emplace_back(load_string_resource(IDS_STRING_STR_DEFAULT));
 
-	std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + m_plugin->get_short_name_w());
+	std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + m_plugin->get_type_name());
 	std::error_code err;
 	std::filesystem::directory_iterator conf_dir_iter(config_dir, err);
 	for (auto const& dir_entry : conf_dir_iter)
@@ -984,7 +984,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	else
 	{
 		url = m_plugin->get_playlist_url(params);
-		m_plFileName = fmt::format(_T("{:s}_Playlist_{:s}.m3u8"), GetPluginShortNameW(m_plugin_type, true), info.get_name());
+		m_plFileName = fmt::format(_T("{:s}_Playlist_{:s}.m3u8"), GetPluginTypeNameW(m_plugin_type, true), info.get_name());
 	}
 
 	if (url.empty())
@@ -2025,7 +2025,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 
 	const auto& channelsPath = fmt::format(L"{:s}{:s}\\{:s}",
 										   GetConfig().get_string(true, REG_LISTS_PATH),
-										   GetPluginShortNameW(m_plugin_type),
+										   GetPluginTypeNameW(m_plugin_type),
 										   m_all_channels_lists[lst_idx]);
 
 	std::ifstream is(channelsPath, std::istream::binary);
@@ -3425,7 +3425,7 @@ void CIPTVChannelEditorDlg::OnSave()
 	int lst_idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
 	if (lst_idx == -1 || m_all_channels_lists.empty())
 	{
-		const auto& plugin_name = GetPluginShortNameW(m_plugin_type);
+		const auto& plugin_name = GetPluginTypeNameW(m_plugin_type);
 		const auto& list_name = fmt::format(L"{:s}_channel_list.xml", plugin_name);
 		const auto& list_path = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), plugin_name);
 		std::error_code err;
@@ -3491,7 +3491,7 @@ void CIPTVChannelEditorDlg::OnSave()
 
 		doc->append_node(tv_info);
 		// write document
-		auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), GetPluginShortNameW(m_plugin_type));
+		auto& channelsPath = fmt::format(L"{:s}{:s}\\", GetConfig().get_string(true, REG_LISTS_PATH), GetPluginTypeNameW(m_plugin_type));
 		std::error_code err;
 		std::filesystem::create_directories(channelsPath, err);
 
@@ -4298,7 +4298,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList()
 	if (!CheckForSave())
 		return;
 
-	const auto& pluginName = GetPluginShortNameW(m_plugin_type);
+	const auto& pluginName = GetPluginTypeNameW(m_plugin_type);
 	int cnt = 2;
 	std::wstring newListName;
 	for(;;)
@@ -5417,7 +5417,7 @@ void CIPTVChannelEditorDlg::SaveStreamInfo()
 {
 	const auto& dump = m_stream_infos.serialize();
 	// write document
-	const auto& streamInfoFile = fmt::format(L"{:s}{:s}\\stream_info.bin", GetConfig().get_string(true, REG_LISTS_PATH), GetPluginShortNameW(m_plugin_type));
+	const auto& streamInfoFile = fmt::format(L"{:s}{:s}\\stream_info.bin", GetConfig().get_string(true, REG_LISTS_PATH), GetPluginTypeNameW(m_plugin_type));
 	std::ofstream os(streamInfoFile, std::istream::binary);
 	os.write(dump.data(), dump.size());
 	os.close();

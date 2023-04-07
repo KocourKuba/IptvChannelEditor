@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_sharavoz::plugin_sharavoz()
 {
-	short_name = "sharavoz";
+	type_name = "sharavoz";
 }
 
 void plugin_sharavoz::load_default()

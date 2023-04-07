@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_bcumedia::plugin_bcumedia()
 {
-	short_name = "bcumedia";
+	type_name = "bcumedia";
 }
 
 void plugin_bcumedia::load_default()

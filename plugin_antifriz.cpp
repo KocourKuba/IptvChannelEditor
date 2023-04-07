@@ -36,7 +36,8 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_antifriz::plugin_antifriz()
 {
-	short_name = "antifriz";
+	type_name = "antifriz";
+	class_name = "antifriz_config";
 }
 
 void plugin_antifriz::load_default()

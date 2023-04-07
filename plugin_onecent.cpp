@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_onecent::plugin_onecent()
 {
-	short_name = "onecent";
+	type_name = "onecent";
 }
 
 void plugin_onecent::load_default()

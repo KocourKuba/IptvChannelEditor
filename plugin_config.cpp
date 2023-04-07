@@ -100,7 +100,7 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool us
 	}
 	else
 	{
-		std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_short_name_w());
+		std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_type_name());
 		std::filesystem::create_directories(config_dir);
 		full_path = config_dir.append(filename);
 	}
@@ -141,7 +141,7 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename)
 		return;
 	}
 
-	std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_short_name_w());
+	std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_type_name());
 	const auto& full_path = config_dir.append(filename);
 
 	bool res = false;

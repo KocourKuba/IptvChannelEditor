@@ -43,8 +43,8 @@ static constexpr auto API_COMMAND_SET_URL = L"http://api.iptv.so/0.9/json/{:s}?t
 
 plugin_tvclub::plugin_tvclub()
 {
-	short_name = "tvclub";
-	requested_token = true;
+	type_name = "tvclub";
+	class_name = "tvclub_config";
 }
 
 void plugin_tvclub::load_default()
@@ -62,6 +62,8 @@ void plugin_tvclub::load_default()
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
 	playlist_templates.emplace_back(info);
+
+	requested_token = true;
 
 	streams_config[1].cu_type = CatchupType::cu_append;
 	streams_config[1].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";

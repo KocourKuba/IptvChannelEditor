@@ -35,7 +35,8 @@ DEALINGS IN THE SOFTWARE.
 
 base_plugin::base_plugin()
 {
-	short_name = "custom";
+	type_name = "custom";
+	class_name = "default_config";
 }
 
 base_plugin::base_plugin(const base_plugin& src)
@@ -529,7 +530,7 @@ std::wstring base_plugin::compile_name_template(std::wstring packed_name, const 
 	CTime st(cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour(), cur_dt.GetMinute(), cur_dt.GetSecond());
 	std::tm lt = fmt::localtime(st.GetTime());
 
-	utils::string_replace_inplace<wchar_t>(packed_name, REPL_TYPE, utils::utf8_to_utf16(short_name));
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_TYPE, get_type_name());
 	utils::string_replace_inplace<wchar_t>(packed_name, REPL_NAME, utils::utf8_to_utf16(name));
 	utils::string_replace_inplace<wchar_t>(packed_name, REPL_YEAR, std::to_wstring(cur_dt.GetYear()));
 	utils::string_replace_inplace<wchar_t>(packed_name, REPL_MONTH, std::to_wstring(cur_dt.GetMonth()));

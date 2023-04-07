@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_ottiptv::plugin_ottiptv()
 {
-	short_name = "ottiptv";
+	type_name = "ottiptv";
 }
 
 void plugin_ottiptv::load_default()

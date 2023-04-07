@@ -56,6 +56,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CTooltipPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_TITLE, &CPluginConfigPage::OnEnChangeEditTitle)
 	ON_EN_CHANGE(IDC_EDIT_USER_AGENT, &CPluginConfigPage::OnEnChangeEditUserAgent)
 	ON_EN_CHANGE(IDC_EDIT_PROVIDER_URL, &CPluginConfigPage::OnEnChangeEditProviderUrl)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CLASS_NAME, &CPluginConfigPage::OnEnChangeEditClassName)
 END_MESSAGE_MAP()
 
 CPluginConfigPage::CPluginConfigPage() : CTooltipPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
@@ -74,6 +75,8 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_USER_AGENT, m_UserAgent);
 	DDX_Control(pDX, IDC_EDIT_PROVIDER_URL, m_wndProviderUrl);
 	DDX_Text(pDX, IDC_EDIT_PROVIDER_URL, m_ProviderUrl);
+	DDX_Control(pDX, IDC_EDIT_PLUGIN_CLASS_NAME, m_wndClassName);
+	DDX_Text(pDX, IDC_EDIT_PLUGIN_CLASS_NAME, m_ClassName);
 	DDX_Control(pDX, IDC_COMBO_ACCESS_TYPE, m_wndAccessType);
 	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndChkSquareIcons);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_EXT_FILES, m_wndBtnExtFiles);
@@ -95,6 +98,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	AddTooltip(IDC_EDIT_PLUGIN_NAME, IDS_STRING_EDIT_PLUGIN_NAME);
 	AddTooltip(IDC_EDIT_TITLE, IDS_STRING_EDIT_TITLE);
 	AddTooltip(IDC_EDIT_PROVIDER_URL, IDS_STRING_EDIT_PROVIDER_URL);
+	AddTooltip(IDC_EDIT_PLUGIN_CLASS_NAME, IDS_STRING_EDIT_PLUGIN_CLASS_NAME);
 	AddTooltip(IDC_CHECK_SQUARE_ICONS, IDS_STRING_CHECK_SQUARE_ICONS);
 	AddTooltip(IDC_BUTTON_EDIT_EXT_FILES, IDS_STRING_BUTTON_EDIT_EXT_FILES);
 	AddTooltip(IDC_BUTTON_EDIT_EXT_SCRIPTS, IDS_STRING_BUTTON_EDIT_EXT_SCRIPTS);
@@ -146,6 +150,7 @@ void CPluginConfigPage::UpdateControls()
 	m_wndTitle.SetReadOnly(readOnly);
 	m_wndUserAgent.SetReadOnly(readOnly);
 	m_wndProviderUrl.SetReadOnly(readOnly);
+	m_wndClassName.SetReadOnly(readOnly);
 	m_wndChkSquareIcons.EnableWindow(!readOnly);
 	m_wndAccessType.EnableWindow(custom);
 
@@ -186,6 +191,7 @@ void CPluginConfigPage::FillControls()
 	m_Title = plugin->get_title().c_str();
 	m_UserAgent = plugin->get_user_agent().c_str();
 	m_ProviderUrl = plugin->get_provider_url().c_str();
+	m_ClassName = plugin->get_class_name().c_str();
 
 	UpdateData(FALSE);
 
@@ -343,4 +349,11 @@ void CPluginConfigPage::OnEnChangeEditProviderUrl()
 	UpdateData(TRUE);
 	AllowSave();
 	GetPropertySheet()->m_plugin->set_provider_url(m_ProviderUrl.GetString());
+}
+
+void CPluginConfigPage::OnEnChangeEditClassName()
+{
+	UpdateData(TRUE);
+	AllowSave();
+	GetPropertySheet()->m_plugin->set_class_name(m_ClassName.GetString());
 }

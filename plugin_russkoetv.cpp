@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_russkoetv::plugin_russkoetv()
 {
-	short_name = "russkoetv";
+	type_name = "russkoetv";
 }
 
 void plugin_russkoetv::load_default()

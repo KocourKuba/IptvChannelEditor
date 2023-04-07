@@ -35,7 +35,8 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_edem::plugin_edem()
 {
-	short_name = "edem";
+	type_name = "edem";
+	class_name = "edem_config";
 }
 
 void plugin_edem::load_default()

@@ -41,7 +41,8 @@ static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
 
 plugin_itv::plugin_itv()
 {
-	short_name = "itv";
+	type_name = "itv";
+	class_name = "itv_config";
 }
 
 void plugin_itv::load_default()

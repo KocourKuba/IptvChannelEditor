@@ -1,8 +1,8 @@
 ﻿<dune_plugin>
+    <type_name></type_name>
     <name>{name}</name>
     <caption>{plugin_caption}</caption>
     <class_name>default</class_name>
-    <short_name>{short_name}</short_name>
     <icon_url>{plugin_logo}</icon_url>
     <background>{plugin_bg}</background>
     <version_index>{plugin_version_index}</version_index>
@@ -17,6 +17,24 @@
                 <run_string>bin/update_suppliers</run_string>
             </data>
         </boot_end>
+        <gui_start>
+            <type>plugin_system</type>
+            <data>
+                <run_string></run_string>
+            </data>
+        </gui_start>
+        <install>
+            <type>plugin_system</type>
+            <data>
+                <run_string></run_string>
+            </data>
+        </install>
+        <update>
+            <type>plugin_system</type>
+            <data>
+                <run_string></run_string>
+            </data>
+        </update>
     </global_actions>
     <check_update>
         <schema>2</schema>

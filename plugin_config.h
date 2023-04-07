@@ -359,15 +359,16 @@ public:
 	PluginType get_plugin_type() const { return plugin_type; }
 
 	/// <summary>
-	/// plugin short name
+	/// plugin type name
 	/// </summary>
-	const std::string& get_short_name() const { return short_name; }
-	void set_short_name(const std::string& val) { short_name = val; }
+	std::wstring get_type_name() const { return utils::utf8_to_utf16(type_name); }
+	const std::string& get_type_name_a() const { return type_name; }
 
 	/// <summary>
-	/// plugin short name wide char
+	/// plugin class name
 	/// </summary>
-	std::wstring get_short_name_w() const { return utils::utf8_to_utf16(short_name); }
+	const std::string& get_class_name() const { return class_name; }
+	void set_class_name(const std::wstring& val) { class_name = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// returns link to provider api url
@@ -715,7 +716,7 @@ public:
 	friend void to_json(nlohmann::json& j, const plugin_config& c)
 	{
 		SERIALIZE_STRUCT(j, c, access_type);
-		SERIALIZE_STRUCT(j, c, short_name);
+		SERIALIZE_STRUCT(j, c, class_name);
 		SERIALIZE_STRUCT(j, c, name);
 		SERIALIZE_STRUCT(j, c, title);
 		SERIALIZE_STRUCT(j, c, dev_code);
@@ -748,7 +749,7 @@ public:
 	friend void from_json(const nlohmann::json& j, plugin_config& c)
 	{
 		DESERIALIZE_STRUCT(j, c, access_type);
-		DESERIALIZE_STRUCT(j, c, short_name);
+		DESERIALIZE_STRUCT(j, c, class_name);
 		DESERIALIZE_STRUCT(j, c, name);
 		DESERIALIZE_STRUCT(j, c, title);
 		DESERIALIZE_STRUCT(j, c, user_agent);
@@ -781,11 +782,12 @@ protected:
 
 	// non configurable parameters
 	PluginType plugin_type = PluginType::enCustom;
-	std::string short_name;
+	std::string type_name;
 
 	std::wstring provider_api_url;
 
 	// configurable parameters
+	std::string class_name;
 
 	// plugin access type
 	AccountAccessType access_type = AccountAccessType::enNone;

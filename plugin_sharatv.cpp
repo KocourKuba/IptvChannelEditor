@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_sharatv::plugin_sharatv()
 {
-	short_name = "sharatv";
+	type_name = "sharatv";
 }
 
 void plugin_sharatv::load_default()

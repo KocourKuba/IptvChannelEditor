@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_filmax::plugin_filmax()
 {
-	short_name = "filmax";
+	type_name = "filmax";
 }
 
 void plugin_filmax::load_default()

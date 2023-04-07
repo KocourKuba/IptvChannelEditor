@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_kineskop::plugin_kineskop()
 {
-	short_name = "kineskop";
+	type_name = "kineskop";
 }
 
 void plugin_kineskop::load_default()

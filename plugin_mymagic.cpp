@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_mymagic::plugin_mymagic()
 {
-	short_name = "mymagic";
+	type_name = "mymagic";
 }
 
 void plugin_mymagic::load_default()

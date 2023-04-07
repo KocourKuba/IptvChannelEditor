@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 plugin_fox::plugin_fox()
 {
-	short_name = "fox";
+	type_name = "fox";
 }
 
 void plugin_fox::load_default()

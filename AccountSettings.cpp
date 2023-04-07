@@ -409,7 +409,7 @@ void AccountSettings::ReadSettingsRegistry(PluginType plugin_type)
 	if (::RegOpenCurrentUser(KEY_READ, &hkHive) != ERROR_SUCCESS)
 		return;
 
-	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginShortNameW(plugin_type, false));
+	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginTypeNameW(plugin_type));
 	HKEY hKey = nullptr;
 	if (::RegOpenKeyExW(hkHive, reg_key.c_str(), 0, KEY_READ, &hKey) == ERROR_SUCCESS)
 	{
@@ -465,7 +465,7 @@ void AccountSettings::SaveSectionRegistry(PluginType plugin_type)
 	if (::RegOpenCurrentUser(KEY_WRITE, &hkHive) != ERROR_SUCCESS)
 		return;
 
-	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginShortNameW(plugin_type, false));
+	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginTypeNameW(plugin_type));
 	HKEY hKey = nullptr;
 	DWORD dwDesp;
 
@@ -516,7 +516,7 @@ bool AccountSettings::ReadSettingsJson(PluginType plugin_type)
 	if (plugin_type == PluginType::enBase)
 		j_section = utils::utf16_to_utf8(std::wstring_view(APP_SETTINGS));
 	else
-		j_section = GetPluginShortNameA(plugin_type, false);
+		j_section = GetPluginTypeNameA(plugin_type, false);
 
 	if (!m_config.contains(j_section))
 		return false;
@@ -615,5 +615,5 @@ void AccountSettings::UpdateSettingsJson(PluginType plugin_type)
 	if (plugin_type == PluginType::enBase)
 		m_config[utils::utf16_to_utf8(std::wstring_view(APP_SETTINGS))] = node;
 	else
-		m_config[GetPluginShortNameA(plugin_type, false)] = node;
+		m_config[GetPluginTypeNameA(plugin_type, false)] = node;
 }

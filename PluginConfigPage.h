@@ -60,6 +60,7 @@ protected:
 	afx_msg void OnEnChangeEditTitle();
 	afx_msg void OnEnChangeEditUserAgent();
 	afx_msg void OnEnChangeEditProviderUrl();
+	afx_msg void OnEnChangeEditClassName();
 
 	afx_msg void OnCbnSelchangeComboAccessType();
 
@@ -81,6 +82,7 @@ protected:
 	CEdit m_wndTitle;
 	CEdit m_wndUserAgent;
 	CEdit m_wndProviderUrl;
+	CEdit m_wndClassName;
 
 	CComboBox m_wndAccessType;
 	CButton m_wndBtnExtFiles;
@@ -99,5 +101,5 @@ protected:
 	CString m_Title;
 	CString m_UserAgent;
 	CString m_ProviderUrl;
-public:
+	CString m_ClassName;
 };
