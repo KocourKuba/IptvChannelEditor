@@ -158,7 +158,6 @@ void CPluginConfigPageVOD::UpdateControls()
 	m_wndVodUrlTemplate.SetReadOnly(readOnly);
 	m_wndVodRegex.EnableWindow(enableVod && enableM3U);
 	m_wndVodRegex.SetReadOnly(readOnly);
-	m_wndVodRegex.SetReadOnly(readOnly);
 	m_wndVodUrlPrefix.SetReadOnly(readOnly);
 	m_wndVodUrlParams.SetReadOnly(readOnly);
 }

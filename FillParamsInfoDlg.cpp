@@ -98,6 +98,12 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 			csID.LoadString(IDS_STRING_CURRENT);
 			csName.LoadString(IDS_STRING_NAME);
 			break;
+		case 5:
+			m_isFirstColEditable = false;
+			csID.LoadString(IDS_STRING_ENTRY);
+			csName.LoadString(IDS_STRING_VALUE);
+			m_fixed = true;
+			break;
 		default:
 			break;
 	}
@@ -113,7 +119,7 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 		idx++;
 	}
 
-	m_wndAdd.EnableWindow(!m_readonly);
+	m_wndAdd.EnableWindow(!m_readonly && !m_fixed);
 	m_wndRemove.EnableWindow(FALSE);
 	m_wndCopy.EnableWindow(FALSE);
 
@@ -168,7 +174,10 @@ LRESULT CFillParamsInfoDlg::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 {
 	// Get the changed field text via the callback
 	NMLVDISPINFO* dispinfo = reinterpret_cast<NMLVDISPINFO*>(lParam);
-	if (m_readonly || dispinfo->item.pszText[0] == '\0')
+	if (m_readonly)
+		return 1;
+
+	if (m_type != 5 && dispinfo->item.pszText[0] == '\0')
 		return 1;
 
 	m_wndListParams.SetItemText(dispinfo->item.iItem, dispinfo->item.iSubItem, dispinfo->item.pszText);
@@ -211,8 +220,8 @@ void CFillParamsInfoDlg::OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResul
 	if ((pNMLV->uChanged & LVIF_STATE))
 	{
 		BOOL enable = (!m_readonly && pNMLV->uNewState & LVIS_SELECTED);
-		m_wndRemove.EnableWindow(enable);
-		m_wndCopy.EnableWindow(enable);
+		m_wndRemove.EnableWindow(enable && !m_fixed);
+		m_wndCopy.EnableWindow(enable && !m_fixed);
 	}
 
 	*pResult = 0;

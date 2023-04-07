@@ -139,7 +139,7 @@ BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC_LOGO,4,4,20,20
     LTEXT           "Version 1.0",IDC_STATIC_VERSION,53,4,85,9,SS_NOPREFIX
     LTEXT           "Copyright © 2020-2023\nPavel Abakanov (sharky72)",IDC_STATIC,53,15,158,22
-    DEFPUSHBUTTON   "OK",IDOK,82,73,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,81,73,50,14,WS_GROUP
     CONTROL         "Donate at PayPal",IDC_MFCLINK_DONATE_PAYPAL,"MfcLink",WS_TABSTOP,52,38,110,14
     CONTROL         "Donate at YooMoney ",IDC_MFCLINK_DONATE_YOOMONEY,
                     "MfcLink",WS_TABSTOP,52,52,110,14
@@ -525,17 +525,19 @@ BEGIN
     CONTROL         "Square Icons",IDC_CHECK_SQUARE_ICONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,96,72,89,10
     LTEXT           "External bin files",IDC_STATIC,7,86,94,8
     PUSHBUTTON      "...",IDC_BUTTON_EDIT_EXT_FILES,7,95,19,14,BS_BITMAP
-    LTEXT           "External cgi scripts",IDC_STATIC,193,86,94,8
-    PUSHBUTTON      "...",IDC_BUTTON_EDIT_EXT_SCRIPTS,193,95,19,14,BS_BITMAP
+    LTEXT           "External cgi scripts",IDC_STATIC,167,86,94,8
+    PUSHBUTTON      "...",IDC_BUTTON_EDIT_EXT_SCRIPTS,167,95,19,14,BS_BITMAP
     PUSHBUTTON      "...",IDC_BUTTON_EDIT_SERVERS,7,112,19,14,BS_BITMAP
-    CONTROL         "Static Servers List",IDC_CHECK_STATIC_SERVERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,30,115,143,10
+    CONTROL         "Static Servers List",IDC_CHECK_STATIC_SERVERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,30,115,133,10
     PUSHBUTTON      "...",IDC_BUTTON_EDIT_DEVICES,7,129,19,14,BS_BITMAP
-    CONTROL         "Static Devices List",IDC_CHECK_STATIC_DEVICES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,30,132,143,10
-    PUSHBUTTON      "...",IDC_BUTTON_EDIT_QUALITY,193,112,19,14,BS_BITMAP
+    CONTROL         "Static Devices List",IDC_CHECK_STATIC_DEVICES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,30,132,133,10
+    PUSHBUTTON      "...",IDC_BUTTON_EDIT_QUALITY,167,112,19,14,BS_BITMAP
     CONTROL         "Static Qualities List",IDC_CHECK_STATIC_QUALITIES,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,216,115,143,10
-    PUSHBUTTON      "...",IDC_BUTTON_EDIT_PROFILES,193,129,19,14,BS_BITMAP
-    CONTROL         "Static Profiles List",IDC_CHECK_STATIC_PROFILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,216,132,143,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,190,115,133,10
+    PUSHBUTTON      "...",IDC_BUTTON_EDIT_PROFILES,167,129,19,14,BS_BITMAP
+    CONTROL         "Static Profiles List",IDC_CHECK_STATIC_PROFILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,190,132,133,10
+    LTEXT           "Manifest entries",IDC_STATIC,276,86,94,8
+    PUSHBUTTON      "...",IDC_BUTTON_EDIT_MANIFEST,276,95,19,14,BS_BITMAP
 END
 
 IDD_DIALOG_FILL_PARAMS DIALOGEX 0, 0, 191, 143
@@ -1122,6 +1124,8 @@ BEGIN
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 100, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
@@ -2067,6 +2071,10 @@ STRINGTABLE
 BEGIN
     IDS_STRING_EDIT_PLUGIN_CLASS_NAME 
                             "PHP class name used to override default_config class methods. In case when need to write our own implementation of base methods for the plugin. PHP script must be placed in the 'dune_plugin\\configs' folder. By default used 'default_config' class name."
+    IDS_STRING_ENTRY        "Entry"
+    IDS_STRING_VALUE        "Value"
+    IDS_STRING_BUTTON_EDIT_MANIFEST 
+                            "Set Global Plugin Action manifest entries. See http://files.dune-hd.com/sdk/doc/html/plugins.html#global_plugin_actions"
 END
 
 #endif    // English (United States) resources

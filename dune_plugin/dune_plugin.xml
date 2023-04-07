@@ -1,4 +1,5 @@
 ﻿<dune_plugin>
+    <type>php</type>
     <type_name></type_name>
     <name>{name}</name>
     <caption>{plugin_caption}</caption>
@@ -10,32 +11,10 @@
     <release_date>{plugin_release_date}</release_date>
     <channels_url_path></channels_url_path>
     <channels_direct_links></channels_direct_links>
-    <global_actions>
-        <boot_end>
-            <type>plugin_system</type>
-            <data>
-                <run_string>bin/update_suppliers</run_string>
-            </data>
-        </boot_end>
-        <gui_start>
-            <type>plugin_system</type>
-            <data>
-                <run_string></run_string>
-            </data>
-        </gui_start>
-        <install>
-            <type>plugin_system</type>
-            <data>
-                <run_string></run_string>
-            </data>
-        </install>
-        <update>
-            <type>plugin_system</type>
-            <data>
-                <run_string></run_string>
-            </data>
-        </update>
-    </global_actions>
+    <global_actions></global_actions>
+    <params>
+        <program>starnet.php</program>
+    </params>
     <check_update>
         <schema>2</schema>
         <url></url>
@@ -159,10 +138,6 @@
             </actions>
         </entry_point>
     </entry_points>
-    <type>php</type>
-    <params>
-        <program>starnet.php</program>
-    </params>
     <auto_resume>
         <enable>yes</enable>
         <action>

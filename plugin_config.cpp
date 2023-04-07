@@ -68,6 +68,15 @@ void plugin_config::load_default()
 	static_devices = false;
 	static_profiles = false;
 
+	manifest_list = {
+		{"boot", "" },
+		{"boot_end", "bin/update_suppliers" },
+		{"gui_start", "" },
+		{"install", "" },
+		{"uninstall", "" },
+		{"update", "" },
+	};
+
 	StreamParameters hls;
 	hls.uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 	hls.uri_custom_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";

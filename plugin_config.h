@@ -615,6 +615,13 @@ public:
 	virtual void set_scripts_list(const std::vector<DynamicParamsInfo>& info) { scripts_list = info; }
 
 	/// <summary>
+	/// property list for plugin manifest
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	virtual const std::vector<DynamicParamsInfo>& get_manifest_list() { return manifest_list; }
+	virtual void set_manifest_list(const std::vector<DynamicParamsInfo>& info) { manifest_list = info; }
+
+	/// <summary>
 	/// <summary>
 	/// clear servers list
 	/// </summary>
@@ -740,6 +747,7 @@ public:
 		SERIALIZE_STRUCT(j, c, epg_params);
 		SERIALIZE_STRUCT(j, c, files_list);
 		SERIALIZE_STRUCT(j, c, scripts_list);
+		SERIALIZE_STRUCT(j, c, manifest_list);
 		SERIALIZE_STRUCT(j, c, servers_list);
 		SERIALIZE_STRUCT(j, c, qualities_list);
 		SERIALIZE_STRUCT(j, c, devices_list);
@@ -772,6 +780,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, epg_params);
 		DESERIALIZE_STRUCT(j, c, files_list);
 		DESERIALIZE_STRUCT(j, c, scripts_list);
+		DESERIALIZE_STRUCT(j, c, manifest_list);
 		DESERIALIZE_STRUCT(j, c, servers_list);
 		DESERIALIZE_STRUCT(j, c, qualities_list);
 		DESERIALIZE_STRUCT(j, c, devices_list);
@@ -834,6 +843,7 @@ protected:
 	std::array<EpgParameters, 2> epg_params;
 	std::vector<DynamicParamsInfo> files_list;
 	std::vector<DynamicParamsInfo> scripts_list;
+	std::vector<DynamicParamsInfo> manifest_list;
 	std::vector<DynamicParamsInfo> servers_list;
 	std::vector<DynamicParamsInfo> qualities_list;
 	std::vector<DynamicParamsInfo> devices_list;

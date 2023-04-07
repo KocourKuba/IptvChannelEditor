@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_ACCESS_TYPE, &CPluginConfigPage::OnCbnSelchangeComboAccessType)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_EXT_FILES, &CPluginConfigPage::OnBnClickedButtonEditExtFiles)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_EXT_SCRIPTS, &CPluginConfigPage::OnBnClickedButtonEditExtScripts)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_MANIFEST, &CPluginConfigPage::OnBnClickedButtonEditManifest)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_SERVERS, &CPluginConfigPage::OnBnClickedCheckStaticServers)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_DEVICES, &CPluginConfigPage::OnBnClickedCheckStaticDevices)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_QUALITIES, &CPluginConfigPage::OnBnClickedCheckStaticQualities)
@@ -81,6 +82,7 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndChkSquareIcons);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_EXT_FILES, m_wndBtnExtFiles);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_EXT_SCRIPTS, m_wndBtnExtScripts);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_MANIFEST, m_wndBtnManifest);
 	DDX_Control(pDX, IDC_CHECK_STATIC_SERVERS, m_wndChkStaticServers);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_SERVERS, m_wndBtnServers);
 	DDX_Control(pDX, IDC_CHECK_STATIC_DEVICES, m_wndChkStaticDevices);
@@ -102,6 +104,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	AddTooltip(IDC_CHECK_SQUARE_ICONS, IDS_STRING_CHECK_SQUARE_ICONS);
 	AddTooltip(IDC_BUTTON_EDIT_EXT_FILES, IDS_STRING_BUTTON_EDIT_EXT_FILES);
 	AddTooltip(IDC_BUTTON_EDIT_EXT_SCRIPTS, IDS_STRING_BUTTON_EDIT_EXT_SCRIPTS);
+	AddTooltip(IDC_BUTTON_EDIT_MANIFEST, IDS_STRING_BUTTON_EDIT_MANIFEST);
 	AddTooltip(IDC_CHECK_STATIC_SERVERS, IDS_STRING_CHECK_STATIC_SERVERS);
 	AddTooltip(IDC_BUTTON_EDIT_SERVERS, IDS_STRING_BUTTON_EDIT_SERVERS);
 	AddTooltip(IDC_CHECK_STATIC_DEVICES, IDS_STRING_CHECK_STATIC_DEVICES);
@@ -114,6 +117,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnExtFiles);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnExtScripts);
+	SetButtonImage(IDB_PNG_EDIT, m_wndBtnManifest);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnServers);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnDevices);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnQualities);
@@ -153,10 +157,6 @@ void CPluginConfigPage::UpdateControls()
 	m_wndClassName.SetReadOnly(readOnly);
 	m_wndChkSquareIcons.EnableWindow(!readOnly);
 	m_wndAccessType.EnableWindow(custom);
-
-	// ext files
-	m_wndBtnExtFiles.EnableWindow(!readOnly || !plugin->get_files_list().empty());
-	m_wndBtnExtScripts.EnableWindow(!readOnly || !plugin->get_scripts_list().empty());
 
 	// servers
 	m_wndChkStaticServers.SetCheck(plugin->get_static_servers());
@@ -230,6 +230,20 @@ void CPluginConfigPage::OnBnClickedButtonEditExtScripts()
 	{
 		AllowSave();
 		GetPropertySheet()->m_plugin->set_scripts_list(dlg.m_paramsList);
+	}
+}
+
+void CPluginConfigPage::OnBnClickedButtonEditManifest()
+{
+	CFillParamsInfoDlg dlg;
+	dlg.m_type = 5;
+	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_manifest_list();
+	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
+
+	if (dlg.DoModal() == IDOK)
+	{
+		AllowSave();
+		GetPropertySheet()->m_plugin->set_manifest_list(dlg.m_paramsList);
 	}
 }
 

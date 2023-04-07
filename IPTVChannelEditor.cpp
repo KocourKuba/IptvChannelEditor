@@ -916,6 +916,21 @@ bool PackPlugin(const PluginType plugin_type,
 			}
 		}
 
+		auto actions_node = d_node->first_node("global_actions");
+		for (const auto& entry : plugin->get_manifest_list())
+		{
+			if (entry.name.empty()) continue;
+
+			auto action_entry = doc->allocate_node(rapidxml::node_element, entry.id.c_str());
+			action_entry->append_node(rapidxml::alloc_node(*doc, "type", "plugin_system"));
+
+			auto node_data = doc->allocate_node(rapidxml::node_element, "data");
+			node_data->append_node(rapidxml::alloc_node(*doc, "run_string", entry.name.c_str()));
+			action_entry->append_node(node_data);
+
+			actions_node->append_node(action_entry);
+		}
+
 		auto cu_node = d_node->first_node("check_update");
 		const auto& update_url = noCustom ? "" : fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
 		cu_node->first_node("url")->value(update_url.c_str());
