@@ -88,6 +88,10 @@ class default_config extends dynamic_config
         }
     }
 
+    public function init_plugin()
+    {
+    }
+
     /**
      * @return Entry[]
      */

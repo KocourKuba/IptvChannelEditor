@@ -119,6 +119,8 @@ class Default_Dune_Plugin implements DunePlugin
             }
         }
         hd_print("----------------------------------------------------");
+
+        $this->config->init_plugin();
     }
 
     /**
