@@ -91,6 +91,8 @@ void plugin_sharavoz::fill_servers_list(TemplateParams* params /*= nullptr*/)
 		{ "am01.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P4)) },
 		{ "fr01.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P5)) },
 		{ "ch01.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P6)) },
+		{ "eu01.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P7)) },
+		{ "pl01.spr24.net", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SHARAVOZ_P8)) },
 	};
 
 	set_servers_list(servers);

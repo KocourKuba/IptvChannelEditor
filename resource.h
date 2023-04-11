@@ -346,6 +346,8 @@
 #define IDS_STRING_SHARAVOZ_P4          498
 #define IDS_STRING_SHARAVOZ_P5          499
 #define IDS_STRING_SHARAVOZ_P6          500
+#define IDS_STRING_SHARAVOZ_P7          501
+#define IDS_STRING_SHARAVOZ_P8          502
 #define IDS_STRING_YOSSO_ID1            505
 #define IDS_STRING_YOSSO_ID2            506
 #define IDS_STRING_YOSSO_ID3            507
@@ -665,7 +667,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280
