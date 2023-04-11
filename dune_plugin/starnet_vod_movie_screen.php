@@ -98,7 +98,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
                     (
                         PluginFolderViewParams::paint_path_box => false,
                         PluginFolderViewParams::paint_content_box_background => true,
-                        PluginFolderViewParams::background_url => $this->plugin->plugin_info['app_background']
+                        PluginFolderViewParams::background_url => $this->plugin->config->plugin_info['app_background']
                     )
                 ),
             );
@@ -127,7 +127,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             PluginMovieFolderView::params => array(
                 PluginFolderViewParams::paint_path_box => false,
                 PluginFolderViewParams::paint_content_box_background => true,
-                PluginFolderViewParams::background_url => $this->plugin->plugin_info['app_background']
+                PluginFolderViewParams::background_url => $this->plugin->config->plugin_info['app_background']
             )
         );
 

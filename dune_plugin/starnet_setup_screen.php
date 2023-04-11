@@ -98,7 +98,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         //////////////////////////////////////
         // Plugin name
         Control_Factory::add_vgap($defs, -10);
-        $title = " v.{$this->plugin->plugin_info['app_version']} [{$this->plugin->plugin_info['app_release_date']}]";
+        $title = " v.{$this->plugin->config->plugin_info['app_version']} [{$this->plugin->config->plugin_info['app_release_date']}]";
         Control_Factory::add_label($defs, "IPTV Channel Editor by sharky72", $title);
 
         $text_icon = $this->plugin->get_image_path('text.png');
@@ -258,11 +258,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $url_path = '';
         switch ($source) {
             case 2:
-                $url_path = $this->plugin->plugin_info['app_channels_url_path'];
+                $url_path = $this->plugin->config->plugin_info['app_channels_url_path'];
                 break;
             case 3:
-                if (isset($this->plugin->plugin_info['app_direct_links'][$channels_list])) {
-                    $url_path = $this->plugin->plugin_info['app_direct_links'][$channels_list];
+                if (isset($this->plugin->config->plugin_info['app_direct_links'][$channels_list])) {
+                    $url_path = $this->plugin->config->plugin_info['app_direct_links'][$channels_list];
                 }
                 break;
             default:

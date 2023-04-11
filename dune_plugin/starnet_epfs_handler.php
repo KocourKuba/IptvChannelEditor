@@ -51,7 +51,7 @@ class Starnet_Epfs_Handler extends Base_Epfs_Handler
         if (!self::$enabled)
             return;
 
-        self::$epf_id = $plugin->plugin_info['app_name'];
+        self::$epf_id = $plugin->config->plugin_info['app_name'];
         self::$no_internet_epfs = self::$epf_id . '.no_internet';
 
         hd_print("Starnet_Epfs_Handler: init: epf_id: " . self::$epf_id);

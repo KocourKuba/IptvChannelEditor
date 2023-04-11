@@ -313,10 +313,10 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     hd_print("load from: $channels_list_path");
                     break;
                 case 2:
-                    if (isset($plugin_cookies->channels_url) && !empty($plugin_cookies->channels_url)) {
+                    if (!empty($plugin_cookies->channels_url)) {
                         $url_path = $plugin_cookies->channels_url;
                     } else {
-                        $url_path = $this->plugin->plugin_info['app_channels_url_path'];
+                        $url_path = $this->plugin->config->plugin_info['app_channels_url_path'];
                     }
 
                     if (substr($url_path, -1) !== '/') {
@@ -327,13 +327,13 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     hd_print("load folder link: $url_path");
                     break;
                 case 3:
-                    if (isset($plugin_cookies->channels_direct_url) && !empty($plugin_cookies->channels_direct_url)) {
+                    if (!empty($plugin_cookies->channels_direct_url)) {
                         $url_path = $plugin_cookies->channels_direct_url;
                     } else {
-                        if (!isset($this->plugin->plugin_info['app_direct_links'][$channels_list])) {
+                        if (!isset($this->plugin->config->plugin_info['app_direct_links'][$channels_list])) {
                             throw new Exception("Direct link not set!");
                         }
-                        $url_path = $this->plugin->plugin_info['app_direct_links'][$channels_list];
+                        $url_path = $this->plugin->config->plugin_info['app_direct_links'][$channels_list];
                     }
 
                     hd_print("load direct link: $url_path");
