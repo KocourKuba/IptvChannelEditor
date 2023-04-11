@@ -491,12 +491,12 @@ function get_local_time_zone_offset()
  */
 function getTimeZone()
 {
+    $local_tz = get_local_tz();
+
     $tz = date('e');
     if ($tz !== 'UTC') {
-        return $tz;
+        return "$tz ($local_tz)";
     }
-
-    $local_tz = get_local_tz();
 
     if ($local_tz !== '') {
         $sign_ch = $local_tz[0];
