@@ -129,8 +129,10 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
             //foreach ($epg_data as $key=>$value) hd_print("Starnet_Tv_Rows_Screen: do_get_info_children: $key => $value");
             $program = (object)array();
-            $length = $epg_data[PluginTvEpgProgram::end_tm_sec] - $epg_data[PluginTvEpgProgram::start_tm_sec];
-            $program->time = sprintf("Длительность: %2d: %02d", $length / 3600, $length / 60 % 60);
+            $program->time = sprintf("%s - %s",
+                date('H:i', $epg_data[PluginTvEpgProgram::start_tm_sec]),
+                date('H:i', $epg_data[PluginTvEpgProgram::end_tm_sec])
+            );
             //$program->year = preg_match('/\s+\((\d{4,4})\)$/', $epg_data[Ext_Epg_Program::main_category], $matches) ? $matches[1] : '';
             //$program->age = preg_match('/\s+\((\d{1,2}\+)\)$/', $epg_data[Ext_Epg_Program::main_category], $matches) ? $matches[1] : '';
 
