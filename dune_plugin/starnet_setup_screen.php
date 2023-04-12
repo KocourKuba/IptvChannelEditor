@@ -18,8 +18,9 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const SETUP_ACTION_PIN_APPLY = 'pin_apply';
     const SETUP_ACTION_CLEAR_ACCOUNT = 'clear_account';
     const SETUP_ACTION_CLEAR_ACCOUNT_APPLY = 'clear_account_apply';
-    const SETUP_ACTION_CHANGE_LIST_PATH = 'change_list_path';
-    const SETUP_ACTION_CHANGE_LIST = 'change_channels_list';
+    const SETUP_ACTION_CHANGE_CH_LIST_PATH = 'change_list_path';
+    const SETUP_ACTION_CHANGE_CH_LIST = 'change_channels_list';
+    const SETUP_ACTION_CHANGE_PL_LIST = 'change_playlist';
     const SETUP_ACTION_CHANNELS_SOURCE = 'channels_source';
     const SETUP_ACTION_CHANNELS_URL_DLG = 'channels_url_dialog';
     const SETUP_ACTION_CHANNELS_URL_APPLY = 'channels_url_apply';
@@ -157,7 +158,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 if (is_apk())
                     Control_Factory::add_label($defs, 'Папка со списками каналов:', $display_path);
                 else
-                    Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_LIST_PATH,
+                    Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_CH_LIST_PATH,
                         'Задать папку со списками каналов:', $display_path, $folder_icon);
                 break;
             case 2: // internet url
@@ -176,8 +177,19 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (empty($all_channels)) {
             Control_Factory::add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
         } else {
-            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANGE_LIST,
+            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANGE_CH_LIST,
                 'Используемый список каналов:', $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
+        }
+
+        //////////////////////////////////////
+        // playlist source
+        $all_tv_lists = $this->plugin->config->get_tv_list_names($plugin_cookies, $play_list_idx);
+        hd_print("current playlist index: $play_list_idx");
+
+        if (count($all_tv_lists) > 1) {
+            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANGE_PL_LIST,
+                'Источник плейлистов:', $play_list_idx,
+                $all_tv_lists, self::CONTROLS_WIDTH, true);
         }
 
         //////////////////////////////////////
@@ -628,7 +640,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
                     return Action_Factory::show_title_dialog('Данные удалены', $post_action);
 
-                case self::SETUP_ACTION_CHANGE_LIST_PATH:
+                case self::SETUP_ACTION_CHANGE_CH_LIST_PATH:
                     $media_url = MediaURL::encode(
                         array(
                             'screen_id' => Starnet_Folder_Screen::ID,
@@ -638,13 +650,13 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     );
                     return Action_Factory::open_folder($media_url, 'Папка со списком каналов');
 
-                case self::SETUP_ACTION_CHANGE_LIST:
+                case self::SETUP_ACTION_CHANGE_CH_LIST:
                     $old_value = $plugin_cookies->channels_list;
                     $plugin_cookies->channels_list = $new_value;
                     $action = $this->reload_channels($plugin_cookies);
                     if ($action === null) {
                         $plugin_cookies->channels_list = $old_value;
-                        Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!");
+                        Action_Factory::show_title_dialog("Ошибка загрузки списка каналов!");
                     }
                     return $action;
 
@@ -653,6 +665,18 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     hd_print("Selected channels source: $plugin_cookies->channels_source");
                     $action = $this->reload_channels($plugin_cookies);
                     if ($action === null) {
+                        Action_Factory::show_title_dialog("Ошибка загрузки списка каналов!");
+                    }
+                    return $action;
+
+                case self::SETUP_ACTION_CHANGE_PL_LIST:
+                    hd_print("current playlist: $new_value");
+                    $old_value = $plugin_cookies->playlist_idx;
+                    $plugin_cookies->playlist_idx = $new_value;
+                    hd_print("current playlist idx: $new_value");
+                    $action = $this->reload_channels($plugin_cookies);
+                    if ($action === null) {
+                        $plugin_cookies->playlist_idx = $old_value;
                         Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!");
                     }
                     return $action;

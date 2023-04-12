@@ -339,6 +339,28 @@ class default_config extends dynamic_config
         return $all_channels;
     }
 
+    public function get_tv_list_names($plugin_cookies, &$current_idx)
+    {
+        $tv_lists_array = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
+        $current_idx = isset($plugin_cookies->playlist_idx) ? $plugin_cookies->playlist_idx : $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX);
+        $tv_lists = array();
+        foreach ($tv_lists_array as $list) {
+            $tv_lists[] = $list[Plugin_Constants::PLAYLIST_NAME];
+        }
+        return $tv_lists;
+    }
+
+    public function get_tv_list($plugin_cookies, &$current_idx)
+    {
+        $tv_lists_array = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
+        $current_idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+        $tv_lists = array();
+        foreach ($tv_lists_array as $list) {
+            $tv_lists[$list[Plugin_Constants::PLAYLIST_NAME]] = $list[Plugin_Constants::URI_TEMPLATE];
+        }
+        return $tv_lists;
+    }
+
     public function get_vod_list_names($plugin_cookies, &$current_idx)
     {
         $vod_lists_array = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
@@ -664,7 +686,7 @@ class default_config extends dynamic_config
         $this->last_error = '';
         $pl_entries = array();
         $templates = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
-        $idx = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX);
+        $idx = isset($plugin_cookies->playlist_list) ? $plugin_cookies->playlist_list : $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX);
         hd_print("Get playlist information for index $idx");
 
         $parse_pattern = isset($templates[$idx][Plugin_Constants::PARSE_REGEX]) ? $templates[$idx][Plugin_Constants::PARSE_REGEX] : '';
