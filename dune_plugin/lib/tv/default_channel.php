@@ -89,11 +89,6 @@ class Default_Channel implements Channel
     protected $_ext_params;
 
     /**
-     * @var array
-     */
-    protected $_epg = array();
-
-    /**
      * @param string $id
      * @param string $channel_id
      * @param string $title
@@ -349,28 +344,25 @@ class Default_Channel implements Channel
     }
 
     /**
-     * get cached epg
-     * @param $source
-     * @param $day_start_ts
-     * @return array|false
+     * additional parameters
+     * @param string $epg_source_id
+     * @return string
      */
-    public function get_day_epg_items($source, $day_start_ts)
+    public function get_epg_source_id($epg_source_id)
     {
-        $epg_source = isset($this->_epg[$source]) ? $this->_epg[$source] : array();
-        return isset($epg_source[$day_start_ts]) ? $epg_source[$day_start_ts] : false;
-    }
+        switch ($epg_source_id) {
+            case Plugin_Constants::EPG_FIRST:
+                $epg_id = $this->get_epg_id();
+                break;
+            case Plugin_Constants::EPG_SECOND:
+                $epg_id = $this->get_tvg_id();
+                break;
+            default:
+                $epg_id = '';
+        }
 
-    /**
-     * set epg (cached epg_iterator)
-     * @param $source
-     * @param $day_start_ts
-     * @param array $epg
-     */
-    public function set_day_epg_items($source, $day_start_ts, $epg)
-    {
-        $this->_epg[$source][$day_start_ts] = $epg;
+        return $epg_id;
     }
-
     ///////////////////////////////////////////////////////////////////////
 
     /**

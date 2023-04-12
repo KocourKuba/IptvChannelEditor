@@ -566,6 +566,17 @@ class Action_Factory
         return array();
     }
 
+    public static function clear_rows_info_cache($post_action=null)
+    {
+        return array(
+            GuiAction::handler_string_id => PLUGIN_UPDATE_ROWS_INFO_ACTION_ID,
+            GuiAction::data => array(
+                PluginUpdateRowsInfoActionData::clear_cache => true,
+                PluginUpdateRowsInfoActionData::post_action => $post_action,
+                ),
+        );
+    }
+
     public static function update_rows_info($folder_key, $item_id, $info_defs,
         $bg_url = null, $nl_bg_url = null, $mask_url = null, $playback_urls = null, $post_action = null)
     {
@@ -579,8 +590,7 @@ class Action_Factory
             PluginRowsInfo::playback_urls => $playback_urls,
         );
 
-        return array
-        (
+        return array(
             GuiAction::handler_string_id => PLUGIN_UPDATE_ROWS_INFO_ACTION_ID,
             GuiAction::data => array(
                     PluginUpdateRowsInfoActionData::info => $info,

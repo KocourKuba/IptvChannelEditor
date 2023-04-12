@@ -34,7 +34,6 @@ class dynamic_config
         $this->features[Plugin_Constants::VOD_M3U] = false;
 
         $this->features[Plugin_Constants::PLAYLIST_TEMPLATE_INDEX] = 0;
-        $this->features[Plugin_Constants::VOD_TEMPLATES_INDEX] = 0;
 
 
         // load defaults

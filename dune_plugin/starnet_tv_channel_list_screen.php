@@ -94,7 +94,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         $media_url = MediaURL::decode($user_input->selected_media_url);
         $channel_id = $media_url->channel_id;
-        $channel = $this->plugin->tv->get_channels()->get($channel_id);
+        $channel = $this->plugin->tv->get_channel($channel_id);
 
         switch ($user_input->control_id) {
             case ACTION_PLAY_FOLDER:

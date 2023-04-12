@@ -137,6 +137,16 @@ class Starnet_Tv implements Tv, User_Input_Handler
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * clear epg memory cache
+     */
+    public function clear_epg_cache()
+    {
+        $this->epg_man->clear_epg_cache();
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+
+    /**
      * @param string $group_id
      * @return Group|mixed
      * @throws Exception
@@ -573,61 +583,44 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function get_day_epg($channel_id, $day_start_ts, &$plugin_cookies)
     {
+        $day_epg = array();
+
         try {
             // get channel by hash
             $channel = $this->get_channel($channel_id);
         } catch (Exception $ex) {
             hd_print("Can't get channel with ID: $channel_id");
-            return array();
+            return $day_epg;
         }
 
-        $epg_source_id = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
-        $day_epg = $channel->get_day_epg_items($epg_source_id, $day_start_ts);
-        if ($day_epg !== false)
-            return $day_epg;
-
+        // correct day start to local timezone
         $day_start_ts -= get_local_time_zone_offset();
 
-        try {
-            $epg = $this->epg_man->get_epg($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
-            if (count($epg) === 0) {
-                throw new Exception("No EPG data for $channel_id");
-            }
-        } catch (Exception $ex) {
-            hd_print("Can't fetch EPG ID from $epg_source_id epg source: " . $ex->getMessage());
-
+        hd_print("Starnet_Tv::get_day_epg day_start timestamp: $day_start_ts (" . format_datetime("Y-m-d H:i", $day_start_ts) . ")");
+        $epg_source_id = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
+        $day_epg_items = $this->epg_man->get_day_epg_items($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
+        if ($day_epg_items === false) {
             $epg_source_id = ($epg_source_id === Plugin_Constants::EPG_FIRST) ? Plugin_Constants::EPG_SECOND : Plugin_Constants::EPG_FIRST;
-            $day_epg = $channel->get_day_epg_items($epg_source_id, $day_start_ts);
-            if ($day_epg !== false)
-                return $day_epg;
+            $day_epg_items = $this->epg_man->get_day_epg_items($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
+        }
 
-            try {
-                $epg = $this->epg_man->get_epg($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
-                if (count($epg) === 0) {
-                    throw new Exception("No EPG data for $channel_id");
-                }
-            } catch (Exception $ex) {
-                hd_print("Can't fetch EPG ID from $epg_source_id epg source: " . $ex->getMessage());
-                return array();
+        if ($day_epg_items !== false) {
+            // get personal time shift for channel
+            $time_shift = $channel->get_timeshift_hours() * 3600;
+            foreach ($day_epg_items as $time => $value) {
+                $tm_start = (int)$time + $time_shift;
+                $tm_end = (int)$value[Epg_Params::EPG_END] + $time_shift;
+                $day_epg[] = array
+                (
+                    PluginTvEpgProgram::start_tm_sec => $tm_start,
+                    PluginTvEpgProgram::end_tm_sec => $tm_end,
+                    PluginTvEpgProgram::name => $value[Epg_Params::EPG_NAME],
+                    PluginTvEpgProgram::description => $value[Epg_Params::EPG_DESC],
+                );
+
+                //hd_print(format_datetime("m-d H:i", $tm_start) . " - " . format_datetime("m-d H:i", $tm_end) . " {$value[Epg_Params::EPG_NAME]}");
             }
         }
-
-        hd_print("Loaded " . count($epg) . " EPG entries");
-        // get personal time shift for channel
-        $time_shift = $channel->get_timeshift_hours() * 3600;
-        $day_epg = array();
-        foreach ($epg as $time => $value) {
-            $day_epg[] = array
-            (
-                PluginTvEpgProgram::start_tm_sec => (int)$time + $time_shift,
-                PluginTvEpgProgram::end_tm_sec => (int)$value[Epg_Params::EPG_END] + $time_shift,
-                PluginTvEpgProgram::name => $value[Epg_Params::EPG_NAME],
-                PluginTvEpgProgram::description => $value[Epg_Params::EPG_DESC],
-            );
-        }
-
-        $channel->set_day_epg_items($epg_source_id, $day_start_ts, $day_epg);
-        $this->set_channel($channel);
 
         return $day_epg;
     }
@@ -636,7 +629,9 @@ class Starnet_Tv implements Tv, User_Input_Handler
     {
         $program_ts = ($program_ts > 0 ? $program_ts : time());
         hd_print("Starnet_Tv::get_program_info for $channel_id at time $program_ts " . format_datetime("Y-m-d H:i", $program_ts));
-        $day_ts = strtotime(date('d-M-Y', $program_ts));
+        $day_start = date("Y-m-d", $program_ts);
+        $day_ts = strtotime($day_start) + get_local_time_zone_offset();
+        hd_print("Starnet_Tv::get_program_info day start $day_ts (" . format_datetime("Y-m-d H:i", $day_ts) . ")");
         $day_epg = $this->get_day_epg($channel_id, $day_ts, $plugin_cookies);
         foreach ($day_epg as $item) {
             if ($program_ts >= $item[PluginTvEpgProgram::start_tm_sec] && $program_ts < $item[PluginTvEpgProgram::end_tm_sec]) {
@@ -743,7 +738,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             Playback_Points::init();
         }
 
-        hd_print('TV Info loaded at ' . (microtime(1) - $t) . ' secs');
+        hd_print('Starnet_Tv::get_tv_info Info loaded at ' . (microtime(1) - $t) . ' secs');
 
         return array(
             PluginTvInfo::show_group_channels_only => $this->mode,

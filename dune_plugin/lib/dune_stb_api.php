@@ -495,7 +495,7 @@ function getTimeZone()
 
     $tz = date('e');
     if ($tz !== 'UTC') {
-        return "$tz ($local_tz)";
+        return "$tz (UTC$local_tz)";
     }
 
     if ($local_tz !== '') {

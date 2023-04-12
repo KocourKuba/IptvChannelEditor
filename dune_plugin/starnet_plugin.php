@@ -34,7 +34,7 @@ class Starnet_Plugin extends Default_Dune_Plugin
 
         $this->plugin_setup();
 
-        User_Input_Handler_Registry::get_instance()->register_handler(new Starnet_Entry_Handler());
+        User_Input_Handler_Registry::get_instance()->register_handler(new Starnet_Entry_Handler($this));
 
         $this->tv = new Starnet_Tv($this);
         $this->vod = new Starnet_Vod($this);

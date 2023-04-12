@@ -124,18 +124,9 @@ interface Channel
     public function get_ext_params();
 
     /**
-     * get cached epg
-     * @param $source
-     * @param $day_start_ts
-     * @return array|false
+     * additional parameters
+     * @param string $epg_source_id
+     * @return string
      */
-    public function get_day_epg_items($source, $day_start_ts);
-
-    /**
-     * set cached epg
-     * @param $source
-     * @param $day_start_ts
-     * @param array $epg
-     */
-    public function set_day_epg_items($source, $day_start_ts, $epg);
+    public function get_epg_source_id($epg_source_id);
 }

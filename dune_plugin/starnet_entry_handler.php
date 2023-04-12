@@ -6,12 +6,22 @@ class Starnet_Entry_Handler implements User_Input_Handler
 {
     const ID = 'entry';
 
+    private $plugin;
+
     /**
      * @return string
      */
     public function get_handler_id()
     {
         return self::ID . '_handler';
+    }
+
+    /**
+     * @param Default_Dune_Plugin $plugin
+     */
+    public function __construct(Default_Dune_Plugin $plugin)
+    {
+        $this->plugin = $plugin;
     }
 
     /**
@@ -53,14 +63,8 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 return Action_Factory::show_title_dialog($msg);
 
             case 'do_clear_epg':
-                $epg_path = get_temp_path("epg/");
-                hd_print("do clear epg: $epg_path");
-                foreach (glob($epg_path . "*") as $file) {
-                    if (is_file($file)) {
-                        unlink($file);
-                    }
-                }
-                return Action_Factory::show_title_dialog('Кэш EPG очищен');
+                $this->plugin->tv->clear_epg_cache();
+                return Action_Factory::clear_rows_info_cache(Action_Factory::show_title_dialog('Кэш EPG очищен'));
 
             case 'plugin_entry':
                 if (!isset($user_input->action_id)) break;
