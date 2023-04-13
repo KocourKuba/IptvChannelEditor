@@ -254,9 +254,21 @@ void PlaylistEntry::search_epg(const m3u_tags& tags)
 
 std::string PlaylistEntry::search_logo(const m3u_tags& tags)
 {
-	const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_logo);
+	static std::array<m3u_entry::info_tags, 3> logo_search_tags =
+	{
+		m3u_entry::info_tags::tag_url_logo,
+		m3u_entry::info_tags::tag_tvg_logo,
+	};
 
-	return pair != tags.end() ? pair->second : "";
+	for (const auto& tag : logo_search_tags)
+	{
+		if (const auto& pair = tags.find(tag); pair != tags.end() && !pair->second.empty())
+		{
+			return pair->second;
+		}
+	}
+
+	return "";
 }
 
 std::string PlaylistEntry::search_catchup_source(const m3u_tags& tags)
