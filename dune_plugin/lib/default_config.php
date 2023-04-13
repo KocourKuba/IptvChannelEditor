@@ -339,10 +339,24 @@ class default_config extends dynamic_config
         return $all_channels;
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return int
+     */
+    public function get_tv_list_idx($plugin_cookies)
+    {
+        return isset($plugin_cookies->playlist_idx) ? $plugin_cookies->playlist_idx : $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX);
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @param $current_idx
+     * @return array
+     */
     public function get_tv_list_names($plugin_cookies, &$current_idx)
     {
         $tv_lists_array = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
-        $current_idx = isset($plugin_cookies->playlist_idx) ? $plugin_cookies->playlist_idx : $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX);
+        $current_idx = $this->get_tv_list_idx($plugin_cookies);
         $tv_lists = array();
         foreach ($tv_lists_array as $list) {
             $tv_lists[] = $list[Plugin_Constants::PLAYLIST_NAME];
@@ -350,35 +364,44 @@ class default_config extends dynamic_config
         return $tv_lists;
     }
 
-    public function get_tv_list($plugin_cookies, &$current_idx)
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_current_tv_template($plugin_cookies)
     {
         $tv_lists_array = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
-        $current_idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
-        $tv_lists = array();
-        foreach ($tv_lists_array as $list) {
-            $tv_lists[$list[Plugin_Constants::PLAYLIST_NAME]] = $list[Plugin_Constants::URI_TEMPLATE];
-        }
-        return $tv_lists;
+        $current_idx = $this->get_tv_list_idx($plugin_cookies);
+        return isset($tv_lists_array[$current_idx]) ? $tv_lists_array[$current_idx] : array();
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return int
+     */
+    public function get_vod_list_idx($plugin_cookies)
+    {
+        return isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_current_vod_template($plugin_cookies)
+    {
+        $current_idx = $this->get_vod_list_idx($plugin_cookies);
+        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
+        return isset($vod_templates[$current_idx]) ? $vod_templates[$current_idx] : array();
     }
 
     public function get_vod_list_names($plugin_cookies, &$current_idx)
     {
         $vod_lists_array = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
-        $current_idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+        $current_idx = $this->get_vod_list_idx($plugin_cookies);
         $vod_lists = array();
         foreach ($vod_lists_array as $list) {
             $vod_lists[] = $list[Plugin_Constants::PLAYLIST_NAME];
-        }
-        return $vod_lists;
-    }
-
-    public function get_vod_list($plugin_cookies, &$current_idx)
-    {
-        $vod_lists_array = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
-        $current_idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
-        $vod_lists = array();
-        foreach ($vod_lists_array as $list) {
-            $vod_lists[$list[Plugin_Constants::PLAYLIST_NAME]] = $list[Plugin_Constants::URI_TEMPLATE];
         }
         return $vod_lists;
     }
@@ -656,17 +679,13 @@ class default_config extends dynamic_config
             return $this->account_data;
 
         $this->account_data = null;
-        $this->ClearPlaylistCache();
+        $this->ClearPlaylistCache($plugin_cookies);
         $this->SetupM3uParser(true, $plugin_cookies, $force);
 
-        $templates = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
-        $idx = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX);
-        $parse_pattern = isset($templates[$idx][Plugin_Constants::PARSE_REGEX]) ? $templates[$idx][Plugin_Constants::PARSE_REGEX] : '';
-
+        $parse_pattern = $this->get_tv_parse_pattern($plugin_cookies);
         if (empty($parse_pattern))
             return false;
 
-        $parse_pattern = "/$parse_pattern/";
         foreach ($this->get_tv_m3u_entries() as $entry) {
             if (preg_match($parse_pattern, $entry->getPath(), $matches)) {
                 $this->account_data = $matches;
@@ -681,26 +700,23 @@ class default_config extends dynamic_config
      * Collect information from m3u8 playlist
      * @return array
      */
-    public function GetPlaylistStreamsInfo()
+    public function GetPlaylistStreamsInfo($plugin_cookies)
     {
         $this->last_error = '';
         $pl_entries = array();
-        $templates = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
-        $idx = isset($plugin_cookies->playlist_list) ? $plugin_cookies->playlist_list : $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX);
-        hd_print("Get playlist information for index $idx");
 
-        $parse_pattern = isset($templates[$idx][Plugin_Constants::PARSE_REGEX]) ? $templates[$idx][Plugin_Constants::PARSE_REGEX] : '';
+        $parse_pattern = $this->get_tv_parse_pattern($plugin_cookies);
         if (empty($parse_pattern)) {
             $this->last_error = "Unable to parse playlist. Empty parse pattern.\nPossible error in plugin config?";
             hd_print($this->last_error);
-            $this->ClearPlaylistCache();
+            $this->ClearPlaylistCache($plugin_cookies);
             return $pl_entries;
         }
 
         //hd_print("Parsing pattern: $parse_pattern");
-        $parse_pattern = "/$parse_pattern/";
 
-        $tag_id = isset($templates[$idx][Plugin_Constants::TAG_ID_MATCH]) ? $templates[$idx][Plugin_Constants::TAG_ID_MATCH] : '';
+        $template = $this->get_current_tv_template($plugin_cookies);
+        $tag_id = isset($template[Plugin_Constants::TAG_ID_MATCH]) ? $template[Plugin_Constants::TAG_ID_MATCH] : '';
         if (!empty($tag_id)) {
             hd_print("ID matching tag: $tag_id");
         }
@@ -729,7 +745,7 @@ class default_config extends dynamic_config
         if (empty($pl_entries)) {
             $this->last_error = "Total m3u entries: $total but no mapped to ID found.\nEmpty provider playlist or wrong parsing pattern";
             hd_print($this->last_error);
-            $this->ClearPlaylistCache();
+            $this->ClearPlaylistCache($plugin_cookies);
         } else {
             hd_print("Total mapped entries to ID : " . count($pl_entries));
         }
@@ -739,11 +755,12 @@ class default_config extends dynamic_config
 
     /**
      * Clear downloaded playlist
+     * @param $plugin_cookies
      * @return void
      */
-    public function ClearPlaylistCache()
+    public function ClearPlaylistCache($plugin_cookies)
     {
-        $tmp_file = get_temp_path($this->plugin_info['app_type_name'] . "_playlist_tv.m3u8");
+        $tmp_file = get_temp_path($this->get_tv_list_idx($plugin_cookies) . "_playlist_tv.m3u8");
         $this->tv_m3u_entries = null;
         hd_print("Clear playlist cache: $tmp_file");
         if (file_exists($tmp_file)) {
@@ -754,11 +771,12 @@ class default_config extends dynamic_config
 
     /**
      * Clear downloaded playlist
+     * @param $plugin_cookies
      * @return void
      */
-    public function ClearVodCache()
+    public function ClearVodCache($plugin_cookies)
     {
-        $tmp_file = get_temp_path($this->plugin_info['app_type_name'] . "_playlist_vod.m3u8");
+        $tmp_file = get_temp_path($this->get_vod_list_idx($plugin_cookies) . "_playlist_vod.m3u8");
         $bak_file = $tmp_file . ".bak";
         copy($tmp_file, $bak_file);
         hd_print("Clear VOD cache: $tmp_file");
@@ -986,12 +1004,15 @@ class default_config extends dynamic_config
      */
     public function UpdateVodUrlParams($url, $plugin_cookies)
     {
-        $url_prefix = str_replace('{CGI_BIN}', get_cgi_bin_url(), $this->get_vod_url_prefix($plugin_cookies));
+        $vod_template = $this->get_current_vod_template($plugin_cookies);
+        $url_prefix = isset($vod_template[Plugin_Constants::URL_PREFIX]) ? $vod_template[Plugin_Constants::URL_PREFIX] : '';
+
+        $url_prefix = str_replace('{CGI_BIN}', get_cgi_bin_url(), $url_prefix);
         if (!empty($url_prefix)) {
             $url = $url_prefix . $url;
         }
 
-        $url_params = $this->get_vod_url_params($plugin_cookies);
+        $url_params = isset($vod_template[Plugin_Constants::URL_PARAMS]) ? $vod_template[Plugin_Constants::URL_PARAMS] : '';
         if ($url_params) {
             $url .= $url_params;
         }
@@ -1037,7 +1058,7 @@ class default_config extends dynamic_config
      */
     protected function FetchTvM3U($plugin_cookies, $force = false)
     {
-        $m3u_file = get_temp_path($this->plugin_info['app_type_name'] . "_playlist_tv.m3u8");
+        $m3u_file = get_temp_path($this->get_tv_list_idx($plugin_cookies) . "_playlist_tv.m3u8");
         if ($force === false) {
             if (file_exists($m3u_file)) {
                 $mtime = filemtime($m3u_file);
@@ -1074,7 +1095,7 @@ class default_config extends dynamic_config
      */
     protected function FetchVodM3U($plugin_cookies, $force = false)
     {
-        $m3u_file = get_temp_path($this->plugin_info['app_type_name'] . "_playlist_vod.m3u8");
+        $m3u_file = get_temp_path($this->get_vod_list_idx($plugin_cookies) . "_playlist_vod.m3u8");
         if ($force === false) {
             if (file_exists($m3u_file)) {
                 $mtime = filemtime($m3u_file);
@@ -1112,9 +1133,9 @@ class default_config extends dynamic_config
      */
     protected function GetPlaylistUrl($plugin_cookies)
     {
-        $templates = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
-        $idx = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX);
-        $url = isset($templates[$idx][Plugin_Constants::URI_TEMPLATE]) ? $templates[$idx][Plugin_Constants::URI_TEMPLATE] : '';
+        hd_print("Get playlist url for " . $this->get_tv_template_name($plugin_cookies));
+        $template = $this->get_current_tv_template($plugin_cookies);
+        $url = isset($template[Plugin_Constants::URI_TEMPLATE]) ? $template[Plugin_Constants::URI_TEMPLATE] : '';
         return $this->replace_subs_vars($url, $plugin_cookies);
     }
 
@@ -1124,7 +1145,7 @@ class default_config extends dynamic_config
      */
     protected function GetVodListUrl($plugin_cookies)
     {
-        return $this->replace_subs_vars($this->get_vod_template($plugin_cookies), $plugin_cookies);
+        return $this->replace_subs_vars($this->get_vod_uri($plugin_cookies), $plugin_cookies);
     }
 
     /**
@@ -1183,7 +1204,6 @@ class default_config extends dynamic_config
     }
 
     /**
-
      * @param $plugin_cookies
      * @return bool
      */
@@ -1192,42 +1212,61 @@ class default_config extends dynamic_config
         return true;
     }
 
-    public function get_vod_template($plugin_cookies)
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    public function get_tv_template_name($plugin_cookies)
     {
-        $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
-        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
-        return isset($vod_templates[$idx][Plugin_Constants::URI_TEMPLATE]) ? $vod_templates[$idx][Plugin_Constants::URI_TEMPLATE] : '';
+        $template = $this->get_current_tv_template($plugin_cookies);
+        return isset($template[Plugin_Constants::PLAYLIST_NAME]) ? $template[Plugin_Constants::PLAYLIST_NAME] : $this->plugin_info['app_type_name'];
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    protected function get_tv_parse_pattern($plugin_cookies)
+    {
+        $template = $this->get_current_tv_template($plugin_cookies);
+        $parse_pattern = isset($template[Plugin_Constants::PARSE_REGEX]) ? $template[Plugin_Constants::PARSE_REGEX] : '';
+        if (!empty($parse_pattern))
+            $parse_pattern = "/$parse_pattern/";
+
+        return $parse_pattern;
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
+    public function get_vod_uri($plugin_cookies)
+    {
+        $vod_template = $this->get_current_vod_template($plugin_cookies);
+        return isset($vod_template[Plugin_Constants::URI_TEMPLATE]) ? $vod_template[Plugin_Constants::URI_TEMPLATE] : '';
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
     public function get_vod_template_name($plugin_cookies)
     {
-        $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
-        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
-        return isset($vod_templates[$idx][Plugin_Constants::PLAYLIST_NAME]) ? $vod_templates[$idx][Plugin_Constants::PLAYLIST_NAME] : '';
+        $vod_template = $this->get_current_vod_template($plugin_cookies);
+        return isset($vod_template[Plugin_Constants::PLAYLIST_NAME]) ? $vod_template[Plugin_Constants::PLAYLIST_NAME] : $this->plugin_info['app_type_name'];
     }
 
+    /**
+     * @param $plugin_cookies
+     * @return string
+     */
     protected function get_vod_parse_pattern($plugin_cookies)
     {
-        $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
-        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
-        $vod_pattern = isset($vod_templates[$idx][Plugin_Constants::PARSE_REGEX]) ? $vod_templates[$idx][Plugin_Constants::PARSE_REGEX] : '';
+        $vod_template = $this->get_current_vod_template($plugin_cookies);
+        $vod_pattern = isset($vod_template[Plugin_Constants::PARSE_REGEX]) ? $vod_template[Plugin_Constants::PARSE_REGEX] : '';
         if (!empty($vod_pattern))
             $vod_pattern = "/$vod_pattern/";
 
         return $vod_pattern;
-    }
-
-    protected function get_vod_url_prefix($plugin_cookies)
-    {
-        $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
-        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
-        return isset($vod_templates[$idx][Plugin_Constants::URL_PREFIX]) ? $vod_templates[$idx][Plugin_Constants::URL_PREFIX] : '';
-    }
-
-    protected function get_vod_url_params($plugin_cookies)
-    {
-        $idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
-        $vod_templates = $this->get_feature(Plugin_Constants::VOD_TEMPLATES);
-        return isset($vod_templates[$idx][Plugin_Constants::URL_PARAMS]) ? $vod_templates[$idx][Plugin_Constants::URL_PARAMS] : '';
     }
 }

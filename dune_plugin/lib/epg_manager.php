@@ -45,7 +45,6 @@ class Epg_Manager
     {
         try {
             if (!is_dir($this->cache_dir) && !(mkdir($this->cache_dir) && is_dir($this->cache_dir))) {
-                hd_print("Unable to create directory '$this->cache_dir'!!!");
                 throw new Exception("Unable to create directory '$this->cache_dir'!!!");
             }
 
@@ -61,7 +60,6 @@ class Epg_Manager
 
             $params = $this->config->get_epg_params($epg_source);
             if (empty($params[Epg_Params::EPG_URL])) {
-                hd_print("$epg_source EPG url not defined");
                 throw new Exception("$epg_source EPG url not defined");
             }
 

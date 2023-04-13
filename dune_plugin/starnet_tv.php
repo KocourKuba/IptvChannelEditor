@@ -365,6 +365,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 }
             }
 
+            file_put_contents(get_temp_path("current_list.xml"), file_get_contents($channels_list_path));
             $xml = HD::parse_xml_file($channels_list_path);
         } catch (Exception $ex) {
             hd_print("Can't fetch channel_list $channels_list_path " . $ex->getMessage());
@@ -422,7 +423,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         $this->plugin->config->GetAccountInfo($plugin_cookies);
         $this->plugin->config->SetupM3uParser(true, $plugin_cookies);
-        $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo();
+        $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo($plugin_cookies);
 
         $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
 
@@ -631,7 +632,6 @@ class Starnet_Tv implements Tv, User_Input_Handler
         hd_print("Starnet_Tv::get_program_info for $channel_id at time $program_ts " . format_datetime("Y-m-d H:i", $program_ts));
         $day_start = date("Y-m-d", $program_ts);
         $day_ts = strtotime($day_start) + get_local_time_zone_offset();
-        hd_print("Starnet_Tv::get_program_info day start $day_ts (" . format_datetime("Y-m-d H:i", $day_ts) . ")");
         $day_epg = $this->get_day_epg($channel_id, $day_ts, $plugin_cookies);
         foreach ($day_epg as $item) {
             if ($program_ts >= $item[PluginTvEpgProgram::start_tm_sec] && $program_ts < $item[PluginTvEpgProgram::end_tm_sec]) {

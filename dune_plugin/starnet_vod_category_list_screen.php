@@ -98,7 +98,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         switch ($user_input->control_id) {
             case ACTION_RELOAD:
                 hd_print("reload categories");
-                $this->clear_vod();
+                $this->clear_vod($plugin_cookies);
                 $media_url = MediaURL::decode($user_input->parent_media_url);
                 $range = $this->get_folder_range($media_url, 0, $plugin_cookies);
                 return Action_Factory::update_regular_folder($range, true, -1);
@@ -249,11 +249,16 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         return $items;
     }
 
-    public function clear_vod()
+    /**
+     * Clear vod information
+     * @param $plugin_cookies
+     * @return void
+     */
+    public function clear_vod($plugin_cookies)
     {
         $this->category_list = null;
         $this->category_index = null;
         $this->plugin->vod->clear_movie_cache();
-        $this->plugin->config->ClearVodCache();
+        $this->plugin->config->ClearVodCache($plugin_cookies);
     }
 }

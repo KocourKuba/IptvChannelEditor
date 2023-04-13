@@ -93,7 +93,7 @@ class antifriz_config extends default_config
     public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
     {
         hd_print("fetch_vod_categories");
-        $jsonItems = HD::DownloadJson($this->get_vod_template($plugin_cookies), false);
+        $jsonItems = HD::DownloadJson($this->get_vod_uri($plugin_cookies), false);
         if ($jsonItems === false) {
             return;
         }

@@ -378,6 +378,7 @@ class HD
 
         $paths = array(
             get_install_path("config.json"),
+            get_temp_path("*.xml"),
             get_temp_path("*.json"),
             get_temp_path("*.m3u?"),
             "$apk_subst/tmp/run/shell.*",
@@ -424,7 +425,7 @@ class HD
 
     public static function collect_folder_files($path, &$files)
     {
-        //hd_print("search in $path");
+        //hd_print("search for $path");
         foreach (glob($path) as $file) {
             //hd_print("file: $file");
             if (is_file($file) && filesize($file) > 10) {

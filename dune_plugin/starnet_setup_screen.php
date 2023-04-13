@@ -139,6 +139,17 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         }
 
         //////////////////////////////////////
+        // playlist source
+        $all_tv_lists = $this->plugin->config->get_tv_list_names($plugin_cookies, $play_list_idx);
+        hd_print("current playlist index: $play_list_idx");
+
+        if (count($all_tv_lists) > 1) {
+            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANGE_PL_LIST,
+                'Источник плейлистов:', $play_list_idx,
+                $all_tv_lists, self::CONTROLS_WIDTH, true);
+        }
+
+        //////////////////////////////////////
         // channels list source
         $source_ops[1] = 'Локальная или сетевая папки';
         $source_ops[2] = 'Интернет/Интранет папка';
@@ -179,17 +190,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         } else {
             Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANGE_CH_LIST,
                 'Используемый список каналов:', $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
-        }
-
-        //////////////////////////////////////
-        // playlist source
-        $all_tv_lists = $this->plugin->config->get_tv_list_names($plugin_cookies, $play_list_idx);
-        hd_print("current playlist index: $play_list_idx");
-
-        if (count($all_tv_lists) > 1) {
-            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANGE_PL_LIST,
-                'Источник плейлистов:', $play_list_idx,
-                $all_tv_lists, self::CONTROLS_WIDTH, true);
         }
 
         //////////////////////////////////////
@@ -670,7 +670,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     return $action;
 
                 case self::SETUP_ACTION_CHANGE_PL_LIST:
-                    hd_print("current playlist: $new_value");
                     $old_value = $plugin_cookies->playlist_idx;
                     $plugin_cookies->playlist_idx = $new_value;
                     hd_print("current playlist idx: $new_value");
@@ -811,7 +810,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     protected function reload_channels(&$plugin_cookies)
     {
         hd_print("reload_channels");
-        $this->plugin->config->ClearPlaylistCache();
+        $this->plugin->config->ClearPlaylistCache($plugin_cookies);
         $this->plugin->config->ClearChannelsCache($plugin_cookies);
         $this->plugin->tv->unload_channels();
         try {
