@@ -254,7 +254,7 @@ void PlaylistEntry::search_epg(const m3u_tags& tags)
 
 std::string PlaylistEntry::search_logo(const m3u_tags& tags)
 {
-	static std::array<m3u_entry::info_tags, 3> logo_search_tags =
+	static std::array<m3u_entry::info_tags, 2> logo_search_tags =
 	{
 		m3u_entry::info_tags::tag_url_logo,
 		m3u_entry::info_tags::tag_tvg_logo,

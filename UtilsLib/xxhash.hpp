@@ -1426,7 +1426,7 @@ namespace xxh
 			}
 			else
 			{
-				hash128_t acc;
+				hash128_t acc = 0;
 				uint64_t const nbRounds = len / 32;
 
 				acc.low64 = len * PRIME<64>(1);
