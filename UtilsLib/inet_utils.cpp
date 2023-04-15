@@ -27,6 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "inet_utils.h"
 
+#include <wininet.h>
 #include <winhttp.h>
 #include <atltrace.h>
 #include <unordered_map>
@@ -38,12 +39,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma comment(lib, "Winhttp.lib")
 
-#define SECURITY_FLAG_IGNORE_REVOCATION         0x00000080
-#define SECURITY_FLAG_IGNORE_WRONG_USAGE        0x00000200
-
 #define MAX_URL_LENGTH 210
-#define SECURITY_FLAG_IGNORE_ALL_CERT_ERRORS SECURITY_FLAG_IGNORE_UNKNOWN_CA |SECURITY_FLAG_IGNORE_CERT_CN_INVALID \
- | SECURITY_FLAG_IGNORE_CERT_DATE_INVALID | SECURITY_FLAG_IGNORE_REVOCATION | SECURITY_FLAG_IGNORE_WRONG_USAGE
 
 namespace utils
 {
