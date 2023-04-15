@@ -521,8 +521,8 @@ BEGIN
     LTEXT           "User-Agent",IDC_STATIC,7,33,108,8
     EDITTEXT        IDC_EDIT_USER_AGENT,7,44,363,12,ES_AUTOHSCROLL
     LTEXT           "Access Type",IDC_STATIC,7,59,83,8
-    COMBOBOX        IDC_COMBO_ACCESS_TYPE,7,70,84,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Square Icons",IDC_CHECK_SQUARE_ICONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,96,72,89,10
+    COMBOBOX        IDC_COMBO_ACCESS_TYPE,7,70,96,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Square Icons",IDC_CHECK_SQUARE_ICONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,106,72,89,10
     LTEXT           "External bin files",IDC_STATIC,7,86,94,8
     PUSHBUTTON      "...",IDC_BUTTON_EDIT_EXT_FILES,7,95,19,14,BS_BITMAP
     LTEXT           "External cgi scripts",IDC_STATIC,167,86,94,8
@@ -1605,6 +1605,7 @@ END
 STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "Dune IPTV Channel Editor\nChannelEditor\nChannelEditor\n\n\n\n"
+    IDS_STRING_PROGRAM_SETTINGS "Program settings"
     IDS_STRING_PLUGIN_CONFIG "Plugin Configuration"
     IDS_STRING_FAVORITES    "Favorites"
     IDS_STRING_ERR_SOURCE_NOT_SET "Playlist source not set!"
@@ -1629,7 +1630,7 @@ BEGIN
     IDS_STRING_FMT_CHANNELS "Channels: {:d} ({:d} changed, {:d} unknown)"
     IDS_STRING_FMT_PLAYLIST_FLT "Channels: {:d} ({:d}), {:s}"
     IDS_STRING_FMT_PLAYLIST "{:s}, Channels: {:d}"
-    IDS_STRING_FMT_CHANNELS_READED "Channels readed: %d"
+    IDS_STRING_FMT_CHANNELS_READED "Channels read: %d"
     IDS_STRING_FMT_STREAM_INFO "Get Stream Info: %d from %d"
     IDS_STRING_FMT_CHANNELS_TOOLTIP1 "Name:\t\t%s\nID:\t\t%s\nEPG1 ID:\t%s\n"
     IDS_STRING_FMT_CHANNELS_TOOLTIP2 "EPG2 ID:\t%s\n"
@@ -1781,7 +1782,7 @@ BEGIN
     IDS_STRING_COL_VPORTAL  "VPortal"
     IDS_STRING_PAYPAL       "aHR0cHM6Ly93d3cucGF5cGFsLmNvbS9jZ2ktYmluL3dlYnNjcj9jbWQ9X2RvbmF0aW9ucyZidXNpbmVzcz01RFk3UEVTWkw0RDhMJmN1cnJlbmN5X2NvZGU9VVNEJmFtb3VudD01"
     IDS_STRING_YOOMONEY     "aHR0cHM6Ly95b29tb25leS5ydS90by80MTAwMTkxMzM3OTAyNw"
-    IDS_STRING_FMT_MOVIES_READED "Readed %d"
+    IDS_STRING_FMT_MOVIES_READED "Read %d"
     IDS_STRING_ALL          "All"
     IDS_STRING_NONE         "None"
     IDS_STRING_SEASON       "Season"

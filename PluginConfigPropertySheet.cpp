@@ -73,19 +73,19 @@ BOOL CPluginConfigPropertySheet::OnInitDialog()
 	m_min_rc.InflateRect(0, 0, 0, m_gapHeight);
 	MoveWindow(m_min_rc);
 
-	CRect rcCombo(CPoint(7, 7), CSize(115, 30));
+	CRect rcCombo(CPoint(7, 5), CSize(115, 30));
 	MapDialogRect(rcCombo);
 	::SetWindowPos(m_wndPluginConfigs.GetSafeHwnd(), nullptr,
 				   rcCombo.left, rcCombo.top, rcCombo.Width(), rcCombo.Height(),
 				   SWP_NOZORDER | SWP_NOACTIVATE);
 
-	CRect rcSave(CPoint(132, 7), CSize(19, 14));
+	CRect rcSave(CPoint(132, 4), CSize(19, 14));
 	MapDialogRect(rcSave);
 	::SetWindowPos(m_wndBtnSaveConf.GetSafeHwnd(), nullptr,
 				   rcSave.left, rcSave.top, rcSave.Width(), rcSave.Height(),
 				   SWP_NOZORDER | SWP_NOACTIVATE);
 
-	CRect rcSaveAs(CPoint(155, 7), CSize(19, 14));
+	CRect rcSaveAs(CPoint(155, 4), CSize(19, 14));
 	MapDialogRect(rcSaveAs);
 	::SetWindowPos(m_wndBtnSaveAsConf.GetSafeHwnd(), nullptr,
 				   rcSaveAs.left, rcSaveAs.top, rcSaveAs.Width(), rcSaveAs.Height(),
@@ -254,7 +254,7 @@ void CPluginConfigPropertySheet::FillConfigs()
 	{
 		if (!m_selected_cred.config.empty() && entry == m_selected_cred.get_config())
 		{
-			std::wstring name = entry + L" (Current)";
+			const auto& name = fmt::format(L"{:s} ({:s})", entry, load_string_resource(IDS_STRING_CURRENT));
 			int idx = m_wndPluginConfigs.AddString(name.c_str());
 			cur_idx = idx;
 		}

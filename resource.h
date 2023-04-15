@@ -56,6 +56,7 @@
 #define IDD_PATHS_SETTINGS_PAGE         133
 #define IDD_DIALOG_PLUGIN_CONFIG        134
 #define IDD_DIALOG_FILL_PARAMS          135
+#define IDS_STRING_PROGRAM_SETTINGS     135
 #define IDS_STRING_PLUGIN_CONFIG        136
 #define IDD_DIALOG_PLUGIN_CONFIG_TV     136
 #define IDS_STRING_FAVORITES            137
@@ -667,7 +668,7 @@
 #define ID_SELECT_ALL                   32805
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

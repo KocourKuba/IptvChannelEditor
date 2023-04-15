@@ -3210,7 +3210,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 {
-	auto pSheet = std::make_unique<CResizedPropertySheet>(REG_ACC_WINDOW_POS);
+	auto pSheet = std::make_unique<CResizedPropertySheet>(load_string_resource(IDS_STRING_ACCOUNT_SETTINGS).c_str(), REG_ACC_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 
@@ -4160,7 +4160,7 @@ void CIPTVChannelEditorDlg::OnUpdateAddUpdateChannel(CCmdUI* pCmdUI)
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 {
-	CPropertySheet sheet;
+	CPropertySheet sheet(IDS_STRING_PROGRAM_SETTINGS);
 
 	CMainSettingsPage dlg1;
 	CPathsSettingsPage dlg2;
@@ -5433,7 +5433,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 {
-	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(REG_PLUGIN_CFG_WINDOW_POS);
+	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(load_string_resource(IDS_STRING_PLUGIN_CONFIG).c_str(), REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 	pSheet->m_plugin = StreamContainer::get_instance(m_plugin_type);

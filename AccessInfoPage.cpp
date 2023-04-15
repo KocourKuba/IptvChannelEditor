@@ -1365,7 +1365,7 @@ void CAccessInfoPage::OnBnClickedButtonEditConfig()
 {
 	auto& selected = GetCheckedAccount();
 
-	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(REG_PLUGIN_CFG_WINDOW_POS);
+	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(load_string_resource(IDS_STRING_PLUGIN_CONFIG).c_str(), REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 	pSheet->m_plugin = StreamContainer::get_instance(m_plugin->get_plugin_type());
