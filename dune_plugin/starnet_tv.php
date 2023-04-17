@@ -106,6 +106,12 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function get_channel($channel_id)
     {
+        $channels = $this->get_channels();
+        if ($channels === null) {
+            hd_print("Channels no loaded");
+            return null;
+        }
+
         $channel = $this->channels->get($channel_id);
 
         if (is_null($channel)) {
