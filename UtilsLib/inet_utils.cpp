@@ -27,7 +27,6 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "inet_utils.h"
 
-#include <wininet.h>
 #include <winhttp.h>
 #include <atltrace.h>
 #include <unordered_map>
@@ -182,7 +181,7 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 		}
 
 		DWORD dwFlags = WINHTTP_FLAG_BYPASS_PROXY_CACHE;
-		if (cracked.nScheme == INTERNET_SCHEME_HTTPS)
+		if (cracked.nScheme == 2 /*INTERNET_SCHEME_HTTPS*/)
 			dwFlags |= 0x00800000; // INTERNET_FLAG_SECURE
 		// Create an HTTP request handle.
 		CAutoHinternet hRequest = WinHttpOpenRequest(hConnect,
