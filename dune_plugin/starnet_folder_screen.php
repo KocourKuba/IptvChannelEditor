@@ -186,10 +186,10 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                     $info = "||SMB folder:|$caption||" . $v['ip'];
                     $type = 'folder';
                     $ip_path = $v['ip'];
-                    if (isset($v['user']) && !empty($v['user'])) {
+                    if (!empty($v['user'])) {
                         $user = $v['user'];
                     }
-                    if (isset($v['password']) && !empty($v['password'])) {
+                    if (!empty($v['password'])) {
                         $password = $v['password'];
                     }
                     if (isset($v['err'])) {
