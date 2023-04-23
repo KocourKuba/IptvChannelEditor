@@ -5433,14 +5433,13 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 {
-	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(load_string_resource(IDS_STRING_PLUGIN_CONFIG).c_str(), REG_PLUGIN_CFG_WINDOW_POS);
+	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(m_all_configs_lists, load_string_resource(IDS_STRING_PLUGIN_CONFIG).c_str(), REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 	pSheet->m_plugin = StreamContainer::get_instance(m_plugin_type);
 	pSheet->m_plugin->copy(m_plugin.get());
 	pSheet->m_selected_cred = m_cur_account;
 	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
-	pSheet->m_configs = m_all_configs_lists;
 	pSheet->m_configPages = true;
 
 	CPluginConfigPage dlgCfg;
