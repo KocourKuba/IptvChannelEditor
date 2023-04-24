@@ -64,7 +64,7 @@ void plugin_iptvonline::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts";
 
-	epg_params[0].epg_url = "http://epg.drm-play.ml/iptvx.one%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.com/iptvx.one%2Fepg%2F{EPG_ID}.json";
 
 	auto& params1 = epg_params[1];
 	params1.epg_url = "http://epg.iptvx.one/api/id/{EPG_ID}.json";

@@ -63,7 +63,7 @@ void plugin_viplime::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.ml/viplime%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.com/viplime%2Fepg%2F{EPG_ID}.json";
 
 	static_qualities = true;
 	fill_qualities_list();

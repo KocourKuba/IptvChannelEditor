@@ -77,7 +77,7 @@ void plugin_glanz::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.ml/iptvx.one%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.com/iptvx.one%2Fepg%2F{EPG_ID}.json";
 
 	auto& params1 = epg_params[1];
 	params1.epg_url = "http://epg.iptvx.one/api/id/{EPG_ID}.json";

@@ -66,5 +66,5 @@ void plugin_bcumedia::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{TOKEN}/archive-{START}-{DURATION}.ts?token={PASSWORD}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.ml/bcu%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.com/bcu%2Fepg%2F{EPG_ID}.json";
 }

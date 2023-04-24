@@ -74,7 +74,7 @@ void plugin_oneott::load_default()
 	params1.epg_start = "start";
 	params1.epg_end = "stop";
 
-	epg_params[1].epg_url = "http://epg.drm-play.ml/1ott%2Fepg%2F{EPG_ID}.json";
+	epg_params[1].epg_url = "http://epg.drm-play.com/1ott%2Fepg%2F{EPG_ID}.json";
 }
 
 bool plugin_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)

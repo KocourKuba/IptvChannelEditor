@@ -65,7 +65,7 @@ void plugin_yosso::load_default()
 	streams_config[0].uri_arc_template = "http://{DOMAIN}:{PORT}/{VAR1}{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}";
 
 	auto& params1 = epg_params[0];
-	epg_params[0].epg_url = "http://epg.drm-play.ml/yosso%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.com/yosso%2Fepg%2F{EPG_ID}.json";
 
 	static_servers = true;
 	fill_servers_list();

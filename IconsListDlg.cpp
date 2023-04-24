@@ -105,7 +105,7 @@ BOOL CIconsListDlg::OnInitDialog()
 	m_wndIconsList.InsertColumn(0, load_string_resource(IDS_STRING_COL_ICON).c_str(), LVCFMT_CENTER, 170);
 	m_wndIconsList.InsertColumn(1, load_string_resource(IDS_STRING_COL_CHANNEL_NAME).c_str(), LVCFMT_LEFT, 280);
 
-	// https://epg.drm-play.ml/?prov=iptvx.one
+	// https://epg.drm-play.com/?prov=iptvx.one
 	// /<img src='(?<link>[^']+)'.+><\/td><td>(?<name>[^<].+)<\/td><td>(?<id>[^<].+)<\/td><td>/gm
 
 	if (m_Icons)

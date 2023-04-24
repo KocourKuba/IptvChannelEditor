@@ -63,7 +63,7 @@ void plugin_filmax::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}:{PORT}/{INT_ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}:{PORT}/{INT_ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
-	epg_params[0].epg_url = "http://epg.esalecrm.net/filmax/epg/{EPG_ID}.json";
+	epg_params[0].epg_url = "http://epg.drm-play.com/filmax%2Fepg%2F{EPG_ID}.json";
 
 	static_servers = true;
 	fill_servers_list();
