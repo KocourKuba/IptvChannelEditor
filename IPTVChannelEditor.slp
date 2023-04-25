@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20230415235500" scan="248" scanned="20230415235432">
+<document created="20211012165442" version="4.0.374" date="20230425202327" scan="250" scanned="20230425202128">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230415215414" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230425182116" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -2206,17 +2206,26 @@
               <native>Remove</native>
               <lang id="ru" date="20220320143420" savedtotm="1">Удалить</lang>
             </row>
-            <row id="X" changed="20230219213153">82</row>
+            <row id="X" state="3" changed="20230425201748">
+              <prev>82</prev>
+              <native>80</native>
+            </row>
             <row id="Y" changed="20220730092432">82</row>
           </component>
           <component class="TVisButton" name="1135" created="20220320143227" type="button">
-            <row id="CX" changed="20230219213153">71</row>
+            <row id="CX" state="3" changed="20230425201748">
+              <prev>71</prev>
+              <native>75</native>
+            </row>
             <row id="CY" changed="20220528135107">15</row>
             <row id="Text">
               <native>Add from URL</native>
               <lang id="ru" date="20220320143431" savedtotm="1">Добавить из ссылки</lang>
             </row>
-            <row id="X" changed="20230219213153">157</row>
+            <row id="X" state="3" changed="20230425201748">
+              <prev>157</prev>
+              <native>153</native>
+            </row>
             <row id="Y" changed="20230121164542">82</row>
           </component>
           <component class="TVisButton" name="1184" created="20221018224522" type="button" picture="1">
@@ -2326,15 +2335,15 @@
             <row id="X">7</row>
             <row id="Y">73</row>
           </component>
-          <component class="TVisLabel" name="STATIC_Channels_list" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX" created="20211209210449" changed="20220630123234">287</row>
-            <row id="CY" created="20211209210449">8</row>
-            <row id="Text">
-              <native>Channels list path</native>
-              <lang id="ru" date="20211129231515">Папка со списками каналов</lang>
+          <component class="TVisLabel" name="STATIC_Path_contains" state="0" created="20230425202128" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">287</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Path contains Plugins Channels Lists</native>
+              <lang id="ru" date="20230425202214">Папка для хранения Списков каналов всех плагинов</lang>
             </row>
-            <row id="X" created="20211209210449">7</row>
-            <row id="Y" created="20211209210449">63</row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">63</row>
           </component>
           <component class="TVisBasicControl" name="1108" created="20220320143227" type="MfcEditBrowse">
             <row id="CX" changed="20220702022638">301</row>
@@ -2342,15 +2351,15 @@
             <row id="X">7</row>
             <row id="Y">100</row>
           </component>
-          <component class="TVisLabel" name="STATIC_Plugins_save" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX" created="20211209210449" changed="20220630123234">287</row>
-            <row id="CY" created="20211209210449">8</row>
-            <row id="Text">
-              <native>Plugins save path</native>
-              <lang id="ru" date="20211129231544">Папка сохранения плагинов</lang>
+          <component class="TVisLabel" name="STATIC_Path_to_save" state="0" created="20230425201748" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">287</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Path to save Plugins</native>
+              <lang id="ru" date="20230425201911">Папка для сохранения плагинов</lang>
             </row>
-            <row id="X" created="20211209210449">7</row>
-            <row id="Y" created="20211209210449">89</row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">89</row>
           </component>
           <component class="TVisBasicControl" name="1215" created="20221018224522" type="MfcEditBrowse">
             <row id="CX">301</row>
@@ -2358,15 +2367,15 @@
             <row id="X">7</row>
             <row id="Y">128</row>
           </component>
-          <component class="TVisLabel" name="STATIC_Web_Update" created="20220730092432" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX">287</row>
-            <row id="CY">8</row>
-            <row id="Text">
-              <native>Web Update save path</native>
-              <lang id="ru" date="20220730093219">Путь сохранения интернет обновлений</lang>
+          <component class="TVisLabel" name="STATIC_Path_to_save_#1" state="0" created="20230425201748" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">287</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Path to save Plugins Web Update</native>
+              <lang id="ru" date="20230425201907">Папка для сохранения Веб Обновлений плагинов</lang>
             </row>
-            <row id="X">7</row>
-            <row id="Y">117</row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">117</row>
           </component>
           <component class="TVisBasicControl" name="1216" created="20221006234211" type="MfcEditBrowse">
             <row id="CX">301</row>
@@ -2374,15 +2383,15 @@
             <row id="X">7</row>
             <row id="Y" changed="20221018224522">156</row>
           </component>
-          <component class="TVisLabel" name="STATIC_Plugin_Settings" created="20221006234211" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX">287</row>
-            <row id="CY">8</row>
-            <row id="Text">
-              <native>Plugin Settings save path</native>
-              <lang id="ru" date="20221006234246">Путь к настройкам плагинов</lang>
+          <component class="TVisLabel" name="STATIC_Path_to_save_#2" state="0" created="20230425201748" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">287</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" changed="20230425202128">
+              <native>Path to save Plugins Configuration</native>
+              <lang id="ru" date="20230425202316">Папка для сохранения своих Конфигураций плагинов</lang>
             </row>
-            <row id="X">7</row>
-            <row id="Y">145</row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">145</row>
           </component>
         </form>
       </node>
@@ -4979,34 +4988,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20230415234401">
-          <prev>6.6.1575, 7 Apr 2023</prev>
-          <native>6.6.1592, 15 Apr 2023</native>
+        <row id="FileVersion" locked="1" state="3" changed="20230425201748">
+          <prev>6.6.1592, 15 Apr 2023</prev>
+          <native>6.6.1607, 25 Apr 2023</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230415234401">
-          <prev>1575</prev>
-          <native>1592</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230425201748">
+          <prev>1592</prev>
+          <native>1607</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20230415234401">
-          <prev>6.6.1575</prev>
-          <native>6.6.1592</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20230425201748">
+          <prev>6.6.1592</prev>
+          <native>6.6.1607</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230415234401">
-          <prev>1575</prev>
-          <native>1592</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230425201748">
+          <prev>1592</prev>
+          <native>1607</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
