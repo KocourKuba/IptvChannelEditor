@@ -72,10 +72,10 @@ BOOL CPathsSettingsPage::OnInitDialog()
 	m_plugins_web_update_path = GetConfig().get_string(true, REG_WEB_UPDATE_PATH).c_str();
 	m_plugins_settings_path = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH).c_str();
 
-	m_wndListsPath.EnableFolderBrowseButton();
-	m_wndPluginsPath.EnableFolderBrowseButton();
-	m_wndPluginsWebUpdatePath.EnableFolderBrowseButton();
-	m_wndPluginSettingsPath.EnableFolderBrowseButton();
+	m_wndListsPath.EnableFolderBrowseButton(m_lists_path.GetString(), BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE);
+	m_wndPluginsPath.EnableFolderBrowseButton(m_plugins_path.GetString(), BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE);
+	m_wndPluginsWebUpdatePath.EnableFolderBrowseButton(m_plugins_web_update_path.GetString(), BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE);
+	m_wndPluginSettingsPath.EnableFolderBrowseButton(m_plugins_settings_path.GetString(), BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE);
 
 	CString filter(_T("EXE file(*.exe)|*.exe|All Files (*.*)|*.*||"));
 	m_wndPlayer.EnableFileBrowseButton(nullptr, filter.GetString(), OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);
@@ -97,17 +97,53 @@ void CPathsSettingsPage::OnOK()
 	if (m_lists_path.Right(1) != '\\')
 		m_lists_path += '\\';
 
+	if (m_lists_path != GetConfig().get_string(true, REG_LISTS_PATH).c_str())
+	{
+		auto res = AfxMessageBox(IDS_STRING_COPY_LISTS, MB_ICONEXCLAMATION | MB_YESNO);
+		if (res == IDYES)
+		{
+			std::error_code err;
+			std::filesystem::copy(GetConfig().get_string(true, REG_LISTS_PATH), m_lists_path.GetString(),
+								  std::filesystem::copy_options::overwrite_existing| std::filesystem::copy_options::recursive, err);
+			if (err.value() != 0)
+			{
+				AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value()).c_str(), MB_ICONERROR | MB_OK);
+			}
+		}
+	}
+
 	if (m_plugins_path.IsEmpty())
 		m_plugins_path = _T(".\\");
 
 	if (m_plugins_path.Right(1) != '\\')
 		m_plugins_path += '\\';
 
+	if (m_plugins_web_update_path.IsEmpty())
+		m_plugins_web_update_path = _T(".\\");
+
 	if (m_plugins_web_update_path.Right(1) != '\\')
 		m_plugins_web_update_path += '\\';
 
+	if (m_plugins_settings_path.IsEmpty())
+		m_plugins_settings_path = _T(".\\Settings\\");
+
 	if (m_plugins_settings_path.Right(1) != '\\')
 		m_plugins_settings_path += '\\';
+
+	if (m_plugins_settings_path != GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH).c_str())
+	{
+		auto res = AfxMessageBox(IDS_STRING_COPY_CONFIGS, MB_ICONEXCLAMATION | MB_YESNO);
+		if (res == IDYES)
+		{
+			std::error_code err;
+			std::filesystem::copy(GetConfig().get_string(true, REG_LISTS_PATH), m_lists_path.GetString(),
+								  std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive, err);
+			if (err.value() != 0)
+			{
+				AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value()).c_str(), MB_ICONERROR | MB_OK);
+			}
+		}
+	}
 
 	GetConfig().set_string(true, REG_PLAYER, m_player.GetString());
 	GetConfig().set_string(true, REG_FFPROBE, m_probe.GetString());

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="250" scanned="20230425202128" built="20230425202331" lang="ru" pane="TLogPane" col="3" row="Dialogs.133.STATIC_Path_contains.Text">
+<desktop scan="253" scanned="20230425235405" built="20230425235441" lang="ru" pane="TLogPane" col="3" row="Dialogs.110.STATIC_Provider_Playlist.Text">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>

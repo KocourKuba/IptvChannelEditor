@@ -306,6 +306,9 @@
 #define IDS_STRING_ENTRY                385
 #define IDS_STRING_VALUE                386
 #define IDS_STRING_BUTTON_EDIT_MANIFEST 387
+#define IDS_STRING_COPY_LISTS           388
+#define IDS_STRING_COPY_CONFIGS         389
+#define IDS_STRING_ERR_COPY             390
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
