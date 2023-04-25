@@ -58,12 +58,12 @@ copy "%ROOT%Changelog.md" "%ROOT%package\Changelog.md.%BUILD%" >nul
 
 pushd "package\%BUILD%"
 mklink /D dune_plugin "%ROOT%dune_plugin" >nul 2>&1
-mklink /D playlists "%ROOT%playlists" >nul 2>&1
+mklink /D ChannelsLists "%ROOT%ChannelsLists" >nul 2>&1
 
 echo build update package...
 
 7z a -xr!*.bin dune_plugin.7z dune_plugin >nul
-7z a -xr!*.bin -xr!custom playlists.7z playlists >nul
+7z a -xr!*.bin -xr!custom ChannelsLists.7z ChannelsLists >nul
 
 call :header > %outfile%
 
@@ -76,7 +76,7 @@ call :add_node BugTrapU.dll					>>%outfile%
 call :add_node dbghelp.dll					>>%outfile%
 call :add_node Changelog.md					>>%outfile%
 call :add_node dune_plugin.7z				>>%outfile%
-call :add_node playlists.7z	true			>>%outfile%
+call :add_node ChannelsLists.7z	true		>>%outfile%
 echo ^</package^> >>%outfile%
 copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 
@@ -91,7 +91,7 @@ echo BugTrapU.dll				>>packing.lst
 echo dbghelp.dll				>>packing.lst
 echo Changelog.md				>>packing.lst
 echo %ROOT%dune_plugin			>>packing.lst
-echo %ROOT%playlists			>>packing.lst
+echo %ROOT%ChannelsLists		>>packing.lst
 echo dune_plugin_*.zip			>>packing.lst
 
 7z a -xr!*.bin -xr!custom "%ROOT%package\dune_channel_editor_universal.7z" @packing.lst >nul
@@ -99,7 +99,7 @@ copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%ROOT%package\dune_cha
 del packing.lst >nul 2>&1
 del dune_plugin_*.zip >nul 2>&1
 rd dune_plugin /q
-rd playlists /q
+rd ChannelsLists /q
 popd
 
 echo done!

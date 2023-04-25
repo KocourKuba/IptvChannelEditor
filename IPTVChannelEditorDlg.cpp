@@ -2323,16 +2323,19 @@ void CIPTVChannelEditorDlg::OnUpdateRemove(CCmdUI* pCmdUI)
 void CIPTVChannelEditorDlg::OnChannelUp()
 {
 	HTREEITEM hTop = m_wndChannelsTree.GetFirstSelectedItem();
-	HTREEITEM hBottom = m_wndChannelsTree.GetLastSelectedItem();
+	HTREEITEM hPrev = m_wndChannelsTree.GetPrevSiblingItem(hTop);
 
-	if (IsChannel(m_wndChannelsTree.GetPrevSiblingItem(hTop)))
+	if (IsChannel(hPrev))
 	{
+		HTREEITEM hBottom = m_wndChannelsTree.GetLastSelectedItem();
 		MoveChannels(hTop, hBottom, false);
 	}
 	else if (IsCategory(hTop) && m_wndChannelsTree.GetSelectedCount() == 1)
 	{
-		SwapCategories(m_wndChannelsTree.GetPrevSiblingItem(hTop), hTop);
+		SwapCategories(hPrev, hTop);
 	}
+
+	m_wndChannelsTree.EnsureVisible(hTop);
 }
 
 void CIPTVChannelEditorDlg::OnUpdateChannelUp(CCmdUI* pCmdUI)
@@ -2361,8 +2364,9 @@ void CIPTVChannelEditorDlg::OnChannelDown()
 {
 	HTREEITEM hTop = m_wndChannelsTree.GetFirstSelectedItem();
 	HTREEITEM hBottom = m_wndChannelsTree.GetLastSelectedItem();
+	HTREEITEM hNext = m_wndChannelsTree.GetNextSiblingItem(hBottom);
 
-	if (IsChannel(m_wndChannelsTree.GetNextSiblingItem(hBottom)))
+	if (IsChannel(hNext))
 	{
 		// move channel
 		MoveChannels(hTop, hBottom, true);
@@ -2370,8 +2374,10 @@ void CIPTVChannelEditorDlg::OnChannelDown()
 	else if (IsCategory(hTop) && m_wndChannelsTree.GetSelectedCount() == 1)
 	{
 		// move category
-		SwapCategories(m_wndChannelsTree.GetNextSiblingItem(hTop), hTop);
+		hBottom = m_wndChannelsTree.GetNextSiblingItem(hTop);
+		SwapCategories(hBottom, hTop);
 	}
+	m_wndChannelsTree.EnsureVisible(hBottom);
 }
 
 void CIPTVChannelEditorDlg::OnUpdateChannelDown(CCmdUI* pCmdUI)
