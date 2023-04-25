@@ -475,7 +475,7 @@ int main(int argc, char* argv[])
 	args.addArgument({ "check" }, &check, "Check for update");
 	args.addArgument({ "download" }, &download, "Download update");
 	args.addArgument({ "update" }, &update, "Perform update");
-	args.addArgument({ "-o", "--optional" }, &playlists, "Download or Update optional packages (playlists)");
+	args.addArgument({ "-o", "--optional" }, &playlists, "Download or Update optional packages (Channels Lists)");
 	args.addArgument({ "-h", "--help" }, &printHelp, "Show parameters info");
 
 	CFileVersionInfo cVer;

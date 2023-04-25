@@ -92,7 +92,7 @@ void CPathsSettingsPage::OnOK()
 	UpdateData(TRUE);
 
 	if (m_lists_path.IsEmpty())
-		m_lists_path = _T(".\\playlists\\");
+		m_lists_path = _T(".\\ChannelsLists\\");
 
 	if (m_lists_path.Right(1) != '\\')
 		m_lists_path += '\\';

@@ -224,7 +224,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	if (GetConfig().get_string(true, REG_LISTS_PATH).empty())
 	{
-		const auto& playlist_dir = GetAppPath(L"playlists\\");
+		const auto& playlist_dir = GetAppPath(L"ChannelsLists\\");
 		GetConfig().set_string(true, REG_LISTS_PATH, playlist_dir);
 		std::filesystem::create_directories(playlist_dir);
 	}
