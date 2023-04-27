@@ -60,6 +60,7 @@ protected:
 	afx_msg void OnBnClickedButtonStreamRegexTest();
 	afx_msg void OnBnClickedCheckMapTagToId();
 	afx_msg void OnBnClickedCheckPerChannelToken();
+	afx_msg void OnBnClickedCheckEpgIdFromId();
 
 	afx_msg void OnCbnSelchangeComboStreamType();
 	afx_msg void OnCbnSelchangeComboTags();
@@ -95,6 +96,7 @@ protected:
 
 	CButton m_wndBtnEditTemplates;
 	CButton m_wndChkPerChannelToken;
+	CButton m_wndChkEpgIdFromID;
 	CButton m_wndBtnPlaylistTest;
 	CButton m_wndBtnStreamParseTest;
 	CButton m_wndCheckMapTags;

@@ -165,6 +165,12 @@ public:
 	std::wstring get_tag_id_match() const { return utils::utf8_to_utf16(tag_id_match); }
 	void set_tag_id_match(const std::wstring& val) { tag_id_match = utils::utf16_to_utf8(val); }
 
+	bool get_per_channel_token() const { return per_channel_token; }
+	void set_per_channel_token(bool val) { per_channel_token = val; }
+
+	bool get_epg_id_from_id() const { return epg_id_from_id; }
+	void set_epg_id_from_id(bool val) { epg_id_from_id = val; }
+
 	friend void to_json(nlohmann::json& j, const PlaylistTemplateInfo& c)
 	{
 		SERIALIZE_STRUCT(j, c, name);
@@ -174,6 +180,8 @@ public:
 		SERIALIZE_STRUCT(j, c, url_prefix);
 		SERIALIZE_STRUCT(j, c, url_params);
 		SERIALIZE_STRUCT(j, c, tag_id_match);
+		SERIALIZE_STRUCT(j, c, per_channel_token); //-V601
+		SERIALIZE_STRUCT(j, c, epg_id_from_id); //-V601
 	}
 
 	friend void from_json(const nlohmann::json& j, PlaylistTemplateInfo& c)
@@ -185,6 +193,8 @@ public:
 		DESERIALIZE_STRUCT(j, c, url_prefix);
 		DESERIALIZE_STRUCT(j, c, url_params);
 		DESERIALIZE_STRUCT(j, c, tag_id_match);
+		DESERIALIZE_STRUCT(j, c, per_channel_token);
+		DESERIALIZE_STRUCT(j, c, epg_id_from_id);
 	}
 
 	std::string name;
@@ -194,6 +204,8 @@ public:
 	std::string url_prefix;
 	std::string url_params;
 	std::string tag_id_match;
+	bool per_channel_token = false; // use token from uri instead of account settings
+	bool epg_id_from_id = false;
 	bool is_custom = false;
 };
 
@@ -454,6 +466,29 @@ public:
 	std::wstring get_current_tag_id_match() const { return get_tag_id_match(get_playlist_template_idx()); }
 
 	/// <summary>
+	/// property token used per channel, not the global
+	/// </summary>
+	/// <summary>
+	bool get_per_channel_token(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? playlist_templates[idx].get_per_channel_token() : false; }
+	void set_per_channel_token(int idx, const bool val) { if ((idx != -1 && idx < (int)vod_templates.size())) playlist_templates[idx].set_per_channel_token(val); }
+
+	/// <summary>
+	/// property current per channel token
+	/// </summary>
+	bool get_current_per_channel_token() const { return get_per_channel_token(get_playlist_template_idx()); }
+
+	/// <summary>
+	/// property uri id parse template
+	/// </summary>
+	bool get_epg_id_from_id(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_epg_id_from_id() : false; }
+	void set_epg_id_from_id(int idx, const bool val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_epg_id_from_id(val); }
+
+	/// <summary>
+	/// property current epg id from id
+	/// </summary>
+	bool get_current_epg_id_from_id() const { return get_epg_id_from_id(get_playlist_template_idx()); }
+
+	/// <summary>
 	/// plugin supports vod
 	/// </summary>
 	/// <returns>bool</returns>
@@ -528,12 +563,6 @@ public:
 	/// </summary>
 	bool get_square_icons() const { return square_icons; }
 	void set_square_icons(bool val) { square_icons = val; }
-
-	/// <summary>
-	/// property token used per channel, not the global
-	/// </summary>
-	bool get_per_channel_token() const { return per_channel_token; }
-	void set_per_channel_token(bool val) { per_channel_token = val; }
 
 	/// <summary>
 	/// property token requested from provider
@@ -737,7 +766,6 @@ public:
 		SERIALIZE_STRUCT(j, c, vod_templates);
 		SERIALIZE_STRUCT(j, c, vod_template_index);
 		SERIALIZE_STRUCT(j, c, square_icons); //-V601
-		SERIALIZE_STRUCT(j, c, per_channel_token); //-V601
 		SERIALIZE_STRUCT(j, c, requested_token); //-V601
 		SERIALIZE_STRUCT(j, c, static_servers); //-V601
 		SERIALIZE_STRUCT(j, c, static_qualities); //-V601
@@ -770,7 +798,6 @@ public:
 		DESERIALIZE_STRUCT(j, c, vod_templates);
 		DESERIALIZE_STRUCT(j, c, vod_template_index);
 		DESERIALIZE_STRUCT(j, c, square_icons);
-		DESERIALIZE_STRUCT(j, c, per_channel_token);
 		DESERIALIZE_STRUCT(j, c, requested_token);
 		DESERIALIZE_STRUCT(j, c, static_servers);
 		DESERIALIZE_STRUCT(j, c, static_qualities);
@@ -820,8 +847,6 @@ protected:
 	bool square_icons = false;
 	// use channels logo are squared, plugin UI settings
 	bool vod_filter = false;
-	// use token from uri instead of account settings
-	bool per_channel_token = false;
 	// use token generated or received from provider
 	bool requested_token = false;
 	// flag for php plugin if uri does not contains parsed 'id' for channel

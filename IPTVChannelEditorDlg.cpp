@@ -1167,7 +1167,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			{
 
 			}
-			else if (!m_plugin->get_per_channel_token())
+			else if (!m_plugin->get_current_per_channel_token())
 			{
 				m_cur_account.set_token(entry->get_token());
 				bSet = true;
@@ -5378,7 +5378,7 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 
 void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri) const
 {
-	if (!m_plugin->get_per_channel_token())
+	if (!m_plugin->get_current_per_channel_token())
 	{
 		uri->set_token(m_plugin->get_requested_token() ? m_plugin->get_api_token(m_cur_account) : m_cur_account.get_token());
 		return;

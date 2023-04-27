@@ -53,6 +53,7 @@ void plugin_sharavoz::load_default()
 	info.pl_template = "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/iptv\/p\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
+	info.epg_id_from_id = true;
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_SHARAVOZ_DIRECT);
@@ -67,11 +68,11 @@ void plugin_sharavoz::load_default()
 	streams_config[1].uri_arc_template = "http://{SERVER_ID}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	auto& params1 = epg_params[0];
-	params1.epg_url = "http://api.program.spr24.net/api/program?epg={ID}&date={DATE}";
+	params1.epg_url = "http://api.program.spr24.net/api/program?epg={EPG_ID}&date={DATE}";
 	params1.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 
 	auto& params2 = epg_params[1];
-	params2.epg_url = "http://epg.arlekino.tv/api/program?epg={ID}&date={DATE}";
+	params2.epg_url = "http://epg.arlekino.tv/api/program?epg={EPG_ID}&date={DATE}";
 	params2.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 
 	static_servers = true;

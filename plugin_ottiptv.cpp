@@ -54,10 +54,10 @@ void plugin_ottiptv::load_default()
 	info.pl_template = "https://ottiptv.ru/{LOGIN}/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(https://.+/(?<login>.+)/(?<password>.+)/.+$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<var1>.+)\/(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
+	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
-	per_channel_token = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "http://{DOMAIN}/{VAR1}/{ID}/video.m3u8?token={TOKEN}";

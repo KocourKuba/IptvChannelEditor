@@ -61,7 +61,6 @@ void plugin_config::load_default()
 	square_icons = false;
 	vod_support = false;
 	vod_m3u = false;
-	per_channel_token = false;
 	requested_token = false;
 	static_servers = false;
 	static_qualities = false;

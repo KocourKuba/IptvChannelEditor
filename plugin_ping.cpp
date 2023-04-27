@@ -69,10 +69,10 @@ void plugin_ping::load_default()
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+)\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 	info.tag_id_match = "CUID";
+	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
-	per_channel_token = true;
 
 	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";

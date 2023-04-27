@@ -74,6 +74,35 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 						}
 					}
 
+					// special cases after parsing
+					if (m_parent_plugin->get_current_epg_id_from_id())
+					{
+						entry->set_epg_id(0, entry->get_id());
+					}
+
+					switch (m_parent_plugin->get_plugin_type())
+					{
+						case PluginType::enIptvOnline:
+							if (entry->get_epg_id(0).front() == 'X')
+							{
+								entry->set_epg_id(0, entry->get_epg_id(0).substr(1));
+							}
+							break;
+						case PluginType::enOttclub:
+							entry->set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", entry->get_domain(), entry->get_id()));
+							break;
+						case PluginType::enKineskop:
+							entry->set_icon_uri(boost::regex_replace(entry->get_icon_uri().get_uri(), boost::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
+							break;
+						default:
+							break;
+					}
+
+					if (!m_parent_plugin->get_epg_parameter(1).epg_url.empty())
+					{
+						entry->set_epg_id(1, entry->get_epg_id(0));
+					}
+
 					playlist->m_entries.emplace_back(entry);
 					entry = std::make_shared<PlaylistEntry>(m_parent_plugin, playlist, m_config.m_rootPath);
 

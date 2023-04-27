@@ -59,10 +59,10 @@ void plugin_itv::load_default()
 	info.pl_template = "http://itv.ooo/p/{PASSWORD}/hls.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)\/.+$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
+	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
-	per_channel_token = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";

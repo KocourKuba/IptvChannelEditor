@@ -193,7 +193,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_EPG2_ID,253,162,66,12,ES_AUTOHSCROLL
     CONTROL         "Preview EPG",IDC_CHECK_SHOW_EPG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,330,149,76,10
     PUSHBUTTON      "View EPG",IDC_BUTTON_TEST_EPG,332,161,77,14
-    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL | WS_TABSTOP,176,178,232,61,WS_EX_STATICEDGE
+    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",WS_VSCROLL | WS_TABSTOP | 0x844,176,178,232,61,WS_EX_STATICEDGE
     LTEXT           "23:59:59",IDC_STATIC_CUR_TIME,170,251,30,9
     CONTROL         "",IDC_PROGRESS_PROGRAM,"msctls_progress32",WS_BORDER,203,251,182,9
     LTEXT           "00::00",IDC_STATIC_TIME_LEFT,390,251,21,9
@@ -589,6 +589,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_STREAM_ARC_TEMPLATE,7,178,363,12,ES_AUTOHSCROLL
     LTEXT           "Custom Stream Archive Template",-1,7,194,154,8
     EDITTEXT        IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE,7,205,363,12,ES_AUTOHSCROLL
+    CONTROL         "Set EPG ID from ID",IDC_CHECK_EPG_ID_FROM_ID,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,119,62,125,10
 END
 
 IDD_DIALOG_PLUGIN_CONFIG_EPG DIALOGEX 0, 0, 377, 206
@@ -1193,7 +1194,8 @@ BEGIN
     0, 0, 0, 0,
     0, 0, 100, 0,
     0, 0, 0, 0,
-    0, 0, 100, 0
+    0, 0, 100, 0,
+    0, 0, 0, 0
 END
 
 IDD_DIALOG_PLUGIN_CONFIG_EPG AFX_DIALOG_LAYOUT
@@ -1877,6 +1879,8 @@ BEGIN
                             "Set a custom name for the update description. Otherwise will be generated automatically"
     IDS_STRING_EDIT_PLUGIN_UPDATE_NAME 
                             "Name of the update description and package"
+    IDS_STRING_CHECK_EPG_ID_FROM_ID 
+                            "Set EPG ID from channel ID when parse playlist"
 END
 
 STRINGTABLE
@@ -2055,7 +2059,8 @@ BEGIN
     IDS_STRING_CHECK_PER_CHANNEL_TOKEN 
                             "If url contains token it can be global for entire playlist or can be different for each channel. Choose type of the using token"
     IDS_STRING_COMBO_TAGS   "Choose the attribute in the #EXTINF tag that will be threated as Channel ID. Special case for ""Name"". This is not a attribute it is a name of the channel."
-    IDS_CHECK_MAP_TAG_TO_ID "If url does not contain Channel ID, use this option to choose what attribute in the #EXTINF tag will be used as ID."
+    IDS_STRING_CHECK_MAP_TAG_TO_ID 
+                            "If url does not contain Channel ID, use this option to choose what attribute in the #EXTINF tag will be used as ID."
     IDS_STRING_EDIT_PROVIDER_VOD_URL "Edit current VOD template or url."
     IDS_STRING_BUTTON_VOD_PARSE "Test VOD parse regular expression."
     IDS_STRING_BUTTON_VOD_TEMPLATE "Try to download and show VOD playlist."

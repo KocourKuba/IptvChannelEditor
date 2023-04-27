@@ -54,7 +54,7 @@ void plugin_ottclub::load_default()
 	info.pl_template = "http://myott.top/playlist/{PASSWORD}/m3u";
 	info.pl_parse_regex= R"(^https?:\/\/.*\/playlist\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
-
+	info.epg_id_from_id = true;
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].uri_template = "http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";

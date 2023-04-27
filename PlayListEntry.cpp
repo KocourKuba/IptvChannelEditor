@@ -127,44 +127,6 @@ bool PlaylistEntry::Parse(const std::string& str)
 			break;
 	}
 
-	if (result)
-	{
-		// special cases after parsing
-		switch (parent_plugin->get_plugin_type())
-		{
-		case PluginType::enIptvOnline:
-			if (get_epg_id(0).front() == 'X')
-			{
-				set_epg_id(0, get_epg_id(0).substr(1));
-			}
-			break;
-		case PluginType::enSharavoz:
-		case PluginType::enOneOtt:
-		case PluginType::enOttclub:
-			set_epg_id(0, get_id());
-			break;
-		default:
-			break;
-		}
-
-		switch (parent_plugin->get_plugin_type())
-		{
-			case PluginType::enOttclub:
-				set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", get_domain(), get_id()));
-				break;
-			case PluginType::enKineskop:
-				set_icon_uri(boost::regex_replace(get_icon_uri().get_uri(), boost::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
-				break;
-			default:
-				break;
-		}
-
-		if (!parent_plugin->get_epg_parameter(1).epg_url.empty())
-		{
-			set_epg_id(1, get_epg_id(0));
-		}
-	}
-
 	return result;
 }
 
