@@ -25,6 +25,11 @@ interface Group
     /**
      * @return bool
      */
+    public function is_vod_group();
+
+    /**
+     * @return bool
+     */
     public function is_all_channels_group();
 
     /**

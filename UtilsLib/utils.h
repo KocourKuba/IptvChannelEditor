@@ -38,7 +38,6 @@ static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
 
 static constexpr auto VERSION_INFO = "version_info";
 static constexpr auto LIST_VERSION = "list_version";
-static constexpr auto FAVORITES = L"__favorites";
 static constexpr auto PORTAL_SETUP = "portal_setup";
 static constexpr auto ACCESS_TOKEN = "access_key";
 static constexpr auto ACCESS_DOMAIN = "access_domain";
@@ -70,6 +69,10 @@ static constexpr auto PROTECTED = "protected";
 static constexpr auto DISABLED = "disabled";
 static constexpr auto FAVORITE = "favorite";
 static constexpr auto ICON_URL = "icon_url";
+static constexpr auto SPECIAL_GROUP = "special_group";
+static constexpr auto FAVORITES = "##favorites##";
+static constexpr auto VOD_GROUP = "##mediateka##";
+static constexpr auto ALL_GROUP = "##all_channels##";
 
 static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
 static constexpr auto CATEGORIES_LOGO_URL = L"icons/";

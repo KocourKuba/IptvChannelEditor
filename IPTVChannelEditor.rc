@@ -140,8 +140,8 @@ BEGIN
     LTEXT           "Version 1.0",IDC_STATIC_VERSION,53,4,85,9,SS_NOPREFIX
     LTEXT           "Copyright © 2020-2023\nPavel Abakanov (sharky72)",IDC_STATIC,53,15,158,22
     DEFPUSHBUTTON   "OK",IDOK,81,73,50,14,WS_GROUP
-    CONTROL         "Donate at PayPal",IDC_MFCLINK_DONATE_PAYPAL,"MfcLink",WS_TABSTOP,52,38,110,14
-    CONTROL         "Donate at YooMoney ",IDC_MFCLINK_DONATE_YOOMONEY,
+    CONTROL         "Donate by PayPal",IDC_MFCLINK_DONATE_PAYPAL,"MfcLink",WS_TABSTOP,52,38,110,14
+    CONTROL         "Donate by YooMoney ",IDC_MFCLINK_DONATE_YOOMONEY,
                     "MfcLink",WS_TABSTOP,52,52,110,14
 END
 
@@ -1523,7 +1523,7 @@ BEGIN
     BEGIN
         MENUITEM "Play",                        ID_PLAY_STREAM
         MENUITEM SEPARATOR
-        MENUITEM "Add to Favorite",             ID_ADD_TO_FAVORITE
+        MENUITEM "Add to Favorite",             ID_FAVORITE
         MENUITEM "New Channel\tIns",            ID_NEW_CHANNEL
         MENUITEM "Update Channel\tF5",          ID_UPDATE_CHANNEL
         MENUITEM "Disable Channel",             ID_TOGGLE_CHANNEL
@@ -1614,6 +1614,8 @@ BEGIN
     IDS_STRING_PROGRAM_SETTINGS "Program settings"
     IDS_STRING_PLUGIN_CONFIG "Plugin Configuration"
     IDS_STRING_FAVORITES    "Favorites"
+    IDS_STRING_MEDIATEKA    "Video On Demand"
+    IDS_STRING_ALL_CHANNELS "All Channels"
     IDS_STRING_ERR_SOURCE_NOT_SET "Playlist source not set!"
     IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST "Unable to download playlist!\n%s"
     IDS_STRING_ERR_EMPTY_PLAYLIST "Empty playlist!"

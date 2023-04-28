@@ -54,12 +54,6 @@ interface Tv
     public function get_day_epg($channel_id, $day_start_ts, &$plugin_cookies);
 
     /**
-     * Hook for adding special group items.
-     * @param &$items
-     */
-    public function add_special_groups(&$items);
-
-    /**
      * @return bool
      */
     public function is_favorites_supported();

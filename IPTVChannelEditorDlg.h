@@ -253,7 +253,7 @@ private:
 	bool IsSelectedTheSameType(const CTreeCtrlEx* pTreeCtl) const;
 	bool IsSelectedChannelsOrEntries(bool onlyChannel = false) const;
 	bool IsSelectedCategory() const;
-	bool IsSelectedNotFavorite() const;
+	bool IsSelectedMovable() const;
 	bool IsSelectedNotInFavorite() const;
 	bool IsChannelSelectionConsistent() const;
 	bool IsSelectedInTheSameCategory() const;

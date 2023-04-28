@@ -76,6 +76,14 @@ class Default_Group implements Group
     /**
      * @return bool
      */
+    public function is_vod_group()
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
     public function is_all_channels_group()
     {
         return false;

@@ -1,5 +1,5 @@
 <?php
-require_once 'default_group.php';
+require_once 'lib/default_group.php';
 
 class All_Channels_Group extends Default_Group
 {
@@ -10,12 +10,13 @@ class All_Channels_Group extends Default_Group
 
     /**
      * @param Tv $tv
+     * @param $id
      * @param string $title
      * @param string $icon_url
      */
-    public function __construct(Tv $tv, $title, $icon_url)
+    public function __construct(Tv $tv, $id, $title, $icon_url)
     {
-        parent::__construct(Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID, $title, $icon_url);
+        parent::__construct($id, $title, $icon_url);
 
         $this->tv = $tv;
     }

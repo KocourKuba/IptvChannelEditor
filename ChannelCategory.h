@@ -51,7 +51,11 @@ public:
 
 	bool is_empty() const { return channels_map.empty(); }
 
-	bool is_favorite() const { return key == ID_ADD_TO_FAVORITE; }
+	bool is_favorite() const { return key == ID_FAVORITE; }
+
+	bool is_vod() const { return key == ID_VOD; }
+
+	bool is_all_channels() const { return key == ID_ALL_CHANNELS; }
 
 	const std::vector<std::shared_ptr<ChannelInfo>>& get_channels() const { return channels; }
 

@@ -62,6 +62,8 @@
 #define IDS_STRING_FAVORITES            137
 #define IDD_DIALOG_PLUGIN_CONFIG_EPG    137
 #define IDD_DIALOG_PLUGIN_CONFIG_VOD    138
+#define IDS_STRING_MEDIATEKA            138
+#define IDS_STRING_ALL_CHANNELS         139
 #define IDS_STRING_ERR_SOURCE_NOT_SET   140
 #define IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST 141
 #define IDS_STRING_ERR_EMPTY_PLAYLIST   142
@@ -663,7 +665,7 @@
 #define ID_PLAYLISTMENU_SUBMENU         32795
 #define ID_SYNC_TREE_ITEM               32796
 #define ID_SORT_CATEGORY                32797
-#define ID_ADD_TO_FAVORITE              32798
+#define ID_FAVORITE                     32798
 #define ID_CLEAR_STREAM_INFO            32799
 #define ID_MAKE_ALL                     32800
 #define ID_TOGGLE_CATEGORY              32801
@@ -671,13 +673,15 @@
 #define ID_REMOVE_UNKNOWN               32803
 #define ID_INSERT_TEMPLATE              32804
 #define ID_SELECT_ALL                   32805
+#define ID_VOD                          32806
+#define ID_ALL_CHANNELS                 32807
 
 // Next default values for new objects
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280
-#define _APS_NEXT_COMMAND_VALUE         32806
+#define _APS_NEXT_COMMAND_VALUE         32808
 #define _APS_NEXT_CONTROL_VALUE         1240
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif

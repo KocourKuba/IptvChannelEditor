@@ -1,11 +1,11 @@
 ﻿<?php
+require_once 'lib/hashed_array.php';
 require_once 'lib/tv/tv.php';
 require_once 'lib/tv/default_channel.php';
 require_once 'lib/tv/all_channels_group.php';
 require_once 'lib/tv/favorites_group.php';
 require_once 'lib/tv/default_epg_item.php';
-require_once 'lib/hashed_array.php';
-
+require_once 'lib/vod/vod_group.php';
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_vod_category_list_screen.php';
 
@@ -168,27 +168,6 @@ class Starnet_Tv implements Tv, User_Input_Handler
         }
 
         return $g;
-    }
-
-    /**
-     * @param array &$items
-     */
-    public function add_special_groups(&$items)
-    {
-        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            $items[] = array(
-                PluginRegularFolderItem::media_url => MediaURL::encode(
-                    array(
-                        'screen_id' => Starnet_Vod_Category_List_Screen::ID,
-                        'name' => 'VOD',
-                    )
-                ),
-                PluginRegularFolderItem::caption => Default_Dune_Plugin::VOD_GROUP_CAPTION,
-                PluginRegularFolderItem::view_item_params => array(
-                    ViewItemParams::icon_path => Default_Dune_Plugin::VOD_GROUP_ICON
-                )
-            );
-        }
     }
 
     /**
@@ -383,28 +362,9 @@ class Starnet_Tv implements Tv, User_Input_Handler
             throw new Exception('Invalid XML document');
         }
 
-        // Create channels and groups
-        $this->channels = new Hashed_Array();
-        $this->groups = new Hashed_Array();
-
-        // Favorites group
-        if ($this->is_favorites_supported()) {
-            $this->groups->put(new Favorites_Group(
-                Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID,
-                Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
-                Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH));
-            $fav_ids = $this->get_fav_channel_ids($plugin_cookies);
-            hd_print("Local Favorites: " . count($fav_ids));
-        }
-
-        // All channels group
-        $this->groups->put(new All_Channels_Group(
-            $this,
-            Default_Dune_Plugin::ALL_CHANNEL_GROUP_CAPTION,
-            Default_Dune_Plugin::ALL_CHANNEL_GROUP_ICON_PATH));
-
         // read category
         $fav_category_id = Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID;
+        $groups = new Hashed_Array();
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
             if ($xml_tv_category->getName() !== 'tv_category') {
                 $error_string = "Error: unexpected node '{$xml_tv_category->getName()}'. Expected: 'tv_category'";
@@ -412,19 +372,76 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 throw new Exception($error_string);
             }
 
-            if (isset($xml_tv_category->disabled)) {
-                continue;
-            }
-
-            if (!isset($xml_tv_category->favorite)) {
-                $this->groups->put(new Default_Group((string)$xml_tv_category->id,
+            if (isset($xml_tv_category->special_group)) {
+                switch ((string)$xml_tv_category->special_group) {
+                    case Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID:
+                        $fav_category_id = (int)$xml_tv_category->id;
+                        $fav_group = new Favorites_Group(
+                            Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID,
+                            Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
+                            isset($xml_tv_category->icon_url) ? (string)$xml_tv_category->icon_url : Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH);
+                        break;
+                    case Default_Dune_Plugin::VOD_GROUP_ID:
+                        $vod_group = new Vod_Group(
+                            Default_Dune_Plugin::VOD_GROUP_ID,
+                            Default_Dune_Plugin::VOD_GROUP_CAPTION,
+                            isset($xml_tv_category->icon_url) ? (string)$xml_tv_category->icon_url : Default_Dune_Plugin::VOD_GROUP_ICON_PATH);
+                        break;
+                    case Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID:
+                        $all_channels = new All_Channels_Group(
+                            $this,
+                            Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID,
+                            Default_Dune_Plugin::ALL_CHANNEL_GROUP_CAPTION,
+                            isset($xml_tv_category->icon_url) ? (string)$xml_tv_category->icon_url : Default_Dune_Plugin::ALL_CHANNEL_GROUP_ICON_PATH);
+                        break;
+                }
+            } else if (!isset($xml_tv_category->disabled)) {
+                $groups->put(new Default_Group(
+                    (string)$xml_tv_category->id,
                     (string)$xml_tv_category->caption,
                     (string)$xml_tv_category->icon_url));
                 hd_print("Added category: $xml_tv_category->caption");
-            } else if ($xml_tv_category->favorite == "true") {
-                $fav_category_id = (int)$xml_tv_category->id;
-                //hd_print("Embedded Favorites category: $xml_tv_category->caption ($fav_category_id)");
             }
+        }
+
+        // build categories in correct order
+        $this->groups = new Hashed_Array();
+
+        // Favorites group
+        if ($this->is_favorites_supported()) {
+            if (!isset($fav_group)) {
+                $fav_group = new Favorites_Group(
+                    Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID,
+                    Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
+                    Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH);
+            }
+
+            $this->groups->put($fav_group);
+        }
+
+        // All channels category
+        if (!isset($all_channels)) {
+            $all_channels = new All_Channels_Group(
+                $this,
+                Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID,
+                Default_Dune_Plugin::ALL_CHANNEL_GROUP_CAPTION,
+                Default_Dune_Plugin::ALL_CHANNEL_GROUP_ICON_PATH);
+        }
+        $this->groups->put($all_channels);
+
+        // All collected categories from channels list
+        foreach ($groups as $group) {
+            $this->groups->put($group);
+        }
+
+        // Vod group
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
+            if (!isset($vod_group)) {
+                $vod_group = new Vod_Group(Default_Dune_Plugin::VOD_GROUP_ID,
+                    Default_Dune_Plugin::VOD_GROUP_CAPTION,
+                    Default_Dune_Plugin::VOD_GROUP_ICON_PATH);
+            }
+            $this->groups->put($vod_group);
         }
 
         $this->plugin->config->GetAccountInfo($plugin_cookies);
@@ -434,6 +451,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
 
         // Read channels
+        $this->channels = new Hashed_Array();
         $num = 0;
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
             if ($xml_tv_channel->getName() !== 'tv_channel') {

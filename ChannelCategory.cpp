@@ -71,10 +71,18 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) c
 	// <icon_url>plugin_file://icons/1.png</icon_url>
 	category_node->append_node(rapidxml::alloc_node(alloc, utils::ICON_URL, utils::utf16_to_utf8(get_icon_uri().get_uri()).c_str()));
 
-	// <favorite>true</favorite>
+	// <special_group>true</special_group>
 	if (is_favorite())
 	{
-		category_node->append_node(rapidxml::alloc_node(alloc, utils::FAVORITE, "true"));
+		category_node->append_node(rapidxml::alloc_node(alloc, utils::SPECIAL_GROUP, utils::FAVORITES));
+	}
+	else if (is_vod())
+	{
+		category_node->append_node(rapidxml::alloc_node(alloc, utils::SPECIAL_GROUP, utils::VOD_GROUP));
+	}
+	else if (is_all_channels())
+	{
+		category_node->append_node(rapidxml::alloc_node(alloc, utils::SPECIAL_GROUP, utils::ALL_GROUP));
 	}
 
 	// <disabled>true</disabled>

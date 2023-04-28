@@ -90,7 +90,7 @@ constexpr auto MOD_EPG2    = 0x08;
 constexpr auto MOD_ICON    = 0x10;
 
 // Common
-constexpr auto CHANNELS_LIST_VERSION = 5;
+constexpr auto CHANNELS_LIST_VERSION = 6;
 
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 {
@@ -201,8 +201,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_PLAY_STREAM, &CIPTVChannelEditorDlg::OnUpdatePlayStream)
 	ON_COMMAND(ID_SYNC_TREE_ITEM, &CIPTVChannelEditorDlg::OnSyncTreeItem)
 	ON_UPDATE_COMMAND_UI(ID_SYNC_TREE_ITEM, &CIPTVChannelEditorDlg::OnUpdateSyncTreeItem)
-	ON_COMMAND(ID_ADD_TO_FAVORITE, &CIPTVChannelEditorDlg::OnAddToFavorite)
-	ON_UPDATE_COMMAND_UI(ID_ADD_TO_FAVORITE, &CIPTVChannelEditorDlg::OnUpdateAddToFavorite)
+	ON_COMMAND(ID_FAVORITE, &CIPTVChannelEditorDlg::OnAddToFavorite)
+	ON_UPDATE_COMMAND_UI(ID_FAVORITE, &CIPTVChannelEditorDlg::OnUpdateAddToFavorite)
 	ON_COMMAND(ID_MAKE_ALL, &CIPTVChannelEditorDlg::OnMakeAll)
 	ON_COMMAND(ID_MAKE_ALL_ACCOUNTS, &CIPTVChannelEditorDlg::OnMakeAllAccounts)
 	ON_COMMAND(ID_REMOVE_UNKNOWN, &CIPTVChannelEditorDlg::OnRemoveUnknownChannels)
@@ -1431,7 +1431,9 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		tvCategory.item.pszText = (LPWSTR)pair.second.category->get_title().c_str();
 		tvCategory.item.mask = TVIF_TEXT | TVIF_PARAM;
 		tvCategory.item.lParam = (DWORD_PTR)InfoType::enCategory;
-		tvCategory.hInsertAfter = (pair.second.category->is_favorite()) ? TVI_FIRST : nullptr;
+		// higher value and will be added later and it will be first in the tree
+		tvCategory.hInsertAfter = (pair.second.category->is_favorite() || pair.second.category->is_vod() || pair.second.category->is_all_channels()) ? TVI_FIRST : nullptr;
+
 		auto hParent = m_wndChannelsTree.InsertItem(&tvCategory);
 		m_wndChannelsTree.SetItemColor(hParent, pair.second.category->is_disabled() ? m_gray : m_normal);
 
@@ -1474,7 +1476,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 			}
 		}
 
-		if (!cnt && !pair.second.category->is_favorite())
+		if (!cnt && pair.second.category->is_favorite() && pair.second.category->is_vod() && pair.second.category->is_all_channels())
 		{
 			m_wndChannelsTree.DeleteItem(hParent);
 			m_categoriesTreeMap.erase(hParent);
@@ -1530,7 +1532,7 @@ void CIPTVChannelEditorDlg::RemoveOrphanChannels()
 	}
 
 	std::set<HTREEITEM> toDeleteHTree;
-	if (auto& pair = m_categoriesMap.find(ID_ADD_TO_FAVORITE); pair != m_categoriesMap.end())
+	if (auto& pair = m_categoriesMap.find(ID_FAVORITE); pair != m_categoriesMap.end())
 	{
 		for (auto hItem = m_wndChannelsTree.GetChildItem(pair->second.hItem); hItem != nullptr; hItem = m_wndChannelsTree.GetNextSiblingItem(hItem))
 		{
@@ -2004,7 +2006,7 @@ int CIPTVChannelEditorDlg::GetNewCategoryID() const
 	{
 		for (auto pair = m_categoriesMap.crbegin(); pair != m_categoriesMap.crend(); ++pair)
 		{
-			if (pair->first != ID_ADD_TO_FAVORITE)
+			if (pair->first != ID_FAVORITE && pair->first != ID_VOD && pair->first != ID_ALL_CHANNELS)
 			{
 				id = pair->first;
 				break;
@@ -2058,13 +2060,30 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 
 	const auto& root_path = GetAppPath(utils::PLUGIN_ROOT);
 
+	auto all_category = std::make_shared<ChannelCategory>(root_path);
+	all_category->set_icon_uri(L"plugin_file://icons/all.png");
+	all_category->set_title(load_string_resource(IDS_STRING_ALL_CHANNELS));
+	all_category->set_key(ID_ALL_CHANNELS);
+	CategoryInfo all_info = { nullptr, all_category };
+	m_categoriesMap.emplace(ID_ALL_CHANNELS, all_info);
+
+	if (m_plugin->get_vod_support())
+	{
+		auto vod_category = std::make_shared<ChannelCategory>(root_path);
+		vod_category->set_icon_uri(L"plugin_file://icons/vod.png");
+		vod_category->set_title(load_string_resource(IDS_STRING_MEDIATEKA));
+		vod_category->set_key(ID_VOD);
+		CategoryInfo vod_info = { nullptr, vod_category };
+		m_categoriesMap.emplace(ID_VOD, vod_info);
+	}
+
 	auto fav_category = std::make_shared<ChannelCategory>(root_path);
 	fav_category->set_icon_uri(L"plugin_file://icons/fav.png");
 	fav_category->set_title(load_string_resource(IDS_STRING_FAVORITES));
-	fav_category->set_key(ID_ADD_TO_FAVORITE);
+	fav_category->set_key(ID_FAVORITE);
 
-	CategoryInfo info = { nullptr, fav_category };
-	m_categoriesMap.emplace(ID_ADD_TO_FAVORITE, info);
+	CategoryInfo fav_info = { nullptr, fav_category };
+	m_categoriesMap.emplace(ID_FAVORITE, fav_info);
 
 	auto cat_node = i_node->first_node(utils::TV_CATEGORIES)->first_node(utils::TV_CATEGORY);
 	// Iterate <tv_category> nodes
@@ -2074,7 +2093,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		category->ParseNode(cat_node);
 		CategoryInfo info = { nullptr, category };
 		auto& res = m_categoriesMap.emplace(category->get_key(), info);
-		if (!res.second && category->is_favorite())
+		if (!res.second && (category->is_favorite() || category->is_vod() || category->is_all_channels()))
 			res.first->second.category->set_icon_uri(category->get_icon_uri());
 
 		cat_node = cat_node->next_sibling();
@@ -2256,7 +2275,7 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 
 void CIPTVChannelEditorDlg::OnUpdateNewChannel(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!!IsSelectedNotFavorite());
+	pCmdUI->Enable(!!IsSelectedMovable());
 }
 
 void CIPTVChannelEditorDlg::OnRemove()
@@ -2317,7 +2336,7 @@ void CIPTVChannelEditorDlg::OnRemove()
 
 void CIPTVChannelEditorDlg::OnUpdateRemove(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable((IsSelectedChannelsOrEntries(true) && IsSelectedInTheSameCategory() || IsSelectedCategory()) && IsSelectedNotFavorite());
+	pCmdUI->Enable((IsSelectedChannelsOrEntries(true) && IsSelectedInTheSameCategory() || IsSelectedCategory()) && IsSelectedMovable());
 }
 
 void CIPTVChannelEditorDlg::OnChannelUp()
@@ -2354,7 +2373,7 @@ void CIPTVChannelEditorDlg::OnUpdateChannelUp(CCmdUI* pCmdUI)
 	{
 		auto prevCat = FindCategory(hPrev);
 
-		enable = IsSelectedNotFavorite() && prevCat != nullptr && !prevCat->is_favorite();
+		enable = IsSelectedMovable() && prevCat != nullptr && !prevCat->is_favorite();
 	}
 
 	pCmdUI->Enable(enable);
@@ -2384,19 +2403,17 @@ void CIPTVChannelEditorDlg::OnUpdateChannelDown(CCmdUI* pCmdUI)
 {
 	BOOL enable = FALSE;
 	HTREEITEM hCur = m_wndChannelsTree.GetFirstSelectedItem();
+	bool hasNext = m_wndChannelsTree.GetNextSiblingItem(m_wndChannelsTree.GetLastSelectedItem()) != nullptr;
 
 	if (IsChannel(hCur))
 	{
 		// move channel
-		enable = IsChannelSelectionConsistent()
-			&& IsSelectedInTheSameCategory()
-			&& m_wndChannelsTree.GetNextSiblingItem(m_wndChannelsTree.GetLastSelectedItem()) != nullptr;
+		enable = hasNext && IsChannelSelectionConsistent() && IsSelectedInTheSameCategory();
 	}
 	else if (IsCategory(hCur) && m_wndChannelsTree.GetSelectedCount() == 1)
 	{
 		// move category
-		enable = IsSelectedNotFavorite()
-			&& m_wndChannelsTree.GetNextSiblingItem(m_wndChannelsTree.GetLastSelectedItem()) != nullptr;
+		enable = hasNext && IsSelectedMovable();
 	}
 
 	pCmdUI->Enable(enable);
@@ -2478,8 +2495,15 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 	{
 		itemData.emplace_back(hItem);
 		int key = m_categoriesTreeMap[hItem];
-		if (key == ID_ADD_TO_FAVORITE)
-			key = -ID_ADD_TO_FAVORITE; // move to first position for sort
+		if (key == ID_FAVORITE)
+			key = -ID_FAVORITE; // move to first position for sort
+
+		if (key == ID_VOD)
+			key = -ID_VOD; // move to first position for sort
+
+		if (key == ID_ALL_CHANNELS)
+			key = -ID_ALL_CHANNELS; // move to first position for sort
+
 		m_wndChannelsTree.SetItemData(hItem, key);
 	}
 
@@ -2496,8 +2520,15 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 	for (HTREEITEM hItem = m_wndChannelsTree.GetChildItem(nullptr); hItem != nullptr; hItem = m_wndChannelsTree.GetNextSiblingItem(hItem))
 	{
 		int key = (int)m_wndChannelsTree.GetItemData(hItem);
-		if (key == -ID_ADD_TO_FAVORITE)
-			key = ID_ADD_TO_FAVORITE;
+		if (key == -ID_FAVORITE)
+			key = ID_FAVORITE;
+
+		if (key == -ID_VOD)
+			key = ID_VOD;
+
+		if (key == -ID_ALL_CHANNELS)
+			key = ID_ALL_CHANNELS;
+
 		m_categoriesTreeMap[hItem] = key;
 		m_categoriesMap[key].hItem = hItem;
 		m_wndChannelsTree.SetItemData(hItem, (DWORD_PTR)InfoType::enCategory);
@@ -2518,7 +2549,7 @@ void CIPTVChannelEditorDlg::OnRenameChannel()
 
 void CIPTVChannelEditorDlg::OnUpdateRenameChannel(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_wndChannelsTree.GetSelectedCount() == 1 && IsSelectedNotFavorite());
+	pCmdUI->Enable(m_wndChannelsTree.GetSelectedCount() == 1 && IsSelectedMovable());
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedCheckCustomUrl()
@@ -2745,7 +2776,7 @@ void CIPTVChannelEditorDlg::OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResul
 		subMenuMove.CreatePopupMenu();
 
 		const auto& itemCategory = GetItemCategory(m_wndChannelsTree.GetFirstSelectedItem());
-		if (itemCategory != nullptr && !itemCategory->is_favorite())
+		if (itemCategory != nullptr && !itemCategory->is_favorite() && !itemCategory->is_vod() && !itemCategory->is_all_channels())
 		{
 			for (const auto& category : m_categoriesMap)
 			{
@@ -2841,14 +2872,15 @@ void CIPTVChannelEditorDlg::OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResu
 
 void CIPTVChannelEditorDlg::OnAddToFavorite()
 {
-	OnCopyTo(ID_COPY_TO_START + ID_ADD_TO_FAVORITE);
+	OnCopyTo(ID_COPY_TO_START + ID_FAVORITE);
 }
 
 void CIPTVChannelEditorDlg::OnUpdateAddToFavorite(CCmdUI* pCmdUI)
 {
-	const auto& itemCategory = GetItemCategory(m_wndChannelsTree.GetFirstSelectedItem());
+	HTREEITEM hItem = m_wndChannelsTree.GetFirstSelectedItem();
+	const auto& itemCategory = GetItemCategory(hItem);
 
-	pCmdUI->Enable(itemCategory != nullptr && !itemCategory->is_favorite());
+	pCmdUI->Enable(itemCategory != nullptr && !IsCategory(hItem) && !itemCategory->is_favorite() && !itemCategory->is_vod() && !itemCategory->is_all_channels());
 }
 
 void CIPTVChannelEditorDlg::OnCopyTo(UINT id)
@@ -3471,7 +3503,10 @@ void CIPTVChannelEditorDlg::OnSave()
 		auto cat_node = doc->allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
 		for (auto& category : m_categoriesMap)
 		{
-			if (!category.second.category->get_channels().empty())
+			if (!category.second.category->get_channels().empty()
+				|| category.first == ID_FAVORITE
+				|| category.first == ID_VOD
+				|| category.first == ID_ALL_CHANNELS)
 			{
 				cat_node->append_node(category.second.category->GetNode(*doc));
 			}
@@ -3581,7 +3616,7 @@ void CIPTVChannelEditorDlg::OnSortCategory()
 
 void CIPTVChannelEditorDlg::OnUpdateSortCategory(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(IsSelectedCategory() && IsSelectedNotFavorite());
+	pCmdUI->Enable(IsSelectedCategory() && IsSelectedMovable());
 }
 
 void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
@@ -3590,11 +3625,11 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 
 	auto hCur = m_wndChannelsTree.GetSelectedItem();
 	auto info = GetBaseInfo(&m_wndChannelsTree, hCur);
-	if (!info || (IsCategory(hCur) && ((ChannelCategory*)info)->get_key() == ID_ADD_TO_FAVORITE))
+	if (!info)
 		return;
 
-	bool save = false;
 	int idx = m_wndIconSource.GetCurSel();
+	bool save = false;
 	switch (idx)
 	{
 		case 0:
@@ -4035,7 +4070,7 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 	// Categories sorted by it's numeric ID
 	for (auto& pair : m_categoriesMap)
 	{
-		if (pair.first == ID_ADD_TO_FAVORITE) continue;
+		if (pair.first == ID_FAVORITE || pair.first == ID_VOD || pair.first == ID_ALL_CHANNELS) continue;
 
 		for (const auto& channel : pair.second.category->get_channels())
 		{
@@ -4161,7 +4196,7 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 
 void CIPTVChannelEditorDlg::OnUpdateAddUpdateChannel(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(IsSelectedChannelsOrEntries());
+	pCmdUI->Enable(IsSelectedChannelsOrEntries() && IsSelectedMovable());
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
@@ -4481,7 +4516,7 @@ void CIPTVChannelEditorDlg::OnUpdateGetStreamInfo(CCmdUI* pCmdUI)
 	if (m_lastTree)
 	{
 		HTREEITEM first = m_lastTree->GetFirstSelectedItem();
-		enable = enable && IsSelectedTheSameType(m_lastTree);
+		enable = enable && IsSelectedTheSameType(m_lastTree) && IsSelectedMovable();
 	}
 	else
 	{
@@ -4559,7 +4594,7 @@ void CIPTVChannelEditorDlg::OnUpdateClearStreamInfo(CCmdUI* pCmdUI)
 	bool enable = !m_loading;
 	if (m_lastTree)
 	{
-		enable = enable && IsSelectedTheSameType(m_lastTree);
+		enable = enable && IsSelectedTheSameType(m_lastTree) && IsSelectedMovable();
 	}
 	else
 	{
@@ -4641,8 +4676,11 @@ void CIPTVChannelEditorDlg::OnPlayStream()
 
 void CIPTVChannelEditorDlg::OnUpdatePlayStream(CCmdUI* pCmdUI)
 {
-	bool enable = (m_wndChannelsTree.GetSelectedCount() == 1 && IsChannel(m_wndChannelsTree.GetSelectedItem()))
-		|| (m_wndPlaylistTree.GetSelectedCount() == 1 && IsPlaylistEntry(m_wndPlaylistTree.GetSelectedItem()));
+	bool enable = false;
+	if (m_lastTree)
+	{
+		enable = m_lastTree->GetSelectedCount() == 1 && (IsChannel(m_lastTree->GetSelectedItem()) || IsPlaylistEntry(m_lastTree->GetSelectedItem()));
+	}
 
 	pCmdUI->Enable(!GetConfig().get_string(true, REG_PLAYER).empty() && enable);
 }
@@ -4713,7 +4751,7 @@ void CIPTVChannelEditorDlg::OnToggleChannel()
 void CIPTVChannelEditorDlg::OnUpdateToggleChannel(CCmdUI* pCmdUI)
 {
 	BOOL enable = FALSE;
-	if (IsSelectedChannelsOrEntries() && IsSelectedNotFavorite())
+	if (IsSelectedChannelsOrEntries() && IsSelectedMovable())
 	{
 		m_menu_enable_channel = false;
 		for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
@@ -4753,7 +4791,7 @@ void CIPTVChannelEditorDlg::OnToggleCategory()
 void CIPTVChannelEditorDlg::OnUpdateToggleCategory(CCmdUI* pCmdUI)
 {
 	BOOL enable = FALSE;
-	if (IsSelectedCategory() && IsSelectedNotFavorite())
+	if (IsSelectedCategory() && IsSelectedMovable())
 	{
 		m_menu_enable_category = false;
 		for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
@@ -5247,12 +5285,12 @@ bool CIPTVChannelEditorDlg::IsSelectedCategory() const
 	return (m_lastTree == &m_wndChannelsTree && GetCategory(m_wndChannelsTree.GetFirstSelectedItem()) != nullptr && IsSelectedTheSameType(&m_wndChannelsTree));
 }
 
-bool CIPTVChannelEditorDlg::IsSelectedNotFavorite() const
+bool CIPTVChannelEditorDlg::IsSelectedMovable() const
 {
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
 		const auto& category = GetCategory(hItem);
-		if (category && category->is_favorite())
+		if (category && (category->is_favorite() || category->is_vod() || category->is_all_channels()))
 			return false;
 	}
 

@@ -135,9 +135,13 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         $items = array();
 
         foreach ($this->plugin->tv->get_groups() as $group) {
-            $media_url_str = $group->is_favorite_group() ?
-                Starnet_Tv_Favorites_Screen::get_media_url_str() :
-                Starnet_Tv_Channel_List_Screen::get_media_url_str($group->get_id());
+            if ($group->is_favorite_group()) {
+                $media_url_str = Starnet_Tv_Favorites_Screen::get_media_url_str();
+            } else if ($group->is_vod_group()) {
+                $media_url_str = MediaURL::encode(array('screen_id' => Starnet_Vod_Category_List_Screen::ID, 'name' => 'VOD'));
+            } else {
+                $media_url_str = Starnet_Tv_Channel_List_Screen::get_media_url_str($group->get_id());
+            }
 
             $items[] = array(
                 PluginRegularFolderItem::media_url => $media_url_str,
@@ -149,8 +153,6 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 )
             );
         }
-
-        $this->plugin->tv->add_special_groups($items);
 
         // hd_print("Loaded items " . count($items));
         return $items;

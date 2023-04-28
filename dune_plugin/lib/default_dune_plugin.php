@@ -30,8 +30,9 @@ class Default_Dune_Plugin implements DunePlugin
     const FAV_MOVIES_CATEGORY_CAPTION = 'Избранное';
     const FAV_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/fav_movie.png';
 
+    const VOD_GROUP_ID = '##mediateka##';
     const VOD_GROUP_CAPTION = 'Медиатека';
-    const VOD_GROUP_ICON = "plugin_file://icons/vod.png";
+    const VOD_GROUP_ICON_PATH = "plugin_file://icons/vod.png";
 
     const SEARCH_MOVIES_CATEGORY_CAPTION = 'Поиск';
     const SEARCH_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/search_movie.png';
