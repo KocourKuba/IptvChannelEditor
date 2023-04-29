@@ -19,14 +19,7 @@ class All_Channels_Group extends Default_Group
         parent::__construct($id, $title, $icon_url);
 
         $this->tv = $tv;
-    }
-
-    /**
-     * @return bool
-     */
-    public function is_all_channels_group()
-    {
-        return true;
+        $this->is_all_group = true;
     }
 
     /**

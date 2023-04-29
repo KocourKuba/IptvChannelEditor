@@ -23,6 +23,10 @@ class Default_Group implements Group
      */
     protected $_channels;
 
+    protected $is_favorite = false;
+    protected $is_all_group = false;
+    protected $is_vod_group = false;
+
     /**
      * @param string $id
      * @param string $title
@@ -70,7 +74,7 @@ class Default_Group implements Group
      */
     public function is_favorite_group()
     {
-        return false;
+        return $this->is_favorite;
     }
 
     /**
@@ -78,7 +82,7 @@ class Default_Group implements Group
      */
     public function is_vod_group()
     {
-        return false;
+        return $this->is_vod_group;
     }
 
     /**
@@ -86,7 +90,7 @@ class Default_Group implements Group
      */
     public function is_all_channels_group()
     {
-        return false;
+        return $this->is_all_group;
     }
 
     /**

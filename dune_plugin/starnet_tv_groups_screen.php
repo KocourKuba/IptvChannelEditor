@@ -126,6 +126,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
+        //hd_print("Starnet_Tv_Groups_Screen::get_all_folder_items");
         try {
             $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
         } catch (Exception $e) {
@@ -134,24 +135,65 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
 
         $items = array();
 
+        /** @var Default_Group $group */
         foreach ($this->plugin->tv->get_groups() as $group) {
-            if ($group->is_favorite_group()) {
-                $media_url_str = Starnet_Tv_Favorites_Screen::get_media_url_str();
-            } else if ($group->is_vod_group()) {
-                $media_url_str = MediaURL::encode(array('screen_id' => Starnet_Vod_Category_List_Screen::ID, 'name' => 'VOD'));
-            } else {
-                $media_url_str = Starnet_Tv_Channel_List_Screen::get_media_url_str($group->get_id());
-            }
 
-            $items[] = array(
-                PluginRegularFolderItem::media_url => $media_url_str,
-                PluginRegularFolderItem::caption => $group->get_title(),
-                PluginRegularFolderItem::view_item_params => array
-                (
-                    ViewItemParams::icon_path => $group->get_icon_url(),
-                    ViewItemParams::item_detailed_icon_path => $group->get_icon_url()
+            //hd_print("group: {$group->get_title()} , icon: {$group->get_icon_url()}");
+            $icons_param = array(
+                ViewItemParams::icon_path => $group->get_icon_url(),
+                ViewItemParams::item_detailed_icon_path => $group->get_icon_url()
+            );
+
+            if ($group->is_favorite_group()) {
+                $fav_item = array(
+                    PluginRegularFolderItem::media_url => Starnet_Tv_Favorites_Screen::get_media_url_str(),
+                    PluginRegularFolderItem::caption => Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
+                    PluginRegularFolderItem::view_item_params => $icons_param
+                );
+            } else if ($group->is_all_channels_group()) {
+                $all_item = array(
+                    PluginRegularFolderItem::media_url => Starnet_Tv_Channel_List_Screen::get_media_url_str(
+                        Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID),
+                    PluginRegularFolderItem::caption => Default_Dune_Plugin::ALL_CHANNEL_GROUP_CAPTION,
+                    PluginRegularFolderItem::view_item_params => $icons_param
+                );
+            } else {
+                $items[] = array(
+                    PluginRegularFolderItem::media_url => Starnet_Tv_Channel_List_Screen::get_media_url_str($group->get_id()),
+                    PluginRegularFolderItem::caption => $group->get_title(),
+                    PluginRegularFolderItem::view_item_params => $icons_param
+                );
+            }
+        }
+
+        if ($this->plugin->tv->get_vod_group() !== null) {
+            $vod_item = array(
+                PluginRegularFolderItem::media_url => MediaURL::encode(
+                    array('screen_id' => Starnet_Vod_Category_List_Screen::ID, 'name' => 'VOD')
+                ),
+                PluginRegularFolderItem::caption => Default_Dune_Plugin::VOD_GROUP_CAPTION,
+                PluginRegularFolderItem::view_item_params => array(
+                    ViewItemParams::icon_path => $this->plugin->tv->get_vod_group()->get_icon_url(),
+                    ViewItemParams::item_detailed_icon_path => $this->plugin->tv->get_vod_group()->get_icon_url()
                 )
             );
+        }
+
+        $vod_last = !isset($plugin_cookies->vod_last) || $plugin_cookies->vod_last === 'yes';
+        if (isset($vod_item) && $vod_last === false) {
+            array_unshift($items, $vod_item);
+        }
+
+        if (isset($all_item) && (!isset($plugin_cookies->show_all) || $plugin_cookies->show_all === 'yes')) {
+            array_unshift($items, $all_item);
+        }
+
+        if (isset($fav_item)) {
+            array_unshift($items, $fav_item);
+        }
+
+        if (isset($vod_item) && $vod_last !== false) {
+            $items[] = $vod_item;
         }
 
         // hd_print("Loaded items " . count($items));

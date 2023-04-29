@@ -738,8 +738,11 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         $rows = array();
         $fav_channel_ids = $this->plugin->tv->get_fav_channel_ids($plugin_cookies);
+        $show_all = !isset($plugin_cookies->show_all) || $plugin_cookies->show_all === 'yes';
+        /** @var Default_Group $group */
         foreach ($groups as $group) {
             if ($group->is_favorite_group()) continue;
+            if ( $show_all === false && $group->is_all_channels_group()) continue;
 
             $items = array();
             $fav_stickers = null;

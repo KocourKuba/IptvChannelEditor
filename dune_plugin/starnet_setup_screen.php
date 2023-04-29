@@ -10,6 +10,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const CONTROLS_WIDTH = 800;
 
     const SETUP_ACTION_SHOW_TV = 'show_tv';
+    const SETUP_ACTION_VOD_LAST = 'vod_last';
+    const SETUP_ACTION_SHOW_ALL = 'show_all';
     const SETUP_ACTION_OTTKEY_DLG = 'ott_key_dialog';
     const SETUP_ACTION_OTTKEY_APPLY = 'ott_key_apply';
     const SETUP_ACTION_LOGIN_DLG = 'login_dialog';
@@ -26,6 +28,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const SETUP_ACTION_CHANNELS_URL_APPLY = 'channels_url_apply';
     const SETUP_ACTION_VOD_LIST = 'vod_list';
     const SETUP_ACTION_CHANGE_VOD_LIST = 'change_vod_list';
+    const SETUP_ACTION_INTERFACE_DLG = 'interface_dialog';
+    const SETUP_ACTION_INTERFACE_APPLY = 'interface_apply';
     const SETUP_ACTION_STREAMING_DLG = 'streaming_dialog';
     const SETUP_ACTION_STREAMING_APPLY = 'streaming_apply';
     const SETUP_ACTION_AUTO_RESUME = 'auto_resume';
@@ -36,6 +40,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const SETUP_ACTION_PASS_DLG = 'pass_dialog';
     const SETUP_ACTION_PASS_APPLY = 'pass_apply';
     const SETUP_ACTION_SEND_LOG = 'send_log';
+    const SETUP_ACTION_RELOAD_CHANNELS = 'reload_channels';
 
     private static $on_off_ops = array
     (
@@ -109,12 +114,9 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $link_icon = $this->plugin->get_image_path('link.png');
 
         //////////////////////////////////////
-        // Show in main screen
-        if (!is_apk()) {
-            $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : 'yes';
-            Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_SHOW_TV, 'Показывать в главном меню:',
-                self::$on_off_ops[$show_tv], $this->plugin->get_image_path(self::$on_off_img[$show_tv]), self::CONTROLS_WIDTH);
-        }
+        // Interface settings
+        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_INTERFACE_DLG,
+            'Настройки интерфейса:', 'Изменить настройки', $setting_icon, self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // ott or token dialog
@@ -222,6 +224,47 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
     {
         return $this->do_get_control_defs($plugin_cookies);
+    }
+
+    /**
+     * interface dialog defs
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function do_get_interface_control_defs(&$plugin_cookies)
+    {
+        hd_print("do_get_interface_control_defs");
+        $defs = array();
+        Control_Factory::add_vgap($defs, 20);
+
+        $on_off_ops = array();
+        $on_off_ops[SetupControlSwitchDefs::switch_on] = 'Да';
+        $on_off_ops[SetupControlSwitchDefs::switch_off] = 'Нет';
+
+        //////////////////////////////////////
+        // Show in main screen
+        if (!is_apk()) {
+            $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : SetupControlSwitchDefs::switch_on;
+            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_SHOW_TV, 'Показывать в главном меню:', $show_tv, $on_off_ops, 0);
+        }
+
+        //////////////////////////////////////
+        // show all channels category
+        $show_all = isset($plugin_cookies->show_all) ? $plugin_cookies->show_all : SetupControlSwitchDefs::switch_on;
+        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_SHOW_ALL, 'Показывать категорию все каналы:', $show_all, $on_off_ops, 0);
+
+        //////////////////////////////////////
+        // show vod at the end of categories
+        $vod_last = isset($plugin_cookies->vod_last) ? $plugin_cookies->vod_last : SetupControlSwitchDefs::switch_on;
+        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_VOD_LAST, 'Медиатека в конце списка:', $vod_last, $on_off_ops, 0);
+
+        Control_Factory::add_vgap($defs, 50);
+
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_INTERFACE_APPLY, 'ОК', 300);
+        Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
+        Control_Factory::add_vgap($defs, 10);
+
+        return $defs;
     }
 
     /**
@@ -563,242 +606,254 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Setup: handle_user_input:');
+        //hd_print('Starnet_Setup_Screen: handle_user_input:');
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
-        if (isset($user_input->action_type) && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
-            $control_id = $user_input->control_id;
-            $new_value = '';
-            if (isset($user_input->{$control_id})) {
-                $new_value = $user_input->{$control_id};
-                hd_print("Setup: changing $control_id value to $new_value");
-            }
+        $control_id = $user_input->control_id;
+        $new_value = '';
+        if (isset($user_input->action_type, $user_input->{$control_id})
+            && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
+            $new_value = $user_input->{$control_id};
+            hd_print("Setup: changing $control_id value to $new_value");
+        }
 
-            switch ($control_id) {
+        switch ($control_id) {
 
-                case self::SETUP_ACTION_SHOW_TV:
-                    $plugin_cookies->show_tv = ($plugin_cookies->show_tv === SetupControlSwitchDefs::switch_on)
-                        ? SetupControlSwitchDefs::switch_off
-                        : SetupControlSwitchDefs::switch_on;
-                    break;
+            case self::SETUP_ACTION_INTERFACE_DLG: // show interface settings dialog
+                $defs = $this->do_get_interface_control_defs($plugin_cookies);
+                return Action_Factory::show_dialog('Настройки интерфейса', $defs, true);
 
-                case self::SETUP_ACTION_OTTKEY_DLG: // show ott key dialog
-                    $defs = $this->do_get_ott_key_control_defs($plugin_cookies);
-                    return Action_Factory::show_dialog('Ключ чувствителен к регистру. Переключение регистра кнопкой Select', $defs, true);
+            case self::SETUP_ACTION_INTERFACE_APPLY: // show interface settings dialog
+                if (!is_apk()) {
+                    $plugin_cookies->show_tv = $user_input->show_tv;
+                    hd_print("Show on main screen: $plugin_cookies->show_tv");
+                }
 
-                case self::SETUP_ACTION_OTTKEY_APPLY: // handle ott key dialog result
-                    $plugin_cookies->ott_key = $user_input->ott_key;
-                    $plugin_cookies->subdomain = $user_input->subdomain;
-                    $plugin_cookies->mediateka = $user_input->vportal;
-                    hd_print("portal info: $plugin_cookies->mediateka");
-                    return $this->reload_channels($plugin_cookies);
+                $plugin_cookies->show_all = $user_input->show_all;
+                hd_print("Show all channels category: $plugin_cookies->show_all");
 
-                case self::SETUP_ACTION_LOGIN_DLG: // token dialog
-                    $defs = $this->do_get_login_control_defs($plugin_cookies);
-                    return Action_Factory::show_dialog('Данные чувствительны к регистру. Переключение регистра кнопкой Select', $defs, true);
+                $plugin_cookies->vod_last = $user_input->vod_last;
+                hd_print("Vod at last: $plugin_cookies->vod_last");
 
-                case self::SETUP_ACTION_LOGIN_APPLY: // handle token dialog result
-                    $old_login = isset($plugin_cookies->login) ? $plugin_cookies->login : '';
-                    $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
-                    $plugin_cookies->login = $user_input->login;
-                    $plugin_cookies->password = $user_input->password;
-                    $account_data = $this->plugin->config->GetAccountInfo($plugin_cookies, true);
-                    if ($account_data === false) {
-                        $plugin_cookies->login = $old_login;
-                        $plugin_cookies->password = $old_password;
-                        return Action_Factory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
+                return $this->reload_channels($plugin_cookies);
+
+            case self::SETUP_ACTION_OTTKEY_DLG: // show ott key dialog
+                $defs = $this->do_get_ott_key_control_defs($plugin_cookies);
+                return Action_Factory::show_dialog('Ключ чувствителен к регистру. Переключение регистра кнопкой Select', $defs, true);
+
+            case self::SETUP_ACTION_OTTKEY_APPLY: // handle ott key dialog result
+                $plugin_cookies->ott_key = $user_input->ott_key;
+                $plugin_cookies->subdomain = $user_input->subdomain;
+                $plugin_cookies->mediateka = $user_input->vportal;
+                hd_print("portal info: $plugin_cookies->mediateka");
+                return $this->reload_channels($plugin_cookies);
+
+            case self::SETUP_ACTION_LOGIN_DLG: // token dialog
+                $defs = $this->do_get_login_control_defs($plugin_cookies);
+                return Action_Factory::show_dialog('Данные чувствительны к регистру. Переключение регистра кнопкой Select', $defs, true);
+
+            case self::SETUP_ACTION_LOGIN_APPLY: // handle token dialog result
+                $old_login = isset($plugin_cookies->login) ? $plugin_cookies->login : '';
+                $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
+                $plugin_cookies->login = $user_input->login;
+                $plugin_cookies->password = $user_input->password;
+                $account_data = $this->plugin->config->GetAccountInfo($plugin_cookies, true);
+                if ($account_data === false) {
+                    $plugin_cookies->login = $old_login;
+                    $plugin_cookies->password = $old_password;
+                    return Action_Factory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
+                }
+
+                return $this->reload_channels($plugin_cookies);
+
+            case self::SETUP_ACTION_PIN_DLG: // token dialog
+                $defs = $this->do_get_pin_control_defs($plugin_cookies);
+                return Action_Factory::show_dialog('Данные чувствительны к регистру. Переключение регистра кнопкой Select',
+                    $defs, true);
+
+            case self::SETUP_ACTION_PIN_APPLY: // handle token dialog result
+                $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
+                $plugin_cookies->password = $user_input->password;
+                $account_data = $this->plugin->config->GetAccountInfo($plugin_cookies, true);
+                if ($account_data === false) {
+                    $plugin_cookies->password = $old_password;
+                    return Action_Factory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
+                }
+
+                return $this->reload_channels($plugin_cookies);
+
+            case self::SETUP_ACTION_CLEAR_ACCOUNT: // confirm clear account
+                if ($this->plugin->config->get_embedded_account() === null) break;
+
+                return Action_Factory::show_confirmation_dialog('Внимание!', $this, self::SETUP_ACTION_CLEAR_ACCOUNT_APPLY,
+                    'Вы действительно хотите удалить встроенные данные?');
+
+            case self::SETUP_ACTION_CLEAR_ACCOUNT_APPLY: // handle clear account
+                exec('rm -rf ' . get_install_path('account.dat'));
+                exec('rm -rf ' . get_data_path('account.dat'));
+                $this->plugin->config->set_embedded_account(null);
+                $post_action = User_Input_Handler_Registry::create_action($this, RESET_CONTROLS_ACTION_ID);
+                return Action_Factory::show_title_dialog('Данные удалены', $post_action);
+
+            case self::SETUP_ACTION_CHANGE_CH_LIST_PATH:
+                $media_url = MediaURL::encode(
+                    array(
+                        'screen_id' => Starnet_Folder_Screen::ID,
+                        'save_data' => 'channels_list_path',
+                        'windowCounter' => 1,
+                    )
+                );
+                return Action_Factory::open_folder($media_url, 'Папка со списком каналов');
+
+            case self::SETUP_ACTION_CHANGE_CH_LIST:
+                $old_value = $plugin_cookies->channels_list;
+                $plugin_cookies->channels_list = $new_value;
+                $action = $this->reload_channels($plugin_cookies);
+                if ($action === null) {
+                    $plugin_cookies->channels_list = $old_value;
+                    Action_Factory::show_title_dialog("Ошибка загрузки списка каналов!");
+                }
+                return $action;
+
+            case self::SETUP_ACTION_CHANNELS_SOURCE: // handle streaming settings dialog result
+                $plugin_cookies->channels_source = $user_input->channels_source;
+                hd_print("Selected channels source: $plugin_cookies->channels_source");
+                $action = $this->reload_channels($plugin_cookies);
+                if ($action === null) {
+                    Action_Factory::show_title_dialog("Ошибка загрузки списка каналов!");
+                }
+                return $action;
+
+            case self::SETUP_ACTION_CHANGE_PL_LIST:
+                $old_value = $plugin_cookies->playlist_idx;
+                $plugin_cookies->playlist_idx = $new_value;
+                hd_print("current playlist idx: $new_value");
+                $action = $this->reload_channels($plugin_cookies);
+                if ($action === null) {
+                    $plugin_cookies->playlist_idx = $old_value;
+                    Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!");
+                }
+                return $action;
+
+            case self::SETUP_ACTION_CHANNELS_URL_DLG:
+                $defs = $this->do_get_channels_url_control_defs($plugin_cookies);
+                return Action_Factory::show_dialog('Ссылка на списки каналов', $defs, true);
+
+            case self::SETUP_ACTION_CHANNELS_URL_APPLY: // handle streaming settings dialog result
+                if (isset($user_input->channels_url_path)) {
+                    $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
+
+                    switch ($source) {
+                        case 2:
+                            if ($user_input->channels_url_path !== $plugin_cookies->channels_url) {
+                                $plugin_cookies->channels_url = $user_input->channels_url_path;
+                            }
+                            break;
+                        case 3:
+                            if ($user_input->channels_url_path !== $plugin_cookies->channels_direct_url) {
+                                $plugin_cookies->channels_direct_url = $user_input->channels_url_path;
+                            }
+                            break;
                     }
 
-                    return $this->reload_channels($plugin_cookies);
+                    hd_print("Selected channels path: $plugin_cookies->channels_url");
+                }
 
-                case self::SETUP_ACTION_PIN_DLG: // token dialog
-                    $defs = $this->do_get_pin_control_defs($plugin_cookies);
-                    return Action_Factory::show_dialog('Данные чувствительны к регистру. Переключение регистра кнопкой Select',
-                        $defs, true);
+                return $this->reload_channels($plugin_cookies);
 
-                case self::SETUP_ACTION_PIN_APPLY: // handle token dialog result
-                    $old_password = isset($plugin_cookies->password) ? $plugin_cookies->password : '';
-                    $plugin_cookies->password = $user_input->password;
-                    $account_data = $this->plugin->config->GetAccountInfo($plugin_cookies, true);
-                    if ($account_data === false) {
-                        $plugin_cookies->password = $old_password;
-                        return Action_Factory::show_title_dialog('Неправильные логин/пароль или неактивна подписка');
+            case self::SETUP_ACTION_STREAMING_DLG: // show streaming settings dialog
+                $defs = $this->do_get_streaming_control_defs($plugin_cookies);
+                return Action_Factory::show_dialog('Настройки воспроизведения', $defs, true);
+
+            case self::SETUP_ACTION_STREAMING_APPLY: // handle streaming settings dialog result
+                $plugin_cookies->buf_time = $user_input->buf_time;
+                hd_print("Buffering time: $plugin_cookies->buf_time");
+
+                $plugin_cookies->auto_play = $user_input->auto_play;
+                hd_print("Auto play: $plugin_cookies->auto_play");
+
+                $plugin_cookies->auto_resume = $user_input->auto_resume;
+                hd_print("Auto resume: $plugin_cookies->auto_resume");
+
+                //$plugin_cookies->strip_https = $user_input->strip_https;
+                //hd_print("Strip https: $plugin_cookies->strip_https");
+
+                if (isset($user_input->epg_source)) {
+                    $plugin_cookies->epg_source = $user_input->epg_source;
+                    hd_print("Selected epg source: $user_input->epg_source");
+                }
+                $plugin_cookies->epg_font_size = $user_input->epg_font_size;
+                hd_print("Selected epg font size: $user_input->epg_font_size");
+
+                $need_reload = false;
+                if (isset($user_input->stream_format)) {
+                    $need_reload = true;
+                    $plugin_cookies->format = $user_input->stream_format;
+                    hd_print("selected stream type: $plugin_cookies->format");
+                }
+
+                if (isset($user_input->server) && $this->plugin->config->get_server_id($plugin_cookies) !== $user_input->server) {
+                    $need_reload = true;
+                    $this->plugin->config->set_server_id($user_input->server, $plugin_cookies);
+                    hd_print("Selected server: id: $user_input->server name: '" . $this->plugin->config->get_server_name($plugin_cookies) . "'");
+                }
+
+                if (isset($user_input->quality) && $this->plugin->config->get_quality_id($plugin_cookies) !== $user_input->quality) {
+                    $need_reload = true;
+                    $this->plugin->config->set_quality_id($user_input->quality, $plugin_cookies);
+                    hd_print("Selected quality: id: $user_input->quality name: '" . $this->plugin->config->get_quality_name($plugin_cookies) . "'");
+                }
+
+                if (isset($user_input->device) && $this->plugin->config->get_device_id($plugin_cookies) !== $user_input->device) {
+                    $need_reload = true;
+                    $this->plugin->config->set_device_id($user_input->device, $plugin_cookies);
+                    hd_print("Selected device: id: $user_input->device name: '" . $this->plugin->config->get_device_name($plugin_cookies) . "'");
+                }
+
+                if (isset($user_input->profile) && $this->plugin->config->get_profile_id($plugin_cookies) !== $user_input->profile) {
+                    $need_reload = true;
+                    $this->plugin->config->set_profile_id($user_input->profile, $plugin_cookies);
+                    hd_print("Selected profile: id: $user_input->profile name: '" . $this->plugin->config->get_profile_name($plugin_cookies) . "'");
+                }
+
+                return $need_reload ? $this->reload_channels($plugin_cookies) : null;
+
+            case self::SETUP_ACTION_CLEAR_EPG_CACHE: // clear epg cache
+                $epg_path = get_temp_path("epg/");
+                hd_print("do clear epg: $epg_path");
+                foreach(glob($epg_path . "*") as $file) {
+                    if(is_file($file)) {
+                        hd_print("erase: $file");
+                        unlink($file);
                     }
+                }
+                return Action_Factory::show_title_dialog('Кэш EPG очищен');
 
-                    return $this->reload_channels($plugin_cookies);
+            case self::SETUP_ACTION_PASS_DLG: // show pass dialog
+                $defs = $this->do_get_pass_control_defs();
+                return Action_Factory::show_dialog('Родительский контроль', $defs, true);
 
-                case self::SETUP_ACTION_CLEAR_ACCOUNT: // confirm clear account
-                    if ($this->plugin->config->get_embedded_account() === null) break;
+            case self::SETUP_ACTION_PASS_APPLY: // handle pass dialog result
+                if (empty($user_input->pass1) || empty($user_input->pass2)) {
+                    return null;
+                }
 
-                    return Action_Factory::show_confirmation_dialog('Внимание!', $this, self::SETUP_ACTION_CLEAR_ACCOUNT_APPLY,
-                        'Вы действительно хотите удалить встроенные данные?');
+                $msg = 'Пароль не изменен!';
+                $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
+                if ($user_input->pass1 === $pass_sex) {
+                    $plugin_cookies->pass_sex = $user_input->{'pass2'};
+                    $msg = 'Пароль изменен!';
+                }
+                return Action_Factory::show_title_dialog($msg);
 
-                case self::SETUP_ACTION_CLEAR_ACCOUNT_APPLY: // handle clear account
-                    exec('rm -rf ' . get_install_path('account.dat'));
-                    exec('rm -rf ' . get_data_path('account.dat'));
-                    $this->plugin->config->set_embedded_account(null);
-                    $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
-                    return Action_Factory::show_title_dialog('Данные удалены', $post_action);
+            case self::SETUP_ACTION_SEND_LOG: // send log to developer
+                $error_msg = '';
+                $msg = HD::send_log_to_developer($error_msg) ? "Лог отправлен!" : "Лог не отправлен! $error_msg";
+                return Action_Factory::show_title_dialog($msg);
 
-                case self::SETUP_ACTION_CHANGE_CH_LIST_PATH:
-                    $media_url = MediaURL::encode(
-                        array(
-                            'screen_id' => Starnet_Folder_Screen::ID,
-                            'save_data' => 'channels_list_path',
-                            'windowCounter' => 1,
-                        )
-                    );
-                    return Action_Factory::open_folder($media_url, 'Папка со списком каналов');
-
-                case self::SETUP_ACTION_CHANGE_CH_LIST:
-                    $old_value = $plugin_cookies->channels_list;
-                    $plugin_cookies->channels_list = $new_value;
-                    $action = $this->reload_channels($plugin_cookies);
-                    if ($action === null) {
-                        $plugin_cookies->channels_list = $old_value;
-                        Action_Factory::show_title_dialog("Ошибка загрузки списка каналов!");
-                    }
-                    return $action;
-
-                case self::SETUP_ACTION_CHANNELS_SOURCE: // handle streaming settings dialog result
-                    $plugin_cookies->channels_source = $user_input->channels_source;
-                    hd_print("Selected channels source: $plugin_cookies->channels_source");
-                    $action = $this->reload_channels($plugin_cookies);
-                    if ($action === null) {
-                        Action_Factory::show_title_dialog("Ошибка загрузки списка каналов!");
-                    }
-                    return $action;
-
-                case self::SETUP_ACTION_CHANGE_PL_LIST:
-                    $old_value = $plugin_cookies->playlist_idx;
-                    $plugin_cookies->playlist_idx = $new_value;
-                    hd_print("current playlist idx: $new_value");
-                    $action = $this->reload_channels($plugin_cookies);
-                    if ($action === null) {
-                        $plugin_cookies->playlist_idx = $old_value;
-                        Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!");
-                    }
-                    return $action;
-
-                case self::SETUP_ACTION_CHANNELS_URL_DLG:
-                    $defs = $this->do_get_channels_url_control_defs($plugin_cookies);
-                    return Action_Factory::show_dialog('Ссылка на списки каналов', $defs, true);
-
-                case self::SETUP_ACTION_CHANNELS_URL_APPLY: // handle streaming settings dialog result
-                    $need_reload = false;
-                    if (isset($user_input->channels_url_path)) {
-                        $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
-
-                        switch ($source) {
-                            case 2:
-                                if ($user_input->channels_url_path !== $plugin_cookies->channels_url) {
-                                    $plugin_cookies->channels_url = $user_input->channels_url_path;
-                                    $need_reload = true;
-                                }
-                                break;
-                            case 3:
-                                if ($user_input->channels_url_path !== $plugin_cookies->channels_direct_url) {
-                                    $plugin_cookies->channels_direct_url = $user_input->channels_url_path;
-                                    $need_reload = true;
-                                }
-                                break;
-                        }
-
-                        hd_print("Selected channels path: $plugin_cookies->channels_url");
-                    }
-
-                    return $need_reload ? $this->reload_channels($plugin_cookies) : null;
-
-                case self::SETUP_ACTION_STREAMING_DLG: // show streaming settings dialog
-                    $defs = $this->do_get_streaming_control_defs($plugin_cookies);
-                    return Action_Factory::show_dialog('Настройки воспроизведения', $defs, true);
-
-                case self::SETUP_ACTION_STREAMING_APPLY: // handle streaming settings dialog result
-                    $plugin_cookies->buf_time = $user_input->buf_time;
-                    hd_print("Buffering time: $plugin_cookies->buf_time");
-
-                    $plugin_cookies->auto_play = $user_input->auto_play;
-                    hd_print("Auto play: $plugin_cookies->auto_play");
-
-                    $plugin_cookies->auto_resume = $user_input->auto_resume;
-                    hd_print("Auto resume: $plugin_cookies->auto_resume");
-
-                    //$plugin_cookies->strip_https = $user_input->strip_https;
-                    //hd_print("Strip https: $plugin_cookies->strip_https");
-
-                    if (isset($user_input->epg_source)) {
-                        $plugin_cookies->epg_source = $user_input->epg_source;
-                        hd_print("Selected epg source: $user_input->epg_source");
-                    }
-                    $plugin_cookies->epg_font_size = $user_input->epg_font_size;
-                    hd_print("Selected epg font size: $user_input->epg_font_size");
-
-                    $need_reload = false;
-                    if (isset($user_input->stream_format)) {
-                        $need_reload = true;
-                        $plugin_cookies->format = $user_input->stream_format;
-                        hd_print("selected stream type: $plugin_cookies->format");
-                    }
-
-                    if (isset($user_input->server) && $this->plugin->config->get_server_id($plugin_cookies) !== $user_input->server) {
-                        $need_reload = true;
-                        $this->plugin->config->set_server_id($user_input->server, $plugin_cookies);
-                        hd_print("Selected server: id: $user_input->server name: '" . $this->plugin->config->get_server_name($plugin_cookies) . "'");
-                    }
-
-                    if (isset($user_input->quality) && $this->plugin->config->get_quality_id($plugin_cookies) !== $user_input->quality) {
-                        $need_reload = true;
-                        $this->plugin->config->set_quality_id($user_input->quality, $plugin_cookies);
-                        hd_print("Selected quality: id: $user_input->quality name: '" . $this->plugin->config->get_quality_name($plugin_cookies) . "'");
-                    }
-
-                    if (isset($user_input->device) && $this->plugin->config->get_device_id($plugin_cookies) !== $user_input->device) {
-                        $need_reload = true;
-                        $this->plugin->config->set_device_id($user_input->device, $plugin_cookies);
-                        hd_print("Selected device: id: $user_input->device name: '" . $this->plugin->config->get_device_name($plugin_cookies) . "'");
-                    }
-
-                    if (isset($user_input->profile) && $this->plugin->config->get_profile_id($plugin_cookies) !== $user_input->profile) {
-                        $need_reload = true;
-                        $this->plugin->config->set_profile_id($user_input->profile, $plugin_cookies);
-                        hd_print("Selected profile: id: $user_input->profile name: '" . $this->plugin->config->get_profile_name($plugin_cookies) . "'");
-                    }
-
-                    return $need_reload ? $this->reload_channels($plugin_cookies) : null;
-
-                case self::SETUP_ACTION_CLEAR_EPG_CACHE: // clear epg cache
-                    $epg_path = get_temp_path("epg/");
-                    hd_print("do clear epg: $epg_path");
-                    foreach(glob($epg_path . "*") as $file) {
-                        if(is_file($file)) {
-                            hd_print("erase: $file");
-                            unlink($file);
-                        }
-                    }
-                    return Action_Factory::show_title_dialog('Кэш EPG очищен');
-
-                case self::SETUP_ACTION_PASS_DLG: // show pass dialog
-                    $defs = $this->do_get_pass_control_defs();
-                    return Action_Factory::show_dialog('Родительский контроль', $defs, true);
-
-                case self::SETUP_ACTION_PASS_APPLY: // handle pass dialog result
-                    if (empty($user_input->pass1) || empty($user_input->pass2)) {
-                        return null;
-                    }
-
-                    $msg = 'Пароль не изменен!';
-                    $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
-                    if ($user_input->pass1 === $pass_sex) {
-                        $plugin_cookies->pass_sex = $user_input->{'pass2'};
-                        $msg = 'Пароль изменен!';
-                    }
-                    return Action_Factory::show_title_dialog($msg);
-
-                case self::SETUP_ACTION_SEND_LOG: // send log to developer
-                    $error_msg = '';
-                    $msg = HD::send_log_to_developer($error_msg) ? "Лог отправлен!" : "Лог не отправлен! $error_msg";
-                    return Action_Factory::show_title_dialog($msg);
-            }
+            case self::SETUP_ACTION_RELOAD_CHANNELS:
+                //hd_print("reload_action");
+                return $this->reload_channels($plugin_cookies);
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies));
@@ -809,7 +864,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
      */
     protected function reload_channels(&$plugin_cookies)
     {
-        hd_print("reload_channels");
+        hd_print("Reload channels");
         $this->plugin->config->ClearPlaylistCache($plugin_cookies);
         $this->plugin->config->ClearChannelsCache($plugin_cookies);
         $this->plugin->tv->unload_channels();
@@ -820,11 +875,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             return null;
         }
 
-        $post_action = User_Input_Handler_Registry::create_action($this, 'reset_controls');
-
         Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-        $post_action = Starnet_Epfs_Handler::invalidate_folders(null, $post_action);
+        $post_action = Starnet_Epfs_Handler::invalidate_folders(null,
+            User_Input_Handler_Registry::create_action($this, RESET_CONTROLS_ACTION_ID));
 
-        return Action_Factory::invalidate_folders(array(Starnet_Tv_Groups_Screen::ID), $post_action);
+        return Action_Factory::invalidate_folders(array(Starnet_Tv_Groups_Screen::ID, Starnet_Tv_Channel_List_Screen::ID), $post_action);
     }
 }

@@ -218,8 +218,8 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         $items = array();
 
-        foreach ($group->get_group_channels() as $c) {
-            $items[] = $this->get_regular_folder_item($group, $c, $plugin_cookies);
+        foreach ($group->get_group_channels() as $channel) {
+            $items[] = $this->get_regular_folder_item($group, $channel, $plugin_cookies);
         }
 
         return $items;

@@ -1032,7 +1032,7 @@ class default_config extends dynamic_config
 
         $dune_params = $this->get_stream_param($type, Stream_Params::DUNE_PARAMS);
         if (!empty($dune_params)) {
-            hd_print("Additional dune params: $dune_params");
+            //hd_print("Additional dune params: $dune_params");
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
             $dune_params = trim($dune_params, '|');
             $dune_params = str_replace('{BUFFERING}', $buf_time, $dune_params);
