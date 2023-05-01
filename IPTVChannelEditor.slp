@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20230429012546" scan="257" scanned="20230429012536">
+<document created="20211012165442" version="4.0.374" date="20230501183542" scan="260" scanned="20230501183537">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230428232428" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230501163530" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -4376,9 +4376,9 @@
           <native>Internet or intranet path to plugin update package</native>
           <lang id="ru" date="20220730095628">Путь к интернет или интранет веб серверу для скачивания обновления плагина</lang>
         </row>
-        <row id="IDS_STRING_EDIT_PLUGIN_UPDATE_NAME" created="20220730095459" changed="20230312153640">
-          <native>Name of the update description and package</native>
-          <lang id="ru" date="20230312153729">Имя описания и файла для обновления</lang>
+        <row id="IDS_STRING_EDIT_PLUGIN_UPDATE_NAME" created="20220730095459" changed="20230501175539">
+          <native>Generated name of the update description and package</native>
+          <lang id="ru" date="20230501175624">Сгенерированное имя описания и файла для веб обновления</lang>
         </row>
         <row id="IDS_STRING_EDIT_PLUGIN_UPDATE_URL" created="20220730095459">
           <native>Internet or intranet path to plugin update description</native>
@@ -4809,9 +4809,33 @@
         </row>
       </node>
       <node class="TWindowsStringNode" name="25" state="0" created="20230407231756" resid="25" langid="1033">
+        <row id="IDS_STRING_BUTTON_CLEAR_CACHE" state="0" created="20230501182521">
+          <native>Clear cache</native>
+          <lang id="ru" date="20230501182549">Очистить кэш</lang>
+        </row>
+        <row id="IDS_STRING_BUTTON_COLORS" state="0" created="20230501182521">
+          <native>Set the color for the specific category</native>
+          <lang id="ru" date="20230501182617">Установить цвет отображения для выбранных типов каналов</lang>
+        </row>
         <row id="IDS_STRING_BUTTON_EDIT_MANIFEST" state="0" created="20230408002741">
           <native>Set Global Plugin Action manifest entries. See http://files.dune-hd.com/sdk/doc/html/plugins.html##global_plugin_actions</native>
           <lang id="ru" date="20230408003005">Настройка Global Plugin Action для манифеста плагина. Подробнее здесь http://files.dune-hd.com/sdk/doc/html/plugins.html##global_plugin_actions</lang>
+        </row>
+        <row id="IDS_STRING_CHECK_AUTO_HIDE" state="0" created="20230501182521">
+          <native>Hide application to the system tray</native>
+          <lang id="ru" date="20230501182634">Сворачивать приложение в системный трей</lang>
+        </row>
+        <row id="IDS_STRING_CHECK_AUTO_SYNC_CHANNELS" state="0" created="20230501182521">
+          <native>Automatically sync channel in the channel list and playlist and vice versa</native>
+          <lang id="ru" date="20230501182704">Автоматически синхронизировать каналы в списке и в плейлисте при выборе и наоборот</lang>
+        </row>
+        <row id="IDS_STRING_CHECK_PORTABLE" state="0" created="20230501182521">
+          <native>Switch the application to the portable mode (remove dependency from the Windows registry and save all settings to the file)</native>
+          <lang id="ru" date="20230501182805">Переключить приложение в переносимый режим (приложение не будет зависеть от Windows реестра и все настройки будут сохраняться в файл)</lang>
+        </row>
+        <row id="IDS_STRING_COMBO_LANG" state="0" created="20230501182521">
+          <native>Change application language</native>
+          <lang id="ru" date="20230501182818">Изменить язык приложения</lang>
         </row>
         <row id="IDS_STRING_COPY_CONFIGS" state="0" created="20230425212643">
           <native>The root of the Plugins configuration path changed. Copy contained files to the new location? #lExisting files with the same name will be overwritten.</native>
@@ -4821,9 +4845,21 @@
           <native>The root of the Channels lists path changed. Copy contained files to the new location? #lExisting files with the same name will be overwritten.</native>
           <lang id="ru" date="20230425212753">Корневая папка Списков каналов плагинов изменилась. Скопировать содержимое в новую папку?#nФайлы с одинаковыми именем будут перезаписаны.</lang>
         </row>
+        <row id="IDS_STRING_EDIT_CACHE_TTL" created="20230501182521" changed="20230501183537">
+          <native>Maximum time to live for the cache in hours. If time is expired data will be downloaded again.</native>
+          <lang id="ru" date="20230501182929">Максимальное время жизни кэша в часах. Когда дата последнего скачивания превысит указанное время - данные будут скачаны заново</lang>
+        </row>
         <row id="IDS_STRING_EDIT_PLUGIN_CLASS_NAME" state="0">
           <native>PHP class name used to override default_config class methods. In case when need to write our own implementation of base methods for the plugin. PHP script must be placed in the 'dune_plugin\configs' folder. By default used 'default_config' class name.</native>
           <lang id="ru" date="20230407232029">Имя класса PHP используемое для замены методов класса 'default_config'. Для случаев когода надо написать свою реализацию методов плагина. Скрипт PHP должен находиться в папке 'dune_plugin\configs'. По умолчанию используется базовый класс 'dune_config'</lang>
+        </row>
+        <row id="IDS_STRING_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE" state="0" created="20230501175539">
+          <native>Template for generating web update name and description</native>
+          <lang id="ru" date="20230501175618">Шаблон для генерации имени и описания веб обновления</lang>
+        </row>
+        <row id="IDS_STRING_EDIT_STREAM_THREADS" state="0" created="20230501182521">
+          <native>Max threads for collecting channel information. Be careful to increase the threads count. Some providers ban too many simultaneous requests</native>
+          <lang id="ru" date="20230501183043">Максимальное количество потоков для сбора информации о потоках. Будьте осторожны при увеличении количества потоков. Некоторые провайдеры могу забанить за большое количество одновременных запросов.</lang>
         </row>
         <row id="IDS_STRING_ENTRY" state="0" created="20230408002741">
           <native>Entry</native>
@@ -5036,6 +5072,34 @@
         <row id="IDS_STRING_YOSSO_P10" locked="1">RHLS (GlobalCache CDN)</row>
         <row id="IDS_STRING_YOSSO_P9" locked="1">GN (Ukraine, Kiev)</row>
       </node>
+      <node class="TWindowsStringNode" name="38" state="0" created="20230501182521" resid="38" langid="1033">
+        <row id="IDS_STRING_BUTTON_RESET" state="0">
+          <native>Reset colors to the default</native>
+          <lang id="ru" date="20230501183058">Сбросить настройки цветов по умолчанию</lang>
+        </row>
+        <row id="IDS_STRING_CHECK_CMP_TITLE" state="0">
+          <native>Checks for the title when comparing the channels differences</native>
+          <lang id="ru" date="20230501183118">Проверять название канала при проверке изменений</lang>
+        </row>
+      </node>
+      <node class="TWindowsStringNode" name="39" state="0" created="20230501182521" resid="39" langid="1033">
+        <row id="IDS_STRING_CHECK_CMP_EPG1" state="0">
+          <native>Checks for the first EPG ID when comparing the channels differences</native>
+          <lang id="ru" date="20230501183203">Проверять первичный EPG ID канала при проверке изменений</lang>
+        </row>
+        <row id="IDS_STRING_CHECK_CMP_EPG2" state="0">
+          <native>Checks for the second EPG ID when comparing the channels differences</native>
+          <lang id="ru" date="20230501183154">Проверять вторичный EPG ID канала при проверке изменений</lang>
+        </row>
+        <row id="IDS_STRING_CMP_ARCHIVE" state="0">
+          <native>Checks for the archive days when comparing the channels differences</native>
+          <lang id="ru" date="20230501183221">Проверять количество дней архива канала при проверке изменений</lang>
+        </row>
+        <row id="IDS_STRING_CMP_ICON" state="0">
+          <native>Checks for the icon url when comparing the channels differences</native>
+          <lang id="ru" date="20230501183229">Проверять иконку канала при проверке изменений</lang>
+        </row>
+      </node>
       <node class="TWindowsStringNode" name="8" resid="8" langid="1033">
         <row id="IDS_ABOUTBOX">
           <native>&amp;About Dune IPTV Channel Editor...</native>
@@ -5097,34 +5161,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20230429012536">
-          <prev>6.6.1613, 27 Apr 2023</prev>
-          <native>6.6.1614, 28 Apr 2023</native>
+        <row id="FileVersion" locked="1" state="3" changed="20230501175539">
+          <prev>6.6.1614, 28 Apr 2023</prev>
+          <native>6.6.1620, 1 May 2023</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230429012536">
-          <prev>1613</prev>
-          <native>1614</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230501175539">
+          <prev>1614</prev>
+          <native>1620</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20230429012536">
-          <prev>6.6.1613</prev>
-          <native>6.6.1614</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20230501175539">
+          <prev>6.6.1614</prev>
+          <native>6.6.1620</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230429012536">
-          <prev>1613</prev>
-          <native>1614</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230501175539">
+          <prev>1614</prev>
+          <native>1620</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

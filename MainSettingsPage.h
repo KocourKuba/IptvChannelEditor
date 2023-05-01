@@ -25,10 +25,11 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+#include "TooltipPropertyPage.h"
 
 // CMainSettingsPage dialog
 
-class CMainSettingsPage : public CPropertyPage
+class CMainSettingsPage : public CTooltipPropertyPage
 {
 	DECLARE_DYNAMIC(CMainSettingsPage)
 

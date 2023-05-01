@@ -1880,7 +1880,7 @@ BEGIN
     IDS_STRING_CHECK_CUSTOM_UPDATE_NAME 
                             "Set a custom name for the update description. Otherwise will be generated automatically"
     IDS_STRING_EDIT_PLUGIN_UPDATE_NAME 
-                            "Name of the update description and package"
+                            "Generated name of the update description and package"
     IDS_STRING_CHECK_EPG_ID_FROM_ID 
                             "Set EPG ID from channel ID when parse playlist"
 END
@@ -2092,6 +2092,37 @@ BEGIN
     IDS_STRING_COPY_LISTS   "The root of the Channels lists path changed. Copy contained files to the new location? \nExisting files with the same name will be overwritten."
     IDS_STRING_COPY_CONFIGS "The root of the Plugins configuration path changed. Copy contained files to the new location? \nExisting files with the same name will be overwritten."
     IDS_STRING_ERR_COPY     "Copy error! Error code {:d}"
+    IDS_STRING_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE 
+                            "Template for generating web update name and description"
+    IDS_STRING_COMBO_LANG   "Change application language"
+    IDS_STRING_EDIT_STREAM_THREADS 
+                            "Max threads for collecting channel information. Be careful to increase the threads count. Some providers ban too many simultaneous requests"
+    IDS_STRING_EDIT_CACHE_TTL 
+                            "Maximum time to live for the cache in hours. If time is expired data will be downloaded again."
+    IDS_STRING_BUTTON_CLEAR_CACHE "Clear cache"
+    IDS_STRING_CHECK_AUTO_SYNC_CHANNELS 
+                            "Automatically sync channel in the channel list and playlist and vice versa"
+    IDS_STRING_CHECK_AUTO_HIDE "Hide application to the system tray"
+    IDS_STRING_CHECK_PORTABLE 
+                            "Switch the application to the portable mode (remove dependency from the Windows registry and save all settings to the file)"
+    IDS_STRING_BUTTON_COLORS "Set the color for the specific category"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_BUTTON_RESET "Reset colors to the default"
+    IDS_STRING_CHECK_CMP_TITLE 
+                            "Checks for the title when comparing the channels differences"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_CHECK_CMP_EPG1 
+                            "Checks for the first EPG ID when comparing the channels differences"
+    IDS_STRING_CHECK_CMP_EPG2 
+                            "Checks for the second EPG ID when comparing the channels differences"
+    IDS_STRING_CMP_ICON     "Checks for the icon url when comparing the channels differences"
+    IDS_STRING_CMP_ARCHIVE  "Checks for the archive days when comparing the channels differences"
 END
 
 #endif    // English (United States) resources

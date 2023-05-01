@@ -39,9 +39,9 @@ static char THIS_FILE[] = __FILE__;
 
 // CMainSettingsPage dialog
 
-IMPLEMENT_DYNAMIC(CMainSettingsPage, CPropertyPage)
+IMPLEMENT_DYNAMIC(CMainSettingsPage, CTooltipPropertyPage)
 
-BEGIN_MESSAGE_MAP(CMainSettingsPage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CMainSettingsPage, CTooltipPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_THREADS, &CMainSettingsPage::OnEnChangeEditStreamThreads)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_STREAM_THREADS, &CMainSettingsPage::OnDeltaposSpinStreamThreads)
 	ON_EN_CHANGE(IDC_EDIT_CACHE_TTL, &CMainSettingsPage::OnEnChangeEditCacheTTL)
@@ -51,8 +51,7 @@ BEGIN_MESSAGE_MAP(CMainSettingsPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_CLEAR_CACHE, &CMainSettingsPage::OnBnClickedButtonClearCache)
 END_MESSAGE_MAP()
 
-
-CMainSettingsPage::CMainSettingsPage() : CPropertyPage(IDD_MAIN_SETTINGS_PAGE)
+CMainSettingsPage::CMainSettingsPage() : CTooltipPropertyPage(IDD_MAIN_SETTINGS_PAGE)
 {
 }
 
@@ -83,6 +82,25 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 BOOL CMainSettingsPage::OnInitDialog()
 {
 	__super::OnInitDialog();
+
+	AddTooltip(IDC_COMBO_LANG, IDS_STRING_COMBO_LANG);
+	AddTooltip(IDC_EDIT_STREAM_THREADS, IDS_STRING_EDIT_STREAM_THREADS);
+	AddTooltip(IDC_EDIT_CACHE_TTL, IDS_STRING_EDIT_CACHE_TTL);
+	AddTooltip(IDC_BUTTON_CLEAR_CACHE, IDS_STRING_BUTTON_CLEAR_CACHE);
+	AddTooltip(IDC_CHECK_AUTO_SYNC_CHANNELS, IDS_STRING_CHECK_AUTO_SYNC_CHANNELS);
+	AddTooltip(IDC_CHECK_AUTO_HIDE, IDS_STRING_CHECK_AUTO_HIDE);
+	AddTooltip(IDC_CHECK_PORTABLE, IDS_STRING_CHECK_PORTABLE);
+	AddTooltip(IDC_BUTTON_ADDED, IDS_STRING_BUTTON_COLORS);
+	AddTooltip(IDC_BUTTON_CHANGED, IDS_STRING_BUTTON_COLORS);
+	AddTooltip(IDC_BUTTON_HEVC, IDS_STRING_BUTTON_COLORS);
+	AddTooltip(IDC_BUTTON_NOT_ADDED, IDS_STRING_BUTTON_COLORS);
+	AddTooltip(IDC_BUTTON_UNKNOWN, IDS_STRING_BUTTON_COLORS);
+	AddTooltip(IDC_BUTTON_RESET, IDS_STRING_BUTTON_RESET);
+	AddTooltip(IDC_CHECK_CMP_TITLE, IDS_STRING_CHECK_CMP_TITLE);
+	AddTooltip(IDC_CHECK_CMP_EPG1, IDS_STRING_CHECK_CMP_EPG1);
+	AddTooltip(IDC_CHECK_CMP_EPG2, IDS_STRING_CHECK_CMP_EPG2);
+	AddTooltip(IDC_CHECK_CMP_ICON, IDS_STRING_CMP_ICON);
+	AddTooltip(IDC_CHECK_CMP_ARCHIVE, IDS_STRING_CMP_ARCHIVE);
 
 	m_bAutoSync = GetConfig().get_int(true, REG_AUTO_SYNC);
 	m_bAutoHide = GetConfig().get_int(true, REG_AUTO_HIDE);

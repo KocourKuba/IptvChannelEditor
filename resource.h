@@ -312,6 +312,15 @@
 #define IDS_STRING_COPY_LISTS           388
 #define IDS_STRING_COPY_CONFIGS         389
 #define IDS_STRING_ERR_COPY             390
+#define IDS_STRING_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE 391
+#define IDS_STRING_COMBO_LANG           392
+#define IDS_STRING_EDIT_STREAM_THREADS  393
+#define IDS_STRING_EDIT_CACHE_TTL       394
+#define IDS_STRING_BUTTON_CLEAR_CACHE   395
+#define IDS_STRING_CHECK_AUTO_SYNC_CHANNELS 396
+#define IDS_STRING_CHECK_AUTO_HIDE      397
+#define IDS_STRING_CHECK_PORTABLE       398
+#define IDS_STRING_BUTTON_COLORS        399
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
@@ -375,6 +384,12 @@
 #define IDS_STRING_YOSSO_P8             527
 #define IDS_STRING_YOSSO_P9             528
 #define IDS_STRING_YOSSO_P10            529
+#define IDS_STRING_BUTTON_RESET         600
+#define IDS_STRING_CHECK_CMP_TITLE      601
+#define IDS_STRING_CHECK_CMP_EPG1       613
+#define IDS_STRING_CHECK_CMP_EPG2       614
+#define IDS_STRING_CMP_ICON             615
+#define IDS_STRING_CMP_ARCHIVE          616
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -677,7 +692,7 @@
 #define ID_ALL_CHANNELS                 32807
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280
