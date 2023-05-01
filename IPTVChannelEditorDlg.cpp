@@ -1476,7 +1476,12 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 			}
 		}
 
-		if (!cnt && pair.second.category->is_favorite() && pair.second.category->is_vod() && pair.second.category->is_all_channels())
+		if (!cnt
+			&& (   bCheckUnknown
+				|| bCheckChanged
+				||    (!pair.second.category->is_favorite()
+					&& !pair.second.category->is_vod())
+					&& !pair.second.category->is_all_channels()))
 		{
 			m_wndChannelsTree.DeleteItem(hParent);
 			m_categoriesTreeMap.erase(hParent);
