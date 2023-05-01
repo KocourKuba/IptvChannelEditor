@@ -1432,7 +1432,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		tvCategory.item.mask = TVIF_TEXT | TVIF_PARAM;
 		tvCategory.item.lParam = (DWORD_PTR)InfoType::enCategory;
 		// higher value and will be added later and it will be first in the tree
-		tvCategory.hInsertAfter = (pair.second.category->is_favorite() || pair.second.category->is_vod() || pair.second.category->is_all_channels()) ? TVI_FIRST : nullptr;
+		tvCategory.hInsertAfter = pair.second.category->is_not_movable() ? TVI_FIRST : nullptr;
 
 		auto hParent = m_wndChannelsTree.InsertItem(&tvCategory);
 		m_wndChannelsTree.SetItemColor(hParent, pair.second.category->is_disabled() ? m_gray : m_normal);
@@ -1476,12 +1476,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 			}
 		}
 
-		if (!cnt
-			&& (   bCheckUnknown
-				|| bCheckChanged
-				||    (!pair.second.category->is_favorite()
-					&& !pair.second.category->is_vod())
-					&& !pair.second.category->is_all_channels()))
+		if (!cnt && (bCheckUnknown || bCheckChanged || !pair.second.category->is_not_movable()))
 		{
 			m_wndChannelsTree.DeleteItem(hParent);
 			m_categoriesTreeMap.erase(hParent);
@@ -2098,7 +2093,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		category->ParseNode(cat_node);
 		CategoryInfo info = { nullptr, category };
 		auto& res = m_categoriesMap.emplace(category->get_key(), info);
-		if (!res.second && (category->is_favorite() || category->is_vod() || category->is_all_channels()))
+		if (!res.second && category->is_not_movable())
 			res.first->second.category->set_icon_uri(category->get_icon_uri());
 
 		cat_node = cat_node->next_sibling();
@@ -2302,7 +2297,7 @@ void CIPTVChannelEditorDlg::OnRemove()
 			const auto& category = GetCategory(hItem);
 			if (!category) continue;
 
-			if (category->is_favorite()) continue;
+			if (category->is_not_movable()) continue;
 
 			for (auto hChildItem = m_wndChannelsTree.GetChildItem(hItem); hChildItem != nullptr; hChildItem = m_wndChannelsTree.GetNextSiblingItem(hChildItem))
 			{
@@ -2378,7 +2373,7 @@ void CIPTVChannelEditorDlg::OnUpdateChannelUp(CCmdUI* pCmdUI)
 	{
 		auto prevCat = FindCategory(hPrev);
 
-		enable = IsSelectedMovable() && prevCat != nullptr && !prevCat->is_favorite();
+		enable = IsSelectedMovable() && prevCat != nullptr && !prevCat->is_not_movable();
 	}
 
 	pCmdUI->Enable(enable);
@@ -2693,7 +2688,7 @@ void CIPTVChannelEditorDlg::OnBeginlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT*
 
 	if (const auto& category = FindCategory(pTVDispInfo->item.hItem); category != nullptr)
 	{
-		if (category->is_favorite())
+		if (category->is_not_movable())
 			*pResult = 1;
 	}
 }
@@ -2781,11 +2776,11 @@ void CIPTVChannelEditorDlg::OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResul
 		subMenuMove.CreatePopupMenu();
 
 		const auto& itemCategory = GetItemCategory(m_wndChannelsTree.GetFirstSelectedItem());
-		if (itemCategory != nullptr && !itemCategory->is_favorite() && !itemCategory->is_vod() && !itemCategory->is_all_channels())
+		if (itemCategory != nullptr && !itemCategory->is_not_movable())
 		{
 			for (const auto& category : m_categoriesMap)
 			{
-				if (category.second.category->is_favorite() || itemCategory->get_key() == category.first) continue;
+				if (category.second.category->is_not_movable() || itemCategory->get_key() == category.first) continue;
 
 				subMenuCopy.AppendMenu(MF_STRING | MF_ENABLED, ID_COPY_TO_START + category.first, category.second.category->get_title().c_str());
 				subMenuMove.AppendMenu(MF_STRING | MF_ENABLED, ID_MOVE_TO_START + category.first, category.second.category->get_title().c_str());
@@ -2885,7 +2880,7 @@ void CIPTVChannelEditorDlg::OnUpdateAddToFavorite(CCmdUI* pCmdUI)
 	HTREEITEM hItem = m_wndChannelsTree.GetFirstSelectedItem();
 	const auto& itemCategory = GetItemCategory(hItem);
 
-	pCmdUI->Enable(itemCategory != nullptr && !IsCategory(hItem) && !itemCategory->is_favorite() && !itemCategory->is_vod() && !itemCategory->is_all_channels());
+	pCmdUI->Enable(itemCategory != nullptr && !IsCategory(hItem) && !itemCategory->is_not_movable());
 }
 
 void CIPTVChannelEditorDlg::OnCopyTo(UINT id)
@@ -5295,7 +5290,7 @@ bool CIPTVChannelEditorDlg::IsSelectedMovable() const
 	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
 	{
 		const auto& category = GetCategory(hItem);
-		if (category && (category->is_favorite() || category->is_vod() || category->is_all_channels()))
+		if (category && category->is_not_movable())
 			return false;
 	}
 

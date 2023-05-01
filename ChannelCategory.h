@@ -57,6 +57,8 @@ public:
 
 	bool is_all_channels() const { return key == ID_ALL_CHANNELS; }
 
+	bool is_not_movable() const { return is_favorite() || is_all_channels() || is_vod(); }
+
 	const std::vector<std::shared_ptr<ChannelInfo>>& get_channels() const { return channels; }
 
 	void move_channels(const std::shared_ptr<ChannelInfo>& range_start, const std::shared_ptr<ChannelInfo>& range_end, bool down);
