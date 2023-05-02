@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20230501183542" scan="260" scanned="20230501183537">
+<document created="20211012165442" version="4.0.374" date="20230502184744" scan="261" scanned="20230502184736">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230501163530" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230502161432" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -4673,10 +4673,6 @@
         </row>
       </node>
       <node class="TWindowsStringNode" name="23" created="20221104145733" resid="23" langid="1033">
-        <row id="IDS_CHECK_MAP_TAG_TO_ID" state="1">
-          <native>If url does not contain Channel ID, use this option to choose what attribute in the ##EXTINF tag will be used as ID.</native>
-          <lang id="ru" date="20221104151034">Если ссылка не содержит идентификатор (ID) канала, то использовать возможность выбрать один из атрибутов тэга ##EXTINF в качестве идентификатора.</lang>
-        </row>
         <row id="IDS_STRING_BUTTON_VOD_PARSE">
           <native>Test VOD parse regular expression.</native>
           <lang id="ru" date="20221104151141">Открыть сайт для тестирования регулярного выражения для парсинга заголовка фильма.</lang>
@@ -5099,6 +5095,7 @@
           <native>Checks for the icon url when comparing the channels differences</native>
           <lang id="ru" date="20230501183229">Проверять иконку канала при проверке изменений</lang>
         </row>
+        <row id="IDS_STRING_COL_ARCHIVE" locked="1" state="0" created="20230502184736">R</row>
       </node>
       <node class="TWindowsStringNode" name="8" resid="8" langid="1033">
         <row id="IDS_ABOUTBOX">
@@ -5161,34 +5158,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20230501175539">
-          <prev>6.6.1614, 28 Apr 2023</prev>
-          <native>6.6.1620, 1 May 2023</native>
+        <row id="FileVersion" locked="1" state="3" changed="20230502184736">
+          <prev>6.6.1620, 1 May 2023</prev>
+          <native>6.6.1623, 2 May 2023</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230501175539">
-          <prev>1614</prev>
-          <native>1620</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230502184736">
+          <prev>1620</prev>
+          <native>1623</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20230501175539">
-          <prev>6.6.1614</prev>
-          <native>6.6.1620</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20230502184736">
+          <prev>6.6.1620</prev>
+          <native>6.6.1623</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230501175539">
-          <prev>1614</prev>
-          <native>1620</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230502184736">
+          <prev>1620</prev>
+          <native>1623</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

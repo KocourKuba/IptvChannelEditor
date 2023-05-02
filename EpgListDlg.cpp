@@ -73,12 +73,13 @@ BOOL CEpgListDlg::OnInitDialog()
 
 	m_wndEpgList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_UNDERLINECOLD | LVS_EX_UNDERLINEHOT);
 
+	int nColumns[] = { IDS_STRING_COL_ARCHIVE, IDS_STRING_COL_START, IDS_STRING_COL_END, IDS_STRING_COL_TITLE };
+	int nWidths[] = { 20, 140, 140, 500 };
+
 	// Set up list control
 	// Nothing special here.  Just some columns for the report view.
-	m_wndEpgList.InsertColumn(0, L"R", LVCFMT_LEFT, 20);
-	m_wndEpgList.InsertColumn(1, load_string_resource(IDS_STRING_COL_START).c_str(), LVCFMT_LEFT, 140);
-	m_wndEpgList.InsertColumn(2, load_string_resource(IDS_STRING_COL_END).c_str(), LVCFMT_LEFT, 140);
-	m_wndEpgList.InsertColumn(3, load_string_resource(IDS_STRING_COL_TITLE).c_str(), LVCFMT_LEFT, 500);
+	m_wndEpgList.BuildColumns(_countof(nWidths), nWidths, nColumns);
+	m_wndEpgList.AutoSaveColumns(REG_EPG_COLUMNS_WIDTH);
 
 	m_day.SetTime(COleDateTime::GetCurrentTime());
 

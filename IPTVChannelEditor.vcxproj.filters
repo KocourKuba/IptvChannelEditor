@@ -336,6 +336,9 @@
     <ClInclude Include="plugin_bcumedia.h">
       <Filter>Header Files\plugin\flussionic</Filter>
     </ClInclude>
+    <ClInclude Include="ListCtrlEx.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -577,6 +580,9 @@
     </ClCompile>
     <ClCompile Include="plugin_bcumedia.cpp">
       <Filter>Source Files\plugin\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlEx.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

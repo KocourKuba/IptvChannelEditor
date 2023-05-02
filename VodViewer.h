@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "vod_movie.h"
 #include "base_plugin.h"
 #include "PlayListEntry.h"
+#include "ListCtrlEx.h"
 
 
 // CVodViewer dialog
@@ -100,7 +101,7 @@ protected:
 	CComboBox m_wndSeason;
 	CComboBox m_wndEpisode;
 	CComboBox m_wndQuality;
-	CListCtrl m_wndMoviesList;
+	CListCtrlEx m_wndMoviesList;
 	CButton m_wndSearch;
 	CEdit m_wndTotal;
 	CEdit m_wndStreamUrl;

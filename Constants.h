@@ -37,7 +37,9 @@ constexpr auto CMP_FLAG_ALL            = CMP_FLAG_TITLE | CMP_FLAG_ICON | CMP_FL
 
 constexpr auto REG_WINDOW_POS		     = _T("WindowPos");
 constexpr auto REG_ICON_WINDOW_POS	     = _T("IconsWindowPos");
+constexpr auto REG_ICON_COLUMNS_WIDTH    = _T("IconColumnsWidth");
 constexpr auto REG_EPG_WINDOW_POS	     = _T("EpgWindowPos");
+constexpr auto REG_EPG_COLUMNS_WIDTH	 = _T("EpgColumnsWidth");
 constexpr auto REG_VOD_WINDOW_POS	     = _T("VodWindowPos");
 constexpr auto REG_ACC_WINDOW_POS	     = _T("AccountWindowPos");
 constexpr auto REG_PLUGIN_CFG_WINDOW_POS = _T("PluginConfigWindowPos");

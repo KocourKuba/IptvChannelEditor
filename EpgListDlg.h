@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "PlayListEntry.h"
+#include "ListCtrlEx.h"
 #include "IPTVChannelEditorDlg.h"
 
 // Data object handling class
@@ -66,7 +67,7 @@ public:
 	std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 2>* m_epg_cache = nullptr;
 
 protected:
-	CListCtrl m_wndEpgList;
+	CListCtrlEx m_wndEpgList;
 	CRichEditCtrl m_wndEpg;
 	CDateTimeCtrl m_day;
 

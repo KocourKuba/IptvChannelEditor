@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "IconCache.h"
+#include "ListCtrlEx.h"
 #include "base_plugin.h"
 
 // Data object handling class
@@ -80,7 +81,7 @@ protected:
 	std::shared_ptr<std::vector<CIconSourceData>>& m_Icons;
 
 	CProgressCtrl m_wndProgress;
-	CListCtrl m_wndIconsList;
+	CListCtrlEx m_wndIconsList;
 	CImageList	m_imageList;
 	CEdit m_wndIconPath;
 	CEdit m_wndSearch;

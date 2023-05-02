@@ -390,6 +390,7 @@
 #define IDS_STRING_CHECK_CMP_EPG2       614
 #define IDS_STRING_CMP_ICON             615
 #define IDS_STRING_CMP_ARCHIVE          616
+#define IDS_STRING_COL_ARCHIVE          617
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -692,7 +693,7 @@
 #define ID_ALL_CHANNELS                 32807
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

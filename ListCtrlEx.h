@@ -25,19 +25,27 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "ListCtrlEx.h"
 
-class CEditableListCtrl : public CListCtrlEx
+class CListCtrlEx : public CListCtrl
 {
+	DECLARE_DYNAMIC(CListCtrlEx)
+
 public:
-	int GetRowFromPoint(CPoint& point, int* col) const;
+	virtual bool BuildColumns(int nCols, int* nWidth, int* nColString);
+	virtual bool BuildColumns(int nCols, int* nWidth, std::wstring* strColString);
+	virtual void AutoSaveColumns(LPCTSTR lpszSection, LPCTSTR lpszDefault = nullptr);
+	virtual void SaveColumnWidths();
+	virtual void LoadColumnWidths();
+	virtual void SetStoredWidth(int nCol);
+	virtual int GetStoredWidth(int nCol);
 
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	DECLARE_MESSAGE_MAP()
+	afx_msg void OnDestroy();
 
-	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+public:
+	bool m_bAutoSave = false;	// true if saving the column widths.
 
 protected:
-	void EditCell(int nItem, int nCol);
+	std::wstring m_strSection;	// Registry section name.
+	std::wstring m_strDefault;	// Registry default value.
 };

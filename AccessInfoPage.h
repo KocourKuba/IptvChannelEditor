@@ -132,8 +132,8 @@ protected:
 	CButton m_wndCustomBackground;
 	CMFCEditBrowseCtrlEx m_wndBackground;
 	CEditableListCtrl m_wndAccounts;
-	CListCtrl m_wndInfo;
-	CListCtrl m_wndChLists;
+	CListCtrlEx m_wndInfo;
+	CListCtrlEx m_wndChLists;
 	CMFCLinkCtrl m_wndProviderLink;
 	CButton m_wndCustomPluginName;
 	CButton m_wndAutoIncrement;

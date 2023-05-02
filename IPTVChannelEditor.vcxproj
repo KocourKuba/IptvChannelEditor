@@ -239,6 +239,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Credentials.h" />
     <ClInclude Include="IconsSourceParseThread.h" />
+    <ClInclude Include="ListCtrlEx.h" />
     <ClInclude Include="PluginConfigPageEPG.h" />
     <ClInclude Include="PluginConfigPageTV.h" />
     <ClInclude Include="PluginConfigPageVOD.h" />
@@ -342,6 +343,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="IconsSourceParseThread.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="InPlaceEdit.cpp" />
+    <ClCompile Include="ListCtrlEx.cpp" />
     <ClCompile Include="m3u_entry.cpp" />
     <ClCompile Include="MenuEdit.cpp" />
     <ClCompile Include="MySplitButton.cpp" />

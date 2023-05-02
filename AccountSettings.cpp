@@ -55,7 +55,9 @@ constexpr auto CONFIG_FILE = L"settings.cfg";
 static std::set<std::wstring> all_settings_keys = {
 	REG_WINDOW_POS,
 	REG_ICON_WINDOW_POS,
+	REG_ICON_COLUMNS_WIDTH,
 	REG_EPG_WINDOW_POS,
+	REG_EPG_COLUMNS_WIDTH,
 	REG_ACC_WINDOW_POS,
 	REG_PLUGIN_CFG_WINDOW_POS,
 	REG_PLAYER,

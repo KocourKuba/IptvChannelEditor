@@ -2123,6 +2123,7 @@ BEGIN
                             "Checks for the second EPG ID when comparing the channels differences"
     IDS_STRING_CMP_ICON     "Checks for the icon url when comparing the channels differences"
     IDS_STRING_CMP_ARCHIVE  "Checks for the archive days when comparing the channels differences"
+    IDS_STRING_COL_ARCHIVE  "R"
 END
 
 #endif    // English (United States) resources

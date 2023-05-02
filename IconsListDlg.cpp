@@ -102,8 +102,13 @@ BOOL CIconsListDlg::OnInitDialog()
 	// Nothing special here.  Just some columns for the report view.
 	m_wndIconsList.SetExtendedStyle(m_wndIconsList.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP);
 
-	m_wndIconsList.InsertColumn(0, load_string_resource(IDS_STRING_COL_ICON).c_str(), LVCFMT_CENTER, 170);
-	m_wndIconsList.InsertColumn(1, load_string_resource(IDS_STRING_COL_CHANNEL_NAME).c_str(), LVCFMT_LEFT, 280);
+	int nColumns[] = { IDS_STRING_COL_ICON, IDS_STRING_COL_CHANNEL_NAME };
+	int nWidths[] = { 170, 280 };
+
+	// Set up list control
+	// Nothing special here.  Just some columns for the report view.
+	m_wndIconsList.BuildColumns(_countof(nWidths), nWidths, nColumns);
+	m_wndIconsList.AutoSaveColumns(REG_ICON_COLUMNS_WIDTH);
 
 	// https://epg.drm-play.com/?prov=iptvx.one
 	// /<img src='(?<link>[^']+)'.+><\/td><td>(?<name>[^<].+)<\/td><td>(?<id>[^<].+)<\/td><td>/gm
