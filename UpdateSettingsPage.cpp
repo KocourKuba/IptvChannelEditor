@@ -39,15 +39,15 @@ static char THIS_FILE[] = __FILE__;
 
 // CUpdateSettingsPage dialog
 
-IMPLEMENT_DYNAMIC(CUpdateSettingsPage, CPropertyPage)
+IMPLEMENT_DYNAMIC(CUpdateSettingsPage, CTooltipPropertyPage)
 
-BEGIN_MESSAGE_MAP(CUpdateSettingsPage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CUpdateSettingsPage, CTooltipPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_UPDATE_FREQ, &CUpdateSettingsPage::OnEnChangeEditUpdateFreq)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_CHECK_UPDATE, &CUpdateSettingsPage::OnDeltaposSpinStreamThreads)
 END_MESSAGE_MAP()
 
 
-CUpdateSettingsPage::CUpdateSettingsPage() : CPropertyPage(IDD_UPDATE_SETTINGS_PAGE)
+CUpdateSettingsPage::CUpdateSettingsPage() : CTooltipPropertyPage(IDD_UPDATE_SETTINGS_PAGE)
 {
 }
 
@@ -72,14 +72,14 @@ BOOL CUpdateSettingsPage::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CUpdateSettingsPage::OnOK()
+BOOL CUpdateSettingsPage::OnApply()
 {
 	UpdateData(TRUE);
 
 	GetConfig().set_int(true, REG_UPDATE_FREQ, m_UpdateFreq);
 	GetConfig().set_int(true, REG_UPDATE_PL, m_bUpdateChannels);
 
-	__super::OnOK();
+	return __super::OnApply();
 }
 
 void CUpdateSettingsPage::OnEnChangeEditUpdateFreq()

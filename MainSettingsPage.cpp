@@ -144,7 +144,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CMainSettingsPage::OnOK()
+BOOL CMainSettingsPage::OnApply()
 {
 	UpdateData(TRUE);
 
@@ -169,7 +169,7 @@ void CMainSettingsPage::OnOK()
 
 	GetConfig().SetPortable(m_bPortable);
 
-	__super::OnOK();
+	return __super::OnApply();
 }
 
 void CMainSettingsPage::OnEnChangeEditStreamThreads()

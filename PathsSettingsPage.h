@@ -26,11 +26,12 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "CMFCEditBrowsCtrlEx.h"
+#include "TooltipPropertyPage.h"
 
 
 // CPathsSettingsPage dialog
 
-class CPathsSettingsPage : public CPropertyPage
+class CPathsSettingsPage : public CTooltipPropertyPage
 {
 	DECLARE_DYNAMIC(CPathsSettingsPage)
 
@@ -45,7 +46,7 @@ public:
 
 protected:
 	BOOL OnInitDialog() override;
-	void OnOK() override;
+	BOOL OnApply() override;
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()

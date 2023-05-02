@@ -25,10 +25,11 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+#include "TooltipPropertyPage.h"
 
 // CUpdateSettingsPage dialog
 
-class CUpdateSettingsPage : public CPropertyPage
+class CUpdateSettingsPage : public CTooltipPropertyPage
 {
 	DECLARE_DYNAMIC(CUpdateSettingsPage)
 
@@ -43,7 +44,7 @@ public:
 
 protected:
 	BOOL OnInitDialog() override;
-	void OnOK() override;
+	BOOL OnApply() override;
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()

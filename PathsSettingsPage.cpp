@@ -34,18 +34,18 @@ DEALINGS IN THE SOFTWARE.
 
 // CPathsSettingsPage dialog
 
-IMPLEMENT_DYNAMIC(CPathsSettingsPage, CPropertyPage)
+IMPLEMENT_DYNAMIC(CPathsSettingsPage, CTooltipPropertyPage)
 
-BEGIN_MESSAGE_MAP(CPathsSettingsPage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CPathsSettingsPage, CTooltipPropertyPage)
 END_MESSAGE_MAP()
 
-CPathsSettingsPage::CPathsSettingsPage() : CPropertyPage(IDD_PATHS_SETTINGS_PAGE)
+CPathsSettingsPage::CPathsSettingsPage() : CTooltipPropertyPage(IDD_PATHS_SETTINGS_PAGE)
 {
 }
 
 void CPathsSettingsPage::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLAYER, m_player);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLAYER, m_wndPlayer);
@@ -87,7 +87,7 @@ BOOL CPathsSettingsPage::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CPathsSettingsPage::OnOK()
+BOOL CPathsSettingsPage::OnApply()
 {
 	UpdateData(TRUE);
 
@@ -152,5 +152,5 @@ void CPathsSettingsPage::OnOK()
 	GetConfig().set_string(true, REG_WEB_UPDATE_PATH, m_plugins_web_update_path.GetString());
 	GetConfig().set_string(true, REG_SAVE_SETTINGS_PATH, m_plugins_settings_path.GetString());
 
-	__super::OnOK();
+	return __super::OnApply();
 }

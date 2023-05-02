@@ -41,6 +41,7 @@ public:
 	BOOL OnInitDialog() override;
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 	BOOL OnApply() override;
+
 	virtual void FillControls() {}
 
 	DECLARE_MESSAGE_MAP()
