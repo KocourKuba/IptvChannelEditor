@@ -686,10 +686,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	ReloadConfigs();
 	m_plugin->load_plugin_parameters(m_cur_account.get_config());
-	BOOL useDropbox = GetConfig().get_int(false, REG_USE_DROPBOX);
 
 	m_wndBtnExportM3u.EnableWindow(FALSE);
-	BOOL showWebUpdate = (!m_cur_account.update_url.empty() && !m_cur_account.update_package_url.empty() || useDropbox);
+	BOOL showWebUpdate = (!m_cur_account.update_url.empty() && !m_cur_account.update_package_url.empty() || m_cur_account.use_dropbox);
 	m_wndMakeWebUpdate.EnableWindow(showWebUpdate);
 	if (!showWebUpdate)
 	{

@@ -643,8 +643,6 @@ bool PackPlugin(const PluginType plugin_type,
 	if (output_path.back() != '\\')
 		output_path += '\\';
 
-	BOOL useDropbox = GetConfig().get_int(false, REG_USE_DROPBOX);
-
 	std::error_code err;
 	std::filesystem::create_directory(output_path, err);
 
@@ -710,7 +708,7 @@ bool PackPlugin(const PluginType plugin_type,
 		version_index = date_string;
 	}
 
-	if (make_web_update && !useDropbox && (cred.update_url.empty() || cred.update_package_url.empty()))
+	if (make_web_update && !cred.use_dropbox && (cred.update_url.empty() || cred.update_package_url.empty()))
 	{
 		// revert back to previous state
 		GetConfig().set_plugin_type(old_plugin_type);
@@ -730,7 +728,7 @@ bool PackPlugin(const PluginType plugin_type,
 			&& (noCustom || std::find(cred.ch_list.begin(), cred.ch_list.end(), channels) != cred.ch_list.end()))
 		{
 			std::string link;
-			if (const auto& pair = cred.m_direct_links.find(channels); pair != cred.m_direct_links.end())
+			if (const auto& pair = cred.direct_links.find(channels); pair != cred.direct_links.end())
 			{
 				link = pair->second;
 			}
@@ -748,29 +746,54 @@ bool PackPlugin(const PluginType plugin_type,
 	// remove previous packed folder if exist
 	std::filesystem::remove_all(packFolder, err);
 
+	constexpr auto www_path = LR"(www\cgi-bin)";
+	constexpr auto bin_path = L"bin";
+	constexpr auto default_copy = std::filesystem::copy_options::none;
+	constexpr auto recursive_copy = std::filesystem::copy_options::recursive;
+
 	// copy entire plugin folder
 	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
 
-	std::filesystem::copy(plugin_root, packFolder, std::filesystem::copy_options::none, err);
-	std::filesystem::copy(plugin_root + L"lib", packFolder + L"lib", std::filesystem::copy_options::recursive, err);
-	std::filesystem::copy(plugin_root + L"img", packFolder + L"img", std::filesystem::copy_options::recursive, err);
-	std::filesystem::copy(plugin_root + L"icons", packFolder + L"icons", std::filesystem::copy_options::recursive, err);
+	std::filesystem::copy(plugin_root, packFolder, default_copy, err);
+	std::filesystem::copy(plugin_root + L"lib", packFolder + L"lib", recursive_copy, err);
+	std::filesystem::copy(plugin_root + L"img", packFolder + L"img", recursive_copy, err);
+	std::filesystem::copy(plugin_root + L"icons", packFolder + L"icons", recursive_copy, err);
 
-	std::filesystem::create_directory(packFolder + L"bin", err);
-	std::filesystem::copy_file(plugin_root + L"bin\\update_suppliers", packFolder + L"bin\\update_suppliers", std::filesystem::copy_options::none, err);
+	std::filesystem::create_directory(packFolder + bin_path, err);
+	const auto& suppliers_path = fmt::format(LR"({:s}\update_suppliers)", bin_path);
+	std::filesystem::copy_file(plugin_root + suppliers_path, packFolder + suppliers_path, default_copy, err);
 	for (const auto& item : plugin->get_files_list())
 	{
-		std::wstring filename = L"bin\\" + item.get_name();
-		std::filesystem::copy_file(plugin_root + filename, packFolder + filename, std::filesystem::copy_options::none, err);
+		const auto& filename = fmt::format(LR"({:s}\{:s})", bin_path, item.get_name());
+		std::filesystem::copy_file(plugin_root + filename, packFolder + filename, default_copy, err);
 	}
 
 	if (!plugin->get_scripts_list().empty())
 	{
-		std::filesystem::create_directory(packFolder + L"www", err);
+		std::filesystem::create_directories(packFolder + www_path, err);
 		for (const auto& item : plugin->get_scripts_list())
 		{
-			std::wstring filename = L"www\\" + item.get_name();
-			std::filesystem::copy_file(plugin_root + filename, packFolder + filename, std::filesystem::copy_options::none, err);
+			std::wstring filename = fmt::format(LR"({:s}\{:s})", www_path, item.get_name());
+			std::filesystem::copy_file(plugin_root + filename, packFolder + filename, default_copy, err);
+		}
+	}
+
+	std::string proxy_path;
+	if (cred.use_dropbox && cred.use_proxy)
+	{
+		std::string script = R"(update_proxy.sh)";
+		proxy_path = fmt::format("http://127.0.0.1/cgi-bin/plugins/{:s}/{:s}?", plugin->get_name(), script);
+		std::filesystem::create_directories(packFolder + www_path, err);
+		const auto& www_proxy_path = fmt::format(LR"({:s}\{:s})", www_path, utils::utf8_to_utf16(script));
+		std::filesystem::copy_file(plugin_root + www_proxy_path, packFolder + www_proxy_path, default_copy, err);
+
+		for (const auto& dir_entry : std::filesystem::directory_iterator{ plugin_root + LR"(bin\\)" })
+		{
+			if (dir_entry.path().stem() == "curl")
+			{
+				const auto& curl_file = fmt::format(LR"({:s}\{:s})", bin_path, dir_entry.path().filename().wstring());
+				std::filesystem::copy_file(plugin_root + curl_file, packFolder + curl_file, default_copy, err);
+			}
 		}
 	}
 
@@ -901,7 +924,7 @@ bool PackPlugin(const PluginType plugin_type,
 				d_node->first_node("channels_url_path")->value(cred.ch_web_path.c_str());
 			}
 
-			if (!cred.m_direct_links.empty())
+			if (!cred.direct_links.empty())
 			{
 				auto node = d_node->first_node("channels_direct_links");
 				for (const auto& channels : channels_list)
@@ -932,7 +955,7 @@ bool PackPlugin(const PluginType plugin_type,
 		}
 
 		auto cu_node = d_node->first_node("check_update");
-		const auto& update_url = noCustom ? "" : fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
+		const auto& update_url = noCustom ? "" : fmt::format("{:s}{:s}{:s}.xml", proxy_path, cred.update_url, utils::utf16_to_utf8(package_info_name));
 		cu_node->first_node("url")->value(update_url.c_str());
 
 		ostream << *doc;
@@ -1144,7 +1167,9 @@ bool PackPlugin(const PluginType plugin_type,
 			version_info->append_node(rapidxml::alloc_node(*doc, "version", version_string.c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "beta", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "critical", "no"));
-			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}.tar.gz", cred.update_package_url, utils::utf16_to_utf8(package_info_name)).c_str()));
+			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}{:s}.tar.gz", proxy_path,
+																					cred.update_package_url,
+																					utils::utf16_to_utf8(package_info_name)).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "md5", utils::md5_hash_file(packed_file).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "size", std::to_string(plugin_installed_size).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "caption", plugin_caption.c_str()));

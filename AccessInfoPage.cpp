@@ -106,6 +106,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CTooltipPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE, &CAccessInfoPage::OnEnChangeEditPluginUpdateNameTemplate)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_CONFIG, &CAccessInfoPage::OnBnClickedButtonEditConfig)
 	ON_BN_CLICKED(IDC_CHECK_USE_DROPBOX, &CAccessInfoPage::OnBnClickedCheckUseDropbox)
+	ON_BN_CLICKED(IDC_CHECK_USE_PROXY, &CAccessInfoPage::OnBnClickedCheckUseProxy)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PLUGIN_CAPTION, &CAccessInfoPage::OnBnClickedCheckCustomPluginCaption)
 END_MESSAGE_MAP()
 
@@ -157,6 +158,7 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_UPDATE_NAME, m_updateName);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_CONFIG, m_wndEditConfig);
 	DDX_Control(pDX, IDC_CHECK_USE_DROPBOX, m_wndUseDropboxUpdate);
+	DDX_Control(pDX, IDC_CHECK_USE_PROXY, m_wndUseProxy);
 }
 
 BOOL CAccessInfoPage::OnInitDialog()
@@ -193,6 +195,7 @@ BOOL CAccessInfoPage::OnInitDialog()
 	AddTooltip(IDC_BUTTON_EDIT_CONFIG, IDS_STRING_BUTTON_EDIT_CONFIG);
 	AddTooltip(IDC_COMBO_CONFIGS, IDS_STRING_COMBO_CONFIGS);
 	AddTooltip(IDC_CHECK_USE_DROPBOX, IDS_STRING_CHECK_USE_DROPBOX);
+	AddTooltip(IDC_CHECK_USE_PROXY, IDS_STRING_CHECK_USE_PROXY);
 
 	SetButtonImage(IDB_PNG_EDIT, m_wndEditConfig);
 
@@ -271,7 +274,6 @@ BOOL CAccessInfoPage::OnInitDialog()
 	m_wndAccounts.SetItemState(account_idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 	m_wndAccounts.EnsureVisible(account_idx, FALSE);
 	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
-	m_wndUseDropboxUpdate.SetCheck(GetConfig().get_int(false, REG_USE_DROPBOX));
 
 	UpdateData(FALSE);
 
@@ -788,20 +790,17 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	m_wndCustomBackground.EnableWindow(enable);
 	m_wndCustomCaption.EnableWindow(enable);
 	m_wndCustomPluginName.EnableWindow(enable);
-	m_wndUseDropboxUpdate.EnableWindow(enable);
 	m_wndDirectLink.EnableWindow(enable);
 	m_wndUpdatePackageUrl.EnableWindow(enable);
 	m_wndUpdateUrl.EnableWindow(enable);
 	m_wndChannelsWebPath.EnableWindow(enable);
 	m_wndAutoIncrement.EnableWindow(enable);
 	m_wndCustomUpdateName.EnableWindow(enable);
+	m_wndUseDropboxUpdate.EnableWindow(enable);
+	m_wndUseProxy.EnableWindow(enable);
 
 	if (selected.not_valid)
 	{
-		m_wndServers.EnableWindow(FALSE);
-		m_wndDevices.EnableWindow(FALSE);
-		m_wndQualities.EnableWindow(FALSE);
-		m_wndProfiles.EnableWindow(FALSE);
 		m_wndCaption.EnableWindow(enable);
 		m_wndPluginNameTemplate.EnableWindow(FALSE);
 		m_wndLogo.EnableWindow(FALSE);
@@ -961,6 +960,9 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 
 	m_wndUpdatePackageUrl.SetWindowText(selected.get_update_package_url().c_str());
 	m_wndUpdateUrl.SetWindowText(selected.get_update_url().c_str());
+	m_wndUseDropboxUpdate.SetCheck(selected.use_dropbox ? 1 : 0);
+	m_wndUseProxy.SetCheck(selected.use_proxy ? 1 : 0);
+	m_wndUseProxy.EnableWindow(selected.use_dropbox);
 
 	UpdateData(FALSE);
 }
@@ -977,7 +979,7 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 
 		if (pNMLV->uOldState == 0 && (pNMLV->uNewState & LVIS_SELECTED) == LVIS_SELECTED)
 		{
-			if (const auto& pair = selected.m_direct_links.find(get_utf8(m_all_channels_lists[pNMLV->iItem])); pair != selected.m_direct_links.end())
+			if (const auto& pair = selected.direct_links.find(get_utf8(m_all_channels_lists[pNMLV->iItem])); pair != selected.direct_links.end())
 			{
 				m_wndDirectLink.SetWindowText(get_utf16(pair->second).c_str());
 			}
@@ -1424,7 +1426,7 @@ void CAccessInfoPage::OnBnClickedButtonBrowseDirectLink()
 	const auto& ch_list = get_utf8(m_all_channels_lists[selectedList]);
 	if (dlg.m_url.IsEmpty())
 	{
-		selectedAccount.m_direct_links.erase(ch_list);
+		selectedAccount.direct_links.erase(ch_list);
 	}
 	else
 	{
@@ -1436,12 +1438,12 @@ void CAccessInfoPage::OnBnClickedButtonBrowseDirectLink()
 				dlg.m_url = dlg.m_url.Mid(0, pos);
 			}
 			dlg.m_url.Replace(L"www.dropbox.com", L"dl.dropboxusercontent.com");
-			selectedAccount.m_direct_links[ch_list] = get_utf8(dlg.m_url);
+			selectedAccount.direct_links[ch_list] = get_utf8(dlg.m_url);
 			m_wndDirectLink.SetWindowText(dlg.m_url);
 		}
 		else
 		{
-			selectedAccount.m_direct_links[ch_list] = get_utf8(dlg.m_url);
+			selectedAccount.direct_links[ch_list] = get_utf8(dlg.m_url);
 		}
 	}
 }
@@ -1529,5 +1531,19 @@ void CAccessInfoPage::UpdateTemplatedFields(const Credentials& selected)
 
 void CAccessInfoPage::OnBnClickedCheckUseDropbox()
 {
-	GetConfig().set_int(false, REG_USE_DROPBOX, m_wndUseDropboxUpdate.GetCheck());
+	auto& selected = GetCheckedAccount();
+	if (!selected.not_valid)
+	{
+		selected.use_dropbox = m_wndUseDropboxUpdate.GetCheck() != 0;
+		m_wndUseProxy.EnableWindow(m_wndUseDropboxUpdate.GetCheck());
+	}
+}
+
+void CAccessInfoPage::OnBnClickedCheckUseProxy()
+{
+	auto& selected = GetCheckedAccount();
+	if (!selected.not_valid)
+	{
+		selected.use_proxy = m_wndUseProxy.GetCheck() != 0;
+	}
 }

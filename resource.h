@@ -391,6 +391,7 @@
 #define IDS_STRING_CMP_ICON             615
 #define IDS_STRING_CMP_ARCHIVE          616
 #define IDS_STRING_COL_ARCHIVE          617
+#define IDS_STRING_CHECK_USE_PROXY      618
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -585,6 +586,7 @@
 #define IDC_CHECK_USE_DROPBOX           1177
 #define IDC_EDIT_PLUGIN_CHANNELS_WEB_PATH 1178
 #define IDC_BUTTON_SAVE_CONFIG          1179
+#define IDC_CHECK_USE_PROXY             1179
 #define IDC_COMBO_PLUGIN_CONFIG         1180
 #define IDC_EDIT_TITLE                  1181
 #define IDC_COMBO_ACCESS_TYPE           1182
