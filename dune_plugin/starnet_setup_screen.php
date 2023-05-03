@@ -255,8 +255,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // show vod at the end of categories
-        $vod_last = isset($plugin_cookies->vod_last) ? $plugin_cookies->vod_last : SetupControlSwitchDefs::switch_on;
-        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_VOD_LAST, 'Медиатека в конце списка:', $vod_last, $on_off_ops, 0);
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
+            $vod_last = isset($plugin_cookies->vod_last) ? $plugin_cookies->vod_last : SetupControlSwitchDefs::switch_on;
+            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_VOD_LAST, 'Медиатека в конце списка:', $vod_last, $on_off_ops, 0);
+        }
 
         Control_Factory::add_vgap($defs, 50);
 

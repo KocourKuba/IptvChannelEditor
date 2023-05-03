@@ -1434,6 +1434,8 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		// higher value and will be added later and it will be first in the tree
 		tvCategory.hInsertAfter = pair.second.category->is_not_movable() ? TVI_FIRST : nullptr;
 
+		if (!m_plugin->get_vod_support() && pair.second.category->is_vod()) continue;
+
 		auto hParent = m_wndChannelsTree.InsertItem(&tvCategory);
 		m_wndChannelsTree.SetItemColor(hParent, pair.second.category->is_disabled() ? m_gray : m_normal);
 
