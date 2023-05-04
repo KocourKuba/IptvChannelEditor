@@ -34,9 +34,10 @@ define('EPG_START_OVER_ENABLED',    4);
 define('EPG_START_OVER_DISABLED',   8);
 define('EPG_TRICK_PLAY_ENABLED',    16);
 
+define('GUI_ACTION_FLAG_SKIP_ON_PLAY_RESTART',  1);
+
 define ('GCOMP_OPT_APPEAR_WITH_FADE', 0x100);
 define ('GCOMP_OPT_BG_PICTURE', 0x8);
-define ('GCOMP_OPT_DIM_FOCUS', 0x200000);
 define ('GCOMP_OPT_EMPTY_WITH_VIDEO', 0x20);
 define ('GCOMP_OPT_FOCUS', 0x100000);
 define ('GCOMP_OPT_IMG_CHECK_EFF_URL', 0x200000);
@@ -46,11 +47,14 @@ define ('GCOMP_OPT_PREPAINT', 0x1);
 define ('GCOMP_OPT_TRANSPARENT_WITH_VIDEO', 0x10);
 define ('GCOMP_OPT_TTF_COMPACT_HEIGHT', 0x2000);
 define ('GCOMP_OPT_TTF_LAYOUT_FIX', 0x1000);
+define ('PLUGIN_ROW_OPT_FIRST_IN_CLUSTER', 0x1);
+define ('PLUGIN_ROW_OPT_FIRST_WITH_INFO', 0x2);
 
 # enum DialogFrameStyle
 define ('DIALOG_FRAME_STYLE_DEFAULT',                    'default');
 define ('DIALOG_FRAME_STYLE_GLASS',                      'glass');
 define ('DIALOG_FRAME_STYLE_TRANSPARENT',                'transparent');
+define ('DIALOG_FRAME_STYLE_PLAYBACK_INFO',              'playback_info');
 
 # enum GCompFocusType
 define ('GCOMP_FOCUS_NONE',                              'none');
@@ -179,6 +183,7 @@ define ('GUI_EVENT_PLAYBACK_STOP',                       'playback_stop');
 define ('GUI_EVENT_PLAYBACK_GOING_TO_SWITCH',            'playback_going_to_switch');
 define ('GUI_EVENT_PLAYBACK_SWITCHED',                   'playback_switched');
 define ('GUI_EVENT_PLAYBACK_USER_ACTION',                'playback_user_action');
+define ('GUI_EVENT_PLAYBACK_STATE_CHANGED',              'playback_state_changed');
 define ('GUI_EVENT_MENU_PLAYBACK_OSD_CLOSED',            'menu_playback_osd_closed');
 define ('GUI_EVENT_MENU_PLAYBACK_OSD_GOING_TO_OPEN',     'menu_playback_osd_going_to_open');
 define ('GUI_EVENT_MENU_PLAYBACK_FINISH',                'menu_playback_finish');
@@ -296,6 +301,7 @@ define ('PLUGIN_UPDATE_FOLDER_ACTION_ID',                'plugin_update_folder')
 define ('PLUGIN_UPDATE_INFO_BLOCK_ACTION_ID',            'plugin_update_info_block');
 define ('PLUGIN_UPDATE_OSD_ACTION_ID',                   'plugin_update_osd');
 define ('PLUGIN_UPDATE_ROWS_INFO_ACTION_ID',             'plugin_update_rows_info');
+define ('PLUGIN_UPDATE_ROWS_MENU_ACTION_ID',             'plugin_update_rows_menu');
 define ('PLUGIN_UPDATE_STICKER_ACTION_ID',               'plugin_update_sticker');
 define ('PLUGIN_VOD_PLAY_ACTION_ID',                     'plugin_vod_play');
 define ('REMOVE_FROM_FAVORITES_ACTION_ID',               'remove_from_favorites');
@@ -316,15 +322,21 @@ define ('START_SERVICE_ACTION_ID',                       'start_service');
 define ('STATUS_ACTION_ID',                              'status');
 define ('STOP_PLAYBACK_ACTION_ID',                       'stop_playback');
 define ('SWITCH_OSD_MODE_ACTION_ID',                     'switch_osd_mode');
+define ('UNINSTALL_APK_ACTION_ID',                       'uninstall_apk');
 define ('UPDATE_DVB_CHANNELS_ACTION_ID',                 'update_dvb_channels');
 define ('UPDATE_IMAGES_ACTION_ID',                       'update_images');
+define ('UPDATE_TV_INFO_ACTION_ID',                      'update_tv_info');
 define ('WAIT_EXT_APP_START_ACTION_ID',                  'wait_ext_app_start');
 define ('WAIT_FOR_IP_ADDRESS_ACTION_ID',                 'wait_for_ip_address');
 define ('WGET_ACTION_ID',                                'wget');
 
 class AddMenuItemsActionData
 {
+    const /* (char *)                         */ menu_id                          = 'menu_id';
+    const /* (MY_Properties *)                */ menu_params                      = 'menu_params';
     const /* (GuiMenuItemDefList *)           */ menu_items                       = 'menu_items';
+    const /* int                              */ sel_ndx                          = 'sel_ndx';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
 class AddToFavoritesActionData
@@ -390,6 +402,7 @@ class ChangeGCompsActionData
     const /* (char *)                         */ small_state_text                 = 'small_state_text';
     const /* (char *)                         */ sel_state                        = 'sel_state';
     const /* (GCompUiStateDef *)              */ ui_state                         = 'ui_state';
+    const /* bool                             */ skip_repaint                     = 'skip_repaint';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
@@ -454,6 +467,7 @@ class DownloadAndInstallApkActionData
 {
     const /* (char *)                         */ caption                          = 'caption';
     const /* (char *)                         */ package                          = 'package';
+    const /* bool                             */ from_market                      = 'from_market';
     const /* (MY_StringArray *)               */ urls                             = 'urls';
     const /* bool                             */ indirect                         = 'indirect';
     const /* (MY_StringArray *)               */ intro_dialog_urls                = 'intro_dialog_urls';
@@ -713,6 +727,7 @@ class GuiAction
     const /* (char *)                         */ caption                          = 'caption';
     const /* (char *)                         */ plugin_name                      = 'plugin_name';
     const /* (MY_Properties *)                */ params                           = 'params';
+    const /* int                              */ flags                            = 'flags';
 }
 
 class GuiButtonDef
@@ -754,8 +769,10 @@ class GuiLabelDef
 class GuiMenuItemDef
 {
     const /* MY_Bool                          */ is_separator                     = 'is_separator';
+    const /* (char *)                         */ id                               = 'id';
     const /* (char *)                         */ caption                          = 'caption';
     const /* (char *)                         */ icon_url                         = 'icon_url';
+    const /* bool                             */ marked                           = 'marked';
     const /* (GuiAction *)                    */ action                           = 'action';
     const /* (GuiAction *)                    */ is_shown_action                  = 'is_shown_action';
 }
@@ -785,6 +802,7 @@ class GuiTimerDef
     const /* bool                             */ reset_on_keypress                = 'reset_on_keypress';
     const /* bool                             */ clear_on_keypress                = 'clear_on_keypress';
     const /* int                              */ num_repeats                      = 'num_repeats';
+    const /* bool                             */ early_start                      = 'early_start';
 }
 
 class GuiVGapDef
@@ -977,6 +995,7 @@ class PluginOpenFolderActionData
     const /* (char *)                         */ media_url                        = 'media_url';
     const /* (char *)                         */ id                               = 'id';
     const /* (char *)                         */ sel_id                           = 'sel_id';
+    const /* (MY_StringArray *)               */ tags                             = 'tags';
     const /* bool                             */ keep_osd_context                 = 'keep_osd_context';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
@@ -1119,6 +1138,7 @@ class PluginReplacePathActionData
 {
     const /* int                              */ erase_count                      = 'erase_count';
     const /* (PluginPathElementList *)        */ elements                         = 'elements';
+    const /* (char *)                         */ sel_id                           = 'sel_id';
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
@@ -1129,8 +1149,10 @@ class PluginRow
     const /* (char *)                         */ id                               = 'id';
     const /* int                              */ ui_level                         = 'ui_level';
     const /* (char *)                         */ group_id                         = 'group_id';
+    const /* (char *)                         */ header_id                        = 'header_id';
     const /* (char *)                         */ title                            = 'title';
     const /* MY_Bool                          */ focusable                        = 'focusable';
+    const /* int                              */ options                          = 'options';
     const /* int                              */ height                           = 'height';
     const /* int                              */ inactive_height                  = 'inactive_height';
     const /* (GuiAction *)                    */ show_all_action                  = 'show_all_action';
@@ -1142,6 +1164,13 @@ class PluginRowsFolderView
     const /* (char *)                         */ sel_state                        = 'sel_state';
     const /* (GuiActionMap *)                 */ actions                          = 'actions';
     const /* (GuiTimerDef *)                  */ timer                            = 'timer';
+}
+
+class PluginRowsHeader
+{
+    const /* (char *)                         */ id                               = 'id';
+    const /* (char *)                         */ title                            = 'title';
+    const /* bool                             */ first_in_cluster                 = 'first_in_cluster';
 }
 
 class PluginRowsInfo
@@ -1159,6 +1188,7 @@ class PluginRowsInfo
 class PluginRowsPane
 {
     const /* (PluginRowList *)                */ rows                             = 'rows';
+    const /* (PluginRowsHeaderList *)         */ headers                          = 'headers';
     const /* (GCompFocusDef *)                */ focus                            = 'focus';
     const /* (GComponentDef *)                */ bg                               = 'bg';
     const /* MY_Rect                          */ screen_r                         = 'screen_r';
@@ -1169,6 +1199,7 @@ class PluginRowsPane
     const /* bool                             */ header_enabled                   = 'header_enabled';
     const /* bool                             */ single_list_navigation           = 'single_list_navigation';
     const /* MY_Bool                          */ initial_focus_header             = 'initial_focus_header';
+    const /* (char *)                         */ initial_focus_header_id          = 'initial_focus_header_id';
     const /* (char *)                         */ initial_focus_item_id            = 'initial_focus_item_id';
     const /* (char *)                         */ initial_focus_row_id             = 'initial_focus_row_id';
     const /* float                            */ horizontal_focus_freedom_factor  = 'horizontal_focus_freedom_factor';
@@ -1176,6 +1207,10 @@ class PluginRowsPane
     const /* float                            */ vertical_focus_freedom_factor    = 'vertical_focus_freedom_factor';
     const /* float                            */ vertical_focus_gravity           = 'vertical_focus_gravity';
     const /* int                              */ vertical_focus_end_min_offset    = 'vertical_focus_end_min_offset';
+    const /* int                              */ header_font_size                 = 'header_font_size';
+    const /* int                              */ header_min_font_size             = 'header_min_font_size';
+    const /* int                              */ max_header_width                 = 'max_header_width';
+    const /* int                              */ min_header_width                 = 'min_header_width';
     const /* int                              */ up_arrow_dy                      = 'up_arrow_dy';
     const /* (PluginRegularItemParamsMap *)   */ regular_item_params_templates    = 'regular_item_params_templates';
 }
@@ -1269,6 +1304,7 @@ class PluginTvInfo
     const /* time_t                           */ server_time                      = 'server_time';
     const /* (PluginTvGroupList *)            */ groups                           = 'groups';
     const /* (PluginTvChannelList *)          */ channels                         = 'channels';
+    const /* (char *)                         */ channels_file                    = 'channels_file';
     const /* MY_Bool                          */ show_group_channels_only         = 'show_group_channels_only';
     const /* MY_Bool                          */ favorites_supported              = 'favorites_supported';
     const /* (MY_StringArray *)               */ favorite_channel_ids             = 'favorite_channel_ids';
@@ -1288,11 +1324,19 @@ class PluginTvInfo
     const /* PluginEpgMode                    */ epg_mode                         = 'epg_mode';
     const /* int                              */ epg_ttl_sec                      = 'epg_ttl_sec';
     const /* PluginFontSize                   */ epg_font_size                    = 'epg_font_size';
+    const /* int                              */ groups_text_size                 = 'groups_text_size';
+    const /* int                              */ groups_page_size                 = 'groups_page_size';
+    const /* int                              */ channels_text_size               = 'channels_text_size';
+    const /* int                              */ channels_page_size               = 'channels_page_size';
+    const /* int                              */ epg_text_size                    = 'epg_text_size';
+    const /* int                              */ epg_page_size                    = 'epg_page_size';
     const /* UseTz                            */ epg_day_use_local_tz             = 'epg_day_use_local_tz';
     const /* int                              */ epg_day_shift_sec                = 'epg_day_shift_sec';
     const /* (char *)                         */ ext_epg_base_url                 = 'ext_epg_base_url';
     const /* (char *)                         */ ext_epg_channel_ids_url          = 'ext_epg_channel_ids_url';
     const /* MY_Bool                          */ custom_protect_code_handling     = 'custom_protect_code_handling';
+    const /* MY_Bool                          */ builtin_pcontrol_enabled         = 'builtin_pcontrol_enabled';
+    const /* (char *)                         */ entered_pcode                    = 'entered_pcode';
     const /* MY_Bool                          */ subtitles_osd_enabled            = 'subtitles_osd_enabled';
     const /* MY_Bool                          */ keep_playing_on_reload           = 'keep_playing_on_reload';
     const /* MY_Bool                          */ keep_playing_on_reenter          = 'keep_playing_on_reenter';
@@ -1374,6 +1418,11 @@ class PluginUpdateRowsInfoActionData
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
+class PluginUpdateRowsMenuActionData
+{
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
 class PluginUpdateStickerActionData
 {
     const /* (char *)                         */ sticker                          = 'sticker';
@@ -1385,6 +1434,7 @@ class PluginVodInfo
 {
     const /* (char *)                         */ id                               = 'id';
     const /* (char *)                         */ name                             = 'name';
+    const /* (char *)                         */ sub_name                         = 'sub_name';
     const /* (char *)                         */ description                      = 'description';
     const /* (char *)                         */ poster_url                       = 'poster_url';
     const /* (PluginVodSeriesInfoList *)      */ series                           = 'series';
@@ -1392,11 +1442,14 @@ class PluginVodInfo
     const /* int                              */ initial_position_ms              = 'initial_position_ms';
     const /* int                              */ buffering_ms                     = 'buffering_ms';
     const /* MY_Bool                          */ advert_mode                      = 'advert_mode';
+    const /* (GuiMenuItemDefList *)           */ extra_menu_items                 = 'extra_menu_items';
+    const /* (GuiAction *)                    */ enter_menu_action                = 'enter_menu_action';
     const /* (GuiActionMap *)                 */ actions                          = 'actions';
     const /* (GuiTimerDef *)                  */ timer                            = 'timer';
     const /* MY_Bool                          */ ip_address_required              = 'ip_address_required';
     const /* MY_Bool                          */ valid_time_required              = 'valid_time_required';
     const /* MY_Bool                          */ subtitles_osd_enabled            = 'subtitles_osd_enabled';
+    const /* bool                             */ skip_dummy_player_on_error       = 'skip_dummy_player_on_error';
     const /* MY_Bool                          */ keep_playing_on_reload           = 'keep_playing_on_reload';
     const /* MY_Bool                          */ keep_playing_on_reenter          = 'keep_playing_on_reenter';
     const /* (char *)                         */ recent_plugin                    = 'recent_plugin';
@@ -1551,6 +1604,12 @@ class SwitchOsdModeActionData
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
+class UninstallApkActionData
+{
+    const /* (char *)                         */ package                          = 'package';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
 class UpdateDvbChannelsActionData
 {
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
@@ -1562,6 +1621,11 @@ class UpdateImagesActionData
     const /* (char *)                         */ storage_dir_name                 = 'storage_dir_name';
     const /* (MY_StringArray *)               */ names                            = 'names';
     const /* (char *)                         */ title                            = 'title';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class UpdateTvInfoActionData
+{
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 

@@ -21,11 +21,21 @@ abstract class DunePluginFw
 
     public function invoke_operation($plugin, $call_ctx)
     {
+        if (method_exists($plugin, "set_plugin_cookies"))
+            $plugin->set_plugin_cookies($call_ctx->plugin_cookies);
+
         if (method_exists($plugin, "set_internet_status"))
         {
             $internet_status = isset($call_ctx->internet_status) ?
                 intval($call_ctx->internet_status) : -2;
             $plugin->set_internet_status($internet_status);
+        }
+
+        if (method_exists($plugin, "set_opexec_id"))
+        {
+            $opexec_id = isset($call_ctx->opexec_id) ?
+                $call_ctx->opexec_id : "-1";
+            $plugin->set_opexec_id($opexec_id);
         }
 
         if ($call_ctx->op_type_code === PLUGIN_OP_GET_FOLDER_VIEW ||
