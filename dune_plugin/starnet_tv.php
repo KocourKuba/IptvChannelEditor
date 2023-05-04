@@ -308,6 +308,10 @@ class Starnet_Tv implements Tv, User_Input_Handler
     public function load_channels(&$plugin_cookies)
     {
         $channels_list_path = '';
+        if (!isset($plugin_cookies->pass_sex)) {
+            $plugin_cookies->pass_sex = '0000';
+        }
+
         try {
             $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
             $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
@@ -524,7 +528,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
                 $epg1 = (string)$xml_tv_channel->epg_id;
                 $epg2 = (empty($xml_tv_channel->tvg_id)) ? $epg1 : (string)$xml_tv_channel->tvg_id;
-
+                $protected = (int)$xml_tv_channel->protected && isset($plugin_cookies->pass_sex) && !empty($plugin_cookies->pass_sex);
                 $channel = new Default_Channel(
                     $hash,
                     $channel_id,
@@ -538,7 +542,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     $number,
                     $epg1,
                     $epg2,
-                    (int)$xml_tv_channel->protected,
+                    $protected,
                     (int)$xml_tv_channel->timeshift_hours,
                     $ext_params
                 );

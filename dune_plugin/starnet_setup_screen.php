@@ -577,12 +577,12 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
      * adult pass dialog defs
      * @return array
      */
-    public function do_get_pass_control_defs()
+    public function do_get_pass_control_defs($plugin_cookies)
     {
         $defs = array();
 
-        $pass1 = '';
-        $pass2 = '';
+        $pass1 = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
+        $pass2 = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
 
         Control_Factory::add_vgap($defs, 20);
 
@@ -832,21 +832,22 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 return Action_Factory::show_title_dialog('Кэш EPG очищен');
 
             case self::SETUP_ACTION_PASS_DLG: // show pass dialog
-                $defs = $this->do_get_pass_control_defs();
+                $defs = $this->do_get_pass_control_defs($plugin_cookies);
                 return Action_Factory::show_dialog('Родительский контроль', $defs, true);
 
             case self::SETUP_ACTION_PASS_APPLY: // handle pass dialog result
-                if (empty($user_input->pass1) || empty($user_input->pass2)) {
-                    return null;
+                if (!empty($user_input->pass1) && empty($user_input->pass2)) {
+                    $plugin_cookies->pass_sex = '';
+                    $msg = 'Пароль отключен!';
+                } else if ($user_input->pass1 !== $user_input->pass2) {
+                    $plugin_cookies->pass_sex = $user_input->pass2;
+                    $msg = 'Пароль изменен!';
+                } else {
+                    $plugin_cookies->pass_sex = $user_input->pass1;
+                    return Action_Factory::show_title_dialog("Пароль не изменен!");
                 }
 
-                $msg = 'Пароль не изменен!';
-                $pass_sex = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
-                if ($user_input->pass1 === $pass_sex) {
-                    $plugin_cookies->pass_sex = $user_input->{'pass2'};
-                    $msg = 'Пароль изменен!';
-                }
-                return Action_Factory::show_title_dialog($msg);
+                return Action_Factory::show_title_dialog($msg, $this->reload_channels($plugin_cookies));
 
             case self::SETUP_ACTION_SEND_LOG: // send log to developer
                 $error_msg = '';
