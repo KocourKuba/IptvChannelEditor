@@ -368,12 +368,12 @@ class HD
         hd_print("Prepare archive $zip_file_name for send");
         $zip_file = get_temp_path($zip_file_name);
         $apk_subst = getenv('FS_PREFIX');
-        $plugin_name = get_plugin_name() . ".*";
+        $plugin_name = get_plugin_name();
 
-        if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name")) {
-            $redirected = "$apk_subst/D/dune_plugin_logs/$plugin_name";
+        if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name.log")) {
+            $redirected = "$apk_subst/D/dune_plugin_logs/$plugin_name.*";
         } else {
-            $redirected = "$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name";
+            $redirected = "$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.*";
         }
 
         $paths = array(
