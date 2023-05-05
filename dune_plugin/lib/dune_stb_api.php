@@ -1468,7 +1468,7 @@ function print_sysinfo()
         'Dune IP Addr' => get_ip_address(),
         'Dune DNS servers' => $dns,
         'PHP Version' => PHP_VERSION,
-        'libCURL Version' => $values['version'],
+        'libCURL Version' => "{$values['version']} ({$values['ssl_version']})",
     );
     $table = array_merge($table, DuneSystem::$properties);
 
