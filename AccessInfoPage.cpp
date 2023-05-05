@@ -1439,13 +1439,14 @@ void CAccessInfoPage::OnBnClickedButtonBrowseDirectLink()
 			}
 			dlg.m_url.Replace(L"www.dropbox.com", L"dl.dropboxusercontent.com");
 			selectedAccount.direct_links[ch_list] = get_utf8(dlg.m_url);
-			m_wndDirectLink.SetWindowText(dlg.m_url);
 		}
 		else
 		{
 			selectedAccount.direct_links[ch_list] = get_utf8(dlg.m_url);
 		}
 	}
+
+	m_wndDirectLink.SetWindowText(dlg.m_url);
 }
 
 void CAccessInfoPage::OnBnClickedButtonBrowseUpdateDesc()
