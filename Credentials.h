@@ -82,9 +82,8 @@ public:
 		SERIALIZE_STRUCT(j, c, quality_id);
 		SERIALIZE_STRUCT(j, c, embed);
 		SERIALIZE_STRUCT(j, c, ch_list);
-		SERIALIZE_STRUCT2(j, c, direct_links, m_direct_links);
+		SERIALIZE_STRUCT(j, c, m_direct_links);
 		SERIALIZE_STRUCT(j, c, use_dropbox);
-		SERIALIZE_STRUCT(j, c, use_proxy);
 	}
 
 	friend void from_json(const nlohmann::json& j, Credentials& c)
@@ -118,9 +117,8 @@ public:
 		DESERIALIZE_STRUCT(j, c, quality_id);
 		DESERIALIZE_STRUCT(j, c, embed);
 		DESERIALIZE_STRUCT(j, c, ch_list);
-		DESERIALIZE_STRUCT2(j, c, direct_links, m_direct_links);
+		DESERIALIZE_STRUCT(j, c, m_direct_links);
 		DESERIALIZE_STRUCT(j, c, use_dropbox);
-		DESERIALIZE_STRUCT(j, c, use_proxy);
 	}
 
 public:
@@ -156,8 +154,7 @@ public:
 
 	bool not_valid = false;
 	bool use_dropbox = false;
-	bool use_proxy = false;
 
 	std::vector<std::string> ch_list;
-	std::map<std::string, std::string> direct_links;
+	std::map<std::string, std::string> m_direct_links;
 };

@@ -83,7 +83,6 @@ protected:
 	afx_msg void OnBnClickedCheckAutoincrementVersion();
 	afx_msg void OnEnChangeEditPluginUpdateVersion();
 	afx_msg void OnBnClickedCheckUseDropbox();
-	afx_msg void OnBnClickedCheckUseProxy();
 	afx_msg void OnEnChangeEditPluginChannelsWebPath();
 	afx_msg LRESULT OnNotifyEndEdit(WPARAM, LPARAM);
 
@@ -120,7 +119,6 @@ protected:
 	CButton m_wndEmbed;
 	CButton m_wndEditConfig;
 	CButton m_wndUseDropboxUpdate;
-	CButton m_wndUseProxy;
 	CComboBox m_wndServers;
 	CComboBox m_wndDevices;
 	CComboBox m_wndQualities;

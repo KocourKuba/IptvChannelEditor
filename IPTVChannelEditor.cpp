@@ -728,7 +728,7 @@ bool PackPlugin(const PluginType plugin_type,
 			&& (noCustom || std::find(cred.ch_list.begin(), cred.ch_list.end(), channels) != cred.ch_list.end()))
 		{
 			std::string link;
-			if (const auto& pair = cred.direct_links.find(channels); pair != cred.direct_links.end())
+			if (const auto& pair = cred.m_direct_links.find(channels); pair != cred.m_direct_links.end())
 			{
 				link = pair->second;
 			}
@@ -768,9 +768,12 @@ bool PackPlugin(const PluginType plugin_type,
 		std::filesystem::copy_file(plugin_root + filename, packFolder + filename, default_copy, err);
 	}
 
+	const auto& proxy_path = fmt::format("http://127.0.0.1/cgi-bin/plugins/{:s}/https_proxy.sh", plugin->get_name());
+	std::filesystem::create_directories(packFolder + www_path, err);
+	const auto& www_proxy_path = fmt::format(LR"({:s}\https_proxy.sh)", www_path);
+	std::filesystem::copy_file(plugin_root + www_proxy_path, packFolder + www_proxy_path, default_copy, err);
 	if (!plugin->get_scripts_list().empty())
 	{
-		std::filesystem::create_directories(packFolder + www_path, err);
 		for (const auto& item : plugin->get_scripts_list())
 		{
 			std::wstring filename = fmt::format(LR"({:s}\{:s})", www_path, item.get_name());
@@ -778,22 +781,12 @@ bool PackPlugin(const PluginType plugin_type,
 		}
 	}
 
-	std::string proxy_path;
-	if (cred.use_dropbox && cred.use_proxy)
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ plugin_root + LR"(bin\\)" })
 	{
-		std::string script = R"(update_proxy.sh)";
-		proxy_path = fmt::format("http://127.0.0.1/cgi-bin/plugins/{:s}/{:s}?", plugin->get_name(), script);
-		std::filesystem::create_directories(packFolder + www_path, err);
-		const auto& www_proxy_path = fmt::format(LR"({:s}\{:s})", www_path, utils::utf8_to_utf16(script));
-		std::filesystem::copy_file(plugin_root + www_proxy_path, packFolder + www_proxy_path, default_copy, err);
-
-		for (const auto& dir_entry : std::filesystem::directory_iterator{ plugin_root + LR"(bin\\)" })
+		if (dir_entry.path().stem() == "curl")
 		{
-			if (dir_entry.path().stem() == "curl")
-			{
-				const auto& curl_file = fmt::format(LR"({:s}\{:s})", bin_path, dir_entry.path().filename().wstring());
-				std::filesystem::copy_file(plugin_root + curl_file, packFolder + curl_file, default_copy, err);
-			}
+			const auto& curl_file = fmt::format(LR"({:s}\{:s})", bin_path, dir_entry.path().filename().wstring());
+			std::filesystem::copy_file(plugin_root + curl_file, packFolder + curl_file, default_copy, err);
 		}
 	}
 
@@ -924,7 +917,7 @@ bool PackPlugin(const PluginType plugin_type,
 				d_node->first_node("channels_url_path")->value(cred.ch_web_path.c_str());
 			}
 
-			if (!cred.direct_links.empty())
+			if (!cred.m_direct_links.empty())
 			{
 				auto node = d_node->first_node("channels_direct_links");
 				for (const auto& channels : channels_list)
@@ -954,9 +947,20 @@ bool PackPlugin(const PluginType plugin_type,
 			actions_node->append_node(action_entry);
 		}
 
-		auto cu_node = d_node->first_node("check_update");
-		const auto& update_url = noCustom ? "" : fmt::format("{:s}{:s}{:s}.xml", proxy_path, cred.update_url, utils::utf16_to_utf8(package_info_name));
-		cu_node->first_node("url")->value(update_url.c_str());
+		// <check_update>
+		//	 <schema>2</schema>
+		//	 <url>http://127.0.0.1/cgi-bin/plugins/iedem.tv/https_proxy.sh</url>
+		//	 <real_url>http://iptv.esalecrm.net/update/update_edem_mod.xml</real_url>
+		//	 <timeout>0</timeout>
+		// </check_update>
+
+		if (!noCustom && !cred.update_package_url.empty())
+		{
+			auto cu_node = d_node->first_node("check_update");
+			const auto& update_url = fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
+			cu_node->first_node("url")->value(proxy_path.c_str());
+			cu_node->first_node("real_url")->value(update_url.c_str());
+		}
 
 		ostream << *doc;
 		ostream.close();
@@ -1167,7 +1171,7 @@ bool PackPlugin(const PluginType plugin_type,
 			version_info->append_node(rapidxml::alloc_node(*doc, "version", version_string.c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "beta", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "critical", "no"));
-			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}{:s}.tar.gz", proxy_path,
+			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}.tar.gz",
 																					cred.update_package_url,
 																					utils::utf16_to_utf8(package_info_name)).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "md5", utils::md5_hash_file(packed_file).c_str()));

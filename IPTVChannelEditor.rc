@@ -407,8 +407,9 @@ BEGIN
     CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT,
                     "MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x880,270,247,262,12
     CONTROL         "Use Dropbox update",IDC_CHECK_USE_DROPBOX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,263,121,10
-    CONTROL         "Use plugin https Proxy for old Dune",IDC_CHECK_USE_PROXY,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,270,263,258,10
+    CONTROL         "Custom Version Index",IDC_CHECK_AUTOINCREMENT_VERSION,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,270,263,123,10
+    EDITTEXT        IDC_EDIT_PLUGIN_UPDATE_VERSION,395,263,70,12,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
     LTEXT           "Update description URL path",IDC_STATIC,7,276,249,8
     CONTROL         "",IDC_MFCEDITBROWSE_PLUGIN_UPDATE_URL,"MfcEditBrowse",WS_BORDER | WS_TABSTOP | 0x880,7,287,259,12
     LTEXT           "Update package URL path",IDC_STATIC,270,276,255,8
@@ -417,9 +418,6 @@ BEGIN
     CONTROL         "Custom Web Update Name",IDC_CHECK_CUSTOM_UPDATE_NAME,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,303,249,8
     EDITTEXT        IDC_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE,7,315,259,12,ES_AUTOHSCROLL
-    CONTROL         "Custom Version Index",IDC_CHECK_AUTOINCREMENT_VERSION,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,270,302,123,10
-    EDITTEXT        IDC_EDIT_PLUGIN_UPDATE_VERSION,395,301,70,12,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
     EDITTEXT        IDC_EDIT_PLUGIN_UPDATE_NAME,270,315,210,12,ES_AUTOHSCROLL | WS_DISABLED
     LTEXT           ".xml | .tar.gz",IDC_STATIC,482,317,45,8
 END
@@ -1037,15 +1035,14 @@ BEGIN
     50, 100, 0, 0,
     50, 100, 50, 0,
     0, 100, 50, 0,
-    50, 100, 50, 0,
+    50, 100, 0, 0,
+    50, 100, 0, 0,
     0, 100, 0, 0,
     0, 100, 50, 0,
     50, 100, 0, 0,
     50, 100, 50, 0,
     0, 100, 0, 0,
     0, 100, 50, 0,
-    50, 100, 0, 0,
-    50, 100, 0, 0,
     50, 100, 50, 0,
     100, 100, 0, 0
 END
@@ -1880,8 +1877,6 @@ BEGIN
     IDS_STRING_EDIT_PLUGIN_UPDATE_VERSION 
                             "Update Version Index. Must be greater than the previous version"
     IDS_STRING_CHECK_AUTOINCREMENT_VERSION "Automatic calculate Version Index"
-    IDS_STRING_CHECK_CUSTOM_UPDATE_NAME 
-                            "Set a custom name for the update description. Otherwise will be generated automatically"
     IDS_STRING_EDIT_PLUGIN_UPDATE_NAME 
                             "Generated name of the update description and package"
     IDS_STRING_CHECK_EPG_ID_FROM_ID 
@@ -2127,8 +2122,6 @@ BEGIN
     IDS_STRING_CMP_ICON     "Checks for the icon url when comparing the channels differences"
     IDS_STRING_CMP_ARCHIVE  "Checks for the archive days when comparing the channels differences"
     IDS_STRING_COL_ARCHIVE  "R"
-    IDS_STRING_CHECK_USE_PROXY 
-                            "Use internal plugin https proxy for checking and download plugin update on the old Dune HD (101, 102, 301 etc..) from the Dropbox"
 END
 
 #endif    // English (United States) resources
