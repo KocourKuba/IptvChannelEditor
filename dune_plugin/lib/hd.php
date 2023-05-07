@@ -371,9 +371,11 @@ class HD
         $plugin_name = get_plugin_name();
 
         if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name.log")) {
-            $redirected = "$apk_subst/D/dune_plugin_logs/$plugin_name.*";
+            $plugin_logs = "$apk_subst/D/dune_plugin_logs/$plugin_name.*";
+        } else if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name.log")) {
+            $plugin_logs = "$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.*";
         } else {
-            $redirected = "$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.*";
+            $plugin_logs = "$apk_subst/tmp/run/$plugin_name.*";
         }
 
         $paths = array(
@@ -382,8 +384,7 @@ class HD
             get_temp_path("*.json"),
             get_temp_path("*.m3u?"),
             "$apk_subst/tmp/run/shell.*",
-            "$apk_subst/tmp/run/$plugin_name",
-            $redirected,
+            $plugin_logs,
         );
 
         $files = array();
