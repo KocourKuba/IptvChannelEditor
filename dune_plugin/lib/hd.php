@@ -436,6 +436,44 @@ class HD
         }
     }
 
+    public static function check_https_proxy()
+    {
+        try {
+            if (strpos(get_platform_kind(), '86') !== 0) {
+                // no need update
+                throw new Exception();
+            }
+
+            $manifest_path = get_install_path("dune_plugin.xml");
+            if (!file_exists($manifest_path)) {
+                throw new Exception();
+            }
+
+            $manifest = file_get_contents($manifest_path);
+            $xml = self::parse_xml_document($manifest);
+
+            if (!isset($xml->check_update->url) || empty($xml->check_update->url)) {
+                // no need update
+                throw new Exception();
+            }
+
+            if (strpos($xml->check_update->url, 'http://') === 0) {
+                // no need update
+                throw new Exception();
+            }
+
+            $plugin_name = get_plugin_name();
+            hd_print("Manifest updated for https proxy");
+            return @file_put_contents($manifest_path, str_replace($xml->check_update->url,
+                "http://127.0.0.1/cgi-bin/plugins/$plugin_name/https_proxy.sh?{$xml->check_update->url}",
+                $manifest));
+        } catch (Exception $ex) {
+
+        }
+
+        return false;
+    }
+
     /**
      * @param string $doc
      * @return SimpleXMLElement

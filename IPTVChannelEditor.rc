@@ -525,10 +525,8 @@ BEGIN
     LTEXT           "Access Type",IDC_STATIC,7,59,83,8
     COMBOBOX        IDC_COMBO_ACCESS_TYPE,7,70,96,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Square Icons",IDC_CHECK_SQUARE_ICONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,106,72,89,10
-    LTEXT           "External bin files",IDC_STATIC,7,86,94,8
+    LTEXT           "Additional files",IDC_STATIC,7,86,153,8
     PUSHBUTTON      "...",IDC_BUTTON_EDIT_EXT_FILES,7,95,19,14,BS_BITMAP
-    LTEXT           "External cgi scripts",IDC_STATIC,167,86,94,8
-    PUSHBUTTON      "...",IDC_BUTTON_EDIT_EXT_SCRIPTS,167,95,19,14,BS_BITMAP
     PUSHBUTTON      "...",IDC_BUTTON_EDIT_SERVERS,7,112,19,14,BS_BITMAP
     CONTROL         "Static Servers List",IDC_CHECK_STATIC_SERVERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,30,115,133,10
     PUSHBUTTON      "...",IDC_BUTTON_EDIT_DEVICES,7,129,19,14,BS_BITMAP
@@ -538,8 +536,8 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,190,115,133,10
     PUSHBUTTON      "...",IDC_BUTTON_EDIT_PROFILES,167,129,19,14,BS_BITMAP
     CONTROL         "Static Profiles List",IDC_CHECK_STATIC_PROFILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,190,132,133,10
-    LTEXT           "Manifest entries",IDC_STATIC,276,86,94,8
-    PUSHBUTTON      "...",IDC_BUTTON_EDIT_MANIFEST,276,95,19,14,BS_BITMAP
+    LTEXT           "Manifest entries",IDC_STATIC,167,86,153,8
+    PUSHBUTTON      "...",IDC_BUTTON_EDIT_MANIFEST,167,95,19,14,BS_BITMAP
 END
 
 IDD_DIALOG_FILL_PARAMS DIALOGEX 0, 0, 191, 143
@@ -1129,8 +1127,6 @@ BEGIN
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 100, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
@@ -1769,8 +1765,6 @@ BEGIN
     IDS_STRING_CHECK_USE_DROPBOX 
                             "Use DropBox service as server for web update"
     IDS_STRING_USED_ACCOUNT "Used account: {:s}"
-    IDS_STRING_BUTTON_EDIT_EXT_SCRIPTS 
-                            "Add additional scripts into plugin \\www folder"
     IDS_STRING_BUTTON_EDIT_EXT_FILES 
                             "Add additional files into plugin \\bin folder"
     IDS_STRING_BUTTON_CHECK_UPDATE "Check for update"

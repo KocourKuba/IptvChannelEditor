@@ -64,7 +64,6 @@ protected:
 
 	afx_msg void OnCbnSelchangeComboAccessType();
 
-	afx_msg void OnBnClickedButtonEditExtScripts();
 	afx_msg void OnBnClickedButtonEditExtFiles();
 	afx_msg void OnBnClickedButtonEditManifest();
 	afx_msg void OnBnClickedCheckStaticServers();
@@ -87,7 +86,6 @@ protected:
 
 	CComboBox m_wndAccessType;
 	CButton m_wndBtnExtFiles;
-	CButton m_wndBtnExtScripts;
 	CButton m_wndBtnManifest;
 	CButton m_wndChkStaticServers;
 	CButton m_wndBtnServers;

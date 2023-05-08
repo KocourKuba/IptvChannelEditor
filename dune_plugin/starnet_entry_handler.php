@@ -73,6 +73,11 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 clearstatcache();
                 switch ($user_input->action_id) {
                     case 'launch':
+                        if (HD::check_https_proxy() !== false) {
+                            return Action_Factory::show_title_dialog("Требуется перезагрузка",
+                                Action_Factory::restart(), "Плагин настроен на обновление через https прокси");
+                        }
+
                         //hd_print("auto_play: $plugin_cookies->auto_play");
                         if ((int)$user_input->mandatory_playback === 1
                             || (isset($plugin_cookies->auto_play) && $plugin_cookies->auto_play === SetupControlSwitchDefs::switch_on)) {

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20230503232933" scan="267" scanned="20230503232727">
+<document created="20211012165442" version="4.0.374" date="20230508155011" scan="268" scanned="20230508154945">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230503212202" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230508123440" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -2099,22 +2099,16 @@
               <native>263</native>
             </row>
           </component>
-          <component class="TVisCheckBox" name="1179" state="0" created="20230503225546" type="button">
-            <row id="CX" state="3" changed="20230503231340">
-              <prev>262</prev>
-              <native>258</native>
+          <component class="TVisCheckBox" name="1172" created="20220730092432" type="button">
+            <row id="CX" changed="20230121164542">123</row>
+            <row id="CY" changed="20230312025915">10</row>
+            <row id="Text" changed="20220730093453">
+              <native>Custom Version Index</native>
+              <lang id="ru" date="20220730092901">Произвольный индекс версии</lang>
             </row>
-            <row id="CY" state="0">10</row>
-            <row id="Text" changed="20230503231549">
-              <native>Use plugin https Proxy for old Dune</native>
-              <lang id="ru" date="20230503231419">Использовать https прокси плагина для старых Dune</lang>
-            </row>
-            <row id="X" state="3" changed="20230503230252">
-              <prev>137</prev>
-              <native>270</native>
-            </row>
-            <row id="Y" state="3" changed="20230503230252">
-              <prev>264</prev>
+            <row id="X" changed="20230126180934">270</row>
+            <row id="Y" state="3" changed="20230508154945">
+              <prev>302</prev>
               <native>263</native>
             </row>
           </component>
@@ -2175,19 +2169,6 @@
               <native>303</native>
             </row>
           </component>
-          <component class="TVisCheckBox" name="1172" created="20220730092432" type="button">
-            <row id="CX" changed="20230121164542">123</row>
-            <row id="CY" changed="20230312025915">10</row>
-            <row id="Text" changed="20220730093453">
-              <native>Custom Version Index</native>
-              <lang id="ru" date="20220730092901">Произвольный индекс версии</lang>
-            </row>
-            <row id="X" changed="20230126180934">270</row>
-            <row id="Y" state="3" changed="20230503230252">
-              <prev>264</prev>
-              <native>302</native>
-            </row>
-          </component>
           <component class="TVisLabel" name="STATIC_xml_|_targz" created="20230312153640" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX">45</row>
             <row id="CY">8</row>
@@ -2196,6 +2177,12 @@
             <row id="Y" state="3" changed="20230503230252">
               <prev>316</prev>
               <native>317</native>
+            </row>
+          </component>
+          <component class="TVisCheckBox" name="1179" state="1" created="20230503225546" type="button">
+            <row id="Text" state="1" changed="20230503231549">
+              <native>Use plugin https Proxy for old Dune</native>
+              <lang id="ru" date="20230503231419">Использовать https прокси плагина для старых Dune</lang>
             </row>
           </component>
           <component class="TVisComboBox" name="1123" created="20221001005006" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
@@ -2255,15 +2242,6 @@
               <native>247</native>
             </row>
           </component>
-          <component class="TVisEdit" name="1169" created="20230312025915" type="edit">
-            <row id="CX" changed="20230312173508">259</row>
-            <row id="CY">12</row>
-            <row id="X" changed="20230312173508">7</row>
-            <row id="Y" state="3" changed="20230503230252">
-              <prev>314</prev>
-              <native>315</native>
-            </row>
-          </component>
           <component class="TVisEdit" name="1171" created="20220730092432" type="edit" enabled="0">
             <row id="CX" changed="20230126180934">70</row>
             <row id="CY">12</row>
@@ -2271,9 +2249,18 @@
               <prev>396</prev>
               <native>395</native>
             </row>
+            <row id="Y" state="3" changed="20230508154945">
+              <prev>301</prev>
+              <native>263</native>
+            </row>
+          </component>
+          <component class="TVisEdit" name="1169" created="20230312025915" type="edit">
+            <row id="CX" changed="20230312173508">259</row>
+            <row id="CY">12</row>
+            <row id="X" changed="20230312173508">7</row>
             <row id="Y" state="3" changed="20230503230252">
-              <prev>263</prev>
-              <native>301</native>
+              <prev>314</prev>
+              <native>315</native>
             </row>
           </component>
           <component class="TVisEdit" name="1173" created="20220730092432" type="edit" enabled="0">
@@ -2593,27 +2580,14 @@
             </row>
             <row id="Y" changed="20230219213153">72</row>
           </component>
-          <component class="TVisLabel" name="STATIC_External_bin" state="0" created="20230402134453" type="static" unnamed="1" autosize="0" wordwrap="1">
+          <component class="TVisLabel" name="STATIC_Additional" state="0" created="20230508154945" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX" state="0">94</row>
             <row id="CY" state="0">8</row>
             <row id="Text" state="0">
-              <native>External bin files</native>
-              <lang id="ru" date="20230402134530">Внешние bin файлы</lang>
+              <native>Additional files</native>
+              <lang id="ru" date="20230508154959">Дополнительные файлы</lang>
             </row>
             <row id="X" state="0">7</row>
-            <row id="Y" state="0">86</row>
-          </component>
-          <component class="TVisLabel" name="STATIC_External_cgi" state="0" created="20230402134453" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX" state="0">94</row>
-            <row id="CY" state="0">8</row>
-            <row id="Text" state="0">
-              <native>External cgi scripts</native>
-              <lang id="ru" date="20230402134542">Внешние cgi скрипты</lang>
-            </row>
-            <row id="X" state="3" changed="20230408002741">
-              <prev>193</prev>
-              <native>167</native>
-            </row>
             <row id="Y" state="0">86</row>
           </component>
           <component class="TVisCheckBox" name="1210" type="button">
@@ -2693,8 +2667,23 @@
               <native>Manifest entries</native>
               <lang id="ru" date="20230408002805">Параметры манифеста</lang>
             </row>
-            <row id="X" state="0">276</row>
+            <row id="X" state="3" changed="20230508154945">
+              <prev>276</prev>
+              <native>167</native>
+            </row>
             <row id="Y" state="0">86</row>
+          </component>
+          <component class="TVisLabel" name="STATIC_External_bin" state="1" created="20230402134453" type="static" unnamed="1">
+            <row id="Text" state="1">
+              <native>External bin files</native>
+              <lang id="ru" date="20230402134530">Внешние bin файлы</lang>
+            </row>
+          </component>
+          <component class="TVisLabel" name="STATIC_External_cgi" state="1" created="20230402134453" type="static" unnamed="1">
+            <row id="Text" state="1">
+              <native>External cgi scripts</native>
+              <lang id="ru" date="20230402134542">Внешние cgi скрипты</lang>
+            </row>
           </component>
           <component class="TVisEdit" name="1198" type="edit">
             <row id="CX" state="3" changed="20230407231756">
@@ -2757,16 +2746,6 @@
             <row id="X" state="0">7</row>
             <row id="Y" state="0">95</row>
           </component>
-          <component class="TVisButton" name="1236" state="0" created="20230402134453" type="button" picture="1">
-            <row id="CX" state="0">19</row>
-            <row id="CY" state="0">14</row>
-            <row id="Text" locked="1" state="0">...</row>
-            <row id="X" state="3" changed="20230408002741">
-              <prev>193</prev>
-              <native>167</native>
-            </row>
-            <row id="Y" state="0">95</row>
-          </component>
           <component class="TVisButton" name="1206" type="button" picture="1">
             <row id="CX" changed="20221018224522">19</row>
             <row id="CY">14</row>
@@ -2817,7 +2796,10 @@
             <row id="CX" state="0">19</row>
             <row id="CY" state="0">14</row>
             <row id="Text" locked="1" state="0">...</row>
-            <row id="X" state="0">276</row>
+            <row id="X" state="3" changed="20230508154945">
+              <prev>276</prev>
+              <native>167</native>
+            </row>
             <row id="Y" state="0">95</row>
           </component>
         </form>
@@ -4377,7 +4359,7 @@
           <native>Custom generated plugin file name</native>
           <lang id="ru" date="20230311232629">Произвольное имя файла для сгенерированного плагина</lang>
         </row>
-        <row id="IDS_STRING_CHECK_CUSTOM_UPDATE_NAME" created="20220730095459" changed="20220730100425">
+        <row id="IDS_STRING_CHECK_CUSTOM_UPDATE_NAME" state="1" created="20220730095459" changed="20220730100425">
           <native>Set a custom name for the update description. Otherwise will be generated automatically</native>
           <lang id="ru" date="20220730095849">Задать произвольное имя описания обновления, иначе формируется автоматически</lang>
         </row>
@@ -4776,7 +4758,7 @@
           <native>Add additional files into plugin \bin folder</native>
           <lang id="ru" date="20230402134623">Добавить дополнительные файлы в папку \bin плагина</lang>
         </row>
-        <row id="IDS_STRING_BUTTON_EDIT_EXT_SCRIPTS" state="0" created="20230402134453">
+        <row id="IDS_STRING_BUTTON_EDIT_EXT_SCRIPTS" state="1" created="20230402134453">
           <native>Add additional scripts into plugin \www folder</native>
           <lang id="ru" date="20230402134611">Добавить дополнительные скрипты в папку \www плагина</lang>
         </row>
@@ -5112,7 +5094,7 @@
           <native>Checks for the second EPG ID when comparing the channels differences</native>
           <lang id="ru" date="20230501183154">Проверять вторичный EPG ID канала при проверке изменений</lang>
         </row>
-        <row id="IDS_STRING_CHECK_USE_PROXY" state="0" created="20230503232727">
+        <row id="IDS_STRING_CHECK_USE_PROXY" state="1" created="20230503232727">
           <native>Use internal plugin https proxy for checking and download plugin update on the old Dune HD (101, 102, 301 etc..) from the Dropbox</native>
           <lang id="ru" date="20230503232913">Использовать внутренний https прокси плагина для проверки и скачивания обновления плагина через Dropbox на старых Dune (101, 102, 301 и т.д.)</lang>
         </row>
@@ -5187,34 +5169,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20230503225546">
-          <prev>6.6.1623, 2 May 2023</prev>
-          <native>6.6.1627, 3 May 2023</native>
+        <row id="FileVersion" locked="1" state="3" changed="20230508154945">
+          <prev>6.6.1627, 3 May 2023</prev>
+          <native>6.6.1639, 7 May 2023</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230503225546">
-          <prev>1623</prev>
-          <native>1627</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230508154945">
+          <prev>1627</prev>
+          <native>1639</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20230503225546">
-          <prev>6.6.1623</prev>
-          <native>6.6.1627</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20230508154945">
+          <prev>6.6.1627</prev>
+          <native>6.6.1639</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230503225546">
-          <prev>1623</prev>
-          <native>1627</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230508154945">
+          <prev>1627</prev>
+          <native>1639</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

@@ -480,7 +480,7 @@ class smb_tree
     public static function get_folder_info(&$plugin_cookies, $param)
     {
         $select_folder = get_install_path();
-        if (isset($plugin_cookies->{$param}) && !empty($plugin_cookies->{$param})) {
+        if (!empty($plugin_cookies->{$param})) {
             $settings = json_decode($plugin_cookies->{$param}, true);
             if (isset($settings['filepath'])) {
                 $select_folder = $settings['filepath'];

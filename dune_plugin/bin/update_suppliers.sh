@@ -11,3 +11,4 @@ filepath="$dirpath/$plugin_name"
 
 [ -e "$dirpath" ] || mkdir "$dirpath"
 
+# please be warn, addtional data for this script will be generated after this comment!

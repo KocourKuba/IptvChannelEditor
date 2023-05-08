@@ -66,14 +66,12 @@ void plugin_config::load_default()
 	static_qualities = false;
 	static_devices = false;
 	static_profiles = false;
-
+	files_list = {
+		{"0", "bin\\update_suppliers.sh" },
+		{"1", "www\\cgi-bin\\https_proxy.sh" },
+	};
 	manifest_list = {
-		{"boot", "" },
-		{"boot_end", "bin/update_suppliers" },
-		{"gui_start", "" },
-		{"install", "" },
-		{"uninstall", "" },
-		{"update", "" },
+		{"boot_end", "bin/update_suppliers.sh" },
 	};
 
 	StreamParameters hls;

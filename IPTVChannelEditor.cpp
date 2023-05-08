@@ -760,25 +760,12 @@ bool PackPlugin(const PluginType plugin_type,
 	std::filesystem::copy(plugin_root + L"icons", packFolder + L"icons", recursive_copy, err);
 
 	std::filesystem::create_directory(packFolder + bin_path, err);
-	const auto& suppliers_path = fmt::format(LR"({:s}\update_suppliers)", bin_path);
-	std::filesystem::copy_file(plugin_root + suppliers_path, packFolder + suppliers_path, default_copy, err);
+	std::filesystem::create_directories(packFolder + www_path, err);
+
 	for (const auto& item : plugin->get_files_list())
 	{
-		const auto& filename = fmt::format(LR"({:s}\{:s})", bin_path, item.get_name());
+		const auto& filename = item.get_name();
 		std::filesystem::copy_file(plugin_root + filename, packFolder + filename, default_copy, err);
-	}
-
-	const auto& proxy_path = fmt::format("http://127.0.0.1/cgi-bin/plugins/{:s}/https_proxy.sh", plugin->get_name());
-	std::filesystem::create_directories(packFolder + www_path, err);
-	const auto& www_proxy_path = fmt::format(LR"({:s}\https_proxy.sh)", www_path);
-	std::filesystem::copy_file(plugin_root + www_proxy_path, packFolder + www_proxy_path, default_copy, err);
-	if (!plugin->get_scripts_list().empty())
-	{
-		for (const auto& item : plugin->get_scripts_list())
-		{
-			std::wstring filename = fmt::format(LR"({:s}\{:s})", www_path, item.get_name());
-			std::filesystem::copy_file(plugin_root + filename, packFolder + filename, default_copy, err);
-		}
 	}
 
 	for (const auto& dir_entry : std::filesystem::directory_iterator{ plugin_root + LR"(bin\\)" })
@@ -958,8 +945,7 @@ bool PackPlugin(const PluginType plugin_type,
 		{
 			auto cu_node = d_node->first_node("check_update");
 			const auto& update_url = fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
-			cu_node->first_node("url")->value(proxy_path.c_str());
-			cu_node->first_node("real_url")->value(update_url.c_str());
+			cu_node->first_node("url")->value(update_url.c_str());
 		}
 
 		ostream << *doc;
@@ -984,7 +970,7 @@ bool PackPlugin(const PluginType plugin_type,
 		return false;
 	}
 
-	std::ofstream os_supplier(packFolder + LR"(bin\update_suppliers)", std::ofstream::binary | std::ofstream::app);
+	std::ofstream os_supplier(packFolder + LR"(bin\update_suppliers.sh)", std::ofstream::binary | std::ofstream::app);
 	os_supplier << R"(cat << EOF > "$filepath")" << std::endl << "{" << std::endl;
 	os_supplier << R"(   "plugin" : "$plugin_name",)" << std::endl;
 	os_supplier << R"(   "caption" : ")" << plugin_caption.c_str() << R"(",)" << std::endl;

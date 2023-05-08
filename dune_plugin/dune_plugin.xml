@@ -18,7 +18,6 @@
     <check_update>
         <schema>2</schema>
         <url></url>
-        <real_url></real_url>
         <timeout>0</timeout>
     </check_update>
     <embeddable_plugin_folders>

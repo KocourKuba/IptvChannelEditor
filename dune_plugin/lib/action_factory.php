@@ -181,7 +181,7 @@ class Action_Factory
                 foreach (explode("\n", $multiline) as $line) {
                     $px = mb_strlen($line, 'UTF-8') * 21;
                     if ($px > $preferred_width)
-                        $preferred_width = $px;
+                        $preferred_width = (int)$px;
                 }
             }
 
@@ -518,10 +518,10 @@ class Action_Factory
     }
 
     /**
-     * @param array $settings
+     * @param array|null $settings
      * @param bool $reboot
      * @param bool $restart_gui
-     * @param array $post_action
+     * @param array|null $post_action
      * @return array
      */
     public static function change_settings($settings, $reboot, $restart_gui, $post_action = null)
