@@ -941,10 +941,10 @@ bool PackPlugin(const PluginType plugin_type,
 		//	 <timeout>0</timeout>
 		// </check_update>
 
+		const auto& update_url = fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
 		if (!noCustom && !cred.update_package_url.empty())
 		{
 			auto cu_node = d_node->first_node("check_update");
-			const auto& update_url = fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
 			cu_node->first_node("url")->value(update_url.c_str());
 		}
 
