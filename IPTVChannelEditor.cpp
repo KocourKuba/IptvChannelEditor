@@ -936,13 +936,12 @@ bool PackPlugin(const PluginType plugin_type,
 
 		// <check_update>
 		//	 <schema>2</schema>
-		//	 <url>http://127.0.0.1/cgi-bin/plugins/iedem.tv/https_proxy.sh</url>
-		//	 <real_url>http://iptv.esalecrm.net/update/update_edem_mod.xml</real_url>
+		//	 <url>http://iptv.esalecrm.net/update/update_edem_mod.xml</url>
 		//	 <timeout>0</timeout>
 		// </check_update>
 
 		const auto& update_url = fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
-		if (!noCustom && !cred.update_package_url.empty())
+		if (!noCustom && !cred.update_url.empty())
 		{
 			auto cu_node = d_node->first_node("check_update");
 			cu_node->first_node("url")->value(update_url.c_str());
