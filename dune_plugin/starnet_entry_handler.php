@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require_once 'lib/user_input_handler_registry.php';
 

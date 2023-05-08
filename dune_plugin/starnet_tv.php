@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'lib/hashed_array.php';
 require_once 'lib/tv/tv.php';
 require_once 'lib/tv/default_channel.php';

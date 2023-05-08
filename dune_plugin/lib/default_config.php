@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require_once 'default_dune_plugin.php';
 require_once 'dynamic_config.php';

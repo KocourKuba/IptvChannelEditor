@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'dune_stb_api.php';
 
 class HD

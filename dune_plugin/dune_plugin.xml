@@ -1,4 +1,4 @@
-﻿<dune_plugin>
+<dune_plugin>
     <type>php</type>
     <type_name></type_name>
     <name>{name}</name>

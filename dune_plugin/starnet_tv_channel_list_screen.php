@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
 class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
