@@ -358,6 +358,22 @@ class HD
 
     public static function send_log_to_developer(&$error = null)
     {
+        $product = get_product_id();
+        $firmware_version = get_raw_firmware_version();
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://www.howsmyssl.com/a/check");
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_USERAGENT, "DuneHD/1.0 (product_id: $product; firmware_version: $firmware_version)");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+        hd_print("Check PHP TLS Support:\n$response");
+
         $serial = get_serial_number();
         if (empty($serial)) {
             hd_print("Unable to get DUNE serial.");

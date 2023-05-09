@@ -387,25 +387,6 @@ function get_serial_number()
     return $result;
 }
 
-function get_tls_support()
-{
-    $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_URL, "https://www.howsmyssl.com/a/check");
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_USERAGENT, HD::get_dune_user_agent());
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_HEADER, 1);
-
-    $response = curl_exec($ch);
-    curl_close($ch);
-    list($header, $body) = explode("\r\n\r\n", $response, 2);
-    $data = json_decode($body, true);
-
-    return $data['tls_version'] . " (" . $data['rating'] . ")";
-}
-
 /**
  * @return string
  */
@@ -1489,7 +1470,6 @@ function print_sysinfo()
         'Dune DNS servers' => $dns,
         'PHP Version' => PHP_VERSION,
         'libCURL Version' => "{$values['version']} ({$values['ssl_version']})",
-        'TLS Support' => get_tls_support(),
     );
     $table = array_merge($table, DuneSystem::$properties);
 
