@@ -89,12 +89,14 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
 
             case ACTION_OPEN_FOLDER:
             case ACTION_PLAY_FOLDER:
+                $post_action = $user_input->control_id === ACTION_OPEN_FOLDER ? Action_Factory::open_folder() : Action_Factory::tv_play();
                 $has_error = $this->plugin->config->get_last_error();
                 if (!empty($has_error)) {
-                    return Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!", null, $has_error);
+                    $this->plugin->config->set_last_error('');
+                    return Action_Factory::show_title_dialog("Ошибка при загрузке плейлиста или списка!", $post_action, $has_error);
                 }
 
-                return $user_input->control_id === ACTION_OPEN_FOLDER ? Action_Factory::open_folder() : Action_Factory::tv_play();
+                return $post_action;
 
             case ACTION_SETTINGS:
                 return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');

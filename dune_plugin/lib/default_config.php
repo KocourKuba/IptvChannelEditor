@@ -702,18 +702,12 @@ class default_config extends dynamic_config
      */
     public function GetPlaylistStreamsInfo($plugin_cookies)
     {
-        $this->last_error = '';
         $pl_entries = array();
 
         $parse_pattern = $this->get_tv_parse_pattern($plugin_cookies);
         if (empty($parse_pattern)) {
-            $this->last_error = "Unable to parse playlist. Empty parse pattern.\nPossible error in plugin config?";
-            hd_print($this->last_error);
-            $this->ClearPlaylistCache($plugin_cookies);
-            return $pl_entries;
+            hd_print("Empty tv parsing pattern!");
         }
-
-        //hd_print("Parsing pattern: $parse_pattern");
 
         $template = $this->get_current_tv_template($plugin_cookies);
         $tag_id = isset($template[Plugin_Constants::TAG_ID_MATCH]) ? $template[Plugin_Constants::TAG_ID_MATCH] : '';
@@ -725,6 +719,7 @@ class default_config extends dynamic_config
         $total = count($m3u_entries);
         hd_print("Parsing $total playlist entries");
 
+        $mapped = 0;
         foreach ($m3u_entries as $entry) {
             if (!empty($tag_id)) {
                 // special case for name, otherwise take ID from selected tag
@@ -736,18 +731,22 @@ class default_config extends dynamic_config
             }
 
             // http://some_domain/some_token/index.m3u8
-            if (preg_match($parse_pattern, $entry->getPath(), $matches)) {
+            if (!empty($parse_pattern) && preg_match($parse_pattern, $entry->getPath(), $matches)) {
                 $id = !empty($tag_id) ? $id : $matches['id'];
                 $pl_entries[$id] = $matches;
+                $mapped++;
+            } else {
+                // threat as custom url
+                $pl_entries[hash('crc32', $entry->getPath())] = array();
             }
         }
 
-        if (empty($pl_entries)) {
-            $this->last_error = "Total m3u entries: $total but no mapped to ID found.\nEmpty provider playlist or wrong parsing pattern";
+        if (empty($pl_entries) && $this->plugin_info['app_type_name'] !== 'custom') {
+            $this->set_last_error("Пустой плейлист провайдера!");
             hd_print($this->last_error);
             $this->ClearPlaylistCache($plugin_cookies);
         } else {
-            hd_print("Total mapped entries to ID : " . count($pl_entries));
+            hd_print("Total entries:" . count($pl_entries) . ", mapped to ID $mapped: ");
         }
 
         return $pl_entries;

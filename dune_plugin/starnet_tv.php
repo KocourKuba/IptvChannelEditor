@@ -13,6 +13,7 @@ require_once 'starnet_vod_category_list_screen.php';
 class Starnet_Tv implements Tv, User_Input_Handler
 {
     const ID = 'tv';
+    const CHANNELS_LIST_MAX_VERSION = 6;
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -374,6 +375,14 @@ class Starnet_Tv implements Tv, User_Input_Handler
         if ($xml->getName() !== 'tv_info') {
             hd_print("Error: unexpected node '" . $xml->getName() . "'. Expected: 'tv_info'");
             throw new Exception('Invalid XML document');
+        }
+
+        if ($xml->vesion_info->list_version > self::CHANNELS_LIST_MAX_VERSION)
+        {
+            $message = "Внмание: Версия списка каналов {$xml->vesion_info->list_version} более новая, чем поддерживает данный плагин " .
+                self::CHANNELS_LIST_MAX_VERSION . "\nПожалуйста обновите плагин на более свежую версию";
+            hd_print($message);
+            $this->plugin->config->set_last_error($message);
         }
 
         // read category
