@@ -889,7 +889,9 @@ bool PackPlugin(const PluginType plugin_type,
 		//    <version>{plugin_version}</version>
 		//    <release_date>{plugin_release_date}</release_date>
 		//    <channels_url_path>{plugin_channels_url_path}</channels_url_path>
+		//    <list_version_support>6</list_version_support>
 
+		const auto& channels_list_version = std::to_string(CHANNELS_LIST_VERSION);
 		auto d_node = doc->first_node("dune_plugin");
 
 		d_node->first_node("type_name")->value(plugin->get_type_name_a().c_str());
@@ -897,6 +899,7 @@ bool PackPlugin(const PluginType plugin_type,
 		d_node->first_node("version_index")->value(version_index.c_str());
 		d_node->first_node("version")->value(version_string.c_str());
 		d_node->first_node("release_date")->value(RELEASEDATE);
+		d_node->first_node("list_version_support")->value(channels_list_version.c_str());
 		if (!noCustom)
 		{
 			if (!cred.ch_web_path.empty())

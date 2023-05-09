@@ -1382,6 +1382,7 @@ function get_plugin_manifest_info()
         'app_release_date' => (string)$xml->release_date,
         'app_logo' => (string)$xml->icon_url,
         'app_background' => (string)$xml->background,
+        'app_ch_list_version' => (string)$xml->list_version_support,
         'app_channels_url_path' => (string)$xml->channels_url_path,
         'app_direct_links' => $direct_links,
     );

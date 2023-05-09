@@ -27,6 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 
 constexpr auto APP_SETTINGS = L"Application";
+constexpr auto CHANNELS_LIST_VERSION = 6;
 
 constexpr auto CMP_FLAG_TITLE          = 0x01;
 constexpr auto CMP_FLAG_ICON           = 0x02;

@@ -9,6 +9,7 @@
     <version_index>{plugin_version_index}</version_index>
     <version>{plugin_version}</version>
     <release_date>{plugin_release_date}</release_date>
+    <list_version_support></list_version_support>
     <channels_url_path></channels_url_path>
     <channels_direct_links></channels_direct_links>
     <global_actions></global_actions>

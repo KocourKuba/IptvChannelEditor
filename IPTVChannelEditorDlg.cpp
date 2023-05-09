@@ -90,7 +90,6 @@ constexpr auto MOD_EPG2    = 0x08;
 constexpr auto MOD_ICON    = 0x10;
 
 // Common
-constexpr auto CHANNELS_LIST_VERSION = 6;
 
 int CALLBACK CBCompareForSwap(LPARAM lParam1, LPARAM lParam2, LPARAM)
 {
