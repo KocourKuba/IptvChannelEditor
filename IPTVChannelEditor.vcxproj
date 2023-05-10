@@ -428,6 +428,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <Image Include="res\Changed.png" />
     <Image Include="res\Config.png" />
     <Image Include="res\Download.png" />
+    <Image Include="res\duplicates.png" />
     <Image Include="res\Edit.png" />
     <Image Include="res\export_m3u.png" />
     <Image Include="res\Filter.png" />
@@ -438,6 +439,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <Image Include="res\New.png" />
     <Image Include="res\NotAdded.png" />
     <Image Include="res\NotChanged.png" />
+    <Image Include="res\no_duplicates.png" />
     <Image Include="res\Open.png" />
     <Image Include="res\QR Code.png" />
     <Image Include="res\reload.png" />

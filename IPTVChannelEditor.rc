@@ -125,6 +125,10 @@ IDB_PNG_CHANGELOG       PNG                     "res\\help.png"
 
 IDB_PNG_UPDATE          PNG                     "res\\update.png"
 
+IDB_PNG_DUPLICATES      PNG                     "res\\duplicates.png"
+
+IDB_PNG_NO_DUPLICATES   PNG                     "res\\no_duplicates.png"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -167,9 +171,9 @@ BEGIN
     COMBOBOX        IDC_COMBO_CHANNELS,4,48,125,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "+",IDC_BUTTON_ADD_NEW_CHANNELS_LIST,132,47,16,15,BS_ICON | BS_MULTILINE
     PUSHBUTTON      ">",IDC_BUTTON_EXPORT_M3U,149,47,16,15,BS_ICON | BS_MULTILINE
-    EDITTEXT        IDC_EDIT_SEARCH,4,66,108,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "»",IDC_BUTTON_SEARCH_NEXT,114,64,16,15,BS_ICON
-    CONTROL         "=",IDC_CHECK_SHOW_CHANGED_CH,"Button",BS_AUTOCHECKBOX | BS_BITMAP | BS_PUSHLIKE | WS_TABSTOP,132,64,16,15
+    EDITTEXT        IDC_EDIT_SEARCH,4,66,88,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "»",IDC_BUTTON_SEARCH_NEXT,95,64,16,15,BS_ICON
+    CONTROL         "=",IDC_CHECK_SHOW_CHANGED_CH,"Button",BS_AUTOCHECKBOX | BS_BITMAP | BS_PUSHLIKE | WS_TABSTOP,113,64,16,15
     CONTROL         "?",IDC_CHECK_SHOW_UNKNOWN,"Button",BS_AUTOCHECKBOX | BS_BITMAP | BS_PUSHLIKE | WS_TABSTOP,149,64,16,15
     GROUPBOX        "Channel Info",IDC_STATIC,170,44,244,201
     LTEXT           "Channel ID",IDC_STATIC,177,55,62,8
@@ -238,6 +242,7 @@ BEGIN
     PUSHBUTTON      "Reload Icon",IDC_BUTTON_RELOAD_ICON,92,399,74,19
     LTEXT           "Plugin Channels List",IDC_STATIC,4,80,158,8
     LTEXT           "Provider Playlist",IDC_STATIC,420,80,154,8,SS_WORDELLIPSIS
+    CONTROL         "~",IDC_CHECK_SHOW_DUPLICATES,"Button",BS_AUTOCHECKBOX | BS_BITMAP | BS_PUSHLIKE | WS_TABSTOP,132,64,16,15
 END
 
 IDD_DIALOG_NEW_CHANNELS_LIST DIALOGEX 0, 0, 165, 61
@@ -925,7 +930,8 @@ BEGIN
     50, 100, 0, 0,
     0, 100, 0, 0,
     0, 0, 50, 0,
-    50, 0, 50, 0
+    50, 0, 50, 0,
+    50, 0, 0, 0
 END
 
 IDD_ABOUTBOX AFX_DIALOG_LAYOUT
@@ -1765,6 +1771,8 @@ BEGIN
     IDS_STRING_CHECK_USE_DROPBOX 
                             "Use DropBox service as server for web update"
     IDS_STRING_USED_ACCOUNT "Used account: {:s}"
+    IDS_STRING_CHECK_SHOW_DUPLICATES 
+                            "Show duplicated channels in the different categories"
     IDS_STRING_BUTTON_EDIT_EXT_FILES 
                             "Add additional files into plugin \\bin folder"
     IDS_STRING_BUTTON_CHECK_UPDATE "Check for update"

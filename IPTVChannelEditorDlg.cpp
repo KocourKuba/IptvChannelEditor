@@ -238,7 +238,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomArchive)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_ICON, &CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon)
-END_MESSAGE_MAP()
+		ON_BN_CLICKED(IDC_CHECK_SHOW_DUPLICATES, &CIPTVChannelEditorDlg::OnBnClickedCheckShowDuplicates)
+		END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -294,6 +295,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, m_wndSearch);
 	DDX_Control(pDX, IDC_CHECK_SHOW_UNKNOWN, m_wndShowUnknown);
+	DDX_Control(pDX, IDC_CHECK_SHOW_DUPLICATES, m_wndShowDuplicates);
 	DDX_Control(pDX, IDC_TREE_PLAYLIST, m_wndPlaylistTree);
 	DDX_Control(pDX, IDC_BUTTON_PL_FILTER, m_wndBtnFilter);
 	DDX_Control(pDX, IDC_EDIT_PL_SEARCH, m_wndPlSearch);
@@ -521,6 +523,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	AddTooltip(IDC_SPLIT_BUTTON_UPDATE_CHANGED, IDS_STRING_BUTTON_UPDATE_CHANGED);
 	AddTooltip(IDC_BUTTON_ADD_PLAYLIST, IDS_STRING_BUTTON_ADD_PLAYLIST);
 	AddTooltip(IDC_BUTTON_EXPORT_M3U, IDS_STRING_EXPORT_M3U);
+	AddTooltip(IDC_CHECK_SHOW_DUPLICATES, IDS_STRING_CHECK_SHOW_DUPLICATES);
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
@@ -558,6 +561,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SetButtonImage(IDB_PNG_CHANGED, m_wndShowChanged);
 	SetButtonImage(IDB_PNG_ADDED, m_wndNotAdded);
 	SetButtonImage(IDB_PNG_UNKNOWN, m_wndShowUnknown);
+	SetButtonImage(IDB_PNG_DUPLICATES, m_wndShowDuplicates);
 	SetButtonImage(IDB_PNG_FIND_NEXT, m_wndBtnPlSearchNext);
 	SetButtonImage(IDB_PNG_ACCOUNT, m_wndBtnAccountSetting);
 	SetButtonImage(IDB_PNG_CONFIG, m_wndBtnEditConfig);
@@ -1409,6 +1413,13 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		m_wndShowChangedCh.SetCheck(FALSE);
 	}
 
+	BOOL bCheckDuplicates = m_wndShowDuplicates.GetCheck();
+	if (bCheckDuplicates && m_playlistMap.empty())
+	{
+		bCheckDuplicates = FALSE;
+		m_wndShowDuplicates.SetCheck(FALSE);
+	}
+
 	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
 	BOOL bCmpTitle = (flags & CMP_FLAG_TITLE) ? TRUE : FALSE;
 	BOOL bCmpIcon = (flags & CMP_FLAG_ICON) ? TRUE : FALSE;
@@ -1445,6 +1456,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		{
 			bool bUnknown = false;
 			bool bChanged = false;
+			bool bDuplicate = false;
 
 			const auto& id = channel->get_id();
 			if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
@@ -1462,7 +1474,20 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 				bUnknown = true;
 			}
 
-			if (!bCheckChanged && !bCheckUnknown || bCheckChanged && bChanged || bCheckUnknown && bUnknown)
+			int in_group = 0;
+			if (bCheckDuplicates)
+			{
+				for (const auto& pair : m_categoriesMap)
+				{
+					if (pair.second.category->find_channel(id))
+					{
+						in_group++;
+					}
+				}
+				bDuplicate = in_group > 1;
+			}
+
+			if (!bCheckChanged && !bCheckUnknown && !bCheckDuplicates || bCheckChanged && bChanged || bCheckUnknown && bUnknown || bCheckDuplicates && bDuplicate)
 			{
 				TVINSERTSTRUCTW tvChannel = { nullptr };
 				tvChannel.hParent = hParent;
@@ -4132,6 +4157,12 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckNotAdded()
 void CIPTVChannelEditorDlg::OnBnClickedCheckShowUnknown()
 {
 	SetButtonImage(m_wndShowUnknown.GetCheck() ? IDB_PNG_KNOWN : IDB_PNG_UNKNOWN, m_wndShowUnknown);
+	FillTreeChannels();
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedCheckShowDuplicates()
+{
+	SetButtonImage(m_wndShowDuplicates.GetCheck() ? IDB_PNG_NO_DUPLICATES : IDB_PNG_DUPLICATES, m_wndShowDuplicates);
 	FillTreeChannels();
 }
 

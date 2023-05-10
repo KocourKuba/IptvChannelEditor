@@ -676,5 +676,11 @@
     <Image Include="res\update.png">
       <Filter>Resource Files\PNG</Filter>
     </Image>
+    <Image Include="res\no_duplicates.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
+    <Image Include="res\duplicates.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
   </ItemGroup>
 </Project>

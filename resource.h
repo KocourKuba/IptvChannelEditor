@@ -27,6 +27,8 @@
 #define IDB_PNG_EXPORT_M3U              69
 #define IDB_PNG_CHANGELOG               70
 #define IDB_PNG_UPDATE                  71
+#define IDB_PNG_DUPLICATES              72
+#define IDB_PNG_NO_DUPLICATES           73
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
 #define IDD_CUSTOM_URL                  104
@@ -299,6 +301,7 @@
 #define IDS_STRING_MFCEDITBROWSE_PLUGIN_CHANNELS_DIRECT 376
 #define IDS_STRING_CHECK_USE_DROPBOX    377
 #define IDS_STRING_USED_ACCOUNT         378
+#define IDS_STRING_CHECK_SHOW_DUPLICATES 379
 #define IDS_STRING_BUTTON_EDIT_EXT_FILES 380
 #define IDS_STRING_BUTTON_CHECK_UPDATE  381
 #define IDS_STRING_BUTTON_CHANGELOG     382
@@ -429,6 +432,7 @@
 #define IDC_EDIT_CATEGORY               1040
 #define IDC_CHECK_SHOW_CHANGED_CH       1041
 #define IDC_EDIT_PASSWORD               1042
+#define IDC_CHECK_SHOW_DUPLICATES       1042
 #define IDC_EDIT_EPG1_ID                1043
 #define IDC_EDIT_INFO_AUDIO             1044
 #define IDC_EDIT_INFO_VIDEO             1045

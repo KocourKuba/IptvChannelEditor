@@ -147,6 +147,7 @@ protected:
 	afx_msg void OnBnClickedCheckShowChanged();
 	afx_msg void OnBnClickedCheckNotAdded();
 	afx_msg void OnBnClickedCheckShowUnknown();
+	afx_msg void OnBnClickedCheckShowDuplicates();
 	afx_msg void OnBnClickedCheckShowUrl();
 	afx_msg void OnBnClickedExportM3U();
 
@@ -200,6 +201,9 @@ protected:
 	afx_msg void OnBnDropDownSplitButtonUpdateChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedCheckShowEpg();
 	afx_msg void OnBnClickedButtonReloadIcon();
+	afx_msg void OnBeginlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedButtonChangelog();
+	afx_msg void OnBnClickedButtonCheckUpdate();
 	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnSwitchPlugin(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
@@ -321,6 +325,7 @@ protected:
 	CButton m_wndShowUrl;
 	CButton m_wndBtnFilter;
 	CButton m_wndShowUnknown;
+	CButton m_wndShowDuplicates;
 	CButton m_wndShowChanged;
 	CButton m_wndShowChangedCh;
 	CButton m_wndBtnAddPlaylist;
@@ -485,8 +490,4 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// vod
 	std::map<PluginType, std::map<std::wstring, vod_category_storage>> m_vod_categories;
-public:
-	afx_msg void OnBeginlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBnClickedButtonChangelog();
-	afx_msg void OnBnClickedButtonCheckUpdate();
 };

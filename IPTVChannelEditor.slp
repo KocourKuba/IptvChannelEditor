@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20230508155011" scan="268" scanned="20230508154945">
+<document created="20211012165442" version="4.0.374" date="20230510202132" scan="269" scanned="20230510202012">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230508123440" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20230510182002" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -967,7 +967,10 @@
             <row id="CX">16</row>
             <row id="CY">15</row>
             <row id="Text" locked="1">=</row>
-            <row id="X" changed="20221114231550">132</row>
+            <row id="X" state="3" changed="20230510202012">
+              <prev>132</prev>
+              <native>113</native>
+            </row>
             <row id="Y">64</row>
           </component>
           <component class="TVisCheckBox" name="1127" created="20220320143227" type="button" pushlike="1">
@@ -1273,6 +1276,13 @@
             <row id="X" state="0">420</row>
             <row id="Y" state="0">80</row>
           </component>
+          <component class="TVisCheckBox" name="1042" state="0" created="20230510202012" type="button" pushlike="1">
+            <row id="CX" state="0">16</row>
+            <row id="CY" state="0">15</row>
+            <row id="Text" locked="1" state="0">~</row>
+            <row id="X" state="0">132</row>
+            <row id="Y" state="0">64</row>
+          </component>
           <component class="TVisComboBox" name="1084" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
             <row id="CX" changed="20221018224522">98</row>
             <row id="CY">30</row>
@@ -1289,7 +1299,10 @@
             <row id="Y">48</row>
           </component>
           <component class="TVisEdit" name="1051" type="edit">
-            <row id="CX" changed="20221114231550">108</row>
+            <row id="CX" state="3" changed="20230510202012">
+              <prev>108</prev>
+              <native>88</native>
+            </row>
             <row id="CY">12</row>
             <row id="X">4</row>
             <row id="Y">66</row>
@@ -1498,7 +1511,10 @@
             <row id="CX">16</row>
             <row id="CY">15</row>
             <row id="Text" locked="1">»</row>
-            <row id="X" changed="20221114231550">114</row>
+            <row id="X" state="3" changed="20230510202012">
+              <prev>114</prev>
+              <native>95</native>
+            </row>
             <row id="Y">64</row>
           </component>
           <component class="TVisUpDown" name="1083" type="msctls_updown32">
@@ -2581,7 +2597,10 @@
             <row id="Y" changed="20230219213153">72</row>
           </component>
           <component class="TVisLabel" name="STATIC_Additional" state="0" created="20230508154945" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX" state="0">94</row>
+            <row id="CX" state="3" changed="20230510202012">
+              <prev>94</prev>
+              <native>153</native>
+            </row>
             <row id="CY" state="0">8</row>
             <row id="Text" state="0">
               <native>Additional files</native>
@@ -2661,7 +2680,10 @@
             </row>
           </component>
           <component class="TVisLabel" name="STATIC_Manifest_entries" state="0" created="20230408002741" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX" state="0">94</row>
+            <row id="CX" state="3" changed="20230510202012">
+              <prev>94</prev>
+              <native>153</native>
+            </row>
             <row id="CY" state="0">8</row>
             <row id="Text" state="0">
               <native>Manifest entries</native>
@@ -4762,6 +4784,10 @@
           <native>Add additional scripts into plugin \www folder</native>
           <lang id="ru" date="20230402134611">Добавить дополнительные скрипты в папку \www плагина</lang>
         </row>
+        <row id="IDS_STRING_CHECK_SHOW_DUPLICATES" state="0" created="20230510202012">
+          <native>Show duplicated channels in the different categories</native>
+          <lang id="ru" date="20230510202128">Показать дубликаты. Т.е. одинаковые каналы находящиеся в разных категориях</lang>
+        </row>
         <row id="IDS_STRING_CHECK_USE_DROPBOX" created="20230311232458">
           <native>Use DropBox service as server for web update</native>
           <lang id="ru" date="20230311232746">Использовать сервис DropBox для размещения веб обновлений</lang>
@@ -5169,34 +5195,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20230508154945">
-          <prev>6.6.1627, 3 May 2023</prev>
-          <native>6.6.1639, 7 May 2023</native>
+        <row id="FileVersion" locked="1" state="3" changed="20230510202012">
+          <prev>6.6.1639, 7 May 2023</prev>
+          <native>6.6.1651, 10 May 2023</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230508154945">
-          <prev>1627</prev>
-          <native>1639</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230510202012">
+          <prev>1639</prev>
+          <native>1651</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20230508154945">
-          <prev>6.6.1627</prev>
-          <native>6.6.1639</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20230510202012">
+          <prev>6.6.1639</prev>
+          <native>6.6.1651</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20221110221253">6</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20230403230234">
           <prev>5</prev>
           <native>6</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230508154945">
-          <prev>1627</prev>
-          <native>1639</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20230510202012">
+          <prev>1639</prev>
+          <native>1651</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
