@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'lib/default_config.php';
 
 class lightiptv_config extends default_config
