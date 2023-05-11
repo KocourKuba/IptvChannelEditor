@@ -39,7 +39,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const SETUP_ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
     const SETUP_ACTION_PASS_DLG = 'pass_dialog';
     const SETUP_ACTION_PASS_APPLY = 'pass_apply';
-    const SETUP_ACTION_SEND_LOG = 'send_log';
     const SETUP_ACTION_RELOAD_CHANNELS = 'reload_channels';
 
     private static $on_off_ops = array
@@ -203,13 +202,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         // adult channel password
         Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_PASS_DLG,
             'Пароль для взрослых каналов:', 'Изменить пароль', $text_icon, self::CONTROLS_WIDTH);
-
-        Control_Factory::add_vgap($defs, 20);
-
-        //////////////////////////////////////
-        // adult channel password
-        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_SEND_LOG,
-            'Отправить лог разработчику:', 'Отправить', $setting_icon, self::CONTROLS_WIDTH);
 
         Control_Factory::add_vgap($defs, 10);
 
@@ -581,8 +573,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     {
         $defs = array();
 
-        $pass1 = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
-        $pass2 = isset($plugin_cookies->pass_sex) ? $plugin_cookies->pass_sex : '0000';
+        $pass1 = '';
+        $pass2 = '';
 
         Control_Factory::add_vgap($defs, 20);
 
@@ -836,23 +828,22 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 return Action_Factory::show_dialog('Родительский контроль', $defs, true);
 
             case self::SETUP_ACTION_PASS_APPLY: // handle pass dialog result
-                if (!empty($user_input->pass1) && empty($user_input->pass2)) {
+                $need_reload = false;
+                if ($user_input->pass1 !== $plugin_cookies->pass_sex) {
+                    $msg = 'Неверный старый пароль!';
+                } else if (empty($user_input->pass2)) {
                     $plugin_cookies->pass_sex = '';
                     $msg = 'Пароль отключен!';
+                    $need_reload = true;
                 } else if ($user_input->pass1 !== $user_input->pass2) {
                     $plugin_cookies->pass_sex = $user_input->pass2;
                     $msg = 'Пароль изменен!';
+                    $need_reload = true;
                 } else {
-                    $plugin_cookies->pass_sex = $user_input->pass1;
-                    return Action_Factory::show_title_dialog("Пароль не изменен!");
+                    $msg = 'Пароль не изменен!';
                 }
 
-                return Action_Factory::show_title_dialog($msg, $this->reload_channels($plugin_cookies));
-
-            case self::SETUP_ACTION_SEND_LOG: // send log to developer
-                $error_msg = '';
-                $msg = HD::send_log_to_developer($error_msg) ? "Лог отправлен!" : "Лог не отправлен! $error_msg";
-                return Action_Factory::show_title_dialog($msg);
+                return Action_Factory::show_title_dialog($msg, $need_reload ? $this->reload_channels($plugin_cookies) : null);
 
             case self::SETUP_ACTION_RELOAD_CHANNELS:
                 //hd_print("reload_action");
