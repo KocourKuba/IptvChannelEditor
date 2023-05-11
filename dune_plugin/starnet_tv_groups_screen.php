@@ -1,6 +1,7 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
 require_once 'starnet_setup_screen.php';
+require_once 'starnet_channels_setup_screen.php';
 
 class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
@@ -51,6 +52,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             GUI_EVENT_KEY_PLAY       => User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER),
             GUI_EVENT_KEY_SETUP      => $action_settings,
             GUI_EVENT_KEY_B_GREEN    => $action_settings,
+            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_CHANNELS_SETTINGS, 'Настройки каналов'),
         );
 
         if ($this->IsSetupNeeds($plugin_cookies) !== false) {
@@ -101,11 +103,14 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             case ACTION_SETTINGS:
                 return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
 
+            case ACTION_CHANNELS_SETTINGS:
+                return Action_Factory::open_folder(Starnet_Channels_Setup_Screen::get_media_url_str(), 'Настройки каналов');
+
             case ACTION_BALANCE:
                 $defs = array();
                 $this->plugin->config->AddSubscriptionUI($defs, $plugin_cookies);
                 Control_Factory::add_close_dialog_button($defs, 'OK', 150);
-                return Action_Factory::show_dialog('Подписка', $defs);
+                return Action_Factory::show_dialog('Информация', $defs);
 
             case GUI_EVENT_KEY_RETURN:
                 $post_action = Action_Factory::close_and_run();

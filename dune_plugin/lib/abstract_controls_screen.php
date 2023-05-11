@@ -43,6 +43,11 @@ abstract class Abstract_Controls_Screen implements Screen
         (
             PluginControlsFolderView::defs => $defs,
             PluginControlsFolderView::initial_sel_ndx => -1,
+            PluginControlsFolderView::params => array(
+                PluginFolderViewParams::paint_path_box => true,
+                PluginFolderViewParams::paint_content_box_background => true,
+                PluginFolderViewParams::background_url => $this->plugin->config->plugin_info['app_background'],
+            ),
         );
 
         return array

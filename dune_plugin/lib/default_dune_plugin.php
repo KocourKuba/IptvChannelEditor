@@ -156,6 +156,11 @@ class Default_Dune_Plugin implements DunePlugin
     public $setup_screen;
 
     /**
+     * @var Starnet_Channels_Setup_Screen
+     */
+    public $channels_setup_screen;
+
+    /**
      * @var Starnet_Folder_Screen
      */
     public $folder_screen;

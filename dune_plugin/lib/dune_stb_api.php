@@ -71,6 +71,7 @@ const ACTION_ITEM_DOWN = 'item_down';
 const ACTION_ITEM_DELETE = 'item_delete';
 const ACTION_ITEMS_CLEAR = 'items_clear';
 const ACTION_SETTINGS = 'settings';
+const ACTION_CHANNELS_SETTINGS = 'channels_settings';
 const ACTION_NEED_CONFIGURE = 'configure';
 const ACTION_BALANCE = 'balance';
 const ACTION_POPUP_MENU = 'popup_menu';

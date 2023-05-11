@@ -584,6 +584,31 @@ class Starnet_Tv implements Tv, User_Input_Handler
     }
 
     /**
+     * @param User_Input_Handler $handler
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function reload_channels(User_Input_Handler $handler, &$plugin_cookies)
+    {
+        hd_print("Reload channels");
+        $this->plugin->config->ClearPlaylistCache($plugin_cookies);
+        $this->plugin->config->ClearChannelsCache($plugin_cookies);
+        $this->unload_channels();
+        try {
+            $this->load_channels($plugin_cookies);
+        } catch (Exception $e) {
+            hd_print("Reload channel list failed: $plugin_cookies->channels_list");
+            return null;
+        }
+
+        Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+        $post_action = Starnet_Epfs_Handler::invalidate_folders(null,
+            User_Input_Handler_Registry::create_action($handler, RESET_CONTROLS_ACTION_ID));
+
+        return Action_Factory::invalidate_folders(array(Starnet_Tv_Groups_Screen::ID, Starnet_Tv_Channel_List_Screen::ID), $post_action);
+    }
+
+    /**
      * @param string $playback_url
      * @param $plugin_cookies
      * @return string
