@@ -263,6 +263,7 @@ define ('BLURAY_PLAY_ACTION_ID',                         'bluray_play');
 define ('BT_COMMAND_ACTION_ID',                          'bt_command');
 define ('CHANGE_BEHAVIOUR_ACTION_ID',                    'change_behaviour');
 define ('CHANGE_GCOMPS_ACTION_ID',                       'change_gcomps');
+define ('CHANGE_PARENTAL_CODE_ACTION_ID',                'change_parental_code');
 define ('CHANGE_SETTINGS_ACTION_ID',                     'change_settings');
 define ('CHECK_RESTRICTED_ACTION_ID',                    'check_restricted');
 define ('CHECK_SYSTEM_STORAGE_ACTION_ID',                'check_system_storage');
@@ -403,6 +404,11 @@ class ChangeGCompsActionData
     const /* (char *)                         */ sel_state                        = 'sel_state';
     const /* (GCompUiStateDef *)              */ ui_state                         = 'ui_state';
     const /* bool                             */ skip_repaint                     = 'skip_repaint';
+    const /* (GuiAction *)                    */ post_action                      = 'post_action';
+}
+
+class ChangeParentalCodeActionData
+{
     const /* (GuiAction *)                    */ post_action                      = 'post_action';
 }
 
