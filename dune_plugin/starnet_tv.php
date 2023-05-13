@@ -627,7 +627,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
     {
-        hd_print("get_tv_playback_url: channel: $channel_id archive_ts: $archive_ts");
+        hd_print("get_tv_playback_url: channel: $channel_id archive_ts: $archive_ts, protect code: $protect_code");
 
         try {
             $this->ensure_channels_loaded($plugin_cookies);

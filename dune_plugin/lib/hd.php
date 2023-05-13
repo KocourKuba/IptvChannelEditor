@@ -356,7 +356,7 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
-    public static function send_log_to_developer(&$error = null)
+    public static function send_log_to_developer($plugin_cookies, &$error = null)
     {
         $product = get_product_id();
         $firmware_version = get_raw_firmware_version();
@@ -372,7 +372,8 @@ class HD
 
         $response = curl_exec($ch);
         curl_close($ch);
-        hd_print("Check PHP TLS Support:\n$response");
+        hd_print("Cookies:\n" . base64_encode(serialize($plugin_cookies)));
+        hd_print("PHP TLS Support:\n" . base64_encode($response));
 
         $serial = get_serial_number();
         if (empty($serial)) {
@@ -396,6 +397,7 @@ class HD
 
         $paths = array(
             get_install_path("config.json"),
+            get_install_path("dune_plugin.xml"),
             get_temp_path("*.xml"),
             get_temp_path("*.json"),
             get_temp_path("*.m3u?"),
@@ -405,7 +407,14 @@ class HD
 
         $files = array();
         foreach ($paths as $path) {
-            self::collect_folder_files($path, $files);
+            //hd_print("search for $path");
+            foreach (glob($path) as $file) {
+                //hd_print("file: $file");
+                if (is_file($file) && filesize($file) > 10) {
+                    //hd_print("file found: $file");
+                    $files[] = $file;
+                }
+            }
         }
 
         $handle = false;
@@ -438,18 +447,6 @@ class HD
         unlink($zip_file);
 
         return $ret;
-    }
-
-    public static function collect_folder_files($path, &$files)
-    {
-        //hd_print("search for $path");
-        foreach (glob($path) as $file) {
-            //hd_print("file: $file");
-            if (is_file($file) && filesize($file) > 10) {
-                //hd_print("file found: $file");
-                $files[] = $file;
-            }
-        }
     }
 
     public static function check_https_proxy()
