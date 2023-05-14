@@ -71,7 +71,12 @@ void plugin_config::load_default()
 		{"1", "www\\cgi-bin\\https_proxy.sh" },
 	};
 	manifest_list = {
+		{"boot", "" },
 		{"boot_end", "bin/update_suppliers.sh" },
+		{"gui_start", "" },
+		{"install", "" },
+		{"uninstall", "" },
+		{"update", "" },
 	};
 
 	StreamParameters hls;
