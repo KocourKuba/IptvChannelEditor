@@ -58,7 +58,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print("Vod_History_Screen: handle_user_input:");
+        //hd_print(__METHOD__);
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
@@ -72,7 +72,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 		{
 			case ACTION_ITEM_DELETE:
 				$media_url = MediaURL::decode($user_input->selected_media_url);
-                //hd_print("Vod_History_Screen: Delete movie_id: $media_url->movie_id");
+                //hd_print(__METHOD__ . ": Delete movie_id: $media_url->movie_id");
                 $this->plugin->vod->remove_movie_from_history($media_url->movie_id, $plugin_cookies);
 				$parent_media_url = MediaURL::decode($user_input->parent_media_url);
 				$sel_ndx = $user_input->sel_ndx + 1;

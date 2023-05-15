@@ -35,13 +35,13 @@ class edem_config extends default_config
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
-        hd_print("TryLoadMovie: $movie_id");
+        hd_print(__METHOD__ . ": $movie_id");
         $movie = new Movie($movie_id, $this->parent);
         $movieData = $this->make_json_request($plugin_cookies,
             array('cmd' => "flick", 'fid' => (int)$movie_id, 'offset'=> 0,'limit' => 0));
 
         if ($movieData === false) {
-            hd_print("TryLoadMovie: failed to load movie: $movie_id");
+            hd_print(__METHOD__ . ": failed to load movie: $movie_id");
             return $movie;
         }
 

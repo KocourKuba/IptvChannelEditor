@@ -40,7 +40,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print("TvChannelListScreen get_action_map: " . $media_url->get_raw_string());
+        //hd_print(__METHOD__ . ": " . $media_url->get_raw_string());
 
         $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER);
         $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS);
@@ -85,7 +85,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Starnet_Tv_Channel_List_Screen: handle_user_input:');
+        //hd_print(__METHOD__);
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
@@ -108,7 +108,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                         $ex->getMessage());
                 }
 
-                return Action_Factory::tv_play();
+                return Action_Factory::tv_play($media_url);
 
             case ACTION_ADD_FAV:
                 $opt_type = $this->plugin->tv->is_favorite_channel_id($channel_id, $plugin_cookies) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;

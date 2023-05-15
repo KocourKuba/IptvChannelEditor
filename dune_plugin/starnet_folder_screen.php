@@ -37,9 +37,9 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
      */
     public static function get_media_url_str($id, $caption, $filepath, $type, $ip_path, $user, $password, $nfs_protocol, $err, $save_data, $save_file, $windowCounter = null)
     {
-        //hd_print("StarnetFolderScreen: get_media_url_str: $id");
-        //hd_print("StarnetFolderScreen: get_media_url_str: $caption");
-        //hd_print("StarnetFolderScreen: get_media_url_str: $filepath");
+        //hd_print(__METHOD__ . ": $id");
+        //hd_print(__METHOD__ . ": $caption");
+        //hd_print(__METHOD__ . ": $filepath");
 
         return MediaURL::encode
         (
@@ -68,7 +68,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
      */
     public function get_file_list(&$plugin_cookies, $dir)
     {
-        //hd_print("StarnetFolderScreen: get_file_list: $dir");
+        //hd_print(__METHOD__ . ": $dir");
         $smb_shares = new smb_tree();
         $fileData['folder'] = array();
         $fileData['file'] = array();
@@ -120,7 +120,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print("StarnetFolderScreen: get_action_map: " . $media_url->get_raw_string());
+        //hd_print(__METHOD__ . ": " . $media_url->get_raw_string());
         $actions = array();
         $fs_action = User_Input_Handler_Registry::create_action($this, 'fs_action');
         $save_folder = User_Input_Handler_Registry::create_action($this, 'select_folder', 'Выбрать папку');
@@ -164,7 +164,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
      */
     public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        //hd_print("StarnetFolderScreen: get_folder_range: $from_ndx, " . $media_url->get_raw_string());
+        //hd_print(__METHOD__ . ": $from_ndx, " . $media_url->get_raw_string());
         $items = array();
         $dir = empty($media_url->filepath) ? "/tmp/mnt" : $media_url->filepath;
         $windowCounter = isset($media_url->windowCounter) ? $media_url->windowCounter + 1 : 2;
@@ -306,7 +306,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('smart_file_screen: handle_user_input:');
+        //hd_print(__METHOD__);
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->selected_media_url)) {
@@ -331,7 +331,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 return Action_Factory::change_behaviour($actions, 1000, $invalidate);
 
             case 'fs_action':
-                //hd_print("smt_tree::fs_action: " . MediaUrl::encode($selected_url));
+                //hd_print(__METHOD__ . " fs_action: " . MediaUrl::encode($selected_url));
                 if ($selected_url->type !== 'folder') {
                     break;
                 }
@@ -367,7 +367,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
             case 'select_folder':
                 $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
-                //hd_print("smt_tree::select_folder: " . $url->get_media_url_str());
+                //hd_print(__METHOD__ . " select_folder: " . $url->get_media_url_str());
                 smb_tree::set_folder_info($plugin_cookies, $url);
                 $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Channels_Setup_Screen::ID . "_handler");
                 $post_action = is_null($setup_handler)
@@ -388,7 +388,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 return $action;
 
             case 'reset_folder':
-                //hd_print("reset_folder");
+                //hd_print(__METHOD__ . " reset_folder");
                 $plugin_cookies->ch_list_path = '';
                 $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Channels_Setup_Screen::ID . "_handler");
                 $post_post = is_null($setup_handler)
@@ -450,9 +450,9 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
             case 'new_smb_data':
                 $smb_shares = new smb_tree();
-                //hd_print("smt_tree::new_smb_data folder: $selected_url->caption");
-                //hd_print("smt_tree::new_smb_data folder: $selected_url->new_user");
-                //hd_print("smt_tree::new_smb_data folder: $selected_url->new_pass");
+                //hd_print(__METHOD__ . " new_smb_data folder: $selected_url->caption");
+                //hd_print(__METHOD__ . " new_smb_data folder: $selected_url->new_user");
+                //hd_print(__METHOD__ . " new_smb_data folder: $selected_url->new_pass");
                 $new_ip_smb[$selected_url->ip_path]['foldername'] = $selected_url->caption;
                 $new_ip_smb[$selected_url->ip_path]['user'] = $user_input->new_user;
                 $new_ip_smb[$selected_url->ip_path]['password'] = $user_input->new_pass;
@@ -582,7 +582,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
      */
     public function do_get_mount_smb_err_defs($err, $caption, $ip_path, $user, $password)
     {
-        //hd_print('StarnetFolderScreen: do_get_mount_smb_err_defs');
+        //hd_print(__METHOD__ . ': do_get_mount_smb_err_defs');
         $defs = array();
         Control_Factory::add_multiline_label($defs, 'Error mount:', $err, 4);
         Control_Factory::add_label($defs, 'SMB folder:', $caption);
@@ -603,7 +603,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
      */
     protected function GetSMBAccessDefs(array &$defs, $user, $password)
     {
-        //hd_print('StarnetFolderScreen: GetSMBAccessDefs');
+        //hd_print(__METHOD__ . ': GetSMBAccessDefs');
         Control_Factory::add_text_field($defs, $this, null,
             'new_user',
             'Имя пользователя SMB папки:',

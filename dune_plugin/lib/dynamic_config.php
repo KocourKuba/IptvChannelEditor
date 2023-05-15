@@ -21,7 +21,7 @@ class dynamic_config
      */
     public function init_defaults()
     {
-        hd_print("Init defaults");
+        hd_print(__METHOD__);
         $this->features[Plugin_Constants::TV_FAVORITES_SUPPORTED] = true; // always true
         $this->features[Plugin_Constants::BALANCE_SUPPORTED] = false; // account support account info requests
         $this->features[Plugin_Constants::VOD_QUALITY_SUPPORTED] = false; // currently supported only in edem
@@ -75,8 +75,8 @@ class dynamic_config
      */
     public function load_config()
     {
+        hd_print(__METHOD__);
         $settings = HD::parse_json_file(get_install_path('config.json'), true);
-        hd_print("Load plugin settings");
 
         $this->set_feature(Plugin_Constants::ACCESS_TYPE, $settings[Plugin_Constants::ACCESS_TYPE]);
         $this->set_feature(Plugin_Constants::SQUARE_ICONS, $settings[Plugin_Constants::SQUARE_ICONS]);
@@ -93,7 +93,7 @@ class dynamic_config
             $param_idx = $config[Stream_Params::STREAM_TYPE];
             $params = $this->get_stream_params($param_idx);
             $this->set_stream_params($param_idx, array_merge($params, $config));
-            //hd_print("stream_config: $param_idx");
+            //hd_print(__METHOD__ . ": stream config: $param_idx");
             //foreach($this->get_stream_params($param_idx) as $key=>$value) hd_print("$key: $value");
         }
 
@@ -101,7 +101,7 @@ class dynamic_config
             $param_idx = $epg[Epg_Params::EPG_PARAM];
             $params = $this->get_epg_params($param_idx);
             $this->set_epg_params($param_idx, array_merge($params, $epg));
-            //hd_print("epg_param: $param_idx");
+            //hd_print(__METHOD__ . ": epg_param: $param_idx");
             //foreach($epg as $key=>$value) hd_print("$key: $value");
         }
 

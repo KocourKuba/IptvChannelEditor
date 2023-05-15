@@ -20,12 +20,12 @@ class glanz_config extends default_config
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
-        hd_print("TryLoadMovie: $movie_id");
+        hd_print(__METHOD__ . ": $movie_id");
         $movie = new Movie($movie_id, $this->parent);
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
 
         if ($jsonItems === false) {
-            hd_print("TryLoadMovie: failed to load movie: $movie_id");
+            hd_print(__METHOD__ . ": failed to load movie: $movie_id");
             return $movie;
         }
 

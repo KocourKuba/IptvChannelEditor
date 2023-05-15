@@ -440,7 +440,7 @@ function get_mac_address()
 
     if (is_null($mac_addr)) {
         if (is_apk()) {
-            $mac_addr = file_exists('/tmp/run/dune_mac.txt') ? trim(shell_exec('cat $FS_PREFIX/tmp/run/dune_mac.txt')) : '';
+            $mac_addr = file_exists('/tmp/run/dune_mac.txt') ? strtoupper(trim(shell_exec('cat $FS_PREFIX/tmp/run/dune_mac.txt'))) : '';
         } else {
             $mac_addr = trim(shell_exec('ifconfig eth0 | head -1 | sed "s/^.*HWaddr //"'));
         }
@@ -1334,20 +1334,20 @@ function get_plugin_manifest_info()
 {
     $plugin_path = get_install_path("dune_plugin.xml");
     if (!file_exists($plugin_path)) {
-        hd_print("Plugin manifest not found!");
+        hd_print(__METHOD__ . ": Plugin manifest not found!");
         throw new Exception("Plugin manifest not found!");
     }
 
     $xml = HD::parse_xml_file($plugin_path);
     if ($xml === null) {
-        hd_print("Empty plugin manifest!");
+        hd_print(__METHOD__ . ": Empty plugin manifest!");
         throw new Exception("Empty plugin manifest!");
     }
 
     $direct_links = array();
     foreach ($xml->channels_direct_links->children() as $links_info) {
         if ($links_info->getName() !== 'links_info') {
-            $error_string = "Error: unexpected node '{$links_info->getName()}'. Expected: 'links_info'";
+            $error_string = __METHOD__ . " Error: unexpected node '{$links_info->getName()}'. Expected: 'links_info'";
             hd_print($error_string);
         }
 
@@ -1424,7 +1424,7 @@ function get_active_skin_path()
         return rtrim(trim(preg_replace('/^.*=/', '', file_get_contents('/tmp/dune_skin_dir.txt'))), '/');
     }
 
-    hd_print("Error in class " . get_class($this) . "::" . __FUNCTION__ . "! Can not determine the path to the active skin.");
+    hd_print("Error in class " . __METHOD__ . "! Can not determine the path to the active skin.");
     return '';
 }
 
@@ -1505,7 +1505,7 @@ function get_system_language_string_value($string_key)
         }
     }
 
-    hd_print("Error in class " . get_class($this) . "::" . __FUNCTION__ . "! Not found value for key '$string_key'!");
+    hd_print("Error in class " . __METHOD__ . "! Not found value for key '$string_key'!");
     return '';
 }
 

@@ -159,7 +159,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
      */
     public function do_get_interface_control_defs(&$plugin_cookies)
     {
-        hd_print("do_get_interface_control_defs");
+        hd_print(__METHOD__);
         $defs = array();
         Control_Factory::add_vgap($defs, 20);
 
@@ -285,7 +285,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
      */
     public function do_get_streaming_control_defs(&$plugin_cookies)
     {
-        hd_print("do_get_channels_control_defs");
+        hd_print(__METHOD__);
         $defs = array();
         Control_Factory::add_vgap($defs, 20);
 
@@ -491,7 +491,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Starnet_Setup_Screen: handle_user_input:');
+        //hd_print(__METHOD__);
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         $control_id = $user_input->control_id;

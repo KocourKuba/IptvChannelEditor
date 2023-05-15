@@ -30,7 +30,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             $arr['info'] = $info;
         }
 
-        //hd_print("Movie ID: $movie_id, Movie name: $name, Movie Poster: $poster_url");
+        //hd_print(__METHOD__ . ": Movie ID: $movie_id, Movie name: $name, Movie Poster: $poster_url");
 
         return MediaURL::encode($arr);
     }
@@ -75,13 +75,13 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
      */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print("Vod_Movie_Screen::get_folder_view: MediaUrl: " . $media_url->get_raw_string());
+        //hd_print(__METHOD__ . ": MediaUrl: " . $media_url->get_raw_string());
         $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if (is_null($movie) || empty($movie->series_list)) {
             if (is_null($movie)) {
                 $movie = new Movie($media_url->movie_id, $this->plugin);
             }
-            hd_print("empty movie or no series data");
+            hd_print(__METHOD__ . ": empty movie or no series data");
             HD::print_backtrace();
             $movie->description = "Техническая информация о фильме содержит неправильные или отсутствующие данные.\nПоказ фильма невозможен";
             return array
@@ -147,8 +147,8 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        hd_print('Starnet_Vod_Movie_Screen: handle_user_input:');
-        foreach($user_input as $key => $value) hd_print("  $key => $value");
+        //hd_print(__METHOD__);
+        //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         if ($user_input->control_id === 'favorites') {
             $movie_id = $user_input->movie_id;

@@ -850,7 +850,7 @@ class default_config extends dynamic_config
      */
     public function getSearchList($keyword, $plugin_cookies)
     {
-        hd_print("getSearchList: $keyword");
+        hd_print(__METHOD__ . ": $keyword");
 
         $vod_pattern = $this->get_vod_parse_pattern($plugin_cookies);
         $t = microtime(1);
@@ -889,7 +889,7 @@ class default_config extends dynamic_config
      */
     public function getFilterList($params, $plugin_cookies)
     {
-        //hd_print("getFilterList: $params");
+        //hd_print(__METHOD__ . ": $params");
         return array();
     }
 
@@ -900,7 +900,7 @@ class default_config extends dynamic_config
      */
     public function getMovieList($query_id, $plugin_cookies)
     {
-        hd_print("getMovieList: $query_id");
+        hd_print(__METHOD__ . ": $query_id");
         $movies = array();
 
         $arr = explode("_", $query_id);
@@ -941,7 +941,7 @@ class default_config extends dynamic_config
      */
     public function TryLoadMovie($movie_id, $plugin_cookies)
     {
-        hd_print("TryLoadMovie: $movie_id");
+        hd_print(__METHOD__ . ": $movie_id");
         $movie = new Movie($movie_id, $this->parent);
 
         $vod_pattern = $this->get_vod_parse_pattern($plugin_cookies);

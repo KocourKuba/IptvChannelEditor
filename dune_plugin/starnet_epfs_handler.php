@@ -54,7 +54,7 @@ class Starnet_Epfs_Handler extends Base_Epfs_Handler
         self::$epf_id = $plugin->config->plugin_info['app_name'];
         self::$no_internet_epfs = self::$epf_id . '.no_internet';
 
-        hd_print("Starnet_Epfs_Handler: init: epf_id: " . self::$epf_id);
+        hd_print(__METHOD__ . ": epf_id: " . self::$epf_id);
         parent::initialize(self::$epf_id);
 
         self::$tv_rows_screen = new Starnet_Tv_Rows_Screen($plugin);
@@ -121,7 +121,7 @@ class Starnet_Epfs_Handler extends Base_Epfs_Handler
         if (!self::$enabled)
             return null;
 
-        hd_print("update_all_epfs: first run " . ($first_run ? "yes" : "no"));
+        hd_print(__METHOD__ . ": first run " . ($first_run ? "yes" : "no"));
 
         self::ensure_no_internet_epfs_created($first_run, $plugin_cookies);
 

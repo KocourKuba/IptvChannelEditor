@@ -220,13 +220,13 @@ class HD
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         if ($content === false) {
-            $err_msg = "HTTP error: $http_code (" . curl_error($ch) . ')';
+            $err_msg = __METHOD__ . " HTTP error: $http_code (" . curl_error($ch) . ')';
             hd_print($err_msg);
             throw new Exception($err_msg);
         }
 
         if ($http_code >= 300) {
-            $err_msg = "HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
+            $err_msg = __METHOD__ . " HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
             hd_print($err_msg);
             throw new Exception($err_msg);
         }
@@ -646,7 +646,7 @@ class HD
             $items = $json ? json_decode($contents, true) : unserialize($contents);
             $items = is_null($items) ? array() : $items;
         } else {
-            //hd_print("$path not exist");
+            //hd_print(__METHOD__ . " $path not exist");
             $items = array();
         }
 

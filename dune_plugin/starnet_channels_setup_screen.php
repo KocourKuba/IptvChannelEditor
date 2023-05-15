@@ -53,7 +53,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
      */
     public function do_get_control_defs(&$plugin_cookies)
     {
-        hd_print("do_get_control_defs");
+        hd_print(__METHOD__);
         $defs = array();
 
         $folder_icon = $this->plugin->get_image_path('folder.png');
@@ -142,7 +142,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
      */
     public function do_get_channels_url_control_defs(&$plugin_cookies)
     {
-        hd_print("do_get_channels_url_control_defs");
+        hd_print(__METHOD__);
         $defs = array();
 
         $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
@@ -182,7 +182,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Starnet_Channels_Setup_Screen: handle_user_input:');
+        //hd_print(__METHOD__);
         //foreach($user_input as $key => $value) hd_print("  $key => $value");
 
         $control_id = $user_input->control_id;

@@ -95,6 +95,7 @@ class Default_Dune_Plugin implements DunePlugin
         $this->config->init_defaults();
         $this->config->load_config();
         $this->config->load_embedded_account();
+        $this->config->init_plugin();
 
         print_sysinfo();
 
@@ -121,8 +122,6 @@ class Default_Dune_Plugin implements DunePlugin
             }
         }
         hd_print("----------------------------------------------------");
-
-        $this->config->init_plugin();
     }
 
     /**
@@ -235,7 +234,7 @@ class Default_Dune_Plugin implements DunePlugin
     public function create_screen(&$object)
     {
         if (!is_null($object) && method_exists($object, 'get_id')) {
-            hd_print('create_screen: ' . get_class($object));
+            hd_print(__METHOD__ . ': ' . get_class($object));
             $this->add_screen($object);
             User_Input_Handler_Registry::get_instance()->register_handler($object);
         } else {
@@ -255,7 +254,7 @@ class Default_Dune_Plugin implements DunePlugin
     protected function add_screen(Screen $scr)
     {
         if (isset($this->screens[$scr->get_id()])) {
-            hd_print("Error: screen (id: " . $scr->get_id() . ") already registered.");
+            hd_print(__METHOD__ . " Error: screen (id: " . $scr->get_id() . ") already registered.");
         } else {
             $this->screens[$scr->get_id()] = $scr;
         }
@@ -271,11 +270,11 @@ class Default_Dune_Plugin implements DunePlugin
     protected function get_screen_by_id($screen_id)
     {
         if (isset($this->screens[$screen_id])) {
-            // hd_print("get_screen_by_id: '$screen_id'");
+            // hd_print(__METHOD__ . ": '$screen_id'");
             return $this->screens[$screen_id];
         }
 
-        hd_print("Error: no screen with id '$screen_id' found.");
+        hd_print(__METHOD__ . " Error: no screen with id '$screen_id' found.");
         HD::print_backtrace();
         throw new Exception('Screen not found');
     }
@@ -308,7 +307,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_folder_view($media_url, &$plugin_cookies)
     {
-        //hd_print("Default_Dune_Plugin: get_folder_view: $media_url");
+        //hd_print(__METHOD__ . ": MediaUrl: $media_url");
         $decoded_media_url = MediaURL::decode($media_url);
 
         return $this->get_screen_by_url($decoded_media_url)->get_folder_view($decoded_media_url, $plugin_cookies);
@@ -360,7 +359,7 @@ class Default_Dune_Plugin implements DunePlugin
     public function get_tv_info($media_url, &$plugin_cookies)
     {
         if (is_null($this->tv)) {
-            hd_print('get_tv_info: TV is not supported');
+            hd_print(__METHOD__ . ': TV is not supported');
             HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
@@ -381,7 +380,7 @@ class Default_Dune_Plugin implements DunePlugin
     public function get_tv_stream_url($media_url, &$plugin_cookies)
     {
         if (is_null($this->tv)) {
-            hd_print('get_tv_stream_url: TV is not supported');
+            hd_print(__METHOD__ . ': TV is not supported');
             HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
@@ -402,7 +401,7 @@ class Default_Dune_Plugin implements DunePlugin
     public function get_tv_playback_url($channel_id, $archive_tm_sec, $protect_code, &$plugin_cookies)
     {
         if (is_null($this->tv)) {
-            hd_print('get_tv_playback_url: TV is not supported');
+            hd_print(__METHOD__ . ': TV is not supported');
             HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
@@ -422,7 +421,7 @@ class Default_Dune_Plugin implements DunePlugin
     public function get_day_epg($channel_id, $day_start_tm_sec, &$plugin_cookies)
     {
         if (is_null($this->tv)) {
-            hd_print('get_day_epg: TV is not supported');
+            hd_print(__METHOD__ . ': TV is not supported');
             HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
@@ -442,7 +441,7 @@ class Default_Dune_Plugin implements DunePlugin
     public function change_tv_favorites($op_type, $channel_id, &$plugin_cookies)
     {
         if (is_null($this->tv)) {
-            hd_print('change_tv_favorites: TV is not supported');
+            hd_print(__METHOD__ . ': TV is not supported');
             HD::print_backtrace();
             throw new Exception('TV is not supported');
         }
@@ -465,12 +464,12 @@ class Default_Dune_Plugin implements DunePlugin
     public function get_vod_info($media_url, &$plugin_cookies)
     {
         if (is_null($this->vod)) {
-            hd_print('get_vod_info: VOD is not supported');
+            hd_print(__METHOD__ . ': VOD is not supported');
             HD::print_backtrace();
             throw new Exception('VOD is not supported');
         }
 
-        //hd_print("Default_Dune_Plugin::get_vod_info: MediaUrl: $media_url_str");
+        //hd_print(__METHOD__ . ": MediaUrl: $media_url_str");
         $mu = MediaURL::decode($media_url);
 
         return $this->vod->get_vod_info($mu, $plugin_cookies);
@@ -486,7 +485,7 @@ class Default_Dune_Plugin implements DunePlugin
     public function get_vod_stream_url($media_url, &$plugin_cookies)
     {
         if (is_null($this->vod)) {
-            hd_print('get_vod_stream_url: VOD is not supported');
+            hd_print(__METHOD__ . ': VOD is not supported');
             return '';
         }
 
@@ -507,7 +506,7 @@ class Default_Dune_Plugin implements DunePlugin
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         //if ($user_input->control_id !== 'timer' && $user_input->control_id !== 'plugin_rows_info_update') {
-        //    hd_print('Default_Dune_Plugin: handle_user_input:');
+        //    hd_print(__METHOD__);
         //    foreach ($user_input as $key => $value) hd_print("  $key => $value");
         //}
 
