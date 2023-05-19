@@ -65,6 +65,7 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_AUTO_SYNC_CHANNELS, m_bAutoSync);
 	DDX_Check(pDX, IDC_CHECK_AUTO_HIDE, m_bAutoHide);
 	DDX_Check(pDX, IDC_CHECK_PORTABLE, m_bPortable);
+	DDX_Check(pDX, IDC_CHECK_CONVERT_DUPES, m_bConvertDupes);
 
 	DDX_Check(pDX, IDC_CHECK_CMP_TITLE, m_bCmpTitle);
 	DDX_Check(pDX, IDC_CHECK_CMP_ICON, m_bCmpIcon);
@@ -76,6 +77,7 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_CHANGED, m_wndChanged);
 	DDX_Control(pDX, IDC_BUTTON_UNKNOWN, m_wndUnknown);
 	DDX_Control(pDX, IDC_BUTTON_HEVC, m_wndHEVC);
+	DDX_Control(pDX, IDC_BUTTON_DUPLICATED, m_wndDuplicated);
 	DDX_Control(pDX, IDC_BUTTON_CLEAR_CACHE, m_wndClearCache);
 }
 
@@ -90,11 +92,13 @@ BOOL CMainSettingsPage::OnInitDialog()
 	AddTooltip(IDC_CHECK_AUTO_SYNC_CHANNELS, IDS_STRING_CHECK_AUTO_SYNC_CHANNELS);
 	AddTooltip(IDC_CHECK_AUTO_HIDE, IDS_STRING_CHECK_AUTO_HIDE);
 	AddTooltip(IDC_CHECK_PORTABLE, IDS_STRING_CHECK_PORTABLE);
+	AddTooltip(IDC_CHECK_CONVERT_DUPES, IDS_STRING_CHECK_CONVERT_DUPES);
 	AddTooltip(IDC_BUTTON_ADDED, IDS_STRING_BUTTON_COLORS);
 	AddTooltip(IDC_BUTTON_CHANGED, IDS_STRING_BUTTON_COLORS);
 	AddTooltip(IDC_BUTTON_HEVC, IDS_STRING_BUTTON_COLORS);
 	AddTooltip(IDC_BUTTON_NOT_ADDED, IDS_STRING_BUTTON_COLORS);
 	AddTooltip(IDC_BUTTON_UNKNOWN, IDS_STRING_BUTTON_COLORS);
+	AddTooltip(IDC_BUTTON_DUPLICATED, IDS_STRING_BUTTON_DUPLICATED);
 	AddTooltip(IDC_BUTTON_RESET, IDS_STRING_BUTTON_RESET);
 	AddTooltip(IDC_CHECK_CMP_TITLE, IDS_STRING_CHECK_CMP_TITLE);
 	AddTooltip(IDC_CHECK_CMP_EPG1, IDS_STRING_CHECK_CMP_EPG1);
@@ -105,6 +109,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_bAutoSync = GetConfig().get_int(true, REG_AUTO_SYNC);
 	m_bAutoHide = GetConfig().get_int(true, REG_AUTO_HIDE);
 	m_bPortable = GetConfig().IsPortable();
+	m_bConvertDupes = GetConfig().get_int(true, REG_CONVERT_DUPES);
 	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
 	m_MaxCacheTTL = GetConfig().get_int(true, REG_MAX_CACHE_TTL, 24);
 	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
@@ -113,6 +118,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_wndUnknown.SetColor(GetConfig().get_int(true, REG_COLOR_UNKNOWN, ::GetSysColor(COLOR_WINDOWTEXT)));
 	m_wndChanged.SetColor(GetConfig().get_int(true, REG_COLOR_CHANGED, RGB(226, 135, 67)));
 	m_wndHEVC.SetColor(GetConfig().get_int(true, REG_COLOR_HEVC, RGB(158, 255, 250)));
+	m_wndDuplicated.SetColor(GetConfig().get_int(true, REG_COLOR_DUPLICATED, ::GetSysColor(COLOR_GRAYTEXT)));
 
 	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
 
@@ -150,6 +156,7 @@ BOOL CMainSettingsPage::OnApply()
 
 	GetConfig().set_int(true, REG_AUTO_SYNC, m_bAutoSync);
 	GetConfig().set_int(true, REG_AUTO_HIDE, m_bAutoHide);
+	GetConfig().set_int(true, REG_CONVERT_DUPES, m_bConvertDupes);
 	GetConfig().set_int(true, REG_MAX_THREADS, m_MaxThreads);
 	GetConfig().set_int(true, REG_MAX_CACHE_TTL, m_MaxCacheTTL);
 	GetConfig().set_int(true, REG_LANGUAGE, m_nLang);
@@ -158,6 +165,7 @@ BOOL CMainSettingsPage::OnApply()
 	GetConfig().set_int(true, REG_COLOR_CHANGED, m_wndChanged.GetColor());
 	GetConfig().set_int(true, REG_COLOR_UNKNOWN, m_wndUnknown.GetColor());
 	GetConfig().set_int(true, REG_COLOR_HEVC, m_wndHEVC.GetColor());
+	GetConfig().set_int(true, REG_COLOR_DUPLICATED, m_wndDuplicated.GetColor());
 
 	int flags = 0;
 	flags |= (m_bCmpTitle ? CMP_FLAG_TITLE : 0);

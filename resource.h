@@ -181,6 +181,7 @@
 #define IDS_STRING_NONE                 252
 #define IDS_STRING_SEASON               253
 #define IDS_STRING_EPISODE              254
+#define IDS_STRING_CHECK_CONVERT_DUPES  255
 #define IDS_STRING_LOADING              256
 #define IDS_STRING_QUALITY_ID           257
 #define IDS_STRING_FMT_CHANNELS_ALL     258
@@ -193,6 +194,7 @@
 #define IDS_STRING_CUSTOM_PLAYLIST      265
 #define IDS_STRING_CHECK_EMBED          266
 #define IDS_STRING_COL_COMMENT          267
+#define IDS_STRING_BUTTON_DUPLICATED    268
 #define IDS_STRING_COL_LIST             269
 #define IDS_STRING_ERR_SAME_FILENAME    270
 #define IDS_STRING_EDIT_CAPTION         271
@@ -491,6 +493,7 @@
 #define IDC_LIST_EPG                    1090
 #define IDC_CHECK_AUTO_SYNC_CHANNELS    1091
 #define IDC_LIST_INFO                   1092
+#define IDC_CHECK_CONVERT_DUPES         1092
 #define IDC_LIST_CHANNELS               1093
 #define IDC_STATIC_LOGIN                1094
 #define IDC_STATIC_DEVICE_ID            1095
@@ -578,6 +581,8 @@
 #define IDC_BUTTON_RESET                1167
 #define IDC_BUTTON_UNKNOWN              1168
 #define IDC_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE 1169
+#define IDC_BUTTON_HEVC2                1169
+#define IDC_BUTTON_DUPLICATED           1169
 #define IDC_EDIT_PLUGIN_UPDATE_VERSION  1171
 #define IDC_CHECK_AUTOINCREMENT_VERSION 1172
 #define IDC_EDIT_PLUGIN_UPDATE_NAME     1173

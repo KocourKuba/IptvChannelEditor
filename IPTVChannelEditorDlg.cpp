@@ -255,6 +255,7 @@ CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	m_colorUnknown = m_normal;
 	m_colorHEVC = RGB(158, 255, 250);
 	m_colorChanged = RGB(226, 135, 67);
+	m_colorDuplicated = m_gray;
 }
 
 void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
@@ -454,6 +455,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_colorChanged = GetConfig().get_int(true, REG_COLOR_CHANGED, RGB(158, 255, 250));
 	m_colorUnknown = GetConfig().get_int(true, REG_COLOR_UNKNOWN, ::GetSysColor(COLOR_WINDOWTEXT));
 	m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC, RGB(226, 135, 67));
+	m_colorDuplicated = GetConfig().get_int(true, REG_COLOR_DUPLICATED, ::GetSysColor(COLOR_GRAYTEXT));
 
 	m_wndTrayIcon.HideIcon();
 
@@ -1134,6 +1136,7 @@ void CIPTVChannelEditorDlg::OnTimer(UINT_PTR nIDEvent)
 
 LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
+	BOOL bConvertDupes = GetConfig().get_int(true, REG_CONVERT_DUPES);
 	m_evtStop.ResetEvent();
 
 	m_playlistEntries.reset((Playlist*)wParam);
@@ -1188,9 +1191,12 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			auto res = m_playlistMap.emplace(entry->get_id(), entry);
 			if (!res.second)
 			{
-				TRACE(L"Duplicate channel: %s (%s)\n",
+				TRACE(L"Duplicate channel: %s with %s (%s)\n",
+					  entry->get_title().c_str(),
 					  res.first->second->get_title().c_str(),
 					  res.first->second->get_id().c_str());
+
+				if (!bConvertDupes) continue;
 
 				entry->set_is_template(false);
 				entry->set_id(L"");
@@ -1725,7 +1731,7 @@ void CIPTVChannelEditorDlg::UpdatePlaylistTreeColors()
 
 			if (m_playlistDupes.find(entry->get_id()) != m_playlistDupes.end())
 			{
-				color = m_gray;
+				color = m_colorDuplicated;
 			}
 
 			m_wndPlaylistTree.SetItemColor(hItem, color);
@@ -4255,6 +4261,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	std::wstring old_list = GetConfig().get_string(true, REG_LISTS_PATH);
 	int old_flags = GetConfig().get_int(true, REG_CMP_FLAGS);
 	int old_update = GetConfig().get_int(true, REG_UPDATE_FREQ);
+	int old_convert = GetConfig().get_int(true, REG_CONVERT_DUPES);
 	int old_portable = GetConfig().IsPortable();
 
 	if (sheet.DoModal() == IDOK)
@@ -4277,7 +4284,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 			GetConfig().SaveSettings();
 		}
 
-		if (old_list != GetConfig().get_string(true, REG_LISTS_PATH))
+		if (old_list != GetConfig().get_string(true, REG_LISTS_PATH)
+			|| old_convert != GetConfig().get_int(true, REG_CONVERT_DUPES))
 		{
 			SwitchPlugin();
 		}

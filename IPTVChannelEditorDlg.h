@@ -419,6 +419,7 @@ private:
 	COLORREF m_colorHEVC; // channel HEVC
 	COLORREF m_colorChanged; // channel has difference with same entry in the playlist
 	COLORREF m_colorUnknown; // channel not present in the current playlist
+	COLORREF m_colorDuplicated; // channel not present in the current playlist
 
 	// Stream info container. Loaded when switch plugin and updates by GetStreamInfo
 	serializable_map m_stream_infos;

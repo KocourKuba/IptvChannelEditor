@@ -64,12 +64,14 @@ protected:
 	CMFCColorButton m_wndUnknown;
 	CMFCColorButton m_wndChanged;
 	CMFCColorButton m_wndHEVC;
+	CMFCColorButton m_wndDuplicated;
 	CButton m_wndClearCache;
 
 private:
 	BOOL m_bAutoSync = FALSE;
 	BOOL m_bAutoHide = FALSE;
 	BOOL m_bPortable = FALSE;
+	BOOL m_bConvertDupes = FALSE;
 
 	BOOL m_bCmpTitle = TRUE;
 	BOOL m_bCmpIcon = TRUE;

@@ -61,6 +61,7 @@ constexpr auto REG_WEB_UPDATE_PATH     = _T("PluginsWebUpdatePath");
 constexpr auto REG_SAVE_SETTINGS_PATH  = _T("PluginsSettingsPath");
 constexpr auto REG_AUTO_SYNC           = _T("AutoSyncChannel");
 constexpr auto REG_AUTO_HIDE           = _T("AutoHideToTray");
+constexpr auto REG_CONVERT_DUPES       = _T("ConvertDupes");
 constexpr auto REG_MAX_THREADS         = _T("MaxStreamThreads");
 constexpr auto REG_MAX_CACHE_TTL       = _T("MaxCacheTTL");
 constexpr auto REG_LANGUAGE            = _T("Language");
@@ -72,6 +73,7 @@ constexpr auto REG_COLOR_NOT_ADDED     = _T("ColorNotAdded");
 constexpr auto REG_COLOR_CHANGED       = _T("ColorChanged");
 constexpr auto REG_COLOR_UNKNOWN       = _T("ColorUnknown");
 constexpr auto REG_COLOR_HEVC          = _T("ColorHEVC");
+constexpr auto REG_COLOR_DUPLICATED    = _T("ColorDuplicated");
 
 // main dialog
 constexpr auto REG_PLUGIN              = _T("PluginType");
