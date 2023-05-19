@@ -1651,7 +1651,7 @@ BEGIN
     IDS_STRING_FMT_CHANNELS_TOOLTIP3 
                             "Archive:\t%d day(s)\nAdult:\t\t%s\nIn categories:\t%s"
     IDS_STRING_FMT_PLAYLIST_TOOLTIPS 
-                            "Name:\t\t%s\nID:\t\t%s\nEPG ID:\t\t%s\nArchive:\t%d day(s)\nAdult:\t\t%s"
+                            "Name:\t\t%s\nID:\t\t%s\nEPG ID:\t\t%s\nArchive:\t%d day(s)\nAdult:\t\t%s\nURL:\t\t%s"
     IDS_STRING_YES          "Yes"
     IDS_STRING_NO           "No"
     IDS_STRING_CUSTOM       "Custom"

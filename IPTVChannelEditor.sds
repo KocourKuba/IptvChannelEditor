@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="269" scanned="20230510202012" built="20230510202140" lang="ru" pane="TLogPane" col="4" row="Strings.24.IDS_STRING_CHECK_SHOW_DUPLICATES">
+<desktop scan="270" scanned="20230519210347" built="20230519214345" lang="ru" pane="TLogPane" col="4" row="Strings.11.IDS_STRING_FMT_PLAYLIST_TOOLTIPS">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="3"/>
+    <item class="TRemoveUnusedItemsTrigger" position="6"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>
