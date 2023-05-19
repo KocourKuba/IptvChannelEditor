@@ -1149,6 +1149,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_wndBtnStop.EnableWindow(FALSE);
 
 	m_playlistMap.clear();
+	m_playlistDupes.clear();
 	if (m_playlistEntries)
 	{
 		bool bSet = false;
@@ -1190,7 +1191,12 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 				TRACE(L"Duplicate channel: %s (%s)\n",
 					  res.first->second->get_title().c_str(),
 					  res.first->second->get_id().c_str());
-				continue;
+
+				entry->set_is_template(false);
+				entry->set_id(L"");
+				entry->recalc_hash();
+				m_playlistMap.emplace(entry->get_id(), entry);
+				m_playlistDupes.emplace(entry->get_id());
 			}
 		}
 
@@ -1683,7 +1689,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 	m_wndUpdateChanged.EnableWindow(!m_changedChannels.empty() || !m_unknownChannels.empty());
 }
 
-void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
+void CIPTVChannelEditorDlg::UpdatePlaylistTreeColors()
 {
 	HTREEITEM root = m_wndPlaylistTree.GetRootItem();
 	while (root != nullptr)
@@ -1715,6 +1721,11 @@ void CIPTVChannelEditorDlg::CheckForExistingPlaylist()
 				{
 					m_wndPlaylistTree.SetItemBackColor(hItem, m_colorHEVC);
 				}
+			}
+
+			if (m_playlistDupes.find(entry->get_id()) != m_playlistDupes.end())
+			{
+				color = m_gray;
 			}
 
 			m_wndPlaylistTree.SetItemColor(hItem, color);
@@ -2240,7 +2251,7 @@ void CIPTVChannelEditorDlg::OnAddCategory()
 	if (needCheckExisting)
 	{
 		UpdateChannelsTreeColors();
-		CheckForExistingPlaylist();
+		UpdatePlaylistTreeColors();
 	}
 
 	GetConfig().set_int(true, REG_AUTO_SYNC, autoSyncOld);
@@ -2354,7 +2365,7 @@ void CIPTVChannelEditorDlg::OnRemove()
 	}
 
 	RemoveOrphanChannels();
-	CheckForExistingPlaylist();
+	UpdatePlaylistTreeColors();
 	UpdateChannelsTreeColors();
 	set_allow_save();
 }
@@ -2939,7 +2950,7 @@ void CIPTVChannelEditorDlg::OnAddTo(UINT id)
 	if (changed)
 	{
 		UpdateChannelsTreeColors(hTarget);
-		CheckForExistingPlaylist();
+		UpdatePlaylistTreeColors();
 		set_allow_save();
 	}
 
@@ -2992,7 +3003,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID()
 		{
 			channel->set_epg_id(0, m_epgID1.GetString());
 			UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(hSelected));
-			CheckForExistingPlaylist();
+			UpdatePlaylistTreeColors();
 			set_allow_save();
 		}
 	}
@@ -3029,7 +3040,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl()
 	channel->recalc_hash();
 
 	UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(hItem));
-	CheckForExistingPlaylist();
+	UpdatePlaylistTreeColors();
 
 	set_allow_save();
 }
@@ -3104,7 +3115,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditUrlID()
 	category->add_channel(channel);
 
 	UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
-	CheckForExistingPlaylist();
+	UpdatePlaylistTreeColors();
 	set_allow_save();
 }
 
@@ -3348,7 +3359,7 @@ void CIPTVChannelEditorDlg::FillTreePlaylist()
 	}
 
 	UpdateChannelsTreeColors();
-	CheckForExistingPlaylist();
+	UpdatePlaylistTreeColors();
 
 	if (m_playlistIds.size() != m_playlistMap.size())
 	{
@@ -3683,7 +3694,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	{
 		UpdateIconInfo(info);
 		UpdateChannelsTreeColors(m_wndChannelsTree.GetParentItem(m_wndChannelsTree.GetSelectedItem()));
-		CheckForExistingPlaylist();
+		UpdatePlaylistTreeColors();
 		set_allow_save();
 	}
 
@@ -4218,7 +4229,7 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 	if (needCheckExisting)
 	{
 		UpdateChannelsTreeColors();
-		CheckForExistingPlaylist();
+		UpdatePlaylistTreeColors();
 		UpdateControlsForItem();
 	}
 
@@ -4287,7 +4298,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 		m_colorUnknown = GetConfig().get_int(true, REG_COLOR_UNKNOWN);
 		m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC);
 		UpdateChannelsTreeColors();
-		CheckForExistingPlaylist();
+		UpdatePlaylistTreeColors();
 	}
 }
 
@@ -4912,7 +4923,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 	}
 
 	FillTreeChannels();
-	CheckForExistingPlaylist();
+	UpdatePlaylistTreeColors();
 }
 
 HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx* pTreeCtl, const SearchParams& searchParams)

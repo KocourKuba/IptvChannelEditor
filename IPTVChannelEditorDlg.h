@@ -241,7 +241,7 @@ private:
 
 	void RemoveOrphanChannels();
 	void UpdateChannelsTreeColors(HTREEITEM root = nullptr);
-	void CheckForExistingPlaylist();
+	void UpdatePlaylistTreeColors();
 	bool ChooseIconFromFile(bool isChannel, uri_stream* info);
 	bool ChooseIconFromLink(uri_stream* info);
 	bool ChooseIconFromLib(int idx, LPCWSTR source, uri_stream* info, bool isHtml = true, bool isSquare = false);
@@ -470,6 +470,9 @@ private:
 	// map of all playlist entries to entry id (channel id)
 	// Loaded when fill playlist tree
 	std::unordered_map<std::wstring, std::shared_ptr<PlaylistEntry>> m_playlistMap;
+
+	// dupes
+	std::set<std::wstring> m_playlistDupes;
 
 	// map HTREE items to entry
 	// Loaded when fill playlist tree
