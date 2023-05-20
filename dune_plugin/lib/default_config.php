@@ -576,7 +576,7 @@ class default_config extends dynamic_config
         $is_archive = (int)$archive_ts > 0;
         $stream_type = $this->get_format($plugin_cookies);
         $ext_params = $channel->get_ext_params();
-        $ext_params[Plugin_Constants::CGI_BIN] = get_cgi_bin_url();
+        $ext_params[Plugin_Constants::CGI_BIN] = get_plugin_cgi_url();
         $ext_params[Plugin_Constants::CHANNEL_ID] = $channel->get_channel_id();
         $ext_params[Stream_Params::CU_START] = $archive_ts;
         $ext_params[Stream_Params::CU_NOW] = $now;
@@ -1006,7 +1006,7 @@ class default_config extends dynamic_config
         $vod_template = $this->get_current_vod_template($plugin_cookies);
         $url_prefix = isset($vod_template[Plugin_Constants::URL_PREFIX]) ? $vod_template[Plugin_Constants::URL_PREFIX] : '';
 
-        $url_prefix = str_replace('{CGI_BIN}', get_cgi_bin_url(), $url_prefix);
+        $url_prefix = str_replace('{CGI_BIN}', get_plugin_cgi_url(), $url_prefix);
         if (!empty($url_prefix)) {
             $url = $url_prefix . $url;
         }

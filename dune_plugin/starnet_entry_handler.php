@@ -73,7 +73,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 clearstatcache();
                 switch ($user_input->action_id) {
                     case 'launch':
-                        if (HD::check_https_proxy() !== false) {
+                        if (HD::toggle_https_proxy($plugin_cookies) !== 0) {
                             return Action_Factory::show_title_dialog("Требуется перезагрузка",
                                 Action_Factory::restart(), "Плагин настроен на обновление через https прокси");
                         }

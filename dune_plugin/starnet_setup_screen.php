@@ -31,6 +31,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const SETUP_ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
     const SETUP_ACTION_PASS_DLG = 'pass_dialog';
     const SETUP_ACTION_PASS_APPLY = 'pass_apply';
+    const SETUP_ACTION_USE_HTTPS_PROXY = 'use_proxy';
 
     private static $on_off_ops = array
     (
@@ -131,6 +132,15 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         // streaming dialog
         Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_STREAMING_DLG,
             'Настройки EPG и проигрывания:', 'Изменить настройки', $setting_icon, self::CONTROLS_WIDTH);
+
+        if ((is_update_url_https() || is_https_proxy_enabled())
+            && strpos(get_platform_kind(), '86') !== 0) {
+
+            $use_proxy = isset($plugin_cookies->use_proxy) ? $plugin_cookies->use_proxy : SetupControlSwitchDefs::switch_off;
+            Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_USE_HTTPS_PROXY,
+                'https proxy для веб обновления:', self::$on_off_ops[$use_proxy],
+                $this->plugin->get_image_path(self::$on_off_img[$use_proxy]), self::CONTROLS_WIDTH);
+        }
 
         //////////////////////////////////////
         // adult channel password
@@ -644,6 +654,19 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 }
 
                 return Action_Factory::show_title_dialog('Кэш EPG очищен');
+
+            case self::SETUP_ACTION_USE_HTTPS_PROXY:
+                $old_value = $plugin_cookies->use_proxy;
+                $plugin_cookies->use_proxy = ($plugin_cookies->use_proxy === SetupControlSwitchDefs::switch_on)
+                    ? SetupControlSwitchDefs::switch_off
+                    : SetupControlSwitchDefs::switch_on;
+                if (HD::toggle_https_proxy($plugin_cookies) === 0) {
+                    $plugin_cookies->use_proxy = $old_value;
+                    return Action_Factory::show_title_dialog("Изменение не удалось!");
+                }
+
+                $msg = "Использование https прокси " . ($plugin_cookies->use_proxy === SetupControlSwitchDefs::switch_on ? "включено" : "отключено");
+                return Action_Factory::show_title_dialog("Требуется перезагрузка", Action_Factory::restart(), $msg);
 
             case self::SETUP_ACTION_PASS_DLG: // show pass dialog
                 $defs = $this->do_get_pass_control_defs($plugin_cookies);

@@ -444,47 +444,53 @@ class HD
         if (is_resource($handle)) {
             fclose($handle);
         }
-        unlink($zip_file);
+        @unlink($zip_file);
 
         return $ret;
     }
 
-    public static function check_https_proxy()
+    public static function toggle_https_proxy($plugin_cookies)
     {
         try {
-            if (strpos(get_platform_kind(), '86') !== 0) {
-                // no need update
+            $plugin_info = get_plugin_manifest_info();
+            if (empty($plugin_info['app_update_path'])) {
+                // no need to update
                 throw new Exception();
             }
 
-            $manifest_path = get_install_path("dune_plugin.xml");
-            if (!file_exists($manifest_path)) {
+            $use_proxy = (isset($plugin_cookies->use_proxy) && $plugin_cookies->use_proxy === 'yes')
+                || strpos(get_platform_kind(), '86') === 0;
+            hd_print(__METHOD__ . " Use https proxy: " . ($use_proxy ? "yes" : "no"));
+
+            $proxy_enabled = is_https_proxy_enabled();
+            hd_print(__METHOD__ . " Proxy enabled: " . ($proxy_enabled ? "yes" : "no"));
+
+            if (($use_proxy && $proxy_enabled) || (!$use_proxy && !$proxy_enabled)) {
+                // no need to update, already enabled or not https
                 throw new Exception();
             }
 
-            $manifest = file_get_contents($manifest_path);
-            $xml = self::parse_xml_document($manifest);
-
-            if (!isset($xml->check_update->url) || empty($xml->check_update->url)) {
-                // no need update
+            $update_url = $plugin_info['app_update_path'];
+            if ($proxy_enabled === false && strpos($update_url, 'https://') !== 0) {
+                // no need to update, not https
                 throw new Exception();
             }
 
-            if (strpos($xml->check_update->url, 'http://') === 0) {
-                // no need update
-                throw new Exception();
+            $proxy_url = get_plugin_cgi_url("https_proxy.sh?");
+            if ($use_proxy) {
+                $new_url = $proxy_url . $update_url;
+            } else {
+                $new_url = substr($update_url, strlen($proxy_url));
             }
+            hd_print(__METHOD__ . " New update url: $new_url");
 
-            $plugin_name = get_plugin_name();
-            hd_print("Manifest updated for https proxy");
-            return @file_put_contents($manifest_path, str_replace($xml->check_update->url,
-                "http://127.0.0.1/cgi-bin/plugins/$plugin_name/https_proxy.sh?{$xml->check_update->url}",
-                $manifest));
+            $new_manifest = str_replace($update_url, $new_url, @file_get_contents($plugin_info['app_manifest_path']));
+            return @file_put_contents($plugin_info['app_manifest_path'], $new_manifest);
         } catch (Exception $ex) {
 
         }
 
-        return false;
+        return 0;
     }
 
     /**

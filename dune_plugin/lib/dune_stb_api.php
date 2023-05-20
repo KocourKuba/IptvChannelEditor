@@ -1313,7 +1313,7 @@ function get_install_path($path = '')
     return DuneSystem::$properties['install_dir_path'] . '/' . $path;
 }
 
-function get_cgi_bin_url($path = '')
+function get_plugin_cgi_url($path = '')
 {
     return DuneSystem::$properties['plugin_cgi_url'] . $path;
 }
@@ -1327,59 +1327,73 @@ function get_plugin_name()
 {
     return DuneSystem::$properties['plugin_name'];
 }
-/**
- * @throws Exception
- */
+
 function get_plugin_manifest_info()
 {
-    $plugin_path = get_install_path("dune_plugin.xml");
-    if (!file_exists($plugin_path)) {
-        hd_print(__METHOD__ . ": Plugin manifest not found!");
-        throw new Exception("Plugin manifest not found!");
-    }
-
-    $xml = HD::parse_xml_file($plugin_path);
-    if ($xml === null) {
-        hd_print(__METHOD__ . ": Empty plugin manifest!");
-        throw new Exception("Empty plugin manifest!");
-    }
-
-    $direct_links = array();
-    foreach ($xml->channels_direct_links->children() as $links_info) {
-        if ($links_info->getName() !== 'links_info') {
-            $error_string = __METHOD__ . " Error: unexpected node '{$links_info->getName()}'. Expected: 'links_info'";
-            hd_print($error_string);
+    $result = array();
+    try {
+        $manifest_path = get_install_path("dune_plugin.xml");
+        if (!file_exists($manifest_path)) {
+            throw new Exception(__METHOD__ . ": Plugin manifest not found!");
         }
 
-        $direct_links[(string)$links_info->list] = (string)$links_info->link;
-    }
+        $xml = HD::parse_xml_file($manifest_path);
+        if ($xml === null) {
+            throw new Exception(__METHOD__ . ": Empty plugin manifest!");
+        }
 
-    $result = array(
-        'app_type_name' => (string)$xml->type_name,
-        'app_name' => (string)$xml->name,
-        'app_caption' => (string)$xml->caption,
-        'app_class_name' => (string)$xml->class_name,
-        'app_version' => (string)$xml->version,
-        'app_version_idx' => isset($xml->version_index) ? (string)$xml->version_index : '0',
-        'app_release_date' => (string)$xml->release_date,
-        'app_logo' => (string)$xml->icon_url,
-        'app_background' => (string)$xml->background,
-        'app_ch_list_version' => (string)$xml->list_version_support,
-        'app_channels_url_path' => (string)$xml->channels_url_path,
-        'app_direct_links' => $direct_links,
-    );
+        $direct_links = array();
+        foreach ($xml->channels_direct_links->children() as $links_info) {
+            if ($links_info->getName() !== 'links_info') {
+                $error_string = __METHOD__ . " Error: unexpected node '{$links_info->getName()}'. Expected: 'links_info'";
+                hd_print($error_string);
+            }
 
-    foreach(func_get_args() as $node_name) {
-        $result[$node_name] = json_decode(json_encode($xml->xpath("//$node_name")), true);
+            $direct_links[(string)$links_info->list] = (string)$links_info->link;
+        }
+
+        $result['app_type_name'] = (string)$xml->type_name;
+        $result['app_name'] = (string)$xml->name;
+        $result['app_caption'] = (string)$xml->caption;
+        $result['app_class_name'] = (string)$xml->class_name;
+        $result['app_version'] = (string)$xml->version;
+        $result['app_version_idx'] = isset($xml->version_index) ? (string)$xml->version_index : '0';
+        $result['app_release_date'] = (string)$xml->release_date;
+        $result['app_logo'] = (string)$xml->icon_url;
+        $result['app_background'] = (string)$xml->background;
+        $result['app_ch_list_version'] = (string)$xml->list_version_support;
+        $result['app_channels_url_path'] = (string)$xml->channels_url_path;
+        $result['app_direct_links'] = $direct_links;
+        $result['app_update_path'] = (string)$xml->check_update->url;
+        $result['app_manifest_path'] = $manifest_path;
+
+        foreach(func_get_args() as $node_name) {
+            $result[$node_name] = json_decode(json_encode($xml->xpath("//$node_name")), true);
+        }
+    } catch (Exception $ex) {
+        hd_print($ex->getMessage());
     }
 
     return $result;
 }
 
+function is_update_url_https()
+{
+    $plugin_info = get_plugin_manifest_info();
+    return strpos($plugin_info['app_update_path'], 'https://') === 0;
+}
+
+function is_https_proxy_enabled()
+{
+    $plugin_info = get_plugin_manifest_info();
+    return strpos($plugin_info['app_update_path'], get_plugin_cgi_url("https_proxy.sh?")) === 0;
+}
+
+/**
+ * @return array array of local storages
+ */
 function get_local_storages_list()
 {
-    # Return: array of local storages
-
     $i = 0;
     $result = array();
 

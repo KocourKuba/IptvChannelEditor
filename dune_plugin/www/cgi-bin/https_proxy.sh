@@ -4,7 +4,10 @@ thisdir=`dirname $0`
 plugin_root=`builtin cd "$thisdir/../.." && pwd`
 plugin_name=$(basename $plugin_root)
 user_agent="DuneHD/1.0 (product_id: $product; firmware_version: $firmware_version)"
-script_path="http://127.0.0.1/cgi-bin/plugins/$plugin_name/https_proxy.sh"
+if [ -z "$HD_HTTP_LOCAL_PORT" ]; then
+  HD_HTTP_LOCAL_PORT = "80";
+fi
+script_path="http://127.0.0.1:$HD_HTTP_LOCAL_PORT/cgi-bin/plugins/$plugin_name/https_proxy.sh"
 log_path="$FS_PREFIX/tmp/run/shell.log"
 
 source $FS_PREFIX/tmp/run/versions.txt
