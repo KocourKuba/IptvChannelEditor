@@ -102,13 +102,13 @@ void CPluginConfigPageVOD::AssignMacros()
 {
 	std::vector<std::wstring> pl_params =
 	{
-		base_plugin::REPL_SUBDOMAIN,
-		base_plugin::REPL_LOGIN,
-		base_plugin::REPL_PASSWORD,
-		base_plugin::REPL_TOKEN,
-		base_plugin::REPL_SERVER_ID,
-		base_plugin::REPL_DEVICE_ID,
-		base_plugin::REPL_QUALITY_ID,
+		REPL_SUBDOMAIN,
+		REPL_LOGIN,
+		REPL_PASSWORD,
+		REPL_TOKEN,
+		REPL_SERVER_ID,
+		REPL_DEVICE_ID,
+		REPL_QUALITY_ID,
 	};
 
 	m_wndVodUrlTemplate.SetTemplateParams(pl_params);
@@ -125,7 +125,7 @@ void CPluginConfigPageVOD::AssignMacros()
 
 	std::vector<std::wstring> url_prefix =
 	{
-		base_plugin::REPL_CGI_BIN,
+		REPL_CGI_BIN,
 	};
 
 	m_wndVodUrlPrefix.SetTemplateParams(url_prefix);
@@ -317,15 +317,15 @@ void CPluginConfigPageVOD::OnCbnDropdownComboVodTemplate()
 
 void CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates()
 {
-	std::vector<DynamicParamsInfo> info;
+	std::vector<CFillParamsInfoDlg::variantInfo> info;
 	for (const auto& item : GetPropertySheet()->m_plugin->get_vod_templates())
 	{
-		info.emplace_back(item.name, item.pl_template);
+		info.emplace_back(item);
 	}
 
 	CFillParamsInfoDlg dlg;
-	dlg.m_type = 4;
-	dlg.m_paramsList = std::move(info);
+	dlg.m_type = DynamicParamsType::enPlaylistVOD;
+	dlg.m_paramsList = info;
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
@@ -335,7 +335,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates()
 		std::vector<PlaylistTemplateInfo> playlists;
 		for (const auto& item : dlg.m_paramsList)
 		{
-			playlists.emplace_back(item.id, item.name);
+			playlists.emplace_back(std::get<PlaylistTemplateInfo>(item));
 		}
 		GetPropertySheet()->m_plugin->set_vod_templates(playlists);
 

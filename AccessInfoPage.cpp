@@ -244,17 +244,17 @@ BOOL CAccessInfoPage::OnInitDialog()
 
 	std::vector<std::wstring> macroses =
 	{
-		base_plugin::REPL_TYPE,
-		base_plugin::REPL_NAME,
-		base_plugin::REPL_COMMENT,
-		base_plugin::REPL_YEAR,
-		base_plugin::REPL_MONTH,
-		base_plugin::REPL_DAY,
-		base_plugin::REPL_HOUR,
-		base_plugin::REPL_MIN,
-		base_plugin::REPL_TIMESTAMP,
-		base_plugin::REPL_VERSION,
-		base_plugin::REPL_VERSION_INDEX,
+		REPL_TYPE,
+		REPL_NAME,
+		REPL_COMMENT,
+		REPL_YEAR,
+		REPL_MONTH,
+		REPL_DAY,
+		REPL_HOUR,
+		REPL_MIN,
+		REPL_TIMESTAMP,
+		REPL_VERSION,
+		REPL_VERSION_INDEX,
 	};
 
 	m_wndPluginNameTemplate.SetTemplateParams(macroses);

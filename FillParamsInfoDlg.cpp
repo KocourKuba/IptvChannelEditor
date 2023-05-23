@@ -77,36 +77,39 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 	CString csName;
 	switch (m_type)
 	{
-		case 0:
-			csID = L"{SERVER_ID}";
-			csName = L"{SERVER}";
+		case DynamicParamsType::enServers:
+			csID = REPL_SERVER_ID;
+			csName = REPL_SERVER;
 			break;
-		case 1:
-			csID = L"{DEVICE_ID}";
-			csName = L"{DEVICE}";
+		case DynamicParamsType::enDevices:
+			csID = REPL_DEVICE_ID;
+			csName = L"{DEVICE_NAME}";
 			break;
-		case 2:
-			csID = L"{QUALITY_ID}";
-			csName = L"{QUALITY}";
+		case DynamicParamsType::enQuality:
+			csID = REPL_QUALITY_ID;
+			csName = L"{QUALITY_NAME}";
 			break;
-		case 3:
-			csID = L"{PROFILE_ID}";
-			csName = L"{PROFILE}";
+		case DynamicParamsType::enProfiles:
+			csID = REPL_PROFILE_ID;
+			csName = L"{PROFILE_NAME}";
 			break;
-		case 4:
+		case DynamicParamsType::enManifest:
 			m_isFirstColEditable = false;
-			csID.LoadString(IDS_STRING_CURRENT);
-			csName.LoadString(IDS_STRING_NAME);
-			break;
-		case 5:
-			m_isFirstColEditable = false;
-			csID.LoadString(IDS_STRING_ENTRY);
-			csName.LoadString(IDS_STRING_VALUE);
+			VERIFY(csID.LoadString(IDS_STRING_ENTRY));
+			VERIFY(csName.LoadString(IDS_STRING_VALUE));
 			m_fixed = true;
+			break;
+		case DynamicParamsType::enFiles:
+		case DynamicParamsType::enPlaylistTV:
+		case DynamicParamsType::enPlaylistVOD:
+			m_isFirstColEditable = false;
+			VERIFY(csID.LoadString(IDS_STRING_CURRENT));
+			VERIFY(csName.LoadString(IDS_STRING_NAME));
 			break;
 		default:
 			break;
 	}
+
 
 	m_wndListParams.InsertColumn(0, csID, LVCFMT_LEFT, 80, 0);
 	m_wndListParams.InsertColumn(1, csName, LVCFMT_LEFT, vWidth - 80, 0);
@@ -114,8 +117,13 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 	int idx = 0;
 	for (const auto& info : m_paramsList)
 	{
-		m_wndListParams.InsertItem(idx, info.get_id().c_str(), 0);
-		m_wndListParams.SetItemText(idx, 1, info.get_name().c_str());
+		auto id = GetParamId(info);
+		if (id.empty())
+		{
+			id = std::to_wstring(idx);
+		}
+		m_wndListParams.InsertItem(idx, id.c_str(), 0);
+		m_wndListParams.SetItemText(idx, 1, GetParamName(info).c_str());
 		idx++;
 	}
 
@@ -177,7 +185,7 @@ LRESULT CFillParamsInfoDlg::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 	if (m_readonly)
 		return 1;
 
-	if (m_type != 5 && dispinfo->item.pszText[0] == '\0')
+	if (m_type != DynamicParamsType::enManifest && dispinfo->item.pszText[0] == '\0')
 		return 1;
 
 	m_wndListParams.SetItemText(dispinfo->item.iItem, dispinfo->item.iSubItem, dispinfo->item.pszText);
@@ -188,8 +196,26 @@ LRESULT CFillParamsInfoDlg::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 void CFillParamsInfoDlg::OnBnClickedButtonAdd()
 {
 	int cnt = m_wndListParams.GetItemCount();
-	m_wndListParams.InsertItem(cnt, std::to_wstring(cnt + 1).c_str(), 0);
-	m_wndListParams.SetItemText(cnt, 1, fmt::format(L"param{:d}", cnt + 1).c_str());
+	variantInfo param;
+	switch (m_type)
+	{
+		case DynamicParamsType::enServers:
+		case DynamicParamsType::enDevices:
+		case DynamicParamsType::enQuality:
+		case DynamicParamsType::enProfiles:
+		case DynamicParamsType::enFiles:
+			param = DynamicParamsInfo(std::to_string(cnt), fmt::format("name{:d}", cnt));
+			break;
+		case DynamicParamsType::enPlaylistTV:
+		case DynamicParamsType::enPlaylistVOD:
+			param = PlaylistTemplateInfo(fmt::format("name{:d}", cnt));
+			break;
+		default:
+			break;
+	}
+	m_paramsList.emplace_back(param);
+	m_wndListParams.InsertItem(cnt, std::to_wstring(cnt).c_str(), 0);
+	m_wndListParams.SetItemText(cnt, 1, GetParamName(param).c_str());
 }
 
 void CFillParamsInfoDlg::OnBnClickedButtonRemove()
@@ -197,7 +223,9 @@ void CFillParamsInfoDlg::OnBnClickedButtonRemove()
 	POSITION pos = m_wndListParams.GetFirstSelectedItemPosition();
 	if (pos != nullptr)
 	{
-		m_wndListParams.DeleteItem(m_wndListParams.GetNextSelectedItem(pos));
+		int idx = m_wndListParams.GetNextSelectedItem(pos);
+		m_paramsList.erase(m_paramsList.begin() + idx);
+		m_wndListParams.DeleteItem(idx);
 	}
 }
 
@@ -206,11 +234,13 @@ void CFillParamsInfoDlg::OnBnClickedButtonCopy()
 	POSITION pos = m_wndListParams.GetFirstSelectedItemPosition();
 	if (pos != nullptr)
 	{
+		int cnt = (int)m_wndListParams.GetItemCount();
 		int selected = m_wndListParams.GetNextSelectedItem(pos);
-		const CString& data = m_wndListParams.GetItemText(selected, 1);
-		int cnt = m_wndListParams.GetItemCount();
-		m_wndListParams.InsertItem(cnt, std::to_wstring(cnt + 1).c_str(), 0);
-		m_wndListParams.SetItemText(cnt, 1, data.GetString());
+		auto item = m_paramsList[selected];
+		m_paramsList.emplace_back(item);
+
+		m_wndListParams.InsertItem(cnt, std::to_wstring(cnt).c_str(), 0);
+		m_wndListParams.SetItemText(cnt, 1, GetParamName(item).c_str());
 	}
 }
 
@@ -229,16 +259,6 @@ void CFillParamsInfoDlg::OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResul
 
 void CFillParamsInfoDlg::OnOK()
 {
-	int cnt = m_wndListParams.GetItemCount();
-	m_paramsList.clear();
-	for (int i = 0; i < cnt; i++)
-	{
-		DynamicParamsInfo info;
-		info.set_id(m_wndListParams.GetItemText(i, 0).GetString());
-		info.set_name(m_wndListParams.GetItemText(i, 1).GetString());
-		m_paramsList.emplace_back(info);
-	}
-
 	__super::OnOK();
 }
 
@@ -247,4 +267,29 @@ BOOL CFillParamsInfoDlg::DestroyWindow()
 	SaveWindowPos(GetSafeHwnd(), REG_FILL_INFO_WINDOW_POS);
 
 	return __super::DestroyWindow();
+}
+
+std::wstring CFillParamsInfoDlg::GetParamId(const variantInfo& info)
+{
+	if (std::holds_alternative<DynamicParamsInfo>(info))
+	{
+		return std::get<DynamicParamsInfo>(info).get_id();
+	}
+
+	return L"";
+}
+
+std::wstring CFillParamsInfoDlg::GetParamName(const variantInfo& info)
+{
+	if (std::holds_alternative<DynamicParamsInfo>(info))
+	{
+		return std::get<DynamicParamsInfo>(info).get_name();
+	}
+
+	if (std::holds_alternative<PlaylistTemplateInfo>(info))
+	{
+		return std::get<PlaylistTemplateInfo>(info).get_name();
+	}
+
+	return L"";
 }

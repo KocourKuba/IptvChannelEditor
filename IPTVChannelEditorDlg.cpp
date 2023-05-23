@@ -575,32 +575,32 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	std::vector<std::wstring> strm_params;
 	strm_params.insert(strm_params.end(),
 					   {
-						  base_plugin::REPL_SUBDOMAIN,
-						  base_plugin::REPL_LOGIN,
-						  base_plugin::REPL_PASSWORD,
-						  base_plugin::REPL_TOKEN,
-						  base_plugin::REPL_SERVER_ID,
-						  base_plugin::REPL_DEVICE_ID,
-						  base_plugin::REPL_QUALITY_ID,
-						  base_plugin::REPL_DOMAIN,
-						  base_plugin::REPL_PORT,
-						  base_plugin::REPL_ID,
-						  base_plugin::REPL_INT_ID,
-						  base_plugin::REPL_VAR1,
-						  base_plugin::REPL_VAR2,
+						  REPL_SUBDOMAIN,
+						  REPL_LOGIN,
+						  REPL_PASSWORD,
+						  REPL_TOKEN,
+						  REPL_SERVER_ID,
+						  REPL_DEVICE_ID,
+						  REPL_QUALITY_ID,
+						  REPL_DOMAIN,
+						  REPL_PORT,
+						  REPL_ID,
+						  REPL_INT_ID,
+						  REPL_VAR1,
+						  REPL_VAR2,
 					   });
 	m_wndStreamUrl.SetTemplateParams(strm_params);
 
 	std::vector<std::wstring> arc_params(std::move(strm_params));
 	arc_params.insert(arc_params.end(),
 					  {
-						  base_plugin::REPL_LIVE_URL,
-						  base_plugin::REPL_HOST,
-						  base_plugin::REPL_START,
-						  base_plugin::REPL_STOP,
-						  base_plugin::REPL_NOW,
-						  base_plugin::REPL_DURATION,
-						  base_plugin::REPL_OFFSET,
+						  REPL_LIVE_URL,
+						  REPL_HOST,
+						  REPL_START,
+						  REPL_STOP,
+						  REPL_NOW,
+						  REPL_DURATION,
+						  REPL_OFFSET,
 					  });
 	m_wndCustomArchiveUrl.SetTemplateParams(arc_params);
 

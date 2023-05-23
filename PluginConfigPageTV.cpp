@@ -158,13 +158,13 @@ void CPluginConfigPageTV::AssignMacros()
 
 	std::vector<std::wstring> pl_params =
 	{
-		base_plugin::REPL_SUBDOMAIN,
-		base_plugin::REPL_LOGIN,
-		base_plugin::REPL_PASSWORD,
-		base_plugin::REPL_TOKEN,
-		base_plugin::REPL_SERVER_ID,
-		base_plugin::REPL_DEVICE_ID,
-		base_plugin::REPL_QUALITY_ID,
+		REPL_SUBDOMAIN,
+		REPL_LOGIN,
+		REPL_PASSWORD,
+		REPL_TOKEN,
+		REPL_SERVER_ID,
+		REPL_DEVICE_ID,
+		REPL_QUALITY_ID,
 	};
 
 	m_wndPlaylistTemplate.SetTemplateParams(pl_params);
@@ -172,14 +172,14 @@ void CPluginConfigPageTV::AssignMacros()
 	std::vector<std::wstring> strm_params(std::move(pl_params));
 	strm_params.insert(strm_params.end(),
 					   {
-						   base_plugin::REPL_CGI_BIN,
-						   base_plugin::REPL_DOMAIN,
-						   base_plugin::REPL_PORT,
-						   base_plugin::REPL_ID,
-						   base_plugin::REPL_INT_ID,
-						   base_plugin::REPL_HOST,
-						   base_plugin::REPL_VAR1,
-						   base_plugin::REPL_VAR2,
+						   REPL_CGI_BIN,
+						   REPL_DOMAIN,
+						   REPL_PORT,
+						   REPL_ID,
+						   REPL_INT_ID,
+						   REPL_HOST,
+						   REPL_VAR1,
+						   REPL_VAR2,
 					   });
 
 	m_wndStreamTemplate.SetTemplateParams(strm_params);
@@ -187,12 +187,12 @@ void CPluginConfigPageTV::AssignMacros()
 	std::vector<std::wstring> arc_params(std::move(strm_params));
 	arc_params.insert(arc_params.end(),
 					  {
-						  base_plugin::REPL_LIVE_URL,
-						  base_plugin::REPL_START,
-						  base_plugin::REPL_STOP,
-						  base_plugin::REPL_NOW,
-						  base_plugin::REPL_DURATION,
-						  base_plugin::REPL_OFFSET,
+						  REPL_LIVE_URL,
+						  REPL_START,
+						  REPL_STOP,
+						  REPL_NOW,
+						  REPL_DURATION,
+						  REPL_OFFSET,
 					  });
 
 	m_wndStreamArchiveTemplate.SetTemplateParams(arc_params);
@@ -455,40 +455,28 @@ void CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate()
 
 void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()
 {
-	auto current_info = GetPropertySheet()->m_plugin->get_playlist_infos();
+	const auto& current_info = GetPropertySheet()->m_plugin->get_playlist_infos();
 
-	std::vector<DynamicParamsInfo> info;
+	std::vector<CFillParamsInfoDlg::variantInfo> info;
 	for (const auto& item : current_info)
 	{
-		info.emplace_back(item.name, item.name);
+		info.emplace_back(item);
 	}
 
 	CFillParamsInfoDlg dlg;
-	dlg.m_type = 4;
+	dlg.m_type = DynamicParamsType::enPlaylistTV;
 	dlg.m_paramsList = std::move(info);
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
-		std::vector <PlaylistTemplateInfo> new_info;
+		std::vector<PlaylistTemplateInfo> playlists;
 		for (const auto& item : dlg.m_paramsList)
 		{
-			auto it = std::find_if(current_info.begin(), current_info.end(), [&item](const auto& it)
-								   {
-									   return it.name == item.id;
-								   });
-			if (it != current_info.end())
-			{
-				it->name = item.name;
-				new_info.emplace_back(*it);
-			}
-			else
-			{
-				new_info.emplace_back(item.name);
-			}
+			playlists.emplace_back(std::get<PlaylistTemplateInfo>(item));
 		}
-		GetPropertySheet()->m_plugin->set_playlist_infos(new_info);
 
+		GetPropertySheet()->m_plugin->set_playlist_infos(playlists);
 		FillControls();
 		AllowSave();
 	}

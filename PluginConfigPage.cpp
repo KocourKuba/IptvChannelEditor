@@ -204,84 +204,152 @@ void CPluginConfigPage::OnCbnSelchangeComboAccessType()
 void CPluginConfigPage::OnBnClickedButtonEditExtFiles()
 {
 	CFillParamsInfoDlg dlg;
-	dlg.m_type = 4;
-	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_files_list();
+	std::vector<CFillParamsInfoDlg::variantInfo> info;
+	for (const auto& item : GetPropertySheet()->m_plugin->get_files_list())
+	{
+		info.emplace_back(item);
+	}
+
+	dlg.m_type = DynamicParamsType::enFiles;
+	dlg.m_paramsList = info;
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
+		std::vector<DynamicParamsInfo> params;
+		for (const auto& item : dlg.m_paramsList)
+		{
+			params.emplace_back(std::get<DynamicParamsInfo>(item));
+		}
+		GetPropertySheet()->m_plugin->set_files_list(params);
 		AllowSave();
-		GetPropertySheet()->m_plugin->set_files_list(dlg.m_paramsList);
 	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditManifest()
 {
 	CFillParamsInfoDlg dlg;
-	dlg.m_type = 5;
-	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_manifest_list();
+	std::vector<CFillParamsInfoDlg::variantInfo> info;
+	for (const auto& item : GetPropertySheet()->m_plugin->get_manifest_list())
+	{
+		info.emplace_back(item);
+	}
+
+	dlg.m_type = DynamicParamsType::enManifest;
+	dlg.m_paramsList = info;
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
+		std::vector<DynamicParamsInfo> params;
+		for (const auto& item : dlg.m_paramsList)
+		{
+			params.emplace_back(std::get<DynamicParamsInfo>(item));
+		}
+		GetPropertySheet()->m_plugin->set_manifest_list(params);
 		AllowSave();
-		GetPropertySheet()->m_plugin->set_manifest_list(dlg.m_paramsList);
 	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditServers()
 {
 	CFillParamsInfoDlg dlg;
-	dlg.m_type = 0;
-	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_servers_list();
+	std::vector<CFillParamsInfoDlg::variantInfo> info;
+	for (const auto& item : GetPropertySheet()->m_plugin->get_servers_list())
+	{
+		info.emplace_back(item);
+	}
+
+	dlg.m_type = DynamicParamsType::enServers;
+	dlg.m_paramsList = info;
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
+		std::vector<DynamicParamsInfo> params;
+		for (const auto& item : dlg.m_paramsList)
+		{
+			params.emplace_back(std::get<DynamicParamsInfo>(item));
+		}
+		GetPropertySheet()->m_plugin->set_servers_list(params);
 		AllowSave();
-		GetPropertySheet()->m_plugin->set_servers_list(dlg.m_paramsList);
 	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditDevices()
 {
 	CFillParamsInfoDlg dlg;
-	dlg.m_type = 1;
-	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_devices_list();
+	std::vector<CFillParamsInfoDlg::variantInfo> info;
+	for (const auto& item : GetPropertySheet()->m_plugin->get_devices_list())
+	{
+		info.emplace_back(item);
+	}
+
+	dlg.m_type = DynamicParamsType::enDevices;
+	dlg.m_paramsList = info;
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
+		std::vector<DynamicParamsInfo> params;
+		for (const auto& item : dlg.m_paramsList)
+		{
+			params.emplace_back(std::get<DynamicParamsInfo>(item));
+		}
+		GetPropertySheet()->m_plugin->set_devices_list(params);
 		AllowSave();
-		GetPropertySheet()->m_plugin->set_devices_list(dlg.m_paramsList);
 	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditQuality()
 {
 	CFillParamsInfoDlg dlg;
-	dlg.m_type = 2;
-	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_qualities_list();
+	std::vector<CFillParamsInfoDlg::variantInfo> info;
+	for (const auto& item : GetPropertySheet()->m_plugin->get_qualities_list())
+	{
+		info.emplace_back(item);
+	}
+
+	dlg.m_type = DynamicParamsType::enQuality;
+	dlg.m_paramsList = info;
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
+		std::vector<DynamicParamsInfo> params;
+		for (const auto& item : dlg.m_paramsList)
+		{
+			params.emplace_back(std::get<DynamicParamsInfo>(item));
+		}
+
+		GetPropertySheet()->m_plugin->set_qualities_list(params);
 		AllowSave();
-		GetPropertySheet()->m_plugin->set_qualities_list(dlg.m_paramsList);
 	}
 }
 
 void CPluginConfigPage::OnBnClickedButtonEditProfiles()
 {
 	CFillParamsInfoDlg dlg;
-	dlg.m_type = 3;
-	dlg.m_paramsList = GetPropertySheet()->m_plugin->get_profiles_list();
+	std::vector<CFillParamsInfoDlg::variantInfo> info;
+	for (const auto& item : GetPropertySheet()->m_plugin->get_profiles_list())
+	{
+		info.emplace_back(item);
+	}
+
+	dlg.m_type = DynamicParamsType::enProfiles;
+	dlg.m_paramsList = info;
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
 	{
+		std::vector<DynamicParamsInfo> params;
+		for (const auto& item : dlg.m_paramsList)
+		{
+			params.emplace_back(std::get<DynamicParamsInfo>(item));
+		}
+
+		GetPropertySheet()->m_plugin->set_profiles_list(params);
 		AllowSave();
-		GetPropertySheet()->m_plugin->set_profiles_list(dlg.m_paramsList);
 	}
 }
 

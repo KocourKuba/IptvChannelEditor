@@ -40,6 +40,7 @@ public:
 	CFillParamsInfoDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CFillParamsInfoDlg() = default;
 
+	using variantInfo = std::variant<DynamicParamsInfo, PlaylistTemplateInfo>;
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_FILL_PARAMS };
@@ -62,13 +63,16 @@ protected:
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 
 public:
-	int m_type = 0;
+	DynamicParamsType m_type = DynamicParamsType::enUnknown;
 	bool m_readonly = true;
 	bool m_fixed = false;
 	bool m_isFirstColEditable = true;
-	std::vector<DynamicParamsInfo> m_paramsList;
+	std::vector<variantInfo> m_paramsList;
 
 protected:
+	std::wstring GetParamId(const CFillParamsInfoDlg::variantInfo& info);
+	std::wstring GetParamName(const variantInfo& info);
+
 	CEditableListCtrl m_wndListParams;
 	CButton m_wndAdd;
 	CButton m_wndRemove;

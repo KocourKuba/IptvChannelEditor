@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_config.h"
 #include "uri_stream.h"
 #include "Credentials.h"
+#include "Constants.h"
 #include "UtilsLib\inet_utils.h"
 
 class uri_stream;
@@ -55,49 +56,6 @@ struct EpgInfo
 /// </summary>
 class base_plugin : public plugin_config
 {
-public:
-	static constexpr auto REPL_LIVE_URL      = L"{LIVE_URL}";      // live url, used in archive template substitution
-	static constexpr auto REPL_CGI_BIN       = L"{CGI_BIN}";       // Url points to plugin cgi_bin folder
-	static constexpr auto REPL_DOMAIN        = L"{DOMAIN}";        // stream url domain (set from playlist)
-	static constexpr auto REPL_PORT          = L"{PORT}";          // stream url port (set from playlist)
-	static constexpr auto REPL_ID            = L"{ID}";            // id (set from playlist)
-	static constexpr auto REPL_SUBDOMAIN     = L"{SUBDOMAIN}";     // domain (set from settings or set by provider)
-	static constexpr auto REPL_TOKEN         = L"{TOKEN}";         // token (set from playlist or set by provider)
-	static constexpr auto REPL_LOGIN         = L"{LOGIN}";         // login (set from settings)
-	static constexpr auto REPL_PASSWORD      = L"{PASSWORD}";      // password (set from settings)
-	static constexpr auto REPL_INT_ID        = L"{INT_ID}";        // internal id (reads from playlist)
-	static constexpr auto REPL_HOST          = L"{HOST}";          // host (reads from playlist)
-	static constexpr auto REPL_SERVER        = L"{SERVER}";        // server name (read from settings)
-	static constexpr auto REPL_SERVER_ID     = L"{SERVER_ID}";     // server id (read from settings)
-	static constexpr auto REPL_DEVICE_ID     = L"{DEVICE_ID}";     // device id (read from settings)
-	static constexpr auto REPL_QUALITY_ID    = L"{QUALITY_ID}";    // quality id (set from settings)
-	static constexpr auto REPL_PROFILE_ID    = L"{PROFILE_ID}";    // profile id (read from settings)
-	static constexpr auto REPL_VAR1          = L"{VAR1}";          // Custom capture group variable
-	static constexpr auto REPL_VAR2          = L"{VAR2}";          // Custom capture group variable
-
-	static constexpr auto REPL_EPG_ID        = L"{EPG_ID}";        // epg id (set from playlist)
-	static constexpr auto REPL_START         = L"{START}";         // EPG archive start time (unix timestamp)
-	static constexpr auto REPL_NOW           = L"{NOW}";           // EPG archive current time (unix timestamp)
-	static constexpr auto REPL_DATE          = L"{DATE}";          // EPG date (set by format)
-	static constexpr auto REPL_TIMESTAMP     = L"{TIMESTAMP}";     // EPG time, unix timestamp (set by format)
-	static constexpr auto REPL_OFFSET        = L"{OFFSET}";        // EPG archive current time (unix timestamp)
-	static constexpr auto REPL_DUNE_IP       = L"{DUNE_IP}";       // dune IP address. Useful for using My EPG Server plugin
-
-	static constexpr auto REPL_DURATION      = L"{DURATION}";      // archive duration (in second) in flussonic archive
-	static constexpr auto REPL_STOP          = L"{STOP}";          // archive end time (unix timestamp)
-
-	static constexpr auto REPL_YEAR          = L"{YEAR}";          // Year subst template, used in epg_date_format, epg_time_format
-	static constexpr auto REPL_MONTH         = L"{MONTH}";         // Month subst template, used in epg_date_format, epg_time_format
-	static constexpr auto REPL_DAY           = L"{DAY}";           // Day subst template, used in epg_date_format, epg_time_format
-	static constexpr auto REPL_HOUR          = L"{HOUR}";          // Hour subst template, used in epg_time_format
-	static constexpr auto REPL_MIN           = L"{MIN}";           // Minute subst template, used in epg_time_format
-
-	static constexpr auto REPL_TYPE          = L"{TYPE}";          // Plugin type template, used to compile plugin file/package
-	static constexpr auto REPL_NAME          = L"{NAME}";          // Plugin name template, used to compile plugin file/package
-	static constexpr auto REPL_COMMENT       = L"{COMMENT}";       // Account comment, used to compile plugin file/package
-	static constexpr auto REPL_VERSION       = L"{VERSION}";       // Plugin version template, used to compile plugin file/package
-	static constexpr auto REPL_VERSION_INDEX = L"{VERSION_INDEX}"; // Plugin version index template, used to compile plugin file/package
-
 public:
 	base_plugin();
 	base_plugin(const base_plugin& src);

@@ -25,6 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+#include <variant>
 #include "PluginDefines.h"
 #include "IPTVChannelEditor.h"
 #include "UtilsLib\json_wrapper.h"
@@ -103,24 +104,6 @@ struct TemplateParams
 	int quality_idx = 0;
 };
 
-struct DynamicParamsInfo
-{
-public:
-	DynamicParamsInfo() = default;
-	DynamicParamsInfo(const std::string& _id, const std::string& _name) : id(_id), name(_name) {}
-
-	std::wstring get_id() const { return utils::utf8_to_utf16(id); }
-	void set_id(const std::wstring& val) { id = utils::utf16_to_utf8(val); }
-
-	std::wstring get_name() const { return utils::utf8_to_utf16(name); }
-	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
-
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(DynamicParamsInfo, id, name);
-
-	std::string id;
-	std::string name;
-};
-
 /// <summary>
 /// Playlist template parameter
 /// </summary>
@@ -135,13 +118,6 @@ public:
 	{
 		set_name(load_string_resource(ID));
 	}
-
-	PlaylistTemplateInfo(UINT ID, const std::string& _pl_template) : pl_template(_pl_template)
-	{
-		set_name(load_string_resource(ID));
-	}
-
-	PlaylistTemplateInfo(const std::string& _name, const std::string& _pl_template) : name(_name), pl_template(_pl_template) {}
 
 	std::wstring get_name() const { return utils::utf8_to_utf16(name); }
 	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
@@ -331,6 +307,37 @@ struct StreamParameters
 		DESERIALIZE_STRUCT(j, c, cu_duration);
 		DESERIALIZE_STRUCT(j, c, dune_params);
 	}
+};
+
+enum class DynamicParamsType
+{
+	enUnknown = -1,
+	enServers,
+	enDevices,
+	enQuality,
+	enProfiles,
+	enFiles,
+	enManifest,
+	enPlaylistTV,
+	enPlaylistVOD,
+};
+
+struct DynamicParamsInfo
+{
+public:
+	DynamicParamsInfo() = default;
+	DynamicParamsInfo(const std::string& _id, const std::string& _name) : id(_id), name(_name) {}
+
+	std::wstring get_id() const { return utils::utf8_to_utf16(id); }
+	void set_id(const std::wstring& val) { id = utils::utf16_to_utf8(val); }
+
+	std::wstring get_name() const { return utils::utf8_to_utf16(name); }
+	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
+
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(DynamicParamsInfo, id, name);
+
+	std::string id;
+	std::string name;
 };
 
 class plugin_config

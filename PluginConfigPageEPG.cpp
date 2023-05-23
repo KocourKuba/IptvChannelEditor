@@ -160,32 +160,32 @@ void CPluginConfigPageEPG::AssignMacros()
 {
 	std::vector<std::wstring> epg_params =
 	{
-		base_plugin::REPL_ID,
-		base_plugin::REPL_DOMAIN,
-		base_plugin::REPL_EPG_ID,
-		base_plugin::REPL_TOKEN,
-		base_plugin::REPL_TIMESTAMP,
-		base_plugin::REPL_DATE,
-		base_plugin::REPL_DUNE_IP,
+		REPL_ID,
+		REPL_DOMAIN,
+		REPL_EPG_ID,
+		REPL_TOKEN,
+		REPL_TIMESTAMP,
+		REPL_DATE,
+		REPL_DUNE_IP,
 	};
 	m_wndEpgUrl.SetTemplateParams(epg_params);
 
 	std::vector<std::wstring> date_fmt_params =
 	{
-		base_plugin::REPL_YEAR,
-		base_plugin::REPL_MONTH,
-		base_plugin::REPL_DAY,
+		REPL_YEAR,
+		REPL_MONTH,
+		REPL_DAY,
 	};
 	m_wndDateFormat.SetTemplateParams(date_fmt_params);
 
 	std::vector<std::wstring> epg_start_time_params =
 	{
-		base_plugin::REPL_YEAR,
-		base_plugin::REPL_MONTH,
-		base_plugin::REPL_DAY,
-		base_plugin::REPL_HOUR,
-		base_plugin::REPL_MIN,
-		base_plugin::REPL_TIMESTAMP,
+		REPL_YEAR,
+		REPL_MONTH,
+		REPL_DAY,
+		REPL_HOUR,
+		REPL_MIN,
+		REPL_TIMESTAMP,
 	};
 	m_wndEpgStartFormat.SetTemplateParams(epg_start_time_params);
 }
@@ -283,14 +283,14 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	lt.tm_sec = 0;
 	time_t dayTime = std::mktime(&lt);
 
-	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_EPG_ID, m_SetID.GetString());
-	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_TOKEN, m_Token.GetString());
-	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_DATE, m_EpgDateFormat.GetString());
-	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_YEAR, std::to_wstring(m_Date.GetYear()));
-	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_MONTH, std::to_wstring(m_Date.GetMonth()));
-	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_DAY, std::to_wstring(m_Date.GetDay()));
-	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
-	utils::string_replace_inplace<wchar_t>(url, base_plugin::REPL_DUNE_IP, m_DuneIP.GetString());
+	utils::string_replace_inplace<wchar_t>(url, REPL_EPG_ID, m_SetID.GetString());
+	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, m_Token.GetString());
+	utils::string_replace_inplace<wchar_t>(url, REPL_DATE, m_EpgDateFormat.GetString());
+	utils::string_replace_inplace<wchar_t>(url, REPL_YEAR, std::to_wstring(m_Date.GetYear()));
+	utils::string_replace_inplace<wchar_t>(url, REPL_MONTH, std::to_wstring(m_Date.GetMonth()));
+	utils::string_replace_inplace<wchar_t>(url, REPL_DAY, std::to_wstring(m_Date.GetDay()));
+	utils::string_replace_inplace<wchar_t>(url, REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
+	utils::string_replace_inplace<wchar_t>(url, REPL_DUNE_IP, m_DuneIP.GetString());
 
 	CWaitCursor cur;
 	std::stringstream data;
