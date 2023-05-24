@@ -476,8 +476,8 @@ public:
 	/// property token used per channel, not the global
 	/// </summary>
 	/// <summary>
-	bool get_per_channel_token(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? playlist_templates[idx].get_per_channel_token() : false; }
-	void set_per_channel_token(int idx, const bool val) { if ((idx != -1 && idx < (int)vod_templates.size())) playlist_templates[idx].set_per_channel_token(val); }
+	bool get_per_channel_token(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_per_channel_token() : false; }
+	void set_per_channel_token(int idx, const bool val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_per_channel_token(val); }
 
 	/// <summary>
 	/// property current per channel token
