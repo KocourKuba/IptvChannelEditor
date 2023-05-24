@@ -13,6 +13,7 @@ require_once 'starnet_vod_category_list_screen.php';
 class Starnet_Tv implements Tv, User_Input_Handler
 {
     const ID = 'tv';
+    const PARAM_ZOOM = 'zoom_select';
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -110,14 +111,14 @@ class Starnet_Tv implements Tv, User_Input_Handler
     {
         $channels = $this->get_channels();
         if ($channels === null) {
-            hd_print("Channels no loaded");
+            hd_print(__METHOD__ . ": Channels no loaded");
             return null;
         }
 
         $channel = $this->channels->get($channel_id);
 
         if (is_null($channel)) {
-            hd_print("Unknown channel: $channel_id");
+            hd_print(__METHOD__ . ": Unknown channel: $channel_id");
         }
 
         return $channel;
@@ -172,9 +173,8 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $g = $this->groups->get($group_id);
 
         if (is_null($g)) {
-            hd_print("Unknown group: $group_id");
-            HD::print_backtrace();
-            throw new Exception("Unknown group: $group_id");
+            hd_print(__METHOD__ . ": Unknown group: $group_id");
+            throw new Exception(__METHOD__ . ": Unknown group: $group_id");
         }
 
         return $g;
@@ -208,14 +208,14 @@ class Starnet_Tv implements Tv, User_Input_Handler
         switch ($fav_op_type) {
             case PLUGIN_FAVORITES_OP_ADD:
                 if (in_array($channel_id, $fav_channel_ids) === false) {
-                    hd_print("Add channel $channel_id to favorites");
+                    hd_print(__METHOD__ . ": Add channel $channel_id to favorites");
                     $fav_channel_ids[] = $channel_id;
                 }
                 break;
             case PLUGIN_FAVORITES_OP_REMOVE:
                 $k = array_search($channel_id, $fav_channel_ids);
                 if ($k !== false) {
-                    hd_print("Remove channel $channel_id from favorites");
+                    hd_print(__METHOD__ . ": Remove channel $channel_id from favorites");
                     unset ($fav_channel_ids[$k]);
                 }
                 break;
@@ -226,7 +226,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             case PLUGIN_FAVORITES_OP_MOVE_UP:
                 $k = array_search($channel_id, $fav_channel_ids);
                 if ($k !== false && $k !== 0) {
-                    hd_print("Move channel $channel_id up");
+                    hd_print(__METHOD__ . ": Move channel $channel_id up");
                     $t = $fav_channel_ids[$k - 1];
                     $fav_channel_ids[$k - 1] = $fav_channel_ids[$k];
                     $fav_channel_ids[$k] = $t;
@@ -235,7 +235,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             case PLUGIN_FAVORITES_OP_MOVE_DOWN:
                 $k = array_search($channel_id, $fav_channel_ids);
                 if ($k !== false && $k !== count($fav_channel_ids) - 1) {
-                    hd_print("Move channel $channel_id down");
+                    hd_print(__METHOD__ . ": Move channel $channel_id down");
                     $t = $fav_channel_ids[$k + 1];
                     $fav_channel_ids[$k + 1] = $fav_channel_ids[$k];
                     $fav_channel_ids[$k] = $t;
@@ -315,11 +315,11 @@ class Starnet_Tv implements Tv, User_Input_Handler
         try {
             $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
             $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
-            hd_print("Load channels list using source: $source");
+            hd_print(__METHOD__ . ": Load channels list using source: $source");
             switch ($source) {
                 case 1:
                     $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . $channels_list;
-                    hd_print("load from: $channels_list_path");
+                    hd_print(__METHOD__ . ": load from: $channels_list_path");
                     break;
                 case 2:
                     if (!empty($plugin_cookies->channels_url)) {
@@ -333,19 +333,19 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     }
 
                     $url_path .= $channels_list;
-                    hd_print("load folder link: $url_path");
+                    hd_print(__METHOD__ . ": load folder link: $url_path");
                     break;
                 case 3:
                     if (!empty($plugin_cookies->channels_direct_url)) {
                         $url_path = $plugin_cookies->channels_direct_url;
                     } else {
                         if (!isset($this->plugin->config->plugin_info['app_direct_links'][$channels_list])) {
-                            throw new Exception("Direct link not set!");
+                            throw new Exception(__METHOD__ . ": Direct link not set!");
                         }
                         $url_path = $this->plugin->config->plugin_info['app_direct_links'][$channels_list];
                     }
 
-                    hd_print("load direct link: $url_path");
+                    hd_print(__METHOD__ . ": load direct link: $url_path");
                     break;
             }
 
@@ -358,7 +358,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     file_put_contents($channels_list_path, HD::http_get_document($url_path));
                 } catch (Exception $ex) {
                     if (!file_exists($channels_list_path)) {
-                        hd_print("Can't fetch channel_list from $url_path " . $ex->getMessage());
+                        hd_print(__METHOD__ . ": Can't fetch channel_list from $url_path " . $ex->getMessage());
                         return;
                     }
                 }
@@ -367,13 +367,13 @@ class Starnet_Tv implements Tv, User_Input_Handler
             file_put_contents(get_temp_path("current_list.xml"), file_get_contents($channels_list_path));
             $xml = HD::parse_xml_file($channels_list_path);
         } catch (Exception $ex) {
-            hd_print("Can't fetch channel_list $channels_list_path " . $ex->getMessage());
+            hd_print(__METHOD__ . ": Can't fetch channel_list $channels_list_path " . $ex->getMessage());
             return;
         }
 
         if ($xml->getName() !== 'tv_info') {
-            hd_print("Error: unexpected node '" . $xml->getName() . "'. Expected: 'tv_info'");
-            throw new Exception('Invalid XML document');
+            hd_print(__METHOD__ . ": Error: unexpected node '" . $xml->getName() . "'. Expected: 'tv_info'");
+            throw new Exception(__METHOD__ . ": Invalid XML document");
         }
 
         $max_support_ch_list_ver = $this->plugin->config->plugin_info['app_ch_list_version'];
@@ -392,7 +392,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $groups = new Hashed_Array();
         foreach ($xml->tv_categories->children() as $xml_tv_category) {
             if ($xml_tv_category->getName() !== 'tv_category') {
-                $error_string = "Error: unexpected node '{$xml_tv_category->getName()}'. Expected: 'tv_category'";
+                $error_string = __METHOD__ . ": Error: unexpected node '{$xml_tv_category->getName()}'. Expected: 'tv_category'";
                 hd_print($error_string);
                 throw new Exception($error_string);
             }
@@ -427,7 +427,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     (string)$xml_tv_category->id,
                     (string)$xml_tv_category->caption,
                     (string)$xml_tv_category->icon_url));
-                hd_print("Added category: $xml_tv_category->caption");
+                hd_print(__METHOD__ . ": Added category: $xml_tv_category->caption");
             }
         }
 
@@ -436,7 +436,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         // All channels category
         if (!isset($all_channels)) {
-            hd_print("Using default all channels group, icon: " . Default_Dune_Plugin::ALL_CHANNEL_GROUP_ICON_PATH);
+            hd_print(__METHOD__ . ": Using default all channels group, icon: " . Default_Dune_Plugin::ALL_CHANNEL_GROUP_ICON_PATH);
             $all_channels = new All_Channels_Group(
                 $this,
                 Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID,
@@ -448,7 +448,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         // Favorites group
         if ($this->is_favorites_supported()) {
             if (!isset($fav_group)) {
-                hd_print("Using default favorites channels group icon: " . Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH);
+                hd_print(__METHOD__ . ": Using default favorites channels group icon: " . Default_Dune_Plugin::FAV_CHANNEL_GROUP_ICON_PATH);
                 $fav_group = new Favorites_Group(
                     Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID,
                     Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
@@ -461,7 +461,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         // Vod group
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
             if (!isset($vod_group)) {
-                hd_print("Using default vod channels group icon: " . Default_Dune_Plugin::VOD_GROUP_ICON_PATH);
+                hd_print(__METHOD__ . ": Using default vod channels group icon: " . Default_Dune_Plugin::VOD_GROUP_ICON_PATH);
                 $vod_group = new Vod_Group(Default_Dune_Plugin::VOD_GROUP_ID,
                     Default_Dune_Plugin::VOD_GROUP_CAPTION,
                     Default_Dune_Plugin::VOD_GROUP_ICON_PATH);
@@ -485,19 +485,19 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $num = 0;
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
             if ($xml_tv_channel->getName() !== 'tv_channel') {
-                hd_print("Error: unexpected node '{$xml_tv_channel->getName()}'. Expected: 'tv_channel'");
+                hd_print(__METHOD__ . ": Error: unexpected node '{$xml_tv_channel->getName()}'. Expected: 'tv_channel'");
                 continue;
             }
 
             // ignore disabled channel
             if (isset($xml_tv_channel->disabled)) {
-                hd_print("Channel $xml_tv_channel->caption is disabled");
+                hd_print(__METHOD__ . ": Channel $xml_tv_channel->caption is disabled");
                 continue;
             }
 
             // Read category id from channel
             if (!isset($xml_tv_channel->tv_category_id)) {
-                hd_print("Error: Category undefined for channel $xml_tv_channel->caption !");
+                hd_print(__METHOD__ . ": Error: Category undefined for channel $xml_tv_channel->caption !");
                 continue;
             }
 
@@ -528,7 +528,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 if ($tv_category_id !== $fav_category_id) {
                     foreach($channel->get_groups() as $group) {
                         if ($group->get_id() !== $fav_category_id) {
-                            hd_print("Channel $xml_tv_channel->caption ($channel_id) already exist in category: " . $group->get_title() . "(" . $group->get_id() . ")");
+                            hd_print(__METHOD__ . ": Channel $xml_tv_channel->caption ($channel_id) already exist in category: " . $group->get_title() . "(" . $group->get_id() . ")");
                         }
                     }
                 }
@@ -563,16 +563,16 @@ class Starnet_Tv implements Tv, User_Input_Handler
             if (($tv_category_id === $fav_category_id || $xml_tv_channel->favorite) && $this->is_favorites_supported()) {
                 // favorites category
                 if (in_array($channel_id, $fav_channel_ids) === false) {
-                    hd_print("Added from channels list to favorites channel $hash ($xml_tv_channel->caption)");
+                    hd_print(__METHOD__ . ": Added from channels list to favorites channel $hash ($xml_tv_channel->caption)");
                     $fav_channel_ids[] = $channel_id;
                 }
             } else if (!$this->groups->has($tv_category_id)) {
                 // Category disabled or unknown
-                hd_print("Unknown category $tv_category_id");
+                hd_print(__METHOD__ . ": Unknown category $tv_category_id");
             } else {
                 $group = $this->groups->get($tv_category_id);
                 if (is_null($group))
-                    hd_print("unknown group: $tv_category_id");
+                    hd_print(__METHOD__ . ": unknown group: $tv_category_id");
                 $channel->add_group($group);
                 $group->add_channel($channel);
             }
@@ -580,7 +580,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         $this->set_fav_channel_ids($plugin_cookies, $fav_channel_ids);
 
-        hd_print("Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
+        hd_print(__METHOD__ . ": Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
     }
 
     /**
@@ -590,14 +590,14 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function reload_channels(User_Input_Handler $handler, &$plugin_cookies)
     {
-        hd_print("Reload channels");
+        hd_print(__METHOD__ . ": Reload channels");
         $this->plugin->config->ClearPlaylistCache($plugin_cookies);
         $this->plugin->config->ClearChannelsCache($plugin_cookies);
         $this->unload_channels();
         try {
             $this->load_channels($plugin_cookies);
         } catch (Exception $e) {
-            hd_print("Reload channel list failed: $plugin_cookies->channels_list");
+            hd_print(__METHOD__ . ": Reload channel list failed: $plugin_cookies->channels_list");
             return null;
         }
 
@@ -627,7 +627,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function get_tv_playback_url($channel_id, $archive_ts, $protect_code, &$plugin_cookies)
     {
-        hd_print("get_tv_playback_url: channel: $channel_id archive_ts: $archive_ts, protect code: $protect_code");
+        hd_print(__METHOD__ . ": channel: $channel_id archive_ts: $archive_ts, protect code: $protect_code");
 
         try {
             $this->ensure_channels_loaded($plugin_cookies);
@@ -636,8 +636,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             // get channel by hash
             $channel = $this->get_channel($channel_id);
             if ($protect_code !== $pass_sex && $channel->is_protected()) {
-                hd_print('Wrong adult password');
-                throw new Exception('Wrong adult password');
+                throw new Exception("Wrong adult password");
             }
 
             if ($this->plugin->history_support && !$channel->is_protected()) {
@@ -646,9 +645,27 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
             // update url if play archive or different type of the stream
             $url = $this->plugin->config->GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
-            hd_print("get_tv_playback_url: $url");
+
+            $zoom_data = HD::get_items('channels_zoom', true);
+            if (isset($zoom_data[$channel_id])) {
+                $zoom_preset = $zoom_data[$channel_id];
+                hd_print(__METHOD__ . ": zoom_preset: $zoom_preset");
+            } else if (!is_android() && !is_apk()) {
+                $zoom_preset = DuneVideoZoomPresets::normal;
+                hd_print(__METHOD__ . ": zoom_preset: reset to normal $zoom_preset");
+            } else {
+                $zoom_preset = '-';
+                hd_print(__METHOD__ . ": zoom_preset: not applicable");
+            }
+
+            if ($zoom_preset !== '-') {
+                $url .= (strpos($url, "|||dune_params") === false ? "|||dune_params|||" : ",");
+                $url .= "zoom:$zoom_preset";
+            }
+
+            hd_print(__METHOD__ . ": $url");
         } catch (Exception $ex) {
-            hd_print("get_tv_playback_url: Exception: " . $ex->getMessage());
+            hd_print(__METHOD__ . ": Exception: " . $ex->getMessage());
             $url = '';
         }
 
@@ -669,14 +686,14 @@ class Starnet_Tv implements Tv, User_Input_Handler
             // get channel by hash
             $channel = $this->get_channel($channel_id);
         } catch (Exception $ex) {
-            hd_print("Can't get channel with ID: $channel_id");
+            hd_print(__METHOD__ . ": Can't get channel with ID: $channel_id");
             return $day_epg;
         }
 
         // correct day start to local timezone
         $day_start_ts -= get_local_time_zone_offset();
 
-        hd_print("Starnet_Tv::get_day_epg day_start timestamp: $day_start_ts (" . format_datetime("Y-m-d H:i", $day_start_ts) . ")");
+        hd_print(__METHOD__ . ": day_start timestamp: $day_start_ts (" . format_datetime("Y-m-d H:i", $day_start_ts) . ")");
         $epg_source_id = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
         $day_epg_items = $this->epg_man->get_day_epg_items($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
         if ($day_epg_items === false) {
@@ -708,7 +725,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
     public function get_program_info($channel_id, $program_ts, $plugin_cookies)
     {
         $program_ts = ($program_ts > 0 ? $program_ts : time());
-        hd_print("Starnet_Tv::get_program_info for $channel_id at time $program_ts " . format_datetime("Y-m-d H:i", $program_ts));
+        hd_print(__METHOD__ . ": for $channel_id at time $program_ts " . format_datetime("Y-m-d H:i", $program_ts));
         $day_start = date("Y-m-d", $program_ts);
         $day_ts = strtotime($day_start) + get_local_time_zone_offset();
         $day_epg = $this->get_day_epg($channel_id, $day_ts, $plugin_cookies);
@@ -718,7 +735,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             }
         }
 
-        hd_print("Starnet_Tv::get_program_info no entries found for time $program_ts");
+        hd_print(__METHOD__ . ": No entries found for time $program_ts");
         return null;
     }
 
@@ -813,7 +830,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             Playback_Points::init();
         }
 
-        hd_print('Starnet_Tv::get_tv_info Info loaded at ' . (microtime(1) - $t) . ' secs');
+        hd_print(__METHOD__ . ': Info loaded at ' . (microtime(1) - $t) . ' secs');
 
         return array(
             PluginTvInfo::show_group_channels_only => true,
@@ -841,11 +858,11 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
     public function get_action_map()
     {
-        if ($this->plugin->new_ui_support) {
-            return array(GUI_EVENT_PLAYBACK_STOP => User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP));
-        }
+        $actions = array();
+        //$actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_ZOOM_MENU);
+        $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
 
-        return null;
+        return $actions;
     }
 
     /**
@@ -853,23 +870,55 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Starnet_Tv: handle_user_input');
+        //hd_print(__METHOD__ . ": handle_user_input");
         //foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
         if (!isset($user_input->control_id)) {
             return null;
         }
 
-        if ($this->plugin->history_support && isset($user_input->plugin_tv_channel_id)) {
-            Playback_Points::update($user_input->plugin_tv_channel_id);
+        $channel_id = $user_input->plugin_tv_channel_id;
+
+        if ($this->plugin->history_support) {
+            Playback_Points::update($channel_id);
         }
 
-        if ($user_input->control_id === GUI_EVENT_PLAYBACK_STOP
-            && (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed))) {
+        switch ($user_input->control_id) {
+            case GUI_EVENT_PLAYBACK_STOP:
+                if (!$this->plugin->new_ui_support
+                    || !(isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed))) break;
 
-            Playback_Points::save();
-            Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-            return Starnet_Epfs_Handler::invalidate_folders();
+                Playback_Points::save();
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+                return Starnet_Epfs_Handler::invalidate_folders();
+
+            case ACTION_ZOOM_MENU:
+                $attrs['dialog_params']['frame_style'] = DIALOG_FRAME_STYLE_GLASS;
+                $zoom_data = HD::get_items('channels_zoom', true);
+                $dune_zoom = isset($zoom_data[$channel_id]) ? $zoom_data[$channel_id] : DuneVideoZoomPresets::not_set;
+
+                $defs = array();
+                Control_Factory::add_label($defs,'', 'Переключите канал для применения');
+                Control_Factory::add_combobox($defs, $this, null, ACTION_ZOOM_SELECT, "",
+                    $dune_zoom, DuneVideoZoomPresets::$zoom_ops, 1000, true);
+                Control_Factory::add_button_close ($defs, $this, null,ACTION_ZOOM_APPLY,
+                    "", 'Сохранить', 600);
+                return Action_Factory::show_dialog('Масштабирование изображения для канала', $defs,true,0, $attrs);
+
+            case ACTION_ZOOM_APPLY:
+                $zoom_data = HD::get_items('channels_zoom', true);
+                if ($user_input->{ACTION_ZOOM_SELECT} === DuneVideoZoomPresets::not_set) {
+                    $zoom_preset = DuneVideoZoomPresets::normal;
+                    hd_print(__METHOD__ . ": Zoom preset removed for channel: $channel_id ($zoom_preset)");
+                    unset ($zoom_data[$channel_id]);
+                } else {
+                    $zoom_preset = $zoom_data[$channel_id] = $user_input->{ACTION_ZOOM_SELECT};
+                    hd_print(__METHOD__ . ": Zoom preset $zoom_preset for channel: $channel_id");
+                }
+
+                HD::put_items('channels_zoom', $zoom_data);
+                //set_video_zoom(get_zoom_value($zoom_preset));
+                break;
         }
 
         return null;

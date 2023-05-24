@@ -51,7 +51,7 @@ class Playback_Points
 
                 // if channel does support archive do not update current point
                 $this->points[$id] += ($this->points[$id] !== 0) ? $player_state['playback_position'] : 0;
-                hd_print("Playback_Points::update_point channel_id $id at time mark: {$this->points[$id]}");
+                //hd_print("Playback_Points::update_point channel_id $id at time mark: {$this->points[$id]}");
             }
         }
     }

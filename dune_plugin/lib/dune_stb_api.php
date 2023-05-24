@@ -90,6 +90,9 @@ const ACTION_CREATE_FILTER = 'create_filter';
 const ACTION_RUN_FILTER = 'run_filter';
 const ACTION_OPEN_FOLDER = 'open_folder';
 const ACTION_PLAY_FOLDER = 'play_folder';
+const ACTION_ZOOM_MENU = 'zoom_menu';
+const ACTION_ZOOM_SELECT = 'zoom_select';
+const ACTION_ZOOM_APPLY = 'zoom_apply';
 
 # Mounted storages path
 const DUNE_MOUNTED_STORAGES_PATH = '/tmp/mnt/storage/';
@@ -164,7 +167,7 @@ const DEF_LABEL_TEXT_COLOR_CORAL        = 21; #0xff5030	Light red					VOD descr
 const DEF_LABEL_TEXT_COLOR_DARKGRAY2    = 22; #0x404040	Dark grey					VOD descr
 const DEF_LABEL_TEXT_COLOR_GAINSBORO    = 23; #0xe0e0e0	Light light light grey		P+ P-
 
-const CMD_STATUS_GREP = '" /firmware/ext_command/cgi-bin/do | grep "command_status" | sed -n "s/^<param name=\"command_status\" value=\"\(.*\)\"\/>/\1/p"';
+const CMD_STATUS_GREP = '" /firmware/ext_command/cgi-bin/do | grep "command_status" | sed -n "s|^<param name=\"command_status\" value=\"(.*)\"/>|\1|p"';
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -181,15 +184,41 @@ class SetupControlSwitchDefs
 # Video zoom values for media_url string (|||dune_params|||zoom:value)
 class DuneVideoZoomPresets
 {
-    const    normal = '0';
-    const    enlarge = '1';
-    const    make_wider = '2';
-    const    fill_screen = '3';
-    const    full_fill_screen = '4';
-    const    make_taller = '5';
-    const    cut_edges = '6';
-    const    full_enlarge = '8';
-    const    full_stretch = '9';
+    const not_set = 'x';
+    const normal = '0';
+    const enlarge = '1';
+    const make_wider = '2';
+    const fill_screen = '3';
+    const full_fill_screen = '4';
+    const make_taller = '5';
+    const cut_edges = '6';
+    const full_enlarge = '8';
+    const full_stretch = '9';
+
+    public static $zoom_value = array(
+        DuneVideoZoomPresets::normal => VIDEO_ZOOM_NORMAL,
+        DuneVideoZoomPresets::enlarge => VIDEO_ZOOM_ENLARGE,
+        DuneVideoZoomPresets::make_wider => VIDEO_ZOOM_MAKE_WIDER,
+        DuneVideoZoomPresets::fill_screen => VIDEO_ZOOM_NON_LINEAR_STRETCH,
+        DuneVideoZoomPresets::full_fill_screen => VIDEO_ZOOM_NON_LINEAR_STRETCH_TO_FULL_SCREEN,
+        DuneVideoZoomPresets::make_taller => VIDEO_ZOOM_MAKE_TALLER,
+        DuneVideoZoomPresets::cut_edges => VIDEO_ZOOM_CUT_EDGES,
+        DuneVideoZoomPresets::full_enlarge => VIDEO_ZOOM_FULL_SCREEN,
+        DuneVideoZoomPresets::full_stretch => VIDEO_ZOOM_STRETCH_TO_FULL_SCREEN
+    );
+
+    public static $zoom_ops = array(
+        DuneVideoZoomPresets::not_set => 'Не выбрано',
+        DuneVideoZoomPresets::normal => 'Обычный',
+        DuneVideoZoomPresets::enlarge => 'Увеличение',
+        DuneVideoZoomPresets::make_wider => 'Увеличение ширины',
+        DuneVideoZoomPresets::fill_screen => 'Нелинейное растяжение',
+        DuneVideoZoomPresets::full_fill_screen => 'Нелинейное растяжение на весь экран',
+        DuneVideoZoomPresets::make_taller => 'Увеличение высоты',
+        DuneVideoZoomPresets::cut_edges => 'Обрезка краев',
+        DuneVideoZoomPresets::full_enlarge => 'Полный экран',
+        DuneVideoZoomPresets::full_stretch => 'Растяжение на весь экран'
+    );
 }
 
 // Deinterlacing modes for media_url string (|||dune_params|||deint:value)
@@ -1252,7 +1281,7 @@ function set_video_source_rect($x, $y, $width, $height)
     # rectangle is already in effect. Note that both video source rectangle and clip rectangle may
     # be specified with set_video_source_rect() and set_clip_rect() respectively but if both are in effect
     # then the clip rectangle setting is ignored until set_video_source_rect() is set to complete
-    # original video so programr should take care to avoid such situations.
+    # original video so programmer should take care to avoid such situations.
     # Return: command execution status
 
     $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=set_playback_state&video_source_rect_x=' . $x . '&video_source_rect_y=' . $y . '&video_source_rect_width=' . $width . '&video_source_rect_height=' . $height . CMD_STATUS_GREP;
@@ -1283,6 +1312,10 @@ function get_video_zoom()
     return get_shell_exec($cmd);
 }
 
+/**
+ * @param $value string
+ * @return string
+ */
 function set_video_zoom($value)
 {
     # Argument: VIDEO_ZOOM_NORMAL | VIDEO_ZOOM_ENLARGE | VIDEO_ZOOM_MAKE_WIDER | VIDEO_ZOOM_NON_LINEAR_STRETCH |
@@ -1292,6 +1325,17 @@ function set_video_zoom($value)
 
     $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=set_playback_state&video_zoom=' . $value . CMD_STATUS_GREP;
     return get_shell_exec($cmd);
+}
+
+/**
+ * @param $preset DuneVideoZoomPresets::const
+ * @return string
+ */
+function get_zoom_value($preset)
+{
+    return isset(DuneVideoZoomPresets::$zoom_value[$preset])
+        ? DuneVideoZoomPresets::$zoom_value[$preset]
+        : DuneVideoZoomPresets::$zoom_value[DuneVideoZoomPresets::normal];
 }
 
 ###############################################################################

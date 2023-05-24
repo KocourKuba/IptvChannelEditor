@@ -576,8 +576,9 @@ class default_config extends dynamic_config
         $is_archive = (int)$archive_ts > 0;
         $stream_type = $this->get_format($plugin_cookies);
         $ext_params = $channel->get_ext_params();
+        $channel_id = $channel->get_channel_id();
         $ext_params[Plugin_Constants::CGI_BIN] = get_plugin_cgi_url();
-        $ext_params[Plugin_Constants::CHANNEL_ID] = $channel->get_channel_id();
+        $ext_params[Plugin_Constants::CHANNEL_ID] = $channel_id;
         $ext_params[Stream_Params::CU_START] = $archive_ts;
         $ext_params[Stream_Params::CU_NOW] = $now;
         $ext_params[Stream_Params::CU_OFFSET] = $now - $archive_ts;

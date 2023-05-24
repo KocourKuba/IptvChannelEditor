@@ -4,6 +4,7 @@ require_once 'lib/abstract_preloaded_regular_screen.php';
 class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'tv_channel_list';
+    const PARAM_ZOOM = 'zoom_select';
 
     /**
      * @param string $group_id
@@ -44,26 +45,26 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER);
         $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS);
+        $zoom_popup = User_Input_Handler_Registry::create_action($this, ACTION_ZOOM_MENU, 'Масштаб для канала');
 
         $actions = array(
             GUI_EVENT_KEY_ENTER   => $action_play,
             GUI_EVENT_KEY_PLAY    => $action_play,
-            GUI_EVENT_KEY_B_GREEN => $action_settings,
+            GUI_EVENT_KEY_B_GREEN => $zoom_popup,
             GUI_EVENT_KEY_SETUP   => $action_settings,
         );
 
         if ((string)$media_url->group_id === Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID) {
             $search_action = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, 'Поиск');
-            $actions[GUI_EVENT_KEY_C_YELLOW] = $search_action;
-            $actions[GUI_EVENT_KEY_SEARCH] = $search_action;
+            if (is_apk()) {
+                $actions[GUI_EVENT_KEY_C_YELLOW] = $search_action;
+            } else {
+                $actions[GUI_EVENT_KEY_SEARCH] = $search_action;
+            }
         }
 
         if ($this->plugin->tv->is_favorites_supported()) {
             $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, 'В избранное');
-        }
-
-        if (HD::rows_api_support()) {
-            $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
         }
 
         return $actions;
@@ -161,16 +162,41 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
                 return Action_Factory::update_regular_folder($range, true, $ndx);
 
-            case GUI_EVENT_PLAYBACK_STOP:
-                if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
+            case ACTION_ZOOM_MENU:
+                $zoom_data = HD::get_items('channels_zoom', true);
+                $current_idx = isset($zoom_data[$channel_id]) ? $zoom_data[$channel_id] : DuneVideoZoomPresets::not_set;
 
-                    if ($this->plugin->history_support && isset($user_input->plugin_tv_channel_id)) {
-                        Playback_Points::update($user_input->plugin_tv_channel_id);
+                hd_print(__METHOD__ . ": Current idx: $current_idx");
+                $menu_items = array();
+                foreach (DuneVideoZoomPresets::$zoom_ops as $idx => $zoom_item) {
+                    $add_param[ACTION_ZOOM_SELECT] = (string)$idx;
+
+                    $icon_url = null;
+                    if ((string)$idx === (string)$current_idx) {
+                        $icon_url = "gui_skin://button_icons/proceed.aai";
+                    }
+                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_ZOOM_APPLY,
+                        $zoom_item, $icon_url, $add_param);
+                }
+
+                return Action_Factory::show_popup_menu($menu_items);
+
+            case ACTION_ZOOM_APPLY:
+                if (isset($user_input->{ACTION_ZOOM_SELECT})) {
+
+                    $zoom_select = $user_input->{ACTION_ZOOM_SELECT};
+                    $zoom_data = HD::get_items('channels_zoom', true);
+                    if ($zoom_select === DuneVideoZoomPresets::not_set) {
+                        hd_print(__METHOD__ . ": Zoom preset removed for channel: $channel_id");
+                        unset ($zoom_data[$channel_id]);
+                    } else {
+                        hd_print(__METHOD__ . ": Zoom preset $zoom_select for channel: $channel_id");
+                        $zoom_data[$channel_id] = $zoom_select;
                     }
 
-                    Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                    return Starnet_Epfs_Handler::invalidate_folders();
+                    HD::put_items('channels_zoom', $zoom_data);
                 }
+                break;
         }
 
         return null;
