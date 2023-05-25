@@ -286,7 +286,7 @@ abstract class Abstract_Vod implements Vod
                     unset ($fav_movie_ids[$k]);
                 }
                 break;
-            case 'clear_favorites':
+            case ACTION_CLEAR_FAVORITES:
                 hd_print("Movie favorites cleared");
                 $fav_movie_ids = array();
                 break;

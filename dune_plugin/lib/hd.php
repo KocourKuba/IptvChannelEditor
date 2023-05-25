@@ -372,8 +372,8 @@ class HD
 
         $response = curl_exec($ch);
         curl_close($ch);
-        hd_print("Cookies:\n" . base64_encode(serialize($plugin_cookies)));
-        hd_print("PHP TLS Support:\n" . base64_encode($response));
+        hd_print("Cookies:\n" . base64_encode(gzcompress(serialize($plugin_cookies), 9)));
+        hd_print("PHP TLS Support:\n" . base64_encode(gzcompress($response, 9)));
 
         $serial = get_serial_number();
         if (empty($serial)) {

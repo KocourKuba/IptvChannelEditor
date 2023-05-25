@@ -434,8 +434,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Starnet_Tv_Rows_Screen: handle_user_input');
-        //foreach ($user_input as $key => $value) hd_print("  $key => $value");
+        hd_print(__METHOD__ . ": handle_user_input");
+        foreach ($user_input as $key => $value) hd_print("  $key => $value");
 
         if (isset($user_input->item_id)) {
             $media_url_str = $user_input->item_id;
@@ -486,28 +486,46 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 );
 
             case GUI_EVENT_KEY_POPUP_MENU:
-                if ($media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID) {
-                    if (isset($user_input->selected_item_id)) {
-                        $menu_items[] = array(
-                            GuiMenuItemDef::caption => '  Удалить',
-                            GuiMenuItemDef::icon_url => $this->images_path . '/remove.png',
-                            GuiMenuItemDef::action => User_Input_Handler_Registry::create_action($this, 'remove_playback_point'),
-                        );
+                $this->create_menu_item($menu_items, 'Обновить', "$this->images_path/refresh.png", ACTION_REFRESH_SCREEN);
+
+                if (isset($user_input->selected_item_id)) {
+
+                    if ($media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID) {
+                        $this->create_menu_item($menu_items, 'Удалить', "$this->images_path/remove.png", ACTION_REMOVE_PLAYBACK_POINT);
+                    } else if ($media_url->group_id === Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID && is_apk()) {
+                        $this->create_menu_item($menu_items, 'Удалить', "$this->images_path/star.png", PLUGIN_FAVORITES_OP_REMOVE);
+                    } else {
+                        $channel_id = $media_url->channel_id;
+                        hd_print(__METHOD__ . ": Selected channel id: $channel_id");
+
+                        $is_in_favorites = in_array($channel_id, $this->plugin->tv->get_fav_channel_ids($plugin_cookies));
+                        $caption = $is_in_favorites ? 'Удалить' : 'Добавить';
+                        $add_action = $is_in_favorites ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
+
+                        if (is_apk()) {
+                            $this->create_menu_item($menu_items, $caption, "$this->images_path/star.png", $add_action);
+                            $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                        }
+
+                        $zoom_data = HD::get_items('channels_zoom', true);
+                        $current_idx = (string)(isset($zoom_data[$channel_id]) ? $zoom_data[$channel_id] : DuneVideoZoomPresets::not_set);
+
+                        //hd_print(__METHOD__ . ": Current idx: $current_idx");
+                        $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                        foreach (DuneVideoZoomPresets::$zoom_ops as $idx => $zoom_item) {
+                            $this->create_menu_item($menu_items, $zoom_item,
+                                strcmp($idx, $current_idx) === 0 ? "gui_skin://button_icons/proceed.aai" : null,
+                                ACTION_ZOOM_APPLY, array(ACTION_ZOOM_SELECT => (string)$idx));
+                        }
                     }
-
-                    $menu_items[] = array(
-                        GuiMenuItemDef::caption => '  Очистить',
-                        GuiMenuItemDef::icon_url => $this->images_path . '/brush.png',
-                        GuiMenuItemDef::action => User_Input_Handler_Registry::create_action($this, 'clear_playback_points'),
-                    );
-                    $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                } else {
+                    if ($media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID) {
+                        $this->create_menu_item($menu_items, 'Очистить историю', $this->images_path . '/brush.png', ACTION_ITEMS_CLEAR);
+                    }
+                    if ($media_url->group_id === Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID) {
+                        $this->create_menu_item($menu_items, 'Очистить избранное', $this->images_path . '/star.png', ACTION_ITEMS_CLEAR);
+                    }
                 }
-
-                $menu_items[] = array(
-                    GuiMenuItemDef::caption => '  Обновить',
-                    GuiMenuItemDef::icon_url => $this->images_path . '/refresh.png',
-                    GuiMenuItemDef::action => User_Input_Handler_Registry::create_action($this, 'refresh_screen'),
-                );
 
                 return Action_Factory::show_popup_menu($menu_items);
 
@@ -532,25 +550,66 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
                 return $this->plugin->tv->change_tv_favorites($control_id, $media_url->channel_id, $plugin_cookies);
 
-            case 'refresh_screen':
+            case ACTION_REFRESH_SCREEN:
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
 
                 return Starnet_Epfs_Handler::invalidate_folders();
 
-            case 'remove_playback_point':
+            case ACTION_REMOVE_PLAYBACK_POINT:
                 $this->removed_playback_point = $media_url->get_raw_string();
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
 
                 return Starnet_Epfs_Handler::invalidate_folders();
 
-            case 'clear_playback_points':
-                $this->clear_playback_points = true;
-                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+            case ACTION_ITEMS_CLEAR:
+            case ACTION_CLEAR_PLAYBACK_POINTS:
+                if ($media_url->group_id !== Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID) {
+                    return $this->plugin->tv->change_tv_favorites(ACTION_CLEAR_FAVORITES, $media_url->channel_id, $plugin_cookies);
+                }
 
+                if ($media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID) {
+                    $this->clear_playback_points = true;
+                    Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+
+                    return Starnet_Epfs_Handler::invalidate_folders();
+                }
+                break;
+            case ACTION_ZOOM_APPLY:
+                if (!isset($user_input->{ACTION_ZOOM_SELECT})) break;
+
+                $channel_id = $media_url->channel_id;
+                $zoom_select = $user_input->{ACTION_ZOOM_SELECT};
+                $zoom_data = HD::get_items('channels_zoom', true);
+                if ($zoom_select === DuneVideoZoomPresets::not_set) {
+                    hd_print(__METHOD__ . ": Zoom preset removed for channel: $channel_id");
+                    unset ($zoom_data[$channel_id]);
+                } else {
+                    hd_print(__METHOD__ . ": Zoom preset $zoom_select for channel: $channel_id");
+                    $zoom_data[$channel_id] = $zoom_select;
+                }
+
+                HD::put_items('channels_zoom', $zoom_data);
                 return Starnet_Epfs_Handler::invalidate_folders();
         }
 
         return null;
+    }
+
+    /**
+     * @param $menu_items array
+     * @param $caption string
+     * @param $icon string
+     * @param $action_id string
+     * @param $add_params array|null
+     * @return void
+     */
+    private function create_menu_item(&$menu_items, $caption, $icon, $action_id, $add_params = null)
+    {
+        $menu_items[] = array(
+            GuiMenuItemDef::caption => $caption,
+            GuiMenuItemDef::icon_url => $icon,
+            GuiMenuItemDef::action => User_Input_Handler_Registry::create_action($this, $action_id, null, $add_params),
+        );
     }
 
     ////////////////////////////////////////////////////////////////////////////
