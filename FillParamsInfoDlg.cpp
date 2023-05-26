@@ -259,6 +259,22 @@ void CFillParamsInfoDlg::OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResul
 
 void CFillParamsInfoDlg::OnOK()
 {
+	int cnt = m_wndListParams.GetItemCount();
+	for (int i = 0; i < cnt; i++)
+	{
+		auto& info = m_paramsList[i];
+
+		const auto& id = m_wndListParams.GetItemText(i, 0);
+		const auto& name = m_wndListParams.GetItemText(i, 1);
+
+		std::visit(get_id_overload{
+			[id](DynamicParamsInfo& t) { t.set_id(id.GetString()); },
+			[id](PlaylistTemplateInfo&) {}
+				   }, info);
+
+		std::visit([name](auto& t) { t.set_name(name.GetString()); }, info);
+	}
+
 	__super::OnOK();
 }
 
@@ -271,25 +287,13 @@ BOOL CFillParamsInfoDlg::DestroyWindow()
 
 std::wstring CFillParamsInfoDlg::GetParamId(const variantInfo& info)
 {
-	if (std::holds_alternative<DynamicParamsInfo>(info))
-	{
-		return std::get<DynamicParamsInfo>(info).get_id();
-	}
-
-	return L"";
+	return std::visit(get_id_overload{
+						[](const DynamicParamsInfo& t) { return t.get_id(); },
+						[](const PlaylistTemplateInfo& t) { return t.get_name(); }
+					  }, info);
 }
 
 std::wstring CFillParamsInfoDlg::GetParamName(const variantInfo& info)
 {
-	if (std::holds_alternative<DynamicParamsInfo>(info))
-	{
-		return std::get<DynamicParamsInfo>(info).get_name();
-	}
-
-	if (std::holds_alternative<PlaylistTemplateInfo>(info))
-	{
-		return std::get<PlaylistTemplateInfo>(info).get_name();
-	}
-
-	return L"";
+	return std::visit([](const auto& t) { return t.get_name(); }, info);
 }

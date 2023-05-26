@@ -254,34 +254,33 @@ void CPluginConfigPageTV::FillControls()
 		idx++;
 	}
 
-	plugin->set_playlist_template_idx(current);
 	m_wndPlaylistTemplates.SetCurSel(current);
 
-	FillPlaylistSettings();
+	FillPlaylistSettings(current);
 
 	m_wndStreamType.SetCurSel(0);
 	FillControlsStream();
 	UpdateControls();
 }
 
-void CPluginConfigPageTV::FillPlaylistSettings()
+void CPluginConfigPageTV::FillPlaylistSettings(size_t index)
 {
 	const auto& plugin = GetPropertySheet()->m_plugin;
 	if (!plugin) return;
 
-	m_PlaylistTemplate = plugin->get_current_playlist_template().c_str();
-	m_ParseStream = plugin->get_current_parse_pattern().c_str();
-	m_wndChkPerChannelToken.SetCheck(plugin->get_current_per_channel_token() != false);
-	m_wndChkEpgIdFromID.SetCheck(plugin->get_current_epg_id_from_id() != false);
+	m_PlaylistTemplate = plugin->get_playlist_template(index).c_str();
+	m_ParseStream = plugin->get_uri_parse_pattern(index).c_str();
+	m_wndChkPerChannelToken.SetCheck(plugin->get_per_channel_token(index) != false);
+	m_wndChkEpgIdFromID.SetCheck(plugin->get_epg_id_from_id(index) != false);
 
-	if (plugin->get_current_tag_id_match().empty())
+	if (plugin->get_tag_id_match(index).empty())
 	{
 		m_wndCheckMapTags.SetCheck(FALSE);
 		m_wndTags.EnableWindow(FALSE);
 	}
 	else
 	{
-		int idx = m_wndTags.FindString(-1, plugin->get_current_tag_id_match().c_str());
+		int idx = m_wndTags.FindString(-1, plugin->get_tag_id_match(index).c_str());
 		if (idx != CB_ERR)
 		{
 			m_wndTags.EnableWindow(TRUE);
@@ -449,8 +448,7 @@ void CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate()
 	int idx = m_wndPlaylistTemplates.GetCurSel();
 	auto& plugin = GetPropertySheet()->m_plugin;
 
-	plugin->set_playlist_template_idx(idx);
-	FillPlaylistSettings();
+	FillPlaylistSettings(idx);
 }
 
 void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()

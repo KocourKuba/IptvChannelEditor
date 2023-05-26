@@ -50,7 +50,7 @@ protected:
 	void AssignMacros();
 	void FillControls() override;
 
-	void FillPlaylistSettings();
+	void FillPlaylistSettings(size_t index);
 
 	DECLARE_MESSAGE_MAP()
 

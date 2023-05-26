@@ -31,6 +31,8 @@ DEALINGS IN THE SOFTWARE.
 
 
 // CFillParamsInfo dialog
+template <class... Fs> struct get_id_overload : Fs... { using Fs::operator()...; };
+template <class... Fs> get_id_overload(Fs...) -> get_id_overload<Fs...>;
 
 class CFillParamsInfoDlg : public CDialogEx
 {
