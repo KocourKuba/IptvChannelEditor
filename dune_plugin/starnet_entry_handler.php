@@ -31,8 +31,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print(__METHOD__);
-        //foreach ($user_input as $key => $value) hd_print("  $key => $value");
+        //dump_input_handler(__METHOD__, $user_input);
 
         if (!isset($user_input->control_id))
             return null;

@@ -513,11 +513,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //if ($user_input->control_id !== 'timer' && $user_input->control_id !== 'plugin_rows_info_update') {
-        //    hd_print(__METHOD__);
-        //    foreach ($user_input as $key => $value) hd_print("  $key => $value");
-        //}
-
+        //dump_input_handler(__METHOD__, $user_input);
         return User_Input_Handler_Registry::get_instance()->handle_user_input($user_input, $plugin_cookies);
     }
 

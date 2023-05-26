@@ -76,8 +76,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Starnet_Tv_Groups_Screen: handle_user_input:');
-        //foreach ($user_input as $key => $value) hd_print("  $key => $value");
+        //dump_input_handler(__METHOD__, $user_input);
 
         switch ($user_input->control_id) {
             case ACTION_NEED_CONFIGURE:

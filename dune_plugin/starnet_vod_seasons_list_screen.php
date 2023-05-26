@@ -43,6 +43,7 @@ class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen 
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
+        //dump_input_handler(__METHOD__, $user_input);
         return null;
     }
     ///////////////////////////////////////////////////////////////////////

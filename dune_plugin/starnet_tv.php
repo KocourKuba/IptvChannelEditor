@@ -219,7 +219,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     unset ($fav_channel_ids[$k]);
                 }
                 break;
-            case 'clear_favorites':
+            case ACTION_CLEAR_FAVORITES:
                 hd_print("Clear favorites");
                 $fav_channel_ids = array();
                 break;
@@ -655,7 +655,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 hd_print(__METHOD__ . ": zoom_preset: reset to normal $zoom_preset");
             } else {
                 $zoom_preset = '-';
-                hd_print(__METHOD__ . ": zoom_preset: not applicable");
+                //hd_print(__METHOD__ . ": zoom_preset: not applicable");
             }
 
             if ($zoom_preset !== '-') {
@@ -830,7 +830,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             Playback_Points::init();
         }
 
-        hd_print(__METHOD__ . ': Info loaded at ' . (microtime(1) - $t) . ' secs');
+        //hd_print(__METHOD__ . ': Info loaded at ' . (microtime(1) - $t) . ' secs');
 
         return array(
             PluginTvInfo::show_group_channels_only => true,
@@ -870,8 +870,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print(__METHOD__ . ": handle_user_input");
-        //foreach ($user_input as $key => $value) hd_print("  $key => $value");
+        //dump_input_handler(__METHOD__, $user_input);
 
         if (!isset($user_input->control_id)) {
             return null;

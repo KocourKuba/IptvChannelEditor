@@ -48,10 +48,10 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         $zoom_popup = User_Input_Handler_Registry::create_action($this, ACTION_ZOOM_MENU, 'Масштаб для канала');
 
         $actions = array(
-            GUI_EVENT_KEY_ENTER   => $action_play,
-            GUI_EVENT_KEY_PLAY    => $action_play,
-            GUI_EVENT_KEY_B_GREEN => $zoom_popup,
-            GUI_EVENT_KEY_SETUP   => $action_settings,
+            GUI_EVENT_KEY_ENTER      => $action_play,
+            GUI_EVENT_KEY_PLAY       => $action_play,
+            GUI_EVENT_KEY_POPUP_MENU => $zoom_popup,
+            GUI_EVENT_KEY_SETUP      => $action_settings,
         );
 
         if ((string)$media_url->group_id === Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID) {
@@ -86,8 +86,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print(__METHOD__);
-        //foreach($user_input as $key => $value) hd_print("  $key => $value");
+        //dump_input_handler(__METHOD__, $user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;

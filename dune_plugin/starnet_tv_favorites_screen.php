@@ -114,8 +114,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Tv favorites: handle_user_input:');
-        //foreach($user_input as $key => $value) hd_print("  $key => $value");
+        //dump_input_handler(__METHOD__, $user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -138,7 +137,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                 break;
 
             case ACTION_ITEMS_CLEAR:
-                $fav_op_type = 'clear_favorites';
+                $fav_op_type = ACTION_CLEAR_FAVORITES;
                 $inc = 0;
                 break;
 

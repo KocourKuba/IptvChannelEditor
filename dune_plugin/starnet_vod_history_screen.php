@@ -58,8 +58,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print(__METHOD__);
-        //foreach($user_input as $key => $value) hd_print("  $key => $value");
+        //dump_input_handler(__METHOD__, $user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;

@@ -93,6 +93,10 @@ const ACTION_PLAY_FOLDER = 'play_folder';
 const ACTION_ZOOM_MENU = 'zoom_menu';
 const ACTION_ZOOM_SELECT = 'zoom_select';
 const ACTION_ZOOM_APPLY = 'zoom_apply';
+const ACTION_REFRESH_SCREEN = 'refresh_screen';
+const ACTION_REMOVE_PLAYBACK_POINT = 'remove_playback_point';
+const ACTION_CLEAR_PLAYBACK_POINTS = 'clear_playback_points';
+const ACTION_CLEAR_FAVORITES = 'clear_favorites';
 
 # Mounted storages path
 const DUNE_MOUNTED_STORAGES_PATH = '/tmp/mnt/storage/';
@@ -1584,4 +1588,10 @@ function debug_print(/*mixed $var1, $var2...*/)
 
         hd_print('Debug alert! ' . rtrim($chain, '->') . (empty($var) ? '' : ' >> ') . ltrim($var, "\n"));
     }
+}
+
+function dump_input_handler($method, $user_input)
+{
+    hd_print($method);
+    foreach ($user_input as $key => $value) hd_print("  $key => $value");
 }

@@ -77,8 +77,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('Vod Vod_Series_List_Screen: handle_user_input:');
-        //foreach($user_input as $key => $value) hd_print("  $key => $value");
+        //dump_input_handler(__METHOD__, $user_input);
 
         switch ($user_input->control_id) {
             case ACTION_QUALITY:

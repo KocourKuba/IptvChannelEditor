@@ -7,6 +7,15 @@ require_once 'lib/hd.php';
 class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Input_Handler
 {
     const ID = 'file_list';
+    const ACTION_FS = 'fs_action';
+    const ACTION_SELECT_FOLDER = 'select_folder';
+    const ACTION_CREATE_FOLDER = 'create_folder';
+    const ACTION_RESET_FOLDER = 'reset_folder';
+    const ACTION_GET_FOLDER_NAME = 'get_folder_name';
+    const ACTION_DO_MKDIR = 'do_mkdir';
+    const ACTION_SMB_SETUP = 'smb_setup';
+    const ACTION_NEW_SMB_DATA = 'new_smb_data';
+    const ACTION_SAVE_SMB_SETUP = 'save_smb_setup';
 
     private $counter = 0;
 
@@ -122,12 +131,12 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
     {
         //hd_print(__METHOD__ . ": " . $media_url->get_raw_string());
         $actions = array();
-        $fs_action = User_Input_Handler_Registry::create_action($this, 'fs_action');
-        $save_folder = User_Input_Handler_Registry::create_action($this, 'select_folder', 'Выбрать папку');
-        $open_folder = User_Input_Handler_Registry::create_action($this, 'open_folder', 'Открыть папку');
-        $create_folder = User_Input_Handler_Registry::create_action($this, 'create_folder', 'Создать папку');
-        $reset_folder = User_Input_Handler_Registry::create_action($this, 'reset_folder', 'Сбросить по умолчанию');
-        $smb_setup = User_Input_Handler_Registry::create_action($this, 'smb_setup', 'Настройки SMB');
+        $fs_action = User_Input_Handler_Registry::create_action($this, self::ACTION_FS);
+        $save_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_SELECT_FOLDER, 'Выбрать папку');
+        $open_folder = User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER, 'Открыть папку');
+        $create_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_GET_FOLDER_NAME, 'Создать папку');
+        $reset_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_RESET_FOLDER, 'Сбросить по умолчанию');
+        $smb_setup = User_Input_Handler_Registry::create_action($this, self::ACTION_SMB_SETUP, 'Настройки SMB');
 
         $actions[GUI_EVENT_KEY_ENTER] = $fs_action;
         $actions[GUI_EVENT_KEY_PLAY] = $fs_action;
@@ -306,8 +315,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print(__METHOD__);
-        //foreach($user_input as $key => $value) hd_print("  $key => $value");
+        //dump_input_handler(__METHOD__, $user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -318,7 +326,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         $parent_url = MediaURL::decode($user_input->parent_media_url);
 
         switch ($user_input->control_id) {
-            case 'timer':
+            case GUI_EVENT_TIMER:
                 $actions = $this->get_action_map($parent_url, $plugin_cookies);
                 if (isset($parent_url->filepath)
                     && $parent_url->filepath !== '/tmp/mnt/smb'
@@ -330,7 +338,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
                 return Action_Factory::change_behaviour($actions, 1000, $invalidate);
 
-            case 'fs_action':
+            case self::ACTION_FS:
                 //hd_print(__METHOD__ . " fs_action: " . MediaUrl::encode($selected_url));
                 if ($selected_url->type !== 'folder') {
                     break;
@@ -365,7 +373,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 }
                 return Action_Factory::show_dialog('Error SMB!!!', $defs, true, 1100);
 
-            case 'select_folder':
+            case self::ACTION_SELECT_FOLDER:
                 $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
                 //hd_print(__METHOD__ . " select_folder: " . $url->get_media_url_str());
                 smb_tree::set_folder_info($plugin_cookies, $url);
@@ -387,7 +395,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
                 return $action;
 
-            case 'reset_folder':
+            case self::ACTION_RESET_FOLDER:
                 //hd_print(__METHOD__ . " reset_folder");
                 $plugin_cookies->ch_list_path = '';
                 $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Channels_Setup_Screen::ID . "_handler");
@@ -407,27 +415,27 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 }
                 return $action;
 
-            case 'create_folder':
+            case self::ACTION_GET_FOLDER_NAME:
                 $defs = array();
                 Control_Factory::add_text_field($defs,
                     $this, null,
-                    'do_folder_name', '',
+                    self::ACTION_CREATE_FOLDER, '',
                     '', 0, 0, 1, 1, 1230, false, true
                 );
                 Control_Factory::add_vgap($defs, 500);
                 return Action_Factory::show_dialog('Задайте имя папки', $defs, true);
 
-            case 'do_folder_name':
-                $do_mkdir = User_Input_Handler_Registry::create_action($this, 'do_mkdir');
+            case self::ACTION_CREATE_FOLDER:
+                $do_mkdir = User_Input_Handler_Registry::create_action($this, self::ACTION_DO_MKDIR);
                 return Action_Factory::close_dialog_and_run($do_mkdir);
 
-            case 'do_mkdir':
+            case self::ACTION_DO_MKDIR:
                 if (!mkdir($concurrentDirectory = $parent_url->filepath . '/' . $user_input->do_folder_name) && !is_dir($concurrentDirectory)) {
                     return Action_Factory::show_title_dialog('Невозможно создать папку!');
                 }
                 return Action_Factory::invalidate_folders(array($user_input->parent_media_url));
 
-            case 'open_folder':
+            case ACTION_OPEN_FOLDER:
                 $path = $parent_url->filepath;
                 hd_print("smt_tree::open_folder: $path");
                 if (preg_match('|^/tmp/mnt/storage/|', $path)) {
@@ -448,7 +456,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 //hd_print("smt_tree::open_folder launch url: $url");
                 return Action_Factory::launch_media_url($url);
 
-            case 'new_smb_data':
+            case self::ACTION_NEW_SMB_DATA:
                 $smb_shares = new smb_tree();
                 //hd_print(__METHOD__ . " new_smb_data folder: $selected_url->caption");
                 //hd_print(__METHOD__ . " new_smb_data folder: $selected_url->new_user");
@@ -483,7 +491,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 );
                 return Action_Factory::open_folder($selected_url, $caption);
 
-            case 'smb_setup':
+            case self::ACTION_SMB_SETUP:
                 $smb_view = isset($plugin_cookies->smb_setup) ? (int)$plugin_cookies->smb_setup : 1;
 
                 $smb_view_ops[1] = 'Сетевые папки';
@@ -495,14 +503,14 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                     'smb_view', 'Отображать:',
                     $smb_view, $smb_view_ops, 0
                 );
-                $save_smb_setup = User_Input_Handler_Registry::create_action($this, 'save_smb_setup');
+                $save_smb_setup = User_Input_Handler_Registry::create_action($this, self::ACTION_SAVE_SMB_SETUP);
                 Control_Factory::add_custom_close_dialog_and_apply_buffon($defs,
                     '_do_save_smb_setup', 'Применить', 250, $save_smb_setup
                 );
 
                 return Action_Factory::show_dialog('Настройка поиска SMB', $defs, true, 1000, $attrs);
 
-            case 'save_smb_setup':
+            case self::ACTION_SAVE_SMB_SETUP:
                 $smb_view_ops = array();
                 $smb_view = 1;
                 $smb_view_ops[1] = 'Сетевые папки';
@@ -617,8 +625,8 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         );
 
         Control_Factory::add_custom_close_dialog_and_apply_buffon($defs,
-            'new_smb_data', 'Применить', 300,
-            User_Input_Handler_Registry::create_action($this, 'new_smb_data')
+            self::ACTION_NEW_SMB_DATA, 'Применить', 300,
+            User_Input_Handler_Registry::create_action($this, self::ACTION_NEW_SMB_DATA)
         );
 
         Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);

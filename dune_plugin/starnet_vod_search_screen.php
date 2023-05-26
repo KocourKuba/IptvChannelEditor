@@ -81,8 +81,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //hd_print('StarnetSearchScreen::handle_user_input:');
-        //foreach($user_input as $key => $value) hd_print("  $key => $value");
+        //dump_input_handler(__METHOD__, $user_input);
 
         switch ($user_input->control_id) {
             case ACTION_CREATE_SEARCH:
