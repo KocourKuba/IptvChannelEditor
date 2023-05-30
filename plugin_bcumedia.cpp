@@ -50,7 +50,8 @@ void plugin_bcumedia::load_default()
 	provider_url = "https://bcumedia.pro/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "https://bcumedia.pro/playlist/hls/{PASSWORD}.m3u";
+	info.pl_domain = "https://bcumedia.pro";
+	info.pl_template = "{PL_DOMAIN}/playlist/hls/{PASSWORD}.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/hls\/(?<password>.+)\.m3u8?$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
 	info.tag_id_match = "tvg-id";
@@ -66,5 +67,6 @@ void plugin_bcumedia::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{TOKEN}/archive-{START}-{DURATION}.ts?token={PASSWORD}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.com/bcu%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/bcu%2Fepg%2F{EPG_ID}.json";
 }

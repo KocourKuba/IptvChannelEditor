@@ -51,7 +51,8 @@ void plugin_ottclub::load_default()
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
-	info.pl_template = "http://myott.top/playlist/{PASSWORD}/m3u";
+	info.pl_domain = "http://myott.top";
+	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}/m3u";
 	info.pl_parse_regex= R"(^https?:\/\/.*\/playlist\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	info.epg_id_from_id = true;
@@ -60,5 +61,6 @@ void plugin_ottclub::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://myott.top/api/channel/{EPG_ID}";
+	epg_params[0].epg_domain = "http://myott.top";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/api/channel/{EPG_ID}";
 }

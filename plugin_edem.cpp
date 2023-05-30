@@ -47,18 +47,18 @@ void plugin_edem::load_default()
 	vod_filter = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://epg.it999.ru/edem_epg_ico.m3u8";
-	info.pl_parse_regex = R"(^http:\/.*\/playlists\/uplist\/.*\/playlist\.m3u8$)";
+	info.pl_domain = "http://epg.it999.ru";
+	info.pl_template = "{PL_DOMAIN}/edem_epg_ico.m3u8";
+	info.pl_parse_regex = R"(^https?:\/.*\/playlists\/uplist\/.*\/playlist\.m3u8$)";
 	info.parse_regex = R"(^https?:\/\/(?<subdomain>.+)\/iptv\/(?<token>.+)\/(?<id>.+)\/.*\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_EDEM_THEMATIC);
-	info.pl_template = "http://epg.it999.ru/edem_epg_ico2.m3u8";
+	info.pl_template = "{PL_DOMAIN}/edem_epg_ico2.m3u8";
 	playlist_templates.emplace_back(info);
 
 	PlaylistTemplateInfo vod_info;
 	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
-	vod_info.pl_template = "{SUBDOMAIN}";
 	vod_templates.emplace_back(vod_info);
 
 	title = "iEdem/iLook TV";
@@ -71,5 +71,6 @@ void plugin_edem::load_default()
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 	streams_config[0].dune_params = "hls_forced_type:event";
 
-	epg_params[0].epg_url = "http://epg.drm-play.com/edem%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/edem%2Fepg%2F{EPG_ID}.json";
 }

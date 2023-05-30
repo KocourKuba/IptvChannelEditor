@@ -56,6 +56,7 @@ protected:
 	afx_msg void OnBnClickedButtonEditVodTemplates();
 	afx_msg void OnBnClickedButtonVodTemplate();
 	afx_msg void OnBnClickedButtonVodParse();
+	afx_msg void OnEnChangeEditPlaylistDomain();
 	afx_msg void OnEnChangeEditProviderVodUrl();
 	afx_msg void OnEnChangeEditVodRegex();
 	afx_msg void OnBnClickedCheckVodSupport();
@@ -68,6 +69,7 @@ private:
 	void UpdateControls();
 
 protected:
+	CEdit m_wndVodPlaylistDomain;
 	CMenuEdit m_wndVodUrlTemplate;
 	CMenuEdit m_wndVodRegex;
 	CMenuEdit m_wndVodUrlPrefix;
@@ -82,6 +84,7 @@ protected:
 	CButton m_wndBtnVodTemplateTest;
 	CButton m_wndBtnEditVodTemplates;
 
+	CString m_VodPlaylistDomain;
 	CString m_VodPlaylistTemplate;
 	CString m_VodParseRegex;
 	CString m_VodUrlPrefix;

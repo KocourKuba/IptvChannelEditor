@@ -66,8 +66,9 @@ protected:
 	afx_msg void OnCbnSelchangeComboTags();
 	afx_msg void OnCbnSelchangeComboCatchupType();
 
-	afx_msg void OnEnChangeEditParsePattern();
+	afx_msg void OnEnChangeEditPlaylistDomain();
 	afx_msg void OnEnChangeEditPlaylistTemplate();
+	afx_msg void OnEnChangeEditParsePattern();
 	afx_msg void OnEnChangeEditDuration();
 	afx_msg void OnEnChangeEditStreamTemplate();
 	afx_msg void OnEnChangeEditStreamArcTemplate();
@@ -81,6 +82,7 @@ private:
 
 protected:
 
+	CEdit m_wndPlaylistDomain;
 	CMenuEdit m_wndPlaylistTemplate;
 	CMenuEdit m_wndParseStream;
 	CEdit m_wndDuration;
@@ -101,6 +103,7 @@ protected:
 	CButton m_wndBtnStreamParseTest;
 	CButton m_wndCheckMapTags;
 
+	CString m_PlaylistDomain;
 	CString m_PlaylistTemplate;
 	CString m_ParseStream;
 	CString m_DuneParams;

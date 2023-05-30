@@ -50,14 +50,16 @@ void plugin_sharavoz::load_default()
 	provider_url = "https://www.sharavoz.tv/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
+	info.pl_domain = "http://www.sharavoz.tv";
+	info.pl_template = "{PL_DOMAIN}/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/iptv\/p\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
 	info.epg_id_from_id = true;
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_SHARAVOZ_DIRECT);
-	info.pl_template = "http://www.spr24.net/iptv/p/{PASSWORD}/Playlist.navigator-ott.m3u";
+	info.pl_domain = "http://www.spr24.net";
+	info.pl_template = "{PL_DOMAIN}/iptv/p/{PASSWORD}/Playlist.navigator-ott.m3u";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
@@ -67,13 +69,13 @@ void plugin_sharavoz::load_default()
 	streams_config[1].uri_template = "http://{SERVER_ID}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{SERVER_ID}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
-	auto& params1 = epg_params[0];
-	params1.epg_url = "http://api.program.spr24.net/api/program?epg={EPG_ID}&date={DATE}";
-	params1.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
+	epg_params[0].epg_domain = "http://api.program.spr24.net";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/api/program?epg={EPG_ID}&date={DATE}";
+	epg_params[0].epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 
-	auto& params2 = epg_params[1];
-	params2.epg_url = "http://epg.arlekino.tv/api/program?epg={EPG_ID}&date={DATE}";
-	params2.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
+	epg_params[1].epg_domain = "http://epg.arlekino.tv";
+	epg_params[1].epg_url = "{EPG_DOMAIN}/api/program?epg={EPG_ID}&date={DATE}";
+	epg_params[1].epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 
 	static_servers = true;
 	fill_servers_list();

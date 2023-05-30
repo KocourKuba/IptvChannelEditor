@@ -52,15 +52,18 @@ void plugin_cbilling::load_default()
 	access_type = AccountAccessType::enPin;
 
 	provider_url = "https://cbilling.eu/";
+	provider_api_url = "http://protected-api.com";
+	balance_support = true;
 
 	PlaylistTemplateInfo vod_info;
 	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
-	vod_info.pl_template = "http://protected-api.com";
+	vod_info.pl_template = "{API_URL}";
 	vod_templates.emplace_back(vod_info);
 	vod_support = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://248on.com/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
+	info.pl_domain = "http://248on.com";
+	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<token>.+)_otp_dev.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	playlist_templates.emplace_back(info);
@@ -71,9 +74,12 @@ void plugin_cbilling::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
-	auto& params1 = epg_params[0];
-	params1.epg_url = "http://protected-api.com/epg/{EPG_ID}/?date=";
-	params1.epg_root = "";
+	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";
+	epg_params[0].epg_root = "";
+
+	epg_params[1].epg_domain = "http://epg.drm-play.com";
+	epg_params[1].epg_url = "{EPG_DOMAIN}/cbilling%2Fepg%2F{EPG_ID}.json";
+	epg_params[1].epg_root = "epg_data";
 
 	static_devices = true;
 	fill_devices_list();
@@ -99,14 +105,14 @@ void plugin_cbilling::fill_devices_list(TemplateParams* params /*= nullptr*/)
 bool plugin_cbilling::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
 	static constexpr auto ACCOUNT_HEADER_TEMPLATE = "x-public-key: {:s}";
-	static constexpr auto ACCOUNT_TEMPLATE = L"http://protected-api.com/auth/info";
+	static constexpr auto ACCOUNT_TEMPLATE = L"/auth/info";
 
 	CWaitCursor cur;
 	std::vector<std::string> headers;
 	headers.emplace_back("accept: */*");
 	headers.emplace_back(fmt::format(ACCOUNT_HEADER_TEMPLATE, utils::utf16_to_utf8(params.password)));
 	std::stringstream data;
-	if (!download_url(ACCOUNT_TEMPLATE, data, 0, &headers))
+	if (!download_url(get_provider_api_url() + ACCOUNT_TEMPLATE, data, 0, &headers))
 	{
 		return false;
 	}

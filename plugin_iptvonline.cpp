@@ -50,7 +50,8 @@ void plugin_iptvonline::load_default()
 	provider_url = "https://iptv.online/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://iptv.online/play/{PASSWORD}/m3u8";
+	info.pl_domain = "http://iptv.online";
+	info.pl_template = "{PL_DOMAIN}/play/{PASSWORD}/m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.+\/play\/(?<password>.+)\/m3u8?$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
 	playlist_templates.emplace_back(info);
@@ -64,10 +65,12 @@ void plugin_iptvonline::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts";
 
-	epg_params[0].epg_url = "http://epg.drm-play.com/iptvx.one%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json";
 
 	auto& params1 = epg_params[1];
-	params1.epg_url = "http://epg.iptvx.one/api/id/{EPG_ID}.json";
+	params1.epg_domain = "http://epg.iptvx.one";
+	params1.epg_url = "{EPG_DOMAIN}/api/id/{EPG_ID}.json";
 	params1.epg_root = "ch_programme";
 	params1.epg_name = "title";
 	params1.epg_desc = "description";

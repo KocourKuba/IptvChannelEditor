@@ -54,15 +54,18 @@ void plugin_itv::load_default()
 	access_type = AccountAccessType::enPin;
 
 	provider_url = "https://itv.live/";
+	provider_api_url = "http://api.itv.live";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://itv.ooo/p/{PASSWORD}/hls.m3u8";
+	info.pl_domain = "http://itv.ooo";
+	info.pl_template = "{PL_DOMAIN}/p/{PASSWORD}/hls.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)\/.+$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
 	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
+	balance_support = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
@@ -72,7 +75,7 @@ void plugin_itv::load_default()
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	auto& params = epg_params[0];
-	params.epg_url = "http://api.itv.live/epg/{EPG_ID}";
+	params.epg_url = "{API_URL}/epg/{EPG_ID}";
 	params.epg_root = "res";
 	params.epg_name = "title";
 	params.epg_desc = "desc";

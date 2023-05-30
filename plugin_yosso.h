@@ -27,8 +27,6 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "base_plugin.h"
 
-// API documentation http://protected-api.com/api/documentation
-
 class plugin_yosso : public base_plugin
 {
 public:

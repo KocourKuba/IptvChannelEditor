@@ -834,7 +834,7 @@ bool PackPlugin(const PluginType plugin_type,
 	enc.Encode("http://iptv.esalecrm.net/upload/", 0, ATL_BASE64_FLAG_NOCRLF | ATL_BASE64_FLAG_NOPAD);
 
 	int idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
-	plugin->set_playlist_template_idx(idx);
+	plugin->set_playlist_idx(idx);
 	plugin->set_dev_path(enc.GetResultString());
 	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder), true);
 

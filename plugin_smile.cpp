@@ -51,12 +51,13 @@ void plugin_smile::load_default()
 
 	PlaylistTemplateInfo vod_info;
 	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
-	vod_info.pl_template = "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vodall.m3u";
+	vod_info.pl_domain = "http://pl.smile-tv.live";
+	vod_info.pl_template = "{VOD_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u";
 	vod_info.parse_regex = R"((?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$)";
 	vod_templates.emplace_back(vod_info);
 
 	vod_info.set_name(load_string_resource(IDS_STRING_NO_ADULT));
-	vod_info.pl_template = "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vod.m3u";
+	vod_info.pl_template = "{VOD_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u";
 	vod_info.parse_regex = R"((?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$)";
 	vod_templates.emplace_back(vod_info);
 
@@ -64,7 +65,8 @@ void plugin_smile::load_default()
 	vod_m3u = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/tv.m3u";
+	info.pl_domain = "http://pl.smile-tv.live";
+	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u";
 	info.parse_regex = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 	info.tag_id_match = "CUID";
 	info.per_channel_token = true;
@@ -75,5 +77,6 @@ void plugin_smile::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.com/smile%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/smile%2Fepg%2F{EPG_ID}.json";
 }

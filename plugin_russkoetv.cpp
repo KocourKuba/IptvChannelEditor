@@ -34,6 +34,8 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
+// API documentation http://protected-api.com/api/documentation
+
 plugin_russkoetv::plugin_russkoetv()
 {
 	type_name = "russkoetv";
@@ -48,10 +50,12 @@ void plugin_russkoetv::load_default()
 	access_type = AccountAccessType::enPin;
 
 	provider_url = "https://russkoetv.tv/";
+	provider_api_url = "http://protected-api.com";
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
-	info.pl_template = "http://russkoetv.tv/play/{PASSWORD}.m3u8";
+	info.pl_domain = "http://russkoetv.tv";
+	info.pl_template = "{PL_DOMAIN}/play/{PASSWORD}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<password>.+)\.m3u8?$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	playlist_templates.emplace_back(info);
@@ -59,6 +63,6 @@ void plugin_russkoetv::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://protected-api.com/epg/{EPG_ID}/?date=";
+	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";
 	epg_params[0].epg_root = "";
 }

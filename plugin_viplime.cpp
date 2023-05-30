@@ -51,7 +51,8 @@ void plugin_viplime::load_default()
 	provider_url = "http://viplime.fun/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://cdntv.online/high/{PASSWORD}/playlist.m3u8";
+	info.pl_domain = "http://cdntv.online";
+	info.pl_template = "{PL_DOMAIN}/high/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/.*\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
 	playlist_templates.emplace_back(info);
@@ -63,7 +64,8 @@ void plugin_viplime::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.com/viplime%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/viplime%2Fepg%2F{EPG_ID}.json";
 
 	static_qualities = true;
 	fill_qualities_list();

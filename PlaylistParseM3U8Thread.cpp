@@ -52,7 +52,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 			m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
 
 			auto entry = std::make_shared<PlaylistEntry>(m_parent_plugin, playlist, m_config.m_rootPath);
-
+			int pl_idx = m_parent_plugin->get_playlist_idx();
 			int channels = 0;
 			int step = 0;
 
@@ -66,7 +66,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 				{
 					if (entry->get_id().empty())
 					{
-						entry->search_id(m_parent_plugin->get_current_tag_id_match());
+						entry->search_id(m_parent_plugin->get_tag_id_match(pl_idx));
 						if (entry->get_id().empty())
 						{
 							entry->set_is_template(false);
@@ -75,7 +75,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					}
 
 					// special cases after parsing
-					if (m_parent_plugin->get_current_epg_id_from_id())
+					if (m_parent_plugin->get_epg_id_from_id(pl_idx))
 					{
 						entry->set_epg_id(0, entry->get_id());
 					}

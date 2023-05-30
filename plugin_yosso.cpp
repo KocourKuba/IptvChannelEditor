@@ -53,7 +53,8 @@ void plugin_yosso::load_default()
 	provider_url = "https://streaming-elbrus.su/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "https://streaming-elbrus.su/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}/playlist.m3u8";
+	info.pl_domain = "https://streaming-elbrus.su";
+	info.pl_template = "{PL_DOMAIN}/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<login>.+)\/(?<password>.+)\/(?<server>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>\d+)\/(?<var1>.+\/)?(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
@@ -64,8 +65,8 @@ void plugin_yosso::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/{VAR1}{ID}/video.m3u8?token={TOKEN}";
 	streams_config[0].uri_arc_template = "http://{DOMAIN}:{PORT}/{VAR1}{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-	auto& params1 = epg_params[0];
-	epg_params[0].epg_url = "http://epg.drm-play.com/yosso%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/yosso%2Fepg%2F{EPG_ID}.json";
 
 	static_servers = true;
 	fill_servers_list();

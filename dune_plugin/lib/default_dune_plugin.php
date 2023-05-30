@@ -8,6 +8,7 @@ require_once 'action_factory.php';
 require_once 'control_factory.php';
 require_once 'control_factory_ext.php';
 require_once 'plugin_constants.php';
+require_once 'plugin_macros.php';
 
 class Default_Dune_Plugin implements DunePlugin
 {

@@ -50,7 +50,8 @@ void plugin_mymagic::load_default()
 	provider_url = "http://mymagic.tv/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u";
+	info.pl_domain = "http://pl.mymagic.tv";
+	info.pl_template = "{PL_DOMAIN}/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/srv\/(?<server>.+)\/(?<quality>.+)\/(?<login>.+)\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 	info.tag_id_match = "CUID";
@@ -62,7 +63,8 @@ void plugin_mymagic::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.com/magic%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/magic%2Fepg%2F{EPG_ID}.json";
 
 	static_servers = true;
 	static_qualities = true;

@@ -3,15 +3,6 @@ require_once 'lib/default_config.php';
 
 class cbilling_config extends default_config
 {
-    const API_HOST = 'http://protected-api.com';
-
-    public function init_defaults()
-    {
-        parent::init_defaults();
-
-        $this->set_feature(Plugin_Constants::BALANCE_SUPPORTED, true);
-    }
-
     /**
      * Get information from the account
      * @param &$plugin_cookies
@@ -46,7 +37,7 @@ class cbilling_config extends default_config
 
             if ($force !== false || empty($this->account_data)) {
                 $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
-                $json = HD::DownloadJson(self::API_HOST . '/auth/info', true, $headers);
+                $json = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . '/auth/info', true, $headers);
                 if (!isset($json['data'])) {
                     throw new Exception("Account info not loaded");
                 }
@@ -97,7 +88,7 @@ class cbilling_config extends default_config
     {
         hd_print(__METHOD__ . ": $movie_id");
         $movie = new Movie($movie_id, $this->parent);
-        $json = HD::DownloadJson(self::API_HOST . "/video/$movie_id", false);
+        $json = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/video/$movie_id", false);
         if ($json === false) {
             return $movie;
         }
@@ -164,7 +155,7 @@ class cbilling_config extends default_config
             return '';
         }
 
-        return self::API_HOST . '/genres';
+        return $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . '/genres';
     }
 
     /**
@@ -190,7 +181,7 @@ class cbilling_config extends default_config
             $total += $node->count;
 
             // fetch genres for category
-            $genres = HD::DownloadJson(self::API_HOST . "/cat/$id/genres", false);
+            $genres = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/cat/$id/genres", false);
             if ($genres === false) {
                 continue;
             }
@@ -223,7 +214,7 @@ class cbilling_config extends default_config
     public function getSearchList($keyword, $plugin_cookies)
     {
         //hd_print("getSearchList");
-        $url = self::API_HOST . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
+        $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
         $searchRes = HD::DownloadJson($url, false);
         return $searchRes === false ? array() : $this->CollectSearchResult($searchRes);
     }
@@ -252,7 +243,7 @@ class cbilling_config extends default_config
             $url = "/genres/$genre_id?page=$val";
         }
 
-        $categories = HD::DownloadJson(self::API_HOST . $url, false);
+        $categories = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . $url, false);
         return $categories === false ? array() : $this->CollectSearchResult($categories);
     }
 

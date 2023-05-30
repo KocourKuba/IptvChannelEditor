@@ -3,8 +3,6 @@ require_once 'lib/default_config.php';
 
 class glanz_config extends default_config
 {
-    const API_HOST = 'http://api.ottg.tv';
-
     public function init_defaults()
     {
         parent::init_defaults();

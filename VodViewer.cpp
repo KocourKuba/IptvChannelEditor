@@ -136,9 +136,10 @@ BOOL CVodViewer::OnInitDialog()
 		int idx = m_wndPlaylist.AddString(vod.get_name().c_str());
 	}
 
-	m_wndPlaylist.SetCurSel(m_plugin->get_vod_template_idx());
+	int idx = m_plugin->get_vod_template_idx();
+	m_wndPlaylist.SetCurSel(idx);
 	m_wndPlaylist.EnableWindow(m_wndPlaylist.GetCount() > 1);
-	m_current_vod = m_vod_storages[m_plugin->get_current_vod_template()];
+	m_current_vod = m_vod_storages[m_plugin->get_vod_template(idx)];
 
 	LoadPlaylist();
 
@@ -228,12 +229,13 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	{
 		params.subdomain = m_account.get_portal();
 	}
-	else
+	else if (m_plugin->get_plugin_type() == PluginType::enSharaclub)
 	{
-		params.login = m_account.get_login();
-		params.password = m_account.get_password();
-		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
+		params.subdomain = m_plugin->get_playlist_domain(m_plugin->get_playlist_idx());
 	}
+
+	params.login = m_account.get_login();
+	params.password = m_account.get_password();
 
 	auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
 
@@ -1118,7 +1120,7 @@ void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 {
 	CWaitCursor cur;
 
-	const auto& url = m_plugin->get_current_vod_template() + L"/video/" + movie.id;
+	const auto& url = m_plugin->get_vod_url(TemplateParams()) + L"/video/" + movie.id;
 	std::stringstream data;
 	if (url.empty() || !m_plugin->download_url(url, data))
 	{

@@ -49,15 +49,17 @@ void plugin_antifriz::load_default()
 	access_type = AccountAccessType::enPin;
 
 	provider_url = "https://antifriztv.com/";
+	provider_api_url = "http://protected-api.com";
 
 	PlaylistTemplateInfo vod_info;
 	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
-	vod_info.pl_template = "http://protected-api.com";
+	vod_info.pl_template = "{API_URL}";
 	vod_templates.emplace_back(vod_info);
 	vod_support = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://af-play.com/playlist/{PASSWORD}.m3u8";
+	info.pl_domain = "https://af-play.com";
+	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<password>.+)\.m3u8?$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
 	playlist_templates.emplace_back(info);
@@ -70,6 +72,10 @@ void plugin_antifriz::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}:80/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
-	epg_params[0].epg_url = "http://protected-api.com/epg/{EPG_ID}/?date=";
+	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";
 	epg_params[0].epg_root = "";
+
+	epg_params[1].epg_domain = "http://epg.drm-play.com";
+	epg_params[1].epg_url = "{EPG_DOMAIN}/antifriz%2Fepg%2F{EPG_ID}.json";
+	epg_params[1].epg_root = "epg_data";
 }

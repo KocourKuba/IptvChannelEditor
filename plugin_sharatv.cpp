@@ -50,7 +50,8 @@ void plugin_sharatv::load_default()
 	provider_url = "https://shara-tv.org/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
+	info.pl_domain = "http://tvfor.pro";
+	info.pl_template = "{PL_DOMAIN}/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+):(?<password>.+)\/.+\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
@@ -58,5 +59,6 @@ void plugin_sharatv::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.com/shara-tv%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/shara-tv%2Fepg%2F{EPG_ID}.json";
 }

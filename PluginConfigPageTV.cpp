@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPageTV, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_CHECK_MAP_TAG_TO_ID, &CPluginConfigPageTV::OnBnClickedCheckMapTagToId)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST_TEMPLATE, &CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_TEMPLATES, &CPluginConfigPageTV::OnBnClickedButtonEditTemplates)
+	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_DOMAIN, &CPluginConfigPageTV::OnEnChangeEditPlaylistDomain)
 	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_TEMPLATE, &CPluginConfigPageTV::OnEnChangeEditPlaylistTemplate)
 	ON_EN_CHANGE(IDC_EDIT_DURATION, &CPluginConfigPageTV::OnEnChangeEditDuration)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_TEMPLATE, &CPluginConfigPageTV::OnEnChangeEditStreamTemplate)
@@ -78,6 +79,8 @@ void CPluginConfigPageTV::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_CATCHUP_TYPE, m_wndCatchupType);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST_TEMPLATE, m_wndPlaylistTemplates);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_TEMPLATES, m_wndBtnEditTemplates);
+	DDX_Control(pDX, IDC_EDIT_PLAYLIST_DOMAIN, m_wndPlaylistDomain);
+	DDX_Text(pDX, IDC_EDIT_PLAYLIST_DOMAIN, m_PlaylistDomain);
 	DDX_Control(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_wndPlaylistTemplate);
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_PlaylistTemplate);
 	DDX_Control(pDX, IDC_BUTTON_PLAYLIST_SHOW, m_wndBtnPlaylistTest);
@@ -111,6 +114,7 @@ BOOL CPluginConfigPageTV::OnInitDialog()
 	AddTooltip(IDC_CHECK_MAP_TAG_TO_ID, IDS_STRING_CHECK_MAP_TAG_TO_ID);
 	AddTooltip(IDC_CHECK_EPG_ID_FROM_ID, IDS_STRING_CHECK_EPG_ID_FROM_ID);
 	AddTooltip(IDC_EDIT_DUNE_PARAMS, IDS_STRING_EDIT_DUNE_PARAMS);
+	AddTooltip(IDC_EDIT_PLAYLIST_DOMAIN, IDS_STRING_EDIT_PLAYLIST_DOMAIN);
 
 	m_wndToolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 10000);
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
@@ -158,6 +162,8 @@ void CPluginConfigPageTV::AssignMacros()
 
 	std::vector<std::wstring> pl_params =
 	{
+		REPL_API_URL,
+		REPL_PL_DOMAIN,
 		REPL_SUBDOMAIN,
 		REPL_LOGIN,
 		REPL_PASSWORD,
@@ -180,6 +186,7 @@ void CPluginConfigPageTV::AssignMacros()
 						   REPL_HOST,
 						   REPL_VAR1,
 						   REPL_VAR2,
+						   REPL_VAR3,
 					   });
 
 	m_wndStreamTemplate.SetTemplateParams(strm_params);
@@ -212,7 +219,8 @@ void CPluginConfigPageTV::UpdateControls()
 	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	// common
-	m_wndPlaylistTemplates.EnableWindow(!readOnly);
+	m_wndPlaylistDomain.SetReadOnly(readOnly);
+	m_wndBtnEditTemplates.EnableWindow(!readOnly);
 	m_wndPlaylistTemplate.SetReadOnly(readOnly);
 	m_wndChkPerChannelToken.EnableWindow(!readOnly);
 	m_wndChkEpgIdFromID.EnableWindow(!readOnly);
@@ -224,7 +232,6 @@ void CPluginConfigPageTV::UpdateControls()
 	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
 
 	// streams
-	m_wndStreamType.EnableWindow(!readOnly);
 	m_wndCatchupType.EnableWindow(!readOnly);
 	m_wndDuration.SetReadOnly(readOnly);
 	m_wndDuneParams.SetReadOnly(readOnly);
@@ -244,7 +251,7 @@ void CPluginConfigPageTV::FillControls()
 	for (const auto& entry : plugin->get_playlist_infos())
 	{
 		auto name = entry.get_name();
-		if (idx == plugin->get_playlist_template_idx())
+		if (idx == plugin->get_playlist_idx())
 		{
 			current = idx;
 			name += fmt::format(L" ({:s})", load_string_resource(IDS_STRING_CURRENT));
@@ -268,6 +275,7 @@ void CPluginConfigPageTV::FillPlaylistSettings(size_t index)
 	const auto& plugin = GetPropertySheet()->m_plugin;
 	if (!plugin) return;
 
+	m_PlaylistDomain = plugin->get_playlist_domain(index).c_str();
 	m_PlaylistTemplate = plugin->get_playlist_template(index).c_str();
 	m_ParseStream = plugin->get_uri_parse_pattern(index).c_str();
 	m_wndChkPerChannelToken.SetCheck(plugin->get_per_channel_token(index) != false);
@@ -383,6 +391,13 @@ void CPluginConfigPageTV::OnEnChangeEditParsePattern()
 	UpdateData(TRUE);
 	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
 	GetPropertySheet()->m_plugin->set_uri_parse_pattern(m_wndPlaylistTemplates.GetCurSel(), m_ParseStream.GetString());
+	AllowSave();
+}
+
+void CPluginConfigPageTV::OnEnChangeEditPlaylistDomain()
+{
+	UpdateData(TRUE);
+	GetPropertySheet()->m_plugin->set_playlist_domain(m_wndPlaylistTemplates.GetCurSel(), m_PlaylistDomain.GetString());
 	AllowSave();
 }
 

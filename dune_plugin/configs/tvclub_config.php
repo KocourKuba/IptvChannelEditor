@@ -3,15 +3,6 @@ require_once 'lib/default_config.php';
 
 class tvclub_config extends default_config
 {
-    const API_HOST = 'http://api.iptv.so/0.9/json';
-
-    public function init_defaults()
-    {
-        parent::init_defaults();
-
-        $this->set_feature(Plugin_Constants::BALANCE_SUPPORTED, true);
-    }
-
     /**
      * @param $plugin_cookies
      * @return string
@@ -30,7 +21,7 @@ class tvclub_config extends default_config
         $servers = parent::get_servers($plugin_cookies);
         if (empty($servers)) {
             try {
-                $json = HD::DownloadJson(self::API_HOST . "/servers?token=$plugin_cookies->token");
+                $json = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/servers?token=$plugin_cookies->token");
                 $servers = array();
                 foreach ($json['servers'] as $item) {
                     $servers[$item['id']] = $item['name'];
@@ -121,7 +112,7 @@ class tvclub_config extends default_config
                 throw new Exception("Token not loaded");
             }
 
-            $url = self::API_HOST . "/account?token=$plugin_cookies->token";
+            $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$plugin_cookies->token";
             // provider returns token used to download playlist
             $json = HD::DownloadJson($url);
             if (!isset($json['account']['info']['login'])) {
@@ -150,7 +141,7 @@ class tvclub_config extends default_config
         }
 
         try {
-            $url = self::API_HOST . "/set?token=$plugin_cookies->token&$param={$plugin_cookies->$param}";
+            $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/set?token=$plugin_cookies->token&$param={$plugin_cookies->$param}";
             HD::http_get_document($url);
             $this->load_settings($plugin_cookies);
             return true;

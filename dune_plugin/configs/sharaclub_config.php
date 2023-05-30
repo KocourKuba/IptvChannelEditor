@@ -3,15 +3,11 @@ require_once 'lib/default_config.php';
 
 class sharaclub_config extends default_config
 {
-    const API_HOST = "http://conf.playtv.pro/api";
-
     public function init_defaults()
     {
         parent::init_defaults();
 
         $this->set_feature(Plugin_Constants::VOD_FILTER_SUPPORTED, true);
-        $this->set_feature(Plugin_Constants::BALANCE_SUPPORTED, true);
-        $this->set_feature(Plugin_Constants::API_REQUEST_URL, "http://{SUBDOMAIN}/api/players.php?a={COMMAND}&u={LOGIN}-{PASSWORD}&source=dune_editor");
     }
 
     /**
@@ -22,9 +18,13 @@ class sharaclub_config extends default_config
     private function replace_api_command($command, $plugin_cookies)
     {
         return str_replace(
-            array('{SUBDOMAIN}', '{LOGIN}', '{PASSWORD}', '{COMMAND}'),
-            array($plugin_cookies->subdomain, $this->get_login($plugin_cookies), $this->get_password($plugin_cookies), $command),
-            $this->get_feature(Plugin_Constants::API_REQUEST_URL));
+            array(Plugin_Macros::API_URL, Plugin_Macros::LOGIN, Plugin_Macros::PASSWORD, Plugin_Macros::COMMAND),
+            array($this->get_feature(Plugin_Constants::PROVIDER_API_URL),
+                $this->get_login($plugin_cookies),
+                $this->get_password($plugin_cookies),
+                $command),
+            Plugin_Macros::API_URL . "/api/players.php?a=" . Plugin_Macros::COMMAND .
+            "&u=" . Plugin_Macros::LOGIN. "-" . Plugin_Macros::PASSWORD . "&source=dune_editor");
     }
 
     /**
@@ -166,12 +166,12 @@ class sharaclub_config extends default_config
 
             if ($force !== false || empty($this->account_data)) {
                 hd_print("Load player configuration");
-                $api = HD::DownloadJson(self::API_HOST . '/con8fig.php?source=dune_editor', false);
+                $api = HD::DownloadJson(base64_decode("aHR0cDovL2NvbmYucGxheXR2LnByby9hcGkvY29uOGZpZy5waHA/c291cmNlPWR1bmVfZWRpdG9y"), false);
                 if ($api === false) {
                     hd_print("Unable to load player configuration");
                 } else {
-                    $plugin_cookies->subdomain = $api->listdomain;
-                    $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_URL, "http://$api->jsonEpgDomain/get/?type=epg&ch={EPG_ID}");
+                    $this->set_feature(Plugin_Constants::PROVIDER_API_URL, "http://$api->listdomain");
+                    $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_DOMAIN, "http://$api->jsonEpgDomain");
 
                     $url = $this->replace_api_command('subscr_info', $plugin_cookies);
                     $json = HD::DownloadJson($url);

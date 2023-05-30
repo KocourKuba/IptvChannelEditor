@@ -3,15 +3,6 @@ require_once 'lib/default_config.php';
 
 class itv_config extends default_config
 {
-    const API_HOST = 'http://api.itv.live';
-
-    public function init_defaults()
-    {
-        parent::init_defaults();
-
-        $this->set_feature(Plugin_Constants::BALANCE_SUPPORTED, true);
-    }
-
     /**
      * Get information from the account
      * @param &$plugin_cookies
@@ -30,7 +21,7 @@ class itv_config extends default_config
             }
 
             if ($force !== false || empty($this->account_data)) {
-                $url = sprintf(self::API_HOST . '/data/%s', $password);
+                $url = sprintf($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . '/data/%s', $password);
                 $json = HD::DownloadJson($url);
                 if (empty($json['package_info'])) {
                     throw new Exception("Account status unknown");

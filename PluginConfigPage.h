@@ -51,6 +51,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void OnBnClickedCheckSquareIcons();
+	afx_msg void OnBnClickedCheckEnableBalance();
 	afx_msg void OnBnClickedButtonEditServers();
 	afx_msg void OnBnClickedButtonEditDevices();
 	afx_msg void OnBnClickedButtonEditQuality();
@@ -61,6 +62,7 @@ protected:
 	afx_msg void OnEnChangeEditUserAgent();
 	afx_msg void OnEnChangeEditProviderUrl();
 	afx_msg void OnEnChangeEditClassName();
+	afx_msg void OnEnChangeEditApiUrl();
 
 	afx_msg void OnCbnSelchangeComboAccessType();
 
@@ -83,6 +85,7 @@ protected:
 	CEdit m_wndUserAgent;
 	CEdit m_wndProviderUrl;
 	CEdit m_wndClassName;
+	CEdit m_wndProviderApiUrl;
 
 	CComboBox m_wndAccessType;
 	CButton m_wndBtnExtFiles;
@@ -96,10 +99,12 @@ protected:
 	CButton m_wndBtnQualities;
 	CButton m_wndChkSquareIcons;
 	CButton m_wndBtnProfiles;
+	CButton m_wndChkEnableBalance;
 
 	CString m_Name;
 	CString m_Title;
 	CString m_UserAgent;
 	CString m_ProviderUrl;
 	CString m_ClassName;
+	CString m_ProviderApiUrl;
 };

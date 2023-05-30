@@ -38,8 +38,8 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto API_COMMAND_GET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}";
-static constexpr auto API_COMMAND_SET_URL = L"http://api.iptv.so/0.9/json/{:s}?token={:s}&{:s}={:s}";
+static constexpr auto API_COMMAND_GET_URL = L"{:s}/{:s}?token={:s}";
+static constexpr auto API_COMMAND_SET_URL = L"{:s}/{:s}?token={:s}&{:s}={:s}";
 
 plugin_tvclub::plugin_tvclub()
 {
@@ -56,9 +56,12 @@ void plugin_tvclub::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "https://tvclub.cc/";
+	provider_api_url = "http://api.iptv.so/0.9/json";
+	balance_support = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://celn.shott.top/p/{TOKEN}";
+	info.pl_domain = "http://celn.shott.top";
+	info.pl_template = "{PL_DOMAIN}/p/{TOKEN}";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
 	playlist_templates.emplace_back(info);
@@ -70,7 +73,7 @@ void plugin_tvclub::load_default()
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
 
 	auto& params = epg_params[0];
-	params.epg_url = "http://api.iptv.so/0.9/json/epg?token={TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24";
+	params.epg_url = "{API_URL}/epg?token={TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24";
 	params.epg_root = "epg|channels|[0]|epg";
 	params.epg_name = "text";
 	params.epg_desc = "description";
@@ -92,7 +95,7 @@ bool plugin_tvclub::parse_access_info(TemplateParams& params, std::list<AccountI
 	creds.set_password(params.password);
 
 	std::stringstream data;
-	const auto& url = fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(creds));
+	const auto& url = fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"account", get_api_token(creds));
 
 	CWaitCursor cur;
 	if (!download_url(url, data))
@@ -154,7 +157,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams* params /*= nullptr*/)
 	creds.set_login(params->login);
 	creds.set_password(params->password);
 
-	const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(creds));
+	const auto& url = fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"settings", get_api_token(creds));
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -199,6 +202,7 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 		creds.set_password(params.password);
 
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
+									  utils::utf8_to_utf16(provider_api_url),
 									  L"set",
 									  get_api_token(creds),
 									  L"server",

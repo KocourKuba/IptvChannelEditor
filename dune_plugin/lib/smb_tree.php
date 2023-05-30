@@ -293,11 +293,11 @@ class smb_tree
             if (isset($df_smb[str_replace(array('/', '\134'), '', $k)])) {
                 $mounts['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['foldername'] = $vel['foldername'];
                 $mounts['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['ip'] = $k;
-                if (isset($vel['user']) && !empty($vel['user'])) {
+                if (!empty($vel['user'])) {
                     $mounts['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['user'] = $vel['user'];
                 }
 
-                if ((isset($vel['password'])) && !empty($vel['password'])) {
+                if (!empty($vel['password'])) {
                     $mounts['/tmp/mnt/smb/' . $df_smb[str_replace(array('/', '\134'), '', $k)]]['password'] = $vel['password'];
                 }
             } else {
@@ -305,11 +305,11 @@ class smb_tree
                 $n = count($df_smb);
                 $username = 'guest';
                 $password = '';
-                if ((isset($vel['user'])) && !empty($vel['user'])) {
+                if (!empty($vel['user'])) {
                     $username = $vel['user'];
                 }
 
-                if ((isset($vel['password'])) && !empty($vel['password'])) {
+                if (!empty($vel['password'])) {
                     $password = $vel['password'];
                 }
 
@@ -339,20 +339,20 @@ class smb_tree
                     $mounts['err_' . $vel['foldername']]['ip'] = $k;
                     $mounts['err_' . $vel['foldername']]['err'] = trim($ret_code);
 
-                    if (isset($vel['user']) && !empty($vel['user'])) {
+                    if (!empty($vel['user'])) {
                         $mounts['err_' . $vel['foldername']]['user'] = $vel['user'];
                     }
 
-                    if (isset($vel['password']) && !empty($vel['password'])) {
+                    if (!empty($vel['password'])) {
                         $mounts['err_' . $vel['foldername']]['password'] = $vel['password'];
                     }
                 } else {
                     $mounts[$fn]['foldername'] = $vel['foldername'];
                     $mounts[$fn]['ip'] = $k;
-                    if ((isset($vel['user'])) && !empty($vel['user'])) {
+                    if (!empty($vel['user'])) {
                         $mounts[$fn]['user'] = $vel['user'];
                     }
-                    if ((isset($vel['password'])) && !empty($vel['password'])) {
+                    if (!empty($vel['password'])) {
                         $mounts[$fn]['password'] = $vel['password'];
                     }
                 }

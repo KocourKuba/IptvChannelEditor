@@ -104,9 +104,6 @@ private:
 public:
 	CString m_status;
 
-	std::wstring m_list_domain;
-	std::wstring m_epg_domain;
-
 	Credentials m_selected_cred;
 	uri_stream* m_CurrentStream = nullptr;
 	std::vector<std::wstring> m_all_channels_lists;

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="278" scanned="20230521164216" built="20230519224829" lang="ru" pane="TLogPane" col="3">
+<desktop scan="284" scanned="20230601181808" built="20230601182432" lang="ru" pane="TLogPane" col="1" row="DlgInits.110.1200.1">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>
@@ -12,11 +12,6 @@
       <item class="TOriginalColumn" width="575"/>
       <item class="TTranslationColumn" lang="ru" width="582"/>
     </columns>
-    <filters>
-      <current>
-        <statuses>[tsNotTranslated,tsBestGuess,tsAutoTranslated,tsTranslated,tsForReview]</statuses>
-      </current>
-    </filters>
     <params>
       <findtext>Splash</findtext>
       <findtext>2009</findtext>
@@ -29,8 +24,6 @@
   <path>
     <item>All</item>
     <item>Release Unicode\IPTVChannelEditor.exe</item>
-    <item>Dialogs</item>
-    <item>136</item>
   </path>
   <export format="efXliff">
     <filter duplicates="dfDuplicatesEqual">

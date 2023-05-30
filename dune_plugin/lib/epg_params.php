@@ -3,6 +3,7 @@
 class Epg_Params
 {
     const /* (int)	    */ EPG_PARAM        = 'epg_param';
+    const /* (char *)	*/ EPG_DOMAIN       = 'epg_domain';
     const /* (char *)	*/ EPG_URL          = 'epg_url';
     const /* (char *)	*/ EPG_ROOT         = 'epg_root';
     const /* (int)	    */ EPG_START        = 'epg_start';

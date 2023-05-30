@@ -151,7 +151,7 @@ class default_config extends dynamic_config
 
     /**
      * @param $plugin_cookies
-     * @return int|null
+     * @return mixed
      */
     public function get_server_id($plugin_cookies)
     {
@@ -168,7 +168,7 @@ class default_config extends dynamic_config
     }
 
     /**
-     * @param $server
+     * @param $server int
      * @param $plugin_cookies
      */
     public function set_server_id($server, $plugin_cookies)
@@ -187,7 +187,7 @@ class default_config extends dynamic_config
 
     /**
      * @param $plugin_cookies
-     * @return int|null
+     * @return int
      */
     public function get_device_id($plugin_cookies)
     {
@@ -588,26 +588,27 @@ class default_config extends dynamic_config
         $ext_params[Ext_Params::M_SERVER_ID] = $this->get_server_id($plugin_cookies);
 
         $replaces = array(
-            Plugin_Constants::CGI_BIN    => '{CGI_BIN}',
-            Plugin_Constants::CHANNEL_ID => '{ID}',
-            Stream_Params::CU_START      => '{START}',
-            Stream_Params::CU_NOW        => '{NOW}',
-            Stream_Params::CU_DURATION   => '{DURATION}',
-            Stream_Params::CU_STOP       => '{STOP}',
-            Stream_Params::CU_OFFSET     => '{OFFSET}',
-            Ext_Params::M_SUBDOMAIN      => '{SUBDOMAIN}',
-            Ext_Params::M_DOMAIN         => '{DOMAIN}',
-            Ext_Params::M_PORT           => '{PORT}',
-            Ext_Params::M_LOGIN          => '{LOGIN}',
-            Ext_Params::M_PASSWORD       => '{PASSWORD}',
-            Ext_Params::M_TOKEN          => '{TOKEN}',
-            Ext_Params::M_INT_ID         => '{INT_ID}',
-            Ext_Params::M_HOST           => '{HOST}',
-            Ext_Params::M_QUALITY_ID     => '{QUALITY_ID}',
-            Ext_Params::M_DEVICE_ID      => '{DEVICE_ID}',
-            Ext_Params::M_SERVER_ID      => '{SERVER_ID}',
-            Ext_Params::M_VAR1           => '{VAR1}',
-            Ext_Params::M_VAR2           => '{VAR2}',
+            Plugin_Constants::CGI_BIN    => Plugin_Macros::CGI_BIN,
+            Plugin_Constants::CHANNEL_ID => Plugin_Macros::ID,
+            Stream_Params::CU_START      => Plugin_Macros::START,
+            Stream_Params::CU_NOW        => Plugin_Macros::NOW,
+            Stream_Params::CU_DURATION   => Plugin_Macros::DURATION,
+            Stream_Params::CU_STOP       => Plugin_Macros::STOP,
+            Stream_Params::CU_OFFSET     => Plugin_Macros::OFFSET,
+            Ext_Params::M_SUBDOMAIN      => Plugin_Macros::SUBDOMAIN,
+            Ext_Params::M_DOMAIN         => Plugin_Macros::DOMAIN,
+            Ext_Params::M_PORT           => Plugin_Macros::PORT,
+            Ext_Params::M_LOGIN          => Plugin_Macros::LOGIN,
+            Ext_Params::M_PASSWORD       => Plugin_Macros::PASSWORD,
+            Ext_Params::M_TOKEN          => Plugin_Macros::TOKEN,
+            Ext_Params::M_INT_ID         => Plugin_Macros::INT_ID,
+            Ext_Params::M_HOST           => Plugin_Macros::HOST,
+            Ext_Params::M_QUALITY_ID     => Plugin_Macros::QUALITY_ID,
+            Ext_Params::M_DEVICE_ID      => Plugin_Macros::DEVICE_ID,
+            Ext_Params::M_SERVER_ID      => Plugin_Macros::SERVER_ID,
+            Ext_Params::M_VAR1           => Plugin_Macros::VAR1,
+            Ext_Params::M_VAR2           => Plugin_Macros::VAR2,
+            Ext_Params::M_VAR3           => Plugin_Macros::VAR3,
         );
 
         $channel_custom_url = $channel->get_custom_url();
@@ -638,7 +639,7 @@ class default_config extends dynamic_config
 
         if ($is_archive) {
             // replace macros to live url
-            $play_template_url = str_replace('{LIVE_URL}', $live_url, $archive_url);
+            $play_template_url = str_replace(Plugin_Macros::LIVE_URL, $live_url, $archive_url);
             $custom_stream_type = $channel->get_custom_archive_url_type();
         } else {
             $play_template_url = $live_url;
@@ -674,7 +675,7 @@ class default_config extends dynamic_config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account: $force");
+        hd_print(__METHOD__ . ": Collect information from account: $force");
 
         if (isset($this->account_data) && !$force)
             return $this->account_data;
@@ -707,18 +708,18 @@ class default_config extends dynamic_config
 
         $parse_pattern = $this->get_tv_parse_pattern($plugin_cookies);
         if (empty($parse_pattern)) {
-            hd_print("Empty tv parsing pattern!");
+            hd_print(__METHOD__ . ": Empty tv parsing pattern!");
         }
 
         $template = $this->get_current_tv_template($plugin_cookies);
         $tag_id = isset($template[Plugin_Constants::TAG_ID_MATCH]) ? $template[Plugin_Constants::TAG_ID_MATCH] : '';
         if (!empty($tag_id)) {
-            hd_print("ID matching tag: $tag_id");
+            hd_print(__METHOD__ . ": ID matching tag: $tag_id");
         }
 
         $m3u_entries = $this->get_tv_m3u_entries();
         $total = count($m3u_entries);
-        hd_print("Parsing $total playlist entries");
+        hd_print(__METHOD__ . ": Parsing $total playlist entries");
 
         $mapped = 0;
         foreach ($m3u_entries as $entry) {
@@ -726,7 +727,7 @@ class default_config extends dynamic_config
                 // special case for name, otherwise take ID from selected tag
                 $id = ($tag_id === 'name') ? $entry->getTitle() : $entry->getAttribute($tag_id);
                 if (empty($id)) {
-                    hd_print("Unable to map ID by $tag_id for entry with url: " . $entry->getPath());
+                    hd_print(__METHOD__ . ": Unable to map ID by $tag_id for entry with url: " . $entry->getPath());
                     continue;
                 }
             }
@@ -747,7 +748,7 @@ class default_config extends dynamic_config
             hd_print($this->last_error);
             $this->ClearPlaylistCache($plugin_cookies);
         } else {
-            hd_print("Total entries:" . count($pl_entries) . ", mapped to ID $mapped: ");
+            hd_print(__METHOD__ . ": Total entries:" . count($pl_entries) . ", mapped to ID $mapped: ");
         }
 
         return $pl_entries;
@@ -762,7 +763,7 @@ class default_config extends dynamic_config
     {
         $tmp_file = get_temp_path($this->get_tv_list_idx($plugin_cookies) . "_playlist_tv.m3u8");
         $this->tv_m3u_entries = null;
-        hd_print("Clear playlist cache: $tmp_file");
+        hd_print(__METHOD__ . ": $tmp_file");
         if (file_exists($tmp_file)) {
             copy($tmp_file, $tmp_file . ".m3u");
             unlink($tmp_file);
@@ -778,8 +779,10 @@ class default_config extends dynamic_config
     {
         $tmp_file = get_temp_path($this->get_vod_list_idx($plugin_cookies) . "_playlist_vod.m3u8");
         $bak_file = $tmp_file . ".bak";
-        copy($tmp_file, $bak_file);
-        hd_print("Clear VOD cache: $tmp_file");
+        if (file_exists($tmp_file)) {
+            copy($tmp_file, $bak_file);
+        }
+        hd_print(__METHOD__ . ": $tmp_file");
         if (file_exists($tmp_file)) {
             copy($tmp_file, $tmp_file . ".m3u");
             unlink($tmp_file);
@@ -794,7 +797,7 @@ class default_config extends dynamic_config
     public function ClearChannelsCache($plugin_cookies)
     {
         $tmp_file = get_temp_path($plugin_cookies->channels_list);
-        hd_print("Clear channels cache: $tmp_file");
+        hd_print(__METHOD__ . ": $tmp_file");
         if (file_exists($tmp_file)) {
             unlink($tmp_file);
         }
@@ -807,7 +810,7 @@ class default_config extends dynamic_config
      */
     public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
     {
-        hd_print("fetch_vod_categories");
+        hd_print(__METHOD__);
         $category_list = array();
         $category_index = array();
 
@@ -839,8 +842,8 @@ class default_config extends dynamic_config
             $category_list[] = $cat;
             $category_index[$group] = $cat;
         }
-        hd_print("Categories read: " . count($category_list));
-        hd_print("Fetched categories at " . (microtime(1) - $t) . " secs");
+        hd_print(__METHOD__ . ": Categories read: " . count($category_list));
+        hd_print(__METHOD__ . ": Fetched categories at " . (microtime(1) - $t) . " secs");
         HD::ShowMemoryUsage();
     }
 
@@ -873,12 +876,12 @@ class default_config extends dynamic_config
             if ($entry === null) continue;
 
             $poster_url = $entry->getAttribute('tvg-logo');
-            hd_print("Found at $index movie '$title', poster url: '$poster_url'");
+            hd_print(__METHOD__ . ": Found at $index movie '$title', poster url: '$poster_url'");
             $movies[] = new Short_Movie($index, $title, $poster_url);
         }
 
-        hd_print("Movies found: " . count($movies));
-        hd_print("Search at " . (microtime(1) - $t) . " secs");
+        hd_print(__METHOD__ . ": Movies found: " . count($movies));
+        hd_print(__METHOD__ . ": Search at " . (microtime(1) - $t) . " secs");
 
         return $movies;
     }
@@ -913,7 +916,7 @@ class default_config extends dynamic_config
         $vod_pattern = $this->get_vod_parse_pattern($plugin_cookies);
         $max = count($indexes);
         $ubound = min($max, $current_offset + 5000);
-        hd_print("Read from: $current_offset to $ubound");
+        hd_print(__METHOD__ . ": Read from: $current_offset to $ubound");
 
         $pos = $current_offset;
         while($pos < $ubound) {
@@ -948,7 +951,7 @@ class default_config extends dynamic_config
         $vod_pattern = $this->get_vod_parse_pattern($plugin_cookies);
         $entry = $this->m3u_parser->getEntryByIdx($movie_id);
         if ($entry === null) {
-            hd_print("Movie not found");
+            hd_print(__METHOD__ . ": Movie not found");
         } else {
             $logo = $entry->getAttribute('tvg-logo');
             $title = $entry->getTitle();
@@ -1007,7 +1010,7 @@ class default_config extends dynamic_config
         $vod_template = $this->get_current_vod_template($plugin_cookies);
         $url_prefix = isset($vod_template[Plugin_Constants::URL_PREFIX]) ? $vod_template[Plugin_Constants::URL_PREFIX] : '';
 
-        $url_prefix = str_replace('{CGI_BIN}', get_plugin_cgi_url(), $url_prefix);
+        $url_prefix = str_replace(Plugin_Macros::CGI_BIN, get_plugin_cgi_url(), $url_prefix);
         if (!empty($url_prefix)) {
             $url = $url_prefix . $url;
         }
@@ -1035,7 +1038,7 @@ class default_config extends dynamic_config
             //hd_print("Additional dune params: $dune_params");
             $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
             $dune_params = trim($dune_params, '|');
-            $dune_params = str_replace('{BUFFERING}', $buf_time, $dune_params);
+            $dune_params = str_replace(Plugin_Macros::BUFFERING, $buf_time, $dune_params);
             $url .= "|||dune_params|||$dune_params";
         }
 
@@ -1063,7 +1066,7 @@ class default_config extends dynamic_config
             if (file_exists($m3u_file)) {
                 $mtime = filemtime($m3u_file);
                 if (time() - $mtime > 3600) {
-                    hd_print("Playlist cache expired. Forcing reload");
+                    hd_print(__METHOD__ . ": Playlist cache expired. Forcing reload");
                     $force = true;
                 }
             } else {
@@ -1076,12 +1079,12 @@ class default_config extends dynamic_config
                 $url = $this->GetPlaylistUrl($plugin_cookies);
                 //hd_print("tv1 m3u8 playlist: " . $url);
                 if (empty($url)) {
-                    hd_print("Tv playlist not defined");
+                    hd_print(__METHOD__ . "Tv playlist not defined");
                     throw new Exception('Tv playlist not defined');
                 }
                 file_put_contents($m3u_file, HD::http_get_document($url));
             } catch (Exception $ex) {
-                hd_print("Unable to load tv playlist: " . $ex->getMessage());
+                hd_print(__METHOD__ . ": Unable to load tv playlist: " . $ex->getMessage());
             }
         }
 
@@ -1100,7 +1103,7 @@ class default_config extends dynamic_config
             if (file_exists($m3u_file)) {
                 $mtime = filemtime($m3u_file);
                 if (time() - $mtime > 3600) {
-                    hd_print("VOD playlist cache expired. Forcing reload");
+                    hd_print(__METHOD__ . ": VOD playlist cache expired. Forcing reload");
                     $force = true;
                 }
             } else {
@@ -1112,13 +1115,13 @@ class default_config extends dynamic_config
             try {
                 $url = $this->GetVodListUrl($plugin_cookies);
                 if (empty($url)) {
-                    hd_print("Vod playlist not defined");
+                    hd_print(__METHOD__ . ": Vod playlist not defined");
                     throw new Exception("Vod playlist not defined");
                 }
 
                 file_put_contents($m3u_file, HD::http_get_document($url));
             } catch (Exception $ex) {
-                hd_print("Unable to load movie playlist: " . $ex->getMessage());
+                hd_print(__METHOD__ . ": Unable to load movie playlist: " . $ex->getMessage());
             }
         }
 
@@ -1133,9 +1136,9 @@ class default_config extends dynamic_config
      */
     protected function GetPlaylistUrl($plugin_cookies)
     {
-        hd_print("Get playlist url for " . $this->get_tv_template_name($plugin_cookies));
+        hd_print(__METHOD__ . ": Get playlist url for " . $this->get_tv_template_name($plugin_cookies));
         $template = $this->get_current_tv_template($plugin_cookies);
-        $url = isset($template[Plugin_Constants::URI_TEMPLATE]) ? $template[Plugin_Constants::URI_TEMPLATE] : '';
+        $url = isset($template[Plugin_Constants::PL_TEMPLATE]) ? $template[Plugin_Constants::PL_TEMPLATE] : '';
         return $this->replace_subs_vars($url, $plugin_cookies);
     }
 
@@ -1156,48 +1159,95 @@ class default_config extends dynamic_config
     protected function replace_subs_vars($url, $plugin_cookies)
     {
         if (!empty($url)) {
-            if (strpos($url, '{LOGIN}') !== false) {
+
+            if (strpos($url, Plugin_Macros::API_URL) !== false) {
+                $api_url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL);
+                if (empty($api_url))
+                    hd_print(__METHOD__ . ": Provider API url not set, but macro was used");
+                else
+                    $url = str_replace(Plugin_Macros::API_URL, $api_url, $url);
+            }
+
+            if (strpos($url, Plugin_Macros::PL_DOMAIN) !== false) {
+                $tv_template = $this->get_current_tv_template($plugin_cookies);
+                $pl_domain = isset($tv_template[Plugin_Constants::PL_DOMAIN]) ? $tv_template[Plugin_Constants::PL_DOMAIN] : '';
+                if (empty($pl_domain))
+                    hd_print(__METHOD__ . ": Playlist domain not set, but macro was used");
+                else
+                    $url = str_replace(Plugin_Macros::PL_DOMAIN, $pl_domain, $url);
+            }
+
+            if (strpos($url, Plugin_Macros::VOD_DOMAIN) !== false) {
+                $vod_template = $this->get_current_vod_template($plugin_cookies);
+                $vod_domain = isset($vod_template[Plugin_Constants::PL_DOMAIN]) ? $vod_template[Plugin_Constants::PL_DOMAIN] : '';
+                if (empty($vod_domain))
+                    hd_print(__METHOD__ . ": Vod domain not set, but macro was used");
+                else
+                    $url = str_replace(Plugin_Macros::VOD_DOMAIN, $vod_domain, $url);
+            }
+
+            if (strpos($url, Plugin_Macros::SUBDOMAIN) !== false) {
+                if (!isset($plugin_cookies->subdomain)) {
+                    hd_print(__METHOD__ . ": Subdomain not set, but macro was used");
+                } else {
+                    $url = str_replace(Plugin_Macros::SUBDOMAIN, $plugin_cookies->subdomain, $url);
+                }
+            }
+
+            if (strpos($url, Plugin_Macros::LOGIN) !== false) {
                 $login = $this->get_login($plugin_cookies);
                 if (empty($login))
-                    hd_print("Login not set");
+                    hd_print(__METHOD__ . ": Login not set, but macro was used");
                 else
-                    $url = str_replace('{LOGIN}', $login, $url);
+                    $url = str_replace(Plugin_Macros::LOGIN, $login, $url);
             }
 
-            if (strpos($url, '{PASSWORD}') !== false) {
+            if (strpos($url, Plugin_Macros::PASSWORD) !== false) {
                 $password = $this->get_password($plugin_cookies);
                 if (empty($password))
-                    hd_print("Password not set");
+                    hd_print(__METHOD__ . ": Password not set, but macro was used");
                 else
-                    $url = str_replace('{PASSWORD}', $password, $url);
+                    $url = str_replace(Plugin_Macros::PASSWORD, $password, $url);
             }
 
-            if (strpos($url, '{TOKEN}') !== false) {
+            if (strpos($url, Plugin_Macros::TOKEN) !== false) {
                 $this->ensure_token_loaded($plugin_cookies);
                 if (empty($plugin_cookies->token))
-                    hd_print("Token not set");
+                    hd_print(__METHOD__ . ": Token not set, but macro was used");
                 else
-                    $url = str_replace('{TOKEN}', $plugin_cookies->token, $url);
+                    $url = str_replace(Plugin_Macros::TOKEN, $plugin_cookies->token, $url);
             }
 
-            if (isset($plugin_cookies->subdomain) && strpos($url, '{SUBDOMAIN}') !== false) {
-                $url = str_replace('{SUBDOMAIN}', $plugin_cookies->subdomain, $url);
+            if (strpos($url, Plugin_Macros::SERVER) !== false) {
+                $server = $this->get_server_name($plugin_cookies);
+                if (empty($server))
+                    hd_print(__METHOD__ . ": Server not set, but macro was used");
+                else
+                    $url = str_replace(Plugin_Macros::SERVER, $server, $url);
             }
 
-            if (strpos($url, '{SERVER}') !== false) {
-                $url = str_replace('{SERVER}', $this->get_server_name($plugin_cookies), $url);
+            if (strpos($url, Plugin_Macros::SERVER_ID) !== false) {
+                $server_id = $this->get_server_id($plugin_cookies);
+                if (empty($server_id))
+                    hd_print(__METHOD__ . ": Server ID not set, but macro was used");
+                else
+                    $url = str_replace(Plugin_Macros::SERVER_ID, $server_id, $url);
             }
 
-            if (strpos($url, '{SERVER_ID}') !== false) {
-                $url = str_replace('{SERVER_ID}', $this->get_server_id($plugin_cookies), $url);
+            if (strpos($url, Plugin_Macros::QUALITY_ID) !== false) {
+                $quality = $this->get_quality_id($plugin_cookies);
+                if (empty($quality))
+                    hd_print(__METHOD__ . ": Quality ID not set, but macro was used");
+                else
+                    $url = str_replace(Plugin_Macros::QUALITY_ID, $quality, $url);
             }
 
-            if (strpos($url, '{QUALITY_ID}') !== false) {
-                $url = str_replace('{QUALITY_ID}', $this->get_quality_id($plugin_cookies), $url);
-            }
-
-            if (strpos($url, '{DEVICE_ID}') !== false) {
-                $url = str_replace('{DEVICE_ID}', $this->get_device_id($plugin_cookies), $url);
+            if (strpos($url, Plugin_Macros::DEVICE_ID) !== false) {
+                $device = $this->get_device_id($plugin_cookies);
+                if (empty($device))
+                    hd_print(__METHOD__ . ": Device ID not set, but macro was used");
+                else
+                $url = str_replace(Plugin_Macros::DEVICE_ID, $device, $url);
             }
         }
         return $url;
@@ -1243,7 +1293,7 @@ class default_config extends dynamic_config
     public function get_vod_uri($plugin_cookies)
     {
         $vod_template = $this->get_current_vod_template($plugin_cookies);
-        return isset($vod_template[Plugin_Constants::URI_TEMPLATE]) ? $vod_template[Plugin_Constants::URI_TEMPLATE] : '';
+        return isset($vod_template[Plugin_Constants::PL_TEMPLATE]) ? $vod_template[Plugin_Constants::PL_TEMPLATE] : '';
     }
 
     /**

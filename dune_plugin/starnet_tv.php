@@ -749,7 +749,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
     {
         $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : SetupControlSwitchDefs::switch_normal;
 
-        $t = microtime(1);
+        //$t = microtime(1);
 
         $this->ensure_channels_loaded($plugin_cookies);
         $this->playback_runtime = PHP_INT_MAX;

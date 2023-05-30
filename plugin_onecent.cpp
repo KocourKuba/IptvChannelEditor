@@ -50,7 +50,8 @@ void plugin_onecent::load_default()
 	provider_url = "https://1cent.tv/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8";
+	info.pl_domain = "http://only4.tv";
+	info.pl_template = "{PL_DOMAIN}/pl/{PASSWORD}/102/only4tv.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
@@ -60,10 +61,12 @@ void plugin_onecent::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}&utc={START}&lutc={NOW}";
 
-	epg_params[1].epg_url = "http://epg.drm-play.com/iptvx.one%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json";
 
 	auto& params1 = epg_params[1];
-	params1.epg_url = "http://epg.iptvx.one/api/id/{EPG_ID}.json";
+	params1.epg_domain = "http://epg.iptvx.one";
+	params1.epg_url = "{EPG_DOMAIN}/api/id/{EPG_ID}.json";
 	params1.epg_root = "ch_programme";
 	params1.epg_name = "title";
 	params1.epg_desc = "description";

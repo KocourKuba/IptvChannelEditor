@@ -23,7 +23,7 @@ class oneott_config extends default_config
             }
 
             if ($force !== false || empty($this->account_data)) {
-                $url = sprintf('http://list.1ott.net/PinApi/%s/%s', $login, $password);
+                $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/PinApi/$login/$password";
                 // provider returns token used to download playlist
                 $json = HD::DownloadJson($url);
                 if (!isset($json['token'])) {

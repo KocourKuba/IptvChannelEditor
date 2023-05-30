@@ -123,6 +123,9 @@ public:
 	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
 	void set_name(UINT ID) { name = utils::utf16_to_utf8(load_string_resource(ID)); }
 
+	std::wstring get_pl_domain() const { return utils::utf8_to_utf16(pl_domain); }
+	void set_pl_domain(const std::wstring& val) { pl_domain = utils::utf16_to_utf8(val); }
+
 	std::wstring get_pl_template() const { return utils::utf8_to_utf16(pl_template); }
 	void set_pl_template(const std::wstring& val) { pl_template = utils::utf16_to_utf8(val); }
 
@@ -150,6 +153,7 @@ public:
 	friend void to_json(nlohmann::json& j, const PlaylistTemplateInfo& c)
 	{
 		SERIALIZE_STRUCT(j, c, name);
+		SERIALIZE_STRUCT(j, c, pl_domain);
 		SERIALIZE_STRUCT(j, c, pl_template);
 		SERIALIZE_STRUCT(j, c, pl_parse_regex);
 		SERIALIZE_STRUCT(j, c, parse_regex);
@@ -163,6 +167,7 @@ public:
 	friend void from_json(const nlohmann::json& j, PlaylistTemplateInfo& c)
 	{
 		DESERIALIZE_STRUCT(j, c, name);
+		DESERIALIZE_STRUCT(j, c, pl_domain);
 		DESERIALIZE_STRUCT(j, c, pl_template);
 		DESERIALIZE_STRUCT(j, c, pl_parse_regex);
 		DESERIALIZE_STRUCT(j, c, parse_regex);
@@ -174,6 +179,7 @@ public:
 	}
 
 	std::string name;
+	std::string pl_domain;
 	std::string pl_template;
 	std::string pl_parse_regex;
 	std::string parse_regex;
@@ -191,6 +197,7 @@ public:
 struct EpgParameters
 {
 	std::string epg_param; // not changed! hardcoded
+	std::string epg_domain;
 	std::string epg_url;
 	std::string epg_root;
 	std::string epg_name;
@@ -206,6 +213,9 @@ struct EpgParameters
 	bool epg_use_mapper = false;
 	std::wstring epg_mapper_url;
 	std::map<std::wstring, std::wstring> epg_mapper;
+
+	std::wstring get_epg_domain() const { return utils::utf8_to_utf16(epg_domain); }
+	void set_epg_domain(const std::wstring& val) { epg_domain = utils::utf16_to_utf8(val); }
 
 	std::wstring get_epg_url() const { return utils::utf8_to_utf16(epg_url); }
 	void set_epg_url(const std::wstring& val) { epg_url = utils::utf16_to_utf8(val); }
@@ -234,6 +244,7 @@ struct EpgParameters
 	friend void to_json(nlohmann::json& j, const EpgParameters& c)
 	{
 		SERIALIZE_STRUCT(j, c, epg_param);
+		SERIALIZE_STRUCT(j, c, epg_domain);
 		SERIALIZE_STRUCT(j, c, epg_url);
 		SERIALIZE_STRUCT(j, c, epg_root);
 		SERIALIZE_STRUCT(j, c, epg_name);
@@ -249,6 +260,7 @@ struct EpgParameters
 	friend void from_json(const nlohmann::json& j, EpgParameters& c)
 	{
 		DESERIALIZE_STRUCT(j, c, epg_param);
+		DESERIALIZE_STRUCT(j, c, epg_domain);
 		DESERIALIZE_STRUCT(j, c, epg_url);
 		DESERIALIZE_STRUCT(j, c, epg_root);
 		DESERIALIZE_STRUCT(j, c, epg_name);
@@ -373,6 +385,11 @@ public:
 	void set_plugin_defaults(PluginType val);
 
 	/// <summary>
+	/// configure internal plugin settings
+	/// </summary>
+	virtual void configure_plugin() {}
+
+	/// <summary>
 	/// plugin type
 	/// </summary>
 	PluginType get_plugin_type() const { return plugin_type; }
@@ -393,7 +410,8 @@ public:
 	/// returns link to provider api url
 	/// </summary>
 	/// <returns>wstring</returns>
-	const std::wstring& get_provider_api_url() const { return provider_api_url; }
+	std::wstring get_provider_api_url() const { return utils::utf8_to_utf16(provider_api_url); }
+	void set_provider_api_url(const std::wstring& val) { provider_api_url = utils::utf16_to_utf8(val); }
 
 	/// <summary>
 	/// property plugin title
@@ -428,11 +446,17 @@ public:
 	/// <summary>
 	/// selected playlist template index
 	/// </summary>
-	size_t get_playlist_template_idx() const { return playlist_template_index; }
-	void set_playlist_template_idx(size_t idx) { playlist_template_index = idx; }
+	size_t get_playlist_idx() const { return playlist_template_index; }
+	void set_playlist_idx(size_t idx) { playlist_template_index = idx; }
 
 	/// <summary>
-	/// property playlist template
+	/// property playlist domain
+	/// </summary>
+	std::wstring get_playlist_domain(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_pl_domain() : L""; }
+	void set_playlist_domain(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_pl_domain(val); }
+
+	/// <summary>
+	/// property playlist template or url
 	/// </summary>
 	std::wstring get_playlist_template(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_pl_template() : L""; }
 	void set_playlist_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_pl_template(val); }
@@ -446,31 +470,16 @@ public:
 	const PlaylistTemplateInfo& get_playlist_info(int idx) const;
 
 	/// <summary>
-	/// property current playlist template
-	/// </summary>
-	std::wstring get_current_playlist_template() const { return get_playlist_template(get_playlist_template_idx()); }
-
-	/// <summary>
 	/// property uri parse template
 	/// </summary>
 	std::wstring get_uri_parse_pattern(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_parse_regex() : L""; }
 	void set_uri_parse_pattern(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_parse_regex(val); }
 
 	/// <summary>
-	/// property current parse pattern
-	/// </summary>
-	std::wstring get_current_parse_pattern() const { return get_uri_parse_pattern(get_playlist_template_idx()); }
-
-	/// <summary>
 	/// property uri id parse template
 	/// </summary>
 	std::wstring get_tag_id_match(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_tag_id_match() : L""; }
 	void set_tag_id_match(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_tag_id_match(val); }
-
-	/// <summary>
-	/// property current parse pattern
-	/// </summary>
-	std::wstring get_current_tag_id_match() const { return get_tag_id_match(get_playlist_template_idx()); }
 
 	/// <summary>
 	/// property token used per channel, not the global
@@ -480,20 +489,10 @@ public:
 	void set_per_channel_token(int idx, const bool val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_per_channel_token(val); }
 
 	/// <summary>
-	/// property current per channel token
-	/// </summary>
-	bool get_current_per_channel_token() const { return get_per_channel_token(get_playlist_template_idx()); }
-
-	/// <summary>
 	/// property uri id parse template
 	/// </summary>
 	bool get_epg_id_from_id(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_epg_id_from_id() : false; }
 	void set_epg_id_from_id(int idx, const bool val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_epg_id_from_id(val); }
-
-	/// <summary>
-	/// property current epg id from id
-	/// </summary>
-	bool get_current_epg_id_from_id() const { return get_epg_id_from_id(get_playlist_template_idx()); }
 
 	/// <summary>
 	/// plugin supports vod
@@ -516,11 +515,6 @@ public:
 	void set_vod_filter(bool val) { vod_filter = val; }
 
 	/// <summary>
-	/// active vod template
-	/// </summary>
-	std::wstring get_current_vod_template() const { return get_vod_template(get_vod_template_idx()); }
-
-	/// <summary>
 	/// property vod templates
 	/// </summary>
 	const std::vector <PlaylistTemplateInfo>& get_vod_templates() const { return vod_templates; }
@@ -533,16 +527,18 @@ public:
 	void set_vod_template_idx(size_t idx) { vod_template_index = idx; }
 
 	/// <summary>
+	/// vod domain
+	/// </summary>
+	/// <returns>wstring</returns>
+	std::wstring get_vod_domain(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_pl_domain() : L""; }
+	void set_vod_domain(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_pl_domain(val); }
+
+	/// <summary>
 	/// vod url template
 	/// </summary>
 	/// <returns>wstring</returns>
 	std::wstring get_vod_template(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_pl_template() : L""; }
 	void set_vod_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_pl_template(val); }
-
-	/// <summary>
-	/// active vod template
-	/// </summary>
-	std::wstring get_current_vod_parse_regex() const { return get_vod_parse_regex(get_vod_template_idx()); }
 
 	/// <summary>
 	/// regex for parsing title
@@ -572,6 +568,12 @@ public:
 	void set_square_icons(bool val) { square_icons = val; }
 
 	/// <summary>
+	/// property enable show balance info
+	/// </summary>
+	bool get_balance_support() const { return balance_support; }
+	void set_balance_support(bool val) { balance_support = val; }
+
+	/// <summary>
 	/// property token requested from provider
 	/// </summary>
 	bool get_requested_token() const { return requested_token; }
@@ -592,6 +594,13 @@ public:
 	void set_supported_stream(size_t idx, const StreamParameters& val) { streams_config[idx] = val; }
 
 	/// <summary>
+	/// return current selected epg idx
+	/// </summary>
+	/// <returns>const StreamParameters&</returns>
+	int get_epg_idx() const { return epg_idx; }
+	void set_epg_idx(int val) { epg_idx = val; }
+
+	/// <summary>
 	/// return supported stream
 	/// </summary>
 	/// <returns>const StreamParameters&</returns>
@@ -599,10 +608,16 @@ public:
 	std::array<EpgParameters, 2>& get_epg_parameters() { return epg_params; }
 
 	/// <summary>
-	/// property index pf epg parameters
+	/// property epg parameter by index
 	/// </summary>
-	const EpgParameters& get_epg_parameter(int idx) const { return epg_params[idx]; };
+	EpgParameters& get_epg_parameter(int idx) { return epg_params[idx]; };
 	void set_epg_parameter(int idx, const EpgParameters& val) { epg_params[idx] = val; };
+
+	/// <summary>
+	/// property epg domain
+	/// </summary>
+	std::wstring get_epg_domain(int idx) { return epg_params[idx].get_epg_domain(); };
+	void set_epg_domain(int idx, const std::wstring& val) { epg_params[idx].set_epg_domain(val); };
 
 	/// <summary>
 	/// returns json root for epg iteration
@@ -757,6 +772,7 @@ public:
 		SERIALIZE_STRUCT(j, c, dev_code);
 		SERIALIZE_STRUCT(j, c, user_agent);
 		SERIALIZE_STRUCT(j, c, provider_url);
+		SERIALIZE_STRUCT(j, c, provider_api_url);
 		SERIALIZE_STRUCT(j, c, playlist_templates);
 		SERIALIZE_STRUCT(j, c, playlist_template_index);
 		SERIALIZE_STRUCT(j, c, vod_support); //-V601
@@ -765,6 +781,7 @@ public:
 		SERIALIZE_STRUCT(j, c, vod_templates);
 		SERIALIZE_STRUCT(j, c, vod_template_index);
 		SERIALIZE_STRUCT(j, c, square_icons); //-V601
+		SERIALIZE_STRUCT(j, c, balance_support); //-V601
 		SERIALIZE_STRUCT(j, c, requested_token); //-V601
 		SERIALIZE_STRUCT(j, c, static_servers); //-V601
 		SERIALIZE_STRUCT(j, c, static_qualities); //-V601
@@ -788,6 +805,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, title);
 		DESERIALIZE_STRUCT(j, c, user_agent);
 		DESERIALIZE_STRUCT(j, c, provider_url);
+		DESERIALIZE_STRUCT(j, c, provider_api_url);
 		DESERIALIZE_STRUCT(j, c, playlist_templates);
 		DESERIALIZE_STRUCT(j, c, playlist_template_index);
 		DESERIALIZE_STRUCT(j, c, vod_support);
@@ -796,6 +814,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, vod_templates);
 		DESERIALIZE_STRUCT(j, c, vod_template_index);
 		DESERIALIZE_STRUCT(j, c, square_icons);
+		DESERIALIZE_STRUCT(j, c, balance_support);
 		DESERIALIZE_STRUCT(j, c, requested_token);
 		DESERIALIZE_STRUCT(j, c, static_servers);
 		DESERIALIZE_STRUCT(j, c, static_qualities);
@@ -816,8 +835,7 @@ protected:
 	// non configurable parameters
 	PluginType plugin_type = PluginType::enCustom;
 	std::string type_name;
-
-	std::wstring provider_api_url;
+	int epg_idx = 0;
 
 	// configurable parameters
 	std::string class_name;
@@ -835,6 +853,9 @@ protected:
 	// developer url
 	std::string dev_code;
 
+	// provider api url
+	std::string provider_api_url;
+
 	// enable vod
 	bool vod_support = false;
 	// vod based on m3u8 playlist
@@ -842,6 +863,8 @@ protected:
 
 	// use channels logo are squared, plugin UI settings
 	bool square_icons = false;
+	// show balance info in plugin
+	bool balance_support = false;
 	// use channels logo are squared, plugin UI settings
 	bool vod_filter = false;
 	// use token generated or received from provider

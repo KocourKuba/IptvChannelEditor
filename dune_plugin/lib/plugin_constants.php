@@ -15,7 +15,6 @@ class Plugin_Constants
     const MPEG = 'mpeg';
 
     // Non configurable parameters by external config
-    const /* (char) */ API_REQUEST_URL = 'api_request_url';
     const /* (bool) */ TV_FAVORITES_SUPPORTED = 'tv_fav';
     const /* (bool) */ VOD_QUALITY_SUPPORTED = 'vod_quality';
     const /* (bool) */ VOD_FILTER_SUPPORTED = 'vod_filter';
@@ -28,6 +27,7 @@ class Plugin_Constants
     const /* (char *) */ CHANNEL_ID = 'id';
     const /* (char *) */ ACCESS_TYPE = 'access_type';
     const /* (bool)   */ SQUARE_ICONS = 'square_icons';
+    const /* (bool)   */ PROVIDER_API_URL = 'provider_api_url';
     const /* (char*)  */ USER_AGENT = 'user_agent';
     const /* (char*)  */ DEV_CODE = 'dev_code';
     const /* (array ) */ PLAYLIST_TEMPLATES = 'playlist_templates';
@@ -40,7 +40,8 @@ class Plugin_Constants
     const PARAM_PLAYLIST = 'playlist';
 
     const /* (char*)  */ PLAYLIST_NAME = 'name';
-    const /* (char *) */ URI_TEMPLATE = 'pl_template';
+    const /* (char *) */ PL_DOMAIN = 'pl_domain';
+    const /* (char *) */ PL_TEMPLATE = 'pl_template';
     const /* (char *) */ PARSE_REGEX = 'parse_regex';
     const /* (char *) */ TAG_ID_MATCH = 'tag_id_match';
     const /* (char*)  */ URL_PREFIX = 'url_prefix';
@@ -70,6 +71,4 @@ class Plugin_Constants
     // not used in config
     const EPG_FIRST = 'first';
     const EPG_SECOND = 'second';
-    const EPG_PARSER = 'epg_parser';
-    const EPG_ID_MAPPER = 'epg_id_mapper';
 }

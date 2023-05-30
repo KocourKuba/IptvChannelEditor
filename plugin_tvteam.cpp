@@ -50,7 +50,8 @@ void plugin_tvteam::load_default()
 	provider_url = "https://tv.team/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://tv.team/pl/11/{PASSWORD}/playlist.m3u8";
+	info.pl_domain = "http://tv.team";
+	info.pl_template = "{PL_DOMAIN}/pl/11/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl\/11\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
 	info.per_channel_token = true;
@@ -65,5 +66,9 @@ void plugin_tvteam::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
-	epg_params[0].epg_url = "http://tv.team/{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://tv.team";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/{EPG_ID}.json";
+
+	epg_params[1].epg_domain = "http://epg.drm-play.com";
+	epg_params[1].epg_url = "{EPG_DOMAIN}/tvteam%2Fepg%2F{EPG_ID}.json";
 }

@@ -40,6 +40,7 @@ IMPLEMENT_DYNAMIC(CPluginConfigPageEPG, CTooltipPropertyPage)
 BEGIN_MESSAGE_MAP(CPluginConfigPageEPG, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPG_TYPE, &CPluginConfigPageEPG::OnCbnSelchangeComboEpgType)
 	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigPageEPG::OnBnClickedButtonEpgTest)
+	ON_EN_CHANGE(IDC_EDIT_EPG_DOMAIN, &CPluginConfigPageEPG::OnEnChangeEditEpgDomain)
 	ON_EN_CHANGE(IDC_EDIT_EPG_URL, &CPluginConfigPageEPG::OnEnChangeEditEpgUrl)
 	ON_EN_CHANGE(IDC_EDIT_EPG_ROOT, &CPluginConfigPageEPG::OnEnChangeEditEpgRoot)
 	ON_EN_CHANGE(IDC_EDIT_EPG_NAME, &CPluginConfigPageEPG::OnEnChangeEditEpgName)
@@ -64,6 +65,8 @@ void CPluginConfigPageEPG::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
+	DDX_Control(pDX, IDC_EDIT_EPG_DOMAIN, m_wndEpgDomain);
+	DDX_Text(pDX, IDC_EDIT_EPG_DOMAIN, m_EpgDomain);
 	DDX_Control(pDX, IDC_EDIT_EPG_URL, m_wndEpgUrl);
 	DDX_Text(pDX, IDC_EDIT_EPG_URL, m_EpgUrl);
 	DDX_Control(pDX, IDC_EDIT_EPG_ROOT, m_wndEpgRoot);
@@ -113,6 +116,7 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	AddTooltip(IDC_DATETIMEPICKER_DATE, IDS_STRING_DATETIMEPICKER_DATE);
 	AddTooltip(IDC_EDIT_UTC, IDS_STRING_DATETIMEPICKER_DATE);
 	AddTooltip(IDC_CHECK_USE_DURATION, IDS_STRING_CHECK_USE_DURATION);
+	AddTooltip(IDC_EDIT_EPG_DOMAIN, IDS_STRING_EDIT_EPG_DOMAIN);
 
 	AssignMacros();
 
@@ -160,6 +164,8 @@ void CPluginConfigPageEPG::AssignMacros()
 {
 	std::vector<std::wstring> epg_params =
 	{
+		REPL_API_URL,
+		REPL_EPG_DOMAIN,
 		REPL_ID,
 		REPL_DOMAIN,
 		REPL_EPG_ID,
@@ -197,7 +203,7 @@ void CPluginConfigPageEPG::UpdateControls()
 	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	// epg
-	m_wndEpgType.EnableWindow(!readOnly);
+	m_wndEpgDomain.SetReadOnly(readOnly);
 	m_wndEpgUrl.SetReadOnly(readOnly);
 	m_wndEpgRoot.SetReadOnly(readOnly);
 	m_wndEpgName.SetReadOnly(readOnly);
@@ -218,14 +224,15 @@ void CPluginConfigPageEPG::FillControls()
 {
 	const auto& epg = GetEpgParameters();
 
-	m_EpgUrl = epg.epg_url.c_str();
-	m_EpgRoot = epg.epg_root.c_str();
-	m_EpgName = epg.epg_name.c_str();
-	m_EpgDesc = epg.epg_desc.c_str();
-	m_EpgStart = epg.epg_start.c_str();
-	m_EpgEnd = epg.epg_end.c_str();
-	m_EpgDateFormat = epg.epg_date_format.c_str();
-	m_EpgTimeFormat = epg.epg_time_format.c_str();
+	m_EpgDomain = epg.get_epg_domain().c_str();
+	m_EpgUrl = epg.get_epg_url().c_str();
+	m_EpgRoot = epg.get_epg_root().c_str();
+	m_EpgName = epg.get_epg_name().c_str();
+	m_EpgDesc = epg.get_epg_desc().c_str();
+	m_EpgStart = epg.get_epg_start().c_str();
+	m_EpgEnd = epg.get_epg_end().c_str();
+	m_EpgDateFormat = epg.get_epg_date_format().c_str();
+	m_EpgTimeFormat = epg.get_epg_time_format().c_str();
 	m_EpgTimezone = epg.epg_timezone;
 	m_wndChkUseDuration.SetCheck(epg.epg_use_duration != false);
 
@@ -283,6 +290,7 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	lt.tm_sec = 0;
 	time_t dayTime = std::mktime(&lt);
 
+	utils::string_replace_inplace<wchar_t>(url, REPL_EPG_DOMAIN, m_EpgDomain.GetString());
 	utils::string_replace_inplace<wchar_t>(url, REPL_EPG_ID, m_SetID.GetString());
 	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, m_Token.GetString());
 	utils::string_replace_inplace<wchar_t>(url, REPL_DATE, m_EpgDateFormat.GetString());
@@ -322,6 +330,13 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	{
 		AfxMessageBox(GetPropertySheet()->m_plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
 	}
+}
+
+void CPluginConfigPageEPG::OnEnChangeEditEpgDomain()
+{
+	UpdateData(TRUE);
+	GetEpgParameters().set_epg_domain(m_EpgDomain.GetString());
+	AllowSave();
 }
 
 void CPluginConfigPageEPG::OnEnChangeEditEpgUrl()

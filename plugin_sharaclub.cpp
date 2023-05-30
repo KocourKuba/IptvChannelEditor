@@ -27,6 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "plugin_sharaclub.h"
 #include "IPTVChannelEditor.h"
+#include "AccountSettings.h"
 
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
@@ -39,14 +40,37 @@ static char THIS_FILE[] = __FILE__;
 
 // API documentation https://list.playtv.pro/api/players.txt
 
-static constexpr auto API_COMMAND_GET_URL = L"http://{:s}/api/players.php?a={:s}&u={:s}-{:s}&source=dune_editor";
-static constexpr auto API_COMMAND_SET_URL = L"http://{:s}/api/players.php?a={:s}&{:s}={:s}&u={:s}-{:s}&source=dune_editor";
+static constexpr auto API_COMMAND_GET_URL = L"{:s}/api/players.php?a={:s}&u={:s}-{:s}&source=dune_editor";
+static constexpr auto API_COMMAND_SET_URL = L"{:s}/api/players.php?a={:s}&{:s}={:s}&u={:s}-{:s}&source=dune_editor";
 
 plugin_sharaclub::plugin_sharaclub()
 {
 	type_name = "sharaclub";
 	class_name = "sharaclub_config";
-	provider_api_url = L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor";;
+}
+
+void plugin_sharaclub::configure_plugin()
+{
+	CWaitCursor cur;
+	std::stringstream data;
+	const auto& epg_domain = get_epg_domain(get_epg_idx());
+	const auto& playlist_domain = get_playlist_domain(get_playlist_idx());
+
+	if ((epg_domain.empty() || playlist_domain.empty()))
+	{
+		if (download_url(L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor", data))
+		{
+			JSON_ALL_TRY;
+			const auto& parsed_json = nlohmann::json::parse(data.str());
+			provider_api_url = "http://" + parsed_json["listdomain"].get<std::string>();
+			epg_params[0].epg_domain = "http://" + parsed_json["jsonEpgDomain"].get<std::string>();
+			JSON_ALL_CATCH;
+		}
+		else
+		{
+			AfxMessageBox(get_download_error().c_str(), MB_ICONERROR | MB_OK);
+		}
+	}
 }
 
 void plugin_sharaclub::load_default()
@@ -61,15 +85,16 @@ void plugin_sharaclub::load_default()
 
 	PlaylistTemplateInfo vod_info;
 	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
-	vod_info.pl_template = "http://{SUBDOMAIN}/kino-full/{LOGIN}-{PASSWORD}";
+	vod_info.pl_template = "{API_URL}/kino-full/{LOGIN}-{PASSWORD}";
 	vod_templates.emplace_back(vod_info);
 
 	vod_support = true;
 	vod_filter = true;
+	balance_support = true;
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
-	info.pl_template = "http://{SUBDOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
+	info.pl_template = "{API_URL}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
 	info.pl_parse_regex = R"(https?:\/\/[^\/]+\/tv-m3u8\/(?<login>[^-]+)-(?<password>.+)$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
 	playlist_templates.emplace_back(info);
@@ -82,9 +107,8 @@ void plugin_sharaclub::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
 
-	auto& params = epg_params[0];
-	params.epg_root = "";
-	params.epg_url = "http://{DOMAIN}/get/?type=epg&ch={EPG_ID}";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/get/?type=epg&ch={EPG_ID}";
+	epg_params[0].epg_root = "";
 }
 
 std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)
@@ -102,7 +126,7 @@ std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wst
 
 bool plugin_sharaclub::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
 {
-	const auto& url = fmt::format(API_COMMAND_GET_URL, params.subdomain, L"subscr_info", params.login, params.password);
+	const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"subscr_info", params.login, params.password);
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -144,7 +168,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams* params /*= nullptr*/)
 	std::vector<DynamicParamsInfo> servers;
 
 	const auto& url = fmt::format(API_COMMAND_GET_URL,
-									params->subdomain,
+									get_provider_api_url(),
 									L"ch_cdn",
 									params->login,
 									params->password);
@@ -184,7 +208,7 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 	if (!servers_list.empty())
 	{
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
-									  params.subdomain,
+									  get_provider_api_url(),
 									  L"ch_cdn",
 									  L"num",
 									  servers_list[params.server_idx].get_id(),
@@ -212,7 +236,11 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams* params /*= nullptr*/)
 	if (!get_profiles_list().empty() || !params || params->login.empty() || params->password.empty())
 		return;
 
-	const auto& url = fmt::format(API_COMMAND_GET_URL, params->subdomain, L"list_profiles", params->login, params->password);
+	const auto& url = fmt::format(API_COMMAND_GET_URL,
+								  get_provider_api_url(),
+								  L"list_profiles",
+								  params->login,
+								  params->password);
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -253,7 +281,7 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 	if (!profiles_list.empty())
 	{
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
-									  params.subdomain,
+									  get_provider_api_url(),
 									  L"list_profiles",
 									  L"num",
 									  profiles_list[params.profile_idx].get_id(),

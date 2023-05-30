@@ -50,7 +50,8 @@ void plugin_oneusd::load_default()
 	provider_url = "http://1usd.tv/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://1usd.tv/pl-{PASSWORD}-hls";
+	info.pl_domain = "http://1usd.tv";
+	info.pl_template = "{PL_DOMAIN}/pl-{PASSWORD}-hls";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl-(?<password>.+)-hls$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
 	info.per_channel_token = true;
@@ -65,5 +66,9 @@ void plugin_oneusd::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
-	epg_params[0].epg_url = "http://tv.team/{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://tv.team";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/{EPG_ID}.json";
+
+	epg_params[1].epg_domain = "http://epg.drm-play.com";
+	epg_params[1].epg_url = "{EPG_DOMAIN}/tvteam%2Fepg%2F{EPG_ID}.json";
 }

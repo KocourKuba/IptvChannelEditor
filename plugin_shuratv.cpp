@@ -50,21 +50,23 @@ void plugin_shuratv::load_default()
 	provider_url = "http://shura.tv/b/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
+	info.pl_domain = "http://pl.tvshka.net";
+	info.pl_template = "{PL_DOMAIN}/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?archive={START}&lutc={NOW}";
 
-	auto& params1 = epg_params[0];
-	params1.epg_url = "http://epg.propg.net/{ID}/epg2/{DATE}";
-	params1.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
-	params1.epg_root = "";
-	params1.epg_name = "epg";
-	params1.epg_desc = "desc";
-	params1.epg_start = "start";
-	params1.epg_end = "stop";
+	auto& params = epg_params[0];
+	params.epg_domain = "http://epg.propg.net";
+	params.epg_url = "{EPG_DOMAIN}/{ID}/epg2/{DATE}";
+	params.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
+	params.epg_root = "";
+	params.epg_name = "epg";
+	params.epg_desc = "desc";
+	params.epg_start = "start";
+	params.epg_end = "stop";
 
 	static_servers = true;
 	fill_servers_list();

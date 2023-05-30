@@ -3,8 +3,6 @@ require_once 'lib/default_config.php';
 
 class vidok_config extends default_config
 {
-    const API_HOST = 'http://sapi.ott.st/v2.4/json';
-
     /**
      * @param $plugin_cookies
      * @return array
@@ -24,7 +22,7 @@ class vidok_config extends default_config
 
     /**
      * @param $plugin_cookies
-     * @return mixed|null
+     * @return mixed
      */
     public function get_server_id($plugin_cookies)
     {
@@ -86,7 +84,7 @@ class vidok_config extends default_config
             }
 
             if (empty($this->account_data)) {
-                $url = self::API_HOST . "/settings?token=$plugin_cookies->token";
+                $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/settings?token=$plugin_cookies->token";
                 // provider returns token used to download playlist
                 $this->account_data = HD::DownloadJson($url);
                 //hd_print(json_encode(self::$settings));
@@ -115,7 +113,7 @@ class vidok_config extends default_config
             }
 
             if ($force !== false || empty($this->account_data)) {
-                $url = self::API_HOST . "/account?token=$plugin_cookies->token";
+                $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$plugin_cookies->token";
                 // provider returns token used to download playlist
                 $this->account_data = HD::DownloadJson($url);
                 if (!isset($this->account_data['account']['login'])) {
@@ -176,7 +174,7 @@ class vidok_config extends default_config
                 throw new Exception("User token not loaded");
             }
 
-            $url = self::API_HOST . "/settings_set?$param={$plugin_cookies->$param}&token=$plugin_cookies->token";
+            $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/settings_set?$param={$plugin_cookies->$param}&token=$plugin_cookies->token";
             $json = HD::DownloadJson($url);
             if (isset($json['error'])) {
                 throw new Exception($json['error']['msg']);

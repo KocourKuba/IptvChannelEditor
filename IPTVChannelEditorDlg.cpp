@@ -588,6 +588,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 						  REPL_INT_ID,
 						  REPL_VAR1,
 						  REPL_VAR2,
+						  REPL_VAR3,
 					   });
 	m_wndStreamUrl.SetTemplateParams(strm_params);
 
@@ -700,25 +701,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		m_wndMakeWebUpdate.SetCheck(0);
 	}
 
-	const auto& provider_api_url = m_plugin->get_provider_api_url();
-	if (!provider_api_url.empty()
-		&& (GetConfig().get_string(false, REG_LIST_DOMAIN).empty() || GetConfig().get_string(false, REG_EPG_DOMAIN).empty()))
-	{
-		CWaitCursor cur;
-		std::stringstream data;
-		if (m_plugin->download_url(provider_api_url, data))
-		{
-			JSON_ALL_TRY;
-			const auto& parsed_json = nlohmann::json::parse(data.str());
-			GetConfig().set_string(false, REG_LIST_DOMAIN, utils::utf8_to_utf16(parsed_json["listdomain"].get<std::string>()));
-			GetConfig().set_string(false, REG_EPG_DOMAIN, utils::utf8_to_utf16(parsed_json["jsonEpgDomain"].get<std::string>()));
-			JSON_ALL_CATCH;
-		}
-		else
-		{
-			AfxMessageBox(m_plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
-		}
-	}
+	m_plugin->configure_plugin();
 
 	const auto& streams = m_plugin->get_supported_streams();
 
@@ -967,7 +950,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 
 	if (m_plugin_type == PluginType::enSharaclub)
 	{
-		params.subdomain = GetConfig().get_string(false, REG_LIST_DOMAIN);
+		params.subdomain = m_plugin->get_playlist_domain(m_plugin->get_playlist_idx());
 	}
 
 	if (m_plugin->get_requested_token())
@@ -1155,6 +1138,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_playlistDupes.clear();
 	if (m_playlistEntries)
 	{
+		int pl_idx = m_plugin->get_playlist_idx();
 		bool bSet = false;
 		for (const auto& entry : m_playlistEntries->m_entries)
 		{
@@ -1173,7 +1157,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			{
 
 			}
-			else if (!m_plugin->get_current_per_channel_token())
+			else if (!m_plugin->get_per_channel_token(pl_idx))
 			{
 				m_cur_account.set_token(entry->get_token());
 				bSet = true;
@@ -1915,10 +1899,6 @@ void CIPTVChannelEditorDlg::FillEPG()
 	auto& epgChannelMap = allEpgMap[epg_id];
 
 	UpdateExtToken(info);
-	if (m_plugin_type == PluginType::enSharaclub)
-	{
-		info->set_domain(GetConfig().get_string(false, REG_EPG_DOMAIN));
-	}
 
 	DWORD dwStart = GetTickCount();
 
@@ -4894,7 +4874,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 		return;
 
 	GetConfig().set_int(false, REG_PLAYLIST_TYPE, idx);
-	m_plugin->set_playlist_template_idx(idx);
+	m_plugin->set_playlist_idx(idx);
 
 	const auto& info = m_playlist_info[idx];
 	m_wndBtnAddPlaylist.EnableWindow(info.is_custom);
@@ -5468,7 +5448,7 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 
 void CIPTVChannelEditorDlg::UpdateExtToken(uri_stream* uri) const
 {
-	if (!m_plugin->get_current_per_channel_token())
+	if (!m_plugin->get_per_channel_token(m_plugin->get_playlist_idx()))
 	{
 		uri->set_token(m_plugin->get_requested_token() ? m_plugin->get_api_token(m_cur_account) : m_cur_account.get_token());
 		return;

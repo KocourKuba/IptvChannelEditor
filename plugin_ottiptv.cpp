@@ -51,8 +51,9 @@ void plugin_ottiptv::load_default()
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
-	info.pl_template = "https://ottiptv.ru/{LOGIN}/{PASSWORD}/playlist.m3u8";
-	info.pl_parse_regex = R"(https://.+/(?<login>.+)/(?<password>.+)/.+$)";
+	info.pl_domain = "https://ottiptv.ru";
+	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/playlist.m3u8";
+	info.pl_parse_regex = R"(https?://.+/(?<login>.+)/(?<password>.+)/.+$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<var1>.+)\/(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
 	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
@@ -66,5 +67,6 @@ void plugin_ottiptv::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{VAR1}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{VAR1}/{ID}/index-{START}-{DURATION}.ts?token={TOKEN}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.com/ottiptv%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/ottiptv%2Fepg%2F{EPG_ID}.json";
 }

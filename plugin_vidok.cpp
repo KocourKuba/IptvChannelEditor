@@ -38,8 +38,8 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static constexpr auto API_COMMAND_GET_URL = L"http://sapi.ott.st/v2.4/json/{:s}?token={:s}";
-static constexpr auto API_COMMAND_SET_URL = L"http://sapi.ott.st/v2.4/json/{:s}?token={:s}&{:s}={:s}";
+static constexpr auto API_COMMAND_GET_URL = L"{:s}/{:s}?token={:s}";
+static constexpr auto API_COMMAND_SET_URL = L"{:s}/{:s}?token={:s}&{:s}={:s}";
 
 plugin_vidok::plugin_vidok()
 {
@@ -56,9 +56,11 @@ void plugin_vidok::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "https://vidok.tv/";
+	provider_api_url = "http://sapi.ott.st/v2.4/json";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://vidok.tv/p/{TOKEN}";
+	info.pl_domain = "http://vidok.tv";
+	info.pl_template = "{PL_DOMAIN}/p/{TOKEN}";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
 	playlist_templates.emplace_back(info);
@@ -70,7 +72,7 @@ void plugin_vidok::load_default()
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}";
 
 	auto& params = epg_params[0];
-	params.epg_url = "http://sapi.ott.st/v2.4/json/epg2?cid={EPG_ID}&token={TOKEN}";
+	params.epg_url = "{API_URL}/epg2?cid={EPG_ID}&token={TOKEN}";
 	params.epg_root = "epg";
 	params.epg_name = "title";
 	params.epg_desc = "description";
@@ -93,7 +95,7 @@ bool plugin_vidok::parse_access_info(TemplateParams& params, std::list<AccountIn
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!download_url(fmt::format(API_COMMAND_GET_URL, L"account", get_api_token(creds)), data))
+	if (!download_url(fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"account", get_api_token(creds)), data))
 	{
 		return false;
 	}
@@ -139,7 +141,7 @@ void plugin_vidok::fill_servers_list(TemplateParams* params /*= nullptr*/)
 	creds.set_login(params->login);
 	creds.set_password(params->password);
 
-	const auto& url = fmt::format(API_COMMAND_GET_URL, L"settings", get_api_token(creds));
+	const auto& url = fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"settings", get_api_token(creds));
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -185,6 +187,7 @@ bool plugin_vidok::set_server(TemplateParams& params)
 		creds.set_password(params.password);
 
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
+									  utils::utf8_to_utf16(provider_api_url),
 									  L"settings_set",
 									  get_api_token(creds),
 									  L"server",

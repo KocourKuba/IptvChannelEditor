@@ -49,22 +49,24 @@ void plugin_glanz::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "http://ottg.cc/";
+	provider_api_url = "http://api.ottg.cc";
 
 	PlaylistTemplateInfo vod_info;
 	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
-	vod_info.pl_template = "http://api.ottg.cc/playlist/vod?login={LOGIN}&password={PASSWORD}";
+	vod_info.pl_template = "{API_URL}/playlist/vod?login={LOGIN}&password={PASSWORD}";
 	vod_templates.emplace_back(vod_info);
 	vod_support = true;
 	vod_filter = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://pl.ottg.cc/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
+	info.pl_domain = "http://pl.ottg.cc";
+	info.pl_template = "{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
 	info.pl_parse_regex = R"(^https?:\/\/.+\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/.+\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>.+)&req_host=(?<host>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_NO_ADULT);
-	info.pl_template = "http://pl.ottg.cc/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0";
+	info.pl_template = "{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
@@ -77,10 +79,12 @@ void plugin_glanz::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 
-	epg_params[0].epg_url = "http://epg.drm-play.com/iptvx.one%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json";
 
 	auto& params1 = epg_params[1];
-	params1.epg_url = "http://epg.iptvx.one/api/id/{EPG_ID}.json";
+	params1.epg_domain = "http://epg.iptvx.one";
+	params1.epg_url = "{EPG_DOMAIN}/api/id/{EPG_ID}.json";
 	params1.epg_root = "ch_programme";
 	params1.epg_name = "title";
 	params1.epg_desc = "description";

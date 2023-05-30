@@ -95,7 +95,15 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 	set_regex_parse_stream(get_uri_parse_pattern(params.playlist_idx));
 
 	if (url.empty())
+	{
 		url = get_playlist_template(params.playlist_idx);
+	}
+
+	if (!get_provider_api_url().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
+
+	if (!get_playlist_domain(params.playlist_idx).empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, get_playlist_domain(params.playlist_idx));
 
 	if (!params.token.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.token);
@@ -160,6 +168,7 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 	utils::string_replace_inplace<wchar_t>(url, REPL_HOST, info->host);
 	utils::string_replace_inplace<wchar_t>(url, REPL_VAR1, info->var1);
 	utils::string_replace_inplace<wchar_t>(url, REPL_VAR2, info->var2);
+	utils::string_replace_inplace<wchar_t>(url, REPL_VAR3, info->var2);
 
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
@@ -268,32 +277,18 @@ void base_plugin::set_regex_parse_stream(const std::wstring& val)
 
 std::wstring base_plugin::get_vod_url(TemplateParams& params) const
 {
-	std::wstring url = get_current_vod_template();
-
-	if (!params.login.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
-
-	if (!params.password.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
-
-	if (!params.subdomain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
-
-	return url;
+	return get_vod_url(get_vod_template_idx(), params);
 }
 
 std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params) const
 {
 	std::wstring url = get_vod_template(idx);
 
-	if (!params.login.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
-
-	if (!params.password.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
-
-	if (!params.subdomain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+	utils::string_replace_inplace<wchar_t>(url, REPL_VOD_DOMAIN, get_vod_domain(idx));
+	utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
+	utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
+	utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+	utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 
 	return url;
 }
@@ -467,6 +462,8 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	lt.tm_sec = 0;
 
 	auto epg_template = epg_params[epg_idx].get_epg_url();
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_API_URL, get_provider_api_url());
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_DOMAIN, epg_params[epg_idx].get_epg_domain());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DOMAIN, info->domain);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->id);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, subst_id);

@@ -54,7 +54,8 @@ void plugin_oneott::load_default()
 	provider_url = "http://1ott.net/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "http://list.1ott.net/api/{TOKEN}/high/ottplay.m3u8";
+	info.pl_domain = "http://list.1ott.net";
+	info.pl_template = "{PL_DOMAIN}/api/{TOKEN}/high/ottplay.m3u8";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 	info.epg_id_from_id = true;
 	playlist_templates.emplace_back(info);
@@ -66,16 +67,17 @@ void plugin_oneott::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	auto& params1 = epg_params[0];
-	params1.epg_url = "http://epg.propg.net/{EPG_ID}/epg2/{DATE}";
-	params1.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
-	params1.epg_root = "";
-	params1.epg_name = "epg";
-	params1.epg_desc = "desc";
-	params1.epg_start = "start";
-	params1.epg_end = "stop";
+	epg_params[0].epg_domain = "http://epg.propg.net";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/{EPG_ID}/epg2/{DATE}";
+	epg_params[0].epg_date_format = "{YEAR}-{MONTH}-{DAY}";
+	epg_params[0].epg_root = "";
+	epg_params[0].epg_name = "epg";
+	epg_params[0].epg_desc = "desc";
+	epg_params[0].epg_start = "start";
+	epg_params[0].epg_end = "stop";
 
-	epg_params[1].epg_url = "http://epg.drm-play.com/1ott%2Fepg%2F{EPG_ID}.json";
+	epg_params[1].epg_domain = "http://epg.drm-play.com";
+	epg_params[1].epg_url = "{EPG_DOMAIN}/1ott%2Fepg%2F{EPG_ID}.json";
 }
 
 bool plugin_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)

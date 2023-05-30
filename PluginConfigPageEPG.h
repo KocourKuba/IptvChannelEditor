@@ -78,6 +78,7 @@ private:
 protected:
 	CDateTimeCtrl m_wndDate;
 
+	CEdit m_wndEpgDomain;
 	CMenuEdit m_wndEpgUrl;
 	CEdit m_wndEpgRoot;
 	CEdit m_wndEpgName;
@@ -94,6 +95,7 @@ protected:
 	CButton m_wndBtnEpgTest;
 	CButton m_wndChkUseDuration;
 
+	CString m_EpgDomain;
 	CString m_EpgUrl;
 	CString m_EpgRoot;
 	CString m_EpgName;
@@ -110,4 +112,6 @@ protected:
 
 	time_t m_UTC = 0;
 	int m_EpgTimezone = 0;
+public:
+	afx_msg void OnEnChangeEditEpgDomain();
 };

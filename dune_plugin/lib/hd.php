@@ -165,7 +165,7 @@ class HD
         }
 
         self::$user_agent = self::$plugin_user_agent;
-        hd_print("HTTP UserAgent: " . self::$user_agent);
+        hd_print(__METHOD__ . " HTTP UserAgent: " . self::$user_agent);
     }
 
     public static function get_dune_user_agent()
@@ -214,7 +214,7 @@ class HD
             }
         }
 
-        hd_print("HTTP fetching $url");
+        hd_print(__METHOD__ . " HTTP fetching $url");
 
         $content = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -430,12 +430,12 @@ class HD
             $handle = fopen($zip_file, 'rb');
             if (is_resource($handle)) {
                 self::http_put_document(base64_decode(self::$dev_code, true) . $zip_file_name, $handle, filesize($zip_file));
-                hd_print("Log file sent");
+                hd_print(__METHOD__ . ": Log file sent");
                 $ret = true;
             }
         } catch (Exception $ex) {
-            $msg = "Unable to upload log: " . $ex->getMessage();
-            hd_print($msg);
+            $msg = ": Unable to upload log: " . $ex->getMessage();
+            hd_print(__METHOD__ . $msg);
             if ($error !== null) {
                 $error = $msg;
             }
@@ -521,8 +521,8 @@ class HD
         $xml = simplexml_load_string(file_get_contents($path));
 
         if ($xml === false) {
-            hd_print("Error: can't parse XML document.");
-            hd_print("path to XML: $path");
+            hd_print(__METHOD__ . " Error: can't parse XML document.");
+            hd_print(__METHOD__ . " path to XML: $path");
             throw new Exception('Illegal XML document');
         }
 
@@ -732,7 +732,7 @@ class HD
                 return false;
             }
         } catch (Exception $ex) {
-            hd_print("Unable to load url: " . $ex->getMessage());
+            hd_print(__METHOD__ . ": Unable to load url: " . $ex->getMessage());
             return false;
         }
 
@@ -742,7 +742,7 @@ class HD
     public static function StoreContentToFile($content, $path)
     {
         if (empty($path)) {
-            hd_print("StoreContentToFile: Path not set");
+            hd_print(__METHOD__ . ": Path not set");
         } else {
             file_put_contents($path, json_encode($content));
         }

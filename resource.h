@@ -394,6 +394,11 @@
 #define IDS_STRING_CMP_ICON             615
 #define IDS_STRING_CMP_ARCHIVE          616
 #define IDS_STRING_COL_ARCHIVE          617
+#define IDS_STRING_EDIT_API_URL         618
+#define IDS_STRING_EDIT_PLAYLIST_DOMAIN 619
+#define IDS_STRING_EDIT_VOD_PLAYLIST_DOMAIN 620
+#define IDS_STRING_EDIT_EPG_DOMAIN      621
+#define IDS_STRING_CHECK_ENABLE_BALANCE 622
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -464,8 +469,8 @@
 #define IDC_EDIT_SET_TOKEN              1060
 #define IDC_EDIT_UTC                    1061
 #define IDC_EDIT_ARCHIVE_URL            1062
-#define IDC_EDIT_SET_TOKEN2             1062
 #define IDC_EDIT_SET_DUNE_IP            1062
+#define IDC_EDIT_EPG_DOMAIN             1063
 #define IDC_STATIC_APP_TITLE            1064
 #define IDC_STATIC_CHANNELS             1066
 #define IDC_STATIC_ICON                 1067
@@ -602,10 +607,12 @@
 #define IDC_EDIT_PARSE_PATTERN          1186
 #define IDC_EDIT_USER_AGENT             1186
 #define IDC_EDIT_STREAM_TEMPLATE        1187
+#define IDC_EDIT_API_URL                1187
 #define IDC_EDIT_STREAM_ARC_TEMPLATE    1188
 #define IDC_EDIT_PLAYLIST_TEMPLATE      1190
 #define IDC_EDIT_DURATION               1191
 #define IDC_STATIC_SUBST                1192
+#define IDC_EDIT_PLAYLIST_DOMAIN        1192
 #define IDC_STATIC_DURATION             1193
 #define IDC_EDIT_DUNE_PARAMS            1193
 #define IDC_COMBO_STREAM_TYPE           1194
@@ -619,6 +626,7 @@
 #define IDC_COMBO_CUSTOM_ARC_STREAM_TYPE 1200
 #define IDC_CHECK_SQUARE_ICONS          1201
 #define IDC_BUTTON_PLAYLIST_SHOW        1202
+#define IDC_CHECK_ENABLE_BALANCE        1202
 #define IDC_BUTTON_STREAM_PARSE         1203
 #define IDC_COMBO_VOD_TEMPLATE          1204
 #define IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE 1205
@@ -699,7 +707,7 @@
 #define ID_ALL_CHANNELS                 32807
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        280

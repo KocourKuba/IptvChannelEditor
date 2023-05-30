@@ -236,12 +236,6 @@ BOOL CAccessInfoPage::OnInitDialog()
 		JSON_ALL_CATCH;
 	}
 
-	if (m_plugin->get_plugin_type() == PluginType::enSharaclub)
-	{
-		m_list_domain = GetConfig().get_string(false, REG_LIST_DOMAIN);
-		m_epg_domain = GetConfig().get_string(false, REG_EPG_DOMAIN);
-	}
-
 	std::vector<std::wstring> macroses =
 	{
 		REPL_TYPE,
@@ -429,11 +423,6 @@ BOOL CAccessInfoPage::OnApply()
 	params.device_idx = selected.device_id;
 	params.profile_idx = selected.profile_id;
 	params.quality_idx = selected.quality_id;
-
-	if (m_plugin->get_plugin_type() == PluginType::enSharaclub)
-	{
-		params.subdomain = m_list_domain;
-	}
 
 	if (m_wndServers.GetCount())
 	{
@@ -817,7 +806,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	TemplateParams params;
 	params.login = selected.get_login();
 	params.password = selected.get_password();
-	params.subdomain = (m_plugin->get_plugin_type() == PluginType::enSharaclub) ? m_list_domain : selected.get_subdomain();
+	params.subdomain = selected.get_subdomain();
 	params.server_idx = selected.server_id;
 	params.device_idx = selected.device_id;
 	params.profile_idx = selected.profile_id;
@@ -1020,33 +1009,8 @@ void CAccessInfoPage::GetAccountInfo()
 	m_wndEmbed.SetCheck(selected_cred.embed);
 	m_wndEmbed.EnableWindow(TRUE);
 
-	std::wstring login;
-	std::wstring password;
-	std::wstring token;
-	std::wstring domain;
-	std::wstring portal;
-
-	switch (m_plugin->get_access_type())
-	{
-		case AccountAccessType::enPin:
-			password = selected_cred.get_password();
-			break;
-
-		case AccountAccessType::enLoginPass:
-			login = selected_cred.get_login();
-			password = selected_cred.get_password();
-			break;
-
-		case AccountAccessType::enOtt:
-			token = selected_cred.get_token();
-			domain = selected_cred.get_subdomain();
-			portal = selected_cred.get_portal();
-			break;
-
-		case AccountAccessType::enNone:
-			return;
-		default: break;
-	}
+	if (m_plugin->get_access_type() == AccountAccessType::enNone)
+		return;
 
 	// reset template flag for new parse
 	auto playlist = std::make_unique<Playlist>();
@@ -1054,9 +1018,9 @@ void CAccessInfoPage::GetAccountInfo()
 	entry->set_is_template(false);
 
 	TemplateParams params;
-	params.login = std::move(login);
-	params.password = std::move(password);
-	params.subdomain = m_list_domain;
+	params.login = selected_cred.get_login();
+	params.password = selected_cred.get_password();
+	params.subdomain = selected_cred.get_subdomain();
 	params.server_idx = selected_cred.server_id;
 	params.device_idx = selected_cred.device_id;
 	params.profile_idx = selected_cred.profile_id;
@@ -1065,6 +1029,10 @@ void CAccessInfoPage::GetAccountInfo()
 	if (m_plugin->get_plugin_type() == PluginType::enTVClub || m_plugin->get_plugin_type() == PluginType::enVidok)
 	{
 		params.token = m_plugin->get_api_token(selected_cred);
+	}
+	else
+	{
+		params.token = selected_cred.get_token();
 	}
 
 	auto& pl_url = m_plugin->get_playlist_url(params);
@@ -1162,6 +1130,7 @@ int CAccessInfoPage::GetSelectedList()
 
 void CAccessInfoPage::OnCbnSelchangeComboConfigs()
 {
+	int account_idx = GetCheckedAccountIdx();
 	auto& selected = GetCheckedAccount();
 	int idx = m_wndConfigs.GetCurSel();
 	if (idx < 1)
@@ -1175,7 +1144,7 @@ void CAccessInfoPage::OnCbnSelchangeComboConfigs()
 		selected.set_config(value);
 		m_plugin->load_plugin_parameters(selected.get_config());
 		CreateAccountsList();
-		m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
+		m_wndAccounts.SetCheck(account_idx);
 	}
 }
 

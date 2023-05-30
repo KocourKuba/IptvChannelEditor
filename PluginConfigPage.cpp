@@ -52,11 +52,13 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_QUALITY, &CPluginConfigPage::OnBnClickedButtonEditQuality)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_PROFILES, &CPluginConfigPage::OnBnClickedButtonEditProfiles)
 	ON_BN_CLICKED(IDC_CHECK_SQUARE_ICONS, &CPluginConfigPage::OnBnClickedCheckSquareIcons)
+	ON_BN_CLICKED(IDC_CHECK_ENABLE_BALANCE, &CPluginConfigPage::OnBnClickedCheckEnableBalance)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_NAME, &CPluginConfigPage::OnEnChangeEditPluginName)
 	ON_EN_CHANGE(IDC_EDIT_TITLE, &CPluginConfigPage::OnEnChangeEditTitle)
 	ON_EN_CHANGE(IDC_EDIT_USER_AGENT, &CPluginConfigPage::OnEnChangeEditUserAgent)
 	ON_EN_CHANGE(IDC_EDIT_PROVIDER_URL, &CPluginConfigPage::OnEnChangeEditProviderUrl)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CLASS_NAME, &CPluginConfigPage::OnEnChangeEditClassName)
+	ON_EN_CHANGE(IDC_EDIT_API_URL, &CPluginConfigPage::OnEnChangeEditApiUrl)
 END_MESSAGE_MAP()
 
 CPluginConfigPage::CPluginConfigPage() : CTooltipPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
@@ -77,8 +79,11 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PROVIDER_URL, m_ProviderUrl);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_CLASS_NAME, m_wndClassName);
 	DDX_Text(pDX, IDC_EDIT_PLUGIN_CLASS_NAME, m_ClassName);
+	DDX_Control(pDX, IDC_EDIT_API_URL, m_wndProviderApiUrl);
+	DDX_Text(pDX, IDC_EDIT_API_URL, m_ProviderApiUrl);
 	DDX_Control(pDX, IDC_COMBO_ACCESS_TYPE, m_wndAccessType);
 	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndChkSquareIcons);
+	DDX_Control(pDX, IDC_CHECK_ENABLE_BALANCE, m_wndChkEnableBalance);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_EXT_FILES, m_wndBtnExtFiles);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_MANIFEST, m_wndBtnManifest);
 	DDX_Control(pDX, IDC_CHECK_STATIC_SERVERS, m_wndChkStaticServers);
@@ -97,6 +102,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 	AddTooltip(IDC_EDIT_PLUGIN_NAME, IDS_STRING_EDIT_PLUGIN_NAME);
 	AddTooltip(IDC_EDIT_TITLE, IDS_STRING_EDIT_TITLE);
+	AddTooltip(IDC_EDIT_API_URL, IDS_STRING_EDIT_API_URL);
 	AddTooltip(IDC_EDIT_PROVIDER_URL, IDS_STRING_EDIT_PROVIDER_URL);
 	AddTooltip(IDC_EDIT_PLUGIN_CLASS_NAME, IDS_STRING_EDIT_PLUGIN_CLASS_NAME);
 	AddTooltip(IDC_CHECK_SQUARE_ICONS, IDS_STRING_CHECK_SQUARE_ICONS);
@@ -111,6 +117,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	AddTooltip(IDC_CHECK_STATIC_PROFILES, IDS_STRING_CHECK_STATIC_PROFILES);
 	AddTooltip(IDC_BUTTON_EDIT_PROFILES, IDS_STRING_BUTTON_EDIT_PROFILES);
 	AddTooltip(IDC_COMBO_ACCESS_TYPE, IDS_STRING_COMBO_ACCESS_TYPE);
+	AddTooltip(IDC_CHECK_ENABLE_BALANCE, IDS_STRING_CHECK_ENABLE_BALANCE);
 
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnExtFiles);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnManifest);
@@ -150,8 +157,10 @@ void CPluginConfigPage::UpdateControls()
 	m_wndTitle.SetReadOnly(readOnly);
 	m_wndUserAgent.SetReadOnly(readOnly);
 	m_wndProviderUrl.SetReadOnly(readOnly);
+	m_wndProviderApiUrl.SetReadOnly(readOnly);
 	m_wndClassName.SetReadOnly(readOnly);
 	m_wndChkSquareIcons.EnableWindow(!readOnly);
+	m_wndChkEnableBalance.EnableWindow(!readOnly);
 	m_wndAccessType.EnableWindow(custom);
 
 	// servers
@@ -182,12 +191,14 @@ void CPluginConfigPage::FillControls()
 
 	m_wndAccessType.SetCurSel((int)plugin->get_access_type());
 	m_wndChkSquareIcons.SetCheck(plugin->get_square_icons() != false);
+	m_wndChkEnableBalance.SetCheck(plugin->get_balance_support() != false);
 
 	m_Name = plugin->get_name().c_str();
 	m_Title = plugin->get_title().c_str();
 	m_UserAgent = plugin->get_user_agent().c_str();
 	m_ProviderUrl = plugin->get_provider_url().c_str();
 	m_ClassName = plugin->get_class_name().c_str();
+	m_ProviderApiUrl = plugin->get_provider_api_url().c_str();
 
 	UpdateData(FALSE);
 
@@ -420,4 +431,17 @@ void CPluginConfigPage::OnEnChangeEditClassName()
 	UpdateData(TRUE);
 	AllowSave();
 	GetPropertySheet()->m_plugin->set_class_name(m_ClassName.GetString());
+}
+
+void CPluginConfigPage::OnBnClickedCheckEnableBalance()
+{
+	AllowSave();
+	GetPropertySheet()->m_plugin->set_balance_support(m_wndChkEnableBalance.GetCheck() != 0);
+}
+
+void CPluginConfigPage::OnEnChangeEditApiUrl()
+{
+	UpdateData(TRUE);
+	AllowSave();
+	GetPropertySheet()->m_plugin->set_provider_api_url(m_ProviderApiUrl.GetString());
 }
