@@ -83,7 +83,7 @@ public:
 		SERIALIZE_STRUCT(j, c, embed);
 		SERIALIZE_STRUCT(j, c, ch_list);
 		SERIALIZE_STRUCT(j, c, m_direct_links);
-		SERIALIZE_STRUCT(j, c, use_dropbox);
+		SERIALIZE_STRUCT(j, c, use_dropbox); //-V601
 	}
 
 	friend void from_json(const nlohmann::json& j, Credentials& c)

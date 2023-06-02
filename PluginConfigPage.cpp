@@ -222,7 +222,7 @@ void CPluginConfigPage::OnBnClickedButtonEditExtFiles()
 	}
 
 	dlg.m_type = DynamicParamsType::enFiles;
-	dlg.m_paramsList = info;
+	dlg.m_paramsList = std::move(info);
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
@@ -247,7 +247,7 @@ void CPluginConfigPage::OnBnClickedButtonEditManifest()
 	}
 
 	dlg.m_type = DynamicParamsType::enManifest;
-	dlg.m_paramsList = info;
+	dlg.m_paramsList = std::move(info);
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
@@ -272,7 +272,7 @@ void CPluginConfigPage::OnBnClickedButtonEditServers()
 	}
 
 	dlg.m_type = DynamicParamsType::enServers;
-	dlg.m_paramsList = info;
+	dlg.m_paramsList = std::move(info);
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
@@ -297,7 +297,7 @@ void CPluginConfigPage::OnBnClickedButtonEditDevices()
 	}
 
 	dlg.m_type = DynamicParamsType::enDevices;
-	dlg.m_paramsList = info;
+	dlg.m_paramsList = std::move(info);
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
@@ -322,7 +322,7 @@ void CPluginConfigPage::OnBnClickedButtonEditQuality()
 	}
 
 	dlg.m_type = DynamicParamsType::enQuality;
-	dlg.m_paramsList = info;
+	dlg.m_paramsList = std::move(info);
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)
@@ -348,7 +348,7 @@ void CPluginConfigPage::OnBnClickedButtonEditProfiles()
 	}
 
 	dlg.m_type = DynamicParamsType::enProfiles;
-	dlg.m_paramsList = info;
+	dlg.m_paramsList = std::move(info);
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)

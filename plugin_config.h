@@ -254,7 +254,7 @@ struct EpgParameters
 		SERIALIZE_STRUCT(j, c, epg_date_format);
 		SERIALIZE_STRUCT(j, c, epg_time_format);
 		SERIALIZE_STRUCT(j, c, epg_timezone);
-		SERIALIZE_STRUCT(j, c, epg_use_duration);
+		SERIALIZE_STRUCT(j, c, epg_use_duration); //-V601
 	}
 
 	friend void from_json(const nlohmann::json& j, EpgParameters& c)
@@ -594,13 +594,6 @@ public:
 	void set_supported_stream(size_t idx, const StreamParameters& val) { streams_config[idx] = val; }
 
 	/// <summary>
-	/// return current selected epg idx
-	/// </summary>
-	/// <returns>const StreamParameters&</returns>
-	int get_epg_idx() const { return epg_idx; }
-	void set_epg_idx(int val) { epg_idx = val; }
-
-	/// <summary>
 	/// return supported stream
 	/// </summary>
 	/// <returns>const StreamParameters&</returns>
@@ -835,7 +828,6 @@ protected:
 	// non configurable parameters
 	PluginType plugin_type = PluginType::enCustom;
 	std::string type_name;
-	int epg_idx = 0;
 
 	// configurable parameters
 	std::string class_name;

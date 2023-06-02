@@ -341,7 +341,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates()
 
 	CFillParamsInfoDlg dlg;
 	dlg.m_type = DynamicParamsType::enPlaylistVOD;
-	dlg.m_paramsList = info;
+	dlg.m_paramsList = std::move(info);
 	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	if (dlg.DoModal() == IDOK)

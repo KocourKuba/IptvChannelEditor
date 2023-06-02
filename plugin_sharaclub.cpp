@@ -53,7 +53,7 @@ void plugin_sharaclub::configure_plugin()
 {
 	CWaitCursor cur;
 	std::stringstream data;
-	const auto& epg_domain = get_epg_domain(get_epg_idx());
+	const auto& epg_domain = get_epg_domain(0);
 	const auto& playlist_domain = get_playlist_domain(get_playlist_idx());
 
 	if ((epg_domain.empty() || playlist_domain.empty()))
