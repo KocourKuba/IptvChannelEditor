@@ -30,7 +30,7 @@ DEALINGS IN THE SOFTWARE.
 #include "map_serializer.h"
 
 #include "UtilsLib\utils.h"
-#include "thread-pool\BS_thread_pool.hpp"
+#include "thread-pool\include\BS_thread_pool.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
