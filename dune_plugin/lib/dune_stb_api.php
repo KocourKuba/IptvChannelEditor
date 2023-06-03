@@ -212,16 +212,16 @@ class DuneVideoZoomPresets
     );
 
     public static $zoom_ops = array(
-        DuneVideoZoomPresets::not_set => 'Не выбрано',
-        DuneVideoZoomPresets::normal => 'Обычный',
-        DuneVideoZoomPresets::enlarge => 'Увеличение',
-        DuneVideoZoomPresets::make_wider => 'Увеличение ширины',
-        DuneVideoZoomPresets::fill_screen => 'Нелинейное растяжение',
-        DuneVideoZoomPresets::full_fill_screen => 'Нелинейное растяжение на весь экран',
-        DuneVideoZoomPresets::make_taller => 'Увеличение высоты',
-        DuneVideoZoomPresets::cut_edges => 'Обрезка краев',
-        DuneVideoZoomPresets::full_enlarge => 'Полный экран',
-        DuneVideoZoomPresets::full_stretch => 'Растяжение на весь экран'
+        DuneVideoZoomPresets::not_set => '%tr%tv_screen_zoom_not_set',
+        DuneVideoZoomPresets::normal => '%tr%tv_screen_zoom_normal',
+        DuneVideoZoomPresets::enlarge => '%tr%tv_screen_zoom_enlarge',
+        DuneVideoZoomPresets::make_wider => '%tr%tv_screen_zoom_make_wider',
+        DuneVideoZoomPresets::fill_screen => '%tr%tv_screen_zoom_fill_screen',
+        DuneVideoZoomPresets::full_fill_screen => '%tr%tv_screen_zoom_full_fill_screen',
+        DuneVideoZoomPresets::make_taller => '%tr%tv_screen_zoom_make_taller',
+        DuneVideoZoomPresets::cut_edges => '%tr%tv_screen_zoom_cut_edges',
+        DuneVideoZoomPresets::full_enlarge => '%tr%tv_screen_zoom_full_enlarge',
+        DuneVideoZoomPresets::full_stretch => '%tr%tv_screen_zoom_full_stretch'
     );
 }
 

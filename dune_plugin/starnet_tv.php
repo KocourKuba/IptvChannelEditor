@@ -245,7 +245,8 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         $this->set_fav_channel_ids($plugin_cookies, $fav_channel_ids);
 
-        $media_urls = array(Starnet_Tv_Favorites_Screen::get_media_url_str(), Starnet_Tv_Channel_List_Screen::get_media_url_str(Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID));
+        $media_urls = array(Starnet_Tv_Favorites_Screen::get_media_url_str(),
+            Starnet_Tv_Channel_List_Screen::get_media_url_str(Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID));
 
         Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
         $post_action = Starnet_Epfs_Handler::invalidate_folders($media_urls);
@@ -378,10 +379,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         $max_support_ch_list_ver = $this->plugin->config->plugin_info['app_ch_list_version'];
         if ($max_support_ch_list_ver < (int)$xml->vesion_info->list_version) {
-            $message = "Внимание: Версия списка каналов {$xml->vesion_info->list_version} более новая," .
-                "\nчем поддерживает данный плагин: $max_support_ch_list_ver\n".
-                "Возможны ошибки воспроизведения.\n".
-                "Пожалуйста обновите плагин на более свежую версию";
+            $message = TR::t('warn_msg1');
             hd_print($message);
             $this->plugin->config->set_last_error($message);
         }
@@ -897,12 +895,12 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 $dune_zoom = isset($zoom_data[$channel_id]) ? $zoom_data[$channel_id] : DuneVideoZoomPresets::not_set;
 
                 $defs = array();
-                Control_Factory::add_label($defs,'', 'Переключите канал для применения');
+                Control_Factory::add_label($defs,'', TR::t('tv_screen_switch_channel'));
                 Control_Factory::add_combobox($defs, $this, null, ACTION_ZOOM_SELECT, "",
                     $dune_zoom, DuneVideoZoomPresets::$zoom_ops, 1000, true);
                 Control_Factory::add_button_close ($defs, $this, null,ACTION_ZOOM_APPLY,
-                    "", 'Сохранить', 600);
-                return Action_Factory::show_dialog('Масштабирование изображения для канала', $defs,true,0, $attrs);
+                    "", TR::t('apply'), 600);
+                return Action_Factory::show_dialog(TR::t('tv_screen_zoom_channel'), $defs,true,0, $attrs);
 
             case ACTION_ZOOM_APPLY:
                 $zoom_data = HD::get_items('channels_zoom', true);

@@ -16,6 +16,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
     const ACTION_SMB_SETUP = 'smb_setup';
     const ACTION_NEW_SMB_DATA = 'new_smb_data';
     const ACTION_SAVE_SMB_SETUP = 'save_smb_setup';
+    const ACTION_RELOAD_CHANNELS = 'reload_channels';
 
     private $counter = 0;
 
@@ -132,11 +133,11 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         //hd_print(__METHOD__ . ": " . $media_url->get_raw_string());
         $actions = array();
         $fs_action = User_Input_Handler_Registry::create_action($this, self::ACTION_FS);
-        $save_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_SELECT_FOLDER, 'Выбрать папку');
-        $open_folder = User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER, 'Открыть папку');
-        $create_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_GET_FOLDER_NAME, 'Создать папку');
-        $reset_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_RESET_FOLDER, 'Сбросить по умолчанию');
-        $smb_setup = User_Input_Handler_Registry::create_action($this, self::ACTION_SMB_SETUP, 'Настройки SMB');
+        $save_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_SELECT_FOLDER, TR::t('folder_screen_select_folder'));
+        $open_folder = User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER, TR::t('folder_screen_open_folder'));
+        $create_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_GET_FOLDER_NAME, TR::t('folder_screen_create_folder'));
+        $reset_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_RESET_FOLDER, TR::t('folder_screen_reset_default'));
+        $smb_setup = User_Input_Handler_Registry::create_action($this, self::ACTION_SMB_SETUP, TR::t('folder_screen_smb_settings'));
 
         $actions[GUI_EVENT_KEY_ENTER] = $fs_action;
         $actions[GUI_EVENT_KEY_PLAY] = $fs_action;
@@ -192,7 +193,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                     $caption = $v['foldername'];
                     $filepath = $k;
                     $icon_file = self::get_folder_icon('smb_folder', $filepath);
-                    $info = "||SMB folder:|$caption||" . $v['ip'];
+                    $info = TR::t('folder_screen_smb__2', $caption, $v['ip']);
                     $type = 'folder';
                     $ip_path = $v['ip'];
                     if (!empty($v['user'])) {
@@ -202,19 +203,19 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                         $password = $v['password'];
                     }
                     if (isset($v['err'])) {
-                        $info = "||SMB folder:|ERROR!!!||" . $v['err'];
+                        $info = TR::t('err_error_smb__1', $v['err']);
                         $err = $v['err'];
                     }
                 } else if ($key === 'nfs') {
                     $caption = $v['foldername'];
                     $filepath = $k;
                     $icon_file = self::get_folder_icon('smb_folder', $filepath);
-                    $info = "||NFS folder:|$caption||" . $v['ip'];
+                    $info = TR::t('folder_screen_nfs__2', $caption, $v['ip']);
                     $type = 'folder';
                     $ip_path = $v['ip'];
                     $nfs_protocol = $v['protocol'];
                     if (isset($v['err'])) {
-                        $info = "||NFS folder:|ERROR!!!||" . $v['err'];
+                        $info = TR::t('err_error_nfs__1', $v['err']);
                         $err = $v['err'];
                     }
                 } else if ($key === 'folder') {
@@ -231,7 +232,6 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                     $filepath = $v['filepath'];
                     $icon_file = self::get_folder_icon($caption, $filepath);
 
-                    $info = "||Folder:|$caption";
                     if ($filepath !== '/tmp/mnt/storage' &&
                         $filepath !== '/tmp/mnt/network' &&
                         $filepath !== '/tmp/mnt/smb' &&
@@ -239,7 +239,9 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                         $media_url->filepath !== '/tmp/mnt/network' &&
                         $media_url->filepath !== '/tmp/mnt/smb' &&
                         $media_url->save_data === 'ch_list_path') {
-                        $info .= "||Нажмите синюю D или Вправо для выбора|$caption";
+                        $info = TR::t('folder_screen_select__1', $caption);
+                    } else {
+                        $info = TR::t('folder_screen_folder__1', $caption);
                     }
                     $type = 'folder';
                 } else if ($key === 'file') {
@@ -251,7 +253,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                     $icon_file = self::get_file_icon($caption);
                     $size = HD::get_filesize_str($v['size']);
                     $filepath = $v['filepath'];
-                    $info = "||File:|$caption||$size";
+                    $info = TR::t('folder_screen_file__2', $caption, $size);
                     $type = 'file';
                 } else {
                     continue;
@@ -285,15 +287,13 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         }
 
         if (empty($items)) {
-            $info = "||Нажмите синюю D или Вправо для выбора|$media_url->caption||Файлы показываются";
-
             $items[] = array(
                 PluginRegularFolderItem::caption => '',
                 PluginRegularFolderItem::media_url => '',
                 PluginRegularFolderItem::view_item_params => array(
                     ViewItemParams::icon_path => 'gui_skin://small_icons/info.aai',
                     ViewItemParams::item_detailed_icon_path => 'gui_skin://large_icons/info.aai',
-                    ViewItemParams::item_detailed_info => $info,
+                    ViewItemParams::item_detailed_info => TR::t('folder_screen_select_file_shows__1', $media_url->caption),
                 )
             );
         }
@@ -352,68 +352,45 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
                 $defs = array();
                 if ($selected_url->nfs_protocol !== false) {
-                    Control_Factory::add_multiline_label($defs, 'Error mount:', $selected_url->err, 3);
-                    Control_Factory::add_label($defs, 'NFS folder:', $selected_url->caption);
-                    Control_Factory::add_label($defs, 'NFS IP:', $selected_url->ip_path);
-                    Control_Factory::add_label($defs, 'Transport Protocol:', $selected_url->nfs_protocol);
-                    Control_Factory::add_close_dialog_button($defs, 'ОК', 300);
-                    return Action_Factory::show_dialog('Error NFS!!!', $defs, true);
+                    Control_Factory::add_multiline_label($defs, TR::t('err_mount'), $selected_url->err, 3);
+                    Control_Factory::add_label($defs, TR::t('folder_screen_nfs'), $selected_url->caption);
+                    Control_Factory::add_label($defs, TR::t('folder_screen_nfs_ip'), $selected_url->ip_path);
+                    Control_Factory::add_label($defs, TR::t('folder_screen_nfs_protocol'), $selected_url->nfs_protocol);
+                    Control_Factory::add_close_dialog_button($defs, TR::t('ok'), 300);
+                    return Action_Factory::show_dialog(TR::t('err_error_nfs'), $defs, true);
                 }
 
-                Control_Factory::add_multiline_label($defs, 'Error mount:', $selected_url->err, 4);
-                Control_Factory::add_label($defs, 'SMB folder:', $selected_url->caption);
-                Control_Factory::add_label($defs, 'SMB IP:', $selected_url->ip_path);
+                Control_Factory::add_multiline_label($defs, TR::t('err_mount'), $selected_url->err, 4);
+                Control_Factory::add_label($defs, TR::t('folder_screen_smb'), $selected_url->caption);
+                Control_Factory::add_label($defs, TR::t('folder_screen_smb_ip'), $selected_url->ip_path);
                 if (strpos("Permission denied", $selected_url->err) !== false) {
                     $user = isset($selected_url->user) ? $selected_url->user : '';
                     $password = isset($selected_url->password) ? $selected_url->password : '';
                     $this->GetSMBAccessDefs($defs, $user, $password);
                 } else {
                     Control_Factory::add_label($defs, '', '');
-                    Control_Factory::add_close_dialog_button($defs, 'ОК', 300);
+                    Control_Factory::add_close_dialog_button($defs, TR::t('ok'), 300);
                 }
-                return Action_Factory::show_dialog('Error SMB!!!', $defs, true, 1100);
+                return Action_Factory::show_dialog(TR::t('err_error_smb'), $defs, true, 1100);
 
             case self::ACTION_SELECT_FOLDER:
                 $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
                 //hd_print(__METHOD__ . " select_folder: " . $url->get_media_url_str());
                 smb_tree::set_folder_info($plugin_cookies, $url);
+
                 $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Channels_Setup_Screen::ID . "_handler");
-                $post_action = is_null($setup_handler)
-                    ? null
-                    : User_Input_Handler_Registry::create_action($setup_handler, $this->plugin->tv->reload_channels($setup_handler, $plugin_cookies));
-
-                $msg_action = Action_Factory::show_title_dialog('Выбрана папка: ' . $url->caption,
-                    $post_action,
-                    'Полный путь: ' . $url->filepath,
-                    800);
-
-                if (is_newer_versions() !== false) {
-                    $action = Action_Factory::replace_path($parent_url->windowCounter, null, $msg_action);
-                } else {
-                    $action = $msg_action;
-                }
-
-                return $action;
+                $post_action = is_null($setup_handler) ? null : User_Input_Handler_Registry::create_action($setup_handler, self::ACTION_RELOAD_CHANNELS);
+                $msg_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $url->caption), $post_action, $url->filepath, 800);
+                return (is_newer_versions() !== false) ? Action_Factory::replace_path($parent_url->windowCounter, null, $msg_action) : $msg_action;
 
             case self::ACTION_RESET_FOLDER:
                 //hd_print(__METHOD__ . " reset_folder");
                 $plugin_cookies->ch_list_path = '';
+
                 $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Channels_Setup_Screen::ID . "_handler");
-                $post_post = is_null($setup_handler)
-                    ? null
-                    : User_Input_Handler_Registry::create_action($setup_handler, $this->plugin->tv->reload_channels($setup_handler, $plugin_cookies));
-
-                $msg_action = Action_Factory::show_title_dialog('Выбрана папка по умолчанию ',
-                    $post_post,
-                    'Полный путь: ' . get_install_path(),
-                    800);
-
-                if (is_newer_versions() !== false) {
-                    $action = Action_Factory::replace_path($parent_url->windowCounter, null, $msg_action);
-                } else {
-                    $action = $msg_action;
-                }
-                return $action;
+                $post_post = is_null($setup_handler) ? null : User_Input_Handler_Registry::create_action($setup_handler, self::ACTION_RELOAD_CHANNELS);
+                $msg_action = Action_Factory::show_title_dialog(TR::t('folder_screen_default_selected'), $post_post, get_install_path(), 800);
+                return (is_newer_versions() !== false) ? Action_Factory::replace_path($parent_url->windowCounter, null, $msg_action) : $msg_action;
 
             case self::ACTION_GET_FOLDER_NAME:
                 $defs = array();
@@ -423,7 +400,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                     '', 0, 0, 1, 1, 1230, false, true
                 );
                 Control_Factory::add_vgap($defs, 500);
-                return Action_Factory::show_dialog('Задайте имя папки', $defs, true);
+                return Action_Factory::show_dialog(TR::t('folder_screen_choose_name'), $defs, true);
 
             case self::ACTION_CREATE_FOLDER:
                 $do_mkdir = User_Input_Handler_Registry::create_action($this, self::ACTION_DO_MKDIR);
@@ -431,7 +408,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
             case self::ACTION_DO_MKDIR:
                 if (!mkdir($concurrentDirectory = $parent_url->filepath . '/' . $user_input->do_folder_name) && !is_dir($concurrentDirectory)) {
-                    return Action_Factory::show_title_dialog('Невозможно создать папку!');
+                    return Action_Factory::show_title_dialog(TR::t('err_cant_create_folder'));
                 }
                 return Action_Factory::invalidate_folders(array($user_input->parent_media_url));
 
@@ -472,7 +449,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                         $selected_url->ip_path,
                         $user_input->new_user,
                         $user_input->new_pass);
-                    return Action_Factory::show_dialog('Error SMB!!!', $defs, true, 1100);
+                    return Action_Factory::show_dialog(TR::t('err_error_smb'), $defs, true, 1100);
                 }
 
                 $caption = $selected_url->caption;
@@ -494,34 +471,38 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
             case self::ACTION_SMB_SETUP:
                 $smb_view = isset($plugin_cookies->smb_setup) ? (int)$plugin_cookies->smb_setup : 1;
 
-                $smb_view_ops[1] = 'Сетевые папки';
-                $smb_view_ops[2] = 'Сетевые папки + поиск SMB шар';
-                $smb_view_ops[3] = 'Поиск SMB шар';
+                $smb_view_ops[1] = TR::t('folder_screen_net_folders');
+                $smb_view_ops[2] = TR::t('folder_screen_net_folders_smb');
+                $smb_view_ops[3] = TR::t('folder_screen_search_smb');
 
                 $defs = array();
                 Control_Factory::add_combobox($defs, $this, null,
-                    'smb_view', 'Отображать:',
+                    'smb_view', TR::t('folder_screen_show'),
                     $smb_view, $smb_view_ops, 0
                 );
                 $save_smb_setup = User_Input_Handler_Registry::create_action($this, self::ACTION_SAVE_SMB_SETUP);
                 Control_Factory::add_custom_close_dialog_and_apply_buffon($defs,
-                    '_do_save_smb_setup', 'Применить', 250, $save_smb_setup
+                    '_do_save_smb_setup', TR::t('apply'), 250, $save_smb_setup
                 );
 
-                return Action_Factory::show_dialog('Настройка поиска SMB', $defs, true, 1000, $attrs);
+                return Action_Factory::show_dialog(TR::t('folder_screen_search_smb_setup'), $defs, true, 1000, $attrs);
 
             case self::ACTION_SAVE_SMB_SETUP:
                 $smb_view_ops = array();
                 $smb_view = 1;
-                $smb_view_ops[1] = 'Сетевые папки';
-                $smb_view_ops[2] = 'Сетевые папки + поиск SMB папок';
-                $smb_view_ops[3] = 'Поиск SMB папок';
+                $smb_view_ops[1] = TR::t('folder_screen_net_folders');
+                $smb_view_ops[2] = TR::t('folder_screen_net_folders_smb');
+                $smb_view_ops[3] = TR::t('folder_screen_search_smb');
                 if (isset($user_input->smb_view)) {
                     $smb_view = $user_input->smb_view;
                     $plugin_cookies->smb_setup = $user_input->smb_view;
                 }
 
-                return Action_Factory::show_title_dialog("Используется: " . $smb_view_ops[$smb_view]);
+                return Action_Factory::show_title_dialog(TR::t('folder_screen_used__1', $smb_view_ops[$smb_view]));
+
+            case self::ACTION_RELOAD_CHANNELS:
+                $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Channels_Setup_Screen::ID . "_handler");
+                return $setup_handler === null ? null : $this->plugin->tv->reload_channels($setup_handler, $plugin_cookies);
         }
         return null;
     }
@@ -592,14 +573,14 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
     {
         //hd_print(__METHOD__ . ': do_get_mount_smb_err_defs');
         $defs = array();
-        Control_Factory::add_multiline_label($defs, 'Error mount:', $err, 4);
-        Control_Factory::add_label($defs, 'SMB folder:', $caption);
-        Control_Factory::add_label($defs, 'SMB IP:', $ip_path);
+        Control_Factory::add_multiline_label($defs, TR::t('err_mount'), $err, 4);
+        Control_Factory::add_label($defs, TR::t('folder_screen_smb'), $caption);
+        Control_Factory::add_label($defs, TR::t('folder_screen_smb_ip'), $ip_path);
         if (strpos("Permission denied", $err) !== false) {
             $this->GetSMBAccessDefs($defs, $user, $password);
         } else {
             Control_Factory::add_label($defs, '', '');
-            Control_Factory::add_close_dialog_button($defs, 'ОК', 300);
+            Control_Factory::add_close_dialog_button($defs, TR::t('ok'), 300);
         }
         return $defs;
     }
@@ -614,21 +595,21 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         //hd_print(__METHOD__ . ': GetSMBAccessDefs');
         Control_Factory::add_text_field($defs, $this, null,
             'new_user',
-            'Имя пользователя SMB папки:',
+            TR::t('folder_screen_user'),
             $user, 0, 0, 0, 1, 500
         );
 
         Control_Factory::add_text_field($defs, $this, null,
             'new_pass',
-            'Пароль SMB папки:',
+            TR::t('folder_screen_password'),
             $password, 0, 0, 0, 1, 500
         );
 
         Control_Factory::add_custom_close_dialog_and_apply_buffon($defs,
-            self::ACTION_NEW_SMB_DATA, 'Применить', 300,
+            self::ACTION_NEW_SMB_DATA, TR::t('ok'), 300,
             User_Input_Handler_Registry::create_action($this, self::ACTION_NEW_SMB_DATA)
         );
 
-        Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
+        Control_Factory::add_close_dialog_button($defs, TR::t('apply'), 300);
     }
 }

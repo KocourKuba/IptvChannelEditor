@@ -68,13 +68,13 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
         //////////////////////////////////////
         // channels list source
-        $source_ops[1] = 'Локальная или сетевая папки';
-        $source_ops[2] = 'Интернет/Интранет папка';
-        $source_ops[3] = 'Прямая Интернет ссылка';
+        $source_ops[1] = TR::t('setup_channels_src_folder');
+        $source_ops[2] = TR::t('setup_channels_src_internet');
+        $source_ops[3] = TR::t('setup_channels_src_direct');
         $channels_source = isset($plugin_cookies->channels_source) ? (int)$plugin_cookies->channels_source : 1;
 
         Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANNELS_SOURCE,
-            'Источник списка каналов:', $channels_source, $source_ops, self::CONTROLS_WIDTH, true);
+            TR::t('setup_channels_src_combo'), $channels_source, $source_ops, self::CONTROLS_WIDTH, true);
 
         switch ($channels_source)
         {
@@ -84,18 +84,18 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                     $display_path = "..." . substr($display_path, -30);
                 }
                 if (is_apk())
-                    Control_Factory::add_label($defs, 'Папка со списками каналов:', $display_path);
+                    Control_Factory::add_label($defs, TR::t('setup_channels_src_label'), $display_path);
                 else
                     Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_CH_LIST_PATH,
-                        'Задать папку со списками каналов:', $display_path, $folder_icon);
+                        TR::t('setup_channels_src_folder_path'), $display_path, $folder_icon);
                 break;
             case 2: // internet url
                 Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANNELS_URL_DLG,
-                    'Задать ссылку со списками каналов:', 'Изменить ссылку', $web_icon, self::CONTROLS_WIDTH);
+                    TR::t('setup_channels_src_internet_path'), TR::t('setup_channels_src_change_caption'), $web_icon, self::CONTROLS_WIDTH);
                 break;
             case 3: // direct internet url
                 Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANNELS_URL_DLG,
-                    'Задать ссылку на список каналов:', 'Изменить ссылку', $link_icon, self::CONTROLS_WIDTH);
+                    TR::t('setup_channels_src_direct_link'), TR::t('setup_channels_src_change_caption'), $link_icon, self::CONTROLS_WIDTH);
                 break;
         }
 
@@ -103,10 +103,10 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         // channels lists
         $all_channels = $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
         if (empty($all_channels)) {
-            Control_Factory::add_label($defs, 'Используемый список каналов:', 'Нет списка каналов!!!');
+            Control_Factory::add_label($defs, TR::t('setup_channels_src_used_label'), TR::t('setup_channels_src_no_channels'));
         } else {
             Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANGE_CH_LIST,
-                'Используемый список каналов:', $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
+                TR::t('setup_channels_src_used_label'), $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
         }
 
         //////////////////////////////////////
@@ -116,7 +116,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
         if (count($all_tv_lists) > 1) {
             Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANGE_PL_LIST,
-                'Источник плейлистов:', $play_list_idx,
+                TR::t('setup_channels_src_playlist'), $play_list_idx,
                 $all_tv_lists, self::CONTROLS_WIDTH, true);
         }
 
@@ -167,8 +167,9 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_CHANNELS_URL_APPLY, 'ОК', 300);
-        Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null,
+            self::SETUP_ACTION_CHANNELS_URL_APPLY, TR::t('ok'), 300);
+        Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
         Control_Factory::add_vgap($defs, 10);
 
         return $defs;
@@ -201,7 +202,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 $action = $this->plugin->tv->reload_channels($this, $plugin_cookies);
                 if ($action === null) {
                     $plugin_cookies->playlist_idx = $old_value;
-                    Action_Factory::show_title_dialog("Ошибка загрузки плейлиста!");
+                    Action_Factory::show_title_dialog(TR::t('err_load_playlist'));
                 }
                 return $action;
 
@@ -213,7 +214,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                         'windowCounter' => 1,
                     )
                 );
-                return Action_Factory::open_folder($media_url, 'Папка со списком каналов');
+                return Action_Factory::open_folder($media_url, TR::t('setup_channels_src_folder_caption'));
 
             case self::SETUP_ACTION_CHANGE_CH_LIST:
                 $old_value = $plugin_cookies->channels_list;
@@ -221,7 +222,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 $action = $this->plugin->tv->reload_channels($this, $plugin_cookies);
                 if ($action === null) {
                     $plugin_cookies->channels_list = $old_value;
-                    Action_Factory::show_title_dialog("Ошибка загрузки списка каналов!");
+                    Action_Factory::show_title_dialog(TR::t('err_load_channels_list'));
                 }
                 return $action;
 
@@ -230,13 +231,13 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 hd_print("Selected channels source: $plugin_cookies->channels_source");
                 $action = $this->plugin->tv->reload_channels($this, $plugin_cookies);
                 if ($action === null) {
-                    Action_Factory::show_title_dialog("Ошибка загрузки списка каналов!");
+                    Action_Factory::show_title_dialog(TR::t('err_load_channels_list'));
                 }
                 return $action;
 
             case self::SETUP_ACTION_CHANNELS_URL_DLG:
                 $defs = $this->do_get_channels_url_control_defs($plugin_cookies);
-                return Action_Factory::show_dialog('Ссылка на списки каналов', $defs, true);
+                return Action_Factory::show_dialog(TR::t('setup_channels_src_link_caption'), $defs, true);
 
             case self::SETUP_ACTION_CHANNELS_URL_APPLY: // handle streaming settings dialog result
                 if (isset($user_input->channels_url_path)) {

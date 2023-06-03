@@ -72,30 +72,26 @@ class tvclub_config extends default_config
     {
         if ($this->GetAccountInfo($plugin_cookies, true) === false) {
             hd_print("Can't get account status");
-            $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
-            $text = explode('\\n', $text);
-            $text = array_values($text);
-
-            Control_Factory::add_label($defs, 'Ошибка!', $text[0], -10);
-            Control_Factory::add_label($defs, 'Описание:', $text[1], 20);
+            Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
+            Control_Factory::add_label($defs, TR::t('description') . ':', TR::t('warn_msg5'), 20);
             return;
         }
 
         $info = $this->account_data['account']['info'];
         $settings = $this->account_data['account']['settings'];
-        Control_Factory::add_label($defs, 'Баланс:', $info['balance'] . ' €', -10);
-        Control_Factory::add_label($defs, 'Логин:', $info['login'], -10);
-        Control_Factory::add_label($defs, 'Сервер:', $settings['server_name'], -10);
-        Control_Factory::add_label($defs, 'Часовой пояс:', $settings['tz_name'] . " {$settings['tz_gmt']}", -10);
+        Control_Factory::add_label($defs, TR::t('balance'), $info['balance'] . ' €', -10);
+        Control_Factory::add_label($defs, TR::t('login'), $info['login'], -10);
+        Control_Factory::add_label($defs, TR::t('server'), $settings['server_name'], -10);
+        Control_Factory::add_label($defs, TR::t('time_zone'), $settings['tz_name'] . " {$settings['tz_gmt']}", -10);
 
         $packages = $this->account_data['account']['services'];
         if (count($packages) === 0) {
-            Control_Factory::add_label($defs, 'Пакеты: ', 'Нет пакетов', 20);
+            Control_Factory::add_label($defs, TR::t('packages'), TR::t('no_packages'), 20);
             return;
         }
 
         foreach ($packages as $item) {
-            Control_Factory::add_label($defs, 'Пакет:', $item['name'] . ' ' . $item['type'] .' до '. date('j.m.Y', $item['expire']), -10);
+            Control_Factory::add_label($defs, TR::t('package'), $item['name'] . ' ' . $item['type'] .' - '. date('j.m.Y', $item['expire']), -10);
         }
 
         Control_Factory::add_vgap($defs, 20);

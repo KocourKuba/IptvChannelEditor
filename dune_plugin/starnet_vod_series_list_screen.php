@@ -53,7 +53,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
         $actions = array(
             GUI_EVENT_KEY_ENTER   => Action_Factory::vod_play(),
             GUI_EVENT_KEY_PLAY    => Action_Factory::vod_play(),
-            GUI_EVENT_KEY_B_GREEN => User_Input_Handler_Registry::create_action($this, ACTION_WATCHED, 'Просмотрено/Не просмотрено'),
+            GUI_EVENT_KEY_B_GREEN => User_Input_Handler_Registry::create_action($this, ACTION_WATCHED, TR::t('vod_screen_viewed_not_viewed')),
         );
 
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED)) {
@@ -61,7 +61,8 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
             $variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : "auto";
             if (!is_null($movie) && isset($movie->variants_list) && count($movie->variants_list) > 1) {
                 $q_exist = (in_array($variant, $movie->variants_list) ? "" : "?");
-                $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_QUALITY, "Качество - $variant$q_exist");
+                $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this,
+                    ACTION_QUALITY, TR::t('vod_screen_quality__1', "$variant$q_exist"));
             }
         }
 
@@ -174,7 +175,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 if (!is_apk()) {
                     $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
                         ACTION_EXTERNAL_PLAYER,
-                        'Проиграть внешним плейером',
+                        TR::t('vod_screen_external_player'),
                         'gui_skin://small_icons/playback.aai'
                     );
                 }
@@ -227,7 +228,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $item_info = $viewed_item[$counter];
 
                 if ($item_info[Movie::WATCHED_FLAG]) {
-                    $info = "$series->name | [Просмотрено]";
+                    $info = TR::t('vod_screen_viewed__1', $series->name);
                 } else if (isset($item_info[Movie::WATCHED_DURATION])) {
                     if ($item_info[Movie::WATCHED_DURATION] === -1) {
                         $info = $series->name;

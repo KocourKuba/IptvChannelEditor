@@ -53,9 +53,9 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
         $add_params['search_actions'] = 'keyboard';
 
         $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, null, $add_params);
-        $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, 'Вверх');
-        $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, 'Вниз');
-        $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить');
+        $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('up'));
+        $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('down'));
+        $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete'));
 
         return $actions;
     }
@@ -104,7 +104,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
                     $search_string, false, false, true, true, 1300, false, true);
                 Control_Factory::add_vgap($defs, 500);
 
-                return Action_Factory::show_dialog('Поиск', $defs, true);
+                return Action_Factory::show_dialog(TR::t('search'), $defs, true);
 
             case ACTION_NEW_SEARCH:
                 return Action_Factory::close_dialog_and_run(
@@ -123,7 +123,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
                 HD::put_items(self::VOD_SEARCH_LIST, $search_items);
                 $action = Action_Factory::open_folder(
                     Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_SEARCH, $search_string),
-                    "Поиск: " . $search_string);
+                    TR::t('search__1', ": $search_string"));
 
                 return Action_Factory::invalidate_folders(array(self::ID), $action);
 
@@ -191,7 +191,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
 
         $items[] = array
         (
-            PluginRegularFolderItem::caption => '[Новый поиск]',
+            PluginRegularFolderItem::caption => TR::t('new_search'),
             PluginRegularFolderItem::view_item_params => array
             (
                 ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
@@ -210,7 +210,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
             if (!empty($item)) {
                 $items[] = array
                 (
-                    PluginRegularFolderItem::caption => "Поиск: $item",
+                    PluginRegularFolderItem::caption => TR::t('search__1', ": $item"),
                     PluginRegularFolderItem::view_item_params => array
                     (
                         ViewItemParams::icon_path => self::SEARCH_ICON_PATH,

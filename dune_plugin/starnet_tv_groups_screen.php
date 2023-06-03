@@ -45,14 +45,14 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         // if token not set force to open setup screen
         // hd_print('Starnet_Tv_Groups_Screen: get_action_map');
 
-        $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS, 'Настройки плагина');
+        $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS, TR::t('entry_setup'));
 
         $actions = array(
             GUI_EVENT_KEY_ENTER      => User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER),
             GUI_EVENT_KEY_PLAY       => User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER),
             GUI_EVENT_KEY_SETUP      => $action_settings,
             GUI_EVENT_KEY_B_GREEN    => $action_settings,
-            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_CHANNELS_SETTINGS, 'Настройки каналов'),
+            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_CHANNELS_SETTINGS, TR::t('tv_screen_channels_setup')),
         );
 
         if ($this->IsSetupNeeds($plugin_cookies) !== false) {
@@ -63,7 +63,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         }
 
         if ($this->plugin->config->get_feature(Plugin_Constants::BALANCE_SUPPORTED)) {
-            $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_BALANCE, 'Подписка');
+            $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_BALANCE, TR::t('tv_screen_subscription'));
         }
 
         return $actions;
@@ -82,8 +82,8 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             case ACTION_NEED_CONFIGURE:
                 if ($this->IsSetupNeeds($plugin_cookies)) {
                     hd_print("Setup required!");
-                    return Action_Factory::show_title_dialog("Отсутствуют данные доступа для просмотра!",
-                        Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина'));
+                    return Action_Factory::show_title_dialog(TR::t('err_no_account_data'),
+                        Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), TR::t('entry_setup')));
                 }
 
                 return Action_Factory::open_folder($user_input->selected_media_url);
@@ -94,22 +94,22 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 $has_error = $this->plugin->config->get_last_error();
                 if (!empty($has_error)) {
                     $this->plugin->config->set_last_error('');
-                    return Action_Factory::show_title_dialog("Ошибка при загрузке плейлиста или списка!", $post_action, $has_error);
+                    return Action_Factory::show_title_dialog(TR::t('err_load_any'), $post_action, $has_error);
                 }
 
                 return $post_action;
 
             case ACTION_SETTINGS:
-                return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
+                return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), TR::t('entry_setup'));
 
             case ACTION_CHANNELS_SETTINGS:
-                return Action_Factory::open_folder(Starnet_Channels_Setup_Screen::get_media_url_str(), 'Настройки каналов');
+                return Action_Factory::open_folder(Starnet_Channels_Setup_Screen::get_media_url_str(), TR::t('tv_screen_channels_setup'));
 
             case ACTION_BALANCE:
                 $defs = array();
                 $this->plugin->config->AddSubscriptionUI($defs, $plugin_cookies);
-                Control_Factory::add_close_dialog_button($defs, 'OK', 150);
-                return Action_Factory::show_dialog('Информация', $defs);
+                Control_Factory::add_close_dialog_button($defs, TR::t('ok'), 150);
+                return Action_Factory::show_dialog(TR::t('tv_screen_information'), $defs);
 
             case GUI_EVENT_KEY_RETURN:
                 $post_action = Action_Factory::close_and_run();

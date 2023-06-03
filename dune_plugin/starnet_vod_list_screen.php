@@ -53,13 +53,13 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $add_action = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, 'Поиск');
+        $add_action = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, TR::t('search'));
 
         return array(
             GUI_EVENT_KEY_ENTER      => $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play(),
             GUI_EVENT_KEY_SEARCH     => $add_action,
             GUI_EVENT_KEY_C_YELLOW   => $add_action,
-            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, 'В Избранное'),
+            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
         );
     }
 
@@ -87,7 +87,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
                     $this, null, ACTION_NEW_SEARCH, '',
                     $media_url->name, false, false, true, true, 1300, false, true);
                 Control_Factory::add_vgap($defs, 500);
-                return Action_Factory::show_dialog('Поиск', $defs, true);
+                return Action_Factory::show_dialog(TR::t('search'), $defs, true);
 
             case ACTION_NEW_SEARCH:
                 return Action_Factory::close_dialog_and_run(User_Input_Handler_Registry::create_action($this, ACTION_RUN_SEARCH));
@@ -107,7 +107,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
                     array(Starnet_Vod_Search_Screen::ID),
                     Action_Factory::open_folder(
                         static::get_media_url_str(Vod_Category::FLAG_SEARCH, $search_string),
-                        "Поиск: " . $search_string));
+                        TR::t('search') . ": $search_string"));
 
             case ACTION_ADD_FAV:
                 $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
@@ -128,7 +128,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
      */
     protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        hd_print("get_short_movie_range: '$media_url->category_id', from_idx: $from_ndx");
+        hd_print(__METHOD__ . ": '$media_url->category_id', from_idx: $from_ndx");
         $this->plugin->config->try_reset_pages();
         if (empty($media_url->genre_id) || $media_url->category_id === Vod_Category::FLAG_ALL) {
             $key = $media_url->category_id;
@@ -165,7 +165,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
      */
     public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        //hd_print("get_folder_range: $from_ndx");
+        //hd_print(__METHOD__ . ": $from_ndx");
         $movie_range = $this->get_short_movie_range($media_url, $from_ndx, $plugin_cookies);
 
         $total = $movie_range->total;
@@ -202,7 +202,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
      */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print("get_folder_view");
+        //hd_print(__METHOD__);
         $this->plugin->config->reset_movie_counter();
         $this->plugin->vod->clear_movie_cache();
         $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);

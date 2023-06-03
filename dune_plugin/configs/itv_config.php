@@ -46,21 +46,17 @@ class itv_config extends default_config
         $account_data = $this->GetAccountInfo($plugin_cookies, true);
         if ($account_data === false) {
             hd_print("Can't get account status");
-            $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
-            $text = explode('\\n', $text);
-            $text = array_values($text);
-
-            Control_Factory::add_label($defs, 'Ошибка!', $text[0], -10);
-            Control_Factory::add_label($defs, 'Описание:', $text[1], 20);
+            Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
+            Control_Factory::add_label($defs, TR::t('description') . ':', TR::t('warn_msg5'), -10);
             return;
         }
 
         $title = 'Пакеты: ';
 
-        Control_Factory::add_label($defs, 'Баланс:', $account_data['user_info']['cash'] . ' $', -10);
+        Control_Factory::add_label($defs, TR::t('balance'), $account_data['user_info']['cash'] . ' $', -10);
         $packages = $account_data['package_info'];
         if (count($packages) === 0) {
-            Control_Factory::add_label($defs, $title, 'Нет пакетов', 20);
+            Control_Factory::add_label($defs, $title, TR::t('no_packages'), 20);
             return;
         }
 

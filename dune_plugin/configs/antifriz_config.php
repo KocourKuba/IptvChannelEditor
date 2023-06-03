@@ -123,7 +123,7 @@ class antifriz_config extends default_config
         }
 
         // all movies
-        $category = new Vod_Category(Vod_Category::FLAG_ALL, "Все фильмы ($total)");
+        $category = new Vod_Category(Vod_Category::FLAG_ALL, TR::t('vod_screen_all_movies__1', " ($total)"));
         array_unshift($category_list, $category);
         $category_index[Vod_Category::FLAG_ALL] = $category;
 
@@ -191,7 +191,7 @@ class antifriz_config extends default_config
             if (isset($entry->name)) {
                 $movie = new Short_Movie($entry->id, $entry->name, $entry->poster);
                 $genre_str = implode(", ", $genresArray);
-                $movie->info = "$entry->name|Год: $entry->year|Страна: $entry->country|Жанр: $genre_str|Рейтинг: $entry->rating";
+                $movie->info = TR::t('vod_screen_movie_info__5', $entry->name, $entry->year, $entry->country, $genre_str, $entry->rating);
                 $movies[] = $movie;
             }
         }

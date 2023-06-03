@@ -61,21 +61,17 @@ class cbilling_config extends default_config
         $account_data = $this->GetAccountInfo($plugin_cookies, true);
         if ($account_data === false) {
             hd_print("Can't get account status");
-            $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
-            $text = explode('\\n', $text);
-            $text = array_values($text);
-
-            Control_Factory::add_label($defs, 'Ошибка!', $text[0], -10);
-            Control_Factory::add_label($defs, 'Описание:', $text[1], -10);
+            Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
+            Control_Factory::add_label($defs, TR::t('description'), TR::t('warn_msg5'), 20);
             return;
         }
 
-        Control_Factory::add_label($defs, 'Пакеты: ', empty($account_data['package']) ? 'Нет пакетов' : $account_data['package'], -10);
-        Control_Factory::add_label($defs, 'Дата окончания', $account_data['end_date'], -10);
-        Control_Factory::add_label($defs, 'Устройств', $account_data['devices_num'], -10);
-        Control_Factory::add_label($defs, 'Адрес сервера', $account_data['server'], -10);
-        Control_Factory::add_label($defs, 'Медиатека', ($account_data['vod'] ? "Да" : "Нет"), -10);
-        Control_Factory::add_label($defs, 'Шифрование траффика', ($account_data['ssl'] ? "Да" : "Нет"), 20);
+        Control_Factory::add_label($defs, TR::t('packages'), empty($account_data['package']) ? TR::t('no_packages') : $account_data['package'], -10);
+        Control_Factory::add_label($defs, TR::t('end_date'), $account_data['end_date'], -10);
+        Control_Factory::add_label($defs, TR::t('devices'), $account_data['devices_num'], -10);
+        Control_Factory::add_label($defs, TR::t('server_addr'), $account_data['server'], -10);
+        Control_Factory::add_label($defs, TR::t('plugin_vod'), ($account_data['vod'] ? TR::t('yes') : TR::t('no')), -10);
+        //Control_Factory::add_label($defs, 'Шифрование траффика', ($account_data['ssl'] ? TR::t('yes') : TR::t('no')), 20);
     }
 
     /**
@@ -266,7 +262,7 @@ class cbilling_config extends default_config
             if (isset($entry->name)) {
                 $movie = new Short_Movie($entry->id, $entry->name, $entry->poster);
                 $genre_str = implode(", ", $genresArray);
-                $movie->info = "$entry->name|Год: $entry->year|Страна: $entry->country|Жанр: $genre_str|Рейтинг: $entry->rating";
+                $movie->info = TR::t('vod_screen_movie_info__5', $entry->name, $entry->year, $entry->country, $genre_str, $entry->rating);
                 $movies[] = $movie;
             }
         }

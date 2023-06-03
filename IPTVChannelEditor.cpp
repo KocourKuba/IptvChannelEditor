@@ -758,6 +758,7 @@ bool PackPlugin(const PluginType plugin_type,
 	std::filesystem::copy(plugin_root + L"lib", packFolder + L"lib", recursive_copy, err);
 	std::filesystem::copy(plugin_root + L"img", packFolder + L"img", recursive_copy, err);
 	std::filesystem::copy(plugin_root + L"icons", packFolder + L"icons", recursive_copy, err);
+	std::filesystem::copy(plugin_root + L"translations", packFolder + L"translations", recursive_copy, err);
 
 	std::filesystem::create_directory(packFolder + bin_path, err);
 	std::filesystem::create_directories(packFolder + www_path, err);

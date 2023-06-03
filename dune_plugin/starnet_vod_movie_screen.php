@@ -83,7 +83,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             }
             hd_print(__METHOD__ . ": empty movie or no series data");
             HD::print_backtrace();
-            $movie->description = "Техническая информация о фильме содержит неправильные или отсутствующие данные.\nПоказ фильма невозможен";
+            $movie->description = TR::t('warn_msg3');
             return array
             (
                 PluginFolderView::multiple_views_supported => false,
@@ -105,7 +105,8 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
         }
 
         $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
-        $right_button_caption = $this->plugin->vod->is_favorite_movie_id($movie->id) ? 'Удалить из Избранного' : 'Добавить в Избранное';
+        $right_button_caption = $this->plugin->vod->is_favorite_movie_id($movie->id)
+            ? TR::t('delete_from_favorite') : TR::t('add_to_favorite');
         $right_button_action = User_Input_Handler_Registry::create_action($this, 'favorites', null, array('movie_id' => $movie->id));
 
         $save_folder = HD::get_items('save_folder');
@@ -156,7 +157,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             $opt_type = $this->plugin->vod->is_favorite_movie_id($movie_id) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
             $this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
 
-            $message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
+            $message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
 
             return Action_Factory::show_title_dialog($message,
                 Action_Factory::invalidate_folders(array(

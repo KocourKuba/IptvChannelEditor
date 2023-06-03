@@ -136,25 +136,21 @@ class vidok_config extends default_config
         $account_data = $this->GetAccountInfo($plugin_cookies, true);
         if ($account_data === false) {
             hd_print("Can't get account status");
-            $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
-            $text = explode('\\n', $text);
-            $text = array_values($text);
-
-            Control_Factory::add_label($defs, 'Ошибка!', $text[0], -10);
-            Control_Factory::add_label($defs, 'Описание:', $text[1], 20);
+            Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
+            Control_Factory::add_label($defs, TR::t('description'), TR::t('warn_msg5'), 20);
             return;
         }
 
-        Control_Factory::add_label($defs, 'Баланс:', $account_data['account']['balance'] . ' €', -10);
-        Control_Factory::add_label($defs, 'Логин:', $account_data['account']['login'], -10);
+        Control_Factory::add_label($defs, TR::t('balance'), $account_data['account']['balance'] . ' €', -10);
+        Control_Factory::add_label($defs, TR::t('login'), $account_data['account']['login'], -10);
         $packages = $account_data['account']['packages'];
         if (count($packages) === 0) {
-            Control_Factory::add_label($defs, 'Пакеты: ', 'Нет пакетов', 20);
+            Control_Factory::add_label($defs, TR::t('packages'), TR::t('no_packages'), 20);
             return;
         }
 
         foreach ($packages as $item) {
-            Control_Factory::add_label($defs, 'Пакет:', $item['name'] .' до '. date('j.m.Y', $item['expire']), -10);
+            Control_Factory::add_label($defs, TR::t('package'), $item['name'] .' - '. date('j.m.Y', $item['expire']), -10);
         }
 
         Control_Factory::add_vgap($defs, 20);

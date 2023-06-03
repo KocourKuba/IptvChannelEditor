@@ -53,9 +53,9 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
         $add_params['filter_actions'] = 'keyboard';
         $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_FILTER, null, $add_params);
 
-        $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, 'Вверх');
-        $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, 'Вниз');
-        $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить');
+        $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('up'));
+        $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('down'));
+        $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete'));
         $actions[GUI_EVENT_KEY_POPUP_MENU] = Action_Factory::show_popup_menu(array());
 
         return $actions;
@@ -102,11 +102,11 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                 $defs = array();
                 if (false === $this->plugin->config->AddFilterUI($defs, $this, $filter_string)) break;
 
-                Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, ACTION_RUN_FILTER, 'Ok', 300);
-                Control_Factory::add_close_dialog_button($defs, 'Отмена', 300);
+                Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, ACTION_RUN_FILTER, TR::t('ok'), 300);
+                Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
                 Control_Factory::add_vgap($defs, 10);
 
-                return Action_Factory::show_dialog('Фильтр', $defs, true);
+                return Action_Factory::show_dialog(TR::t('filter'), $defs, true);
 
             case ACTION_RUN_FILTER:
                 $filter_string = $this->plugin->config->CompileSaveFilterItem($user_input);
@@ -125,7 +125,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                 return Action_Factory::invalidate_folders(array(self::ID),
                     Action_Factory::open_folder(
                         Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_FILTER, $filter_string),
-                        "Фильтр: " . $filter_string));
+                        TR::t('filter__1', $filter_string)));
 
             case ACTION_ITEM_UP:
                 if (!isset($user_input->selected_media_url)) break;
@@ -186,12 +186,12 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_print("Starnet_Filter_Screen::get_all_folder_items");
+        hd_print(__METHOD__);
         $items = array();
 
         $items[] = array
         (
-            PluginRegularFolderItem::caption => '[Новый фильтр]',
+            PluginRegularFolderItem::caption => TR::t('vod_screen_new_filter'),
             PluginRegularFolderItem::view_item_params => array
             (
                 ViewItemParams::icon_path => self::FILTER_ICON_PATH,
@@ -210,7 +210,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
             if (!empty($item)) {
                 $items[] = array
                 (
-                    PluginRegularFolderItem::caption => "Фильтр: $item",
+                    PluginRegularFolderItem::caption => TR::t('filter__1', $item),
                     PluginRegularFolderItem::view_item_params => array
                     (
                         ViewItemParams::icon_path => self::FILTER_ICON_PATH,

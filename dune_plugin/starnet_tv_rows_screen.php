@@ -234,7 +234,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             // green button text
             $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
-                'Влево',
+                TR::t('left'),
                 1,
                 $is_first_channel ? PaneParams::fav_btn_disabled_font_color : PaneParams::fav_btn_font_color,
                 PaneParams::fav_btn_font_size
@@ -258,7 +258,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             // yellow button text
             $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
-                'Вправо',
+                TR::t('right'),
                 1,
                 $is_last_channel ? PaneParams::fav_btn_disabled_font_color : PaneParams::fav_btn_font_color,
                 PaneParams::fav_btn_font_size
@@ -274,7 +274,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             // blue button text
             $defs[] = GComps_Factory::label(GComp_Geom::place_top_left(PaneParams::info_width, -1, $dx, $dy_txt), // label
                 null,
-                'Удалить',
+                TR::t('delete'),
                 1,
                 PaneParams::fav_btn_font_color,
                 PaneParams::fav_btn_font_size
@@ -485,20 +485,20 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 );
 
             case GUI_EVENT_KEY_POPUP_MENU:
-                $this->create_menu_item($menu_items, 'Обновить', "$this->images_path/refresh.png", ACTION_REFRESH_SCREEN);
+                $this->create_menu_item($menu_items, TR::t('refresh'), "$this->images_path/refresh.png", ACTION_REFRESH_SCREEN);
 
                 if (isset($user_input->selected_item_id)) {
 
                     if ($media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID) {
-                        $this->create_menu_item($menu_items, 'Удалить', "$this->images_path/remove.png", ACTION_REMOVE_PLAYBACK_POINT);
+                        $this->create_menu_item($menu_items, TR::t('delete'), "$this->images_path/remove.png", ACTION_REMOVE_PLAYBACK_POINT);
                     } else if ($media_url->group_id === Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID && is_apk()) {
-                        $this->create_menu_item($menu_items, 'Удалить', "$this->images_path/star.png", PLUGIN_FAVORITES_OP_REMOVE);
+                        $this->create_menu_item($menu_items, TR::t('delete'), "$this->images_path/star.png", PLUGIN_FAVORITES_OP_REMOVE);
                     } else {
                         $channel_id = $media_url->channel_id;
                         hd_print(__METHOD__ . ": Selected channel id: $channel_id");
 
                         $is_in_favorites = in_array($channel_id, $this->plugin->tv->get_fav_channel_ids($plugin_cookies));
-                        $caption = $is_in_favorites ? 'Удалить' : 'Добавить';
+                        $caption = $is_in_favorites ? TR::t('delete') : TR::t('add');
                         $add_action = $is_in_favorites ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
 
                         if (is_apk()) {
@@ -519,10 +519,10 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     }
                 } else {
                     if ($media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID) {
-                        $this->create_menu_item($menu_items, 'Очистить историю', $this->images_path . '/brush.png', ACTION_ITEMS_CLEAR);
+                        $this->create_menu_item($menu_items, TR::t('clear_history'), $this->images_path . '/brush.png', ACTION_ITEMS_CLEAR);
                     }
                     if ($media_url->group_id === Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID) {
-                        $this->create_menu_item($menu_items, 'Очистить избранное', $this->images_path . '/star.png', ACTION_ITEMS_CLEAR);
+                        $this->create_menu_item($menu_items, TR::t('clear_favorites'), $this->images_path . '/star.png', ACTION_ITEMS_CLEAR);
                     }
                 }
 
@@ -714,8 +714,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         if (!empty($items)) {
             $new_rows = $this->create_rows($items,
                 json_encode(array('group_id' => Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID)),
-                'Продолжить',
-                'Продолжить просмотр',
+                TR::t('tv_screen_continue'),
+                TR::t('tv_screen_continue_view'),
                 null,
                 TitleRowsParams::history_caption_color
             );

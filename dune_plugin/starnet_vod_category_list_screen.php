@@ -61,14 +61,14 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
     {
         $actions = array(
             GUI_EVENT_KEY_ENTER => Action_Factory::open_folder(),
-            GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, ACTION_RELOAD, 'Перечитать плейлист'),
+            GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, ACTION_RELOAD, TR::t('vod_screen_reload_playlist')),
         );
 
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_M3U)) {
             $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
             if (count($all_vod_lists) > 1) {
                 $change_playlist = User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU);
-                $change_playlist['caption'] = 'Сменить плейлист';
+                $change_playlist['caption'] = TR::t('vod_screen_change_playlist');
                 if (is_apk()) {
                     $actions[GUI_EVENT_KEY_POPUP_MENU] = $change_playlist;
                 } else {

@@ -40,13 +40,13 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
     {
         $action_play = Action_Factory::tv_play();
 
-        $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, 'Вверх');
-        $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, 'Вниз');
-        $remove_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить');
+        $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('up'));
+        $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('down'));
+        $remove_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete'));
         $remove_all_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR);
 
         $menu_items[] = array(
-            GuiMenuItemDef::caption => 'Очистить Избранное',
+            GuiMenuItemDef::caption => TR::t('clear_favorites'),
             GuiMenuItemDef::action => $remove_all_favorite_action);
 
         $popup_menu_action = Action_Factory::show_popup_menu($menu_items);

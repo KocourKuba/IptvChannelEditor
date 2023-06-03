@@ -1,6 +1,7 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
+require_once 'tr.php';
 require_once 'tv/tv.php';
 require_once 'mediaurl.php';
 require_once 'user_input_handler_registry.php';
@@ -19,29 +20,29 @@ class Default_Dune_Plugin implements DunePlugin
     /////////////////////////////////////////////////////////////////////////////
     // views constants
     const ALL_CHANNEL_GROUP_ID = '##all_channels##';
-    const ALL_CHANNEL_GROUP_CAPTION = 'Все каналы';
+    const ALL_CHANNEL_GROUP_CAPTION = '%tr%plugin_all_channels';
     const ALL_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/all.png';
 
     const FAV_CHANNEL_GROUP_ID = '##favorites##';
-    const FAV_CHANNEL_GROUP_CAPTION = 'Избранное';
+    const FAV_CHANNEL_GROUP_CAPTION = '%tr%plugin_favorites';
     const FAV_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/fav.png';
 
     const PLAYBACK_HISTORY_GROUP_ID = '##playback_history_tv_group##';
 
-    const FAV_MOVIES_CATEGORY_CAPTION = 'Избранное';
+    const FAV_MOVIES_CATEGORY_CAPTION = '%tr%plugin_favorites';
     const FAV_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/fav_movie.png';
 
     const VOD_GROUP_ID = '##mediateka##';
-    const VOD_GROUP_CAPTION = 'Медиатека';
+    const VOD_GROUP_CAPTION = '%tr%plugin_vod';
     const VOD_GROUP_ICON_PATH = "plugin_file://icons/vod.png";
 
-    const SEARCH_MOVIES_CATEGORY_CAPTION = 'Поиск';
+    const SEARCH_MOVIES_CATEGORY_CAPTION = '%tr%search';
     const SEARCH_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/search_movie.png';
 
-    const FILTER_MOVIES_CATEGORY_CAPTION = 'Фильтр';
+    const FILTER_MOVIES_CATEGORY_CAPTION = '%tr%filter';
     const FILTER_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/filter_movie.png';
 
-    const HISTORY_MOVIES_CATEGORY_CAPTION = 'История просмотра';
+    const HISTORY_MOVIES_CATEGORY_CAPTION = '%tr%plugin_history';
     const HISTORY_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/history_movie.png';
 
     /////////////////////////////////////////////////////////////////////////////

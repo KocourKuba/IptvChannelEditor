@@ -38,8 +38,8 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
         return array(
             GUI_EVENT_KEY_ENTER      => $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play(),
             GUI_EVENT_KEY_PLAY       => Action_Factory::vod_play(),
-            GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить'),
-            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, 'В Избранное'),
+            GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete')),
+            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
         );
     }
 
@@ -83,7 +83,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 			case ACTION_ADD_FAV:
 				$is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
 				$opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
-				$message = $is_favorite ? 'Удалено из Избранного' : 'Добавлено в Избранное';
+				$message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
 				$this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
 				return Action_Factory::show_title_dialog($message);
 		}
@@ -112,7 +112,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
 
             if (is_null($short_movie)) {
-                $caption = "Информация о фильме недоступна";
+                $caption = TR::t('vod_screen_no_film_info');
                 $poster_url = "missing://";
             } else {
                 $last_viewed = 0;
@@ -123,9 +123,11 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
                     }
                 }
 
-                $caption = $short_movie->name;
                 if ($last_viewed !== 0)
-                    $caption .= "|Последний просмотр: " . format_datetime("d.m.Y H:i", $last_viewed) . "|";
+                    $caption = TR::t('vod_screen_last_viewed__2', $short_movie->name, format_datetime("d.m.Y H:i", $last_viewed));
+                else
+                    $caption = $short_movie->name;
+
                 $poster_url = $short_movie->poster_url;
             }
 

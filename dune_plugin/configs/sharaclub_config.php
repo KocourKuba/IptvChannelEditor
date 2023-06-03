@@ -85,7 +85,7 @@ class sharaclub_config extends default_config
     {
         $profiles = parent::get_profiles($plugin_cookies);
         if (empty($profiles)) {
-            $profiles = array("0" => "По умолчанию");
+            $profiles = array("0" => TR::t('by_default'));
             try {
                 $url = $this->replace_api_command('list_profiles', $plugin_cookies);
                 $content = HD::DownloadJson($url);
@@ -198,22 +198,18 @@ class sharaclub_config extends default_config
         $account_data = $this->GetAccountInfo($plugin_cookies, true);
         if ($account_data === false) {
             hd_print("Can't get account status");
-            $text = 'Невозможно отобразить данные о подписке.\\nНеправильные логин или пароль.';
-            $text = explode('\\n', $text);
-            $text = array_values($text);
-
-            Control_Factory::add_label($defs, 'Ошибка!', $text[0], -10);
-            Control_Factory::add_label($defs, 'Описание:', $text[1], 20);
+            Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
+            Control_Factory::add_label($defs, TR::t('description'), TR::t('warn_msg5'), -10);
             return;
         }
 
         $title = 'Пакеты: ';
 
-        Control_Factory::add_label($defs, 'Баланс:', $account_data['data']['money'] . ' руб.', -10);
-        Control_Factory::add_label($defs, 'Цена подписки:', $account_data['data']['money_need'] . ' руб.', -10);
+        Control_Factory::add_label($defs, TR::t('balance'), $account_data['data']['money'] . ' RUR', -10);
+        Control_Factory::add_label($defs, TR::t('tv_screen_subscription'), $account_data['data']['money_need'] . ' RUR', -10);
         $packages = $account_data['data']['abon'];
         if (count($packages) === 0) {
-            Control_Factory::add_label($defs, $title, 'Нет пакетов', 20);
+            Control_Factory::add_label($defs, $title, TR::t('no_packages'), 20);
             return;
         }
 
@@ -284,10 +280,11 @@ class sharaclub_config extends default_config
             // case for serials
             if (isset($item->seasons)) {
                 foreach ($item->seasons as $season) {
-                    $movie->add_season_data($season->season, !empty($season->info->name) ? $season->info->name : "Сезон $season->season", '');
+                    $movie->add_season_data($season->season,
+                        !empty($season->info->name) ? $season->info->name : TR::t('vod_screen_season__1', $season->season), '');
                     foreach ($season->episodes as $episode) {
                         hd_print("movie playback_url: $episode->video");
-                        $movie->add_series_data($episode->id, "Серия $episode->episode", '', $episode->video, $season->season);
+                        $movie->add_series_data($episode->id, TR::t('vod_screen_series__1', $episode->episode), '', $episode->video, $season->season);
                     }
                 }
             } else {
@@ -327,7 +324,7 @@ class sharaclub_config extends default_config
         foreach ($jsonItems as $movie) {
             $category = (string)$movie->category;
             if (empty($category)) {
-                $category = "Без категории";
+                $category = TR::t('no_category');
             }
 
             if (!array_key_exists($category, $cat_info)) {
@@ -344,7 +341,8 @@ class sharaclub_config extends default_config
         }
 
         foreach ($cat_info as $category => $movie_count) {
-            $cat = new Vod_Category($category, ($category === Vod_Category::FLAG_ALL) ? "Все фильмы ($movie_count)" : "$category ($movie_count)");
+            $cat = new Vod_Category($category,
+                ($category === Vod_Category::FLAG_ALL) ? TR::t('vod_screen_all_movies__1', " ($movie_count)") : "$category ($movie_count)");
             $category_list[] = $cat;
             $category_index[$category] = $cat;
         }
@@ -353,9 +351,9 @@ class sharaclub_config extends default_config
         krsort($years);
 
         $filters = array();
-        $filters['genre'] = array('title' => 'Жанр', 'values' => array(-1 => 'Нет'));
-        $filters['from'] = array('title' => 'Год от', 'values' => array(-1 => 'Нет'));
-        $filters['to'] = array('title' => 'Год до', 'values' => array(-1 => 'Нет'));
+        $filters['genre'] = array('title' => TR::t('genre'), 'values' => array(-1 => TR::t('no')));
+        $filters['from'] = array('title' => TR::t('year_from'), 'values' => array(-1 => TR::t('no')));
+        $filters['to'] = array('title' => TR::t('year_to'), 'values' => array(-1 => TR::t('no')));
 
         $filters['genre']['values'] += $genres;
         $filters['from']['values'] += $years;
@@ -426,7 +424,7 @@ class sharaclub_config extends default_config
 
             $category = $movie->category;
             if (empty($category)) {
-                $category = "Без категории";
+                $category = TR::t('no_category');
             }
 
             if ($category_id === Vod_Category::FLAG_ALL || $category_id === $category) {
@@ -518,7 +516,7 @@ class sharaclub_config extends default_config
         $genres = HD::ArrayToStr($info->genre);
         $country = HD::ArrayToStr($info->country);
         $movie = new Short_Movie($id, (string)$movie_obj->name, (string)$info->poster);
-        $movie->info = "$movie_obj->name|Год: $info->year|Страна: $country|Жанр: $genres|Рейтинг: $info->rating";
+        $movie->info = TR::t('vod_screen_movie_info__5', $movie_obj->name, $info->year, $country, $genres, $info->rating);
 
         return $movie;
     }

@@ -98,7 +98,7 @@ class glanz_config extends default_config
         foreach ($jsonItems as $movie) {
             $category = (string)$movie->category;
             if (empty($category)) {
-                $category = "Без категории";
+                $category = TR::t('no_category');
             }
 
             if (!array_key_exists($category, $cat_info)) {
@@ -115,7 +115,8 @@ class glanz_config extends default_config
         }
 
         foreach ($cat_info as $category => $movie_count) {
-            $cat = new Vod_Category($category, ($category === Vod_Category::FLAG_ALL) ? "Все фильмы ($movie_count)" : "$category ($movie_count)");
+            $cat = new Vod_Category($category,
+                ($category === Vod_Category::FLAG_ALL) ? TR::t('vod_screen_all_movies__1', "($movie_count)") : "$category ($movie_count)");
             $category_list[] = $cat;
             $category_index[$category] = $cat;
         }
@@ -124,9 +125,9 @@ class glanz_config extends default_config
         krsort($years);
 
         $filters = array();
-        $filters['genre'] = array('title' => 'Жанр', 'values' => array(-1 => 'Нет'));
-        $filters['from'] = array('title' => 'Год от', 'values' => array(-1 => 'Нет'));
-        $filters['to'] = array('title' => 'Год до', 'values' => array(-1 => 'Нет'));
+        $filters['genre'] = array('title' => TR::t('genre'), 'values' => array(-1 => TR::t('no')));
+        $filters['from'] = array('title' => TR::t('year_from'), 'values' => array(-1 => TR::t('no')));
+        $filters['to'] = array('title' => TR::t('year_to'), 'values' => array(-1 => TR::t('no')));
 
         $filters['genre']['values'] += $genres;
         $filters['from']['values'] += $years;
@@ -191,7 +192,7 @@ class glanz_config extends default_config
 
             $category = $movie->category;
             if (empty($category)) {
-                $category = "Без категории";
+                $category = TR::t('no_category');
             }
 
             if ($category_id === Vod_Category::FLAG_ALL || $category_id === $category) {
@@ -284,7 +285,7 @@ class glanz_config extends default_config
         $genres_str = implode(", ", $genres);
 
         $movie = new Short_Movie($id, (string)$movie_obj->name, (string)$movie_obj->cover);
-        $movie->info = "$movie_obj->name|Год: $movie_obj->year|Страна: $movie_obj->country|Жанр: $genres_str";
+        $movie->info = TR::t('vod_screen_movie_info__4', $movie_obj->name, $movie_obj->year, $movie_obj->country, $genres_str);
 
         return $movie;
     }

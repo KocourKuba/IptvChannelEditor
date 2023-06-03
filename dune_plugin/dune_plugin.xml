@@ -67,7 +67,7 @@
             <popup_menu>
                 <menu_items>
                     <menu_item>
-                        <caption>Настройки {plugin_caption}</caption>
+                        <caption>%tr%entry_setup</caption>
                         <icon_url>gui_skin://small_icons/setup.aai</icon_url>
                         <action>
                             <type>plugin_handle_user_input</type>
@@ -78,7 +78,7 @@
                         </action>
                     </menu_item>
                     <menu_item>
-                        <caption>Очистить кэш EPG</caption>
+                        <caption>%tr%entry_epg_cache_clear</caption>
                         <icon_url>gui_skin://small_icons/subtitles_settings.aai</icon_url>
                         <action>
                             <type>plugin_handle_user_input</type>
@@ -89,7 +89,7 @@
                         </action>
                     </menu_item>
                     <menu_item>
-                        <caption>Перезагрузить плеер</caption>
+                        <caption>%tr%entry_reboot</caption>
                         <icon_url>gui_skin://small_icons/service_file.aai</icon_url>
                         <action>
                             <type>plugin_handle_user_input</type>
@@ -100,7 +100,7 @@
                         </action>
                     </menu_item>
                     <menu_item>
-                        <caption>Выключить Dune</caption>
+                        <caption>%tr%entry_shutdown</caption>
                         <icon_url>gui_skin://small_icons/power.aai</icon_url>
                         <action>
                             <type>plugin_handle_user_input</type>
@@ -111,7 +111,7 @@
                         </action>
                     </menu_item>
                     <menu_item>
-                        <caption>Отправить лог разработчику</caption>
+                        <caption>%tr%entry_send_log</caption>
                         <icon_url>gui_skin://small_icons/web_browser.aai</icon_url>
                         <action>
                             <type>plugin_handle_user_input</type>

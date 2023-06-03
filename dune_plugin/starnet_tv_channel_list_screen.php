@@ -45,7 +45,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER);
         $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS);
-        $zoom_popup = User_Input_Handler_Registry::create_action($this, ACTION_ZOOM_MENU, 'Масштаб для канала');
+        $zoom_popup = User_Input_Handler_Registry::create_action($this, ACTION_ZOOM_MENU, TR::t('tv_screen_zoom_channel'));
 
         $actions = array(
             GUI_EVENT_KEY_ENTER      => $action_play,
@@ -55,7 +55,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         );
 
         if ((string)$media_url->group_id === Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID) {
-            $search_action = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, 'Поиск');
+            $search_action = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, TR::t('search'));
             if (is_apk()) {
                 $actions[GUI_EVENT_KEY_C_YELLOW] = $search_action;
             } else {
@@ -64,7 +64,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         }
 
         if ($this->plugin->tv->is_favorites_supported()) {
-            $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, 'В избранное');
+            $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite'));
         }
 
         return $actions;
@@ -101,11 +101,9 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 try {
                     $this->plugin->config->GenerateStreamUrl($plugin_cookies, -1, $channel);
                 } catch (Exception $ex) {
-                    return Action_Factory::show_title_dialog('Канал не может быть запущен',
+                    return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
                         null,
-                        "Отсутствуют или неполные данные для формирования ссылки.\n" .
-                        "Возможно не введены данные для просмотра или канал отсутствует в подписке.\n" .
-                        $ex->getMessage());
+                        TR::t('warn_msg2__1', $ex->getMessage()));
                 }
 
                 return Action_Factory::tv_play($media_url);
@@ -116,14 +114,14 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 return Action_Factory::invalidate_folders(array(self::get_media_url_str($media_url->group_id)));
 
             case ACTION_SETTINGS:
-                return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), 'Настройки плагина');
+                return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), TR::t('entry_setup'));
 
             case ACTION_CREATE_SEARCH:
                 $defs = array();
                 Control_Factory::add_text_field($defs, $this, null, ACTION_NEW_SEARCH, '',
                     $channel->get_title(), false, false, true, true, 1300, false, true);
                 Control_Factory::add_vgap($defs, 500);
-                return Action_Factory::show_dialog('Введите название или часть названия канала для поиска', $defs, true, 1300);
+                return Action_Factory::show_dialog(TR::t('tv_screen_search_channel'), $defs, true, 1300);
 
             case ACTION_NEW_SEARCH:
                 return Action_Factory::close_dialog_and_run(User_Input_Handler_Registry::create_action($this, ACTION_RUN_SEARCH));
@@ -146,13 +144,13 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 }
 
                 if ($q === false) {
-                    Control_Factory::add_multiline_label($defs, '', 'Ничего не найдено.', 6);
+                    Control_Factory::add_multiline_label($defs, '', TR::t('tv_screen_not_found'), 6);
                     Control_Factory::add_vgap($defs, 20);
                     Control_Factory::add_close_dialog_and_apply_button_title($defs, $this, null,
-                        ACTION_CREATE_SEARCH, '', 'Новый поиск', 300);
+                        ACTION_CREATE_SEARCH, '', TR::t('new_search'), 300);
                 }
 
-                return Action_Factory::show_dialog('Поиск', $defs, true);
+                return Action_Factory::show_dialog(TR::t('search'), $defs, true);
 
             case ACTION_JUMP_TO_CHANNEL:
                 $ndx = (int)$user_input->number;
@@ -235,7 +233,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         try {
             $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
         } catch (Exception $e) {
-            hd_print("Ошибка загрузки плейлиста! " . $e->getMessage());
+            hd_print("Failed loading playlist! " . $e->getMessage());
             return array();
         }
 

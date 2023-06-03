@@ -558,7 +558,7 @@ class default_config extends dynamic_config
      */
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
-        Control_Factory::add_label($defs, 'Баланс:', 'Информация о балансе не поддерживается');
+        Control_Factory::add_label($defs, TR::t('balance'), TR::t('balance_not_support'));
     }
 
     /**

@@ -40,30 +40,30 @@ class Starnet_Entry_Handler implements User_Input_Handler
             case 'do_reboot':
                 hd_print("do reboot");
                 if (is_apk()) {
-                    return Action_Factory::show_title_dialog('Для этой приставки эта функция недоступна!');
+                    return Action_Factory::show_title_dialog(TR::t('entry_not_available'));
                 }
                 return Action_Factory::restart(true);
 
             case 'power_off':
                 hd_print("do power off");
                 if (is_apk()) {
-                    return Action_Factory::show_title_dialog('Для этой приставки эта функция недоступна!');
+                    return Action_Factory::show_title_dialog(TR::t('entry_not_available'));
                 }
                 return array(send_ir_code(GUI_EVENT_DISCRETE_POWER_OFF));
 
             case 'do_setup':
                 hd_print("do setup");
-                return Action_Factory::open_folder('setup', 'Настройки ' . get_plugin_name());
+                return Action_Factory::open_folder('setup', TR::t('entry_setup'));
 
             case 'do_send_log':
                 hd_print("do_send_log");
                 $error_msg = '';
-                $msg = HD::send_log_to_developer($plugin_cookies, $error_msg) ? "Лог отправлен!" : "Лог не отправлен! $error_msg";
+                $msg = HD::send_log_to_developer($plugin_cookies, $error_msg) ? TR::t('entry_log_sent') : TR::t('entry_log_not_sent') . " $error_msg";
                 return Action_Factory::show_title_dialog($msg);
 
             case 'do_clear_epg':
                 $this->plugin->tv->clear_epg_cache();
-                return Action_Factory::clear_rows_info_cache(Action_Factory::show_title_dialog('Кэш EPG очищен'));
+                return Action_Factory::clear_rows_info_cache(Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared')));
 
             case 'plugin_entry':
                 if (!isset($user_input->action_id)) break;
@@ -73,8 +73,8 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 switch ($user_input->action_id) {
                     case 'launch':
                         if (HD::toggle_https_proxy($plugin_cookies) !== 0) {
-                            return Action_Factory::show_title_dialog("Требуется перезагрузка",
-                                Action_Factory::restart(), "Плагин настроен на обновление через https прокси");
+                            return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'),
+                                Action_Factory::restart(), TR::t('entry_https_proxy_enabled'));
                         }
 
                         //hd_print("auto_play: $plugin_cookies->auto_play");

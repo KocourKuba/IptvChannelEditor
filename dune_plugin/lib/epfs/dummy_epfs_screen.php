@@ -45,7 +45,7 @@ class Dummy_Epfs_Screen extends Abstract_Rows_Screen implements User_Input_Handl
         hd_print("Dummy_Epfs_Screen::get_rows_pane");
         $defs = array();
 
-        $caption = $media_url->no_internet ? "Нет подключения к Интернет" : "Загрузка...";
+        $caption = $media_url->no_internet ? TR::t('err_no_internet') : TR::t('loading');
 
         $rows[] = Rows_Factory::vgap_row(50);
         $defs[] = GComps_Factory::label_v2(GComp_Geom::place_center(), null, $caption, 1, "#AFAFA0FF", 60);

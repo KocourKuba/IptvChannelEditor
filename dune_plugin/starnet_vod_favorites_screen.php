@@ -40,9 +40,9 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
     {
         $play_action = $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play();
 
-        $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, 'Вверх');
-        $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, 'Вниз');
-        $remove_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, 'Удалить');
+        $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('up'));
+        $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('down'));
+        $remove_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete'));
         $remove_all_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR);
 
         $menu_items = array(
@@ -151,7 +151,7 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
 
             if (is_null($short_movie)) {
-                $caption = "Информация о фильме недоступна";
+                $caption = TR::t('vod_screen_no_film_info');
                 $poster_url = "missing://";
             } else {
                 $caption = $short_movie->name;
