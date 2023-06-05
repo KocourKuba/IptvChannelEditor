@@ -780,7 +780,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 PluginTvChannel::future_epg_days => $channel->get_future_epg_days(),
 
                 PluginTvChannel::archive_past_sec => $channel->get_archive_past_sec(),
-                PluginTvChannel::archive_delay_sec => $channel->get_archive_delay_sec(),
+                PluginTvChannel::archive_delay_sec => (isset($plugin_cookies->delay_time) ? $plugin_cookies->delay_time : 60),
 
                 // Buffering time
                 PluginTvChannel::buffering_ms => (isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000),

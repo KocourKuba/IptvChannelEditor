@@ -277,7 +277,7 @@ class Default_Channel implements Channel
      */
     public function get_archive_delay_sec()
     {
-        return 7 * 60;
+        return 60;
     }
 
     /**

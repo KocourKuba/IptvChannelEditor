@@ -414,6 +414,20 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
         Control_Factory::add_combobox($defs, $this, null, 'buf_time', TR::t('setup_buffer_time'), $buf_time, $show_buf_time_ops, 0);
 
+        //////////////////////////////////////
+        // archive delay time
+        $show_delay_time_ops = array();
+        $show_delay_time_ops[60] = TR::t('setup_buffer_sec_default__1', "60");
+        $show_delay_time_ops[10] = TR::t('setup_buffer_sec__1', "10");
+        $show_delay_time_ops[20] = TR::t('setup_buffer_sec__1', "20");
+        $show_delay_time_ops[30] = TR::t('setup_buffer_sec__1', "30");
+        $show_delay_time_ops[2*60] = TR::t('setup_buffer_sec__1', "120");
+        $show_delay_time_ops[3*60] = TR::t('setup_buffer_sec__1', "180");
+        $show_delay_time_ops[5*60] = TR::t('setup_buffer_sec__1', "300");
+
+        $delay_time = isset($plugin_cookies->delay_time) ? $plugin_cookies->delay_time : 60;
+        Control_Factory::add_combobox($defs, $this, null, 'delay_time', TR::t('setup_delay_time'), $delay_time, $show_delay_time_ops, 0);
+
         Control_Factory::add_vgap($defs, 50);
 
         Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_STREAMING_APPLY, TR::t('ok'), 300);
@@ -471,7 +485,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
      * adult pass dialog defs
      * @return array
      */
-    public function do_get_pass_control_defs($plugin_cookies)
+    public function do_get_pass_control_defs()
     {
         $defs = array();
 
@@ -594,9 +608,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 return Action_Factory::show_dialog(TR::t('setup_play_setup'), $defs, true);
 
             case self::SETUP_ACTION_STREAMING_APPLY: // handle streaming settings dialog result
-                $plugin_cookies->buf_time = $user_input->buf_time;
-                hd_print("Buffering time: $plugin_cookies->buf_time");
-
                 $plugin_cookies->auto_play = $user_input->auto_play;
                 hd_print("Auto play: $plugin_cookies->auto_play");
 
@@ -641,6 +652,12 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     hd_print("Selected profile: id: $user_input->profile name: '" . $this->plugin->config->get_profile_name($plugin_cookies) . "'");
                 }
 
+                $plugin_cookies->buf_time = $user_input->buf_time;
+                hd_print("Buffering time: $plugin_cookies->buf_time");
+
+                $plugin_cookies->delay_time = $user_input->delay_time;
+                hd_print("Delay time: $plugin_cookies->delay_time");
+
                 return $need_reload ? $this->plugin->tv->reload_channels($this, $plugin_cookies) : null;
 
             case self::SETUP_ACTION_CLEAR_EPG_CACHE: // clear epg cache
@@ -669,7 +686,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'), Action_Factory::restart(), $msg);
 
             case self::SETUP_ACTION_PASS_DLG: // show pass dialog
-                $defs = $this->do_get_pass_control_defs($plugin_cookies);
+                $defs = $this->do_get_pass_control_defs();
                 return Action_Factory::show_dialog(TR::t('setup_adult_password'), $defs, true);
 
             case self::SETUP_ACTION_PASS_APPLY: // handle pass dialog result
