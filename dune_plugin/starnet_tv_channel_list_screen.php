@@ -56,11 +56,8 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         if ((string)$media_url->group_id === Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID) {
             $search_action = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, TR::t('search'));
-            if (is_apk()) {
-                $actions[GUI_EVENT_KEY_C_YELLOW] = $search_action;
-            } else {
-                $actions[GUI_EVENT_KEY_SEARCH] = $search_action;
-            }
+            $actions[GUI_EVENT_KEY_C_YELLOW] = $search_action;
+            $actions[GUI_EVENT_KEY_SEARCH] = $search_action;
         }
 
         if ($this->plugin->tv->is_favorites_supported()) {
