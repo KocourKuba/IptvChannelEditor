@@ -58,15 +58,10 @@ void plugin_shuratv::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?archive={START}&lutc={NOW}";
 
-	auto& params = epg_params[0];
-	params.epg_domain = "http://epg.propg.net";
-	params.epg_url = "{EPG_DOMAIN}/{ID}/epg2/{DATE}";
-	params.epg_date_format = "{YEAR}-{MONTH}-{DAY}";
-	params.epg_root = "";
-	params.epg_name = "epg";
-	params.epg_desc = "desc";
-	params.epg_start = "start";
-	params.epg_end = "stop";
+	set_epg_preset(0, EpgPresets::enOneOtt);
+	epg_params[0].epg_domain = "http://epg.propg.net";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/{ID}/epg2/{DATE}";
+	epg_params[0].epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 
 	static_servers = true;
 	fill_servers_list();

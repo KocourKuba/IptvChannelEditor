@@ -67,16 +67,11 @@ void plugin_oneott::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
+	set_epg_preset(0, EpgPresets::enOneOtt);
 	epg_params[0].epg_domain = "http://epg.propg.net";
 	epg_params[0].epg_url = "{EPG_DOMAIN}/{EPG_ID}/epg2/{DATE}";
 	epg_params[0].epg_date_format = "{YEAR}-{MONTH}-{DAY}";
-	epg_params[0].epg_root = "";
-	epg_params[0].epg_name = "epg";
-	epg_params[0].epg_desc = "desc";
-	epg_params[0].epg_start = "start";
-	epg_params[0].epg_end = "stop";
 
-	epg_params[1].epg_domain = "http://epg.drm-play.com";
 	epg_params[1].epg_url = "{EPG_DOMAIN}/1ott%2Fepg%2F{EPG_ID}.json";
 }
 

@@ -74,13 +74,8 @@ void plugin_itv::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
-	auto& params = epg_params[0];
-	params.epg_url = "{API_URL}/epg/{EPG_ID}";
-	params.epg_root = "res";
-	params.epg_name = "title";
-	params.epg_desc = "desc";
-	params.epg_start = "startTime";
-	params.epg_end = "stopTime";
+	set_epg_preset(0, EpgPresets::enItvLive);
+	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}";
 }
 
 bool plugin_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)

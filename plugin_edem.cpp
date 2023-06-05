@@ -71,6 +71,5 @@ void plugin_edem::load_default()
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 	streams_config[0].dune_params = "hls_forced_type:event";
 
-	epg_params[0].epg_domain = "http://epg.drm-play.com";
 	epg_params[0].epg_url = "{EPG_DOMAIN}/edem%2Fepg%2F{EPG_ID}.json";
 }

@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPageEPG, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigPageEPG::OnBnClickedButtonEpgTest)
 	ON_EN_CHANGE(IDC_EDIT_EPG_DOMAIN, &CPluginConfigPageEPG::OnEnChangeEditEpgDomain)
 	ON_EN_CHANGE(IDC_EDIT_EPG_URL, &CPluginConfigPageEPG::OnEnChangeEditEpgUrl)
+	ON_CBN_SELCHANGE(IDC_COMBO_EPG_PARSER_PRESET, &CPluginConfigPageEPG::OnCbnSelchangeComboEpgParserPreset)
 	ON_EN_CHANGE(IDC_EDIT_EPG_ROOT, &CPluginConfigPageEPG::OnEnChangeEditEpgRoot)
 	ON_EN_CHANGE(IDC_EDIT_EPG_NAME, &CPluginConfigPageEPG::OnEnChangeEditEpgName)
 	ON_EN_CHANGE(IDC_EDIT_EPG_DESC, &CPluginConfigPageEPG::OnEnChangeEditEpgDesc)
@@ -70,6 +71,7 @@ void CPluginConfigPageEPG::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_EPG_URL, m_wndEpgUrl);
 	DDX_Text(pDX, IDC_EDIT_EPG_URL, m_EpgUrl);
 	DDX_Control(pDX, IDC_EDIT_EPG_ROOT, m_wndEpgRoot);
+	DDX_Control(pDX, IDC_COMBO_EPG_PARSER_PRESET, m_wndEpgPreset);
 	DDX_Text(pDX, IDC_EDIT_EPG_ROOT, m_EpgRoot);
 	DDX_Control(pDX, IDC_EDIT_EPG_NAME, m_wndEpgName);
 	DDX_Text(pDX, IDC_EDIT_EPG_NAME, m_EpgName);
@@ -82,7 +84,7 @@ void CPluginConfigPageEPG::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_EPG_FMT_DATE, m_wndDateFormat);
 	DDX_Text(pDX, IDC_EDIT_EPG_FMT_DATE, m_EpgDateFormat);
 	DDX_Control(pDX, IDC_EDIT_EPG_FMT_TIME, m_wndEpgStartFormat);
-	DDX_Text(pDX, IDC_EDIT_EPG_FMT_TIME, m_EpgTimeFormat);
+	DDX_Text(pDX, IDC_EDIT_EPG_FMT_TIME, m_EpgStartTimeFormat);
 	DDX_Control(pDX, IDC_EDIT_EPG_TZ, m_wndEpgTimezone);
 	DDX_Text(pDX, IDC_EDIT_EPG_TZ, m_EpgTimezone);
 	DDX_Control(pDX, IDC_COMBO_EPG_TYPE, m_wndEpgType);
@@ -134,9 +136,16 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	{
 		m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(0).c_str();
 	}
+	m_wndEpgType.SetCurSel(0);
+
+	for(auto it = EpgPresets::enDRM; it != EpgPresets::enLast; ((size_t&)it)++)
+	{
+		m_wndEpgPreset.AddString(enum_to_string<EpgPresets, std::wstring>(it).c_str());
+	}
+	m_wndEpgPreset.SetCurSel(GetPropertySheet()->m_plugin->get_epg_preset_idx(0));
+
 
 	FillControls();
-	UpdateControls();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -147,7 +156,7 @@ BOOL CPluginConfigPageEPG::OnSetActive()
 	__super::OnSetActive();
 
 	FillControls();
-	UpdateControls();
+
 	return TRUE;
 }
 
@@ -198,26 +207,25 @@ void CPluginConfigPageEPG::AssignMacros()
 
 void CPluginConfigPageEPG::UpdateControls()
 {
-	UpdateData(TRUE);
-
 	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
+	auto preset = (EpgPresets)m_wndEpgPreset.GetCurSel();
+	bool not_custom_preset = preset != EpgPresets::enCustom;
 
 	// epg
 	m_wndEpgDomain.SetReadOnly(readOnly);
 	m_wndEpgUrl.SetReadOnly(readOnly);
-	m_wndEpgRoot.SetReadOnly(readOnly);
-	m_wndEpgName.SetReadOnly(readOnly);
-	m_wndEpgDesc.SetReadOnly(readOnly);
-	m_wndEpgStart.SetReadOnly(readOnly);
-	m_wndEpgEnd.SetReadOnly(readOnly);
 	m_wndDateFormat.SetReadOnly(readOnly);
-	m_wndEpgStartFormat.SetReadOnly(readOnly);
-	m_wndEpgTimezone.SetReadOnly(readOnly);
-	m_wndChkUseDuration.EnableWindow(!readOnly);
-	m_wndBtnEpgTest.EnableWindow(!m_EpgUrl.IsEmpty());
-	m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(m_wndEpgType.GetCurSel()).c_str();
 
-	UpdateData(FALSE);
+	m_wndEpgRoot.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgName.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgDesc.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgStart.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgEnd.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgStartFormat.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgTimezone.SetReadOnly(readOnly || not_custom_preset);
+	m_wndChkUseDuration.EnableWindow(!readOnly || not_custom_preset);
+
+	m_wndBtnEpgTest.EnableWindow(!m_EpgUrl.IsEmpty());
 }
 
 void CPluginConfigPageEPG::FillControls()
@@ -232,11 +240,17 @@ void CPluginConfigPageEPG::FillControls()
 	m_EpgStart = epg.get_epg_start().c_str();
 	m_EpgEnd = epg.get_epg_end().c_str();
 	m_EpgDateFormat = epg.get_epg_date_format().c_str();
-	m_EpgTimeFormat = epg.get_epg_time_format().c_str();
+	m_EpgStartTimeFormat = epg.get_epg_time_format().c_str();
 	m_EpgTimezone = epg.epg_timezone;
 	m_wndChkUseDuration.SetCheck(epg.epg_use_duration != false);
 
+	int epg_type = m_wndEpgType.GetCurSel();
+	m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(epg_type).c_str();
+	m_wndEpgPreset.SetCurSel(GetPropertySheet()->m_plugin->get_epg_preset_idx(epg_type));
+
 	UpdateData(FALSE);
+
+	UpdateControls();
 }
 
 void CPluginConfigPageEPG::UpdateDateTimestamp(bool dateToUtc)
@@ -398,7 +412,7 @@ void CPluginConfigPageEPG::OnEnChangeEditEpgFmtDate()
 void CPluginConfigPageEPG::OnEnChangeEditEpgFmtTime()
 {
 	UpdateData(TRUE);
-	GetEpgParameters().set_epg_time_format(m_EpgTimeFormat.GetString());
+	GetEpgParameters().set_epg_time_format(m_EpgStartTimeFormat.GetString());
 	AllowSave();
 }
 
@@ -417,4 +431,25 @@ void CPluginConfigPageEPG::OnDtnDatetimechangeDatetimepickerDate(NMHDR* pNMHDR, 
 {
 	UpdateDateTimestamp(true);
 	*pResult = 0;
+}
+
+void CPluginConfigPageEPG::OnCbnSelchangeComboEpgParserPreset()
+{
+	int idx = m_wndEpgPreset.GetCurSel();
+	if (idx != CB_ERR)
+	{
+		EpgParameters epg = (idx == (int)EpgPresets::enCustom) ? GetEpgParameters() : GetPropertySheet()->m_plugin->get_epg_preset((EpgPresets)idx);
+		m_EpgRoot = epg.get_epg_root().c_str();
+		m_EpgName = epg.get_epg_name().c_str();
+		m_EpgDesc = epg.get_epg_desc().c_str();
+		m_EpgStart = epg.get_epg_start().c_str();
+		m_EpgEnd = epg.get_epg_end().c_str();
+		m_EpgStartTimeFormat = epg.get_epg_time_format().c_str();
+		m_EpgTimezone = epg.epg_timezone;
+		m_wndChkUseDuration.SetCheck(epg.epg_use_duration != false);
+
+		UpdateData(FALSE);
+
+		UpdateControls();
+	}
 }

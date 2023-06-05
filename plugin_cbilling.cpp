@@ -74,12 +74,10 @@ void plugin_cbilling::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
+	set_epg_preset(0, EpgPresets::enCbilling);
 	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";
-	epg_params[0].epg_root = "";
 
-	epg_params[1].epg_domain = "http://epg.drm-play.com";
 	epg_params[1].epg_url = "{EPG_DOMAIN}/cbilling%2Fepg%2F{EPG_ID}.json";
-	epg_params[1].epg_root = "epg_data";
 
 	static_devices = true;
 	fill_devices_list();

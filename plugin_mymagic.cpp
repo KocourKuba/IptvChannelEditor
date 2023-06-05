@@ -59,15 +59,14 @@ void plugin_mymagic::load_default()
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
+	static_servers = true;
+	static_qualities = true;
 
 	streams_config[0].uri_template = "http://{DOMAIN}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	epg_params[0].epg_domain = "http://epg.drm-play.com";
 	epg_params[0].epg_url = "{EPG_DOMAIN}/magic%2Fepg%2F{EPG_ID}.json";
 
-	static_servers = true;
-	static_qualities = true;
 	fill_servers_list();
 	fill_qualities_list();
 }

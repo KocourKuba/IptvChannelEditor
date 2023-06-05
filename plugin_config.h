@@ -30,6 +30,19 @@ DEALINGS IN THE SOFTWARE.
 #include "IPTVChannelEditor.h"
 #include "UtilsLib\json_wrapper.h"
 
+#define ENUM_TO_STRING(ENUM_TYPE, ...)                                                                                 \
+template<typename ENUM_TYPE, typename StringType>                                                                      \
+inline StringType enum_to_string(const ENUM_TYPE e)                                                                    \
+{                                                                                                                      \
+	static_assert(std::is_enum<ENUM_TYPE>::value, #ENUM_TYPE " must be an enum!");                                     \
+	static const std::pair<ENUM_TYPE, StringType> m[] = __VA_ARGS__;                                                   \
+	auto it = std::find_if(std::begin(m), std::end(m), [&e](const std::pair<ENUM_TYPE, StringType>& ej_pair)           \
+	{                                                                                                                  \
+		return ej_pair.first == e;                                                                                     \
+	});                                                                                                                \
+	return (it != std::end(m)) ? it->second : StringType();                                                            \
+}
+
 namespace s_enum
 {
 enum class StreamType
@@ -79,6 +92,41 @@ NLOHMANN_JSON_SERIALIZE_ENUM(AccountAccessType,
 
 }
 using namespace s_enum;
+
+namespace epg_enum
+{
+
+enum class EpgPresets
+{
+	enDRM = 0,
+	enIptvxOne,
+	enCbilling,
+	enItvLive,
+	enOneOtt,
+	enTVClub,
+	enVidok,
+	enMyEPGServer,
+	enCustom,
+	enLast,
+};
+
+ENUM_TO_STRING(EpgPresets,
+{
+	{ EpgPresets::enDRM,         L"DRM"         },
+	{ EpgPresets::enIptvxOne,    L"IptvxOne"    },
+	{ EpgPresets::enCbilling,    L"Cbilling"    },
+	{ EpgPresets::enItvLive,     L"ItvLive"     },
+	{ EpgPresets::enOneOtt,      L"OneOtt"      },
+	{ EpgPresets::enTVClub,      L"TVClub"      },
+	{ EpgPresets::enVidok,       L"Vidok"       },
+	{ EpgPresets::enMyEPGServer, L"MyEPGServer" },
+	{ EpgPresets::enCustom,      L"Custom"      },
+	{ EpgPresets::enLast,        L"Last"        }
+})
+
+};
+
+using namespace epg_enum;
 
 struct TemplateParams
 {
@@ -213,6 +261,19 @@ struct EpgParameters
 	bool epg_use_mapper = false;
 	std::wstring epg_mapper_url;
 	std::map<std::wstring, std::wstring> epg_mapper;
+
+	bool compare_preset(const EpgParameters& src) const
+	{
+		return (epg_root == src.epg_root
+				&& epg_name == src.epg_name
+				&& epg_desc == src.epg_desc
+				&& epg_start == src.epg_start
+				&& epg_end == src.epg_end
+				&& epg_time_format == src.epg_time_format
+				&& epg_timezone == src.epg_timezone
+				&& epg_use_duration == src.epg_use_duration
+				);
+	}
 
 	std::wstring get_epg_domain() const { return utils::utf8_to_utf16(epg_domain); }
 	void set_epg_domain(const std::wstring& val) { epg_domain = utils::utf16_to_utf8(val); }
@@ -355,13 +416,18 @@ public:
 class plugin_config
 {
 public:
-	plugin_config() = default;
+	plugin_config();
 
 protected:
 	/// <summary>
 	/// load default settings
 	/// </summary>
 	virtual void load_default();
+
+	/// <summary>
+	/// fill EPG parsing preset
+	/// </summary>
+	void FillEpgPresets() const;
 
 public:
 	/// <summary>
@@ -373,6 +439,21 @@ public:
 	/// load plugin parameters to file
 	/// </summary>
 	virtual void load_plugin_parameters(const std::wstring& filename);
+
+	/// <summary>
+	/// get prefilled EPG parsing preset
+	/// </summary>
+	EpgParameters get_epg_preset(EpgPresets idx) const;
+
+	/// <summary>
+	/// set prefilled EPG parsing preset for selected epg type
+	/// </summary>
+	void set_epg_preset(size_t epg_idx, EpgPresets idx);
+
+	/// <summary>
+	/// get EPG parsing preset index for selected epg type
+	/// </summary>
+	size_t get_epg_preset_idx(size_t epg_idx) const;
 
 	/// <summary>
 	/// set path used to send logs to developer
@@ -825,6 +906,8 @@ public:
 
 protected:
 
+	static std::array<EpgParameters, (size_t)EpgPresets::enCustom> known_presets;
+
 	// non configurable parameters
 	PluginType plugin_type = PluginType::enCustom;
 	std::string type_name;
@@ -884,4 +967,5 @@ protected:
 	std::vector<DynamicParamsInfo> qualities_list;
 	std::vector<DynamicParamsInfo> devices_list;
 	std::vector<DynamicParamsInfo> profiles_list;
+	std::array<EpgParameters, 4> epg_presets;
 };

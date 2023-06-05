@@ -69,6 +69,5 @@ void plugin_oneusd::load_default()
 	epg_params[0].epg_domain = "http://tv.team";
 	epg_params[0].epg_url = "{EPG_DOMAIN}/{EPG_ID}.json";
 
-	epg_params[1].epg_domain = "http://epg.drm-play.com";
 	epg_params[1].epg_url = "{EPG_DOMAIN}/tvteam%2Fepg%2F{EPG_ID}.json";
 }

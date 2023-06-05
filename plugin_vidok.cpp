@@ -71,13 +71,8 @@ void plugin_vidok::load_default()
 	streams_config[0].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}";
 
-	auto& params = epg_params[0];
-	params.epg_url = "{API_URL}/epg2?cid={EPG_ID}&token={TOKEN}";
-	params.epg_root = "epg";
-	params.epg_name = "title";
-	params.epg_desc = "description";
-	params.epg_start = "start";
-	params.epg_end = "end";
+	set_epg_preset(0, EpgPresets::enVidok);
+	epg_params[0].epg_url = "{API_URL}/epg2?cid={EPG_ID}&token={TOKEN}";
 }
 
 std::wstring plugin_vidok::get_api_token(const Credentials& creds) const

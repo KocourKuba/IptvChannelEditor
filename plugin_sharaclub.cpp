@@ -107,8 +107,8 @@ void plugin_sharaclub::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/live/{TOKEN}/{ID}.ts";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
 
+	set_epg_preset(0, EpgPresets::enCbilling);
 	epg_params[0].epg_url = "{EPG_DOMAIN}/get/?type=epg&ch={EPG_ID}";
-	epg_params[0].epg_root = "";
 }
 
 std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)

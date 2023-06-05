@@ -30,6 +30,9 @@ DEALINGS IN THE SOFTWARE.
 #include "Constants.h"
 #include "IPTVChannelEditor.h"
 
+
+std::array<EpgParameters, (size_t)EpgPresets::enCustom> plugin_config::known_presets;
+
 void plugin_config::set_plugin_defaults(PluginType val)
 {
 	plugin_type = val;
@@ -44,6 +47,11 @@ const PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx) const
 	}
 
 	return playlist_templates[idx];
+}
+
+plugin_config::plugin_config()
+{
+	FillEpgPresets();
 }
 
 void plugin_config::load_default()
@@ -90,16 +98,14 @@ void plugin_config::load_default()
 
 	streams_config = { hls, mpeg };
 
-	EpgParameters params;
-	params.epg_root = "epg_data";
-	params.epg_name = "name";
-	params.epg_desc = "descr";
-	params.epg_start = "time";
-	params.epg_end = "time_to";
 
-	epg_params = { params, params };
+	set_epg_preset(0, EpgPresets::enDRM);
 	epg_params[0].epg_param = "first";
+	epg_params[0].epg_domain = "http://epg.drm-play.com";
+
+	set_epg_preset(1, EpgPresets::enDRM);
 	epg_params[1].epg_param = "second";
+	epg_params[1].epg_domain = "http://epg.drm-play.com";
 }
 
 bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
@@ -186,6 +192,129 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename)
 	{
 		load_default();
 	}
+}
+
+EpgParameters plugin_config::get_epg_preset(EpgPresets idx) const
+{
+	if (idx < EpgPresets::enCustom)
+		return known_presets[(size_t)idx];
+
+	return {};
+}
+
+void plugin_config::FillEpgPresets() const
+{
+	{ // 0
+		EpgParameters params;
+		params.epg_root = "epg_data";
+		params.epg_name = "name";
+		params.epg_desc = "descr";
+		params.epg_start = "time";
+		params.epg_end = "time_to";
+		known_presets[(size_t)EpgPresets::enDRM] = std::move(params);
+	}
+
+	{ // 1
+		EpgParameters params;
+		params.epg_root = "ch_programme";
+		params.epg_name = "title";
+		params.epg_desc = "description";
+		params.epg_start = "start";
+		params.epg_end = "";
+		params.epg_time_format = "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}"; // "%d-%m-%Y %H:%M";
+		params.epg_timezone = 3; // iptvx.one uses moscow time (UTC+3)
+		known_presets[(size_t)EpgPresets::enIptvxOne] = std::move(params);
+	}
+
+	{ // 2
+		EpgParameters params;
+		params.epg_root = "";
+		params.epg_name = "name";
+		params.epg_desc = "descr";
+		params.epg_start = "time";
+		params.epg_end = "time_to";
+		known_presets[(size_t)EpgPresets::enCbilling] = std::move(params);
+	}
+
+	{ // 3
+		EpgParameters params;
+		params.epg_root = "res";
+		params.epg_name = "title";
+		params.epg_desc = "desc";
+		params.epg_start = "startTime";
+		params.epg_end = "stopTime";
+		known_presets[(size_t)EpgPresets::enItvLive] = std::move(params);
+	}
+
+	{ // 4
+		EpgParameters params;
+		params.epg_root = "";
+		params.epg_name = "epg";
+		params.epg_desc = "desc";
+		params.epg_start = "start";
+		params.epg_end = "stop";
+		known_presets[(size_t)EpgPresets::enOneOtt] = std::move(params);
+	}
+
+	{ // 5
+		EpgParameters params;
+		params.epg_root = "epg|channels|[0]|epg";
+		params.epg_name = "text";
+		params.epg_desc = "description";
+		params.epg_start = "start";
+		params.epg_end = "end";
+		known_presets[(size_t)EpgPresets::enTVClub] = std::move(params);
+	}
+
+	{ // 6
+		EpgParameters params;
+		params.epg_root = "epg";
+		params.epg_name = "title";
+		params.epg_desc = "description";
+		params.epg_start = "start";
+		params.epg_end = "end";
+		known_presets[(size_t)EpgPresets::enVidok] = std::move(params);
+	}
+
+	{ // 7
+		EpgParameters params;
+		params.epg_root = "";
+		params.epg_name = "title";
+		params.epg_desc = "desc";
+		params.epg_start = "start";
+		params.epg_end = "stop";
+		known_presets[(size_t)EpgPresets::enMyEPGServer] = std::move(params);
+	}
+}
+
+void plugin_config::set_epg_preset(size_t epg_idx, EpgPresets idx)
+{
+	auto& epg_param = epg_params[epg_idx];
+	const auto& preset = known_presets[(size_t)idx];
+
+	epg_param.epg_root = preset.epg_root;
+	epg_param.epg_name = preset.epg_name;
+	epg_param.epg_desc = preset.epg_desc;
+	epg_param.epg_start = preset.epg_start;
+	epg_param.epg_end = preset.epg_end;
+	epg_param.epg_time_format = preset.epg_time_format;
+	epg_param.epg_timezone = preset.epg_timezone;
+	epg_param.epg_use_duration = preset.epg_use_duration;
+}
+
+size_t plugin_config::get_epg_preset_idx(size_t epg_idx) const
+{
+	size_t preset_idx = (size_t)EpgPresets::enDRM;
+	const auto& epg_param = epg_params[epg_idx];
+	for (const auto& preset : known_presets)
+	{
+		if (epg_param.compare_preset(preset))
+			return preset_idx;
+
+		preset_idx++;
+	}
+
+	return (size_t)EpgPresets::enCustom;
 }
 
 nlohmann::json plugin_config::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const

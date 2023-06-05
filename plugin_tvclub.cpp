@@ -72,13 +72,8 @@ void plugin_tvclub::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
 
-	auto& params = epg_params[0];
-	params.epg_url = "{API_URL}/epg?token={TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24";
-	params.epg_root = "epg|channels|[0]|epg";
-	params.epg_name = "text";
-	params.epg_desc = "description";
-	params.epg_start = "start";
-	params.epg_end = "end";
+	set_epg_preset(0, EpgPresets::enTVClub);
+	epg_params[0].epg_url = "{API_URL}/epg?token={TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24";
 }
 
 std::wstring plugin_tvclub::get_api_token(const Credentials& creds) const

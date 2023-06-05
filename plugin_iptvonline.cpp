@@ -65,17 +65,9 @@ void plugin_iptvonline::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts";
 
-	epg_params[0].epg_domain = "http://epg.drm-play.com";
 	epg_params[0].epg_url = "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json";
 
-	auto& params1 = epg_params[1];
-	params1.epg_domain = "http://epg.iptvx.one";
-	params1.epg_url = "{EPG_DOMAIN}/api/id/{EPG_ID}.json";
-	params1.epg_root = "ch_programme";
-	params1.epg_name = "title";
-	params1.epg_desc = "description";
-	params1.epg_start = "start";
-	params1.epg_end = "";
-	params1.epg_time_format = "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}"; // "%d-%m-%Y %H:%M";
-	params1.epg_timezone = 3; // iptvx.one uses moscow time (UTC+3)
+	set_epg_preset(1, EpgPresets::enIptvxOne);
+	epg_params[1].epg_domain = "http://epg.iptvx.one";
+	epg_params[1].epg_url = "{EPG_DOMAIN}/api/id/{EPG_ID}.json";
 }

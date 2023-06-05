@@ -66,9 +66,10 @@ protected:
 	afx_msg void OnEnChangeEditEpgFmtDate();
 	afx_msg void OnEnChangeEditEpgFmtTime();
 	afx_msg void OnBnClickedCheckUseDuration();
-
-	afx_msg void OnDtnDatetimechangeDatetimepickerDate(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnChangeEditEpgDomain();
+	afx_msg void OnCbnSelchangeComboEpgParserPreset();
 	afx_msg void OnEnChangeEditUtc();
+	afx_msg void OnDtnDatetimechangeDatetimepickerDate(NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
 	void UpdateControls();
@@ -91,6 +92,7 @@ protected:
 
 	CComboBox m_wndCatchupType;
 	CComboBox m_wndEpgType;
+	CComboBox m_wndEpgPreset;
 
 	CButton m_wndBtnEpgTest;
 	CButton m_wndChkUseDuration;
@@ -103,7 +105,7 @@ protected:
 	CString m_EpgStart;
 	CString m_EpgEnd;
 	CString m_EpgDateFormat;
-	CString m_EpgTimeFormat;
+	CString m_EpgStartTimeFormat;
 	CString m_Token;
 	CString m_SetID;
 	CString m_DuneIP;
@@ -112,6 +114,5 @@ protected:
 
 	time_t m_UTC = 0;
 	int m_EpgTimezone = 0;
-public:
-	afx_msg void OnEnChangeEditEpgDomain();
+	std::array<EpgParameters, 4> epg_presets;
 };
