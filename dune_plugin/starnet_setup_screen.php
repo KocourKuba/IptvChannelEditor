@@ -102,11 +102,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         Control_Factory::add_label($defs, "IPTV Channel Editor by sharky72", $title, 20);
 
         //////////////////////////////////////
-        // Interface settings
-        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_INTERFACE_DLG,
-            TR::t('setup_interface_title'), TR::t('setup_change_settings'), $setting_icon, self::CONTROLS_WIDTH);
-
-        //////////////////////////////////////
         // ott or token dialog
         if ($this->plugin->config->get_embedded_account() !== null) {
             Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CLEAR_ACCOUNT,
@@ -127,6 +122,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     break;
             }
         }
+
+        //////////////////////////////////////
+        // Interface settings
+        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_INTERFACE_DLG,
+            TR::t('setup_interface_title'), TR::t('setup_change_settings'), $setting_icon, self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // streaming dialog
