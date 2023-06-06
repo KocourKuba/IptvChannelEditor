@@ -40,19 +40,19 @@ IMPLEMENT_DYNAMIC(CPluginConfigPageEPG, CTooltipPropertyPage)
 BEGIN_MESSAGE_MAP(CPluginConfigPageEPG, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPG_TYPE, &CPluginConfigPageEPG::OnCbnSelchangeComboEpgType)
 	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigPageEPG::OnBnClickedButtonEpgTest)
-	ON_EN_CHANGE(IDC_EDIT_EPG_DOMAIN, &CPluginConfigPageEPG::OnEnChangeEditEpgDomain)
-	ON_EN_CHANGE(IDC_EDIT_EPG_URL, &CPluginConfigPageEPG::OnEnChangeEditEpgUrl)
+	ON_EN_CHANGE(IDC_EDIT_EPG_DOMAIN, &CPluginConfigPageEPG::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_EPG_URL, &CPluginConfigPageEPG::SaveParameters)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPG_PARSER_PRESET, &CPluginConfigPageEPG::OnCbnSelchangeComboEpgParserPreset)
-	ON_EN_CHANGE(IDC_EDIT_EPG_ROOT, &CPluginConfigPageEPG::OnEnChangeEditEpgRoot)
-	ON_EN_CHANGE(IDC_EDIT_EPG_NAME, &CPluginConfigPageEPG::OnEnChangeEditEpgName)
-	ON_EN_CHANGE(IDC_EDIT_EPG_DESC, &CPluginConfigPageEPG::OnEnChangeEditEpgDesc)
-	ON_EN_CHANGE(IDC_EDIT_EPG_START, &CPluginConfigPageEPG::OnEnChangeEditEpgStart)
-	ON_EN_CHANGE(IDC_EDIT_EPG_END, &CPluginConfigPageEPG::OnEnChangeEditEpgEnd)
-	ON_EN_CHANGE(IDC_EDIT_EPG_TZ, &CPluginConfigPageEPG::OnEnChangeEditEpgTZ)
-	ON_EN_CHANGE(IDC_EDIT_EPG_FMT_DATE, &CPluginConfigPageEPG::OnEnChangeEditEpgFmtDate)
-	ON_EN_CHANGE(IDC_EDIT_EPG_FMT_TIME, &CPluginConfigPageEPG::OnEnChangeEditEpgFmtTime)
+	ON_EN_CHANGE(IDC_EDIT_EPG_ROOT, &CPluginConfigPageEPG::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_EPG_NAME, &CPluginConfigPageEPG::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_EPG_DESC, &CPluginConfigPageEPG::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_EPG_START, &CPluginConfigPageEPG::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_EPG_END, &CPluginConfigPageEPG::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_EPG_TZ, &CPluginConfigPageEPG::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_EPG_FMT_DATE, &CPluginConfigPageEPG::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_EPG_FMT_TIME, &CPluginConfigPageEPG::SaveParameters)
+	ON_BN_CLICKED(IDC_CHECK_USE_DURATION, &CPluginConfigPageEPG::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_UTC, &CPluginConfigPageEPG::OnEnChangeEditUtc)
-	ON_BN_CLICKED(IDC_CHECK_USE_DURATION, &CPluginConfigPageEPG::OnBnClickedCheckUseDuration)
 	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER_DATE, &CPluginConfigPageEPG::OnDtnDatetimechangeDatetimepickerDate)
 END_MESSAGE_MAP()
 
@@ -346,82 +346,6 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	}
 }
 
-void CPluginConfigPageEPG::OnEnChangeEditEpgDomain()
-{
-	UpdateData(TRUE);
-	GetEpgParameters().set_epg_domain(m_EpgDomain.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageEPG::OnEnChangeEditEpgUrl()
-{
-	UpdateData(TRUE);
-	GetEpgParameters().set_epg_url(m_EpgUrl.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageEPG::OnEnChangeEditEpgRoot()
-{
-	UpdateData(TRUE);
-	GetEpgParameters().set_epg_root(m_EpgRoot.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageEPG::OnEnChangeEditEpgName()
-{
-	UpdateData(TRUE);
-	GetEpgParameters().set_epg_name(m_EpgName.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageEPG::OnEnChangeEditEpgDesc()
-{
-	UpdateData(TRUE);
-	GetEpgParameters().set_epg_desc(m_EpgDesc.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageEPG::OnEnChangeEditEpgStart()
-{
-	UpdateData(TRUE);
-	GetEpgParameters().set_epg_start(m_EpgStart.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageEPG::OnEnChangeEditEpgEnd()
-{
-	UpdateData(TRUE);
-	GetEpgParameters().set_epg_end(m_EpgEnd.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageEPG::OnEnChangeEditEpgTZ()
-{
-	UpdateData(TRUE);
-	GetEpgParameters().epg_timezone = m_EpgTimezone;
-	AllowSave();
-}
-
-void CPluginConfigPageEPG::OnEnChangeEditEpgFmtDate()
-{
-	UpdateData(TRUE);
-	GetEpgParameters().set_epg_date_format(m_EpgDateFormat.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageEPG::OnEnChangeEditEpgFmtTime()
-{
-	UpdateData(TRUE);
-	GetEpgParameters().set_epg_time_format(m_EpgStartTimeFormat.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageEPG::OnBnClickedCheckUseDuration()
-{
-	GetEpgParameters().epg_use_duration = m_wndChkUseDuration.GetCheck() != 0;
-	AllowSave();
-}
-
 void CPluginConfigPageEPG::OnEnChangeEditUtc()
 {
 	UpdateDateTimestamp(false);
@@ -451,5 +375,27 @@ void CPluginConfigPageEPG::OnCbnSelchangeComboEpgParserPreset()
 		UpdateData(FALSE);
 
 		UpdateControls();
+
+		SaveParameters();
 	}
+}
+
+void CPluginConfigPageEPG::SaveParameters()
+{
+	UpdateData(TRUE);
+
+	auto& parameters = GetEpgParameters();
+	parameters.set_epg_domain(m_EpgDomain.GetString());
+	parameters.set_epg_url(m_EpgUrl.GetString());
+	parameters.set_epg_root(m_EpgRoot.GetString());
+	parameters.set_epg_name(m_EpgName.GetString());
+	parameters.set_epg_desc(m_EpgDesc.GetString());
+	parameters.set_epg_start(m_EpgStart.GetString());
+	parameters.set_epg_end(m_EpgEnd.GetString());
+	parameters.set_epg_date_format(m_EpgDateFormat.GetString());
+	parameters.set_epg_time_format(m_EpgStartTimeFormat.GetString());
+	parameters.epg_timezone = m_EpgTimezone;
+	parameters.epg_use_duration = m_wndChkUseDuration.GetCheck() != 0;
+
+	AllowSave();
 }

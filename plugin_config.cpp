@@ -253,7 +253,7 @@ void plugin_config::FillEpgPresets() const
 		params.epg_desc = "desc";
 		params.epg_start = "start";
 		params.epg_end = "stop";
-		known_presets[(size_t)EpgPresets::enOneOtt] = std::move(params);
+		known_presets[(size_t)EpgPresets::enPropgNet] = std::move(params);
 	}
 
 	{ // 5

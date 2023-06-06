@@ -67,7 +67,7 @@ void plugin_oneott::load_default()
 	streams_config[1].uri_template = "http://{DOMAIN}/~{TOKEN}/{ID}";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	set_epg_preset(0, EpgPresets::enOneOtt);
+	set_epg_preset(0, EpgPresets::enPropgNet);
 	epg_params[0].epg_domain = "http://epg.propg.net";
 	epg_params[0].epg_url = "{EPG_DOMAIN}/{EPG_ID}/epg2/{DATE}";
 	epg_params[0].epg_date_format = "{YEAR}-{MONTH}-{DAY}";

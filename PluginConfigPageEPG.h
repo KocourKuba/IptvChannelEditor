@@ -56,20 +56,10 @@ protected:
 
 	afx_msg void OnBnClickedButtonEpgTest();
 	afx_msg void OnCbnSelchangeComboEpgType();
-	afx_msg void OnEnChangeEditEpgUrl();
-	afx_msg void OnEnChangeEditEpgRoot();
-	afx_msg void OnEnChangeEditEpgName();
-	afx_msg void OnEnChangeEditEpgDesc();
-	afx_msg void OnEnChangeEditEpgStart();
-	afx_msg void OnEnChangeEditEpgEnd();
-	afx_msg void OnEnChangeEditEpgTZ();
-	afx_msg void OnEnChangeEditEpgFmtDate();
-	afx_msg void OnEnChangeEditEpgFmtTime();
-	afx_msg void OnBnClickedCheckUseDuration();
-	afx_msg void OnEnChangeEditEpgDomain();
 	afx_msg void OnCbnSelchangeComboEpgParserPreset();
 	afx_msg void OnEnChangeEditUtc();
 	afx_msg void OnDtnDatetimechangeDatetimepickerDate(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void SaveParameters();
 
 private:
 	void UpdateControls();
