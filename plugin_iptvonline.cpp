@@ -66,8 +66,5 @@ void plugin_iptvonline::load_default()
 	streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json";
-
-	set_epg_preset(1, EpgPresets::enIptvxOne);
-	epg_params[1].epg_domain = "http://epg.iptvx.one";
-	epg_params[1].epg_url = "{EPG_DOMAIN}/api/id/{EPG_ID}.json";
+	epg_params[1].epg_url = "{EPG_DOMAIN}/ottiptv%2Fepg%2F{EPG_ID}.json";
 }
