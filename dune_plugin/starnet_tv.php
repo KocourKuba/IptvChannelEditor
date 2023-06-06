@@ -701,7 +701,8 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         if ($day_epg_items !== false) {
             // get personal time shift for channel
-            $time_shift = $channel->get_timeshift_hours() * 3600;
+            $time_shift = 3600 * ($channel->get_timeshift_hours() + (isset($plugin_cookies->epg_shift) ? $plugin_cookies->epg_shift : 0));
+            hd_print("EPG time shift $time_shift");
             foreach ($day_epg_items as $time => $value) {
                 $tm_start = (int)$time + $time_shift;
                 $tm_end = (int)$value[Epg_Params::EPG_END] + $time_shift;
