@@ -868,7 +868,11 @@ bool PackPlugin(const PluginType plugin_type,
 																   ? cred.get_update_name() : utils::DUNE_UPDATE_INFO_NAME), cred);
 
 	const auto& version_string = fmt::format("{:s}.{:s}", STRPRODUCTVER, date_string);
-	const auto& update_url = fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
+	std::string update_url;
+	if (!cred.update_url.empty())
+	{
+		update_url = fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
+	}
 
 	// rewrite xml nodes
 	try
@@ -975,10 +979,15 @@ bool PackPlugin(const PluginType plugin_type,
 
 	std::ofstream os_supplier(packFolder + LR"(bin\update_suppliers.sh)", std::ofstream::binary | std::ofstream::app);
 	os_supplier << R"(cat << EOF > "$filepath")" << std::endl << "{" << std::endl;
-	os_supplier << R"(   "plugin" : "$plugin_name",)" << std::endl;
-	os_supplier << R"(   "caption" : ")" << plugin_caption.c_str() << R"(",)" << std::endl;
-	os_supplier << R"(   "tv_app" : "{\"type\":\"plugin\",\"plugin_name\":\"$plugin_name\",\"update_url\":\")" << update_url.c_str() << R"(\"}")" << std::endl;
-	os_supplier << "}" << std::endl << "EOF" << std::endl;
+	os_supplier << R"(  "plugin" : "$plugin_name",)" << std::endl;
+	os_supplier << R"(  "caption" : ")" << plugin_caption.c_str() << R"(",)" << std::endl;
+	os_supplier << R"(  "tv_app" : "{\"type\":\"plugin\",\"plugin_name\":\"$plugin_name\")";
+	if (!update_url.empty())
+	{
+		os_supplier << R"(,\"update_url\":\")" << update_url.c_str() << R"(\")";
+	}
+	os_supplier << R"(}")" << std::endl << "}" << std::endl;
+	os_supplier << "EOF" << std::endl << std::endl;
 	os_supplier.close();
 
 	// copy channel lists

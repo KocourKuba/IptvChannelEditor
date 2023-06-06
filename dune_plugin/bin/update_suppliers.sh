@@ -11,4 +11,6 @@ filepath="$dirpath/$plugin_name"
 
 [ -e "$dirpath" ] || mkdir "$dirpath"
 
+touch "$FS_PREFIX/tmp/plugins/$plugin_name/update_epfs_if_needed_flag"
+
 # please be warn, addtional data for this script will be generated after this comment!

@@ -102,7 +102,12 @@ class Base_Epfs_Handler
 		return get_temp_path('epfs_warmed_up');
 	}
 
-	public static function get_epfs_changed_path()
+    public static function async_worker_warmed_up_path()
+    {
+        return get_temp_path('/async_worker_warmed_up');
+    }
+
+    public static function get_epfs_changed_path()
 	{
 		return get_temp_path('update_epfs_if_needed_flag');
 	}

@@ -20,6 +20,8 @@
         <schema>2</schema>
         <url></url>
         <timeout>0</timeout>
+        <required>no</required>
+        <auto>yes</auto>
     </check_update>
     <embeddable_plugin_folders>
         <enabled>yes</enabled>
