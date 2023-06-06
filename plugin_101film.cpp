@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include "plugin_smile.h"
+#include "plugin_101film.h"
 #include "IPTVChannelEditor.h"
 
 #ifdef _DEBUG
@@ -34,24 +34,24 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-plugin_smile::plugin_smile()
+plugin_101film::plugin_101film()
 {
-	type_name = "smile";
+	type_name = "101film";
 }
 
-void plugin_smile::load_default()
+void plugin_101film::load_default()
 {
 	base_plugin::load_default();
 
-	title = "Smile TV";
-	name = "smiletv";
+	title = "101film";
+	name = "101film";
 	access_type = AccountAccessType::enLoginPass;
 
-	provider_url = "http://smile-tv.live/";
+	provider_url = "http://101film.org/";
 
 	PlaylistTemplateInfo vod_info;
 	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
-	vod_info.pl_domain = "http://pl.smile-tv.live";
+	vod_info.pl_domain = "http://pl.101film.org";
 	vod_info.pl_template = "{VOD_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u";
 	vod_info.parse_regex = R"((?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$)";
 	vod_templates.emplace_back(vod_info);
@@ -65,7 +65,7 @@ void plugin_smile::load_default()
 	vod_m3u = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://pl.smile-tv.live";
+	info.pl_domain = "http://pl.101film.org";
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+)\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";

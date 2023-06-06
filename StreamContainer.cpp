@@ -55,6 +55,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_yosso.h"
 #include "plugin_ottiptv.h"
 #include "plugin_bcumedia.h"
+#include "plugin_101film.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -185,6 +186,10 @@ std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 
 		case PluginType::enOttIptv:
 			plugin = std::make_shared<plugin_ottiptv>();
+			break;
+
+		case PluginType::en101film:
+			plugin = std::make_shared<plugin_101film>();
 			break;
 
 		default:

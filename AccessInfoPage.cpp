@@ -551,8 +551,10 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			case PluginType::enMymagic:
 			case PluginType::enOttIptv:
 			case PluginType::enPing:
+			case PluginType::enSmile:
 			case PluginType::enSharaclub:
 			case PluginType::enYossoTV:
+			case PluginType::en101film:
 			{
 				if (boost::regex_match(url, m, re))
 				{

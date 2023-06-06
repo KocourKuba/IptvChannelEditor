@@ -244,6 +244,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="PluginConfigPageTV.h" />
     <ClInclude Include="PluginConfigPageVOD.h" />
     <ClInclude Include="PluginConfigPropertySheet.h" />
+    <ClInclude Include="plugin_101film.h" />
     <ClInclude Include="plugin_bcumedia.h" />
     <ClInclude Include="plugin_ottiptv.h" />
     <ClInclude Include="plugin_yosso.h" />
@@ -358,6 +359,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="PluginConfigPageTV.cpp" />
     <ClCompile Include="PluginConfigPageVOD.cpp" />
     <ClCompile Include="PluginConfigPropertySheet.cpp" />
+    <ClCompile Include="plugin_101film.cpp" />
     <ClCompile Include="plugin_bcumedia.cpp" />
     <ClCompile Include="plugin_ottiptv.cpp" />
     <ClCompile Include="plugin_yosso.cpp" />

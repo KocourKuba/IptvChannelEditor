@@ -150,6 +150,7 @@ static std::vector<PluginType> all_plugins = {
 	{ PluginType::enVipLime,    },
 	{ PluginType::enYossoTV,    },
 	{ PluginType::enOttIptv,    },
+	{ PluginType::en101film,    },
 	{ PluginType::enCustom,     },
 };
 

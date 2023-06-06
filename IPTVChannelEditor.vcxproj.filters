@@ -342,6 +342,9 @@
     <ClInclude Include="Singleton.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_101film.h">
+      <Filter>Header Files\plugin\shift</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -586,6 +589,9 @@
     </ClCompile>
     <ClCompile Include="ListCtrlEx.cpp">
       <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_101film.cpp">
+      <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
