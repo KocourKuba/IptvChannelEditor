@@ -4232,6 +4232,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	CPropertySheet sheet(IDS_STRING_PROGRAM_SETTINGS);
 
 	CMainSettingsPage dlg1;
+	dlg1.m_epg_cache = &m_epg_cache;
+
 	CPathsSettingsPage dlg2;
 	CUpdateSettingsPage dlg3;
 	sheet.AddPage(&dlg1);

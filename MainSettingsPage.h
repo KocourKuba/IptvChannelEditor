@@ -57,6 +57,9 @@ protected:
 	afx_msg void OnBnClickedButtonReset();
 	afx_msg void OnBnClickedButtonClearCache();
 
+public:
+	std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 2>* m_epg_cache = nullptr;
+
 protected:
 	CComboBox m_wndLanguage;
 	CMFCColorButton m_wndAdded;
