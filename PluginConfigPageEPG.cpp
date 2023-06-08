@@ -205,29 +205,6 @@ void CPluginConfigPageEPG::AssignMacros()
 	m_wndEpgStartFormat.SetTemplateParams(epg_start_time_params);
 }
 
-void CPluginConfigPageEPG::UpdateControls()
-{
-	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
-	auto preset = (EpgPresets)m_wndEpgPreset.GetCurSel();
-	bool not_custom_preset = preset != EpgPresets::enCustom;
-
-	// epg
-	m_wndEpgDomain.SetReadOnly(readOnly);
-	m_wndEpgUrl.SetReadOnly(readOnly);
-	m_wndDateFormat.SetReadOnly(readOnly);
-
-	m_wndEpgRoot.SetReadOnly(readOnly || not_custom_preset);
-	m_wndEpgName.SetReadOnly(readOnly || not_custom_preset);
-	m_wndEpgDesc.SetReadOnly(readOnly || not_custom_preset);
-	m_wndEpgStart.SetReadOnly(readOnly || not_custom_preset);
-	m_wndEpgEnd.SetReadOnly(readOnly || not_custom_preset);
-	m_wndEpgStartFormat.SetReadOnly(readOnly || not_custom_preset);
-	m_wndEpgTimezone.SetReadOnly(readOnly || not_custom_preset);
-	m_wndChkUseDuration.EnableWindow(!readOnly || not_custom_preset);
-
-	m_wndBtnEpgTest.EnableWindow(!m_EpgUrl.IsEmpty());
-}
-
 void CPluginConfigPageEPG::FillControls()
 {
 	const auto& epg = GetEpgParameters();
@@ -251,6 +228,29 @@ void CPluginConfigPageEPG::FillControls()
 	UpdateData(FALSE);
 
 	UpdateControls();
+}
+
+void CPluginConfigPageEPG::UpdateControls()
+{
+	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
+	auto preset = (EpgPresets)m_wndEpgPreset.GetCurSel();
+	bool not_custom_preset = preset != EpgPresets::enCustom;
+
+	// epg
+	m_wndEpgDomain.SetReadOnly(readOnly);
+	m_wndEpgUrl.SetReadOnly(readOnly);
+	m_wndDateFormat.SetReadOnly(readOnly);
+
+	m_wndEpgRoot.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgName.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgDesc.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgStart.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgEnd.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgStartFormat.SetReadOnly(readOnly || not_custom_preset);
+	m_wndEpgTimezone.SetReadOnly(readOnly || not_custom_preset);
+	m_wndChkUseDuration.EnableWindow(!readOnly || not_custom_preset);
+
+	m_wndBtnEpgTest.EnableWindow(!m_EpgUrl.IsEmpty());
 }
 
 void CPluginConfigPageEPG::UpdateDateTimestamp(bool dateToUtc)

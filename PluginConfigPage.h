@@ -50,28 +50,17 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-	afx_msg void OnBnClickedCheckSquareIcons();
-	afx_msg void OnBnClickedCheckEnableBalance();
 	afx_msg void OnBnClickedButtonEditServers();
 	afx_msg void OnBnClickedButtonEditDevices();
 	afx_msg void OnBnClickedButtonEditQuality();
 	afx_msg void OnBnClickedButtonEditProfiles();
 
-	afx_msg void OnEnChangeEditPluginName();
-	afx_msg void OnEnChangeEditTitle();
-	afx_msg void OnEnChangeEditUserAgent();
-	afx_msg void OnEnChangeEditProviderUrl();
-	afx_msg void OnEnChangeEditClassName();
-	afx_msg void OnEnChangeEditApiUrl();
-
 	afx_msg void OnCbnSelchangeComboAccessType();
 
 	afx_msg void OnBnClickedButtonEditExtFiles();
 	afx_msg void OnBnClickedButtonEditManifest();
-	afx_msg void OnBnClickedCheckStaticServers();
-	afx_msg void OnBnClickedCheckStaticDevices();
-	afx_msg void OnBnClickedCheckStaticQualities();
-	afx_msg void OnBnClickedCheckStaticProfiles();
+
+	afx_msg void SaveParameters();
 
 private:
 	void UpdateControls();

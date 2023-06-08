@@ -54,31 +54,17 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
+	afx_msg void SaveParameters();
 	afx_msg void OnBnClickedButtonEditTemplates();
 	afx_msg void OnCbnSelchangeComboPlaylistTemplate();
 	afx_msg void OnBnClickedButtonPlaylistShow();
 	afx_msg void OnBnClickedButtonStreamRegexTest();
-	afx_msg void OnBnClickedCheckMapTagToId();
-	afx_msg void OnBnClickedCheckPerChannelToken();
-	afx_msg void OnBnClickedCheckEpgIdFromId();
 
 	afx_msg void OnCbnSelchangeComboStreamType();
-	afx_msg void OnCbnSelchangeComboTags();
-	afx_msg void OnCbnSelchangeComboCatchupType();
-
-	afx_msg void OnEnChangeEditPlaylistDomain();
-	afx_msg void OnEnChangeEditPlaylistTemplate();
-	afx_msg void OnEnChangeEditParsePattern();
-	afx_msg void OnEnChangeEditDuration();
-	afx_msg void OnEnChangeEditStreamTemplate();
-	afx_msg void OnEnChangeEditStreamArcTemplate();
-	afx_msg void OnEnChangeEditCustomStreamArcTemplate();
-	afx_msg void OnEnChangeEditDuneParams();
 
 private:
-	void UpdateControls();
 	void FillControlsStream();
-	StreamParameters& GetSupportedStream();
+	void UpdateControls();
 
 protected:
 

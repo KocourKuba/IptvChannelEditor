@@ -40,21 +40,21 @@ BEGIN_MESSAGE_MAP(CPluginConfigPageTV, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CPluginConfigPageTV::OnCbnSelchangeComboStreamType)
 	ON_BN_CLICKED(IDC_BUTTON_PLAYLIST_SHOW, &CPluginConfigPageTV::OnBnClickedButtonPlaylistShow)
 	ON_BN_CLICKED(IDC_BUTTON_STREAM_PARSE, &CPluginConfigPageTV::OnBnClickedButtonStreamRegexTest)
-	ON_BN_CLICKED(IDC_CHECK_PER_CHANNEL_TOKEN, &CPluginConfigPageTV::OnBnClickedCheckPerChannelToken)
-	ON_BN_CLICKED(IDC_CHECK_EPG_ID_FROM_ID, &CPluginConfigPageTV::OnBnClickedCheckEpgIdFromId)
-	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN, &CPluginConfigPageTV::OnEnChangeEditParsePattern)
-	ON_BN_CLICKED(IDC_CHECK_MAP_TAG_TO_ID, &CPluginConfigPageTV::OnBnClickedCheckMapTagToId)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST_TEMPLATE, &CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_TEMPLATES, &CPluginConfigPageTV::OnBnClickedButtonEditTemplates)
-	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_DOMAIN, &CPluginConfigPageTV::OnEnChangeEditPlaylistDomain)
-	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_TEMPLATE, &CPluginConfigPageTV::OnEnChangeEditPlaylistTemplate)
-	ON_EN_CHANGE(IDC_EDIT_DURATION, &CPluginConfigPageTV::OnEnChangeEditDuration)
-	ON_EN_CHANGE(IDC_EDIT_STREAM_TEMPLATE, &CPluginConfigPageTV::OnEnChangeEditStreamTemplate)
-	ON_EN_CHANGE(IDC_EDIT_STREAM_ARC_TEMPLATE, &CPluginConfigPageTV::OnEnChangeEditStreamArcTemplate)
-	ON_EN_CHANGE(IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, &CPluginConfigPageTV::OnEnChangeEditCustomStreamArcTemplate)
-	ON_EN_CHANGE(IDC_EDIT_DUNE_PARAMS, &CPluginConfigPageTV::OnEnChangeEditDuneParams)
-	ON_CBN_SELCHANGE(IDC_COMBO_TAGS, &CPluginConfigPageTV::OnCbnSelchangeComboTags)
-	ON_CBN_SELCHANGE(IDC_COMBO_CATCHUP_TYPE, &CPluginConfigPageTV::OnCbnSelchangeComboCatchupType)
+	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_DOMAIN, &CPluginConfigPageTV::SaveParameters)
+	ON_BN_CLICKED(IDC_CHECK_PER_CHANNEL_TOKEN, &CPluginConfigPageTV::SaveParameters)
+	ON_BN_CLICKED(IDC_CHECK_EPG_ID_FROM_ID, &CPluginConfigPageTV::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN, &CPluginConfigPageTV::SaveParameters)
+	ON_BN_CLICKED(IDC_CHECK_MAP_TAG_TO_ID, &CPluginConfigPageTV::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_TEMPLATE, &CPluginConfigPageTV::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_DURATION, &CPluginConfigPageTV::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_STREAM_TEMPLATE, &CPluginConfigPageTV::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_STREAM_ARC_TEMPLATE, &CPluginConfigPageTV::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, &CPluginConfigPageTV::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_DUNE_PARAMS, &CPluginConfigPageTV::SaveParameters)
+	ON_CBN_SELCHANGE(IDC_COMBO_TAGS, &CPluginConfigPageTV::SaveParameters)
+	ON_CBN_SELCHANGE(IDC_COMBO_CATCHUP_TYPE, &CPluginConfigPageTV::SaveParameters)
 END_MESSAGE_MAP()
 
 CPluginConfigPageTV::CPluginConfigPageTV() : CTooltipPropertyPage(IDD_DIALOG_PLUGIN_CONFIG_TV)
@@ -212,34 +212,6 @@ void CPluginConfigPageTV::AssignMacros()
 	m_wndDuneParams.SetTemplateParams(dune_params);
 }
 
-void CPluginConfigPageTV::UpdateControls()
-{
-	UpdateData(TRUE);
-
-	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
-
-	// common
-	m_wndPlaylistDomain.SetReadOnly(readOnly);
-	m_wndBtnEditTemplates.EnableWindow(!readOnly);
-	m_wndPlaylistTemplate.SetReadOnly(readOnly);
-	m_wndChkPerChannelToken.EnableWindow(!readOnly);
-	m_wndChkEpgIdFromID.EnableWindow(!readOnly);
-	m_wndParseStream.SetReadOnly(readOnly);
-	m_wndCheckMapTags.EnableWindow(!readOnly);
-	m_wndTags.EnableWindow(m_wndCheckMapTags.GetCheck() != 0);
-
-	// test
-	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
-
-	// streams
-	m_wndCatchupType.EnableWindow(!readOnly);
-	m_wndDuration.SetReadOnly(readOnly);
-	m_wndDuneParams.SetReadOnly(readOnly);
-	m_wndStreamTemplate.SetReadOnly(readOnly);
-	m_wndStreamArchiveTemplate.SetReadOnly(readOnly);
-	m_wndCustomStreamArchiveTemplate.SetReadOnly(readOnly);
-}
-
 void CPluginConfigPageTV::FillControls()
 {
 	const auto& plugin = GetPropertySheet()->m_plugin;
@@ -266,8 +238,37 @@ void CPluginConfigPageTV::FillControls()
 	FillPlaylistSettings(current);
 
 	m_wndStreamType.SetCurSel(0);
+
 	FillControlsStream();
+
 	UpdateControls();
+}
+
+void CPluginConfigPageTV::UpdateControls()
+{
+
+	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
+
+	// common
+	m_wndPlaylistDomain.SetReadOnly(readOnly);
+	m_wndBtnEditTemplates.EnableWindow(!readOnly);
+	m_wndPlaylistTemplate.SetReadOnly(readOnly);
+	m_wndChkPerChannelToken.EnableWindow(!readOnly);
+	m_wndChkEpgIdFromID.EnableWindow(!readOnly);
+	m_wndParseStream.SetReadOnly(readOnly);
+	m_wndCheckMapTags.EnableWindow(!readOnly);
+	m_wndTags.EnableWindow(m_wndCheckMapTags.GetCheck() != 0);
+
+	// test
+	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
+
+	// streams
+	m_wndCatchupType.EnableWindow(!readOnly);
+	m_wndDuration.SetReadOnly(readOnly);
+	m_wndDuneParams.SetReadOnly(readOnly);
+	m_wndStreamTemplate.SetReadOnly(readOnly);
+	m_wndStreamArchiveTemplate.SetReadOnly(readOnly);
+	m_wndCustomStreamArchiveTemplate.SetReadOnly(readOnly);
 }
 
 void CPluginConfigPageTV::FillPlaylistSettings(size_t index)
@@ -307,10 +308,7 @@ void CPluginConfigPageTV::FillPlaylistSettings(size_t index)
 
 void CPluginConfigPageTV::FillControlsStream()
 {
-	auto& plugin = GetPropertySheet()->m_plugin;
-	if (!plugin) return;
-
-	const auto& stream = GetSupportedStream();
+	const auto& stream = GetPropertySheet()->m_plugin->get_supported_stream(m_wndStreamType.GetCurSel());
 
 	m_wndCatchupType.SetCurSel((int)stream.cu_type);
 
@@ -323,21 +321,49 @@ void CPluginConfigPageTV::FillControlsStream()
 	UpdateData(FALSE);
 }
 
-StreamParameters& CPluginConfigPageTV::GetSupportedStream()
+void CPluginConfigPageTV::SaveParameters()
 {
-	return GetPropertySheet()->m_plugin->get_supported_stream(m_wndStreamType.GetCurSel());
+	UpdateData(TRUE);
+
+	auto& plugin = GetPropertySheet()->m_plugin;
+	int idx = m_wndPlaylistTemplates.GetCurSel();
+
+	plugin->set_uri_parse_pattern(idx, m_ParseStream.GetString());
+	plugin->set_playlist_domain(idx, m_PlaylistDomain.GetString());
+	plugin->set_playlist_template(idx, m_PlaylistTemplate.GetString());
+	plugin->set_per_channel_token(idx, m_wndChkPerChannelToken.GetCheck() != 0);
+	plugin->set_epg_id_from_id(idx, m_wndChkEpgIdFromID.GetCheck() != 0);
+
+	auto& stream = GetPropertySheet()->m_plugin->get_supported_stream(m_wndStreamType.GetCurSel());
+
+	stream.cu_duration = m_Duration;
+	stream.set_uri_template(m_StreamTemplate.GetString());
+	stream.set_uri_arc_template(m_StreamArchiveTemplate.GetString());
+	stream.set_uri_custom_arc_template(m_CustomStreamArchiveTemplate.GetString());
+	stream.set_dune_params(m_DuneParams.GetString());
+	stream.cu_type = (CatchupType)m_wndCatchupType.GetCurSel();
+
+	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
+	BOOL useMapTags = m_wndCheckMapTags.GetCheck() != 0;
+	m_wndTags.EnableWindow(useMapTags);
+
+	if (useMapTags)
+	{
+		CString tag;
+		int tag_idx = m_wndTags.GetCurSel();
+		if (tag_idx != CB_ERR)
+		{
+			m_wndTags.GetLBText(m_wndTags.GetCurSel(), tag);
+			plugin->set_tag_id_match(idx, tag.GetString());
+		}
+	}
+
+	AllowSave();
 }
 
 void CPluginConfigPageTV::OnCbnSelchangeComboStreamType()
 {
 	FillControlsStream();
-}
-
-void CPluginConfigPageTV::OnCbnSelchangeComboCatchupType()
-{
-	UpdateData(TRUE);
-	GetSupportedStream().cu_type = (CatchupType)m_wndCatchupType.GetCurSel();
-	AllowSave();
 }
 
 void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
@@ -386,84 +412,9 @@ void CPluginConfigPageTV::OnBnClickedButtonStreamRegexTest()
 	ShellExecute(nullptr, _T("open"), url.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 }
 
-void CPluginConfigPageTV::OnEnChangeEditParsePattern()
-{
-	UpdateData(TRUE);
-	m_wndBtnStreamParseTest.EnableWindow(!m_ParseStream.IsEmpty());
-	GetPropertySheet()->m_plugin->set_uri_parse_pattern(m_wndPlaylistTemplates.GetCurSel(), m_ParseStream.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnEnChangeEditPlaylistDomain()
-{
-	UpdateData(TRUE);
-	GetPropertySheet()->m_plugin->set_playlist_domain(m_wndPlaylistTemplates.GetCurSel(), m_PlaylistDomain.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnEnChangeEditPlaylistTemplate()
-{
-	UpdateData(TRUE);
-	GetPropertySheet()->m_plugin->set_playlist_template(m_wndPlaylistTemplates.GetCurSel(), m_PlaylistTemplate.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnEnChangeEditDuration()
-{
-	UpdateData(TRUE);
-	GetSupportedStream().cu_duration = m_Duration;
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnEnChangeEditStreamTemplate()
-{
-	UpdateData(TRUE);
-	GetSupportedStream().set_uri_template(m_StreamTemplate.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnEnChangeEditStreamArcTemplate()
-{
-	UpdateData(TRUE);
-	GetSupportedStream().set_uri_arc_template(m_StreamArchiveTemplate.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnEnChangeEditCustomStreamArcTemplate()
-{
-	UpdateData(TRUE);
-	GetSupportedStream().set_uri_custom_arc_template(m_CustomStreamArchiveTemplate.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnEnChangeEditDuneParams()
-{
-	UpdateData(TRUE);
-	GetSupportedStream().set_dune_params(m_DuneParams.GetString());
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnCbnSelchangeComboTags()
-{
-	UpdateData(TRUE);
-	CString tag;
-	if (m_wndCheckMapTags.GetCheck() != 0)
-	{
-		m_wndTags.GetLBText(m_wndTags.GetCurSel(), tag);
-	}
-
-	int idx = m_wndPlaylistTemplates.GetCurSel();
-	GetPropertySheet()->m_plugin->set_tag_id_match(idx, tag.GetString());
-
-	AllowSave();
-}
-
 void CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate()
 {
-	int idx = m_wndPlaylistTemplates.GetCurSel();
-	auto& plugin = GetPropertySheet()->m_plugin;
-
-	FillPlaylistSettings(idx);
+	FillPlaylistSettings(m_wndPlaylistTemplates.GetCurSel());
 }
 
 void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()
@@ -493,22 +444,4 @@ void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()
 		FillControls();
 		AllowSave();
 	}
-}
-
-void CPluginConfigPageTV::OnBnClickedCheckMapTagToId()
-{
-	m_wndTags.EnableWindow(m_wndCheckMapTags.GetCheck() != 0);
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnBnClickedCheckPerChannelToken()
-{
-	GetPropertySheet()->m_plugin->set_per_channel_token(m_wndPlaylistTemplates.GetCurSel(), m_wndChkPerChannelToken.GetCheck() != 0);
-	AllowSave();
-}
-
-void CPluginConfigPageTV::OnBnClickedCheckEpgIdFromId()
-{
-	GetPropertySheet()->m_plugin->set_epg_id_from_id(m_wndPlaylistTemplates.GetCurSel(), m_wndChkEpgIdFromID.GetCheck() != 0);
-	AllowSave();
 }

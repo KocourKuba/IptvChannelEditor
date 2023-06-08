@@ -52,18 +52,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void OnCbnSelchangeComboVodTemplate();
-	afx_msg void OnCbnDropdownComboVodTemplate();
 	afx_msg void OnBnClickedButtonEditVodTemplates();
 	afx_msg void OnBnClickedButtonVodTemplate();
 	afx_msg void OnBnClickedButtonVodParse();
-	afx_msg void OnEnChangeEditPlaylistDomain();
-	afx_msg void OnEnChangeEditProviderVodUrl();
-	afx_msg void OnEnChangeEditVodRegex();
-	afx_msg void OnBnClickedCheckVodSupport();
-	afx_msg void OnBnClickedCheckVodM3U();
-	afx_msg void OnBnClickedCheckVodFilter();
-	afx_msg void OnEnChangeEditVodPrefix();
-	afx_msg void OnEnChangeEditVodParams();
+	afx_msg void SaveParameters();
 
 private:
 	void UpdateControls();

@@ -43,22 +43,22 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_ACCESS_TYPE, &CPluginConfigPage::OnCbnSelchangeComboAccessType)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_EXT_FILES, &CPluginConfigPage::OnBnClickedButtonEditExtFiles)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_MANIFEST, &CPluginConfigPage::OnBnClickedButtonEditManifest)
-	ON_BN_CLICKED(IDC_CHECK_STATIC_SERVERS, &CPluginConfigPage::OnBnClickedCheckStaticServers)
-	ON_BN_CLICKED(IDC_CHECK_STATIC_DEVICES, &CPluginConfigPage::OnBnClickedCheckStaticDevices)
-	ON_BN_CLICKED(IDC_CHECK_STATIC_QUALITIES, &CPluginConfigPage::OnBnClickedCheckStaticQualities)
-	ON_BN_CLICKED(IDC_CHECK_STATIC_PROFILES, &CPluginConfigPage::OnBnClickedCheckStaticProfiles)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_SERVERS, &CPluginConfigPage::OnBnClickedButtonEditServers)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_DEVICES, &CPluginConfigPage::OnBnClickedButtonEditDevices)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_QUALITY, &CPluginConfigPage::OnBnClickedButtonEditQuality)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_PROFILES, &CPluginConfigPage::OnBnClickedButtonEditProfiles)
-	ON_BN_CLICKED(IDC_CHECK_SQUARE_ICONS, &CPluginConfigPage::OnBnClickedCheckSquareIcons)
-	ON_BN_CLICKED(IDC_CHECK_ENABLE_BALANCE, &CPluginConfigPage::OnBnClickedCheckEnableBalance)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_NAME, &CPluginConfigPage::OnEnChangeEditPluginName)
-	ON_EN_CHANGE(IDC_EDIT_TITLE, &CPluginConfigPage::OnEnChangeEditTitle)
-	ON_EN_CHANGE(IDC_EDIT_USER_AGENT, &CPluginConfigPage::OnEnChangeEditUserAgent)
-	ON_EN_CHANGE(IDC_EDIT_PROVIDER_URL, &CPluginConfigPage::OnEnChangeEditProviderUrl)
-	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CLASS_NAME, &CPluginConfigPage::OnEnChangeEditClassName)
-	ON_EN_CHANGE(IDC_EDIT_API_URL, &CPluginConfigPage::OnEnChangeEditApiUrl)
+	ON_BN_CLICKED(IDC_CHECK_STATIC_SERVERS, &CPluginConfigPage::SaveParameters)
+	ON_BN_CLICKED(IDC_CHECK_STATIC_DEVICES, &CPluginConfigPage::SaveParameters)
+	ON_BN_CLICKED(IDC_CHECK_STATIC_QUALITIES, &CPluginConfigPage::SaveParameters)
+	ON_BN_CLICKED(IDC_CHECK_STATIC_PROFILES, &CPluginConfigPage::SaveParameters)
+	ON_BN_CLICKED(IDC_CHECK_SQUARE_ICONS, &CPluginConfigPage::SaveParameters)
+	ON_BN_CLICKED(IDC_CHECK_ENABLE_BALANCE, &CPluginConfigPage::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_NAME, &CPluginConfigPage::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_TITLE, &CPluginConfigPage::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_USER_AGENT, &CPluginConfigPage::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_PROVIDER_URL, &CPluginConfigPage::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CLASS_NAME, &CPluginConfigPage::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_API_URL, &CPluginConfigPage::SaveParameters)
 END_MESSAGE_MAP()
 
 CPluginConfigPage::CPluginConfigPage() : CTooltipPropertyPage(IDD_DIALOG_PLUGIN_CONFIG)
@@ -146,8 +146,6 @@ BOOL CPluginConfigPage::OnSetActive()
 
 void CPluginConfigPage::UpdateControls()
 {
-	UpdateData(TRUE);
-
 	const auto& plugin = GetPropertySheet()->m_plugin;
 	bool custom = plugin->get_plugin_type() == PluginType::enCustom;
 	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
@@ -364,84 +362,30 @@ void CPluginConfigPage::OnBnClickedButtonEditProfiles()
 	}
 }
 
-void CPluginConfigPage::OnBnClickedCheckStaticServers()
+void CPluginConfigPage::SaveParameters()
 {
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_static_servers(m_wndChkStaticServers.GetCheck() != 0);
+	UpdateData(TRUE);
+
+	auto& plugin = GetPropertySheet()->m_plugin;
+
+	plugin->set_static_servers(m_wndChkStaticServers.GetCheck() != 0);
+	plugin->set_static_devices(m_wndChkStaticDevices.GetCheck() != 0);
+	plugin->set_static_qualities(m_wndChkStaticQualities.GetCheck() != 0);
+	plugin->set_static_profiles(m_wndChkStaticProfiles.GetCheck() != 0);
+	plugin->set_square_icons(m_wndChkSquareIcons.GetCheck() != 0);
+
+	plugin->set_name(m_Name.GetString());
+	plugin->set_title(m_Title.GetString());
+	plugin->set_user_agent(m_UserAgent.GetString());
+	plugin->set_provider_url(m_ProviderUrl.GetString());
+	plugin->set_class_name(m_ClassName.GetString());
+	plugin->set_balance_support(m_wndChkEnableBalance.GetCheck() != 0);
+	plugin->set_provider_api_url(m_ProviderApiUrl.GetString());
+
 	m_wndBtnServers.EnableWindow(m_wndChkStaticServers.GetCheck());
-}
-
-void CPluginConfigPage::OnBnClickedCheckStaticDevices()
-{
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_static_devices(m_wndChkStaticDevices.GetCheck() != 0);
 	m_wndBtnDevices.EnableWindow(m_wndChkStaticDevices.GetCheck());
-}
-
-void CPluginConfigPage::OnBnClickedCheckStaticQualities()
-{
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_static_qualities(m_wndChkStaticQualities.GetCheck() != 0);
 	m_wndBtnQualities.EnableWindow(m_wndChkStaticQualities.GetCheck());
-}
-
-void CPluginConfigPage::OnBnClickedCheckStaticProfiles()
-{
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_static_profiles(m_wndChkStaticProfiles.GetCheck() != 0);
 	m_wndBtnProfiles.EnableWindow(m_wndChkStaticProfiles.GetCheck());
-}
 
-void CPluginConfigPage::OnBnClickedCheckSquareIcons()
-{
 	AllowSave();
-	GetPropertySheet()->m_plugin->set_square_icons(m_wndChkSquareIcons.GetCheck() != 0);
-}
-
-void CPluginConfigPage::OnEnChangeEditPluginName()
-{
-	UpdateData(TRUE);
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_name(m_Name.GetString());
-}
-
-void CPluginConfigPage::OnEnChangeEditTitle()
-{
-	UpdateData(TRUE);
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_title(m_Title.GetString());
-}
-
-void CPluginConfigPage::OnEnChangeEditUserAgent()
-{
-	UpdateData(TRUE);
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_user_agent(m_UserAgent.GetString());
-}
-
-void CPluginConfigPage::OnEnChangeEditProviderUrl()
-{
-	UpdateData(TRUE);
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_provider_url(m_ProviderUrl.GetString());
-}
-
-void CPluginConfigPage::OnEnChangeEditClassName()
-{
-	UpdateData(TRUE);
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_class_name(m_ClassName.GetString());
-}
-
-void CPluginConfigPage::OnBnClickedCheckEnableBalance()
-{
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_balance_support(m_wndChkEnableBalance.GetCheck() != 0);
-}
-
-void CPluginConfigPage::OnEnChangeEditApiUrl()
-{
-	UpdateData(TRUE);
-	AllowSave();
-	GetPropertySheet()->m_plugin->set_provider_api_url(m_ProviderApiUrl.GetString());
 }
