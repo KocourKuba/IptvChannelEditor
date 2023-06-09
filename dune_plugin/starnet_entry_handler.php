@@ -39,9 +39,6 @@ class Starnet_Entry_Handler implements User_Input_Handler
         switch ($user_input->control_id) {
             case 'do_reboot':
                 hd_print("do reboot");
-                if (is_apk()) {
-                    return Action_Factory::show_title_dialog(TR::t('entry_not_available'));
-                }
                 return Action_Factory::restart(true);
 
             case 'power_off':
@@ -54,6 +51,10 @@ class Starnet_Entry_Handler implements User_Input_Handler
             case 'do_setup':
                 hd_print("do setup");
                 return Action_Factory::open_folder('setup', TR::t('entry_setup'));
+
+            case 'do_channels_setup':
+                hd_print("do channels setup");
+                return Action_Factory::open_folder('channels_setup', TR::t('tv_screen_channels_setup'));
 
             case 'do_send_log':
                 hd_print("do_send_log");
