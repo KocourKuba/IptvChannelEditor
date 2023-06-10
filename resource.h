@@ -387,6 +387,11 @@
 #define IDS_STRING_YOSSO_P8             527
 #define IDS_STRING_YOSSO_P9             528
 #define IDS_STRING_YOSSO_P10            529
+#define IDS_STRING_SMILE_P0             530
+#define IDS_STRING_SMILE_P1             531
+#define IDS_STRING_SMILE_P2             532
+#define IDS_STRING_SMILE_P3             533
+#define IDS_STRING_SMILE_P4             534
 #define IDS_STRING_BUTTON_RESET         600
 #define IDS_STRING_CHECK_CMP_TITLE      601
 #define IDS_STRING_CHECK_CMP_EPG1       613
@@ -708,7 +713,7 @@
 #define ID_ALL_CHANNELS                 32807
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281

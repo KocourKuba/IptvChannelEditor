@@ -275,20 +275,37 @@ void base_plugin::set_regex_parse_stream(const std::wstring& val)
 	}
 }
 
-std::wstring base_plugin::get_vod_url(TemplateParams& params) const
+std::wstring base_plugin::get_vod_url(TemplateParams& params)
 {
 	return get_vod_url(get_vod_template_idx(), params);
 }
 
-std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params) const
+std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params)
 {
 	std::wstring url = get_vod_template(idx);
 
-	utils::string_replace_inplace<wchar_t>(url, REPL_VOD_DOMAIN, get_vod_domain(idx));
-	utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
-	utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
-	utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
-	utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+	fill_servers_list(&params);
+	if (!servers_list.empty())
+	{
+		int server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[server].get_id());
+	}
+
+	if (!get_vod_domain(idx).empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_VOD_DOMAIN, get_vod_domain(idx));
+
+	if (!get_provider_api_url().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
+
+	if (!params.login.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
+
+	if (!params.password.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+
+	if (!params.subdomain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 
 	return url;
 }

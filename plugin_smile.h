@@ -32,6 +32,7 @@ class plugin_smile : public base_plugin
 public:
 
 	plugin_smile();
+	void fill_servers_list(TemplateParams* params = nullptr) override;
 
 protected:
 	void load_default() override;

@@ -1014,6 +1014,7 @@ void CAccessInfoPage::GetAccountInfo()
 	if (m_plugin->get_access_type() == AccountAccessType::enNone)
 		return;
 
+	const auto& plugin_type = m_plugin->get_plugin_type();
 	// reset template flag for new parse
 	auto playlist = std::make_unique<Playlist>();
 	auto entry = std::make_shared<PlaylistEntry>(m_plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
@@ -1028,7 +1029,7 @@ void CAccessInfoPage::GetAccountInfo()
 	params.profile_idx = selected_cred.profile_id;
 	params.quality_idx = selected_cred.quality_id;
 
-	if (m_plugin->get_plugin_type() == PluginType::enTVClub || m_plugin->get_plugin_type() == PluginType::enVidok)
+	if (plugin_type == PluginType::enTVClub || plugin_type == PluginType::enVidok)
 	{
 		params.token = m_plugin->get_api_token(selected_cred);
 	}
@@ -1086,6 +1087,22 @@ void CAccessInfoPage::GetAccountInfo()
 					break;
 				}
 			}
+		}
+	}
+
+	if (plugin_type == PluginType::enSmile || plugin_type == PluginType::en101film)
+	{
+		static std::vector<std::string> skipped_tag = {
+			"bitrates", "url-tvg", "x-tvg-url", "servers"
+		};
+
+		const auto& tags = playlist->m3u_header.get_tags();
+		for (const auto& tag : tags)
+		{
+			if (std::find(skipped_tag.begin(), skipped_tag.end(), tag.first) != skipped_tag.end()) continue;
+
+			AccountInfo info{ utils::utf8_to_utf16(tag.first), utils::utf8_to_utf16(tag.second) };
+			acc_info.emplace_back(info);
 		}
 	}
 

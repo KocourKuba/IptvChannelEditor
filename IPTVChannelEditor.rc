@@ -2011,6 +2011,11 @@ STRINGTABLE
 BEGIN
     IDS_STRING_YOSSO_P9     "GN (Ukraine, Kiev)"
     IDS_STRING_YOSSO_P10    "RHLS (GlobalCache CDN)"
+    IDS_STRING_SMILE_P0     "Auto Select"
+    IDS_STRING_SMILE_P1     "Server CZ"
+    IDS_STRING_SMILE_P2     "Server DE"
+    IDS_STRING_SMILE_P3     "Server NL"
+    IDS_STRING_SMILE_P4     "Server RU"
 END
 
 STRINGTABLE
