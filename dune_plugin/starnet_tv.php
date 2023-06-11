@@ -14,6 +14,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 {
     const ID = 'tv';
     const PARAM_ZOOM = 'zoom_select';
+    const CHANNELS_ZOOM = 'channels_zoom';
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -319,7 +320,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             hd_print(__METHOD__ . ": Load channels list using source: $source");
             switch ($source) {
                 case 1:
-                    $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path') . $channels_list;
+                    $channels_list_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Folder_Screen::ACTION_CH_LIST_PATH) . $channels_list;
                     hd_print(__METHOD__ . ": load from: $channels_list_path");
                     break;
                 case 2:
@@ -644,7 +645,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             // update url if play archive or different type of the stream
             $url = $this->plugin->config->GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
 
-            $zoom_data = HD::get_items('channels_zoom', true);
+            $zoom_data = HD::get_items(self::CHANNELS_ZOOM, true);
             if (isset($zoom_data[$channel_id])) {
                 $zoom_preset = $zoom_data[$channel_id];
                 hd_print(__METHOD__ . ": zoom_preset: $zoom_preset");
@@ -892,7 +893,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
             case ACTION_ZOOM_MENU:
                 $attrs['dialog_params']['frame_style'] = DIALOG_FRAME_STYLE_GLASS;
-                $zoom_data = HD::get_items('channels_zoom', true);
+                $zoom_data = HD::get_items(self::CHANNELS_ZOOM, true);
                 $dune_zoom = isset($zoom_data[$channel_id]) ? $zoom_data[$channel_id] : DuneVideoZoomPresets::not_set;
 
                 $defs = array();
@@ -904,7 +905,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 return Action_Factory::show_dialog(TR::t('tv_screen_zoom_channel'), $defs,true,0, $attrs);
 
             case ACTION_ZOOM_APPLY:
-                $zoom_data = HD::get_items('channels_zoom', true);
+                $zoom_data = HD::get_items(self::CHANNELS_ZOOM, true);
                 if ($user_input->{ACTION_ZOOM_SELECT} === DuneVideoZoomPresets::not_set) {
                     $zoom_preset = DuneVideoZoomPresets::normal;
                     hd_print(__METHOD__ . ": Zoom preset removed for channel: $channel_id ($zoom_preset)");
@@ -914,7 +915,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     hd_print(__METHOD__ . ": Zoom preset $zoom_preset for channel: $channel_id");
                 }
 
-                HD::put_items('channels_zoom', $zoom_data);
+                HD::put_items(self::CHANNELS_ZOOM, $zoom_data);
                 //set_video_zoom(get_zoom_value($zoom_preset));
                 break;
         }

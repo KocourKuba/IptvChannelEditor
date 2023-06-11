@@ -17,6 +17,9 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
     const ACTION_NEW_SMB_DATA = 'new_smb_data';
     const ACTION_SAVE_SMB_SETUP = 'save_smb_setup';
     const ACTION_RELOAD_CHANNELS = 'reload_channels';
+    const ACTION_CH_LIST_PATH = 'ch_list_path';
+    const ACTION_TV_HISTORY_PATH = 'tv_history_path';
+    const ACTION_VOD_HISTORY_PATH = 'vod_history_path';
 
     private $counter = 0;
 
@@ -238,7 +241,10 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                         $media_url->filepath !== '/tmp/mnt/storage' &&
                         $media_url->filepath !== '/tmp/mnt/network' &&
                         $media_url->filepath !== '/tmp/mnt/smb' &&
-                        $media_url->save_data === 'ch_list_path') {
+                        ($media_url->save_data === self::ACTION_CH_LIST_PATH
+                        || $media_url->save_data === self::ACTION_TV_HISTORY_PATH
+                        || $media_url->save_data === self::ACTION_VOD_HISTORY_PATH)
+                    ) {
                         $info = TR::t('folder_screen_select__1', $caption);
                     } else {
                         $info = TR::t('folder_screen_folder__1', $caption);

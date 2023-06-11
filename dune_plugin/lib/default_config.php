@@ -300,7 +300,7 @@ class default_config extends dynamic_config
         switch ($plugin_cookies->channels_source) {
             case 1: // folder
                 hd_print("Channels source: folder");
-                $channels_list_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
+                $channels_list_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Folder_Screen::ACTION_CH_LIST_PATH);
                 break;
             case 2: // url
                 hd_print("Channels source: url");

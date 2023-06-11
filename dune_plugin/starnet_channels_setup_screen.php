@@ -79,7 +79,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         switch ($channels_source)
         {
             case 1: // channels path
-                $display_path = smb_tree::get_folder_info($plugin_cookies, 'ch_list_path');
+                $display_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Folder_Screen::ACTION_CH_LIST_PATH);
                 if (strlen($display_path) > 30) {
                     $display_path = "..." . substr($display_path, -30);
                 }
