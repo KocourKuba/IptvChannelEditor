@@ -114,7 +114,6 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             case GUI_EVENT_KEY_RETURN:
                 $post_action = Action_Factory::close_and_run();
                 if ($this->plugin->history_support) {
-                    Playback_Points::init();
                     Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
                     $post_action = Starnet_Epfs_Handler::invalidate_folders(null, $post_action);
                 }

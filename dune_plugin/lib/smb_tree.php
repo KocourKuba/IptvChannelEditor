@@ -462,7 +462,13 @@ class smb_tree
         return $d;
     }
 
-    public static function set_folder_info(&$plugin_cookies, $selected_url)
+    /**
+     * @param $plugin_cookies
+     * @param $selected_url MediaURL
+     * @param $param string
+     * @return void
+     */
+    public static function set_folder_info(&$plugin_cookies, $selected_url, $param)
     {
         if (!isset($selected_url->ip_path) || $selected_url->ip_path === false) {
             $save_folder['filepath'] = $selected_url->filepath;
@@ -474,22 +480,30 @@ class smb_tree
             $save_folder[$selected_url->ip_path]['password'] = isset($selected_url->password) ? $selected_url->password : false;
         }
 
-        $plugin_cookies->ch_list_path = json_encode($save_folder);
+        $plugin_cookies->{$param} = json_encode($save_folder);
     }
 
-    public static function get_folder_info(&$plugin_cookies, $param)
+    /**
+     * @param $plugin_cookies
+     * @param $param string
+     * @return string
+     */
+    public static function get_folder_info($plugin_cookies, $param)
     {
-        $select_folder = get_install_path();
-        if (!empty($plugin_cookies->{$param})) {
-            $settings = json_decode($plugin_cookies->{$param}, true);
-            if (isset($settings['filepath'])) {
-                $select_folder = $settings['filepath'];
-            } else {
-                foreach ($settings as $item) {
-                    if (isset($item['foldername'])) {
-                        $q = isset($item['user']) ? self::get_mount_smb($settings) : self::get_mount_nfs();
-                        $select_folder = key($q) . $item['foldername'];
-                    }
+        if (empty($plugin_cookies->{$param})) {
+            return '';
+        }
+
+        $settings = json_decode($plugin_cookies->{$param}, true);
+        if (isset($settings['filepath'])) {
+            $select_folder = $settings['filepath'];
+        } else {
+            $select_folder = '';
+            foreach ($settings as $item) {
+                if (isset($item['foldername'])) {
+                    $q = isset($item['user']) ? self::get_mount_smb($settings) : self::get_mount_nfs();
+                    $select_folder = key($q) . $item['foldername'];
+                    break;
                 }
             }
         }

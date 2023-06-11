@@ -17,6 +17,8 @@ class HD
 
     private static $dev_code;
 
+    private static $token = '05ba6358d39c4f298f43024b654b7387';
+
     ///////////////////////////////////////////////////////////////////////
 
     /**
@@ -644,9 +646,18 @@ class HD
      * @param boolean $preserve_keys
      * @return array|mixed
      */
+    public static function get_data_items($path, $preserve_keys = false, $json = true)
+    {
+        return self::get_items(get_data_path($path), $preserve_keys, $json);
+    }
+
+    /**
+     * @param string $path
+     * @param boolean $preserve_keys
+     * @return array|mixed
+     */
     public static function get_items($path, $preserve_keys = false, $json = true)
     {
-        $path = get_data_path($path);
         if (file_exists($path)) {
             $contents = file_get_contents($path);
             $items = $json ? json_decode($contents, true) : unserialize($contents);
@@ -663,10 +674,18 @@ class HD
      * @param string $path
      * @param mixed $items
      */
+    public static function put_data_items($path, $items, $json = true)
+    {
+        self::put_items(get_data_path($path), $items, $json);
+    }
+
+    /**
+     * @param string $path
+     * @param mixed $items
+     */
     public static function put_items($path, $items, $json = true)
     {
         $data = $json ? json_encode($items) : serialize($items);
-        $path = get_data_path($path);
         $written = file_put_contents($path, $data);
         hd_print("$written bytes written to $path");
     }
@@ -674,9 +693,16 @@ class HD
     /**
      * @param string $path
      */
+    public static function erase_data_items($path)
+    {
+        self::erase_items(get_data_path($path));
+    }
+
+    /**
+     * @param string $path
+     */
     public static function erase_items($path)
     {
-        $path = get_data_path($path);
         if (file_exists($path)) {
             hd_print("$path deleted");
             unlink($path);
@@ -687,7 +713,7 @@ class HD
      * @param string $path
      * @return false|string
      */
-    public static function get_item($path)
+    public static function get_data_item($path)
     {
         $full_path = get_data_path($path);
         return file_exists($full_path) ? file_get_contents($full_path) : '';
@@ -697,7 +723,7 @@ class HD
      * @param string $path
      * @param mixed $item
      */
-    public static function put_item($path, $item)
+    public static function put_data_item($path, $item)
     {
         file_put_contents(get_data_path($path), $item);
     }
@@ -758,5 +784,44 @@ class HD
         $arr = array_reverse($arr, true);
         $arr[$key] = $val;
         return array_reverse($arr, true);
+    }
+
+    public static function mb_str_split($string, $num = 1, $slice = null)
+    {
+        $out = array();
+        do {
+            $array[] = mb_substr($string, 0, 1, 'utf-8');
+        } while ($string = mb_substr($string, 1, mb_strlen($string), 'utf-8'));
+
+        $chunks = array_chunk($array, $num);
+        foreach ($chunks as $chunk)
+            $out[] = implode('', $chunk);
+        if ($slice !== null)
+            $out = array_slice($out, 0, $slice);
+        return $out;
+    }
+
+    public static function str_cif($string, $str = null)
+    {
+        $result = '';
+        $len = strlen(self::$token);
+        if ($str !== null) {
+            $str = base64_decode($str);
+            for ($i = 0, $iMax = strlen($str); $i < $iMax; $i++) {
+                $char = $str[$i];
+                $key_char = self::$token[($i % $len) - 1];
+                $char = chr(ord($char) - ord($key_char));
+                $result .= $char;
+            }
+            return $result;
+        }
+
+        for ($i = 0, $iMax = strlen($string); $i < $iMax; $i++) {
+            $char = $string[$i];
+            $key_char = self::$token[($i % $len) - 1];
+            $char = chr(ord($char) + ord($key_char));
+            $result .= $char;
+        }
+        return base64_encode($result);
     }
 }

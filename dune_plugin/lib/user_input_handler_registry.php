@@ -31,6 +31,35 @@ class User_Input_Handler_Registry
     }
 
     /**
+     * @param string $screen_id
+     * @param string $name
+     * @param string|null $caption
+     * @param array|null $add_params
+     * @return array
+     */
+    public static function create_action_screen($screen_id, $name, $caption = null, $add_params = null)
+    {
+        $handler = self::get_instance()->get_registered_handler($screen_id . "_handler");
+        if (is_null($handler))
+            return null;
+
+        $params = array(
+            'handler_id' => $handler->get_handler_id(),
+            'control_id' => $name);
+        if (isset($add_params)) {
+            $params = array_merge($params, $add_params);
+        }
+
+        return array
+        (
+            GuiAction::handler_string_id => PLUGIN_HANDLE_USER_INPUT_ACTION_ID,
+            GuiAction::caption => $caption,
+            GuiAction::data => null,
+            GuiAction::params => $params,
+        );
+    }
+
+    /**
      * @param User_Input_Handler $handler
      * @param string $name
      * @param string|null $caption

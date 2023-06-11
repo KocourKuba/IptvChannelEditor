@@ -9,9 +9,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const ID = 'setup';
     const CONTROLS_WIDTH = 800;
 
-    const SETUP_ACTION_SHOW_TV = 'show_tv';
-    const SETUP_ACTION_VOD_LAST = 'vod_last';
-    const SETUP_ACTION_SHOW_ALL = 'show_all';
     const SETUP_ACTION_OTTKEY_DLG = 'ott_key_dialog';
     const SETUP_ACTION_OTTKEY_APPLY = 'ott_key_apply';
     const SETUP_ACTION_LOGIN_DLG = 'login_dialog';
@@ -20,19 +17,16 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     const SETUP_ACTION_PIN_APPLY = 'pin_apply';
     const SETUP_ACTION_CLEAR_ACCOUNT = 'clear_account';
     const SETUP_ACTION_CLEAR_ACCOUNT_APPLY = 'clear_account_apply';
-    const SETUP_ACTION_INTERFACE_DLG = 'interface_dialog';
-    const SETUP_ACTION_INTERFACE_APPLY = 'interface_apply';
-    const SETUP_ACTION_STREAMING_DLG = 'streaming_dialog';
-    const SETUP_ACTION_STREAMING_APPLY = 'streaming_apply';
-    const SETUP_ACTION_AUTO_RESUME = 'auto_resume';
-    const SETUP_ACTION_AUTO_PLAY = 'auto_play';
     const SETUP_ACTION_STRIP_HTTPS = 'strip_https';
-    const SETUP_ACTION_EPG_DLG = 'epg_dialog';
-    const SETUP_ACTION_EPG_APPLY = 'epg_dialog_apply';
-    const SETUP_ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
     const SETUP_ACTION_PASS_DLG = 'pass_dialog';
     const SETUP_ACTION_PASS_APPLY = 'pass_apply';
     const SETUP_ACTION_USE_HTTPS_PROXY = 'use_proxy';
+
+    const SETUP_ACTION_INTERFACE_SCREEN = 'interface_screen';
+    const SETUP_ACTION_CHANNELS_SCREEN = 'channels_screen';
+    const SETUP_ACTION_EPG_SCREEN = 'epg_screen';
+    const SETUP_ACTION_STREAMING_SCREEN = 'streaming_screen';
+    const SETUP_ACTION_HISTORY_SCREEN = 'history_screen';
 
     private static $on_off_ops = array
     (
@@ -91,22 +85,20 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
      */
     public function do_get_control_defs(&$plugin_cookies)
     {
-        $defs = array();
-
+        $delete_icon = $this->plugin->get_image_path('brush.png');
         $text_icon = $this->plugin->get_image_path('text.png');
         $setting_icon = $this->plugin->get_image_path('settings.png');
 
+        $defs = array();
         //////////////////////////////////////
         // Plugin name
-        Control_Factory::add_vgap($defs, -10);
-        $title = " v.{$this->plugin->config->plugin_info['app_version']} [{$this->plugin->config->plugin_info['app_release_date']}]";
-        Control_Factory::add_label($defs, "IPTV Channel Editor by sharky72", $title, 20);
+        $this->plugin->create_setup_header($defs);
 
         //////////////////////////////////////
         // ott or token dialog
         if ($this->plugin->config->get_embedded_account() !== null) {
             Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CLEAR_ACCOUNT,
-                TR::t('setup_account_title'), TR::t('setup_account_delete'), $setting_icon);
+                TR::t('setup_account_title'), TR::t('setup_account_delete'), $delete_icon);
         } else {
             switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
                 case Plugin_Constants::ACCOUNT_OTT_KEY:
@@ -126,19 +118,34 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // Interface settings
-        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_INTERFACE_DLG,
+        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_INTERFACE_SCREEN,
             TR::t('setup_interface_title'), TR::t('setup_change_settings'), $setting_icon, self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
-        // epg dialog
-        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_EPG_DLG,
+        // Channels settings
+        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANNELS_SCREEN,
+            TR::t('tv_screen_channels_setup'), TR::t('setup_change_settings'), $setting_icon, self::CONTROLS_WIDTH);
+
+        //////////////////////////////////////
+        // EPG settings
+        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_EPG_SCREEN,
             TR::t('setup_epg_settings'), TR::t('setup_change_settings'), $setting_icon, self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
-        // streaming dialog
-        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_STREAMING_DLG,
+        // Streaming settings
+        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_STREAMING_SCREEN,
             TR::t('setup_streaming_settings'), TR::t('setup_change_settings'), $setting_icon, self::CONTROLS_WIDTH);
 
+        //////////////////////////////////////
+        // History view info location
+        if (!is_apk()) {
+            Control_Factory::add_image_button($defs, $this, null,
+                self::SETUP_ACTION_HISTORY_SCREEN,
+                TR::t('setup_history_folder_path'), TR::t('setup_change_settings'), $setting_icon, self::CONTROLS_WIDTH);
+        }
+
+        //////////////////////////////////////
+        // https proxy settings
         if ((is_update_url_https() || is_https_proxy_enabled())
             && strpos(get_platform_kind(), '86') !== 0) {
 
@@ -153,8 +160,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_PASS_DLG,
             TR::t('setup_adult_title'), TR::t('setup_adult_change'), $text_icon, self::CONTROLS_WIDTH);
 
-        Control_Factory::add_vgap($defs, 10);
-
         return $defs;
     }
 
@@ -166,49 +171,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
     {
         return $this->do_get_control_defs($plugin_cookies);
-    }
-
-    /**
-     * interface dialog defs
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function do_get_interface_control_defs(&$plugin_cookies)
-    {
-        hd_print(__METHOD__);
-        $defs = array();
-        Control_Factory::add_vgap($defs, 20);
-
-        $on_off = array();
-        $on_off[SetupControlSwitchDefs::switch_on] = self::$on_off_ops[SetupControlSwitchDefs::switch_on];
-        $on_off[SetupControlSwitchDefs::switch_off] = self::$on_off_ops[SetupControlSwitchDefs::switch_off];
-
-        //////////////////////////////////////
-        // Show in main screen
-        if (!is_apk()) {
-            $show_tv = isset($plugin_cookies->show_tv) ? $plugin_cookies->show_tv : SetupControlSwitchDefs::switch_on;
-            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_SHOW_TV, TR::t('setup_show_in_main'), $show_tv, $on_off, 0);
-        }
-
-        //////////////////////////////////////
-        // show all channels category
-        $show_all = isset($plugin_cookies->show_all) ? $plugin_cookies->show_all : SetupControlSwitchDefs::switch_on;
-        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_SHOW_ALL, TR::t('setup_show_all_channels'), $show_all, $on_off, 0);
-
-        //////////////////////////////////////
-        // show vod at the end of categories
-        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            $vod_last = isset($plugin_cookies->vod_last) ? $plugin_cookies->vod_last : SetupControlSwitchDefs::switch_on;
-            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_VOD_LAST, TR::t('setup_vod_last'), $vod_last, $on_off, 0);
-        }
-
-        Control_Factory::add_vgap($defs, 50);
-
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_INTERFACE_APPLY, TR::t('ok'), 300);
-        Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
-        Control_Factory::add_vgap($defs, 10);
-
-        return $defs;
     }
 
     /**
@@ -295,181 +257,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
     }
 
     /**
-     * streaming parameters dialog defs
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function do_get_streaming_control_defs(&$plugin_cookies)
-    {
-        hd_print(__METHOD__);
-        $defs = array();
-        Control_Factory::add_vgap($defs, 20);
-
-        //////////////////////////////////////
-        // auto play
-        $on_off = array();
-        $on_off[SetupControlSwitchDefs::switch_on] = self::$on_off_ops[SetupControlSwitchDefs::switch_on];
-        $on_off[SetupControlSwitchDefs::switch_off] = self::$on_off_ops[SetupControlSwitchDefs::switch_off];
-        $auto_play = isset($plugin_cookies->auto_play) ? $plugin_cookies->auto_play : SetupControlSwitchDefs::switch_off;
-        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_AUTO_PLAY, TR::t('setup_autostart'), $auto_play, $on_off, 0);
-
-        //////////////////////////////////////
-        // auto resume
-        $auto_resume = isset($plugin_cookies->auto_resume) ? $plugin_cookies->auto_resume : SetupControlSwitchDefs::switch_on;
-        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_AUTO_RESUME, TR::t('setup_continue_play'), $auto_resume, $on_off, 0);
-
-        //////////////////////////////////////
-        // select server
-        $servers = $this->plugin->config->get_servers($plugin_cookies);
-        if (!empty($servers)) {
-            hd_print("Change server supported");
-            $server_id = $this->plugin->config->get_server_id($plugin_cookies);
-            $server_name = $this->plugin->config->get_server_name($plugin_cookies);
-            hd_print("Selected server: id: $server_id name: '$server_name'");
-            Control_Factory::add_combobox($defs, $this, null, 'server', TR::t('server'), $server_id, $servers, 0);
-        }
-
-        //////////////////////////////////////
-        // select device number
-        $devices = $this->plugin->config->get_devices($plugin_cookies);
-        if (!empty($devices)) {
-            hd_print("Change device supported");
-            $device_id = $this->plugin->config->get_device_id($plugin_cookies);
-            $device_name = $this->plugin->config->get_device_name($plugin_cookies);
-            hd_print("Selected device: id: $device_id name: '$device_name'");
-            Control_Factory::add_combobox($defs, $this, null, 'device', TR::t('setup_device'), $device_id, $devices, 0);
-        }
-
-        //////////////////////////////////////
-        // select quality
-        $qualities = $this->plugin->config->get_qualities($plugin_cookies);
-        if (!empty($qualities)) {
-            hd_print("Change quality supported");
-            $quality_id = $this->plugin->config->get_quality_id($plugin_cookies);
-            $quality_name = $this->plugin->config->get_quality_name($plugin_cookies);
-            hd_print("Selected quality: id: $quality_id name: '$quality_name'");
-            Control_Factory::add_combobox($defs, $this, null, 'quality', TR::t('setup_quality'), $quality_id, $qualities, 0);
-        }
-
-        //////////////////////////////////////
-        // select profile
-        $profiles = $this->plugin->config->get_profiles($plugin_cookies);
-        if (!empty($profiles)) {
-            hd_print("Change profile supported");
-            $profile_id = $this->plugin->config->get_profile_id($plugin_cookies);
-            $profile_name = $this->plugin->config->get_profile_name($plugin_cookies);
-            hd_print("Selected profile: id: $profile_id name: '$profile_name'");
-            Control_Factory::add_combobox($defs, $this, null, 'profile', TR::t('setup_profile'), $profile_id, $profiles, 0);
-        }
-        //////////////////////////////////////
-        // select stream type
-        $format_ops = array();
-        if ($this->plugin->config->get_stream_param(Plugin_Constants::HLS, Stream_Params::URL_TEMPLATE) !== '') {
-            $format_ops[Plugin_Constants::HLS] = 'HLS';
-        }
-
-        if ($this->plugin->config->get_stream_param(Plugin_Constants::MPEG, Stream_Params::URL_TEMPLATE) !== '') {
-            $format_ops[Plugin_Constants::MPEG] = 'MPEG-TS';
-        }
-
-        if (count($format_ops) > 1) {
-            hd_print("Change stream type supported");
-            $format_id = $this->plugin->config->get_format($plugin_cookies);
-            hd_print("Selected stream type: id: $format_id name: '$format_ops[$format_id]'");
-            Control_Factory::add_combobox($defs, $this, null, 'stream_format', TR::t('setup_stream'), $format_id, $format_ops, 0);
-        }
-
-        //////////////////////////////////////
-        // buffering time
-        $show_buf_time_ops = array();
-        $show_buf_time_ops[1000] = TR::t('setup_buffer_sec_default__1', "1");
-        $show_buf_time_ops[0] = TR::t('setup_buffer_no');
-        $show_buf_time_ops[500] = TR::t('setup_buffer_sec__1', "0.5");
-        $show_buf_time_ops[2000] = TR::t('setup_buffer_sec__1', "2");
-        $show_buf_time_ops[3000] = TR::t('setup_buffer_sec__1', "3");
-        $show_buf_time_ops[5000] = TR::t('setup_buffer_sec__1', "5");
-        $show_buf_time_ops[10000] = TR::t('setup_buffer_sec__1', "10");
-
-        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
-        Control_Factory::add_combobox($defs, $this, null, 'buf_time', TR::t('setup_buffer_time'), $buf_time, $show_buf_time_ops, 0);
-
-        //////////////////////////////////////
-        // archive delay time
-        $show_delay_time_ops = array();
-        $show_delay_time_ops[60] = TR::t('setup_buffer_sec_default__1', "60");
-        $show_delay_time_ops[10] = TR::t('setup_buffer_sec__1', "10");
-        $show_delay_time_ops[20] = TR::t('setup_buffer_sec__1', "20");
-        $show_delay_time_ops[30] = TR::t('setup_buffer_sec__1', "30");
-        $show_delay_time_ops[2*60] = TR::t('setup_buffer_sec__1', "120");
-        $show_delay_time_ops[3*60] = TR::t('setup_buffer_sec__1', "180");
-        $show_delay_time_ops[5*60] = TR::t('setup_buffer_sec__1', "300");
-
-        $delay_time = isset($plugin_cookies->delay_time) ? $plugin_cookies->delay_time : 60;
-        Control_Factory::add_combobox($defs, $this, null, 'delay_time', TR::t('setup_delay_time'), $delay_time, $show_delay_time_ops, 0);
-
-        Control_Factory::add_vgap($defs, 50);
-
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_STREAMING_APPLY, TR::t('ok'), 300);
-        Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
-        Control_Factory::add_vgap($defs, 10);
-
-        return $defs;
-    }
-
-    /**
-     * EPG dialog defs
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function do_get_epg_control_defs(&$plugin_cookies)
-    {
-        $defs = array();
-
-        //////////////////////////////////////
-        // EPG
-        $epg_params = $this->plugin->config->get_epg_params(Plugin_Constants::EPG_SECOND);
-        if (!empty($epg_params[Epg_Params::EPG_URL])) {
-            $epg_source_ops = array();
-            $epg_source_ops[SetupControlSwitchDefs::switch_epg1] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg1];
-            $epg_source_ops[SetupControlSwitchDefs::switch_epg2] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg2];
-
-            $epg_source = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
-
-            Control_Factory::add_combobox($defs, $this, null,
-                'epg_source', TR::t('setup_epg_source'), $epg_source, $epg_source_ops, 0);
-        }
-
-        //////////////////////////////////////
-        // clear epg cache
-        Control_Factory::add_button($defs, $this, null, self::SETUP_ACTION_CLEAR_EPG_CACHE, TR::t('entry_epg_cache_clear'), TR::t('clear'), 0);
-
-        $epg_font_ops = array();
-        $epg_font_ops[SetupControlSwitchDefs::switch_small] = self::$on_off_ops[SetupControlSwitchDefs::switch_small];
-        $epg_font_ops[SetupControlSwitchDefs::switch_normal] = self::$on_off_ops[SetupControlSwitchDefs::switch_normal];
-
-        $epg_font_size = isset($plugin_cookies->epg_font_size) ? $plugin_cookies->epg_font_size : SetupControlSwitchDefs::switch_normal;
-
-        Control_Factory::add_combobox($defs, $this, null,
-            'epg_font_size', TR::t('setup_epg_font'), $epg_font_size, $epg_font_ops, 0);
-
-        $show_epg_shift_ops = array();
-        for ($i = -11; $i < 12; $i++) {
-            $show_epg_shift_ops[$i] = TR::t('setup_epg_shift__1', sprintf("%+03d", $i));
-        }
-        $show_epg_shift_ops[0] = TR::t('setup_epg_shift_default__1', "00");
-
-        $epg_shift = isset($plugin_cookies->epg_shift) ? $plugin_cookies->epg_shift : 0;
-        Control_Factory::add_combobox($defs, $this, null, 'epg_shift', TR::t('setup_epg_shift'), $epg_shift, $show_epg_shift_ops, 0);
-
-        Control_Factory::add_vgap($defs, 50);
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_EPG_APPLY, TR::t('apply'), 300);
-        Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
-        Control_Factory::add_vgap($defs, 10);
-
-        return $defs;
-    }
-
-    /**
      * adult pass dialog defs
      * @return array
      */
@@ -514,24 +301,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         }
 
         switch ($control_id) {
-
-            case self::SETUP_ACTION_INTERFACE_DLG: // show interface settings dialog
-                $defs = $this->do_get_interface_control_defs($plugin_cookies);
-                return Action_Factory::show_dialog(TR::t('setup_interface_title'), $defs, true);
-
-            case self::SETUP_ACTION_INTERFACE_APPLY: // show interface settings dialog
-                if (!is_apk()) {
-                    $plugin_cookies->show_tv = $user_input->show_tv;
-                    hd_print("Show on main screen: $plugin_cookies->show_tv");
-                }
-
-                $plugin_cookies->show_all = $user_input->show_all;
-                hd_print("Show all channels category: $plugin_cookies->show_all");
-
-                $plugin_cookies->vod_last = $user_input->vod_last;
-                hd_print("Vod at last: $plugin_cookies->vod_last");
-
-                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
 
             case self::SETUP_ACTION_OTTKEY_DLG: // show ott key dialog
                 $defs = $this->do_get_ott_key_control_defs($plugin_cookies);
@@ -591,92 +360,20 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 $post_action = User_Input_Handler_Registry::create_action($this, RESET_CONTROLS_ACTION_ID);
                 return Action_Factory::show_title_dialog(TR::t('setup_deleted_embedded'), $post_action);
 
-            case self::SETUP_ACTION_EPG_DLG: // show epg settings dialog
-                $defs = $this->do_get_epg_control_defs($plugin_cookies);
-                return Action_Factory::show_dialog(TR::t('setup_epg_settings'), $defs, true);
+            case self::SETUP_ACTION_INTERFACE_SCREEN: // show interface settings dialog
+                return Action_Factory::open_folder(Starnet_Interface_Setup_Screen::get_media_url_str(), TR::t('setup_interface_title'));
 
-            case self::SETUP_ACTION_EPG_APPLY: // handle epg settings dialog result
-                if (isset($user_input->epg_source)) {
-                    $plugin_cookies->epg_source = $user_input->epg_source;
-                    hd_print("Selected epg source: $user_input->epg_source");
-                }
+            case self::SETUP_ACTION_CHANNELS_SCREEN: // show epg settings dialog
+                return Action_Factory::open_folder(Starnet_Channels_Setup_Screen::get_media_url_str(), TR::t('tv_screen_channels_setup'));
 
-                $plugin_cookies->epg_font_size = $user_input->epg_font_size;
-                hd_print("Selected epg font size: $user_input->epg_font_size");
+            case self::SETUP_ACTION_EPG_SCREEN: // show epg settings dialog
+                return Action_Factory::open_folder(Starnet_Epg_Setup_Screen::get_media_url_str(), TR::t('setup_epg_settings'));
 
-                $plugin_cookies->epg_shift = $user_input->epg_shift;
-                hd_print("Selected epg shift: $user_input->epg_shift");
+            case self::SETUP_ACTION_STREAMING_SCREEN: // show streaming settings dialog
+                return Action_Factory::open_folder(Starnet_Streaming_Setup_Screen::get_media_url_str(), TR::t('setup_streaming_settings'));
 
-                return null;
-
-            case self::SETUP_ACTION_STREAMING_DLG: // show streaming settings dialog
-                $defs = $this->do_get_streaming_control_defs($plugin_cookies);
-                return Action_Factory::show_dialog(TR::t('setup_streaming_settings'), $defs, true);
-
-            case self::SETUP_ACTION_STREAMING_APPLY: // handle streaming settings dialog result
-                $plugin_cookies->auto_play = $user_input->auto_play;
-                hd_print("Auto play: $plugin_cookies->auto_play");
-
-                $plugin_cookies->auto_resume = $user_input->auto_resume;
-                hd_print("Auto resume: $plugin_cookies->auto_resume");
-
-                if (isset($user_input->epg_source)) {
-                    $plugin_cookies->epg_source = $user_input->epg_source;
-                    hd_print("Selected epg source: $user_input->epg_source");
-                }
-                $plugin_cookies->epg_font_size = $user_input->epg_font_size;
-                hd_print("Selected epg font size: $user_input->epg_font_size");
-
-                $need_reload = false;
-                if (isset($user_input->stream_format)) {
-                    $need_reload = true;
-                    $plugin_cookies->format = $user_input->stream_format;
-                    hd_print("selected stream type: $plugin_cookies->format");
-                }
-
-                if (isset($user_input->server) && $this->plugin->config->get_server_id($plugin_cookies) !== $user_input->server) {
-                    $need_reload = true;
-                    $this->plugin->config->set_server_id($user_input->server, $plugin_cookies);
-                    hd_print("Selected server: id: $user_input->server name: '" . $this->plugin->config->get_server_name($plugin_cookies) . "'");
-                }
-
-                if (isset($user_input->quality) && $this->plugin->config->get_quality_id($plugin_cookies) !== $user_input->quality) {
-                    $need_reload = true;
-                    $this->plugin->config->set_quality_id($user_input->quality, $plugin_cookies);
-                    hd_print("Selected quality: id: $user_input->quality name: '" . $this->plugin->config->get_quality_name($plugin_cookies) . "'");
-                }
-
-                if (isset($user_input->device) && $this->plugin->config->get_device_id($plugin_cookies) !== $user_input->device) {
-                    $need_reload = true;
-                    $this->plugin->config->set_device_id($user_input->device, $plugin_cookies);
-                    hd_print("Selected device: id: $user_input->device name: '" . $this->plugin->config->get_device_name($plugin_cookies) . "'");
-                }
-
-                if (isset($user_input->profile) && $this->plugin->config->get_profile_id($plugin_cookies) !== $user_input->profile) {
-                    $need_reload = true;
-                    $this->plugin->config->set_profile_id($user_input->profile, $plugin_cookies);
-                    hd_print("Selected profile: id: $user_input->profile name: '" . $this->plugin->config->get_profile_name($plugin_cookies) . "'");
-                }
-
-                $plugin_cookies->buf_time = $user_input->buf_time;
-                hd_print("Buffering time: $plugin_cookies->buf_time");
-
-                $plugin_cookies->delay_time = $user_input->delay_time;
-                hd_print("Delay time: $plugin_cookies->delay_time");
-
-                return $need_reload ? $this->plugin->tv->reload_channels($this, $plugin_cookies) : null;
-
-            case self::SETUP_ACTION_CLEAR_EPG_CACHE: // clear epg cache
-                $epg_path = get_temp_path("epg/");
-                hd_print("do clear epg: $epg_path");
-                foreach(glob($epg_path . "*") as $file) {
-                    if(is_file($file)) {
-                        hd_print("erase: $file");
-                        unlink($file);
-                    }
-                }
-
-                return Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared'));
+            case self::SETUP_ACTION_HISTORY_SCREEN:
+                return Action_Factory::open_folder(Starnet_History_Setup_Screen::get_media_url_str(), TR::t('setup_history_change_folder'));
 
             case self::SETUP_ACTION_USE_HTTPS_PROXY:
                 $old_value = $plugin_cookies->use_proxy;
@@ -712,6 +409,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 }
 
                 return Action_Factory::show_title_dialog($msg, $need_reload ? $this->plugin->tv->reload_channels($this, $plugin_cookies) : null);
+
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies));

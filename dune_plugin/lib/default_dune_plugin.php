@@ -134,6 +134,14 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("----------------------------------------------------");
     }
 
+    public function create_setup_header(&$defs)
+    {
+        Control_Factory::add_vgap($defs, -10);
+        Control_Factory::add_label($defs, "IPTV Channel Editor by sharky72            ",
+            " v.{$this->config->plugin_info['app_version']} [{$this->config->plugin_info['app_release_date']}]",
+            20);
+    }
+
     /**
      * @var Starnet_Tv
      */
@@ -162,12 +170,32 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * @var Starnet_Setup_Screen
      */
-    public $setup_screen;
+    public $main_setup_screen;
 
     /**
      * @var Starnet_Channels_Setup_Screen
      */
     public $channels_setup_screen;
+
+    /**
+     * @var Starnet_Interface_Setup_Screen
+     */
+    public $interface_setup_screen;
+
+    /**
+     * @var Starnet_Epg_Setup_Screen
+     */
+    public $epg_setup_screen;
+
+    /**
+     * @var Starnet_Streaming_Setup_Screen
+     */
+    public $stream_setup_screen;
+
+    /**
+     * @var Starnet_History_Setup_Screen
+     */
+    public $history_setup_screen;
 
     /**
      * @var Starnet_Folder_Screen

@@ -95,7 +95,8 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
                 if ($user_input->search_actions === 'keyboard') {
                     $search_string = $media_url->genre_id;
                 } else {
-                    $search_string = HD::get_item(self::VOD_SEARCH_ITEM);
+                    $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
+                    $search_string = empty($search_items) ? "" : $search_items[0];
                 }
 
                 $defs = array();
@@ -113,14 +114,13 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
             case ACTION_RUN_SEARCH:
                 $search_string = $user_input->{ACTION_NEW_SEARCH};
                 hd_print("search string: $search_string");
-                HD::put_item(self::VOD_SEARCH_ITEM, $search_string);
-                $search_items = HD::get_items(self::VOD_SEARCH_LIST);
+                $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
                 $i = array_search($search_string, $search_items);
                 if ($i !== false) {
                     unset ($search_items [$i]);
                 }
                 array_unshift($search_items, $search_string);
-                HD::put_items(self::VOD_SEARCH_LIST, $search_items);
+                HD::put_data_items(self::VOD_SEARCH_LIST, $search_items);
                 $action = Action_Factory::open_folder(
                     Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_SEARCH, $search_string),
                     TR::t('search__1', ": $search_string"));
@@ -132,14 +132,14 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
-                $search_items = HD::get_items(self::VOD_SEARCH_LIST);
+                $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
                 $i = array_search($video_id, $search_items);
                 if ($i === false || $i === 0)  break;
 
                 $t = $search_items[$i - 1];
                 $search_items[$i - 1] = $search_items[$i];
                 $search_items[$i] = $t;
-                HD::put_items(self::VOD_SEARCH_LIST, $search_items);
+                HD::put_data_items(self::VOD_SEARCH_LIST, $search_items);
 
                 return $this->get_update_action($user_input, -1, $plugin_cookies);
 
@@ -148,14 +148,14 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
-                $search_items = HD::get_items(self::VOD_SEARCH_LIST);
+                $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
                 $i = array_search($video_id, $search_items);
                 if ($i === false || $i === count($search_items) - 1) break;
 
                 $t = $search_items[$i + 1];
                 $search_items[$i + 1] = $search_items[$i];
                 $search_items[$i] = $t;
-                HD::put_items(self::VOD_SEARCH_LIST, $search_items);
+                HD::put_data_items(self::VOD_SEARCH_LIST, $search_items);
 
                 return $this->get_update_action($user_input, 1, $plugin_cookies);
 
@@ -164,12 +164,12 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 $video_id = $media_url->genre_id;
-                $search_items = HD::get_items(self::VOD_SEARCH_LIST);
+                $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
                 $i = array_search($video_id, $search_items);
                 if ($i !== false) {
                     unset ($search_items[$i]);
                 }
-                HD::put_items(self::VOD_SEARCH_LIST, $search_items);
+                HD::put_data_items(self::VOD_SEARCH_LIST, $search_items);
 
                 return Action_Factory::invalidate_folders(array(self::ID));
         }
@@ -205,7 +205,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
             PluginRegularFolderItem::media_url => Starnet_Vod_List_Screen::get_media_url_str(Vod_Category::FLAG_SEARCH, Vod_Category::FLAG_SEARCH)
         );
 
-        $search_items = HD::get_items(self::VOD_SEARCH_LIST);
+        $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
         foreach ($search_items as $item) {
             if (!empty($item)) {
                 $items[] = array

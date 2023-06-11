@@ -13,7 +13,7 @@ class MediaURL
 
     /**
      * @param $str string
-     * @param $map|null array
+     * @param $map array|null
      */
     private function __construct($str, $map)
     {

@@ -23,7 +23,7 @@ class Control_Factory
      * @param string $text
      * @param bool $vgap_after
      */
-    public static function add_label(&$defs, $title, $text, $vgap_after = false)
+    public static function add_label(&$defs, $title, $text, $vgap_after = 2)
     {
         $defs[] = array
         (
@@ -151,7 +151,7 @@ class Control_Factory
         );
 
         self::add_vgap($defs, -65);
-        self::add_smart_label($defs, null, "<gap width=15/><icon>$image</icon><gap width=20/><text dy='-2'>$caption</text>");
+        self::add_smart_label($defs, null, "<gap width=15/><icon dy='-2'>$image</icon><gap width=20/><text dy='-2'>$caption</text>");
     }
 
     /**

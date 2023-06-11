@@ -10,16 +10,11 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
     const ACTION_FS = 'fs_action';
     const ACTION_SELECT_FOLDER = 'select_folder';
     const ACTION_CREATE_FOLDER = 'create_folder';
-    const ACTION_RESET_FOLDER = 'reset_folder';
     const ACTION_GET_FOLDER_NAME = 'get_folder_name';
     const ACTION_DO_MKDIR = 'do_mkdir';
     const ACTION_SMB_SETUP = 'smb_setup';
     const ACTION_NEW_SMB_DATA = 'new_smb_data';
     const ACTION_SAVE_SMB_SETUP = 'save_smb_setup';
-    const ACTION_RELOAD_CHANNELS = 'reload_channels';
-    const ACTION_CH_LIST_PATH = 'ch_list_path';
-    const ACTION_TV_HISTORY_PATH = 'tv_history_path';
-    const ACTION_VOD_HISTORY_PATH = 'vod_history_path';
 
     private $counter = 0;
 
@@ -139,12 +134,10 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         $save_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_SELECT_FOLDER, TR::t('folder_screen_select_folder'));
         $open_folder = User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER, TR::t('folder_screen_open_folder'));
         $create_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_GET_FOLDER_NAME, TR::t('folder_screen_create_folder'));
-        $reset_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_RESET_FOLDER, TR::t('folder_screen_reset_default'));
         $smb_setup = User_Input_Handler_Registry::create_action($this, self::ACTION_SMB_SETUP, TR::t('folder_screen_smb_settings'));
 
         $actions[GUI_EVENT_KEY_ENTER] = $fs_action;
         $actions[GUI_EVENT_KEY_PLAY] = $fs_action;
-        $actions[GUI_EVENT_KEY_D_BLUE] = $reset_folder;
 
         if (is_newer_versions() !== false) {
             $actions[GUI_EVENT_KEY_SETUP] = Action_Factory::replace_path($media_url->windowCounter);
@@ -241,9 +234,8 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                         $media_url->filepath !== '/tmp/mnt/storage' &&
                         $media_url->filepath !== '/tmp/mnt/network' &&
                         $media_url->filepath !== '/tmp/mnt/smb' &&
-                        ($media_url->save_data === self::ACTION_CH_LIST_PATH
-                        || $media_url->save_data === self::ACTION_TV_HISTORY_PATH
-                        || $media_url->save_data === self::ACTION_VOD_HISTORY_PATH)
+                        ($media_url->save_data === Starnet_Plugin::ACTION_CH_LIST_PATH
+                        || $media_url->save_data === Starnet_Plugin::ACTION_HISTORY_PATH)
                     ) {
                         $info = TR::t('folder_screen_select__1', $caption);
                     } else {
@@ -382,20 +374,16 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
             case self::ACTION_SELECT_FOLDER:
                 $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
                 //hd_print(__METHOD__ . " select_folder: " . $url->get_media_url_str());
-                smb_tree::set_folder_info($plugin_cookies, $url);
+                $post_action = null;
+                if ($url->save_data === Starnet_Plugin::ACTION_CH_LIST_PATH) {
+                    smb_tree::set_folder_info($plugin_cookies, $url, Starnet_Plugin::ACTION_CH_LIST_PATH);
+                    $post_action = User_Input_Handler_Registry::create_action_screen(Starnet_Channels_Setup_Screen::ID, ACTION_RELOAD);
+                } else if ($url->save_data === Starnet_Plugin::ACTION_HISTORY_PATH) {
+                    smb_tree::set_folder_info($plugin_cookies, $url, Starnet_Plugin::ACTION_HISTORY_PATH);
+                    $post_action = User_Input_Handler_Registry::create_action_screen(Starnet_History_Setup_Screen::ID, ACTION_RELOAD);
+                }
 
-                $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Channels_Setup_Screen::ID . "_handler");
-                $post_action = is_null($setup_handler) ? null : User_Input_Handler_Registry::create_action($setup_handler, self::ACTION_RELOAD_CHANNELS);
                 $msg_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $url->caption), $post_action, $url->filepath, 800);
-                return (is_newer_versions() !== false) ? Action_Factory::replace_path($parent_url->windowCounter, null, $msg_action) : $msg_action;
-
-            case self::ACTION_RESET_FOLDER:
-                //hd_print(__METHOD__ . " reset_folder");
-                $plugin_cookies->ch_list_path = '';
-
-                $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Channels_Setup_Screen::ID . "_handler");
-                $post_post = is_null($setup_handler) ? null : User_Input_Handler_Registry::create_action($setup_handler, self::ACTION_RELOAD_CHANNELS);
-                $msg_action = Action_Factory::show_title_dialog(TR::t('folder_screen_default_selected'), $post_post, get_install_path(), 800);
                 return (is_newer_versions() !== false) ? Action_Factory::replace_path($parent_url->windowCounter, null, $msg_action) : $msg_action;
 
             case self::ACTION_GET_FOLDER_NAME:
@@ -505,10 +493,6 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 }
 
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_used__1', $smb_view_ops[$smb_view]));
-
-            case self::ACTION_RELOAD_CHANNELS:
-                $setup_handler = User_Input_Handler_Registry::get_instance()->get_registered_handler(Starnet_Channels_Setup_Screen::ID . "_handler");
-                return $setup_handler === null ? null : $this->plugin->tv->reload_channels($setup_handler, $plugin_cookies);
         }
         return null;
     }

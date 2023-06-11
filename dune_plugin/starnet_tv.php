@@ -320,7 +320,11 @@ class Starnet_Tv implements Tv, User_Input_Handler
             hd_print(__METHOD__ . ": Load channels list using source: $source");
             switch ($source) {
                 case 1:
-                    $channels_list_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Folder_Screen::ACTION_CH_LIST_PATH) . $channels_list;
+                    $channels_list_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_CH_LIST_PATH);
+                    if (empty($channels_list_path))
+                        $channels_list_path = get_install_path();
+
+                    $channels_list_path .= $channels_list;
                     hd_print(__METHOD__ . ": load from: $channels_list_path");
                     break;
                 case 2:
@@ -645,7 +649,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             // update url if play archive or different type of the stream
             $url = $this->plugin->config->GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
 
-            $zoom_data = HD::get_items(self::CHANNELS_ZOOM, true);
+            $zoom_data = HD::get_data_items(self::CHANNELS_ZOOM, true);
             if (isset($zoom_data[$channel_id])) {
                 $zoom_preset = $zoom_data[$channel_id];
                 hd_print(__METHOD__ . ": zoom_preset: $zoom_preset");
@@ -826,10 +830,6 @@ class Starnet_Tv implements Tv, User_Input_Handler
             $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
         }
 
-        if ($this->plugin->history_support) {
-            Playback_Points::init();
-        }
-
         //hd_print(__METHOD__ . ': Info loaded at ' . (microtime(1) - $t) . ' secs');
 
         return array(
@@ -887,13 +887,17 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 if (!$this->plugin->new_ui_support
                     || !(isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed))) break;
 
-                Playback_Points::save();
+                $history_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_HISTORY_PATH);
+                if (empty($history_path))
+                    $history_path = get_data_path();
+
+                Playback_Points::save($history_path);
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
                 return Starnet_Epfs_Handler::invalidate_folders();
 
             case ACTION_ZOOM_MENU:
                 $attrs['dialog_params']['frame_style'] = DIALOG_FRAME_STYLE_GLASS;
-                $zoom_data = HD::get_items(self::CHANNELS_ZOOM, true);
+                $zoom_data = HD::get_data_items(self::CHANNELS_ZOOM, true);
                 $dune_zoom = isset($zoom_data[$channel_id]) ? $zoom_data[$channel_id] : DuneVideoZoomPresets::not_set;
 
                 $defs = array();
@@ -905,7 +909,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 return Action_Factory::show_dialog(TR::t('tv_screen_zoom_channel'), $defs,true,0, $attrs);
 
             case ACTION_ZOOM_APPLY:
-                $zoom_data = HD::get_items(self::CHANNELS_ZOOM, true);
+                $zoom_data = HD::get_data_items(self::CHANNELS_ZOOM, true);
                 if ($user_input->{ACTION_ZOOM_SELECT} === DuneVideoZoomPresets::not_set) {
                     $zoom_preset = DuneVideoZoomPresets::normal;
                     hd_print(__METHOD__ . ": Zoom preset removed for channel: $channel_id ($zoom_preset)");
@@ -915,7 +919,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     hd_print(__METHOD__ . ": Zoom preset $zoom_preset for channel: $channel_id");
                 }
 
-                HD::put_items(self::CHANNELS_ZOOM, $zoom_data);
+                HD::put_data_items(self::CHANNELS_ZOOM, $zoom_data);
                 //set_video_zoom(get_zoom_value($zoom_preset));
                 break;
         }

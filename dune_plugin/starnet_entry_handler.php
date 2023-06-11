@@ -69,8 +69,13 @@ class Starnet_Entry_Handler implements User_Input_Handler
             case 'plugin_entry':
                 if (!isset($user_input->action_id)) break;
 
-                hd_print("plugin_entry $user_input->action_id");
+                hd_print(__METHOD__ . ": plugin_entry $user_input->action_id");
                 clearstatcache();
+                $history_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_HISTORY_PATH);
+                if (empty($history_path))
+                    $history_path = get_data_path();
+                Playback_Points::load_points($history_path);
+
                 switch ($user_input->action_id) {
                     case 'launch':
                         if (HD::toggle_https_proxy($plugin_cookies) !== 0) {
@@ -81,7 +86,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         //hd_print("auto_play: $plugin_cookies->auto_play");
                         if ((int)$user_input->mandatory_playback === 1
                             || (isset($plugin_cookies->auto_play) && $plugin_cookies->auto_play === SetupControlSwitchDefs::switch_on)) {
-                            hd_print("action: launch play");
+                            hd_print(__METHOD__ . ": launch play");
 
                             $media_url = null;
                             if (file_exists('/config/resume_state.properties')) {
@@ -124,7 +129,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         return Action_Factory::tv_play($media_url);
 
                     case 'update_epfs':
-                        hd_print("action: update_epfs");
+                        hd_print(__METHOD__ . ": update_epfs");
                         return Starnet_Epfs_Handler::update_all_epfs($plugin_cookies, isset($user_input->first_run_after_boot) || isset($user_input->restore_from_sleep));
                     default:
                         break;

@@ -161,10 +161,10 @@ class Movie implements User_Input_Handler
         $movie = $series_list[$user_input->plugin_vod_series_ndx];
 
         if (!empty($movie->id)) {
-            $save_folder = HD::get_items('save_folder');
+            $save_folder = HD::get_data_items('save_folder');
             if (isset($save_folder[$user_input->plugin_vod_id][$movie->id])) {
                 $save_folder[$user_input->plugin_vod_id][$movie->id][] = $movie->playback_url;
-                HD::put_items('save_folder', $save_folder);
+                HD::put_data_items('save_folder', $save_folder);
             }
         }
 

@@ -97,6 +97,7 @@ const ACTION_REFRESH_SCREEN = 'refresh_screen';
 const ACTION_REMOVE_PLAYBACK_POINT = 'remove_playback_point';
 const ACTION_CLEAR_PLAYBACK_POINTS = 'clear_playback_points';
 const ACTION_CLEAR_FAVORITES = 'clear_favorites';
+const ACTION_RESET_DEFAULT = 'reset_default';
 
 # Mounted storages path
 const DUNE_MOUNTED_STORAGES_PATH = '/tmp/mnt/storage/';

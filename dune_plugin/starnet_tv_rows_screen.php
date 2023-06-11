@@ -28,7 +28,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         parent::__construct(self::ID, $plugin);
 
         $this->images_path = get_install_path('img');
-        Playback_Points::init();
     }
 
     /**
@@ -439,6 +438,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         if (isset($user_input->item_id)) {
             $media_url_str = $user_input->item_id;
             $media_url = MediaURL::decode($media_url_str);
+        } else if ($user_input->control_id === ACTION_REFRESH_SCREEN) {
+            $media_url = '';
         } else {
             $media_url = $this->get_parent_media_url($user_input->parent_sel_state);
             $media_url_str = '';
@@ -506,7 +507,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                             $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
                         }
 
-                        $zoom_data = HD::get_items(Starnet_Tv::CHANNELS_ZOOM, true);
+                        $zoom_data = HD::get_data_items(Starnet_Tv::CHANNELS_ZOOM, true);
                         $current_idx = (string)(isset($zoom_data[$channel_id]) ? $zoom_data[$channel_id] : DuneVideoZoomPresets::not_set);
 
                         //hd_print(__METHOD__ . ": Current idx: $current_idx");
@@ -578,7 +579,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
                 $channel_id = $media_url->channel_id;
                 $zoom_select = $user_input->{ACTION_ZOOM_SELECT};
-                $zoom_data = HD::get_items(Starnet_Tv::CHANNELS_ZOOM, true);
+                $zoom_data = HD::get_data_items(Starnet_Tv::CHANNELS_ZOOM, true);
                 if ($zoom_select === DuneVideoZoomPresets::not_set) {
                     hd_print(__METHOD__ . ": Zoom preset removed for channel: $channel_id");
                     unset ($zoom_data[$channel_id]);
@@ -587,7 +588,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     $zoom_data[$channel_id] = $zoom_select;
                 }
 
-                HD::put_items(Starnet_Tv::CHANNELS_ZOOM, $zoom_data);
+                HD::put_data_items(Starnet_Tv::CHANNELS_ZOOM, $zoom_data);
                 return Starnet_Epfs_Handler::invalidate_folders();
         }
 
@@ -621,7 +622,11 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
     {
         //hd_print("Starnet_Tv_Rows_Screen::get_history_rows");
         if ($this->clear_playback_points) {
-            Playback_Points::clear();
+            $history_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_HISTORY_PATH);
+            if (empty($history_path))
+                $history_path = get_data_path();
+
+            Playback_Points::clear($history_path);
             $this->clear_playback_points = false;
             return null;
         }
@@ -668,7 +673,11 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 if (isset($this->removed_playback_point))
                     if ($this->removed_playback_point === $id) {
                         $this->removed_playback_point = null;
-                        Playback_Points::clear($item['channel_id']);
+                        $history_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_HISTORY_PATH);
+                        if (empty($history_path))
+                            $history_path = get_data_path();
+
+                        Playback_Points::clear($history_path, $item['channel_id']);
                         continue;
                     }
 

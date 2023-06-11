@@ -157,7 +157,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 return Action_Factory::update_regular_folder($range, true, $ndx);
 
             case ACTION_ZOOM_MENU:
-                $zoom_data = HD::get_items(Starnet_Tv::CHANNELS_ZOOM, true);
+                $zoom_data = HD::get_data_items(Starnet_Tv::CHANNELS_ZOOM, true);
                 $current_idx = isset($zoom_data[$channel_id]) ? $zoom_data[$channel_id] : DuneVideoZoomPresets::not_set;
 
                 hd_print(__METHOD__ . ": Current idx: $current_idx");
@@ -179,7 +179,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 if (isset($user_input->{ACTION_ZOOM_SELECT})) {
 
                     $zoom_select = $user_input->{ACTION_ZOOM_SELECT};
-                    $zoom_data = HD::get_items(Starnet_Tv::CHANNELS_ZOOM, true);
+                    $zoom_data = HD::get_data_items(Starnet_Tv::CHANNELS_ZOOM, true);
                     if ($zoom_select === DuneVideoZoomPresets::not_set) {
                         hd_print(__METHOD__ . ": Zoom preset removed for channel: $channel_id");
                         unset ($zoom_data[$channel_id]);
@@ -188,7 +188,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                         $zoom_data[$channel_id] = $zoom_select;
                     }
 
-                    HD::put_items(Starnet_Tv::CHANNELS_ZOOM, $zoom_data);
+                    HD::put_data_items(Starnet_Tv::CHANNELS_ZOOM, $zoom_data);
                 }
                 break;
         }

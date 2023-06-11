@@ -11,11 +11,9 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
     const SETUP_ACTION_CHANGE_CH_LIST_PATH = 'change_list_path';
     const SETUP_ACTION_CHANGE_CH_LIST = 'change_channels_list';
-    const SETUP_ACTION_CHANGE_PL_LIST = 'change_playlist';
     const SETUP_ACTION_CHANNELS_SOURCE = 'channels_source';
     const SETUP_ACTION_CHANNELS_URL_DLG = 'channels_url_dialog';
     const SETUP_ACTION_CHANNELS_URL_APPLY = 'channels_url_apply';
-
     ///////////////////////////////////////////////////////////////////////
 
     /**
@@ -59,12 +57,11 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         $folder_icon = $this->plugin->get_image_path('folder.png');
         $web_icon = $this->plugin->get_image_path('web.png');
         $link_icon = $this->plugin->get_image_path('link.png');
+        $refresh_icon = $this->plugin->get_image_path('refresh.png');
 
         //////////////////////////////////////
         // Plugin name
-        Control_Factory::add_vgap($defs, -10);
-        $title = " v.{$this->plugin->config->plugin_info['app_version']} [{$this->plugin->config->plugin_info['app_release_date']}]";
-        Control_Factory::add_label($defs, "IPTV Channel Editor by sharky72", $title, 20);
+        $this->plugin->create_setup_header($defs);
 
         //////////////////////////////////////
         // channels list source
@@ -79,15 +76,23 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         switch ($channels_source)
         {
             case 1: // channels path
-                $display_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Folder_Screen::ACTION_CH_LIST_PATH);
-                if (strlen($display_path) > 30) {
-                    $display_path = "..." . substr($display_path, -30);
-                }
-                if (is_apk())
+                $display_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_CH_LIST_PATH);
+                if (empty($display_path))
+                    $display_path = get_install_path();
+
+                if (is_apk()) {
                     Control_Factory::add_label($defs, TR::t('setup_channels_src_label'), $display_path);
-                else
+                } else {
                     Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_CH_LIST_PATH,
                         TR::t('setup_channels_src_folder_path'), $display_path, $folder_icon);
+
+                    if ($display_path !== get_install_path()) {
+                        Control_Factory::add_image_button($defs, $this, null, ACTION_RESET_DEFAULT,
+                            TR::t('reset_default'), TR::t('apply'), $refresh_icon);
+                    } else {
+                        Control_Factory::add_label($defs, TR::t('reset_default'), TR::t('apply'));
+                    }
+                }
                 break;
             case 2: // internet url
                 Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANNELS_URL_DLG,
@@ -115,7 +120,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         hd_print("current playlist index: $play_list_idx");
 
         if (count($all_tv_lists) > 1) {
-            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANGE_PL_LIST,
+            Control_Factory::add_combobox($defs, $this, null, ACTION_CHANGE_PLAYLIST,
                 TR::t('setup_channels_src_playlist'), $play_list_idx,
                 $all_tv_lists, self::CONTROLS_WIDTH, true);
         }
@@ -195,7 +200,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
         switch ($control_id) {
 
-            case self::SETUP_ACTION_CHANGE_PL_LIST:
+            case ACTION_CHANGE_PLAYLIST:
                 $old_value = $plugin_cookies->playlist_idx;
                 $plugin_cookies->playlist_idx = $new_value;
                 hd_print("current playlist idx: $new_value");
@@ -210,6 +215,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 $media_url = MediaURL::encode(
                     array(
                         'screen_id' => Starnet_Folder_Screen::ID,
+                        'parent_id' => self::ID,
                         'save_data' => 'channels_list_path',
                         'windowCounter' => 1,
                     )
@@ -259,6 +265,14 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                     hd_print("Selected channels path: $plugin_cookies->channels_url");
                 }
 
+                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
+
+            case ACTION_RELOAD:
+                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
+
+            case ACTION_RESET_DEFAULT:
+                //hd_print(__METHOD__ . " reset_folder");
+                $plugin_cookies->ch_list_path = '';
                 return $this->plugin->tv->reload_channels($this, $plugin_cookies);
         }
 

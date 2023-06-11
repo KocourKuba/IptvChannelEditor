@@ -25,7 +25,7 @@ class Playback_Points
     private $curr_point_id;
 
     /**
-     * @var array
+     * @var MediaURL[]|mixed
      */
     private $points;
 
@@ -66,7 +66,7 @@ class Playback_Points
         if (isset($player_state['player_state']) && $player_state['player_state'] !== 'navigator') {
             if (!isset($player_state['last_playback_event']) || ($player_state['last_playback_event'] !== PLAYBACK_PCR_DISCONTINUITY)) {
 
-                hd_print("Playback_Points::push_point channel_id $channel_id time mark: $archive_ts");
+                hd_print(__METHOD__ . ": channel_id $channel_id time mark: $archive_ts");
                 $this->curr_point_id = $channel_id;
 
                 if (isset($this->points[$channel_id])) {
@@ -82,24 +82,26 @@ class Playback_Points
 
     /**
      */
-    private function save_points()
+    private function save_points($path)
     {
-        hd_print("Playback_Points::save_points: " . count($this->points));
-        HD::put_items(self::TV_HISTORY_ITEMS, $this->points);
+        hd_print(__METHOD__ . ": " . count($this->points) . " to: $path");
+        HD::put_items($path . self::TV_HISTORY_ITEMS, $this->points);
     }
 
     /**
+     * @param string $path
      * @param string $id
      */
-    private function erase_point($id)
+    private function erase_point($path, $id)
     {
-        hd_print("Playback_Points::erase " . ($id !== null ? $id : "all"));
+        hd_print(__METHOD__ . ":erase " . ($id !== null ? $id : "all"));
+        $path .= self::TV_HISTORY_ITEMS;
         if ($id === null) {
             $this->points = array();
-            HD::erase_items(self::TV_HISTORY_ITEMS);
+            HD::erase_items($path);
         } else {
             unset($this->points[$id]);
-            HD::put_items(self::TV_HISTORY_ITEMS, $this->points);
+            HD::put_items($path, $this->points);
         }
     }
     ///////////////////////////////////////////////////////////////////////////
@@ -112,21 +114,34 @@ class Playback_Points
         if (is_null(self::$instance)) {
             self::$instance = new self();
         }
+    }
 
-        if (!isset(self::$instance->points)) {
-            self::$instance->points = self::get_all();
+    /**
+     * @return void
+     */
+    public static function load_points($path, $force = false)
+    {
+        if (is_null(self::$instance)) {
+            self::init();
+        }
+
+        if (!isset(self::$instance->points) || $force) {
+            $points = HD::get_items($path . self::TV_HISTORY_ITEMS, true);
+            hd_print(__METHOD__ . ": " . count($points) . " from: $path");
+            while (count($points) > 7) {
+                array_pop($points);
+            }
+
+            self::$instance->points = $points;
         }
     }
 
     /**
      * @return void
      */
-    public static function clear($id = null)
+    public static function clear($path, $id = null)
     {
-        if (is_null(self::$instance))
-            self::init();
-
-        self::$instance->erase_point($id);
+        self::$instance->erase_point($path, $id);
     }
 
     /**
@@ -134,9 +149,6 @@ class Playback_Points
      */
     public static function update($id = null)
     {
-        if (is_null(self::$instance))
-            self::init();
-
         self::$instance->update_point($id);
     }
 
@@ -146,20 +158,14 @@ class Playback_Points
      */
     public static function push($channel_id, $archive_ts)
     {
-        if (is_null(self::$instance))
-            self::init();
-
         self::$instance->push_point($channel_id, $archive_ts);
     }
 
     /**
      */
-    public static function save()
+    public static function save($path)
     {
-        if (is_null(self::$instance))
-            self::init();
-
-        self::$instance->save_points();
+        self::$instance->save_points($path);
     }
 
     /**
@@ -167,12 +173,6 @@ class Playback_Points
      */
     public static function get_all()
     {
-        $points = HD::get_items(self::TV_HISTORY_ITEMS, true);
-        hd_print("Loaded playback_points: " . count($points));
-        while (count($points) > 7) {
-            array_pop($points);
-        }
-
-        return $points;
+        return self::$instance->points;
     }
 }

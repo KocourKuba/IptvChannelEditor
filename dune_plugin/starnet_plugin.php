@@ -8,6 +8,10 @@ require_once 'starnet_entry_handler.php';
 require_once 'starnet_tv_groups_screen.php';
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_channels_setup_screen.php';
+require_once 'starnet_interface_setup_screen.php';
+require_once 'starnet_epg_setup_screen.php';
+require_once 'starnet_streaming_setup_screen.php';
+require_once 'starnet_history_setup_screen.php';
 require_once 'starnet_folder_screen.php';
 require_once 'starnet_tv.php';
 require_once 'starnet_tv_channel_list_screen.php';
@@ -26,7 +30,10 @@ require_once 'starnet_epfs_handler.php';
 
 class Starnet_Plugin extends Default_Dune_Plugin
 {
-     /**
+    const ACTION_CH_LIST_PATH = 'channels_list_path';
+    const ACTION_HISTORY_PATH = 'history_path';
+
+    /**
      * @throws Exception
      */
     public function __construct()
@@ -44,8 +51,13 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->tv_channels_screen = new Starnet_Tv_Channel_List_Screen($this);
         $this->tv_favorites_screen = new Starnet_Tv_Favorites_Screen($this);
 
-        $this->setup_screen = new Starnet_Setup_Screen($this);
+        $this->main_setup_screen = new Starnet_Setup_Screen($this);
         $this->channels_setup_screen = new Starnet_Channels_Setup_Screen($this);
+        $this->interface_setup_screen = new Starnet_Interface_Setup_Screen($this);
+        $this->epg_setup_screen = new Starnet_Epg_Setup_Screen($this);
+        $this->stream_setup_screen = new Starnet_Streaming_Setup_Screen($this);
+        $this->history_setup_screen = new Starnet_History_Setup_Screen($this);
+
         $this->folder_screen = new Starnet_Folder_Screen($this);
 
         $this->vod_favorites_screen = new Starnet_Vod_Favorites_Screen($this);
@@ -57,6 +69,10 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->vod_search_screen = new Starnet_Vod_Search_Screen($this);
         $this->vod_filter_screen = new Starnet_Vod_Filter_Screen($this);
         $this->vod_history_screen = new Starnet_Vod_History_Screen($this);
+
+        if ($this->history_support) {
+            Playback_Points::init();
+        }
 
         // force clear after reload
         $this->tv->clear_epg_cache();

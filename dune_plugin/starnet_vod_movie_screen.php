@@ -109,7 +109,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             ? TR::t('delete_from_favorite') : TR::t('add_to_favorite');
         $right_button_action = User_Input_Handler_Registry::create_action($this, 'favorites', null, array('movie_id' => $movie->id));
 
-        $save_folder = HD::get_items('save_folder');
+        $save_folder = HD::get_data_items('save_folder');
         if (isset($save_folder[$movie->id]))
             $screen_media_url = Starnet_Vod_Series_List_Screen::get_media_url_str($movie->id, key($save_folder[$movie->id]));
         else if (!isset($movie->season_list)) {
