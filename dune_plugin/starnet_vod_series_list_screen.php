@@ -49,7 +49,6 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        // hd_print("get_action_map: " . $media_url->get_raw_string());
         $actions = array(
             GUI_EVENT_KEY_ENTER   => Action_Factory::vod_play(),
             GUI_EVENT_KEY_PLAY    => Action_Factory::vod_play(),
@@ -160,13 +159,13 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                         $param_pos = strpos($url, '|||dune_params');
                         $url =  $param_pos!== false ? substr($url, 0, $param_pos) : $url;
                         $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
-                        hd_print("play movie in the external player: $cmd");
+                        hd_print(__METHOD__ . ": play movie in the external player: $cmd");
                         exec($cmd, $output);
-                        hd_print("external player exec result code" . HD::ArrayToStr($output));
+                        hd_print(__METHOD__ . ": external player exec result code" . HD::ArrayToStr($output));
                         return $post_action;
                     }
                 } catch (Exception $e) {
-                    hd_print("Movie can't played, exception info: " . $e->getMessage());
+                    hd_print(__METHOD__ . ": Movie can't played, exception info: " . $e->getMessage());
                 }
                 break;
 

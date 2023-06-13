@@ -48,7 +48,7 @@ class Starnet_Vod extends Abstract_Vod
     {
         $fav_movie_ids = HD::get_data_items(self::VOD_FAVORITES_LIST . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies), true);
         $this->set_fav_movie_ids($fav_movie_ids);
-        hd_print("load_favorites: Movies loaded from favorites: " . count($fav_movie_ids));
+        hd_print(__METHOD__ . ": Movies loaded from favorites: " . count($fav_movie_ids));
     }
 
     /**
@@ -104,6 +104,6 @@ class Starnet_Vod extends Abstract_Vod
     {
         $history_items = HD::get_items(self::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies), true);
         $this->set_history_items($history_items);
-        hd_print("load_history: movies loaded from history: " . count($history_items));
+        hd_print(__METHOD__ . ": movies loaded from history: " . count($history_items));
     }
 }

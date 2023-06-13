@@ -28,6 +28,8 @@ class Default_Dune_Plugin implements DunePlugin
     const FAV_CHANNEL_GROUP_ICON_PATH = 'plugin_file://icons/fav.png';
 
     const PLAYBACK_HISTORY_GROUP_ID = '##playback_history_tv_group##';
+    const PLAYBACK_HISTORY_CAPTION = '%tr%plugin_history';
+    const PLAYBACK_HISTORY_GROUP_ICON_PATH = 'plugin_file://icons/history.png';
 
     const FAV_MOVIES_CATEGORY_CAPTION = '%tr%plugin_favorites';
     const FAV_MOVIES_CATEGORY_ICON_PATH = 'plugin_file://icons/fav_movie.png';
@@ -66,11 +68,6 @@ class Default_Dune_Plugin implements DunePlugin
     public $new_ui_support;
 
     /**
-     * @var bool
-     */
-    public $history_support;
-
-    /**
      * set base plugin info from dune_plugin.xml
      * @throws Exception
      */
@@ -81,16 +78,16 @@ class Default_Dune_Plugin implements DunePlugin
         $plugin_config_class = $plugin_info['app_class_name'];
 
         if (!class_exists($plugin_config_class)) {
-            hd_print("Unknown plugin: $plugin_config_class");
+            hd_print(__METHOD__ . ": Unknown plugin: $plugin_config_class");
             throw new Exception("Unknown plugin type: $plugin_config_class");
         }
 
         if (!is_subclass_of($plugin_config_class, 'dynamic_config')) {
-            hd_print("plugin: $plugin_config_class not a subclass of 'dynamic_config'");
+            hd_print(__METHOD__ . ": plugin: $plugin_config_class not a subclass of 'dynamic_config'");
             throw new Exception("Wrong subclass: $plugin_config_class");
         }
 
-        hd_print("Instantiate class: $plugin_config_class");
+        hd_print(__METHOD__ . ": Instantiate class: $plugin_config_class");
         $this->config = new $plugin_config_class;
         $this->config->plugin_info = $plugin_info;
         $this->config->set_parent($this);
@@ -115,7 +112,6 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("Icon                 " . $plugin_info['app_logo']);
         hd_print("Background           " . $plugin_info['app_background']);
         hd_print("New UI support       " . ($this->new_ui_support ? "yes" : "no"));
-        hd_print("History support      " . ($this->history_support ? "yes" : "no"));
         hd_print("Max ch. list version " . $plugin_info['app_ch_list_version']);
 
         if (!empty($plugin_info['app_update_path'])) {
@@ -208,6 +204,11 @@ class Default_Dune_Plugin implements DunePlugin
     public $tv_favorites_screen;
 
     /**
+     * @var Starnet_TV_History_Screen
+     */
+    public $tv_history_screen;
+
+    /**
      * @var Starnet_Vod_Search_Screen
      */
     public $vod_search_screen;
@@ -263,7 +264,6 @@ class Default_Dune_Plugin implements DunePlugin
     {
         $this->screens = array();
         $this->new_ui_support = HD::rows_api_support();
-        $this->history_support = $this->new_ui_support && class_exists('Playback_Points');
     }
 
     /**
@@ -272,11 +272,11 @@ class Default_Dune_Plugin implements DunePlugin
     public function create_screen(&$object)
     {
         if (!is_null($object) && method_exists($object, 'get_id')) {
-            hd_print(__METHOD__ . ': ' . get_class($object));
+            //hd_print(__METHOD__ . ': ' . get_class($object));
             $this->add_screen($object);
             User_Input_Handler_Registry::get_instance()->register_handler($object);
         } else {
-            hd_print(get_class($object) . ': Screen class is illegal. get_id method not defined!');
+            hd_print(__METHOD__ . ": " . get_class($object) . ": Screen class is illegal. get_id method not defined!");
         }
     }
 
@@ -292,7 +292,7 @@ class Default_Dune_Plugin implements DunePlugin
     protected function add_screen(Screen $scr)
     {
         if (isset($this->screens[$scr->get_id()])) {
-            hd_print(__METHOD__ . " Error: screen (id: " . $scr->get_id() . ") already registered.");
+            hd_print(__METHOD__ . ": Error: screen (id: " . $scr->get_id() . ") already registered.");
         } else {
             $this->screens[$scr->get_id()] = $scr;
         }
@@ -312,7 +312,7 @@ class Default_Dune_Plugin implements DunePlugin
             return $this->screens[$screen_id];
         }
 
-        hd_print(__METHOD__ . " Error: no screen with id '$screen_id' found.");
+        hd_print(__METHOD__ . ": Error: no screen with id '$screen_id' found.");
         HD::print_backtrace();
         throw new Exception('Screen not found');
     }
@@ -1022,6 +1022,60 @@ class Default_Dune_Plugin implements DunePlugin
         );
     }
 
+    /**
+     * @return array[]
+     */
+    public function GET_HISTORY_LIST_FOLDER_VIEWS()
+    {
+        return array(
+            // 1x10 title list view with right side icon
+            array
+            (
+                PluginRegularFolderView::async_icon_loading => true,
+
+                PluginRegularFolderView::view_params => array
+                (
+                    ViewParams::num_cols => 1,
+                    ViewParams::num_rows => 10,
+                    ViewParams::paint_icon_selection_box=> true,
+                    ViewParams::paint_details => true,
+                    ViewParams::paint_details_box_background => true,
+                    ViewParams::paint_content_box_background => true,
+                    ViewParams::paint_scrollbar => true,
+                    ViewParams::paint_widget => true,
+                    ViewParams::paint_help_line => true,
+                    ViewParams::item_detailed_info_font_size => FONT_SIZE_SMALL,
+                    ViewParams::background_path=> $this->config->plugin_info['app_background'],
+                    ViewParams::background_order => 0,
+                    ViewParams::item_detailed_info_text_color => 11,
+                    ViewParams::item_detailed_info_auto_line_break => true,
+                    ViewParams::optimize_full_screen_background => true,
+                    ViewParams::zoom_detailed_icon => true,
+                ),
+
+                PluginRegularFolderView::base_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::item_layout => HALIGN_LEFT,
+                    ViewItemParams::icon_valign => VALIGN_CENTER,
+                    ViewItemParams::icon_width => 50,
+                    ViewItemParams::icon_height => 50,
+                    ViewItemParams::icon_dx => 26,
+                    ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
+                    ViewItemParams::item_caption_width => 1060,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::icon_keep_aspect_ratio => true,
+                ),
+
+                PluginRegularFolderView::not_loaded_view_item_params => array
+                (
+                    ViewItemParams::item_paint_icon => true,
+                    ViewItemParams::icon_path => self::DEFAULT_CHANNEL_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => 'missing://',
+                ),
+            ),
+        );
+    }
     /**
      * @return array[]
      */

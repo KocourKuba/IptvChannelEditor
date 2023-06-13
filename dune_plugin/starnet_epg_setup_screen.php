@@ -167,7 +167,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 hd_print(__METHOD__ . ": do clear epg: $epg_path");
                 foreach(glob($epg_path . "*") as $file) {
                     if(is_file($file)) {
-                        hd_print("erase: $file");
+                        hd_print(__METHOD__ . ": erase: $file");
                         unlink($file);
                     }
                 }

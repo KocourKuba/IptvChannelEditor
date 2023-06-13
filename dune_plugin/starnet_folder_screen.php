@@ -234,8 +234,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                         $media_url->filepath !== '/tmp/mnt/storage' &&
                         $media_url->filepath !== '/tmp/mnt/network' &&
                         $media_url->filepath !== '/tmp/mnt/smb' &&
-                        ($media_url->save_data === Starnet_Plugin::ACTION_CH_LIST_PATH
-                        || $media_url->save_data === Starnet_Plugin::ACTION_HISTORY_PATH)
+                        ($media_url->save_data === ACTION_CH_LIST_PATH || $media_url->save_data === ACTION_HISTORY_PATH)
                     ) {
                         $info = TR::t('folder_screen_select__1', $caption);
                     } else {
@@ -337,7 +336,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 return Action_Factory::change_behaviour($actions, 1000, $invalidate);
 
             case self::ACTION_FS:
-                //hd_print(__METHOD__ . " fs_action: " . MediaUrl::encode($selected_url));
+                //hd_print(__METHOD__ . ": fs_action: " . MediaUrl::encode($selected_url));
                 if ($selected_url->type !== 'folder') {
                     break;
                 }
@@ -373,13 +372,13 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
             case self::ACTION_SELECT_FOLDER:
                 $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
-                //hd_print(__METHOD__ . " select_folder: " . $url->get_media_url_str());
+                //hd_print(__METHOD__ . ": select_folder: " . $url->get_media_url_str());
                 $post_action = null;
-                if ($url->save_data === Starnet_Plugin::ACTION_CH_LIST_PATH) {
-                    smb_tree::set_folder_info($plugin_cookies, $url, Starnet_Plugin::ACTION_CH_LIST_PATH);
+                if ($url->save_data === ACTION_CH_LIST_PATH) {
+                    smb_tree::set_folder_info($plugin_cookies, $url, ACTION_CH_LIST_PATH);
                     $post_action = User_Input_Handler_Registry::create_action_screen(Starnet_Channels_Setup_Screen::ID, ACTION_RELOAD);
-                } else if ($url->save_data === Starnet_Plugin::ACTION_HISTORY_PATH) {
-                    smb_tree::set_folder_info($plugin_cookies, $url, Starnet_Plugin::ACTION_HISTORY_PATH);
+                } else if ($url->save_data === ACTION_HISTORY_PATH) {
+                    smb_tree::set_folder_info($plugin_cookies, $url, ACTION_HISTORY_PATH);
                     $post_action = User_Input_Handler_Registry::create_action_screen(Starnet_History_Setup_Screen::ID, ACTION_RELOAD);
                 }
 
@@ -408,7 +407,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
             case ACTION_OPEN_FOLDER:
                 $path = $parent_url->filepath;
-                hd_print("smt_tree::open_folder: $path");
+                hd_print(__METHOD__ . ": smt_tree::open_folder: $path");
                 if (preg_match('|^/tmp/mnt/storage/|', $path)) {
                     $path = preg_replace('|^/tmp/mnt/storage/|', 'storage_name://', $path);
                 } else if (isset($parent_url->ip_path)) {
@@ -429,9 +428,9 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
             case self::ACTION_NEW_SMB_DATA:
                 $smb_shares = new smb_tree();
-                //hd_print(__METHOD__ . " new_smb_data folder: $selected_url->caption");
-                //hd_print(__METHOD__ . " new_smb_data folder: $selected_url->new_user");
-                //hd_print(__METHOD__ . " new_smb_data folder: $selected_url->new_pass");
+                //hd_print(__METHOD__ . ": new_smb_data folder: $selected_url->caption");
+                //hd_print(__METHOD__ . ": new_smb_data folder: $selected_url->new_user");
+                //hd_print(__METHOD__ . ": new_smb_data folder: $selected_url->new_pass");
                 $new_ip_smb[$selected_url->ip_path]['foldername'] = $selected_url->caption;
                 $new_ip_smb[$selected_url->ip_path]['user'] = $user_input->new_user;
                 $new_ip_smb[$selected_url->ip_path]['password'] = $user_input->new_pass;

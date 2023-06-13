@@ -11,7 +11,7 @@ class oneott_config extends default_config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account: $force");
+        hd_print(__METHOD__ . ": Collect information from account: $force");
 
         // this account has special API to get account info
         $login = $this->get_login($plugin_cookies);

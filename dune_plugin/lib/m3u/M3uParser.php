@@ -25,7 +25,7 @@ class M3uParser
         try {
             $file = new SplFileObject($file_name);
         } catch (Exception $ex) {
-            hd_print("Can't read file: $file_name");
+            hd_print(__METHOD__ . ": Can't read file: $file_name");
             return;
         }
 
@@ -45,7 +45,7 @@ class M3uParser
     {
         $data = array();
         if ($this->m3u_file === null) {
-            hd_print("parseFile: Bad file");
+            hd_print(__METHOD__ . ": Bad file");
             return $data;
         }
 
@@ -60,7 +60,7 @@ class M3uParser
             $entry = new Entry();
         }
 
-        hd_print("parseFile " . (microtime(1) - $t) . " secs");
+        hd_print(__METHOD__ . ": parseFile " . (microtime(1) - $t) . " secs");
         return $data;
     }
 
@@ -78,7 +78,7 @@ class M3uParser
     {
         $data = array();
         if ($this->m3u_file === null) {
-            hd_print("indexFile: Bad file");
+            hd_print(__METHOD__ . ": Bad file");
             return $data;
         }
 
@@ -100,7 +100,7 @@ class M3uParser
             $pos = $this->m3u_file->ftell();
         }
 
-        hd_print("indexFile " . (microtime(1) - $t) . " secs");
+        hd_print(__METHOD__ . ": indexFile " . (microtime(1) - $t) . " secs");
         return $data;
     }
 
@@ -113,7 +113,7 @@ class M3uParser
     public function parseInMemory()
     {
         if (!file_exists($this->file_name)) {
-            hd_print("parseInMemory: Can't read file: $this->file_name");
+            hd_print(__METHOD__ . ": Can't read file: $this->file_name");
             return array();
         }
 
@@ -129,7 +129,7 @@ class M3uParser
             $entry = new Entry();
         }
 
-        hd_print("parseInMemory " . (microtime(1) - $t) . " secs");
+        hd_print(__METHOD__ . ": parseInMemory " . (microtime(1) - $t) . " secs");
         return $data;
     }
 
@@ -142,7 +142,7 @@ class M3uParser
     public function getEntryByIdx($idx)
     {
         if ($this->m3u_file === null) {
-            hd_print('getEntryByIdx: Bad file');
+            hd_print(__METHOD__ . ": Bad file");
             return null;
         }
         $this->m3u_file->fseek((int)$idx);
@@ -165,7 +165,7 @@ class M3uParser
     public function getTitleByIdx($idx)
     {
         if ($this->m3u_file === null) {
-            hd_print('getTitleByIdx: Bad file');
+            hd_print(__METHOD__ . ": Bad file");
             return null;
         }
 

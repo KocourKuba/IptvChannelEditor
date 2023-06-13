@@ -2028,7 +2028,7 @@ int CIPTVChannelEditorDlg::GetNewCategoryID() const
 	{
 		for (auto pair = m_categoriesMap.crbegin(); pair != m_categoriesMap.crend(); ++pair)
 		{
-			if (pair->first != ID_FAVORITE && pair->first != ID_VOD && pair->first != ID_ALL_CHANNELS)
+			if (pair->first != ID_FAVORITE && pair->first != ID_VOD && pair->first != ID_ALL_CHANNELS && pair->first != ID_HISTORY)
 			{
 				id = pair->first;
 				break;
@@ -2088,6 +2088,13 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	all_category->set_key(ID_ALL_CHANNELS);
 	CategoryInfo all_info = { nullptr, all_category };
 	m_categoriesMap.emplace(ID_ALL_CHANNELS, all_info);
+
+	auto hist_category = std::make_shared<ChannelCategory>(root_path);
+	hist_category->set_icon_uri(L"plugin_file://icons/history.png");
+	hist_category->set_title(load_string_resource(IDS_STRING_HISTORY));
+	hist_category->set_key(ID_HISTORY);
+	CategoryInfo hist_info = { nullptr, hist_category };
+	m_categoriesMap.emplace(ID_HISTORY, hist_info);
 
 	if (m_plugin->get_vod_support())
 	{
@@ -2520,6 +2527,9 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 		if (key == ID_FAVORITE)
 			key = -ID_FAVORITE; // move to first position for sort
 
+		if (key == ID_HISTORY)
+			key = -ID_HISTORY; // move to first position for sort
+
 		if (key == ID_VOD)
 			key = -ID_VOD; // move to first position for sort
 
@@ -2544,6 +2554,9 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 		int key = (int)m_wndChannelsTree.GetItemData(hItem);
 		if (key == -ID_FAVORITE)
 			key = ID_FAVORITE;
+
+		if (key == -ID_HISTORY)
+			key = ID_HISTORY;
 
 		if (key == -ID_VOD)
 			key = ID_VOD;
@@ -3527,6 +3540,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		{
 			if (!category.second.category->get_channels().empty()
 				|| category.first == ID_FAVORITE
+				|| category.first == ID_HISTORY
 				|| category.first == ID_VOD
 				|| category.first == ID_ALL_CHANNELS)
 			{
@@ -4092,7 +4106,7 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 	// Categories sorted by it's numeric ID
 	for (auto& pair : m_categoriesMap)
 	{
-		if (pair.first == ID_FAVORITE || pair.first == ID_VOD || pair.first == ID_ALL_CHANNELS) continue;
+		if (pair.first == ID_FAVORITE || pair.first == ID_VOD || pair.first == ID_ALL_CHANNELS || pair.first == ID_HISTORY) continue;
 
 		for (const auto& channel : pair.second.category->get_channels())
 		{

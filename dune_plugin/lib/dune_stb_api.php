@@ -98,6 +98,8 @@ const ACTION_REMOVE_PLAYBACK_POINT = 'remove_playback_point';
 const ACTION_CLEAR_PLAYBACK_POINTS = 'clear_playback_points';
 const ACTION_CLEAR_FAVORITES = 'clear_favorites';
 const ACTION_RESET_DEFAULT = 'reset_default';
+const ACTION_CH_LIST_PATH = 'channels_list_path';
+const ACTION_HISTORY_PATH = 'history_path';
 
 # Mounted storages path
 const DUNE_MOUNTED_STORAGES_PATH = '/tmp/mnt/storage/';
@@ -677,7 +679,7 @@ function send_ir_code($key)
         return shell_exec('echo ' . DuneIrControl::$key_codes[$key] . ' > /proc/ir/button');
     }
 
-    hd_print("Error in class " . get_class($this) . "::" . __FUNCTION__ . "! Code of key '$key' not found in base!");
+    hd_print(__METHOD__ . ": Error in class " . get_class($this) . "::" . __FUNCTION__ . "! Code of key '$key' not found in base!");
     return '0';
 }
 
@@ -694,7 +696,7 @@ function send_ir_code_return_status($key)
         return get_shell_exec($cmd);
     }
 
-    hd_print("Error in class " . get_class($this) . "::" . __FUNCTION__ . "! Code of key '$key' not found in base!");
+    hd_print(__METHOD__ . ": Error in class " . get_class($this) . "::" . __FUNCTION__ . "! Code of key '$key' not found in base!");
     return '0';
 }
 
@@ -1394,7 +1396,7 @@ function get_plugin_manifest_info()
         $direct_links = array();
         foreach ($xml->channels_direct_links->children() as $links_info) {
             if ($links_info->getName() !== 'links_info') {
-                $error_string = __METHOD__ . " Error: unexpected node '{$links_info->getName()}'. Expected: 'links_info'";
+                $error_string = __METHOD__ . ": Error: unexpected node '{$links_info->getName()}'. Expected: 'links_info'";
                 hd_print($error_string);
             }
 
@@ -1487,7 +1489,7 @@ function get_active_skin_path()
         return rtrim(trim(preg_replace('/^.*=/', '', file_get_contents('/tmp/dune_skin_dir.txt'))), '/');
     }
 
-    hd_print("Error in class " . __METHOD__ . "! Can not determine the path to the active skin.");
+    hd_print("Error in class " . __METHOD__ . " ! Can not determine the path to the active skin.");
     return '';
 }
 
@@ -1496,7 +1498,7 @@ function get_paved_path($path, $dir_mode = 0777)
     # Returns the specified path (no trailing slash), creating directories along the way
 
     if (!file_exists($path) && !mkdir($path, $dir_mode, true) && !is_dir($path)) {
-        hd_print("Directory '$path' was not created");
+        hd_print(__METHOD__ . ": Directory '$path' was not created");
     }
 
     return rtrim($path, '/');
@@ -1568,7 +1570,7 @@ function get_system_language_string_value($string_key)
         }
     }
 
-    hd_print("Error in class " . __METHOD__ . "! Not found value for key '$string_key'!");
+    hd_print("Error in class " . __METHOD__ . " ! Not found value for key '$string_key'!");
     return '';
 }
 
@@ -1587,7 +1589,7 @@ function debug_print(/*mixed $var1, $var2...*/)
             }
         }
 
-        hd_print('Debug alert! ' . rtrim($chain, '->') . (empty($var) ? '' : ' >> ') . ltrim($var, "\n"));
+        hd_print("Debug alert! " . rtrim($chain, '->') . (empty($var) ? '' : ' >> ') . ltrim($var, "\n"));
     }
 }
 

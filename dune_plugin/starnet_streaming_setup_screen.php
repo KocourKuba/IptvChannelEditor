@@ -94,10 +94,10 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         // select server
         $servers = $this->plugin->config->get_servers($plugin_cookies);
         if (!empty($servers)) {
-            hd_print("Change server supported");
+            //hd_print("Change server supported");
             $server_id = $this->plugin->config->get_server_id($plugin_cookies);
             $server_name = $this->plugin->config->get_server_name($plugin_cookies);
-            hd_print("Selected server: id: $server_id name: '$server_name'");
+            hd_print(__METHOD__ . ": Selected server: id: $server_id name: '$server_name'");
             Control_Factory::add_combobox($defs, $this, null,
                 self::SETUP_ACTION_SERVER, TR::t('server'),
                 $server_id, $servers, self::CONTROLS_WIDTH, true);
@@ -107,10 +107,10 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         // select device number
         $devices = $this->plugin->config->get_devices($plugin_cookies);
         if (!empty($devices)) {
-            hd_print("Change device supported");
+            //hd_print("Change device supported");
             $device_id = $this->plugin->config->get_device_id($plugin_cookies);
             $device_name = $this->plugin->config->get_device_name($plugin_cookies);
-            hd_print("Selected device: id: $device_id name: '$device_name'");
+            hd_print(__METHOD__ . ": Selected device: id: $device_id name: '$device_name'");
             Control_Factory::add_combobox($defs, $this, null,
                 self::SETUP_ACTION_DEVICE, TR::t('setup_device'),
                 $device_id, $devices,self::CONTROLS_WIDTH, true);
@@ -120,10 +120,10 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         // select quality
         $qualities = $this->plugin->config->get_qualities($plugin_cookies);
         if (!empty($qualities)) {
-            hd_print("Change quality supported");
+            //hd_print("Change quality supported");
             $quality_id = $this->plugin->config->get_quality_id($plugin_cookies);
             $quality_name = $this->plugin->config->get_quality_name($plugin_cookies);
-            hd_print("Selected quality: id: $quality_id name: '$quality_name'");
+            hd_print(__METHOD__ . ": Selected quality: id: $quality_id name: '$quality_name'");
             Control_Factory::add_combobox($defs, $this, null,
                 self::SETUP_ACTION_QUALITY, TR::t('setup_quality'),
                 $quality_id, $qualities, self::CONTROLS_WIDTH, true);
@@ -133,10 +133,10 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         // select profile
         $profiles = $this->plugin->config->get_profiles($plugin_cookies);
         if (!empty($profiles)) {
-            hd_print("Change profile supported");
+            //hd_print("Change profile supported");
             $profile_id = $this->plugin->config->get_profile_id($plugin_cookies);
             $profile_name = $this->plugin->config->get_profile_name($plugin_cookies);
-            hd_print("Selected profile: id: $profile_id name: '$profile_name'");
+            hd_print(__METHOD__ . ": Selected profile: id: $profile_id name: '$profile_name'");
             Control_Factory::add_combobox($defs, $this, null,
                 self::SETUP_ACTION_PROFILE, TR::t('setup_profile'),
                 $profile_id, $profiles, self::CONTROLS_WIDTH, true);
@@ -153,9 +153,9 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         }
 
         if (count($format_ops) > 1) {
-            hd_print("Change stream type supported");
+            //hd_print("Change stream type supported");
             $format_id = $this->plugin->config->get_format($plugin_cookies);
-            hd_print("Selected stream type: id: $format_id name: '$format_ops[$format_id]'");
+            hd_print(__METHOD__ . ": Selected stream type: id: $format_id name: '$format_ops[$format_id]'");
             Control_Factory::add_combobox($defs, $this, null,
                 self::SETUP_ACTION_STREAM_FORMAT, TR::t('setup_stream'),
                 $format_id, $format_ops, self::CONTROLS_WIDTH, true);

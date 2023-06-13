@@ -96,7 +96,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
 
         switch ($user_input->control_id) {
             case ACTION_RELOAD:
-                hd_print("reload categories");
+                hd_print(__METHOD__ . ": reload categories");
                 $this->clear_vod($plugin_cookies);
                 $media_url = MediaURL::decode($user_input->parent_media_url);
                 $range = $this->get_folder_range($media_url, 0, $plugin_cookies);
@@ -109,7 +109,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                     && $user_input->{self::PARAM_PLAYLIST} !== false
                     && $user_input->{self::PARAM_PLAYLIST} !== $current_idx) {
                     $plugin_cookies->vod_idx = $user_input->{self::PARAM_PLAYLIST};
-                    hd_print("change VOD playlist to: " . $user_input->{self::PARAM_PLAYLIST});
+                    hd_print(__METHOD__ . ": change VOD playlist to: " . $user_input->{self::PARAM_PLAYLIST});
                     return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
                 }
                 break;
@@ -150,7 +150,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
 
         if (isset($media_url->category_id)) {
             if (!isset($this->category_index[$media_url->category_id])) {
-                hd_print("Error: parent category (id: $media_url->category_id) not found.");
+                hd_print(__METHOD__ . ": Error: parent category (id: $media_url->category_id) not found.");
                 throw new Exception('No parent category found');
             }
 

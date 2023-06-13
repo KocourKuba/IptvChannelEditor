@@ -53,6 +53,7 @@
 #define IDR_MENU_TEMPLATE               120
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG_ICONS_LIST           129
+#define IDS_STRING_HISTORY              130
 #define IDD_DIALOG_ACCESS_INFO          131
 #define IDD_DIALOG_ICON_LINK            132
 #define IDD_PATHS_SETTINGS_PAGE         133
@@ -711,13 +712,14 @@
 #define ID_SELECT_ALL                   32805
 #define ID_VOD                          32806
 #define ID_ALL_CHANNELS                 32807
+#define ID_HISTORY                      32808
 
 // Next default values for new objects
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281
-#define _APS_NEXT_COMMAND_VALUE         32808
+#define _APS_NEXT_COMMAND_VALUE         32809
 #define _APS_NEXT_CONTROL_VALUE         1240
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif

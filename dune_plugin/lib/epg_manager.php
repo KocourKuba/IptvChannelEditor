@@ -54,7 +54,7 @@ class Epg_Manager
             }
 
             if (isset($this->epg_cache[$epg_id][$day_start_ts])) {
-                hd_print(__METHOD__ . "Load day EPG ID $epg_id ($day_start_ts) from memory cache ");
+                hd_print(__METHOD__ . ": Load day EPG ID $epg_id ($day_start_ts) from memory cache ");
                 return $this->epg_cache[$epg_id][$day_start_ts];
             }
 
@@ -65,7 +65,7 @@ class Epg_Manager
 
             $channel_id = $channel->get_id();
             $channel_title = $channel->get_title();
-            hd_print(__METHOD__ . "Try to load EPG ID: '$epg_id' for channel '$channel_id' ($channel_title)");
+            hd_print(__METHOD__ . ": Try to load EPG ID: '$epg_id' for channel '$channel_id' ($channel_title)");
 
             $epg_id = str_replace(' ', '%20', $epg_id);
             $epg_url = str_replace(
@@ -91,12 +91,12 @@ class Epg_Manager
 
                 $epg_date = gmdate($date_format, $day_start_ts + get_local_time_zone_offset());
                 $epg_url = str_replace(Plugin_Macros::DATE, $epg_date, $epg_url);
-                hd_print(__METHOD__ . "From DATE: $epg_date");
+                //hd_print(__METHOD__ . ": From DATE: $epg_date");
             }
 
             if (strpos($epg_url, Plugin_Macros::TIMESTAMP) !== false) {
                 $epg_url = str_replace(Plugin_Macros::TIMESTAMP, $day_start_ts, $epg_url);
-                hd_print(__METHOD__ . "From Timestamp: $day_start_ts");
+                //hd_print(__METHOD__ . ": From Timestamp: $day_start_ts");
             }
 
             if (strpos($epg_url, Plugin_Macros::TOKEN) !== false) {
@@ -108,7 +108,7 @@ class Epg_Manager
             $epg_cache_file = "$this->cache_dir/epg_channel_$hash";
             $day_epg_cache = $epg_cache_file . "_$day_start_ts";
             if (file_exists($day_epg_cache)) {
-                hd_print(__METHOD__ . "Loading day entries for EPG ID: '$epg_id' from file cache: $day_epg_cache");
+                //hd_print(__METHOD__ . ": Loading day entries for EPG ID: '$epg_id' from file cache: $day_epg_cache");
                 return self::load_cache($day_epg_cache);
             }
 
@@ -120,14 +120,14 @@ class Epg_Manager
                 if ($cache_expired > time()) {
                     $program_epg = self::load_cache($epg_cache_file);
                     $from_cache = true;
-                    hd_print(__METHOD__ . "Loading all entries for EPG ID: '$epg_id' from file cache: $epg_cache_file");
+                    hd_print(__METHOD__ . ": Loading all entries for EPG ID: '$epg_id' from file cache: $epg_cache_file");
                 } else {
-                    hd_print(__METHOD__ . "Cache expired at $cache_expired now $now");
+                    hd_print(__METHOD__ . ": Cache expired at $cache_expired now $now");
                 }
             }
 
             if ($from_cache === false) {
-                hd_print(__METHOD__ . "Fetching EPG ID: '$epg_id' from server");
+                hd_print(__METHOD__ . ": Fetching EPG ID: '$epg_id' from server");
                 $program_epg = self::get_epg_json($epg_url, $params);
             }
 
@@ -137,18 +137,18 @@ class Epg_Manager
             }
 
             if ($from_cache === false) {
-                hd_print(__METHOD__ . "Save EPG ID: '$epg_id' to file cache $epg_cache_file");
+                hd_print(__METHOD__ . ": Save EPG ID: '$epg_id' to file cache $epg_cache_file");
                 self::save_cache($program_epg, $epg_cache_file);
             }
 
-            hd_print(__METHOD__ . "Total $counts EPG entries loaded");
+            hd_print(__METHOD__ . ": Total $counts EPG entries loaded");
 
             // filter out epg only for selected day
             $day_end_ts = $day_start_ts + 86400;
 
             $date_start_l = format_datetime("Y-m-d H:i", $day_start_ts);
             $date_end_l = format_datetime("Y-m-d H:i", $day_end_ts);
-            hd_print(__METHOD__ . "Fetch entries for from: $date_start_l to: $date_end_l");
+            //hd_print(__METHOD__ . ": Fetch entries for from: $date_start_l to: $date_end_l");
 
             $day_epg = array();
             foreach ($program_epg as $time_start => $entry) {
@@ -161,16 +161,16 @@ class Epg_Manager
                 throw new Exception("No EPG data for " . $channel->get_id());
             }
 
-            hd_print(__METHOD__ . "Store day epg to memory cache");
+            hd_print(__METHOD__ . ": Store day epg to memory cache");
             $this->epg_cache[$epg_id][$day_start_ts] = $day_epg;
 
-            hd_print(__METHOD__ . "Save day entries for EPG ID: '$epg_id' to file cache: $day_epg_cache");
+            hd_print(__METHOD__ . ": Save day entries for EPG ID: '$epg_id' to file cache: $day_epg_cache");
             self::save_cache($day_epg, $day_epg_cache);
 
             return $day_epg;
 
         } catch (Exception $ex) {
-            hd_print(__METHOD__ . "Can't fetch EPG from $epg_source source: " . $ex->getMessage());
+            hd_print(__METHOD__ . ": Can't fetch EPG from $epg_source source: " . $ex->getMessage());
         }
 
         return false;
@@ -183,7 +183,7 @@ class Epg_Manager
     public function clear_epg_cache()
     {
         $epg_path = get_temp_path("epg/");
-        hd_print("clear epg file cache: $epg_path");
+        hd_print(__METHOD__ . ": clear epg file cache: $epg_path");
         foreach (glob($epg_path . "*") as $file) {
             if (is_file($file)) {
                 unlink($file);
@@ -226,11 +226,11 @@ class Epg_Manager
         try {
             $ch_data = HD::DownloadJson($url);
             if (empty($ch_data)) {
-                hd_print("Empty document returned.");
+                hd_print(__METHOD__ . ": Empty document returned.");
                 return $day_epg;
             }
         } catch (Exception $ex) {
-            hd_print("http exception: " . $ex->getMessage());
+            hd_print(__METHOD__ . ": http exception: " . $ex->getMessage());
             return $day_epg;
         }
 
@@ -240,11 +240,11 @@ class Epg_Manager
                 $ch_data = $ch_data[$epg_root];
             }
         }
-        // hd_print("json epg root: " . $parser_params[EPG_ROOT]);
-        // hd_print("json start: " . $parser_params[EPG_START]);
-        // hd_print("json end: " . $parser_params[EPG_END]);
-        // hd_print("json title: " . $parser_params[EPG_NAME]);
-        // hd_print("json desc: " . $parser_params[EPG_DESC]);
+        //hd_print("json epg root: " . $parser_params[EPG_ROOT]);
+        //hd_print("json start: " . $parser_params[EPG_START]);
+        //hd_print("json end: " . $parser_params[EPG_END]);
+        //hd_print("json title: " . $parser_params[EPG_NAME]);
+        //hd_print("json desc: " . $parser_params[EPG_DESC]);
 
         // collect all program that starts after day start and before day end
         $prev_start = 0;

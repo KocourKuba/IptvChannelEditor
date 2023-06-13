@@ -4,6 +4,7 @@ require_once 'lib/tv/tv.php';
 require_once 'lib/tv/default_channel.php';
 require_once 'lib/tv/all_channels_group.php';
 require_once 'lib/tv/favorites_group.php';
+require_once 'lib/tv/history_group.php';
 require_once 'lib/tv/default_epg_item.php';
 require_once 'lib/vod/vod_group.php';
 require_once 'starnet_setup_screen.php';
@@ -221,7 +222,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 }
                 break;
             case ACTION_CLEAR_FAVORITES:
-                hd_print("Clear favorites");
+                hd_print(__METHOD__ . ": Clear favorites");
                 $fav_channel_ids = array();
                 break;
             case PLUGIN_FAVORITES_OP_MOVE_UP:
@@ -320,10 +321,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             hd_print(__METHOD__ . ": Load channels list using source: $source");
             switch ($source) {
                 case 1:
-                    $channels_list_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_CH_LIST_PATH);
-                    if (empty($channels_list_path))
-                        $channels_list_path = get_install_path();
-
+                    $channels_list_path = smb_tree::get_folder_info($plugin_cookies, ACTION_CH_LIST_PATH, get_install_path());
                     $channels_list_path .= $channels_list;
                     hd_print(__METHOD__ . ": load from: $channels_list_path");
                     break;
@@ -401,7 +399,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             }
 
             if (isset($xml_tv_category->special_group)) {
-                hd_print("special group $xml_tv_category->special_group, icon: $xml_tv_category->icon_url");
+                hd_print(__METHOD__ . ": special group $xml_tv_category->special_group, icon: $xml_tv_category->icon_url");
                 switch ((string)$xml_tv_category->special_group) {
                     case Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID:
                         $fav_category_id = (int)$xml_tv_category->id;
@@ -422,6 +420,13 @@ class Starnet_Tv implements Tv, User_Input_Handler
                             Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID,
                             Default_Dune_Plugin::ALL_CHANNEL_GROUP_CAPTION,
                             isset($xml_tv_category->icon_url) ? (string)$xml_tv_category->icon_url : Default_Dune_Plugin::ALL_CHANNEL_GROUP_ICON_PATH);
+                        break;
+                    case Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID:
+                        $history_channels = new History_Group(
+                            $this,
+                            Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID,
+                            Default_Dune_Plugin::PLAYBACK_HISTORY_CAPTION,
+                            isset($xml_tv_category->icon_url) ? (string)$xml_tv_category->icon_url : Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ICON_PATH);
                         break;
                 }
             } else if (!isset($xml_tv_category->disabled)) {
@@ -460,6 +465,17 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
             $this->groups->put($fav_group);
         }
+
+        // History channels category
+        if (!isset($history_channels)) {
+            hd_print(__METHOD__ . ": Using default history channels group, icon: " . Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ICON_PATH);
+            $history_channels = new History_Group(
+                $this,
+                Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID,
+                Default_Dune_Plugin::PLAYBACK_HISTORY_CAPTION,
+                Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ICON_PATH);
+        }
+        $this->groups->put($history_channels);
 
         // Vod group
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
@@ -608,7 +624,10 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $post_action = Starnet_Epfs_Handler::invalidate_folders(null,
             User_Input_Handler_Registry::create_action($handler, RESET_CONTROLS_ACTION_ID));
 
-        return Action_Factory::invalidate_folders(array(Starnet_Tv_Groups_Screen::ID, Starnet_Tv_Channel_List_Screen::ID), $post_action);
+        return Action_Factory::invalidate_folders(array(
+            Starnet_Tv_Groups_Screen::get_media_url_str(),
+            Starnet_Tv_Channel_List_Screen::ID
+        ), $post_action);
     }
 
     /**
@@ -642,7 +661,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 throw new Exception("Wrong adult password");
             }
 
-            if ($this->plugin->history_support && !$channel->is_protected()) {
+            if (!$channel->is_protected()) {
                 Playback_Points::push($channel_id, ($archive_ts !== -1 ? $archive_ts : ($channel->has_archive() ? time() : 0)));
             }
 
@@ -696,7 +715,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         // correct day start to local timezone
         $day_start_ts -= get_local_time_zone_offset();
 
-        hd_print(__METHOD__ . ": day_start timestamp: $day_start_ts (" . format_datetime("Y-m-d H:i", $day_start_ts) . ")");
+        //hd_print(__METHOD__ . ": day_start timestamp: $day_start_ts (" . format_datetime("Y-m-d H:i", $day_start_ts) . ")");
         $epg_source_id = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
         $day_epg_items = $this->epg_man->get_day_epg_items($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
         if ($day_epg_items === false) {
@@ -707,7 +726,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         if ($day_epg_items !== false) {
             // get personal time shift for channel
             $time_shift = 3600 * ($channel->get_timeshift_hours() + (isset($plugin_cookies->epg_shift) ? $plugin_cookies->epg_shift : 0));
-            hd_print("EPG time shift $time_shift");
+            //hd_print(__METHOD__ . ": EPG time shift $time_shift");
             foreach ($day_epg_items as $time => $value) {
                 $tm_start = (int)$time + $time_shift;
                 $tm_end = (int)$value[Epg_Params::EPG_END] + $time_shift;
@@ -804,6 +823,10 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 continue;
             }
 
+            if ($group->is_history_group()) {
+                continue;
+            }
+
             if ($this->show_all_channels_group === false && $group->is_all_channels_group()) {
                 continue;
             }
@@ -878,22 +901,17 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         $channel_id = $user_input->plugin_tv_channel_id;
 
-        if ($this->plugin->history_support) {
-            Playback_Points::update($channel_id);
-        }
+        Playback_Points::update($channel_id);
 
         switch ($user_input->control_id) {
             case GUI_EVENT_PLAYBACK_STOP:
                 if (!$this->plugin->new_ui_support
                     || !(isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed))) break;
 
-                $history_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_HISTORY_PATH);
-                if (empty($history_path))
-                    $history_path = get_data_path();
-
-                Playback_Points::save($history_path);
+                Playback_Points::save(smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()));
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                return Starnet_Epfs_Handler::invalidate_folders();
+                return Starnet_Epfs_Handler::invalidate_folders(null,
+                    Action_Factory::invalidate_folders(array(Starnet_TV_History_Screen::get_media_url_str())));
 
             case ACTION_ZOOM_MENU:
                 $attrs['dialog_params']['frame_style'] = DIALOG_FRAME_STYLE_GLASS;

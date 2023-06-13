@@ -169,8 +169,8 @@ class edem_config extends default_config
 
         $this->set_filters($exist_filters);
 
-        hd_print("Categories read: " . count($category_list));
-        hd_print("Filters count: " . count($exist_filters));
+        hd_print(__METHOD__ . ": Categories read: " . count($category_list));
+        hd_print(__METHOD__ . ": Filters count: " . count($exist_filters));
     }
 
     /**
@@ -181,7 +181,7 @@ class edem_config extends default_config
      */
     public function getSearchList($keyword, $plugin_cookies)
     {
-        hd_print("getSearchList $keyword");
+        hd_print(__METHOD__ . ": getSearchList $keyword");
         $searchRes = $this->make_json_request($plugin_cookies,
             array('cmd' => "search", 'query' => $keyword));
 
@@ -196,7 +196,7 @@ class edem_config extends default_config
      */
     public function getFilterList($params, $plugin_cookies)
     {
-        hd_print("getFilterList: $params");
+        hd_print(__METHOD__ . ": getFilterList: $params");
         $pairs = explode(" ", $params);
         $post_params = array();
         foreach ($pairs as $pair) {
@@ -283,18 +283,18 @@ class edem_config extends default_config
     public function AddFilterUI(&$defs, $parent, $initial = -1)
     {
         $filters = array("years", "genre");
-        hd_print("AddFilterUI: $initial");
+        hd_print(__METHOD__ . ": AddFilterUI: $initial");
         $added = false;
         foreach ($filters as $name) {
             $filter = $this->get_filter($name);
             if ($filter === null) {
-                hd_print("AddFilterUI: no filters with '$name'");
+                hd_print(__METHOD__ . ": AddFilterUI: no filters with '$name'");
                 continue;
             }
 
             $values = $filter['values'];
             if (empty($values)) {
-                hd_print("AddFilterUI: no filters values for '$name'");
+                hd_print(__METHOD__ . ": AddFilterUI: no filters values for '$name'");
                 continue;
             }
 
@@ -352,7 +352,7 @@ class edem_config extends default_config
         $mediateka = isset($this->embedded_account->vportal) ? $this->embedded_account->vportal : $plugin_cookies->mediateka;
         if (empty($mediateka)
             || !preg_match('/^portal::\[key:([^]]+)\](.+)$/', $mediateka, $matches)) {
-            hd_print("incorrect or empty VPortal key");
+            hd_print(__METHOD__ . ": incorrect or empty VPortal key");
             return false;
         }
 
@@ -375,7 +375,7 @@ class edem_config extends default_config
             CURLOPT_POSTFIELDS => json_encode($pairs)
         );
 
-        // hd_print("post_data: " . json_encode($pairs));
+        //hd_print("post_data: " . json_encode($pairs));
 
         return HD::DownloadJson($url, $to_array, $curl_opt);
     }

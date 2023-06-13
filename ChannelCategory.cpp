@@ -84,6 +84,10 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) c
 	{
 		category_node->append_node(rapidxml::alloc_node(alloc, utils::SPECIAL_GROUP, utils::ALL_GROUP));
 	}
+	else if (is_history())
+	{
+		category_node->append_node(rapidxml::alloc_node(alloc, utils::SPECIAL_GROUP, utils::HISTORY_GROUP));
+	}
 
 	// <disabled>true</disabled>
 	if (is_disabled())

@@ -16,6 +16,7 @@ require_once 'starnet_folder_screen.php';
 require_once 'starnet_tv.php';
 require_once 'starnet_tv_channel_list_screen.php';
 require_once 'starnet_tv_favorites_screen.php';
+require_once 'starnet_tv_history_screen.php';
 require_once 'starnet_vod.php';
 require_once 'starnet_vod_search_screen.php';
 require_once 'starnet_vod_filter_screen.php';
@@ -30,9 +31,6 @@ require_once 'starnet_epfs_handler.php';
 
 class Starnet_Plugin extends Default_Dune_Plugin
 {
-    const ACTION_CH_LIST_PATH = 'channels_list_path';
-    const ACTION_HISTORY_PATH = 'history_path';
-
     /**
      * @throws Exception
      */
@@ -50,6 +48,7 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->tv_groups_screen = new Starnet_Tv_Groups_Screen($this);
         $this->tv_channels_screen = new Starnet_Tv_Channel_List_Screen($this);
         $this->tv_favorites_screen = new Starnet_Tv_Favorites_Screen($this);
+        $this->tv_history_screen = new Starnet_TV_History_Screen($this);
 
         $this->main_setup_screen = new Starnet_Setup_Screen($this);
         $this->channels_setup_screen = new Starnet_Channels_Setup_Screen($this);
@@ -70,15 +69,13 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->vod_filter_screen = new Starnet_Vod_Filter_Screen($this);
         $this->vod_history_screen = new Starnet_Vod_History_Screen($this);
 
-        if ($this->history_support) {
-            Playback_Points::init();
-        }
+        Playback_Points::init();
 
         // force clear after reload
         $this->tv->clear_epg_cache();
 
         Starnet_Epfs_Handler::init($this);
 
-        hd_print("Init done.");
+        hd_print(__METHOD__ . ": Init done.");
     }
 }

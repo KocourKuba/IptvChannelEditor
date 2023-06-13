@@ -71,12 +71,12 @@ class antifriz_config extends default_config
      */
     protected function GetVodListUrl($plugin_cookies)
     {
-        // hd_print("Type: $type");
+        //hd_print("Type: $type");
 
         $password = $this->get_password($plugin_cookies);
 
         if (empty($password)) {
-            hd_print("Password not set");
+            hd_print(__METHOD__ . ": Password not set");
             return '';
         }
 
@@ -90,7 +90,7 @@ class antifriz_config extends default_config
      */
     public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
     {
-        hd_print("fetch_vod_categories");
+        hd_print(__METHOD__);
         $jsonItems = HD::DownloadJson($this->get_vod_uri($plugin_cookies), false);
         if ($jsonItems === false) {
             return;
@@ -127,7 +127,7 @@ class antifriz_config extends default_config
         array_unshift($category_list, $category);
         $category_index[Vod_Category::FLAG_ALL] = $category;
 
-        hd_print("Categories read: " . count($category_list));
+        hd_print(__METHOD__ . ": Categories read: " . count($category_list));
     }
 
     /**
@@ -152,7 +152,7 @@ class antifriz_config extends default_config
      */
     public function getMovieList($query_id, $plugin_cookies)
     {
-        hd_print("getVideoList: $query_id");
+        hd_print(__METHOD__ . ": $query_id");
         $val = $this->get_next_page($query_id);
 
         if ($query_id === Vod_Category::FLAG_ALL) {
@@ -196,7 +196,7 @@ class antifriz_config extends default_config
             }
         }
 
-        hd_print("Movies found: " . count($movies));
+        hd_print(__METHOD__ . ": Movies found: " . count($movies));
         return $movies;
     }
 }

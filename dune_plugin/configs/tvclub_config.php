@@ -28,7 +28,7 @@ class tvclub_config extends default_config
                 }
                 $this->set_servers($servers);
             } catch (Exception $ex) {
-                hd_print("Servers not loaded");
+                hd_print(__METHOD__ . ": Servers not loaded");
             }
         }
 
@@ -53,7 +53,7 @@ class tvclub_config extends default_config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account: $force");
+        hd_print(__METHOD__ . ": Collect information from account: $force");
 
         if ($force !== false || empty($this->account_data)) {
             if (!$this->load_settings($plugin_cookies)) {
@@ -71,7 +71,7 @@ class tvclub_config extends default_config
     public function AddSubscriptionUI(&$defs, $plugin_cookies)
     {
         if ($this->GetAccountInfo($plugin_cookies, true) === false) {
-            hd_print("Can't get account status");
+            hd_print(__METHOD__ . ": Can't get account status");
             Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
             Control_Factory::add_label($defs, TR::t('description') . ':', TR::t('warn_msg5'), 20);
             return;
@@ -130,7 +130,7 @@ class tvclub_config extends default_config
      */
     protected function save_settings(&$plugin_cookies, $param)
     {
-        hd_print("save settings $param to {$plugin_cookies->$param}");
+        hd_print(__METHOD__ . ": $param to {$plugin_cookies->$param}");
 
         if (!$this->ensure_token_loaded($plugin_cookies)) {
             return false;
@@ -142,7 +142,7 @@ class tvclub_config extends default_config
             $this->load_settings($plugin_cookies);
             return true;
         } catch (Exception $ex) {
-            hd_print("Settings not saved");
+            hd_print(__METHOD__ . ": Settings not saved");
         }
 
         return false;
@@ -160,7 +160,7 @@ class tvclub_config extends default_config
         $password = $this->get_password($plugin_cookies);
 
         if (empty($login) || empty($password)) {
-            hd_print("Login or password not set");
+            hd_print(__METHOD__ . ": Login or password not set");
             return false;
         }
 

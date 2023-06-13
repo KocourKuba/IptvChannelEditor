@@ -67,7 +67,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
 
         $display_path = $this->get_history_path($plugin_cookies);
 
-        Control_Factory::add_label($defs, TR::t('setup_channels_src_folder'), $display_path, 2);
+        Control_Factory::add_label($defs, TR::t('setup_channels_src_folder'), $display_path);
 
         Control_Factory::add_image_button($defs, $this, null,
             self::SETUP_ACTION_HISTORY_CHANGE_FOLDER, TR::t('setup_history_folder_path'), TR::t('folder_screen_select_folder'), $folder_icon, self::CONTROLS_WIDTH);
@@ -124,7 +124,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
                 $media_url = MediaURL::encode(
                     array(
                         'screen_id' => Starnet_Folder_Screen::ID,
-                        'save_data' => Starnet_Plugin::ACTION_HISTORY_PATH,
+                        'save_data' => ACTION_HISTORY_PATH,
                         'windowCounter' => 1,
                     )
                 );
@@ -133,7 +133,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
             case ACTION_RESET_DEFAULT:
                 hd_print(__METHOD__ . ": do set history folder to default: " . get_data_path());
                 $media_url = MediaURL::encode(array('filepath' => get_data_path()));
-                smb_tree::set_folder_info($plugin_cookies, MediaURL::decode($media_url), Starnet_Plugin::ACTION_HISTORY_PATH);
+                smb_tree::set_folder_info($plugin_cookies, MediaURL::decode($media_url), ACTION_HISTORY_PATH);
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case self::SETUP_ACTION_COPY_TO_DATA:
@@ -193,11 +193,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
 
     private function get_history_path($plugin_cookies)
     {
-        $history_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_HISTORY_PATH);
-        if (empty($history_path))
-            $history_path = get_data_path();
-
-        return $history_path;
+        return smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path());
     }
 
     public static function CopyData($sourcePath, $destPath){

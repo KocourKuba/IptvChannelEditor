@@ -54,7 +54,7 @@ class default_config extends dynamic_config
         $plugin_data = '';
         if (file_exists($plugin_account)) {
             $plugin_data = file_get_contents($plugin_account, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            hd_print("account data: $plugin_data");
+            hd_print(__METHOD__ . ": account data: $plugin_data");
             if ($plugin_data !== false) {
                 $plugin_data = base64_decode(substr($plugin_data, 5));
             }
@@ -71,18 +71,18 @@ class default_config extends dynamic_config
 
         if (!empty($plugin_data)) {
             if ($plugin_data !== $backup_data) {
-                hd_print("backup account data.");
+                hd_print(__METHOD__ . ": backup account data.");
                 $backup_data = $plugin_data;
                 file_put_contents($backup_account, $backup_data);
             }
         } else if (!empty($backup_data)) {
-            hd_print("using backup account data.");
+            hd_print(__METHOD__ . ": using backup account data.");
             $plugin_data = $backup_data;
         }
 
         $account = json_decode($plugin_data);
         if ($account !== false) {
-            hd_print("account data loaded.");
+            hd_print(__METHOD__ . ": account data loaded.");
             $this->embedded_account = $account;
             //foreach ($this->embedded_account as $key => $item) hd_print("Embedded info: $key => $item");
         }
@@ -99,7 +99,7 @@ class default_config extends dynamic_config
     {
         if (empty($this->tv_m3u_entries)) {
             $this->tv_m3u_entries = $this->m3u_parser->parseInMemory();
-            hd_print("Total entries loaded from playlist m3u file:" . count($this->tv_m3u_entries));
+            hd_print(__METHOD__ . ": Total entries loaded from playlist m3u file:" . count($this->tv_m3u_entries));
             HD::ShowMemoryUsage();
         }
 
@@ -299,37 +299,35 @@ class default_config extends dynamic_config
 
         switch ($plugin_cookies->channels_source) {
             case 1: // folder
-                hd_print("Channels source: folder");
-                $channels_list_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_CH_LIST_PATH);
-                if (empty($channels_list_path))
-                    $channels_list_path = get_install_path();
+                hd_print(__METHOD__ . ": Channels source: folder");
+                $channels_list_path = smb_tree::get_folder_info($plugin_cookies, ACTION_CH_LIST_PATH, get_install_path());
                 break;
             case 2: // url
-                hd_print("Channels source: url");
+                hd_print(__METHOD__ . ": Channels source: url");
                 $channels_list_path = get_install_path();
                 break;
             case 3: // direct url
-                hd_print("Channels source: direct url");
+                hd_print(__METHOD__ . ": Channels source: direct url");
                 $channels_list_path = get_install_path();
                 break;
             default:
                 return array();
         }
 
-        hd_print("Channels list search path: $channels_list_path");
+        hd_print(__METHOD__ . ": Channels list search path: $channels_list_path");
 
         $all_channels = array();
         $list = glob($channels_list_path . '*.xml');
         foreach ($list as $filename) {
             $filename = basename($filename);
             if ($filename !== 'dune_plugin.xml') {
-                hd_print("Found channels list: $filename");
+                hd_print(__METHOD__ . ": Found channels list: $filename");
                 $all_channels[$filename] = $filename;
             }
         }
 
         if (empty($all_channels)) {
-            hd_print("No channels list found in selected location: " . $channels_list_path);
+            hd_print(__METHOD__ . ": No channels list found in selected location: " . $channels_list_path);
             return $all_channels;
         }
 
@@ -337,7 +335,7 @@ class default_config extends dynamic_config
             $used_list = (string)reset($all_channels);
         }
 
-        hd_print("Used channels list: $used_list");
+        hd_print(__METHOD__ . ": Used channels list: $used_list");
         return $all_channels;
     }
 
@@ -747,7 +745,7 @@ class default_config extends dynamic_config
 
         if (empty($pl_entries) && $this->plugin_info['app_type_name'] !== 'custom') {
             $this->set_last_error("Пустой плейлист провайдера!");
-            hd_print($this->last_error);
+            hd_print(__METHOD__ . ": $this->last_error");
             $this->ClearPlaylistCache($plugin_cookies);
         } else {
             hd_print(__METHOD__ . ": Total entries:" . count($pl_entries) . ", mapped to ID $mapped: ");
@@ -1081,7 +1079,7 @@ class default_config extends dynamic_config
                 $url = $this->GetPlaylistUrl($plugin_cookies);
                 //hd_print("tv1 m3u8 playlist: " . $url);
                 if (empty($url)) {
-                    hd_print(__METHOD__ . "Tv playlist not defined");
+                    hd_print(__METHOD__ . ": Tv playlist not defined");
                     throw new Exception('Tv playlist not defined');
                 }
                 file_put_contents($m3u_file, HD::http_get_document($url));

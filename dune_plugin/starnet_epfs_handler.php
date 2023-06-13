@@ -123,23 +123,21 @@ class Starnet_Epfs_Handler extends Base_Epfs_Handler
 
         hd_print(__METHOD__ . ": first run " . ($first_run ? "yes" : "no"));
 
-        $history_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_HISTORY_PATH);
-        if (empty($history_path))
-            $history_path = get_data_path();
-
-        Playback_Points::load_points($history_path, true);
+        Playback_Points::load_points(
+            smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()),
+            true);
 
         self::ensure_no_internet_epfs_created($first_run, $plugin_cookies);
 
         try {
             $folder_view = self::$tv_rows_screen->get_folder_view_for_epf($plugin_cookies);
         } catch (Exception $e) {
-            hd_print("Exception while generating epf: " . $e->getMessage());
+            hd_print(__METHOD__ . ": Exception while generating epf: " . $e->getMessage());
             return null;
         }
 
         $cold_run = !is_file(self::warmed_up_path());
-        hd_print("Cold run: " . ($cold_run ? "yes" : "no"));
+        hd_print(__METHOD__ . ": Cold run: " . ($cold_run ? "yes" : "no"));
         if ($cold_run) {
             file_put_contents(self::warmed_up_path(), '');
         }

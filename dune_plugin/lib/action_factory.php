@@ -326,7 +326,7 @@ class Action_Factory
      */
     public static function replace_path($erase_count = null, $elements = null, $post_action = null)
     {
-        hd_print("replace_path: erase_count: $erase_count,  elements: $elements, post_action: " . json_encode($post_action));
+        //hd_print("replace_path: erase_count: $erase_count,  elements: $elements, post_action: " . json_encode($post_action));
         if ($erase_count === null || is_newer_versions() === false) {
             return $post_action;
         }

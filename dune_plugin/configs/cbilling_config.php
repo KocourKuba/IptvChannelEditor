@@ -11,7 +11,7 @@ class cbilling_config extends default_config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account: $force");
+        hd_print(__METHOD__ . ": Collect information from account: $force");
         // this account has special API to get account info
         // {
         //    "data": {
@@ -60,7 +60,7 @@ class cbilling_config extends default_config
     {
         $account_data = $this->GetAccountInfo($plugin_cookies, true);
         if ($account_data === false) {
-            hd_print("Can't get account status");
+            hd_print(__METHOD__ . ": Can't get account status");
             Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
             Control_Factory::add_label($defs, TR::t('description'), TR::t('warn_msg5'), 20);
             return;
@@ -142,12 +142,12 @@ class cbilling_config extends default_config
      */
     protected function GetVodListUrl($plugin_cookies)
     {
-        // hd_print("Type: $type");
+        //hd_print("Type: $type");
 
         $password = $this->get_password($plugin_cookies);
 
         if (empty($password)) {
-            hd_print("Password not set");
+            hd_print(__METHOD__ . ": Password not set");
             return '';
         }
 
@@ -161,7 +161,7 @@ class cbilling_config extends default_config
      */
     public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
     {
-        hd_print("fetch_vod_categories");
+        hd_print(__METHOD__);
         $jsonItems = HD::DownloadJson($this->get_vod_uri($plugin_cookies), false);
         if ($jsonItems === false) {
             return;
@@ -198,7 +198,7 @@ class cbilling_config extends default_config
         array_unshift($category_list, $category);
         $category_index[Vod_Category::FLAG_ALL] = $category;
 
-        hd_print("Categories read: " . count($category_list));
+        hd_print(__METHOD__ . ": Categories read: " . count($category_list));
     }
 
     /**
@@ -209,7 +209,7 @@ class cbilling_config extends default_config
      */
     public function getSearchList($keyword, $plugin_cookies)
     {
-        //hd_print("getSearchList");
+        //hd_print("__METHOD__");
         $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
         $searchRes = HD::DownloadJson($url, false);
         return $searchRes === false ? array() : $this->CollectSearchResult($searchRes);
@@ -223,7 +223,7 @@ class cbilling_config extends default_config
      */
     public function getMovieList($query_id, $plugin_cookies)
     {
-        hd_print("getVideoList: $query_id");
+        hd_print(__METHOD__ . ": $query_id");
         $val = $this->get_next_page($query_id);
 
         if ($query_id === Vod_Category::FLAG_ALL) {
@@ -267,7 +267,7 @@ class cbilling_config extends default_config
             }
         }
 
-        hd_print("Movies found: " . count($movies));
+        hd_print(__METHOD__ . ": Movies found: " . count($movies));
         return $movies;
     }
 }

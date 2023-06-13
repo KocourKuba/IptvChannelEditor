@@ -75,7 +75,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         $channel = $this->plugin->tv->get_channel($channel_id);
         if (is_null($channel)) {
-            hd_print("Unknown channel $channel_id");
+            hd_print(__METHOD__ . ": Unknown channel $channel_id");
             return null;
         }
 
@@ -110,7 +110,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         if (is_null($epg_data = $this->plugin->tv->get_program_info($channel_id, -1, $plugin_cookies))) {
 
-            hd_print("Starnet_Tv_Rows_Screen: do_get_info_children: no epg data");
+            hd_print(__METHOD__ . ": no epg data");
             $channel_desc = $channel->get_desc();
             if (!empty($channel_desc)) {
                 $geom = GComp_Geom::place_top_left(PaneParams::info_width, -1, 0, $y);
@@ -126,7 +126,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             }
         } else {
 
-            //foreach ($epg_data as $key=>$value) hd_print("Starnet_Tv_Rows_Screen: do_get_info_children: $key => $value");
+            //foreach ($epg_data as $key=>$value) hd_print("$key => $value");
             $program = (object)array();
             $program->time = sprintf("%s - %s",
                 gmdate('H:i', $epg_data[PluginTvEpgProgram::start_tm_sec] + get_local_time_zone_offset()),
@@ -325,7 +325,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
     {
         $rows = $this->get_regular_rows($plugin_cookies);
         if (is_null($rows)) {
-            hd_print("no rows");
+            hd_print(__METHOD__ . ": no rows");
             return null;
         }
 
@@ -440,6 +440,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             $media_url = MediaURL::decode($media_url_str);
         } else if ($user_input->control_id === ACTION_REFRESH_SCREEN) {
             $media_url = '';
+            $media_url_str = '';
         } else {
             $media_url = $this->get_parent_media_url($user_input->parent_sel_state);
             $media_url_str = '';
@@ -622,11 +623,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
     {
         //hd_print("Starnet_Tv_Rows_Screen::get_history_rows");
         if ($this->clear_playback_points) {
-            $history_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_HISTORY_PATH);
-            if (empty($history_path))
-                $history_path = get_data_path();
-
-            Playback_Points::clear($history_path);
+            Playback_Points::clear(smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()));
             $this->clear_playback_points = false;
             return null;
         }
@@ -673,11 +670,9 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 if (isset($this->removed_playback_point))
                     if ($this->removed_playback_point === $id) {
                         $this->removed_playback_point = null;
-                        $history_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_HISTORY_PATH);
-                        if (empty($history_path))
-                            $history_path = get_data_path();
-
-                        Playback_Points::clear($history_path, $item['channel_id']);
+                        Playback_Points::clear(
+                            smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()),
+                            $item['channel_id']);
                         continue;
                     }
 
@@ -734,7 +729,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             }
         }
 
-        hd_print("History rows: " . count($rows));
+        hd_print(__METHOD__ . ": History rows: " . count($rows));
         return $rows;
     }
 
@@ -788,7 +783,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             }
         }
 
-        hd_print("Favorites rows: " . count($rows));
+        hd_print(__METHOD__ . ": Favorites rows: " . count($rows));
         return $rows;
     }
 
@@ -857,7 +852,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             }
         }
 
-        hd_print("Regular rows: " . count($rows));
+        hd_print(__METHOD__ . ": Regular rows: " . count($rows));
         return $rows;
     }
 

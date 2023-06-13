@@ -125,7 +125,7 @@ abstract class Abstract_Vod implements Vod
 
     public function clear_movie_cache()
     {
-        hd_print("Abstract_Vod::clear_movie_cache: movie cache cleared");
+        hd_print(__METHOD__ . ": Abstract_Vod::clear_movie_cache: movie cache cleared");
 
         $this->short_movie_by_id = array();
         $this->movie_by_id = array();
@@ -148,22 +148,22 @@ abstract class Abstract_Vod implements Vod
     public function ensure_movie_loaded($movie_id, &$plugin_cookies)
     {
         if (!isset($movie_id)) {
-            hd_print('Movie ID is not set');
+            hd_print(__METHOD__ . ": Movie ID is not set");
             return;
         }
 
         if ($this->is_failed_movie_id($movie_id)) {
-            hd_print("No movie with ID: $movie_id");
+            hd_print(__METHOD__ . ": No movie with ID: $movie_id");
             return;
         }
 
         $movie = $this->get_cached_movie($movie_id);
         if ($movie === null) {
-            hd_print("Movie $movie_id not in cache. Load info.");
+            hd_print(__METHOD__ . ": Movie $movie_id not in cache. Load info.");
             $this->try_load_movie($movie_id, $plugin_cookies);
-            hd_print("Movie $movie_id loaded");
+            hd_print(__METHOD__ . ": Movie $movie_id loaded");
         } else {
-            hd_print("Movie $movie_id is in cache.");
+            hd_print(__METHOD__ . ": Movie $movie_id is in cache.");
         }
     }
 
@@ -250,7 +250,7 @@ abstract class Abstract_Vod implements Vod
     public function is_favorite_movie_id($movie_id)
     {
         if (!$this->is_favorites_supported()) {
-            hd_print("AbstractVod: Favorites not supported");
+            hd_print(__METHOD__ . ": Favorites not supported");
             return false;
         }
 
@@ -272,22 +272,22 @@ abstract class Abstract_Vod implements Vod
 
         switch ($fav_op_type) {
             case PLUGIN_FAVORITES_OP_ADD:
-                hd_print("Try to add movie id: $movie_id");
+                hd_print(__METHOD__ . ": Try to add movie id: $movie_id");
                 if (!is_null($movie_id) && in_array($movie_id, $fav_movie_ids) === false) {
-                    hd_print("Movie id: $movie_id added to favorites");
+                    hd_print(__METHOD__ . ": Movie id: $movie_id added to favorites");
                     $fav_movie_ids[] = $movie_id;
                 }
                 break;
             case PLUGIN_FAVORITES_OP_REMOVE:
-                hd_print("Try to remove movie id: $movie_id");
+                hd_print(__METHOD__ . ": Try to remove movie id: $movie_id");
                 $k = array_search($movie_id, $fav_movie_ids);
                 if ($k !== false) {
-                    hd_print("Movie id: $movie_id removed from favorites");
+                    hd_print(__METHOD__ . ": Movie id: $movie_id removed from favorites");
                     unset ($fav_movie_ids[$k]);
                 }
                 break;
             case ACTION_CLEAR_FAVORITES:
-                hd_print("Movie favorites cleared");
+                hd_print(__METHOD__ . ": Movie favorites cleared");
                 $fav_movie_ids = array();
                 break;
             case PLUGIN_FAVORITES_OP_MOVE_UP:
@@ -383,7 +383,7 @@ abstract class Abstract_Vod implements Vod
      */
     protected function load_genres($plugin_cookies)
     {
-        hd_print("AbstractVod::load_genres: Not implemented.");
+        hd_print(__METHOD__ . ": Not implemented.");
         return null;
     }
 
@@ -393,7 +393,7 @@ abstract class Abstract_Vod implements Vod
      */
     public function get_genre_icon_url($genre_id)
     {
-        hd_print("AbstractVod::get_genre_icon_url: Not implemented.");
+        hd_print(__METHOD__ . ": Not implemented.");
         return null;
     }
 
@@ -403,7 +403,7 @@ abstract class Abstract_Vod implements Vod
      */
     public function get_genre_media_url_str($genre_id)
     {
-        hd_print("AbstractVod::get_genre_media_url_str: Not implemented.");
+        hd_print(__METHOD__ . ": Not implemented.");
         return null;
     }
 
@@ -416,7 +416,7 @@ abstract class Abstract_Vod implements Vod
         $this->genres = $this->load_genres($plugin_cookies);
 
         if ($this->genres === null) {
-            hd_print("AbstractVod::ensure_genres_loaded: Not implemented.");
+            hd_print(__METHOD__ . ": Not implemented.");
         }
     }
 
@@ -426,7 +426,7 @@ abstract class Abstract_Vod implements Vod
     public function get_genre_ids()
     {
         if ($this->genres === null) {
-            hd_print("AbstractVod::get_genre_ids: Not implemented.");
+            hd_print(__METHOD__ . ": Not implemented.");
             return null;
         }
 
@@ -440,7 +440,7 @@ abstract class Abstract_Vod implements Vod
     public function get_genre_caption($genre_id)
     {
         if ($this->genres === null) {
-            hd_print("AbstractVod::get_genre_caption: Not implemented.");
+            hd_print(__METHOD__ . ": Not implemented.");
             return null;
         }
 
@@ -461,7 +461,7 @@ abstract class Abstract_Vod implements Vod
      */
     public function get_vod_list_folder_views()
     {
-        hd_print("AbstractVod::get_vod_list_folder_views: Not implemented.");
+        hd_print(__METHOD__ . ": Not implemented.");
         return null;
     }
 
@@ -470,7 +470,7 @@ abstract class Abstract_Vod implements Vod
      */
     public function get_vod_genres_folder_views()
     {
-        hd_print("AbstractVod::get_vod_genres_folder_views: Not implemented.");
+        hd_print(__METHOD__ . ": Not implemented.");
         return null;
     }
 }

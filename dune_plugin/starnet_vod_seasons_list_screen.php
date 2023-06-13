@@ -80,7 +80,7 @@ class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen 
         $items = array();
 
         foreach ($movie->season_list as $season) {
-            hd_print("movie_id: $movie->id season_id: $season->id season_name: $season->name");
+            hd_print(__METHOD__ . ": movie_id: $movie->id season_id: $season->id season_name: $season->name");
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => MediaURL::encode(array

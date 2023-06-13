@@ -127,8 +127,8 @@ class Movie implements User_Input_Handler
     public function __construct($id, $plugin)
     {
         if (is_null($id)) {
-            hd_print("Movie::id is null, create dummy movie");
-            $id = -1;
+            hd_print(__METHOD__ . ": Movie::id is null, create dummy movie");
+            $id = "-1";
         }
 
         $this->id = (string)$id;
@@ -457,8 +457,8 @@ class Movie implements User_Input_Handler
             $initial_start_array[$counter] = $pos * 1000;
             $playback_url = $this->plugin->config->UpdateVodUrlParams($playback_url, $plugin_cookies);
             $playback_url = $this->plugin->config->UpdateDuneParams($playback_url, $plugin_cookies,Plugin_Constants::HLS);
-            hd_print("Start playback movie $media_url->movie_id ($variant)");
-            hd_print("Url: $playback_url from $initial_start_array[$counter]");
+            hd_print(__METHOD__ . ": Start playback movie $media_url->movie_id ($variant)");
+            hd_print(__METHOD__ . ": Url: $playback_url from $initial_start_array[$counter]");
             $series_array[] = array(
                 PluginVodSeriesInfo::name => $name,
                 PluginVodSeriesInfo::playback_url => $playback_url,
@@ -472,7 +472,7 @@ class Movie implements User_Input_Handler
         if (isset($initial_start_array[$initial_series_ndx])) {
             $initial_start = $initial_start_array[$initial_series_ndx];
         }
-        hd_print("starting vod index $initial_series_ndx at position $initial_start");
+        hd_print(__METHOD__ . ": starting vod index $initial_series_ndx at position $initial_start");
 
         return array(
             PluginVodInfo::id => $this->id,

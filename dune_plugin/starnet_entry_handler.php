@@ -38,26 +38,26 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
         switch ($user_input->control_id) {
             case 'do_reboot':
-                hd_print("do reboot");
+                hd_print(__METHOD__ . ": do reboot");
                 return Action_Factory::restart(true);
 
             case 'power_off':
-                hd_print("do power off");
+                hd_print(__METHOD__ . ": do power off");
                 if (is_apk()) {
                     return Action_Factory::show_title_dialog(TR::t('entry_not_available'));
                 }
                 return array(send_ir_code(GUI_EVENT_DISCRETE_POWER_OFF));
 
             case 'do_setup':
-                hd_print("do setup");
+                hd_print(__METHOD__ . ": do setup");
                 return Action_Factory::open_folder('setup', TR::t('entry_setup'));
 
             case 'do_channels_setup':
-                hd_print("do channels setup");
+                hd_print(__METHOD__ . ": do channels setup");
                 return Action_Factory::open_folder('channels_setup', TR::t('tv_screen_channels_setup'));
 
             case 'do_send_log':
-                hd_print("do_send_log");
+                hd_print(__METHOD__ . ": do_send_log");
                 $error_msg = '';
                 $msg = HD::send_log_to_developer($plugin_cookies, $error_msg) ? TR::t('entry_log_sent') : TR::t('entry_log_not_sent') . " $error_msg";
                 return Action_Factory::show_title_dialog($msg);
@@ -71,10 +71,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
                 hd_print(__METHOD__ . ": plugin_entry $user_input->action_id");
                 clearstatcache();
-                $history_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_HISTORY_PATH);
-                if (empty($history_path))
-                    $history_path = get_data_path();
-                Playback_Points::load_points($history_path);
+                Playback_Points::load_points(smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()));
 
                 switch ($user_input->action_id) {
                     case 'launch':
@@ -102,7 +99,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                             }
                             $action = Action_Factory::tv_play($media_url);
                         } else {
-                            hd_print("action: launch open");
+                            hd_print(__METHOD__ . ": action: launch open");
                             $action = Action_Factory::open_folder();
                         }
 

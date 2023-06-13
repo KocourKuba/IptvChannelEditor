@@ -28,14 +28,14 @@ class Base_Epfs_Handler
         $tmp_path = "$path.tmp";
 
         if (false === file_put_contents($tmp_path, $data)) {
-            hd_print("Failed to write tmp file: $tmp_path");
+            hd_print(__METHOD__ . ": Failed to write tmp file: $tmp_path");
         } else if (!rename($tmp_path, $path)) {
-            hd_print("Failed to rename $tmp_path to $path");
+            hd_print(__METHOD__ . ": Failed to rename $tmp_path to $path");
             unlink($tmp_path);
             return;
         }
 
-		hd_print("Write epf for $epf_id to $path (" . strlen($data) . ' bytes)');
+		hd_print(__METHOD__ . ": Write epf for $epf_id to $path (" . strlen($data) . ' bytes)');
 	}
 
 	////////////////////////////////////////////////////////////////////////////

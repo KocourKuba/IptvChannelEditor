@@ -170,7 +170,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
 
             $channel = $this->plugin->tv->get_channel($channel_id);
             if (is_null($channel)) {
-                hd_print("Unknown channel $channel_id");
+                hd_print(__METHOD__ . ": Unknown channel $channel_id");
                 $this->plugin->tv->change_tv_favorites(PLUGIN_FAVORITES_OP_REMOVE, $channel_id, $plugin_cookies);
                 continue;
             }
@@ -179,7 +179,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
             (
                 PluginRegularFolderItem::media_url => MediaURL::encode(array(
                         'channel_id' => $channel->get_id(),
-                        'group_id' => '__favorites')
+                        'group_id' => Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID)
                 ),
                 PluginRegularFolderItem::caption => $channel->get_title(),
                 PluginRegularFolderItem::view_item_params => array(

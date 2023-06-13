@@ -113,7 +113,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                 $filter_string = $this->plugin->config->CompileSaveFilterItem($user_input);
                 if (empty($filter_string)) break;
 
-                hd_print("filter_screen filter string: $filter_string");
+                hd_print(__METHOD__ . ": filter_screen filter string: $filter_string");
                 $filter_items = HD::get_data_items(self::VOD_FILTER_LIST);
                 $i = array_search($filter_string, $filter_items);
                 if ($i !== false) {

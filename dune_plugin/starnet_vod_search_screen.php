@@ -113,7 +113,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
 
             case ACTION_RUN_SEARCH:
                 $search_string = $user_input->{ACTION_NEW_SEARCH};
-                hd_print("search string: $search_string");
+                hd_print(__METHOD__ . ": search string: $search_string");
                 $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
                 $i = array_search($search_string, $search_items);
                 if ($i !== false) {
@@ -186,7 +186,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_print("Starnet_Search_Screen::get_all_folder_items");
+        hd_print(__METHOD__);
         $items = array();
 
         $items[] = array

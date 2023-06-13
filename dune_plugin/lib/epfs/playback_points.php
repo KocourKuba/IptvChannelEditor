@@ -94,7 +94,7 @@ class Playback_Points
      */
     private function erase_point($path, $id)
     {
-        hd_print(__METHOD__ . ":erase " . ($id !== null ? $id : "all"));
+        hd_print(__METHOD__ . ": erase " . ($id !== null ? $id : "all"));
         $path .= self::TV_HISTORY_ITEMS;
         if ($id === null) {
             $this->points = array();

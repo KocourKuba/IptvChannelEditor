@@ -25,6 +25,7 @@ class Default_Group implements Group
 
     protected $is_favorite = false;
     protected $is_all_group = false;
+    protected $is_history = false;
     protected $is_vod_group = false;
 
     /**
@@ -75,6 +76,14 @@ class Default_Group implements Group
     public function is_favorite_group()
     {
         return $this->is_favorite;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_history_group()
+    {
+        return $this->is_history;
     }
 
     /**

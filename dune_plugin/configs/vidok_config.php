@@ -105,7 +105,7 @@ class vidok_config extends default_config
      */
     public function GetAccountInfo(&$plugin_cookies, $force = false)
     {
-        hd_print("Collect information from account: $force");
+        hd_print(__METHOD__ . ": Collect information from account: $force");
 
         try {
             if (!$this->ensure_token_loaded($plugin_cookies)) {
@@ -135,7 +135,7 @@ class vidok_config extends default_config
     {
         $account_data = $this->GetAccountInfo($plugin_cookies, true);
         if ($account_data === false) {
-            hd_print("Can't get account status");
+            hd_print(__METHOD__ . ": Can't get account status");
             Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
             Control_Factory::add_label($defs, TR::t('description'), TR::t('warn_msg5'), 20);
             return;
@@ -163,7 +163,7 @@ class vidok_config extends default_config
      */
     protected function save_settings(&$plugin_cookies, $param)
     {
-        hd_print("save settings $param to {$plugin_cookies->$param}");
+        hd_print(__METHOD__ . ": $param to {$plugin_cookies->$param}");
 
         try {
             if (!$this->ensure_token_loaded($plugin_cookies)) {
@@ -195,7 +195,7 @@ class vidok_config extends default_config
         $password = $this->get_password($plugin_cookies);
 
         if (empty($login) || empty($password)) {
-            hd_print("Login or password not set");
+            hd_print(__METHOD__ . ": Login or password not set");
             return false;
         }
 

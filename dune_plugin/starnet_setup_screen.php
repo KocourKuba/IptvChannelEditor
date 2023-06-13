@@ -297,7 +297,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
         if (isset($user_input->action_type, $user_input->{$control_id})
             && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $new_value = $user_input->{$control_id};
-            hd_print("Setup: changing $control_id value to $new_value");
+            //hd_print("Setup: changing $control_id value to $new_value");
         }
 
         switch ($control_id) {
@@ -310,7 +310,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 $plugin_cookies->ott_key = $user_input->ott_key;
                 $plugin_cookies->subdomain = $user_input->subdomain;
                 $plugin_cookies->mediateka = $user_input->vportal;
-                hd_print("portal info: $plugin_cookies->mediateka");
                 return $this->plugin->tv->reload_channels($this, $plugin_cookies);
 
             case self::SETUP_ACTION_LOGIN_DLG: // token dialog

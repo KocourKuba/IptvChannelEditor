@@ -264,7 +264,7 @@ class smb_tree
 
         $xml = simplexml_load_string(file_get_contents($path));
         if ($xml === false) {
-            hd_print("Error parsing $path.");
+            hd_print(__METHOD__ . ": Error parsing $path.");
             return false;
         }
 
@@ -327,7 +327,7 @@ class smb_tree
                 if ($wr === false) {
                     $fn = '/tmp/mnt/smb/' . $n;
                     if (!file_exists($fn) && !mkdir($fn, 0777, true) && !is_dir($fn)) {
-                        hd_print("Directory '$fn' was not created");
+                        hd_print(__METHOD__ . ": Directory '$fn' was not created");
                     }
                     $ret_code = exec("mount -t cifs -o username=$username,password=$password,posixpaths,rsize=32768,wsize=130048 \"$k\" \"$fn\" 2>&1 &");
                 } else {
@@ -440,7 +440,7 @@ class smb_tree
                 if ($wr === false) {
                     $fn = '/tmp/mnt/network/' . $n;
                     if (!file_exists($fn) && !mkdir($fn, 0777, true) && !is_dir($fn)) {
-                        hd_print("Directory '$fn' was not created");
+                        hd_print(__METHOD__ . ": Directory '$fn' was not created");
                     }
                     $q = shell_exec("mount -t nfs -o " . $vel['protocol'] . " $k $fn 2>&1");
                 } else {
@@ -486,12 +486,13 @@ class smb_tree
     /**
      * @param $plugin_cookies
      * @param $param string
+     * @param $default string
      * @return string
      */
-    public static function get_folder_info($plugin_cookies, $param)
+    public static function get_folder_info($plugin_cookies, $param, $default)
     {
         if (empty($plugin_cookies->{$param})) {
-            return '';
+            return $default;
         }
 
         $settings = json_decode($plugin_cookies->{$param}, true);

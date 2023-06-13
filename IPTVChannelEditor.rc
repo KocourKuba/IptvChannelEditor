@@ -1655,6 +1655,7 @@ END
 STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "Dune IPTV Channel Editor\nChannelEditor\nChannelEditor\n\n\n\n"
+    IDS_STRING_HISTORY      "History"
     IDS_STRING_PROGRAM_SETTINGS "Program settings"
     IDS_STRING_PLUGIN_CONFIG "Plugin Configuration"
     IDS_STRING_FAVORITES    "Favorites"

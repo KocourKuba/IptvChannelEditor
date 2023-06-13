@@ -167,7 +167,7 @@ class HD
         }
 
         self::$user_agent = self::$plugin_user_agent;
-        hd_print(__METHOD__ . " HTTP UserAgent: " . self::$user_agent);
+        hd_print(__METHOD__ . ": HTTP UserAgent: " . self::$user_agent);
     }
 
     public static function get_dune_user_agent()
@@ -216,19 +216,19 @@ class HD
             }
         }
 
-        hd_print(__METHOD__ . " HTTP fetching $url");
+        hd_print(__METHOD__ . ": HTTP fetching $url");
 
         $content = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         if ($content === false) {
-            $err_msg = __METHOD__ . " HTTP error: $http_code (" . curl_error($ch) . ')';
+            $err_msg = __METHOD__ . ": Using default history channels group HTTP error: $http_code (" . curl_error($ch) . ')';
             hd_print($err_msg);
             throw new Exception($err_msg);
         }
 
         if ($http_code >= 300) {
-            $err_msg = __METHOD__ . " HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
+            $err_msg = __METHOD__ . ": HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
             hd_print($err_msg);
             throw new Exception($err_msg);
         }
@@ -374,17 +374,17 @@ class HD
 
         $response = curl_exec($ch);
         curl_close($ch);
-        hd_print("Cookies:\n" . base64_encode(gzcompress(serialize($plugin_cookies), 9)));
-        hd_print("PHP TLS Support:\n" . base64_encode(gzcompress($response, 9)));
+        hd_print(__METHOD__ . ": Cookies:\n" . base64_encode(gzcompress(serialize($plugin_cookies), 9)));
+        hd_print(__METHOD__ . ": PHP TLS Support:\n" . base64_encode(gzcompress($response, 9)));
 
         $serial = get_serial_number();
         if (empty($serial)) {
-            hd_print("Unable to get DUNE serial.");
+            hd_print(__METHOD__ . ": Unable to get DUNE serial.");
             $serial = 'XX-XX-XX-XX-XX';
         }
         $timestamp = format_datetime('Ymd_His', time());
         $zip_file_name = "{$serial}_$timestamp.zip";
-        hd_print("Prepare archive $zip_file_name for send");
+        hd_print(__METHOD__ . ": Prepare archive $zip_file_name for send");
         $zip_file = get_temp_path($zip_file_name);
         $apk_subst = getenv('FS_PREFIX');
         $plugin_name = get_plugin_name();
@@ -462,10 +462,10 @@ class HD
 
             $use_proxy = (isset($plugin_cookies->use_proxy) && $plugin_cookies->use_proxy === 'yes')
                 || strpos(get_platform_kind(), '86') === 0;
-            hd_print(__METHOD__ . " Use https proxy: " . ($use_proxy ? "yes" : "no"));
+            //hd_print(__METHOD__ . ": Use https proxy: " . ($use_proxy ? "yes" : "no"));
 
             $proxy_enabled = is_https_proxy_enabled();
-            hd_print(__METHOD__ . " Proxy enabled: " . ($proxy_enabled ? "yes" : "no"));
+            //hd_print(__METHOD__ . ": Proxy enabled: " . ($proxy_enabled ? "yes" : "no"));
 
             if (($use_proxy && $proxy_enabled) || (!$use_proxy && !$proxy_enabled)) {
                 // no need to update, already enabled or not https
@@ -484,7 +484,7 @@ class HD
             } else {
                 $new_url = substr($update_url, strlen($proxy_url));
             }
-            hd_print(__METHOD__ . " New update url: $new_url");
+            hd_print(__METHOD__ . ": New update url: $new_url");
 
             $new_manifest = str_replace($update_url, $new_url, @file_get_contents($plugin_info['app_manifest_path']));
             return @file_put_contents($plugin_info['app_manifest_path'], $new_manifest);
@@ -523,8 +523,8 @@ class HD
         $xml = simplexml_load_string(file_get_contents($path));
 
         if ($xml === false) {
-            hd_print(__METHOD__ . " Error: can't parse XML document.");
-            hd_print(__METHOD__ . " path to XML: $path");
+            hd_print(__METHOD__ . ": Error: can't parse XML document.");
+            hd_print(__METHOD__ . ": path to XML: $path");
             throw new Exception('Illegal XML document');
         }
 
@@ -575,9 +575,9 @@ class HD
 
     public static function print_backtrace()
     {
-        hd_print('Back trace:');
+        hd_print("Back trace:");
         foreach (debug_backtrace() as $f) {
-            hd_print('  - ' . $f['function'] . ' at ' . $f['file'] . ':' . $f['line']);
+            hd_print("  - {$f['function']} at {$f['file']}:{$f['line']}");
         }
     }
 
@@ -663,7 +663,7 @@ class HD
             $items = $json ? json_decode($contents, true) : unserialize($contents);
             $items = is_null($items) ? array() : $items;
         } else {
-            //hd_print(__METHOD__ . " $path not exist");
+            //hd_print(__METHOD__ . ": $path not exist");
             $items = array();
         }
 

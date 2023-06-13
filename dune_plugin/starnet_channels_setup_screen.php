@@ -76,9 +76,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         switch ($channels_source)
         {
             case 1: // channels path
-                $display_path = smb_tree::get_folder_info($plugin_cookies, Starnet_Plugin::ACTION_CH_LIST_PATH);
-                if (empty($display_path))
-                    $display_path = get_install_path();
+                $display_path = smb_tree::get_folder_info($plugin_cookies, ACTION_CH_LIST_PATH, get_install_path());
 
                 if (is_apk()) {
                     Control_Factory::add_label($defs, TR::t('setup_channels_src_label'), $display_path);
@@ -117,7 +115,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         //////////////////////////////////////
         // playlist source
         $all_tv_lists = $this->plugin->config->get_tv_list_names($plugin_cookies, $play_list_idx);
-        hd_print("current playlist index: $play_list_idx");
+        hd_print(__METHOD__ . ": current playlist index: $play_list_idx");
 
         if (count($all_tv_lists) > 1) {
             Control_Factory::add_combobox($defs, $this, null, ACTION_CHANGE_PLAYLIST,
@@ -195,7 +193,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         if (isset($user_input->action_type, $user_input->{$control_id})
             && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $new_value = $user_input->{$control_id};
-            hd_print("Setup: changing $control_id value to $new_value");
+            //hd_print(__METHOD__ . ": Setup: changing $control_id value to $new_value");
         }
 
         switch ($control_id) {
@@ -203,7 +201,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
             case ACTION_CHANGE_PLAYLIST:
                 $old_value = $plugin_cookies->playlist_idx;
                 $plugin_cookies->playlist_idx = $new_value;
-                hd_print("current playlist idx: $new_value");
+                hd_print(__METHOD__ . ": current playlist idx: $new_value");
                 $action = $this->plugin->tv->reload_channels($this, $plugin_cookies);
                 if ($action === null) {
                     $plugin_cookies->playlist_idx = $old_value;
@@ -234,7 +232,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
             case self::SETUP_ACTION_CHANNELS_SOURCE: // handle streaming settings dialog result
                 $plugin_cookies->channels_source = $user_input->channels_source;
-                hd_print("Selected channels source: $plugin_cookies->channels_source");
+                hd_print(__METHOD__ . ": Selected channels source: $plugin_cookies->channels_source");
                 $action = $this->plugin->tv->reload_channels($this, $plugin_cookies);
                 if ($action === null) {
                     Action_Factory::show_title_dialog(TR::t('err_load_channels_list'));
@@ -262,7 +260,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                             break;
                     }
 
-                    hd_print("Selected channels path: $plugin_cookies->channels_url");
+                    hd_print(__METHOD__ . ": Selected channels path: $plugin_cookies->channels_url");
                 }
 
                 return $this->plugin->tv->reload_channels($this, $plugin_cookies);
@@ -271,7 +269,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 return $this->plugin->tv->reload_channels($this, $plugin_cookies);
 
             case ACTION_RESET_DEFAULT:
-                //hd_print(__METHOD__ . " reset_folder");
+                //hd_print(__METHOD__ . ": reset_folder");
                 $plugin_cookies->ch_list_path = '';
                 return $this->plugin->tv->reload_channels($this, $plugin_cookies);
         }

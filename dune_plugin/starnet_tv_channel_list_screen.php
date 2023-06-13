@@ -133,7 +133,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                     $s = mb_stripos($ch_title, $find_text, 0, "UTF-8");
                     if ($s !== false) {
                         $q = true;
-                        hd_print("found channel: $ch_title, idx: " . $idx);
+                        hd_print(__METHOD__ . ": found channel: $ch_title, idx: " . $idx);
                         $add_params['number'] = $idx;
                         Control_Factory::add_close_dialog_and_apply_button_title($defs, $this, $add_params,
                             ACTION_JUMP_TO_CHANNEL, '', $ch_title, 900);
@@ -230,7 +230,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         try {
             $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
         } catch (Exception $e) {
-            hd_print("Failed loading playlist! " . $e->getMessage());
+            hd_print(__METHOD__ . ": Failed loading playlist! " . $e->getMessage());
             return array();
         }
 

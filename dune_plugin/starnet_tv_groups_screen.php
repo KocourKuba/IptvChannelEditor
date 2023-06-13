@@ -43,7 +43,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         // if token not set force to open setup screen
-        // hd_print('Starnet_Tv_Groups_Screen: get_action_map');
+        //hd_print(__METHOD__);
 
         $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS, TR::t('entry_setup'));
 
@@ -56,7 +56,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         );
 
         if ($this->IsSetupNeeds($plugin_cookies) !== false) {
-            hd_print("Create setup action");
+            hd_print(__METHOD__ . ": Create setup action");
             $configure = User_Input_Handler_Registry::create_action($this, ACTION_NEED_CONFIGURE);
             $actions[GUI_EVENT_KEY_PLAY] = $configure;
             $actions[GUI_EVENT_KEY_ENTER] = $configure;
@@ -81,7 +81,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         switch ($user_input->control_id) {
             case ACTION_NEED_CONFIGURE:
                 if ($this->IsSetupNeeds($plugin_cookies)) {
-                    hd_print("Setup required!");
+                    hd_print(__METHOD__ . ": Setup required!");
                     return Action_Factory::show_title_dialog(TR::t('err_no_account_data'),
                         Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), TR::t('entry_setup')));
                 }
@@ -112,13 +112,8 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 return Action_Factory::show_dialog(TR::t('tv_screen_information'), $defs);
 
             case GUI_EVENT_KEY_RETURN:
-                $post_action = Action_Factory::close_and_run();
-                if ($this->plugin->history_support) {
-                    Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                    $post_action = Starnet_Epfs_Handler::invalidate_folders(null, $post_action);
-                }
-
-                return $post_action;
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+                return Starnet_Epfs_Handler::invalidate_folders(null, Action_Factory::close_and_run());
         }
 
         return null;
@@ -135,7 +130,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         try {
             $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
         } catch (Exception $e) {
-            hd_print("Channels not loaded");
+            hd_print(__METHOD__ . ": Channels not loaded");
         }
 
         $items = array();
@@ -160,6 +155,12 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                     PluginRegularFolderItem::media_url => Starnet_Tv_Channel_List_Screen::get_media_url_str(
                         Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID),
                     PluginRegularFolderItem::caption => Default_Dune_Plugin::ALL_CHANNEL_GROUP_CAPTION,
+                    PluginRegularFolderItem::view_item_params => $icons_param
+                );
+            } else if ($group->is_history_group()) {
+                $hist_item = array(
+                    PluginRegularFolderItem::media_url => Starnet_TV_History_Screen::get_media_url_str(),
+                    PluginRegularFolderItem::caption => Default_Dune_Plugin::PLAYBACK_HISTORY_CAPTION,
                     PluginRegularFolderItem::view_item_params => $icons_param
                 );
             } else {
@@ -193,6 +194,10 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             array_unshift($items, $all_item);
         }
 
+        if (isset($hist_item)) {
+            array_unshift($items, $hist_item);
+        }
+
         if (isset($fav_item)) {
             array_unshift($items, $fav_item);
         }
@@ -201,7 +206,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             $items[] = $vod_item;
         }
 
-        // hd_print("Loaded items " . count($items));
+        //hd_print("Loaded items " . count($items));
         return $items;
     }
 
@@ -222,7 +227,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 $setup_needs = empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
                 break;
             default:
-                hd_print("Access type not set");
+                hd_print(__METHOD__ . ": Access type not set");
                 $setup_needs = false;
         }
 

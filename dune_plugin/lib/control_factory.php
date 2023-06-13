@@ -23,7 +23,7 @@ class Control_Factory
      * @param string $text
      * @param bool $vgap_after
      */
-    public static function add_label(&$defs, $title, $text, $vgap_after = 2)
+    public static function add_label(&$defs, $title, $text, $vgap_after = 4)
     {
         $defs[] = array
         (
@@ -348,5 +348,7 @@ class Control_Factory
                 GuiComboboxDef::confirm_action => $confirm_action,
             ),
         );
+
+        self::add_vgap($defs, 4);
     }
 }
