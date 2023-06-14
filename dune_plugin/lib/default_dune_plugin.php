@@ -755,7 +755,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewItemParams::icon_sel_margin_top => 0,
                     ViewItemParams::item_paint_caption => true,
                     ViewItemParams::item_caption_width => 1100,
-                    ViewItemParams::item_caption_font_size => FONT_SIZE_LARGE,
+                    ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array
@@ -1178,7 +1178,7 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewItemParams::icon_sel_margin_top => 0,
                     ViewItemParams::item_paint_caption => true,
                     ViewItemParams::item_caption_width => 1100,
-                    ViewItemParams::item_caption_font_size => FONT_SIZE_LARGE,
+                    ViewItemParams::item_caption_font_size => FONT_SIZE_NORMAL,
                 ),
 
                 PluginRegularFolderView::not_loaded_view_item_params => array
