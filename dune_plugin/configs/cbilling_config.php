@@ -84,7 +84,7 @@ class cbilling_config extends default_config
     {
         hd_print(__METHOD__ . ": $movie_id");
         $movie = new Movie($movie_id, $this->parent);
-        $json = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/video/$movie_id", false);
+        $json = HD::DownloadJson($this->GetVodListUrl($plugin_cookies) . "/video/$movie_id", false);
         if ($json === false) {
             return $movie;
         }
@@ -138,31 +138,13 @@ class cbilling_config extends default_config
 
     /**
      * @param $plugin_cookies
-     * @return string
-     */
-    protected function GetVodListUrl($plugin_cookies)
-    {
-        //hd_print("Type: $type");
-
-        $password = $this->get_password($plugin_cookies);
-
-        if (empty($password)) {
-            hd_print(__METHOD__ . ": Password not set");
-            return '';
-        }
-
-        return $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . '/genres';
-    }
-
-    /**
-     * @param $plugin_cookies
      * @param array &$category_list
      * @param array &$category_index
      */
     public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
     {
         hd_print(__METHOD__);
-        $jsonItems = HD::DownloadJson($this->get_vod_uri($plugin_cookies), false);
+        $jsonItems = HD::DownloadJson($this->GetVodListUrl($plugin_cookies), false);
         if ($jsonItems === false) {
             return;
         }
@@ -177,7 +159,7 @@ class cbilling_config extends default_config
             $total += $node->count;
 
             // fetch genres for category
-            $genres = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/cat/$id/genres", false);
+            $genres = HD::DownloadJson($this->GetVodListUrl($plugin_cookies) . "/cat/$id/genres", false);
             if ($genres === false) {
                 continue;
             }
@@ -210,7 +192,7 @@ class cbilling_config extends default_config
     public function getSearchList($keyword, $plugin_cookies)
     {
         //hd_print("__METHOD__");
-        $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
+        $url = $this->GetVodListUrl($plugin_cookies) . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
         $searchRes = HD::DownloadJson($url, false);
         return $searchRes === false ? array() : $this->CollectSearchResult($searchRes);
     }
@@ -239,7 +221,7 @@ class cbilling_config extends default_config
             $url = "/genres/$genre_id?page=$val";
         }
 
-        $categories = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . $url, false);
+        $categories = HD::DownloadJson($this->GetVodListUrl($plugin_cookies) . $url, false);
         return $categories === false ? array() : $this->CollectSearchResult($categories);
     }
 
