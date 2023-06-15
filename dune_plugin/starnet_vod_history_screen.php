@@ -36,10 +36,11 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         return array(
-            GUI_EVENT_KEY_ENTER      => $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play(),
-            GUI_EVENT_KEY_PLAY       => Action_Factory::vod_play(),
-            GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete')),
-            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
+            GUI_EVENT_KEY_ENTER    => $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play(),
+            GUI_EVENT_KEY_PLAY     => Action_Factory::vod_play(),
+            GUI_EVENT_KEY_B_GREEN  => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete')),
+            GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR, TR::t('clear_history')),
+            GUI_EVENT_KEY_D_BLUE   => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
         );
     }
 
@@ -80,7 +81,14 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 				$range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
 				return Action_Factory::update_regular_folder($range, true, $sel_ndx);
 
-			case ACTION_ADD_FAV:
+            case ACTION_ITEMS_CLEAR:
+                $this->plugin->vod->set_history_items(array(), $plugin_cookies);
+                HD::erase_items(Starnet_Vod::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies));
+                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
+                return Action_Factory::update_regular_folder($range, true);
+
+            case ACTION_ADD_FAV:
 				$is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
 				$opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
 				$message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');

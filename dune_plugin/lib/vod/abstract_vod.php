@@ -349,7 +349,7 @@ abstract class Abstract_Vod implements Vod
 
     public function add_movie_to_history($id, $series_idx, $item, &$plugin_cookies)
     {
-        //hd_print("add movie to history: id: $id, series: $series_idx");
+        //hd_print(__METHOD__ . ": add movie to history: id: $id, series: $series_idx");
         $this->ensure_history_loaded($plugin_cookies);
 
         if (isset($this->history_items[$id])) {

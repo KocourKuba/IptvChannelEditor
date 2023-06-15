@@ -92,7 +92,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         }
 
         if ($handle = opendir($dir)) {
-            $bug_kind = $smb_shares::get_bug_platform_kind();
+            $bug_kind = get_bug_platform_kind();
             while (false !== ($file = readdir($handle))) {
                 if ($file !== "." && $file !== "..") {
                     $absolute_filepath = $dir . '/' . $file;

@@ -38,6 +38,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
             GUI_EVENT_KEY_ENTER    => $action_play,
             GUI_EVENT_KEY_PLAY     => $action_play,
             GUI_EVENT_KEY_B_GREEN  => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete')),
+            GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR, TR::t('clear_history')),
             GUI_EVENT_KEY_D_BLUE   => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
         );
     }
@@ -81,6 +82,14 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
                 return Starnet_Epfs_Handler::invalidate_folders(null,
                     Action_Factory::update_regular_folder($range, true, $sel_ndx));
+
+            case ACTION_ITEMS_CLEAR:
+                Playback_Points::clear(smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()));
+                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+                return Starnet_Epfs_Handler::invalidate_folders(null,
+                    Action_Factory::update_regular_folder($range, true));
 
 			case ACTION_ADD_FAV:
 				$is_favorite = $this->plugin->tv->is_favorite_channel_id($channel_id, $plugin_cookies);

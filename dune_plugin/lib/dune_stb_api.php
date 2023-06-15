@@ -336,6 +336,17 @@ function get_platform_kind()
     return $platform_kind;
 }
 
+function get_bug_platform_kind()
+{
+    static $bug_platform_kind = null;
+
+    if (is_null($bug_platform_kind)) {
+        $v = get_platform_kind();
+        $bug_platform_kind = ($v === '8672' || $v === '8673' || $v === '8758');
+    }
+    return $bug_platform_kind;
+}
+
 function get_android_platform()
 {
     static $result = null;
