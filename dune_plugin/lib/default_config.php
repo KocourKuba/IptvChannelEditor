@@ -586,6 +586,9 @@ class default_config extends dynamic_config
         $ext_params[Stream_Params::CU_DURATION] = $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
         $ext_params[Ext_Params::M_DEVICE_ID] = $this->get_device_id($plugin_cookies);
         $ext_params[Ext_Params::M_SERVER_ID] = $this->get_server_id($plugin_cookies);
+        $ext_params[Ext_Params::M_PROFILE_ID] = $this->get_profile_id($plugin_cookies);
+        $ext_params[Ext_Params::M_QUALITY_ID] = $this->get_quality_id($plugin_cookies);
+        $ext_params[Ext_Params::M_PASSWORD] = $this->get_password($plugin_cookies);
 
         $replaces = array(
             Plugin_Constants::CGI_BIN    => Plugin_Macros::CGI_BIN,
@@ -606,6 +609,7 @@ class default_config extends dynamic_config
             Ext_Params::M_QUALITY_ID     => Plugin_Macros::QUALITY_ID,
             Ext_Params::M_DEVICE_ID      => Plugin_Macros::DEVICE_ID,
             Ext_Params::M_SERVER_ID      => Plugin_Macros::SERVER_ID,
+            Ext_Params::M_PROFILE_ID     => Plugin_Macros::PROFILE_ID,
             Ext_Params::M_VAR1           => Plugin_Macros::VAR1,
             Ext_Params::M_VAR2           => Plugin_Macros::VAR2,
             Ext_Params::M_VAR3           => Plugin_Macros::VAR3,
