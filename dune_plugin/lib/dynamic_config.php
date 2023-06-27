@@ -63,6 +63,11 @@ class dynamic_config
             //foreach($epg as $key=>$value) hd_print("$key: $value");
         }
 
+        $int_epg = array();
+        $int_epg[Epg_Params::EPG_DOMAIN] = '';
+        $int_epg[Epg_Params::EPG_URL] = Plugin_Macros::EPG_ID;
+        $this->set_epg_params(Plugin_Constants::EPG_INTERNAL, $int_epg);
+
         $servers = array();
         foreach ($settings[Plugin_Constants::SERVERS_LIST] as $pair) {
             $servers[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];

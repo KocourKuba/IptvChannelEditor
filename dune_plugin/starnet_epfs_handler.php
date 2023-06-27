@@ -124,7 +124,7 @@ class Starnet_Epfs_Handler extends Base_Epfs_Handler
         hd_print(__METHOD__ . ": first run " . ($first_run ? "yes" : "no"));
 
         Playback_Points::load_points(
-            smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()),
+            smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH),
             true);
 
         self::ensure_no_internet_epfs_created($first_run, $plugin_cookies);

@@ -486,11 +486,15 @@ class smb_tree
     /**
      * @param $plugin_cookies
      * @param $param string
-     * @param $default string
+     * @param $default string|null
      * @return string
      */
-    public static function get_folder_info($plugin_cookies, $param, $default)
+    public static function get_folder_info($plugin_cookies, $param, $default = null)
     {
+        if ($default === null) {
+            $default = get_data_path();
+        }
+
         if (empty($plugin_cookies->{$param})) {
             return $default;
         }

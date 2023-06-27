@@ -124,7 +124,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
                 $media_url = MediaURL::encode(
                     array(
                         'screen_id' => Starnet_Folder_Screen::ID,
-                        'save_data' => ACTION_HISTORY_PATH,
+                        'save_data' => PARAM_HISTORY_PATH,
                         'windowCounter' => 1,
                     )
                 );
@@ -133,7 +133,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
             case ACTION_RESET_DEFAULT:
                 hd_print(__METHOD__ . ": do set history folder to default: " . get_data_path());
                 $media_url = MediaURL::encode(array('filepath' => get_data_path()));
-                smb_tree::set_folder_info($plugin_cookies, MediaURL::decode($media_url), ACTION_HISTORY_PATH);
+                smb_tree::set_folder_info($plugin_cookies, MediaURL::decode($media_url), PARAM_HISTORY_PATH);
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case self::SETUP_ACTION_COPY_TO_DATA:
@@ -193,7 +193,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
 
     private function get_history_path($plugin_cookies)
     {
-        return smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path());
+        return smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH);
     }
 
     public static function CopyData($sourcePath, $destPath){

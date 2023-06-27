@@ -98,8 +98,10 @@ const ACTION_REMOVE_PLAYBACK_POINT = 'remove_playback_point';
 const ACTION_CLEAR_PLAYBACK_POINTS = 'clear_playback_points';
 const ACTION_CLEAR_FAVORITES = 'clear_favorites';
 const ACTION_RESET_DEFAULT = 'reset_default';
-const ACTION_CH_LIST_PATH = 'channels_list_path';
-const ACTION_HISTORY_PATH = 'history_path';
+
+const PARAM_CH_LIST_PATH = 'channels_list_path';
+const PARAM_HISTORY_PATH = 'history_path';
+const PARAM_XMLTV_INDEX = 'xmltv_index';
 
 # Mounted storages path
 const DUNE_MOUNTED_STORAGES_PATH = '/tmp/mnt/storage/';
@@ -186,6 +188,7 @@ class SetupControlSwitchDefs
     const switch_small = 'small';
     const switch_epg1  = Plugin_Constants::EPG_FIRST;
     const switch_epg2 = Plugin_Constants::EPG_SECOND;
+    const switch_epg3 = Plugin_Constants::EPG_INTERNAL;
 }
 
 # Video zoom values for media_url string (|||dune_params|||zoom:value)

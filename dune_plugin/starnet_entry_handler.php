@@ -63,7 +63,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 return Action_Factory::show_title_dialog($msg);
 
             case 'do_clear_epg':
-                $this->plugin->tv->clear_epg_cache();
+                $this->plugin->config->epg_man->clear_epg_cache(true);
                 return Action_Factory::clear_rows_info_cache(Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared')));
 
             case 'plugin_entry':
@@ -71,7 +71,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
                 hd_print(__METHOD__ . ": plugin_entry $user_input->action_id");
                 clearstatcache();
-                Playback_Points::load_points(smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()));
+                Playback_Points::load_points(smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH));
 
                 switch ($user_input->action_id) {
                     case 'launch':

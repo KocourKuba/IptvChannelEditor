@@ -12,7 +12,7 @@ class ExtGrp
      */
     public function __construct($lineStr)
     {
-        $this->makeData($lineStr);
+        $this->parseData($lineStr);
     }
 
     /**
@@ -23,7 +23,7 @@ class ExtGrp
      *
      * @param string $lineStr
      */
-    protected function makeData($lineStr)
+    protected function parseData($lineStr)
     {
         $name = trim(substr($lineStr, 8)); // #EXTINF
         $this->setGroup($name);

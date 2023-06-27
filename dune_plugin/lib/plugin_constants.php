@@ -71,4 +71,5 @@ class Plugin_Constants
     // not used in config
     const EPG_FIRST = 'first';
     const EPG_SECOND = 'second';
+    const EPG_INTERNAL = 'internal';
 }

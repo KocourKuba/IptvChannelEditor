@@ -234,7 +234,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                         $media_url->filepath !== '/tmp/mnt/storage' &&
                         $media_url->filepath !== '/tmp/mnt/network' &&
                         $media_url->filepath !== '/tmp/mnt/smb' &&
-                        ($media_url->save_data === ACTION_CH_LIST_PATH || $media_url->save_data === ACTION_HISTORY_PATH)
+                        ($media_url->save_data === PARAM_CH_LIST_PATH || $media_url->save_data === PARAM_HISTORY_PATH)
                     ) {
                         $info = TR::t('folder_screen_select__1', $caption);
                     } else {
@@ -374,11 +374,11 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
                 //hd_print(__METHOD__ . ": select_folder: " . $url->get_media_url_str());
                 $post_action = null;
-                if ($url->save_data === ACTION_CH_LIST_PATH) {
-                    smb_tree::set_folder_info($plugin_cookies, $url, ACTION_CH_LIST_PATH);
+                if ($url->save_data === PARAM_CH_LIST_PATH) {
+                    smb_tree::set_folder_info($plugin_cookies, $url, PARAM_CH_LIST_PATH);
                     $post_action = User_Input_Handler_Registry::create_action_screen(Starnet_Channels_Setup_Screen::ID, ACTION_RELOAD);
-                } else if ($url->save_data === ACTION_HISTORY_PATH) {
-                    smb_tree::set_folder_info($plugin_cookies, $url, ACTION_HISTORY_PATH);
+                } else if ($url->save_data === PARAM_HISTORY_PATH) {
+                    smb_tree::set_folder_info($plugin_cookies, $url, PARAM_HISTORY_PATH);
                     $post_action = User_Input_Handler_Registry::create_action_screen(Starnet_History_Setup_Screen::ID, ACTION_RELOAD);
                 }
 

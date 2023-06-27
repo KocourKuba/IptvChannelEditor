@@ -203,6 +203,11 @@ class M3uParser
         }
 
         if (self::isTag($line)) {
+            if (self::isExtM3u($line)) {
+                $entry->setExtM3u(new ExtM3U($line));
+                return true;
+            }
+
             if (self::isExtInf($line)) {
                 $entry->setExtInf(new ExtInf($line));
             } else if (self::isExtGrp($line)) {

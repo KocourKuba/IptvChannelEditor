@@ -76,7 +76,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         switch ($channels_source)
         {
             case 1: // channels path
-                $display_path = smb_tree::get_folder_info($plugin_cookies, ACTION_CH_LIST_PATH, get_install_path());
+                $display_path = smb_tree::get_folder_info($plugin_cookies, PARAM_CH_LIST_PATH, get_install_path());
 
                 if (is_apk()) {
                     Control_Factory::add_label($defs, TR::t('setup_channels_src_label'), $display_path);

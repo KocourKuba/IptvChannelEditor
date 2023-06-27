@@ -97,7 +97,7 @@ class Starnet_Vod extends Abstract_Vod
 
     protected function do_save_history_movies($history_items, $plugin_cookies)
     {
-        $history_path = smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()) .
+        $history_path = smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH) .
             self::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies);
 
         HD::put_items($history_path, $history_items);
@@ -105,7 +105,7 @@ class Starnet_Vod extends Abstract_Vod
 
     protected function load_history($plugin_cookies)
     {
-        $history_path = smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()) .
+        $history_path = smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH) .
             self::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies);
 
         $history_items = HD::get_items($history_path, true);

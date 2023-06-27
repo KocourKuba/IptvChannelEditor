@@ -37,10 +37,15 @@ class default_config extends dynamic_config
      * @var array[]
      */
     protected $vod_m3u_indexes;
+    /**
+     * @var Epg_Manager
+     */
+    public $epg_man;
 
     public function __construct()
     {
         $this->m3u_parser = new M3uParser();
+        $this->epg_man = new Epg_Manager($this);
     }
 
     public function set_parent($parent)
@@ -300,7 +305,7 @@ class default_config extends dynamic_config
         switch ($plugin_cookies->channels_source) {
             case 1: // folder
                 hd_print(__METHOD__ . ": Channels source: folder");
-                $channels_list_path = smb_tree::get_folder_info($plugin_cookies, ACTION_CH_LIST_PATH, get_install_path());
+                $channels_list_path = smb_tree::get_folder_info($plugin_cookies, PARAM_CH_LIST_PATH, get_install_path());
                 break;
             case 2: // url
                 hd_print(__METHOD__ . ": Channels source: url");
@@ -727,6 +732,12 @@ class default_config extends dynamic_config
 
         $mapped = 0;
         foreach ($m3u_entries as $entry) {
+            if ($entry->isExtM3U()) {
+                $xmltv_url = $entry->getAnyAttribute(array('url-tvg', 'x-tvg-url'));
+                hd_print(__METHOD__ . ": xmltv url: $xmltv_url");
+                $this->epg_man->set_xmltv_url($xmltv_url);
+            }
+
             if (!empty($tag_id)) {
                 // special case for name, otherwise take ID from selected tag
                 $id = ($tag_id === 'name') ? $entry->getTitle() : $entry->getAttribute($tag_id);

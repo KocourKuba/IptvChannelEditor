@@ -25,11 +25,6 @@ class Starnet_Tv implements Tv, User_Input_Handler
     protected $plugin;
 
     /**
-     * @var Epg_Manager
-     */
-    protected $epg_man;
-
-    /**
      * @var bool
      */
     protected $show_all_channels_group;
@@ -71,7 +66,6 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $this->plugin = $plugin;
         $this->show_all_channels_group = true;
         $this->playback_url_is_stream_url = false;
-        $this->epg_man = new Epg_Manager($plugin->config);
 
         User_Input_Handler_Registry::get_instance()->register_handler($this);
     }
@@ -151,16 +145,6 @@ class Starnet_Tv implements Tv, User_Input_Handler
     public function get_vod_group()
     {
         return $this->vod_group;
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * clear epg memory cache
-     */
-    public function clear_epg_cache()
-    {
-        $this->epg_man->clear_epg_cache();
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -321,7 +305,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             hd_print(__METHOD__ . ": Load channels list using source: $source");
             switch ($source) {
                 case 1:
-                    $channels_list_path = smb_tree::get_folder_info($plugin_cookies, ACTION_CH_LIST_PATH, get_install_path());
+                    $channels_list_path = smb_tree::get_folder_info($plugin_cookies, PARAM_CH_LIST_PATH, get_install_path());
                     $channels_list_path .= $channels_list;
                     hd_print(__METHOD__ . ": load from: $channels_list_path");
                     break;
@@ -600,6 +584,9 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $this->set_fav_channel_ids($plugin_cookies, $fav_channel_ids);
 
         hd_print(__METHOD__ . ": Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
+        if (isset($plugin_cookies->epg_source) && $plugin_cookies->epg_source === Plugin_Constants::EPG_INTERNAL) {
+            $this->plugin->config->epg_man->index_xmltv_file($plugin_cookies);
+        }
     }
 
     /**
@@ -717,10 +704,10 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
         //hd_print(__METHOD__ . ": day_start timestamp: $day_start_ts (" . format_datetime("Y-m-d H:i", $day_start_ts) . ")");
         $epg_source_id = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
-        $day_epg_items = $this->epg_man->get_day_epg_items($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
-        if ($day_epg_items === false) {
+        $day_epg_items = $this->plugin->config->epg_man->get_day_epg_items($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
+        if ($day_epg_items === false && $epg_source_id !== Plugin_Constants::EPG_INTERNAL) {
             $epg_source_id = ($epg_source_id === Plugin_Constants::EPG_FIRST) ? Plugin_Constants::EPG_SECOND : Plugin_Constants::EPG_FIRST;
-            $day_epg_items = $this->epg_man->get_day_epg_items($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
+            $day_epg_items = $this->plugin->config->epg_man->get_day_epg_items($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
         }
 
         if ($day_epg_items !== false) {
@@ -908,7 +895,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
                 if (!$this->plugin->new_ui_support
                     || !(isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed))) break;
 
-                Playback_Points::save(smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()));
+                Playback_Points::save(smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH));
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
                 return Starnet_Epfs_Handler::invalidate_folders(null,
                     Action_Factory::invalidate_folders(array(Starnet_TV_History_Screen::get_media_url_str())));

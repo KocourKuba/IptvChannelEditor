@@ -2,9 +2,15 @@
 
 require_once 'ExtInf.php';
 require_once 'ExtGrp.php';
+require_once 'ExtM3U.php';
 
 class Entry
 {
+    /**
+     * @var ExtM3U|null
+     */
+    private $extM3U;
+
     /**
      * @var ExtInf|null
      */
@@ -31,6 +37,38 @@ class Entry
     private $parsed_title;
 
     /**
+     * @return boolean
+     */
+    public function isExtM3U()
+    {
+        return !is_null($this->extM3U);
+    }
+
+    /**
+     * @return ExtM3U|null
+     */
+    public function getExtM3U()
+    {
+        return $this->extM3U;
+    }
+
+    /**
+     * @param ExtM3U $extM3U
+     */
+    public function setExtM3U(ExtM3U $extM3U)
+    {
+        $this->extM3U = $extM3U;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isExtInf()
+    {
+        return !is_null($this->extInf);
+    }
+
+    /**
      * @return ExtInf|null
      */
     public function getExtInf()
@@ -44,6 +82,14 @@ class Entry
     public function setExtInf(ExtInf $extInf)
     {
         $this->extInf = $extInf;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isExtGrp()
+    {
+        return !is_null($this->extGrp);
     }
 
     /**
@@ -109,9 +155,29 @@ class Entry
      */
     public function getAttribute($attr)
     {
-        if ($this->extInf === null)
-            return '';
+        if ($this->isExtInf()) {
+            return $this->extInf->getAttribute($attr);
+        }
 
-        return $this->extInf->getAttribute($attr);
+        if ($this->isExtM3U()) {
+            return $this->extM3U->getAttribute($attr);
+        }
+
+        return '';
+    }
+
+    /**
+     * @param $attrs array
+     * @return string
+     */
+    public function getAnyAttribute($attrs)
+    {
+        foreach ($attrs as $attr) {
+            $val = $this->getAttribute($attr);
+            if (!empty($val))
+                return $val;
+        }
+
+        return '';
     }
 }

@@ -190,8 +190,8 @@ class HD
     }
 
     /**
-     * @param string $url
-     * @param array $opts
+     * @param $url string
+     * @param $opts array
      * @return bool|string
      * @throws Exception
      */
@@ -222,7 +222,7 @@ class HD
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         if ($content === false) {
-            $err_msg = __METHOD__ . ": Using default history channels group HTTP error: $http_code (" . curl_error($ch) . ')';
+            $err_msg = __METHOD__ . ": HTTP error: $http_code (" . curl_error($ch) . ')';
             hd_print($err_msg);
             throw new Exception($err_msg);
         }
@@ -236,6 +236,62 @@ class HD
         curl_close($ch);
 
         return $content;
+    }
+
+    /**
+     * @param $url string
+     * @param $file_name string
+     * @param $opts array
+     * @return bool|mixed
+     * @throws Exception
+     */
+    public static function http_save_document($url, $file_name, $opts = null)
+    {
+        $fp = fopen($file_name, 'wb');
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 2);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_USERAGENT, self::get_dune_user_agent());
+        curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
+        curl_setopt($ch, CURLOPT_FILETIME, true);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+
+        if (isset($opts)) {
+            //self::dump_curl_opts($opts);
+            foreach ($opts as $k => $v) {
+                curl_setopt($ch, $k, $v);
+            }
+        }
+
+        hd_print(__METHOD__ . ": HTTP fetching $url");
+
+        $result = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if ($result === false) {
+            $err_msg = __METHOD__ . ": HTTP error: $http_code (" . curl_error($ch) . ')';
+            hd_print($err_msg);
+            throw new Exception($err_msg);
+        }
+
+        if ($http_code >= 300) {
+            $err_msg = __METHOD__ . ": HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
+            hd_print($err_msg);
+            throw new Exception($err_msg);
+        }
+
+        $file_time = curl_getinfo($ch, CURLINFO_FILETIME);
+
+        curl_close($ch);
+
+        return $file_time;
     }
 
     /**
@@ -765,13 +821,31 @@ class HD
         return $contents;
     }
 
-    public static function StoreContentToFile($content, $path)
+    /**
+     * @param $path string
+     * @param $content mixed
+     */
+    public static function StoreContentToFile($path, $content)
     {
         if (empty($path)) {
             hd_print(__METHOD__ . ": Path not set");
         } else {
             file_put_contents($path, json_encode($content));
         }
+    }
+
+    /**
+     * @param $path string
+     * @param $assoc boolean
+     */
+    public static function ReadContentFromFile($path, $assoc = true)
+    {
+        if (empty($path) || !file_exists($path)) {
+            hd_print(__METHOD__ . ": Path not exists: $path");
+            return false;
+        }
+
+        return json_decode(file_get_contents($path), $assoc);
     }
 
     public static function ShowMemoryUsage()

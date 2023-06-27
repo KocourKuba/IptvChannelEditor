@@ -564,16 +564,17 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
             case ACTION_ITEMS_CLEAR:
             case ACTION_CLEAR_PLAYBACK_POINTS:
-                if ($media_url->group_id !== Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID) {
-                    return $this->plugin->tv->change_tv_favorites(ACTION_CLEAR_FAVORITES, $media_url->channel_id, $plugin_cookies);
-                }
-
                 if ($media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID) {
                     $this->clear_playback_points = true;
                     Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
 
                     return Starnet_Epfs_Handler::invalidate_folders();
                 }
+
+                if ($media_url->group_id === Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID) {
+                    return $this->plugin->tv->change_tv_favorites(ACTION_CLEAR_FAVORITES, $media_url->channel_id, $plugin_cookies);
+                }
+
                 break;
             case ACTION_ZOOM_APPLY:
                 if (!isset($user_input->{ACTION_ZOOM_SELECT})) break;
@@ -623,7 +624,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
     {
         //hd_print("Starnet_Tv_Rows_Screen::get_history_rows");
         if ($this->clear_playback_points) {
-            Playback_Points::clear(smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()));
+            Playback_Points::clear(smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH));
             $this->clear_playback_points = false;
             return null;
         }
@@ -671,7 +672,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     if ($this->removed_playback_point === $id) {
                         $this->removed_playback_point = null;
                         Playback_Points::clear(
-                            smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()),
+                            smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH),
                             $item['channel_id']);
                         continue;
                     }

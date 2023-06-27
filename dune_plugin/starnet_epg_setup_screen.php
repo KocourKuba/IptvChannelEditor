@@ -10,6 +10,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
     const CONTROLS_WIDTH = 800;
 
     const SETUP_ACTION_EPG_SOURCE = 'epg_source';
+    const SETUP_ACTION_EPG_CACHE_TTL = 'epg_cache_ttl';
     const SETUP_ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
     const SETUP_ACTION_EPG_FONT = 'epg_font_size';
     const SETUP_ACTION_EPG_SHIFT = 'epg_shift';
@@ -20,6 +21,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         SetupControlSwitchDefs::switch_normal => '%tr%setup_normal',
         SetupControlSwitchDefs::switch_epg1 => '%tr%setup_first',
         SetupControlSwitchDefs::switch_epg2 => '%tr%setup_second',
+        SetupControlSwitchDefs::switch_epg3 => '%tr%setup_internal',
     );
 
     private static $on_off_img = array
@@ -77,24 +79,39 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
         //////////////////////////////////////
         // EPG
-        $epg_params = $this->plugin->config->get_epg_params(Plugin_Constants::EPG_SECOND);
-        if (!empty($epg_params[Epg_Params::EPG_URL])) {
-            $epg_source_ops = array();
-            $epg_source_ops[SetupControlSwitchDefs::switch_epg1] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg1];
-            $epg_source_ops[SetupControlSwitchDefs::switch_epg2] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg2];
+        $epg_source_ops = array();
+        $epg_source_ops[SetupControlSwitchDefs::switch_epg1] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg1];
+        $epg_source_ops[SetupControlSwitchDefs::switch_epg2] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg2];
+        $epg_source_ops[SetupControlSwitchDefs::switch_epg3] = self::$on_off_ops[SetupControlSwitchDefs::switch_epg3];
 
-            if (!isset($plugin_cookies->epg_source)) {
-                $plugin_cookies->epg_source = SetupControlSwitchDefs::switch_epg1;
-            }
-
-            Control_Factory::add_combobox($defs, $this, null,
-                self::SETUP_ACTION_EPG_SOURCE, TR::t('setup_epg_source'), $plugin_cookies->epg_source, $epg_source_ops, self::CONTROLS_WIDTH);
+        if (!isset($plugin_cookies->epg_source)) {
+            $plugin_cookies->epg_source = SetupControlSwitchDefs::switch_epg1;
         }
+
+        Control_Factory::add_combobox($defs, $this, null,
+            self::SETUP_ACTION_EPG_SOURCE, TR::t('setup_epg_source'),
+            $plugin_cookies->epg_source, $epg_source_ops, self::CONTROLS_WIDTH, true);
+
+        $epg_cache_ops = array();
+        $epg_cache_ops[1] = 1;
+        $epg_cache_ops[2] = 2;
+        $epg_cache_ops[3] = 3;
+        $epg_cache_ops[5] = 5;
+        $epg_cache_ops[7] = 7;
+
+        if (!isset($plugin_cookies->epg_cache_ttl)) {
+            $plugin_cookies->epg_cache_ttl = 3;
+        }
+
+        Control_Factory::add_combobox($defs, $this, null,
+            self::SETUP_ACTION_EPG_CACHE_TTL, TR::t('setup_epg_cache_ttl'),
+            $plugin_cookies->epg_cache_ttl, $epg_cache_ops, self::CONTROLS_WIDTH, true);
 
         //////////////////////////////////////
         // clear epg cache
         Control_Factory::add_image_button($defs, $this, null,
-            self::SETUP_ACTION_CLEAR_EPG_CACHE, TR::t('entry_epg_cache_clear'), TR::t('clear'), $remove_icon, self::CONTROLS_WIDTH);
+            self::SETUP_ACTION_CLEAR_EPG_CACHE, TR::t('entry_epg_cache_clear'), TR::t('clear'),
+            $remove_icon, self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // epg font size
@@ -118,7 +135,8 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             $plugin_cookies->epg_shift = 0;
         }
         Control_Factory::add_combobox($defs, $this, null,
-            self::SETUP_ACTION_EPG_SHIFT, TR::t('setup_epg_shift'), $plugin_cookies->epg_shift, $show_epg_shift_ops, self::CONTROLS_WIDTH);
+            self::SETUP_ACTION_EPG_SHIFT, TR::t('setup_epg_shift'),
+            $plugin_cookies->epg_shift, $show_epg_shift_ops, self::CONTROLS_WIDTH);
 
         return $defs;
     }
@@ -150,6 +168,11 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 hd_print(__METHOD__ . ": Selected epg source: $plugin_cookies->epg_source");
                 break;
 
+            case self::SETUP_ACTION_EPG_CACHE_TTL:
+                $plugin_cookies->epg_cache_ttl = $user_input->epg_cache_ttl;
+                hd_print(__METHOD__ . ": Selected epg cache ttl: $plugin_cookies->epg_cache_ttl");
+                break;
+
             case self::SETUP_ACTION_EPG_FONT: // handle epg settings dialog result
                 $plugin_cookies->epg_font_size = ($plugin_cookies->epg_font_size === SetupControlSwitchDefs::switch_small)
                     ? SetupControlSwitchDefs::switch_normal
@@ -163,15 +186,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 break;
 
             case self::SETUP_ACTION_CLEAR_EPG_CACHE: // clear epg cache
-                $epg_path = get_temp_path("epg/");
-                hd_print(__METHOD__ . ": do clear epg: $epg_path");
-                foreach(glob($epg_path . "*") as $file) {
-                    if(is_file($file)) {
-                        hd_print(__METHOD__ . ": erase: $file");
-                        unlink($file);
-                    }
-                }
-
+                $this->plugin->config->epg_man->clear_epg_cache(true);
                 return Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared'));
         }
 

@@ -310,7 +310,7 @@ class sharaclub_config extends default_config
             return;
         }
 
-        HD::StoreContentToFile($jsonItems, self::get_vod_cache_file());
+        HD::StoreContentToFile(self::get_vod_cache_file(), $jsonItems);
 
         $category_list = array();
         $category_index = array();

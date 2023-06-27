@@ -73,7 +73,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
                 return Action_Factory::tv_play($media_url);
 
 			case ACTION_ITEM_DELETE:
-                Playback_Points::clear(smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()), $channel_id);
+                Playback_Points::clear(smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH), $channel_id);
 				$parent_media_url = MediaURL::decode($user_input->parent_media_url);
 				$sel_ndx = $user_input->sel_ndx + 1;
 				if ($sel_ndx < 0)
@@ -84,7 +84,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
                     Action_Factory::update_regular_folder($range, true, $sel_ndx));
 
             case ACTION_ITEMS_CLEAR:
-                Playback_Points::clear(smb_tree::get_folder_info($plugin_cookies, ACTION_HISTORY_PATH, get_data_path()));
+                Playback_Points::clear(smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH));
                 $parent_media_url = MediaURL::decode($user_input->parent_media_url);
                 $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);

@@ -71,8 +71,8 @@ class Starnet_Plugin extends Default_Dune_Plugin
 
         Playback_Points::init();
 
-        // force clear after reload
-        $this->tv->clear_epg_cache();
+        // clear epg cache after reload, but not the xmltv cache
+        $this->config->epg_man->clear_epg_cache();
 
         Starnet_Epfs_Handler::init($this);
 

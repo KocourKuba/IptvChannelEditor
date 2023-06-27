@@ -352,6 +352,7 @@ class Default_Channel implements Channel
     {
         switch ($epg_source_id) {
             case Plugin_Constants::EPG_FIRST:
+            case Plugin_Constants::EPG_INTERNAL:
                 $epg_id = $this->get_epg_id();
                 break;
             case Plugin_Constants::EPG_SECOND:
