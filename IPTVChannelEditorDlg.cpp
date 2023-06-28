@@ -4139,7 +4139,7 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 			m3u_tags m3uTags = (found != m_playlistMap.end()) ? found->second->get_m3u_entry().get_tags_map() : empty_tags_map;
 
 			os << "#EXTINF:-1";
-			os << " tvg-id=\"" << utils::utf16_to_utf8(channel->get_id()) << "\"";
+			os << " tvg-id=\"" << utils::utf16_to_utf8(channel->get_epg_id(0)) << "\"";
 			os << " group-title=\"" << utils::utf16_to_utf8(pair.second.category->get_title()) << "\"";
 
 			if (!channel->get_icon_uri().is_local())
