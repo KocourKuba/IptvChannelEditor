@@ -28,7 +28,6 @@ DEALINGS IN THE SOFTWARE.
 #include "m3u_entry.h"
 
 #include "UtilsLib\utils.h"
-#include "UtilsLib\rapidxml_value.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

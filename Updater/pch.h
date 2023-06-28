@@ -48,4 +48,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "Version.h"
 
+#include "UtilsLib\rapidxml_value.hpp"
+
 #endif //PCH_H

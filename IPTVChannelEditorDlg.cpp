@@ -58,8 +58,6 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 #include "UtilsLib\md5.h"
-#include "UtilsLib\rapidxml_print.hpp"
-#include "UtilsLib\rapidxml_value.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

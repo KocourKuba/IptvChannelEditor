@@ -37,7 +37,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
-#include "UtilsLib\rapidxml_value.hpp"
 #include "UtilsLib\Crc32.h"
 #include "UtilsLib\FileVersionInfo.h"
 

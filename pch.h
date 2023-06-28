@@ -50,6 +50,9 @@ DEALINGS IN THE SOFTWARE.
 
 #include "Version.h"
 #include "framework.h"
+#include "UtilsLib\rapidxml_utils.hpp"
+#include "UtilsLib\rapidxml_print.hpp"
+#include "UtilsLib\rapidxml_value.hpp"
 
 #define WM_INIT_PROGRESS (WM_USER + 301)
 #define WM_UPDATE_PROGRESS (WM_USER + 302)

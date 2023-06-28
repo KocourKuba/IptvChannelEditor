@@ -39,8 +39,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\FileVersionInfo.h"
 #include "UtilsLib\inet_utils.h"
-#include "UtilsLib\rapidxml_print.hpp"
-#include "UtilsLib\rapidxml_value.hpp"
 #include "UtilsLib\md5.h"
 
 #include "7zip\SevenZipWrapper.h"

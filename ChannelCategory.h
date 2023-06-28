@@ -28,8 +28,6 @@ DEALINGS IN THE SOFTWARE.
 #include "ChannelInfo.h"
 #include "IconContainer.h"
 
-#include "UtilsLib\rapidxml.hpp"
-
 // <tv_category>
 //   <id>1</id>
 //   <caption>Общие</caption>

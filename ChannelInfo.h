@@ -28,8 +28,6 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_stream.h"
 #include "IconContainer.h"
 
-#include "UtilsLib\rapidxml.hpp"
-
 // <tv_channel>
 //     <caption>Первый канал</caption>
 //     <tvg_id>1</tvg_id>

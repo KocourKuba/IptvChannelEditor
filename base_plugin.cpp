@@ -32,9 +32,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
-#include "UtilsLib\rapidxml_print.hpp"
-#include "UtilsLib\rapidxml_value.hpp"
-#include "UtilsLib\rapidxml_utils.hpp"
 
 #include "7zip\SevenZipWrapper.h"
 

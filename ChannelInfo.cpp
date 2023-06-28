@@ -28,8 +28,6 @@ DEALINGS IN THE SOFTWARE.
 #include "ChannelInfo.h"
 #include "ChannelCategory.h"
 
-#include "UtilsLib\rapidxml_value.hpp"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
