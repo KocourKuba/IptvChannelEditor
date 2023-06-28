@@ -257,11 +257,6 @@ struct EpgParameters
 	size_t epg_timezone = 0;
 	bool epg_use_duration = false;
 
-	// not saved to the config!
-	bool epg_use_mapper = false;
-	std::wstring epg_mapper_url;
-	std::map<std::wstring, std::wstring> epg_mapper;
-
 	bool compare_preset(const EpgParameters& src) const
 	{
 		return (epg_root == src.epg_root
@@ -439,6 +434,16 @@ public:
 	/// load plugin parameters to file
 	/// </summary>
 	virtual void load_plugin_parameters(const std::wstring& filename);
+
+	/// <summary>
+	/// set playlist epg url
+	/// </summary>
+	void set_internal_epg_url(const std::wstring& url) { internal_epg_url = url; }
+
+	/// <summary>
+	/// get playlist epg url
+	/// </summary>
+	const std::wstring& get_internal_epg_url() { return internal_epg_url; }
 
 	/// <summary>
 	/// get prefilled EPG parsing preset
@@ -685,7 +690,6 @@ public:
 	/// property epg parameter by index
 	/// </summary>
 	EpgParameters& get_epg_parameter(int idx) { return epg_params[idx]; };
-	void set_epg_parameter(int idx, const EpgParameters& val) { epg_params[idx] = val; };
 
 	/// <summary>
 	/// property epg domain
@@ -911,6 +915,7 @@ protected:
 	// non configurable parameters
 	PluginType plugin_type = PluginType::enCustom;
 	std::string type_name;
+	std::wstring internal_epg_url;
 
 	// configurable parameters
 	std::string class_name;

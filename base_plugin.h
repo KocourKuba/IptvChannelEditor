@@ -126,13 +126,6 @@ public:
 	std::wstring get_vod_url(size_t idx, TemplateParams& params);
 
 	/// <summary>
-	/// returns epg mapper
-	/// </summary>
-	/// <param name="epg_idx">index of epg, primary/secondary</param>
-	/// <returns>map&</returns>
-	const std::map<std::wstring, std::wstring>& get_epg_id_mapper(int epg_idx);
-
-	/// <summary>
 	/// parse epg for channel.
 	/// </summary>
 	/// <param name="epg_idx">index of epg, primary/secondary</param>
@@ -140,7 +133,7 @@ public:
 	/// <param name="epg_map">map of downloaded epg entries, used for cache</param>
 	/// <param name="for_time">date to request</param>
 	/// <returns>bool</returns>
-	bool parse_epg(int epg_idx, const std::wstring& epg_id, std::map<time_t, EpgInfo>& epg_map, time_t for_time, const uri_stream* info);
+	bool parse_epg(int epg_idx, const std::wstring& epg_id, std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 3>& epg_map, time_t for_time, const uri_stream* info);
 
 	/// <summary>
 	/// returns compiled epg url for channel

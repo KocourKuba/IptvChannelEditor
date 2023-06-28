@@ -58,7 +58,7 @@ protected:
 	afx_msg void OnBnClickedButtonClearCache();
 
 public:
-	std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 2>* m_epg_cache = nullptr;
+	std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 3>* m_epg_cache = nullptr;
 
 protected:
 	CComboBox m_wndLanguage;

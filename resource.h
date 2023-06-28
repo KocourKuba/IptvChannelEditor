@@ -500,6 +500,8 @@
 #define IDC_COMBO_PLUGIN_TYPE           1084
 #define IDC_COMBO_ICON_SOURCE           1085
 #define IDC_LIST_ICONS                  1086
+#define IDC_EDIT_STREAM_THREADS         1087
+#define IDC_SPIN_STREAM_THREADS         1088
 #define IDC_EDIT_ARCHIVE_DAYS           1089
 #define IDC_LIST_EPG                    1090
 #define IDC_CHECK_AUTO_SYNC_CHANNELS    1091
@@ -516,8 +518,7 @@
 #define IDC_RICHEDIT_EPG                1100
 #define IDC_RADIO_EPG1                  1101
 #define IDC_RADIO_EPG2                  1102
-#define IDC_EDIT_STREAM_THREADS         1103
-#define IDC_SPIN_STREAM_THREADS         1104
+#define IDC_RADIO_EPG3                  1103
 #define IDC_COMBO_LANG                  1105
 #define IDC_SPLIT_BUTTON_PACK           1106
 #define IDC_EDIT_CACHE_TTL              1106
@@ -715,7 +716,7 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281

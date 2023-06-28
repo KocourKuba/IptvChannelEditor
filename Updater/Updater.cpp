@@ -203,7 +203,7 @@ int parse_info(UpdateInfo& info)
 	auto& xml = info.update_info.str();
 	try
 	{
-		doc->parse<0>(xml.data());
+		doc->parse<rapidxml::parse_default>(xml.data());
 	}
 	catch (rapidxml::parse_error&)
 	{

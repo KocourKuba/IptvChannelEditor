@@ -113,28 +113,31 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 	int i = 0;
 	int current_idx = -1;
 	const auto& epg_id = m_info->get_epg_id(m_epg_idx);
-	m_pEpgChannelMap = &((*m_epg_cache)[m_epg_idx][epg_id]);
-	m_csEpgUrl = m_plugin->compile_epg_url(m_epg_idx, epg_id, start_time, m_info).c_str();
+	m_csEpgUrl = (m_epg_idx == 2) ? m_plugin->get_internal_epg_url().c_str() : m_plugin->compile_epg_url(m_epg_idx, epg_id, start_time, m_info).c_str();
 
 	bool need_load = true;
 	while (need_load)
 	{
-		for (auto& epg_pair : *m_pEpgChannelMap)
+		if (auto& it = m_epg_cache->at(m_epg_idx).find(epg_id); it != m_epg_cache->at(m_epg_idx).end())
 		{
-			if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
+			m_pEpgChannelMap = &(m_epg_cache->at(m_epg_idx)[epg_id]);
+			for (auto& epg_pair : it->second)
 			{
-				need_load = false;
-				break;
+				if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
+				{
+					need_load = false;
+					break;
+				}
 			}
 		}
 
-		if (need_load && !m_plugin->parse_epg(m_epg_idx, epg_id, *m_pEpgChannelMap, now, m_info))
+		if (need_load && !m_plugin->parse_epg(m_epg_idx, epg_id, *m_epg_cache, now, m_info))
 		{
 			need_load = false;
 		}
 	}
 
-	for (const auto& epg : *m_pEpgChannelMap)
+	for (const auto& epg : m_epg_cache->at(m_epg_idx)[epg_id])
 	{
 		time_t shifted_start = epg.first - time_shift;
 		time_t shifted_end = epg.second.time_end - time_shift;

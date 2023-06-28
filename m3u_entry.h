@@ -80,7 +80,7 @@ public:
 
 	directives get_directive() const { return ext_name; }
 
-	const std::map<std::string, std::string>& get_tags() const { return ext_tags; }
+	const std::map<std::string, std::string>& get_ext_tags() const { return ext_tags; }
 	const std::map<info_tags, std::string>& get_tags_map() const { return tags_map; }
 
 	std::string get_dvalue() const { return ext_value; }

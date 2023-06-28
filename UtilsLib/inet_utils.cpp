@@ -114,38 +114,28 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 	if (post_data)
 		hash_str += utf8_to_utf16(std::string(post_data));
 
-	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
-	std::filesystem::create_directory(cache_file);
-	cache_file.append(fmt::format(L"{:08x}", xxh::xxhash<32>(hash_str)));
 	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
 
-	if (m_cache_ttl_sec && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
+	const auto& cache_file = GetCachePath(hash_str);
+	ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
+	if (!CheckIsCacheExpired(cache_file))
 	{
-		ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
-		std::time_t file_time = to_time_t(std::filesystem::last_write_time(cache_file));
-		std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-		int diff = int(now - file_time);
-		// cache ttl 1 day
-		if (diff < m_cache_ttl_sec)
+		std::ifstream in_file(cache_file.c_str());
+		if (in_file.good())
 		{
-			ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n", diff / 3600, (diff - (diff / 3600 * 3600)) / 60, diff - diff / 60 * 60);
-			std::ifstream in_file(cache_file.c_str());
-			if (in_file.good())
+			vData << in_file.rdbuf();
+			in_file.close();
+			size_t data_size = vData.rdbuf()->_Get_buffer_view()._Size;
+			ATLTRACE(L"\nloaded from cache: %d bytes\n", data_size);
+			if (data_size != 0)
 			{
-				vData << in_file.rdbuf();
-				in_file.close();
-				size_t data_size = vData.rdbuf()->_Get_buffer_view()._Size;
-				ATLTRACE(L"\nloaded from cache: %d bytes\n", data_size);
-				if (data_size != 0)
-				{
-					return true;
-				}
+				return true;
 			}
 		}
-		else
-		{
-			ATLTRACE("\nCache expired. Download again.\n");
-		}
+	}
+	else
+	{
+		ATLTRACE("\nCache expired. Download again.\n");
 	}
 
 	do
@@ -376,6 +366,28 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 #endif // _DEBUG
 
 	return false;
+}
+
+std::filesystem::path CUrlDownload::GetCachePath(const std::wstring& hash_str)
+{
+	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
+	std::filesystem::create_directory(cache_file);
+	cache_file.append(fmt::format(L"{:08x}", xxh::xxhash<32>(hash_str)));
+	return cache_file;
+}
+
+bool CUrlDownload::CheckIsCacheExpired(const std::wstring& cache_file)
+{
+	if (m_cache_ttl_sec && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
+	{
+		std::time_t file_time = to_time_t(std::filesystem::last_write_time(cache_file));
+		std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		int diff = int(now - file_time);
+		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n", diff / 3600, (diff - (diff / 3600 * 3600)) / 60, diff - diff / 60 * 60);
+		return (diff > m_cache_ttl_sec);
+	}
+
+	return true;
 }
 
 std::string entityDecrypt(const std::string& text)

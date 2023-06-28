@@ -31,6 +31,7 @@ DEALINGS IN THE SOFTWARE.
 #include "utils.h"
 
 #include "boost\regex.hpp"
+#include "fmt\chrono.h"
 
 namespace utils
 {
@@ -50,6 +51,23 @@ constexpr auto L_SURROGATE_END = 0xDFFF;
 constexpr auto H_SURROGATE_START = 0xD800;
 constexpr auto H_SURROGATE_END = 0xDBFF;
 constexpr auto SURROGATE_PAIR_START = 0x10000;
+
+constexpr auto DATE_OFF_YEAR = 0;
+constexpr auto DATE_OFF_MON  = 4;
+constexpr auto DATE_OFF_DAY  = 6;
+constexpr auto DATE_OFF_HOUR = 8;
+constexpr auto DATE_OFF_MIN  = 10;
+constexpr auto DATE_OFF_SEC  = 12;
+
+inline int atoi_2(const char* s)
+{
+	return (int)(s[0] - '0') * 10 + (s[1] - '0');
+}
+
+inline int atoi_4(const char* s)
+{
+	return atoi_2(s) * 100 + atoi_2(s + 2);
+}
 
 // simulation of Windows GetTickCount()
 uint64_t ChronoGetTickCount()
@@ -376,6 +394,144 @@ bool is_number(const wchar_t* szFilename)
 	}
 
 	return true;
+}
+
+/**
+ * Timezone parsing code based loosely on the algorithm in
+ * filldata.cpp of MythTV.
+ */
+static time_t parse_xmltv_timezone(const char* tzstr, unsigned int len)
+{
+	time_t result = 0;
+
+	if ((len == 5) && (tzstr[0] == '+')) {
+
+		result = (3600 * atoi_2(tzstr + 1)) + (60 * atoi_2(tzstr + 3));
+
+	}
+	else if ((len == 5) && (tzstr[0] == '-')) {
+
+		result = -(3600 * atoi_2(tzstr + 1)) + (60 * atoi_2(tzstr + 3));
+
+	}
+
+	return result;
+}
+
+time_t parse_xmltv_date(const char* sz_date, size_t full_len)
+{
+	/*
+	 * according to the xmltv dtd:
+	 *
+	 * All dates and times in this the xmltv DTD follow the same format,
+	 * loosely based on ISO 8601. They can be 'YYYYMMDDhhmmss' or some initial substring,
+	 * for example if you only know the year and month you can have 'YYYYMM'.
+	 * Also can be append a timezone to the end;
+	 * if no explicit timezone is given, UT is assumed.
+	 * Examples:
+	 * '200007281733 BST', '200209', '19880523083000 +0300'.  (BST == +0100.)
+	 *
+	 * thus:
+	 * example *date = "20031022220000 +0200"
+	 * type:            YYYYMMDDhhmmss ZZzzz"
+	 * position:        0         1         2
+	 *                  012345678901234567890
+	 *
+	 * symbolic names of tz is obsolete in my case. Most of providers uses numeric tz offset
+	 *
+	 * note: since part of the time specification can be omitted, we cannot hard-code the offset to the timezone!
+	 */
+
+	 /*
+	  * For some reason, mktime() accepts broken-time arguments as localtime,
+	  * and there is no corresponding UTC function.
+	  * For this reason we have to calculate the offset from GMT to adjust the
+	  * argument given to mktime().
+	  */
+
+	std::tm pTm = fmt::localtime(time(nullptr));
+	long tmz = 0;
+	_get_timezone(&tmz);
+	long gmtoff = 60 * 60 * pTm.tm_isdst - tmz;
+
+	/* Find where the timezone starts */
+	const char* p = sz_date;
+	while ((*p >= '0') && (*p <= '9'))
+	{
+		p++;
+	}
+
+	// Calculate the length of the date
+	size_t len = p - sz_date;
+	time_t tz = 0;
+	if (*p == ' ')
+	{
+		// Parse the timezone, skipping the initial space
+		const char* tz_str = p + 1;
+		size_t tz_len = full_len - len - 1;
+		if (tz_len == 5)
+		{
+			if (tz_str[0] == '+')
+			{
+				tz = atoi_2(tz_str + 1) * 3600 + 60 * atoi_2(tz_str + 3);
+			}
+			else if (tz_str[0] == '-')
+			{
+				tz = 60 * atoi_2(tz_str + 3) - atoi_2(tz_str + 1) * 3600;
+			}
+		}
+	}
+	else if (*p != 0 && *p != '\"')
+	{
+		// syntax error, bad format
+		return 0;
+	}
+
+	struct tm tm_obj;
+
+	time_t result = 0;
+	if (len >= DATE_OFF_SEC + 2)
+	{
+		tm_obj.tm_sec = atoi_2(sz_date + DATE_OFF_SEC);
+	}
+	else
+	{
+		tm_obj.tm_sec = 0;
+	}
+
+	if (len >= DATE_OFF_MIN + 2)
+	{
+		tm_obj.tm_min = atoi_2(sz_date + DATE_OFF_MIN);
+	}
+	else
+	{
+		tm_obj.tm_min = 0;
+	}
+
+	if (len >= DATE_OFF_HOUR + 2)
+	{
+		tm_obj.tm_hour = atoi_2(sz_date + DATE_OFF_HOUR);
+	}
+	else
+	{
+		tm_obj.tm_hour = 0;
+	}
+
+	if (len >= DATE_OFF_DAY + 2)
+	{
+		tm_obj.tm_mday = atoi_2(sz_date + DATE_OFF_DAY);
+		tm_obj.tm_mon = atoi_2(sz_date + DATE_OFF_MON);
+		tm_obj.tm_year = atoi_4(sz_date + DATE_OFF_YEAR);
+
+		tm_obj.tm_sec = (int)(tm_obj.tm_sec - tz + gmtoff);
+		tm_obj.tm_mon -= 1;
+		tm_obj.tm_year -= 1900;
+		tm_obj.tm_isdst = -1;
+
+		result = mktime(&tm_obj);
+	}
+
+	return result;
 }
 
 }

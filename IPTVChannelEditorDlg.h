@@ -349,6 +349,7 @@ protected:
 	CButton m_wndShowEPG;
 	CButton m_wndEpg1;
 	CButton m_wndEpg2;
+	CButton m_wndEpg3;
 	CButton m_wndBtnSettings;
 	CButton m_wndMakeWebUpdate;
 	CProgressCtrl m_wndProgress;
@@ -489,7 +490,7 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
-	std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 2> m_epg_cache;
+	std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 3> m_epg_cache;
 
 	//////////////////////////////////////////////////////////////////////////
 	// vod

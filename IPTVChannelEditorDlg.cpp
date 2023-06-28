@@ -131,6 +131,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(IDC_BUTTON_CACHE_ICON, &CIPTVChannelEditorDlg::OnUpdateButtonCacheIcon)
 	ON_BN_CLICKED(IDC_RADIO_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_RADIO_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
+	ON_BN_CLICKED(IDC_RADIO_EPG3, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_EPG, &CIPTVChannelEditorDlg::OnBnClickedCheckShowEpg)
 	ON_BN_CLICKED(IDC_SPLIT_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged)
@@ -332,6 +333,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RICHEDIT_EPG, m_wndEpg);
 	DDX_Control(pDX, IDC_RADIO_EPG1, m_wndEpg1);
 	DDX_Control(pDX, IDC_RADIO_EPG2, m_wndEpg2);
+	DDX_Control(pDX, IDC_RADIO_EPG3, m_wndEpg3);
 	DDX_Control(pDX, IDC_SPLIT_BUTTON_UPDATE_CHANGED, m_wndUpdateChanged);
 	DDX_Control(pDX, IDC_SPLIT_BUTTON_PACK, m_wndPack);
 	DDX_Control(pDX, IDC_BUTTON_SETTINGS, m_wndBtnSettings);
@@ -1170,6 +1172,21 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			if (bSet) break;
 		}
 
+		static std::vector<std::string> selected_tag = {
+			"url-tvg", "x-tvg-url"
+		};
+
+		const auto& hdr_tags = m_playlistEntries->m3u_header.get_ext_tags();
+		for (const auto& tag : hdr_tags)
+		{
+			const auto& found = std::find(selected_tag.begin(), selected_tag.end(), tag.first);
+			if (found != selected_tag.end())
+			{
+				m_plugin->set_internal_epg_url(utils::utf8_to_utf16(tag.second));
+				break;
+			}
+		}
+
 		for (auto& entry : m_playlistEntries->m_entries)
 		{
 			auto res = m_playlistMap.emplace(entry->get_id(), entry);
@@ -1875,8 +1892,8 @@ void CIPTVChannelEditorDlg::FillEPG()
 	if (!info)
 		return;
 
-	int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
-	if (epg_idx < 0 || epg_idx >1)
+	int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3) - IDC_RADIO_EPG1;
+	if (epg_idx < 0 || epg_idx > 2)
 		epg_idx = 0;
 
 	int time_shift = m_timeShiftHours * 3600;
@@ -1895,8 +1912,6 @@ void CIPTVChannelEditorDlg::FillEPG()
 
 	auto& epg_id = info->get_epg_id(epg_idx);
 
-	auto& allEpgMap = m_epg_cache[epg_idx];
-	auto& epgChannelMap = allEpgMap[epg_id];
 
 	UpdateExtToken(info);
 
@@ -1907,17 +1922,20 @@ void CIPTVChannelEditorDlg::FillEPG()
 	bool need_load = true;
 	while(need_load)
 	{
-		for (auto& epg_pair : epgChannelMap)
+		if (auto& it = m_epg_cache[epg_idx].find(epg_id); it != m_epg_cache[epg_idx].end())
 		{
-			if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
+			for (auto& epg_pair : it->second)
 			{
-				epg_info = epg_pair.second;
-				need_load = false;
-				break;
+				if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
+				{
+					epg_info = epg_pair.second;
+					need_load = false;
+					break;
+				}
 			}
 		}
 
-		if (need_load && !m_plugin->parse_epg(epg_idx, epg_id, epgChannelMap, now, info))
+		if (need_load && !m_plugin->parse_epg(epg_idx, epg_id, m_epg_cache, now, info))
 		{
 			need_load = false;
 		}
@@ -2065,7 +2083,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 
 	try
 	{
-		doc->parse<0>(buffer.data());
+		doc->parse<rapidxml::parse_default>(buffer.data());
 	}
 	catch (rapidxml::parse_error& ex)
 	{
@@ -2675,7 +2693,11 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 	bool bSameCategory = IsSelectedInTheSameCategory();
 	bool hasProbe = !GetConfig().get_string(true, REG_FFPROBE).empty();
 
-	bool firstEpg = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) == IDC_RADIO_EPG1;
+	int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3) - IDC_RADIO_EPG1;
+	if (epg_idx < 0 || epg_idx > 2)
+		epg_idx = 0;
+
+	bool firstEpg = (epg_idx == 0 || epg_idx == 2);
 	m_wndBtnCustomUrl.EnableWindow(single);
 	m_wndArchive.EnableWindow(state != 0);
 	m_wndAdult.EnableWindow(state != 0);
@@ -2686,6 +2708,7 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 	m_wndSearch.EnableWindow(TRUE);
 	m_wndEpg1.EnableWindow(single);
 	m_wndEpg2.EnableWindow(single && !m_plugin->get_epg_parameter(1).epg_url.empty());
+	m_wndEpg3.EnableWindow(!m_plugin->get_internal_epg_url().empty());
 
 	m_wndArchiveDays.EnableWindow((state != 0) && (m_isArchive != 0));
 	m_wndArchiveDays.SetTextColor(single && (changed_flag & MOD_ARCHIVE) ? m_colorChanged : m_normal);
@@ -3156,8 +3179,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 	auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
 	if (info)
 	{
-		int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG2) - IDC_RADIO_EPG1;
-		if (epg_idx < 0 || epg_idx >1)
+		int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3) - IDC_RADIO_EPG1;
+		if (epg_idx < 0 || epg_idx > 2)
 			epg_idx = 0;
 
 		CEpgListDlg dlg;
@@ -3520,7 +3543,7 @@ void CIPTVChannelEditorDlg::OnSave()
 	{
 		// create document;
 		auto doc = std::make_unique<rapidxml::xml_document<>>();
-		auto decl = doc->allocate_node(rapidxml::node_declaration);
+		auto decl = doc->allocate_node(rapidxml::node_type::node_declaration);
 
 		// adding attributes at the top of our xml
 		decl->append_attribute(doc->allocate_attribute("version", "1.0"));
@@ -3528,14 +3551,14 @@ void CIPTVChannelEditorDlg::OnSave()
 		doc->append_node(decl);
 
 		// create <tv_info> root node
-		auto tv_info = doc->allocate_node(rapidxml::node_element, utils::TV_INFO);
+		auto tv_info = doc->allocate_node(rapidxml::node_type::node_element, utils::TV_INFO);
 
-		auto info_node = doc->allocate_node(rapidxml::node_element, utils::VERSION_INFO);
+		auto info_node = doc->allocate_node(rapidxml::node_type::node_element, utils::VERSION_INFO);
 		info_node->append_node(rapidxml::alloc_node(*doc, utils::LIST_VERSION, std::to_string(CHANNELS_LIST_VERSION).c_str()));
 		tv_info->append_node(info_node);
 
 		// append <tv_category> to <tv_categories> node
-		auto cat_node = doc->allocate_node(rapidxml::node_element, utils::TV_CATEGORIES);
+		auto cat_node = doc->allocate_node(rapidxml::node_type::node_element, utils::TV_CATEGORIES);
 		for (auto& category : m_categoriesMap)
 		{
 			if (!category.second.category->get_channels().empty()
@@ -3551,7 +3574,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		tv_info->append_node(cat_node);
 
 		// create <tv_channels> node
-		auto ch_node = doc->allocate_node(rapidxml::node_element, utils::TV_CHANNELS);
+		auto ch_node = doc->allocate_node(rapidxml::node_type::node_element, utils::TV_CHANNELS);
 		// append <tv_channel> to <v_channels> node
 		for (const auto& pair : m_categoriesMap)
 		{
@@ -4056,7 +4079,7 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 	// Create M3U header
 	// Fill all parsed tags from original playlist and verify is catchup type for new playlist is correctly set
 	os << "#EXTM3U";
-	const auto& header_tags = m_playlistEntries->m3u_header.get_tags();
+	const auto& header_tags = m_playlistEntries->m3u_header.get_ext_tags();
 	for (const auto& pair_tags : header_tags)
 	{
 		os << " " << pair_tags.first << "=\"" << pair_tags.second << "\"";

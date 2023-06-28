@@ -1,7 +1,7 @@
 #pragma once
 
 // Copyright (C) 2006, 2009 Marcin Kalicinski
-// Version 1.13
+// Version 1.14
 // Revision $DateTime: 2009/05/13 01:46:17 $
 //! \file rapidxml_iterators.hpp This file contains rapidxml iterators
 
@@ -73,12 +73,12 @@ namespace rapidxml
             return tmp;
         }
 
-        bool operator ==(const node_iterator<Ch> &rhs)
+        bool operator ==(const node_iterator<Ch> &rhs) const
         {
             return m_node == rhs.m_node;
         }
 
-        bool operator !=(const node_iterator<Ch> &rhs)
+        bool operator !=(const node_iterator<Ch> &rhs) const
         {
             return m_node != rhs.m_node;
         }

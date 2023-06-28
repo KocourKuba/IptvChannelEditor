@@ -69,6 +69,9 @@
     <ClInclude Include="SmartHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="rapidxml_ext.hpp">
+      <Filter>Header Files\rapidxml</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

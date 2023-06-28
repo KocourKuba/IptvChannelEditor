@@ -54,7 +54,6 @@ DEALINGS IN THE SOFTWARE.
 using namespace SevenZip;
 
 constexpr auto PACK_PATH = L"{:s}_plugin\\";
-constexpr auto PACK_DLL = L"7za.dll";
 
 static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
 static HANDLE g_hAppRunningMutex = nullptr;
@@ -920,7 +919,7 @@ bool PackPlugin(const PluginType plugin_type,
 				{
 					if (channels.second.empty()) continue;
 
-					auto links = doc->allocate_node(rapidxml::node_element, "links_info");
+					auto links = doc->allocate_node(rapidxml::node_type::node_element, "links_info");
 					links->append_node(rapidxml::alloc_node(*doc, "list", channels.first.c_str()));
 					links->append_node(rapidxml::alloc_node(*doc, "link", channels.second.c_str()));
 					node->append_node(links);
@@ -933,10 +932,10 @@ bool PackPlugin(const PluginType plugin_type,
 		{
 			if (entry.name.empty()) continue;
 
-			auto action_entry = doc->allocate_node(rapidxml::node_element, entry.id.c_str());
+			auto action_entry = doc->allocate_node(rapidxml::node_type::node_element, entry.id.c_str());
 			action_entry->append_node(rapidxml::alloc_node(*doc, "type", "plugin_system"));
 
-			auto node_data = doc->allocate_node(rapidxml::node_element, "data");
+			auto node_data = doc->allocate_node(rapidxml::node_type::node_element, "data");
 			node_data->append_node(rapidxml::alloc_node(*doc, "run_string", entry.name.c_str()));
 			action_entry->append_node(node_data);
 
@@ -1153,18 +1152,18 @@ bool PackPlugin(const PluginType plugin_type,
 			auto doc = std::make_unique<rapidxml::xml_document<>>();
 
 			// adding attributes at the top of our xml
-			auto decl = doc->allocate_node(rapidxml::node_declaration);
+			auto decl = doc->allocate_node(rapidxml::node_type::node_declaration);
 			decl->append_attribute(doc->allocate_attribute("version", "1.0"));
 			decl->append_attribute(doc->allocate_attribute("encoding", "UTF-8"));
 			doc->append_node(decl);
 
-			auto update_info = doc->allocate_node(rapidxml::node_element, "dune_plugin_update_info");
+			auto update_info = doc->allocate_node(rapidxml::node_type::node_element, "dune_plugin_update_info");
 
 			update_info->append_node(rapidxml::alloc_node(*doc, "schema", "2"));
 			update_info->append_node(rapidxml::alloc_node(*doc, "name", plugin->get_name().c_str()));
 			update_info->append_node(rapidxml::alloc_node(*doc, "caption", plugin_caption.c_str()));
 
-			auto version_info = doc->allocate_node(rapidxml::node_element, "plugin_version_descriptor");
+			auto version_info = doc->allocate_node(rapidxml::node_type::node_element, "plugin_version_descriptor");
 			version_info->append_node(rapidxml::alloc_node(*doc, "version_index", version_index.c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "version", version_string.c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "beta", "no"));

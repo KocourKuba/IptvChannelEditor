@@ -98,7 +98,6 @@ void plugin_config::load_default()
 
 	streams_config = { hls, mpeg };
 
-
 	set_epg_preset(0, EpgPresets::enDRM);
 	epg_params[0].epg_param = "first";
 	epg_params[0].epg_domain = "http://epg.drm-play.com";
