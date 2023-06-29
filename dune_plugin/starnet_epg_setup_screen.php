@@ -103,13 +103,13 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             $urls = $this->plugin->config->epg_man->get_xmltv_urls();
             if (empty($urls['custom'])) {
-                $urls['custom'] = 'Not set';
+                $urls['custom'] = TR::t('custom');
             }
             Control_Factory::add_combobox($defs, $this, null,
                 self::SETUP_ACTION_XMLTV_EPG_IDX, TR::t('setup_xmltv_epg_source'),
                 $xmltv_epg_idx, $urls, self::CONTROLS_WIDTH, true);
 
-            if ($xmltv_epg_idx === 0) {
+            if ($xmltv_epg_idx === 'custom') {
                 Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CUSTOM_XMLTV_EPG_DLG,
                     TR::t('setup_xmltv_set_epg_source'), TR::t('setup_enter_xmltv_url'), $this->plugin->get_image_path('text.png'));
             }
@@ -225,7 +225,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 $val = $user_input->{self::SETUP_ACTION_XMLTV_EPG_IDX};
                 $plugin_cookies->{self::SETUP_ACTION_XMLTV_EPG_IDX} = $val;
                 hd_print(__METHOD__ . ": Selected xmltv epg idx: $val");
-                break;
+                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
 
             case self::SETUP_ACTION_CUSTOM_XMLTV_EPG_DLG: // show ott key dialog
                 $defs = $this->do_get_custom_epg_defs($plugin_cookies);

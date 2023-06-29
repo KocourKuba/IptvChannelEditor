@@ -345,6 +345,9 @@
     <ClInclude Include="plugin_101film.h">
       <Filter>Header Files\plugin\shift</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_ipstream.h">
+      <Filter>Header Files\plugin\append</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -592,6 +595,9 @@
     </ClCompile>
     <ClCompile Include="plugin_101film.cpp">
       <Filter>Source Files\plugin\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_ipstream.cpp">
+      <Filter>Source Files\plugin\append</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -126,6 +126,7 @@ setup_channels_src_playlist = Источник плейлистов
 setup_channels_src_folder_caption = Папка со списком каналов
 setup_channels_src_link_caption = Ссылка на списки каналов
 reset_default = Сбросить по умолчанию
+custom = Произвольный
 
 entry_not_available = Для этой приставки эта функция недоступна!
 entry_send_log = Отправить лог разработчику

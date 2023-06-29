@@ -42,6 +42,7 @@ login = Login
 password = Password
 time_zone = Time zone
 reset_default = Reset to default
+custom = Custom
 
 plugin_all_channels = All channels
 plugin_favorites = Favorites

@@ -576,6 +576,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			case PluginType::enBcuMedia:
 			case PluginType::enCbilling:
 			case PluginType::enIptvOnline:
+			case PluginType::enIpstream:
 			case PluginType::enItv:
 			case PluginType::enOneCent:
 			case PluginType::enTVClub:
@@ -594,7 +595,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 					m_wndAccounts.SetItemText(cnt, 1, m[1].str().c_str());
 
 					Credentials cred;
-					cred.set_password(m[2].str());
+					cred.set_password(m[1].str());
 					m_all_credentials.emplace_back(cred);
 				}
 			}

@@ -25,41 +25,14 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+#include "base_plugin.h"
 
-enum class PluginType
+class plugin_ipstream : public base_plugin
 {
-	enCustom = -1000,
-	enBase = -1,
-	en101film,
-	enAntifriz,
-	enBcuMedia,
-	enCbilling,
-	enEdem,
-	enFilmax,
-	enFox,
-	enGlanz,
-	enIptvOnline,
-	enIpstream,
-	enItv,
-	enKineskop,
-	enLightIptv,
-	enMymagic,
-	enOneCent,
-	enOneOtt,
-	enOneUsd,
-	enOttclub,
-	enOttIptv,
-	enPing,
-	enRusskoeTV,
-	enSharaTV,
-	enSharaclub,
-	enSharavoz,
-	enShuraTV,
-	enSmile,
-	enTVClub,
-	enTvTeam,
-	enVidok,
-	enVipLime,
-	enYossoTV,
-	enLast,
+public:
+
+	plugin_ipstream();
+
+protected:
+	void load_default() override;
 };
