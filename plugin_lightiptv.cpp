@@ -37,7 +37,6 @@ static char THIS_FILE[] = __FILE__;
 plugin_lightiptv::plugin_lightiptv()
 {
 	type_name = "lightiptv";
-	class_name = "lightiptv_config";
 }
 
 void plugin_lightiptv::load_default()

@@ -82,12 +82,6 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 
 					switch (m_parent_plugin->get_plugin_type())
 					{
-						case PluginType::enIptvOnline:
-							if (entry->get_epg_id(0).front() == 'X')
-							{
-								entry->set_epg_id(0, entry->get_epg_id(0).substr(1));
-							}
-							break;
 						case PluginType::enOttclub:
 							entry->set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", entry->get_domain(), entry->get_id()));
 							break;

@@ -343,27 +343,6 @@ class Default_Channel implements Channel
         $this->_ext_params[$param] = $value;
     }
 
-    /**
-     * additional parameters
-     * @param string $epg_source_id
-     * @return string
-     */
-    public function get_epg_source_id($epg_source_id)
-    {
-        switch ($epg_source_id) {
-            case Plugin_Constants::EPG_FIRST:
-            case Plugin_Constants::EPG_INTERNAL:
-                $epg_id = $this->get_epg_id();
-                break;
-            case Plugin_Constants::EPG_SECOND:
-                $epg_id = $this->get_tvg_id();
-                break;
-            default:
-                $epg_id = '';
-        }
-
-        return $epg_id;
-    }
     ///////////////////////////////////////////////////////////////////////
 
     /**

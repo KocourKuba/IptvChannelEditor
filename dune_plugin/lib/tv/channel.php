@@ -122,11 +122,4 @@ interface Channel
      * @return array
      */
     public function get_ext_params();
-
-    /**
-     * additional parameters
-     * @param string $epg_source_id
-     * @return string
-     */
-    public function get_epg_source_id($epg_source_id);
 }

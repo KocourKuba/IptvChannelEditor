@@ -37,7 +37,6 @@ static char THIS_FILE[] = __FILE__;
 plugin_viplime::plugin_viplime()
 {
 	type_name = "viplime";
-	class_name = "viplime_config";
 }
 
 void plugin_viplime::load_default()

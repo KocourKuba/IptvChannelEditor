@@ -401,7 +401,13 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::array<
 		return added;
 	}
 
-	const auto& url = compile_epg_url(epg_idx, epg_id, for_time, info);
+	std::wstring new_epg_id(epg_id);
+	if (plugin_type == PluginType::enIptvOnline && epg_idx != 2 && epg_id.front() == 'X')
+	{
+		new_epg_id = epg_id.substr(1);
+	}
+
+	const auto& url = compile_epg_url(epg_idx, new_epg_id, for_time, info);
 	if (!download_url(url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
 		return false;
 

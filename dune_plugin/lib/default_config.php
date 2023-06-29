@@ -112,6 +112,28 @@ class default_config extends dynamic_config
     }
 
     /**
+     * @param $channel Channel
+     * @param $epg_source string
+     * @return string
+     */
+    public function get_epg_id($channel, $epg_source)
+    {
+        switch ($epg_source) {
+            case Plugin_Constants::EPG_FIRST:
+            case Plugin_Constants::EPG_INTERNAL:
+                $epg_id = $channel->get_epg_id();
+                break;
+            case Plugin_Constants::EPG_SECOND:
+                $epg_id = $channel->get_tvg_id();
+                break;
+            default:
+                $epg_id = '';
+        }
+
+        return $epg_id;
+    }
+
+    /**
      * @return Object|null
      */
     public function get_embedded_account()
@@ -731,11 +753,21 @@ class default_config extends dynamic_config
         hd_print(__METHOD__ . ": Parsing $total playlist entries");
 
         $mapped = 0;
+        $this->epg_man->clear_xmltv_urls();
+        $this->epg_man->set_xmltv_url('custom',
+            isset($plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_CUSTOM_XMLTV_EPG})
+                ? $plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_CUSTOM_XMLTV_EPG}
+                : '');
+
         foreach ($m3u_entries as $entry) {
             if ($entry->isExtM3U()) {
-                $xmltv_url = $entry->getAnyAttribute(array('url-tvg', 'x-tvg-url'));
-                hd_print(__METHOD__ . ": xmltv url: $xmltv_url");
-                $this->epg_man->set_xmltv_url($xmltv_url);
+                foreach (array('url-tvg', 'x-tvg-url') as $attr) {
+                    $xmltv_url = $entry->getAttribute($attr);
+                    if (!empty($xmltv_url)) {
+                        hd_print(__METHOD__ . ": $attr: $xmltv_url");
+                        $this->epg_man->set_xmltv_url($attr, $xmltv_url);
+                    }
+                }
             }
 
             if (!empty($tag_id)) {

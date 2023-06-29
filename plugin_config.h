@@ -918,6 +918,8 @@ protected:
 	std::wstring internal_epg_url;
 
 	// configurable parameters
+
+	// name of specialized php class for plugin
 	std::string class_name;
 
 	// plugin access type

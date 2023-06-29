@@ -584,8 +584,18 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $this->set_fav_channel_ids($plugin_cookies, $fav_channel_ids);
 
         hd_print(__METHOD__ . ": Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
-        if (isset($plugin_cookies->epg_source) && $plugin_cookies->epg_source === Plugin_Constants::EPG_INTERNAL) {
-            $this->plugin->config->epg_man->index_xmltv_file($plugin_cookies);
+
+        if (isset($plugin_cookies->epg_source)
+            && $plugin_cookies->epg_source === Plugin_Constants::EPG_INTERNAL
+            && empty($this->plugin->config->epg_man->xmltv_data)) {
+
+            $xmltv_idx = isset($plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_XMLTV_EPG_IDX})
+                ? $plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_XMLTV_EPG_IDX}
+                : 'custom';
+            $this->plugin->config->epg_man->xmltv_data = Epg_Manager::index_xmltv_file(
+                $this->plugin->config->epg_man->get_xmltv_url($xmltv_idx),
+                $this->plugin->config->epg_man->get_xml_cached_file($xmltv_idx),
+                3600 * 24 * (isset($plugin_cookies->epg_cache_ttl) ? $plugin_cookies->epg_cache_ttl : 3));
         }
     }
 
@@ -703,13 +713,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $day_start_ts -= get_local_time_zone_offset();
 
         //hd_print(__METHOD__ . ": day_start timestamp: $day_start_ts (" . format_datetime("Y-m-d H:i", $day_start_ts) . ")");
-        $epg_source_id = isset($plugin_cookies->epg_source) ? $plugin_cookies->epg_source : SetupControlSwitchDefs::switch_epg1;
-        $day_epg_items = $this->plugin->config->epg_man->get_day_epg_items($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
-        if ($day_epg_items === false && $epg_source_id !== Plugin_Constants::EPG_INTERNAL) {
-            $epg_source_id = ($epg_source_id === Plugin_Constants::EPG_FIRST) ? Plugin_Constants::EPG_SECOND : Plugin_Constants::EPG_FIRST;
-            $day_epg_items = $this->plugin->config->epg_man->get_day_epg_items($channel, $epg_source_id, $day_start_ts, $plugin_cookies);
-        }
-
+        $day_epg_items = $this->plugin->config->epg_man->get_day_epg_items($channel, $day_start_ts, $plugin_cookies);
         if ($day_epg_items !== false) {
             // get personal time shift for channel
             $time_shift = 3600 * ($channel->get_timeshift_hours() + (isset($plugin_cookies->epg_shift) ? $plugin_cookies->epg_shift : 0));
