@@ -957,7 +957,7 @@ void CVodViewer::FilterList()
 	{
 		do
 		{
-			if (m_genre_idx == 0 && m_year_idx == 0)
+			if (m_genre_idx <= 0 && m_year_idx <= 0)
 			{
 				for (const auto& movie_pair : m_current_vod.getAt(m_category_idx)->movies.vec())
 				{
@@ -982,14 +982,14 @@ void CVodViewer::FilterList()
 			json_request["key"] = utils::utf16_to_utf8(key);
 			json_request["mac"] = "000000000000";
 			json_request["app"] = "IPTV ChannelEditor";
-			if (m_genre_idx != 0)
+			if (m_genre_idx > 0)
 			{
 				int id = utils::char_to_int(m_genres[m_genre_idx - 1].id);
 				json_request["genre"] = id;
 				ATLTRACE("\ngenre id: %d\n", id);
 			}
 
-			if (m_year_idx != 0)
+			if (m_year_idx > 0)
 			{
 				const auto& years = utils::utf16_to_utf8(m_years[m_year_idx - 1]);
 				json_request["years"] = years;

@@ -59,6 +59,7 @@ void plugin_edem::load_default()
 
 	PlaylistTemplateInfo vod_info;
 	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
+	vod_info.pl_template = "{SUBDOMAIN}";
 	vod_templates.emplace_back(vod_info);
 
 	title = "iEdem/iLook TV";
