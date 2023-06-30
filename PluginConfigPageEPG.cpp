@@ -132,10 +132,6 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	m_wndEpgType.SetCurSel(0);
 	m_DuneIP = GetConfig().get_string(true, REG_DUNE_IP).c_str();
 	m_Token = GetPropertySheet()->m_selected_cred.get_token().c_str();
-	if (GetPropertySheet()->m_CurrentStream)
-	{
-		m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(0).c_str();
-	}
 	m_wndEpgType.SetCurSel(0);
 
 	for(auto it = EpgPresets::enDRM; it != EpgPresets::enLast; ((size_t&)it)++)
@@ -223,6 +219,11 @@ void CPluginConfigPageEPG::FillControls()
 
 	int epg_type = m_wndEpgType.GetCurSel();
 	m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(epg_type).c_str();
+	if (GetPropertySheet()->m_plugin->get_plugin_type() == PluginType::enIptvOnline && m_SetID.Left(1) == 'X')
+	{
+		m_SetID = m_SetID.Mid(1);
+	}
+
 	m_wndEpgPreset.SetCurSel(GetPropertySheet()->m_plugin->get_epg_preset_idx(epg_type));
 
 	UpdateData(FALSE);
@@ -293,6 +294,7 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	UpdateData(TRUE);
 
 	std::wstring url(m_EpgUrl.GetString());
+
 	// set to begin of the day
 	CTime nt(m_Date.GetYear(), m_Date.GetMonth(), m_Date.GetDay(), m_Date.GetHour(), m_Date.GetMinute(), m_Date.GetSecond());
 
