@@ -4914,7 +4914,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 	m_plugin->set_playlist_idx(idx);
 
 	const auto& info = m_playlist_info[idx];
-	m_wndBtnAddPlaylist.EnableWindow(info.is_custom);
+	m_wndBtnAddPlaylist.ShowWindow(info.is_custom ? SW_SHOW : SW_HIDE);
 	LoadPlaylist();
 }
 
