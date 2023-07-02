@@ -395,6 +395,7 @@ struct DynamicParamsInfo
 public:
 	DynamicParamsInfo() = default;
 	DynamicParamsInfo(const std::string& _id, const std::string& _name) : id(_id), name(_name) {}
+	DynamicParamsInfo(const std::wstring& _id, const std::wstring& _name) : id(utils::utf16_to_utf8(_id)), name(utils::utf16_to_utf8(_name)) {}
 
 	std::wstring get_id() const { return utils::utf8_to_utf16(id); }
 	void set_id(const std::wstring& val) { id = utils::utf16_to_utf8(val); }
@@ -438,12 +439,12 @@ public:
 	/// <summary>
 	/// set playlist epg url
 	/// </summary>
-	void set_internal_epg_url(const std::wstring& url) { internal_epg_url = url; }
+	void set_internal_epg_url(const std::map<std::wstring, std::wstring>& urls) { internal_epg_urls = urls; }
 
 	/// <summary>
 	/// get playlist epg url
 	/// </summary>
-	const std::wstring& get_internal_epg_url() { return internal_epg_url; }
+	std::wstring get_internal_epg_url(const std::wstring& source_id) { return internal_epg_urls.find(source_id) != internal_epg_urls.end() ? internal_epg_urls[source_id] : L""; }
 
 	/// <summary>
 	/// get prefilled EPG parsing preset
@@ -915,7 +916,7 @@ protected:
 	// non configurable parameters
 	PluginType plugin_type = PluginType::enCustom;
 	std::string type_name;
-	std::wstring internal_epg_url;
+	std::map<std::wstring, std::wstring> internal_epg_urls;
 
 	// configurable parameters
 

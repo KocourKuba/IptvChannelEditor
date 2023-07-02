@@ -312,7 +312,84 @@ std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params)
 	return url;
 }
 
-bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 3>& all_epg_map, time_t for_time, const uri_stream* info)
+bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>& epg_map)
+{
+	if (internal_epg_url.empty())
+		return false;
+
+	CWaitCursor cur;
+	std::stringstream data;
+	if (!download_url(internal_epg_url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
+		return false;
+
+	bool added = false;
+	data.clear();
+
+	auto cache_file = m_dl.GetCachePath(internal_epg_url);
+	boost::wregex re(LR"(^.*\.gz$)");
+	if (boost::regex_match(internal_epg_url, re))
+	{
+		std::vector<char> buffer;
+		const auto& unpacked_path = m_dl.GetCachePath(internal_epg_url.substr(0, internal_epg_url.length() - 3));
+		if (m_dl.CheckIsCacheExpired(unpacked_path))
+		{
+			const auto& pack_dll = GetAppPath((AccountSettings::PACK_DLL_PATH).c_str()) + PACK_DLL;
+			if (!std::filesystem::exists(pack_dll))
+			{
+				AfxMessageBox(IDS_STRING_ERR_DLL_MISSING, MB_OK | MB_ICONSTOP);
+				return false;
+			}
+
+			SevenZip::SevenZipWrapper archiver(pack_dll);
+			auto& extractor = archiver.GetExtractor();
+			extractor.SetCompressionFormat(SevenZip::CompressionFormat::GZip);
+			extractor.SetArchivePath(cache_file);
+			extractor.ExtractFileToMemory(0, (std::vector<BYTE>&)buffer);
+			std::ofstream unpacked_file(unpacked_path, std::ofstream::binary);
+			unpacked_file.write((char*)buffer.data(), buffer.size());
+			unpacked_file.close();
+		}
+
+		cache_file = unpacked_path;
+	}
+
+	// Parse the buffer using the xml file parsing library into doc
+	auto doc = std::make_unique<rapidxml::xml_document<>>();
+	rapidxml::file<> xmlFile(utils::utf16_to_utf8(cache_file).c_str());
+
+	try
+	{
+		doc->parse<rapidxml::parse_default>(xmlFile.data());
+	}
+	catch (rapidxml::parse_error& ex)
+	{
+		ex;
+		return false;
+	}
+
+	auto prog_node = doc->first_node("tv")->first_node("programme");
+	// Iterate <tv_category> nodes
+	while (prog_node)
+	{
+		EpgInfo epg_info;
+		const auto& channel = rapidxml::get_value_wstring(prog_node->first_attribute("channel"));
+		const auto& attr_start = prog_node->first_attribute("start");
+		epg_info.time_start = utils::parse_xmltv_date(attr_start->value(), attr_start->value_size());
+		const auto& attr_stop = prog_node->first_attribute("stop");
+		epg_info.time_end = utils::parse_xmltv_date(attr_stop->value(), attr_stop->value_size());
+		epg_info.name = rapidxml::get_value_string(prog_node->first_node("title"));
+		epg_info.desc = rapidxml::get_value_string(prog_node->first_node("desc"));
+
+		epg_map[channel].emplace(epg_info.time_start, epg_info);
+
+		prog_node = prog_node->next_sibling();
+		added = true;
+	}
+
+	return added;
+}
+
+bool base_plugin::parse_json_epg(int epg_idx, const std::wstring& epg_id, std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 3>& all_epg_map, time_t for_time, const uri_stream* info)
 {
 	if (epg_id.empty())
 		return false;
@@ -321,85 +398,6 @@ bool base_plugin::parse_epg(int epg_idx, const std::wstring& epg_id, std::array<
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (epg_idx == 2)
-	{
-		if (internal_epg_url.empty())
-			return false;
-
-		if (!all_epg_map[epg_idx].empty() && all_epg_map[epg_idx].find(epg_id) == all_epg_map[epg_idx].end())
-		{
-			// do not load and parse xmltv again if epg_id not exist in already loaded epg
-			return false;
-		}
-
-		if (!download_url(internal_epg_url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
-			return false;
-
-		data.clear();
-
-		auto cache_file = m_dl.GetCachePath(internal_epg_url);
-		boost::wregex re(LR"(^.*\.gz$)");
-		if (boost::regex_match(internal_epg_url, re))
-		{
-			std::vector<char> buffer;
-			const auto& unpacked_path = m_dl.GetCachePath(internal_epg_url.substr(0, internal_epg_url.length() - 3));
-			if (m_dl.CheckIsCacheExpired(unpacked_path))
-			{
-				const auto& pack_dll = GetAppPath((AccountSettings::PACK_DLL_PATH).c_str()) + PACK_DLL;
-				if (!std::filesystem::exists(pack_dll))
-				{
-					AfxMessageBox(IDS_STRING_ERR_DLL_MISSING, MB_OK | MB_ICONSTOP);
-					return false;
-				}
-
-				SevenZip::SevenZipWrapper archiver(pack_dll);
-				auto& extractor = archiver.GetExtractor();
-				extractor.SetCompressionFormat(SevenZip::CompressionFormat::GZip);
-				extractor.SetArchivePath(cache_file);
-				extractor.ExtractFileToMemory(0, (std::vector<BYTE>&)buffer);
-				std::ofstream unpacked_file(unpacked_path, std::ofstream::binary);
-				unpacked_file.write((char*)buffer.data(), buffer.size());
-				unpacked_file.close();
-			}
-
-			cache_file = unpacked_path;
-		}
-
-		// Parse the buffer using the xml file parsing library into doc
-		auto doc = std::make_unique<rapidxml::xml_document<>>();
-		rapidxml::file<> xmlFile(utils::utf16_to_utf8(cache_file).c_str());
-
-		try
-		{
-			doc->parse<rapidxml::parse_default>(xmlFile.data());
-		}
-		catch (rapidxml::parse_error& ex)
-		{
-			ex;
-			return false;
-		}
-
-		auto prog_node = doc->first_node("tv")->first_node("programme");
-		// Iterate <tv_category> nodes
-		while (prog_node)
-		{
-			EpgInfo epg_info;
-			const auto& channel = rapidxml::get_value_wstring(prog_node->first_attribute("channel"));
-			const auto& attr_start = prog_node->first_attribute("start");
-			epg_info.time_start = utils::parse_xmltv_date(attr_start->value(), attr_start->value_size());
-			const auto& attr_stop = prog_node->first_attribute("stop");
-			epg_info.time_end = utils::parse_xmltv_date(attr_stop->value(), attr_stop->value_size());
-			epg_info.name = rapidxml::get_value_string(prog_node->first_node("title"));
-			epg_info.desc = rapidxml::get_value_string(prog_node->first_node("desc"));
-
-			all_epg_map[epg_idx][channel].emplace(epg_info.time_start, epg_info);
-
-			prog_node = prog_node->next_sibling();
-			added = true;
-		}
-
-		return added;
-	}
 
 	const auto& url = compile_epg_url(epg_idx, epg_id, for_time, info);
 	if (!download_url(url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))

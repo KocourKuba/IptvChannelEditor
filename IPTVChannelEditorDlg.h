@@ -150,6 +150,8 @@ protected:
 	afx_msg void OnBnClickedCheckShowDuplicates();
 	afx_msg void OnBnClickedCheckShowUrl();
 	afx_msg void OnBnClickedExportM3U();
+	afx_msg void OnBnClickedButtonAddEpg();
+	afx_msg void OnCbnSelchangeComboCustomXmltvEpg();
 
 	afx_msg void OnBnClickedCheckCustomUrl();
 	afx_msg void OnBnClickedCheckCustomArchive();
@@ -282,6 +284,7 @@ private:
 	void SaveStreamInfo();
 	void UpdateWindowTitle();
 	void UpdateIconInfo(uri_stream* uri);
+	std::map<std::wstring, std::wstring> LoadCustomXmltvSources();
 
 protected:
 	CFont m_largeFont;
@@ -299,6 +302,7 @@ protected:
 	CComboBox m_wndStreamType;
 	CComboBox m_wndCustomStreamType;
 	CComboBox m_wndCustomArcStreamType;
+	CComboBox m_wndXmltvEpgSource;
 	CRichEditCtrl m_wndEpg;
 	CMySplitButton m_wndUpdateChanged;
 	CSplitButton m_wndPack;
@@ -335,6 +339,7 @@ protected:
 	CButton m_wndBtnCustomUrl;
 	CButton m_wndBtnCustomArchiveUrl;
 	CButton m_wndPlArchive;
+	CButton m_wndBtnAddEPG;
 	CButton m_wndBtnViewEPG;
 	CButton m_wndBtnAccountSetting;
 	CButton m_wndBtnDownloadPlaylist;
@@ -376,6 +381,7 @@ protected:
 	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
 	int m_archivePlDays = 0; // always read only field
+	int m_xmltvEpgSource = 0;
 
 private:
 	Credentials m_cur_account;
@@ -475,6 +481,8 @@ private:
 
 	// dupes
 	std::set<std::wstring> m_playlistDupes;
+
+	std::vector<std::wstring> m_xmltv_sources;
 
 	// map HTREE items to entry
 	// Loaded when fill playlist tree

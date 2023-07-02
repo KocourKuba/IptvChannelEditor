@@ -113,7 +113,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 	int i = 0;
 	int current_idx = -1;
 	const auto& epg_id = m_info->get_epg_id(m_epg_idx);
-	m_csEpgUrl = (m_epg_idx == 2) ? m_plugin->get_internal_epg_url().c_str() : m_plugin->compile_epg_url(m_epg_idx, epg_id, start_time, m_info).c_str();
+	m_csEpgUrl = (m_epg_idx == 2) ? m_xmltv_source.c_str() : m_plugin->compile_epg_url(m_epg_idx, epg_id, start_time, m_info).c_str();
 
 	bool need_load = true;
 	while (need_load)
@@ -131,9 +131,31 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 			}
 		}
 
-		if (need_load && !m_plugin->parse_epg(m_epg_idx, epg_id, *m_epg_cache, now, m_info))
+		if (need_load)
 		{
-			need_load = false;
+			bool res = false;
+			if (m_epg_idx != 2)
+			{
+				res = m_plugin->parse_json_epg(m_epg_idx, epg_id, *m_epg_cache, now, m_info);
+			}
+			else
+			{
+				auto& epg_cache = m_epg_cache->at(m_epg_idx);
+				if (!epg_cache.empty() && epg_cache.find(epg_id) == epg_cache.end())
+				{
+					// do not load and parse xmltv again if epg_id not exist in already loaded epg
+					need_load = false;
+				}
+				else
+				{
+					res = m_plugin->parse_xml_epg(m_xmltv_source, epg_cache);
+				}
+			}
+
+			if (!res)
+			{
+				need_load = false;
+			}
 		}
 	}
 

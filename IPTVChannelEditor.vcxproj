@@ -429,6 +429,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <Image Include="res\Account.png" />
     <Image Include="res\Added.png" />
     <Image Include="res\AddedOnly.png" />
+    <Image Include="res\add_epg.png" />
     <Image Include="res\Changed.png" />
     <Image Include="res\Config.png" />
     <Image Include="res\Download.png" />

@@ -335,23 +335,6 @@ std::wstring utf8_to_utf16(const char* srcData, size_t srcSize)
 	return dest;
 }
 
-std::vector<std::string> regex_split(const std::string& str, const std::string& token /*= "\\s+"*/)
-{
-	std::vector<std::string> elems;
-
-	boost::regex rgx(token);
-	boost::sregex_token_iterator iter(str.begin(), str.end(), rgx, -1);
-	boost::sregex_token_iterator end;
-
-	while (iter != end)
-	{
-		elems.emplace_back(*iter);
-		++iter;
-	}
-
-	return elems;
-}
-
 std::string generateRandomId(size_t length /*= 0*/)
 {
 	static const std::string allowed_chars{ "123456789BCDFGHJKLMNPQRSTVWXZbcdfghjklmnpqrstvwxz" };

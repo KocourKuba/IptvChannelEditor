@@ -694,5 +694,8 @@
     <Image Include="res\duplicates.png">
       <Filter>Resource Files\PNG</Filter>
     </Image>
+    <Image Include="res\add_epg.png">
+      <Filter>Resource Files\PNG</Filter>
+    </Image>
   </ItemGroup>
 </Project>

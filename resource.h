@@ -29,6 +29,7 @@
 #define IDB_PNG_UPDATE                  71
 #define IDB_PNG_DUPLICATES              72
 #define IDB_PNG_NO_DUPLICATES           73
+#define IDB_PNG_ADD_EPG                 74
 #define IDD_ABOUTBOX                    102
 #define IDD_CUSTOM_PLAYLIST             103
 #define IDD_CUSTOM_URL                  104
@@ -413,6 +414,7 @@
 #define IDC_BUTTON_GET                  1007
 #define IDC_BUTTON_ADD_PLAYLIST         1007
 #define IDC_BUTTON_RELOAD_ICON          1008
+#define IDC_BUTTON_ADD_EPG              1009
 #define IDC_BUTTON_IMPORT               1010
 #define IDC_BUTTON_ADD_NEW_CHANNELS_LIST 1011
 #define IDC_BUTTON_ACCOUNT_SETTINGS     1012
@@ -633,6 +635,7 @@
 #define IDC_DATETIMEPICKER_DATE         1199
 #define IDC_COMBO_CUSTOM_ARC_STREAM_TYPE 1200
 #define IDC_CHECK_SQUARE_ICONS          1201
+#define IDC_COMBO_CUSTOM_XMLTV_EPG      1201
 #define IDC_BUTTON_PLAYLIST_SHOW        1202
 #define IDC_CHECK_ENABLE_BALANCE        1202
 #define IDC_BUTTON_STREAM_PARSE         1203

@@ -65,6 +65,7 @@ public:
 	uri_stream* m_info = nullptr;
 	std::shared_ptr<base_plugin> m_plugin;
 	std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 3>* m_epg_cache = nullptr;
+	std::wstring m_xmltv_source;
 
 protected:
 	CListCtrlEx m_wndEpgList;

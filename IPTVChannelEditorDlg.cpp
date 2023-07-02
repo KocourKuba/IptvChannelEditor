@@ -54,10 +54,12 @@ DEALINGS IN THE SOFTWARE.
 #include "StreamContainer.h"
 #include "AccountSettings.h"
 #include "Constants.h"
+#include "FillParamsInfoDlg.h"
 
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 #include "UtilsLib\md5.h"
+#include "UtilsLib\Crc32.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -130,6 +132,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_RADIO_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_RADIO_EPG3, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
+	ON_BN_CLICKED(IDC_BUTTON_ADD_EPG, &CIPTVChannelEditorDlg::OnBnClickedButtonAddEpg)
+	ON_CBN_SELCHANGE(IDC_COMBO_CUSTOM_XMLTV_EPG, &CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomXmltvEpg)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_EPG, &CIPTVChannelEditorDlg::OnBnClickedCheckShowEpg)
 	ON_BN_CLICKED(IDC_SPLIT_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedCheckShowChanged)
@@ -237,8 +241,8 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_ARCHIVE, &CIPTVChannelEditorDlg::OnBnClickedCheckCustomArchive)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_ICON, &CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon)
-		ON_BN_CLICKED(IDC_CHECK_SHOW_DUPLICATES, &CIPTVChannelEditorDlg::OnBnClickedCheckShowDuplicates)
-		END_MESSAGE_MAP()
+	ON_BN_CLICKED(IDC_CHECK_SHOW_DUPLICATES, &CIPTVChannelEditorDlg::OnBnClickedCheckShowDuplicates)
+END_MESSAGE_MAP()
 
 CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
@@ -332,6 +336,9 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RADIO_EPG1, m_wndEpg1);
 	DDX_Control(pDX, IDC_RADIO_EPG2, m_wndEpg2);
 	DDX_Control(pDX, IDC_RADIO_EPG3, m_wndEpg3);
+	DDX_Control(pDX, IDC_BUTTON_ADD_EPG, m_wndBtnAddEPG);
+	DDX_Control(pDX, IDC_COMBO_CUSTOM_XMLTV_EPG, m_wndXmltvEpgSource);
+	DDX_CBIndex(pDX, IDC_COMBO_CUSTOM_XMLTV_EPG, m_xmltvEpgSource);
 	DDX_Control(pDX, IDC_SPLIT_BUTTON_UPDATE_CHANGED, m_wndUpdateChanged);
 	DDX_Control(pDX, IDC_SPLIT_BUTTON_PACK, m_wndPack);
 	DDX_Control(pDX, IDC_BUTTON_SETTINGS, m_wndBtnSettings);
@@ -571,6 +578,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SetButtonImage(IDB_PNG_OPEN, m_wndBtnAddPlaylist);
 	SetButtonImage(IDB_PNG_DOWNLOAD, m_wndBtnDownloadPlaylist);
 	SetButtonImage(IDB_PNG_FILTER, m_wndBtnFilter);
+	SetButtonImage(IDB_PNG_ADD_EPG, m_wndBtnAddEPG);
 
 	std::vector<std::wstring> strm_params;
 	strm_params.insert(strm_params.end(),
@@ -835,6 +843,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_blockChecking = true;
 	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
 
+	LoadCustomXmltvSources();
+
 	// Reload selected channels list
 	OnCbnSelchangeComboChannels();
 
@@ -854,6 +864,30 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 100, nullptr);
 
 	UnlockWindowUpdate();
+}
+
+std::map<std::wstring, std::wstring> CIPTVChannelEditorDlg::LoadCustomXmltvSources()
+{
+	std::map<std::wstring, std::wstring> custom_xml_sources;
+	nlohmann::json sources;
+	JSON_ALL_TRY;
+	{
+		sources = nlohmann::json::parse(GetConfig().get_string(false, REG_CUSTOM_XMLTV_SOURCE));
+		std::map<std::wstring, std::wstring > source_map;
+		for (const auto& item : sources.items())
+		{
+			const auto& val = item.value();
+			if (val.empty()) continue;
+
+			JSON_ALL_TRY;
+			{
+			}
+			JSON_ALL_CATCH;
+		}
+	}
+	JSON_ALL_CATCH;
+
+	return custom_xml_sources;
 }
 
 void CIPTVChannelEditorDlg::ReloadConfigs()
@@ -1134,8 +1168,18 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
 	m_wndBtnStop.EnableWindow(FALSE);
 
+	int old_data = 0;
+	if (m_wndXmltvEpgSource.GetCount())
+	{
+		old_data = m_wndXmltvEpgSource.GetItemData(m_xmltvEpgSource != -1 ? m_xmltvEpgSource : 0);
+	}
+
+	m_wndXmltvEpgSource.ResetContent();
+
 	m_playlistMap.clear();
 	m_playlistDupes.clear();
+
+	std::map<std::wstring, std::wstring> playlist_xmltv_sources;
 	if (m_playlistEntries)
 	{
 		int pl_idx = m_plugin->get_playlist_idx();
@@ -1170,7 +1214,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			if (bSet) break;
 		}
 
-		static std::vector<std::string> selected_tag = {
+		static std::array<std::string, 2> selected_tag = {
 			"url-tvg", "x-tvg-url"
 		};
 
@@ -1180,8 +1224,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			const auto& found = std::find(selected_tag.begin(), selected_tag.end(), tag.first);
 			if (found != selected_tag.end())
 			{
-				m_plugin->set_internal_epg_url(utils::utf8_to_utf16(tag.second));
-				break;
+				playlist_xmltv_sources[utils::utf8_to_utf16(tag.first)] = utils::utf8_to_utf16(tag.second);
 			}
 		}
 
@@ -1210,6 +1253,43 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			AfxMessageBox(IDS_STRING_ERR_EMPTY_PLAYLIST, MB_OK | MB_ICONERROR);
 		}
 	}
+
+	m_plugin->set_internal_epg_url(playlist_xmltv_sources);
+
+	m_xmltv_sources.clear();
+
+	std::map<std::wstring, std::wstring> all_xmltv_sources = LoadCustomXmltvSources();
+	for(const auto& source : playlist_xmltv_sources)
+	{
+		all_xmltv_sources.emplace(source);
+	}
+
+	int max_dropdown_size = 80;
+	m_xmltvEpgSource = 0;
+	for (const auto& source : all_xmltv_sources)
+	{
+		const auto& text = fmt::format(L"{:s} - {:s}", source.first, source.second);
+		m_xmltv_sources.emplace_back(source.second);
+		int idx = m_wndXmltvEpgSource.AddString(text.c_str());
+		auto tag_data = crc32_bitwise(source.first.c_str(), source.first.size());
+		m_wndXmltvEpgSource.SetItemData(idx, tag_data);
+		if (tag_data == old_data)
+		{
+			m_xmltvEpgSource = idx;
+		}
+
+		CWindowDC dc(this);
+		CFont* pFont = m_wndXmltvEpgSource.GetFont();
+		CFont* pFontDC = dc.SelectObject(pFont);
+		CSize size = dc.GetTextExtent(text.c_str());
+		dc.SelectObject(pFontDC);
+		size.cx += 10;
+
+		if (size.cx > max_dropdown_size)
+			max_dropdown_size = size.cx;
+	}
+	m_wndXmltvEpgSource.SetCurSel(m_xmltvEpgSource);
+	m_wndXmltvEpgSource.SetDroppedWidth(max_dropdown_size);
 
 	UpdateChannelsTreeColors();
 	FillTreePlaylist();
@@ -1933,9 +2013,31 @@ void CIPTVChannelEditorDlg::FillEPG()
 			}
 		}
 
-		if (need_load && !m_plugin->parse_epg(epg_idx, epg_id, m_epg_cache, now, info))
+		if (need_load)
 		{
-			need_load = false;
+			bool res = false;
+			if (epg_idx != 2)
+			{
+				res = m_plugin->parse_json_epg(epg_idx, epg_id, m_epg_cache, now, info);
+			}
+			else
+			{
+				auto& epg_cache = m_epg_cache.at(epg_idx);
+				if (!epg_cache.empty() && epg_cache.find(epg_id) == epg_cache.end())
+				{
+					// do not load and parse xmltv again if epg_id not exist in already loaded epg
+					need_load = false;
+				}
+				else
+				{
+					res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache);
+				}
+			}
+
+			if (!res)
+			{
+				need_load = false;
+			}
 		}
 	}
 
@@ -2646,6 +2748,8 @@ void CIPTVChannelEditorDlg::OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* 
 
 void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullptr*/)
 {
+	UpdateData(TRUE);
+
 	if (hSelected == nullptr)
 		hSelected = m_wndChannelsTree.GetSelectedItem();
 
@@ -2706,7 +2810,7 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 	m_wndSearch.EnableWindow(TRUE);
 	m_wndEpg1.EnableWindow(single);
 	m_wndEpg2.EnableWindow(single && !m_plugin->get_epg_parameter(1).epg_url.empty());
-	m_wndEpg3.EnableWindow(!m_plugin->get_internal_epg_url().empty());
+	m_wndEpg3.EnableWindow((m_xmltvEpgSource != -1 && m_xmltvEpgSource < (int)m_xmltv_sources.size()) ? !m_xmltv_sources[m_xmltvEpgSource].empty() : FALSE);
 
 	m_wndArchiveDays.EnableWindow((state != 0) && (m_isArchive != 0));
 	m_wndArchiveDays.SetTextColor(single && (changed_flag & MOD_ARCHIVE) ? m_colorChanged : m_normal);
@@ -3185,6 +3289,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		dlg.m_plugin = m_plugin;
 		dlg.m_epg_idx = epg_idx;
 		dlg.m_epg_cache = &m_epg_cache;
+		dlg.m_xmltv_source = m_xmltv_sources[m_xmltvEpgSource];
 		dlg.m_params.subdomain = m_cur_account.get_subdomain();
 		dlg.m_params.token = m_cur_account.get_token();
 		dlg.m_params.login = m_cur_account.get_login();
@@ -5698,4 +5803,35 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCheckUpdate()
 		RequestToUpdateServer(cmd, false);
 		PostMessage(WM_CLOSE);
 	}
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonAddEpg()
+{
+	std::vector<CFillParamsInfoDlg::variantInfo> info;
+	for (const auto& item : LoadCustomXmltvSources())
+	{
+		info.emplace_back(DynamicParamsInfo(item.first, item.second));
+	}
+
+	CFillParamsInfoDlg dlg;
+	dlg.m_type = DynamicParamsType::enServers;
+	dlg.m_paramsList = std::move(info);
+	dlg.m_readonly = false;
+
+	if (dlg.DoModal() == IDOK)
+	{
+		std::vector<DynamicParamsInfo> params;
+		for (const auto& item : dlg.m_paramsList)
+		{
+			params.emplace_back(std::get<DynamicParamsInfo>(item));
+		}
+
+		nlohmann::json data = params;
+		GetConfig().set_string(false, REG_CUSTOM_XMLTV_SOURCE, utils::utf8_to_utf16(data.dump()));
+	}
+}
+
+void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomXmltvEpg()
+{
+	UpdateData(TRUE);
 }

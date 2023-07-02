@@ -351,7 +351,23 @@ inline std::wstring utf8_to_utf16(const std::string& s)
 	return utf8_to_utf16(s.c_str(), s.size());
 }
 
-std::vector<std::string> regex_split(const std::string& str, const std::string& token = "\\s+");
+template<typename T>
+std::vector<std::basic_string<T>> regex_split(const std::basic_string<T>& str, const T* token = "\\s+")
+{
+	std::vector<std::basic_string<T>> elems;
+
+	boost::basic_regex<T, boost::regex_traits<T> > rgx(token);
+	boost::regex_token_iterator<std::basic_string<T>::const_iterator> iter(str.begin(), str.end(), rgx, -1);
+	boost::regex_token_iterator<std::basic_string<T>::const_iterator> end;
+
+	while (iter != end)
+	{
+		elems.emplace_back(*iter);
+		++iter;
+	}
+
+	return elems;
+}
 
 template<typename T>
 std::vector<std::basic_string<T>> string_split(const std::basic_string<T>& str, T delim = ' ')
