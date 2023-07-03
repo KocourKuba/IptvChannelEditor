@@ -131,4 +131,14 @@ class MediaURL
 
         return new MediaURL($s, json_decode($s));
     }
+
+    /**
+     * @param array $m
+     * @param bool $raw_encode
+     * @return MediaURL
+     */
+    public static function make($m, $raw_encode = false)
+    {
+        return self::decode(self::encode($m, $raw_encode));
+    }
 }

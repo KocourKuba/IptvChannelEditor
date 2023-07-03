@@ -82,6 +82,7 @@ const ACTION_CREATE_SEARCH = 'create_search';
 const ACTION_NEW_SEARCH = 'new_search';
 const ACTION_RUN_SEARCH = 'run_search';
 const ACTION_RELOAD = 'reload';
+const ACTION_FOLDER_SELECTED = 'folder_selected';
 const ACTION_CHANGE_PLAYLIST = 'change_playlist';
 const ACTION_WATCHED = 'watched';
 const ACTION_QUALITY = 'quality';
@@ -101,6 +102,7 @@ const ACTION_RESET_DEFAULT = 'reset_default';
 
 const PARAM_CH_LIST_PATH = 'channels_list_path';
 const PARAM_HISTORY_PATH = 'history_path';
+const PARAM_XMLTV_CACHE_PATH = 'xmltv_cache_path';
 const PARAM_XMLTV_INDEX = 'xmltv_index';
 
 # Mounted storages path

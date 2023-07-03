@@ -70,10 +70,6 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->vod_history_screen = new Starnet_Vod_History_Screen($this);
 
         Playback_Points::init();
-
-        // clear epg cache after reload, but not the xmltv cache
-        $this->config->epg_man->clear_epg_cache();
-
         Starnet_Epfs_Handler::init($this);
 
         hd_print(__METHOD__ . ": Init done.");

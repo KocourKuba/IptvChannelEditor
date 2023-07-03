@@ -214,7 +214,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                     array(
                         'screen_id' => Starnet_Folder_Screen::ID,
                         'parent_id' => self::ID,
-                        'save_data' => 'channels_list_path',
+                        'save_data' => self::ID,
                         'windowCounter' => 1,
                     )
                 );
@@ -265,7 +265,15 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
                 return $this->plugin->tv->reload_channels($this, $plugin_cookies);
 
+            case ACTION_FOLDER_SELECTED:
+                $data = MediaURL::decode($user_input->selected_data);
+                hd_print(__METHOD__ . ": " . ACTION_FOLDER_SELECTED . " $data->filepath");
+                smb_tree::set_folder_info($plugin_cookies, $data, PARAM_CH_LIST_PATH);
+                return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
+                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, 800);
+
             case ACTION_RELOAD:
+                hd_print(__METHOD__ . ": reload");
                 return $this->plugin->tv->reload_channels($this, $plugin_cookies);
 
             case ACTION_RESET_DEFAULT:

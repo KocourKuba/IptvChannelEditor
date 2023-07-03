@@ -9,6 +9,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
     const ID = 'file_list';
     const ACTION_FS = 'fs_action';
     const ACTION_SELECT_FOLDER = 'select_folder';
+    const ACTION_RESET_FOLDER = 'reset_folder';
     const ACTION_CREATE_FOLDER = 'create_folder';
     const ACTION_GET_FOLDER_NAME = 'get_folder_name';
     const ACTION_DO_MKDIR = 'do_mkdir';
@@ -133,6 +134,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         $fs_action = User_Input_Handler_Registry::create_action($this, self::ACTION_FS);
         $save_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_SELECT_FOLDER, TR::t('folder_screen_select_folder'));
         $open_folder = User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER, TR::t('folder_screen_open_folder'));
+        $reset_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_RESET_FOLDER, TR::t('reset_default'));
         $create_folder = User_Input_Handler_Registry::create_action($this, self::ACTION_GET_FOLDER_NAME, TR::t('folder_screen_create_folder'));
         $smb_setup = User_Input_Handler_Registry::create_action($this, self::ACTION_SMB_SETUP, TR::t('folder_screen_smb_settings'));
 
@@ -145,6 +147,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
         if (empty($media_url->filepath)) {
             $actions[GUI_EVENT_KEY_B_GREEN] = $smb_setup;
+            $actions[GUI_EVENT_KEY_D_BLUE] = $reset_folder;
         } else if ($media_url->filepath !== '/tmp/mnt/storage' &&
             $media_url->filepath !== '/tmp/mnt/network' &&
             $media_url->filepath !== '/tmp/mnt/smb') {
@@ -173,6 +176,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         //hd_print(__METHOD__ . ": $from_ndx, " . $media_url->get_raw_string());
         $items = array();
         $dir = empty($media_url->filepath) ? "/tmp/mnt" : $media_url->filepath;
+        $allow_network = !isset($media_url->allow_network) || $media_url->allow_network;
         $windowCounter = isset($media_url->windowCounter) ? $media_url->windowCounter + 1 : 2;
         $err = false;
         $ip_path = isset($media_url->ip_path) ? $media_url->ip_path : false;
@@ -216,8 +220,10 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                     }
                 } else if ($key === 'folder') {
                     if ($k === 'network') {
+                        if (!$allow_network) continue;
                         $caption = 'NFS';
                     } else if ($k === 'smb') {
+                        if (!$allow_network) continue;
                         $caption = 'SMB';
                     } else if ($k === 'storage') {
                         $caption = 'Storage';
@@ -234,7 +240,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                         $media_url->filepath !== '/tmp/mnt/storage' &&
                         $media_url->filepath !== '/tmp/mnt/network' &&
                         $media_url->filepath !== '/tmp/mnt/smb' &&
-                        ($media_url->save_data === PARAM_CH_LIST_PATH || $media_url->save_data === PARAM_HISTORY_PATH)
+                        $media_url->save_data !== false
                     ) {
                         $info = TR::t('folder_screen_select__1', $caption);
                     } else {
@@ -312,7 +318,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        dump_input_handler(__METHOD__, $user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -372,18 +378,24 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
 
             case self::ACTION_SELECT_FOLDER:
                 $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
-                //hd_print(__METHOD__ . ": select_folder: " . $url->get_media_url_str());
+                hd_print(__METHOD__ . ": select_folder: " . $url->get_media_url_str());
                 $post_action = null;
-                if ($url->save_data === PARAM_CH_LIST_PATH) {
-                    smb_tree::set_folder_info($plugin_cookies, $url, PARAM_CH_LIST_PATH);
-                    $post_action = User_Input_Handler_Registry::create_action_screen(Starnet_Channels_Setup_Screen::ID, ACTION_RELOAD);
-                } else if ($url->save_data === PARAM_HISTORY_PATH) {
-                    smb_tree::set_folder_info($plugin_cookies, $url, PARAM_HISTORY_PATH);
-                    $post_action = User_Input_Handler_Registry::create_action_screen(Starnet_History_Setup_Screen::ID, ACTION_RELOAD);
+                if ($url->save_data !== false) {
+                    $post_action = User_Input_Handler_Registry::create_action_screen($url->save_data, ACTION_FOLDER_SELECTED,
+                        '', array('selected_data' => $url->get_media_url_str()));
                 }
 
-                $msg_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $url->caption), $post_action, $url->filepath, 800);
-                return (is_newer_versions() !== false) ? Action_Factory::replace_path($parent_url->windowCounter, null, $msg_action) : $msg_action;
+                return (is_newer_versions() !== false) ? Action_Factory::replace_path($parent_url->windowCounter, null, $post_action) : $post_action;
+
+            case self::ACTION_RESET_FOLDER:
+                $url = isset($selected_url->filepath) ? $selected_url : $parent_url;
+                //hd_print(__METHOD__ . ": select_folder: " . $url->get_media_url_str());
+                $post_action = null;
+                if ($url->save_data !== false) {
+                    $post_action = User_Input_Handler_Registry::create_action_screen($url->save_data, ACTION_RESET_DEFAULT);
+                }
+
+                return (is_newer_versions() !== false) ? Action_Factory::replace_path($parent_url->windowCounter, null, $post_action) : $post_action;
 
             case self::ACTION_GET_FOLDER_NAME:
                 $defs = array();

@@ -63,7 +63,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 return Action_Factory::show_title_dialog($msg);
 
             case 'do_clear_epg':
-                $this->plugin->config->epg_man->clear_epg_cache(true);
+                $this->plugin->config->epg_man->clear_epg_cache($plugin_cookies);
                 return Action_Factory::clear_rows_info_cache(Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared')));
 
             case 'plugin_entry':

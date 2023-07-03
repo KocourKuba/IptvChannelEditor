@@ -74,15 +74,11 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
 
         if ($display_path !== get_data_path()) {
             Control_Factory::add_image_button($defs, $this, null,
-                ACTION_RESET_DEFAULT, TR::t('reset_default'), TR::t('apply'), $refresh_icon, self::CONTROLS_WIDTH);
-
-            Control_Factory::add_image_button($defs, $this, null,
                 self::SETUP_ACTION_COPY_TO_DATA, TR::t('setup_copy_to_data'), TR::t('apply'), $refresh_icon, self::CONTROLS_WIDTH);
 
             Control_Factory::add_image_button($defs, $this, null,
                 self::SETUP_ACTION_COPY_TO_PLUGIN, TR::t('setup_copy_to_plugin'), TR::t('apply'), $refresh_icon, self::CONTROLS_WIDTH);
         } else {
-            Control_Factory::add_label($defs, TR::t('reset_default'), TR::t('apply'));
             Control_Factory::add_label($defs, TR::t('setup_copy_to_data'), TR::t('apply'));
             Control_Factory::add_label($defs, TR::t('setup_copy_to_plugin'), TR::t('apply'));
         }
@@ -124,7 +120,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
                 $media_url = MediaURL::encode(
                     array(
                         'screen_id' => Starnet_Folder_Screen::ID,
-                        'save_data' => PARAM_HISTORY_PATH,
+                        'save_data' => self::ID,
                         'windowCounter' => 1,
                     )
                 );
@@ -132,8 +128,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
 
             case ACTION_RESET_DEFAULT:
                 hd_print(__METHOD__ . ": do set history folder to default: " . get_data_path());
-                $media_url = MediaURL::encode(array('filepath' => get_data_path()));
-                smb_tree::set_folder_info($plugin_cookies, MediaURL::decode($media_url), PARAM_HISTORY_PATH);
+                smb_tree::set_folder_info($plugin_cookies, MediaURL::make(array('filepath' => get_data_path())), PARAM_HISTORY_PATH);
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case self::SETUP_ACTION_COPY_TO_DATA:
@@ -181,6 +176,13 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
 
                 return Action_Factory::show_title_dialog(TR::t('setup_history_cleared'),
                     User_Input_Handler_Registry::create_action($this, ACTION_RELOAD));
+
+            case ACTION_FOLDER_SELECTED:
+                $data = MediaURL::decode($user_input->selected_data);
+                hd_print(__METHOD__ . ": " . ACTION_FOLDER_SELECTED . " $data->filepath");
+                smb_tree::set_folder_info($plugin_cookies, $data->filepath, PARAM_HISTORY_PATH);
+                return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
+                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, 800);
 
             case ACTION_RELOAD:
                 hd_print(__METHOD__ . ": reload");
