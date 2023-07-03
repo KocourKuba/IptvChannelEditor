@@ -99,6 +99,10 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 			VERIFY(csName.LoadString(IDS_STRING_VALUE));
 			m_fixed = true;
 			break;
+		case DynamicParamsType::enLinks:
+			VERIFY(csID.LoadString(IDS_STRING_CURRENT));
+			VERIFY(csName.LoadString(IDS_STRING_NAME));
+			break;
 		case DynamicParamsType::enFiles:
 		case DynamicParamsType::enPlaylistTV:
 		case DynamicParamsType::enPlaylistVOD:

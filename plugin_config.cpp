@@ -39,6 +39,16 @@ void plugin_config::set_plugin_defaults(PluginType val)
 	load_default();
 }
 
+void plugin_config::configure_plugin()
+{
+	JSON_ALL_TRY;
+	{
+		const auto& sources = nlohmann::json::parse(GetConfig().get_string(false, REG_CUSTOM_XMLTV_SOURCE));
+		set_custom_epg_urls(sources.get<std::vector<DynamicParamsInfo>>());
+	}
+	JSON_ALL_CATCH;
+}
+
 const PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx) const
 {
 	if (idx != -1 && idx >= (int)playlist_templates.size())
@@ -161,7 +171,7 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename)
 	const auto& full_path = config_dir.append(filename);
 
 	bool res = false;
-	try
+	JSON_ALL_TRY
 	{
 		nlohmann::json node;
 		std::ifstream in_stream(full_path);
@@ -172,20 +182,7 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename)
 			res = true;
 		}
 	}
-	catch (const nlohmann::json::out_of_range& ex)
-	{
-		// out of range errors may happen if provided sizes are excessive
-		TRACE("out of range error: %s\n", ex.what());
-	}
-	catch (const nlohmann::detail::type_error& ex)
-	{
-		// type error
-		TRACE("type error: %s\n", ex.what());
-	}
-	catch (...)
-	{
-		TRACE("unknown exception\n");
-	}
+	JSON_ALL_CATCH;
 
 	if (!res)
 	{

@@ -412,7 +412,6 @@
 #define IDC_BUTTON_CACHE_ICON           1005
 #define IDC_BUTTON_DOWNLOAD_PLAYLIST    1006
 #define IDC_BUTTON_GET                  1007
-#define IDC_BUTTON_ADD_PLAYLIST         1007
 #define IDC_BUTTON_RELOAD_ICON          1008
 #define IDC_BUTTON_ADD_EPG              1009
 #define IDC_BUTTON_IMPORT               1010
@@ -719,7 +718,7 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281

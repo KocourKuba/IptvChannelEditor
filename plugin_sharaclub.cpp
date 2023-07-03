@@ -49,8 +49,10 @@ plugin_sharaclub::plugin_sharaclub()
 	class_name = "sharaclub_config";
 }
 
-void plugin_sharaclub::configure_plugin()
+void plugin_sharaclub::configure_provider_plugin()
 {
+	base_plugin::configure_provider_plugin();
+
 	CWaitCursor cur;
 	std::stringstream data;
 	const auto& epg_domain = get_epg_domain(0);

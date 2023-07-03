@@ -233,6 +233,7 @@ private:
 	void FillTreeChannels(LPCWSTR select = nullptr);
 	void FillTreePlaylist();
 	std::vector<std::wstring> FilterPlaylist();
+	void FillXmlSources();
 
 	void LoadChannelInfo(std::shared_ptr<ChannelInfo> channel = nullptr);
 	void LoadPlayListInfo(HTREEITEM hItem = nullptr);
@@ -284,7 +285,7 @@ private:
 	void SaveStreamInfo();
 	void UpdateWindowTitle();
 	void UpdateIconInfo(uri_stream* uri);
-	std::map<std::wstring, std::wstring> LoadCustomXmltvSources();
+	void LoadCustomXmltvSources();
 
 protected:
 	CFont m_largeFont;
@@ -332,7 +333,6 @@ protected:
 	CButton m_wndShowDuplicates;
 	CButton m_wndShowChanged;
 	CButton m_wndShowChangedCh;
-	CButton m_wndBtnAddPlaylist;
 	CButton m_wndNotAdded;
 	CButton m_wndArchive;
 	CButton m_wndAdult;

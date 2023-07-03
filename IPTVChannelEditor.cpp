@@ -692,6 +692,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 	// load plugin settings
 	plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config));
+	plugin->configure_plugin();
 
 	COleDateTime cur_dt = COleDateTime::GetCurrentTime();
 	const auto& date_string = fmt::format("{:d}{:02d}{:02d}{:02d}", cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour());

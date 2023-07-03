@@ -92,121 +92,137 @@ bool CheckForTimeOut(uint64_t dwStartTime, uint32_t dwTimeOut)
 
 inline size_t count_utf8_to_utf16(const char* sData, size_t sSize)
 {
-	size_t result{ sSize };
+	size_t destSize(sSize);
 
-	for (size_t index = 0; index < sSize;)
+	try
 	{
-		if (sData[index] >= 0)
+		for (size_t index = 0; index < sSize;)
 		{
-			// use fast inner loop to skip single byte code points (which are
-			// expected to be the most frequent)
-			while ((++index < sSize) && (sData[index] >= 0))
-				;
-
-			if (index >= sSize) break;
-		}
-
-		// start special handling for multi-byte code points
-		const char c{ sData[index++] };
-
-		if ((c & BIT7) == 0)
-		{
-			throw std::range_error("UTF-8 string character can never start with 10xxxxxx");
-		}
-		if ((c & BIT6) == 0) // 2 byte character, 0x80 to 0x7FF
-		{
-			if (index == sSize)
+			if (sData[index] >= 0)
 			{
-				throw std::range_error("UTF-8 string is missing bytes in character");
+				// use fast inner loop to skip single byte code points (which are
+				// expected to be the most frequent)
+				while ((++index < sSize) && (sData[index] >= 0))
+					;
+
+				if (index >= sSize) break;
 			}
 
-			const char c2{ sData[index++] };
-			if ((c2 & 0xC0) != BIT8)
-			{
-				throw std::range_error("UTF-8 continuation byte is missing leading bit mask");
-			}
+			// start special handling for multi-byte code points
+			const char c{ sData[index++] };
 
-			// can't require surrogates for 7FF
-			--result;
-		}
-		else if ((c & BIT5) == 0) // 3 byte character, 0x800 to 0xFFFF
-		{
-			if (sSize - index < 2)
+			if ((c & BIT7) == 0)
 			{
-				throw std::range_error("UTF-8 string is missing bytes in character");
+				throw std::range_error("UTF-8 string character can never start with 10xxxxxx");
 			}
-
-			const char c2{ sData[index++] };
-			const char c3{ sData[index++] };
-			if (((c2 | c3) & 0xC0) != BIT8)
+			if ((c & BIT6) == 0) // 2 byte character, 0x80 to 0x7FF
 			{
-				throw std::range_error("UTF-8 continuation byte is missing leading bit mask");
-			}
+				if (index == sSize)
+				{
+					throw std::range_error("UTF-8 string is missing bytes in character");
+				}
 
-			result -= 2;
-		}
-		else if ((c & BIT4) == 0) // 4 byte character, 0x10000 to 0x10FFFF
-		{
-			if (sSize - index < 3)
+				const char c2{ sData[index++] };
+				if ((c2 & 0xC0) != BIT8)
+				{
+					throw std::range_error("UTF-8 continuation byte is missing leading bit mask");
+				}
+
+				// can't require surrogates for 7FF
+				--destSize;
+			}
+			else if ((c & BIT5) == 0) // 3 byte character, 0x800 to 0xFFFF
 			{
-				throw std::range_error("UTF-8 string is missing bytes in character");
-			}
+				if (sSize - index < 2)
+				{
+					throw std::range_error("UTF-8 string is missing bytes in character");
+				}
 
-			const char c2{ sData[index++] };
-			const char c3{ sData[index++] };
-			const char c4{ sData[index++] };
-			if (((c2 | c3 | c4) & 0xC0) != BIT8)
+				const char c2{ sData[index++] };
+				const char c3{ sData[index++] };
+				if (((c2 | c3) & 0xC0) != BIT8)
+				{
+					throw std::range_error("UTF-8 continuation byte is missing leading bit mask");
+				}
+
+				destSize -= 2;
+			}
+			else if ((c & BIT4) == 0) // 4 byte character, 0x10000 to 0x10FFFF
 			{
-				throw std::range_error("UTF-8 continuation byte is missing leading bit mask");
-			}
+				if (sSize - index < 3)
+				{
+					throw std::range_error("UTF-8 string is missing bytes in character");
+				}
 
-			const uint32_t codePoint =
-				((c & LOW_3BITS) << 18) | ((c2 & LOW_6BITS) << 12) | ((c3 & LOW_6BITS) << 6) | (c4 & LOW_6BITS);
-			result -= (3 - (codePoint >= SURROGATE_PAIR_START));
-		}
-		else
-		{
-			throw std::range_error("UTF-8 string has invalid Unicode code point");
+				const char c2{ sData[index++] };
+				const char c3{ sData[index++] };
+				const char c4{ sData[index++] };
+				if (((c2 | c3 | c4) & 0xC0) != BIT8)
+				{
+					throw std::range_error("UTF-8 continuation byte is missing leading bit mask");
+				}
+
+				const uint32_t codePoint =
+					((c & LOW_3BITS) << 18) | ((c2 & LOW_6BITS) << 12) | ((c3 & LOW_6BITS) << 6) | (c4 & LOW_6BITS);
+				destSize -= (3 - (codePoint >= SURROGATE_PAIR_START));
+			}
+			else
+			{
+				throw std::range_error("UTF-8 string has invalid Unicode code point");
+			}
 		}
 	}
+	catch (std::range_error& ex)
+	{
+		ex;
+		destSize = 0;
+	}
 
-	return result;
+	return destSize;
 }
 
 inline size_t count_utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
 {
 	size_t destSize(srcSize);
-	for (size_t index = 0; index < srcSize; ++index)
+	try
 	{
-		const std::wstring::value_type ch(srcData[index]);
-		if (ch <= 0x7FF)
+		for (size_t index = 0; index < srcSize; ++index)
 		{
-			if (ch > 0x7F) // 2 bytes needed (11 bits used)
+			const std::wstring::value_type ch(srcData[index]);
+			if (ch <= 0x7FF)
 			{
-				++destSize;
+				if (ch > 0x7F) // 2 bytes needed (11 bits used)
+				{
+					++destSize;
+				}
 			}
-		}
-		// Check for high surrogate.
-		else if (ch >= H_SURROGATE_START && ch <= H_SURROGATE_END) // 4 bytes needed (21 bits used)
-		{
-			++index;
-			if (index == srcSize)
+			// Check for high surrogate.
+			else if (ch >= H_SURROGATE_START && ch <= H_SURROGATE_END) // 4 bytes needed (21 bits used)
 			{
-				throw std::range_error("UTF-16 string is missing low surrogate");
-			}
+				++index;
+				if (index == srcSize)
+				{
+					throw std::range_error("UTF-16 string is missing low surrogate");
+				}
 
-			const auto lowSurrogate = srcData[index];
-			if (lowSurrogate < L_SURROGATE_START || lowSurrogate > L_SURROGATE_END)
-			{
-				throw std::range_error("UTF-16 string has invalid low surrogate");
-			}
+				const auto lowSurrogate = srcData[index];
+				if (lowSurrogate < L_SURROGATE_START || lowSurrogate > L_SURROGATE_END)
+				{
+					throw std::range_error("UTF-16 string has invalid low surrogate");
+				}
 
-			destSize += 2;
+				destSize += 2;
+			}
+			else // 3 bytes needed (16 bits used)
+			{
+				destSize += 2;
+			}
 		}
-		else // 3 bytes needed (16 bits used)
-		{
-			destSize += 2;
-		}
+	}
+	catch (std::range_error& ex)
+	{
+		ex;
+		destSize = 0;
 	}
 
 	return destSize;

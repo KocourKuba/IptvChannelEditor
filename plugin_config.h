@@ -385,6 +385,7 @@ enum class DynamicParamsType
 	enQuality,
 	enProfiles,
 	enFiles,
+	enLinks,
 	enManifest,
 	enPlaylistTV,
 	enPlaylistVOD,
@@ -439,12 +440,34 @@ public:
 	/// <summary>
 	/// set playlist epg url
 	/// </summary>
-	void set_internal_epg_url(const std::map<std::wstring, std::wstring>& urls) { internal_epg_urls = urls; }
+	void set_custom_epg_urls(const std::vector<DynamicParamsInfo>& urls) { custom_epg_urls = urls; }
 
 	/// <summary>
 	/// get playlist epg url
 	/// </summary>
-	std::wstring get_internal_epg_url(const std::wstring& source_id) { return internal_epg_urls.find(source_id) != internal_epg_urls.end() ? internal_epg_urls[source_id] : L""; }
+	const std::vector<DynamicParamsInfo>& get_custom_epg_urls() { return custom_epg_urls; }
+
+	/// <summary>
+	/// set playlist epg url
+	/// </summary>
+	void set_internal_epg_urls(const std::vector<DynamicParamsInfo>& urls) { internal_epg_urls = urls; }
+
+	/// <summary>
+	/// get playlist epg url
+	/// </summary>
+	const std::vector<DynamicParamsInfo>& get_internal_epg_urls() { return internal_epg_urls; }
+
+	/// <summary>
+	/// get playlist epg url
+	/// </summary>
+	std::wstring get_internal_epg_url(const std::wstring& source_id)
+	{
+		const auto& it = std::find_if(internal_epg_urls.begin(), internal_epg_urls.end(), [source_id](const auto& item)
+									  {
+										  return item.get_id() == source_id;
+									  });
+		return it != internal_epg_urls.end() ? it->get_name() : L"";
+	}
 
 	/// <summary>
 	/// get prefilled EPG parsing preset
@@ -474,7 +497,12 @@ public:
 	/// <summary>
 	/// configure internal plugin settings
 	/// </summary>
-	virtual void configure_plugin() {}
+	virtual void configure_plugin();
+
+	/// <summary>
+	/// configure provider plugin settings
+	/// </summary>
+	virtual void configure_provider_plugin() {}
 
 	/// <summary>
 	/// plugin type
@@ -874,6 +902,7 @@ public:
 		SERIALIZE_STRUCT(j, c, qualities_list);
 		SERIALIZE_STRUCT(j, c, devices_list);
 		SERIALIZE_STRUCT(j, c, profiles_list);
+		SERIALIZE_STRUCT(j, c, custom_epg_urls);
 	}
 
 	friend void from_json(const nlohmann::json& j, plugin_config& c)
@@ -907,6 +936,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, qualities_list);
 		DESERIALIZE_STRUCT(j, c, devices_list);
 		DESERIALIZE_STRUCT(j, c, profiles_list);
+		DESERIALIZE_STRUCT(j, c, custom_epg_urls);
 	}
 
 protected:
@@ -916,7 +946,7 @@ protected:
 	// non configurable parameters
 	PluginType plugin_type = PluginType::enCustom;
 	std::string type_name;
-	std::map<std::wstring, std::wstring> internal_epg_urls;
+	std::vector<DynamicParamsInfo> internal_epg_urls;
 
 	// configurable parameters
 
@@ -976,4 +1006,5 @@ protected:
 	std::vector<DynamicParamsInfo> devices_list;
 	std::vector<DynamicParamsInfo> profiles_list;
 	std::array<EpgParameters, 4> epg_presets;
+	std::vector<DynamicParamsInfo> custom_epg_urls;
 };
