@@ -58,6 +58,12 @@ class Epg_Manager
         $this->xml_cached_file = array();
     }
 
+    public function clear_epg_memory_cache()
+    {
+        $this->epg_cache = array();
+        $this->xmltv_data = null;
+    }
+
     /**
      * @param $idx string
      * @param $xmltv_url string
@@ -84,6 +90,18 @@ class Epg_Manager
     public function get_xmltv_urls()
     {
         return $this->xmltv_urls;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_xmltv_idx($plugin_cookies)
+    {
+
+        if (isset($plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_XMLTV_EPG_IDX}))
+            return $plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_XMLTV_EPG_IDX};
+
+        return array_search($this->xmltv_urls, reset($this->xmltv_urls));
     }
 
     /**
@@ -141,7 +159,9 @@ class Epg_Manager
             }
 
             $params = $this->config->get_epg_params($epg_source);
-            if (empty($params[Epg_Params::EPG_URL]) && $epg_source !== Plugin_Constants::EPG_INTERNAL) {
+            if ($epg_source === Plugin_Constants::EPG_INTERNAL) {
+                $params[Epg_Params::EPG_DOMAIN] = $this->get_xmltv_url($this->get_xmltv_idx($plugin_cookies));
+            } else if (empty($params[Epg_Params::EPG_URL])) {
                 $epg_source = ($epg_source === Plugin_Constants::EPG_FIRST) ? Plugin_Constants::EPG_SECOND : Plugin_Constants::EPG_FIRST;
                 $params = $this->config->get_epg_params($epg_source);
                 if (empty($params[Epg_Params::EPG_URL])) {
@@ -189,6 +209,7 @@ class Epg_Manager
             }
 
             $epg_url = str_replace('#', '%23', $epg_url);
+            hd_print(__METHOD__ . ": Epg url: $epg_url");
             $hash = hash('crc32', $epg_url);
             $epg_cache_file = get_temp_path("epg/epg_channel_$hash");
             $day_epg_cache = $epg_cache_file . "_$day_start_ts";
@@ -214,10 +235,7 @@ class Epg_Manager
 
             if ($from_cache === false) {
                 if ($epg_source === Plugin_Constants::EPG_INTERNAL) {
-                    $xmltv_idx = isset($plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_XMLTV_EPG_IDX})
-                        ? $plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_XMLTV_EPG_IDX}
-                        : 'custom';
-
+                    $xmltv_idx = $this->get_xmltv_idx($plugin_cookies);
                     if (empty($this->xmltv_data)) {
                         $lock_file = get_temp_path(crc32($this->get_xmltv_url($xmltv_idx)) . ".lock");
                         if (file_exists($lock_file)) {
@@ -352,28 +370,27 @@ class Epg_Manager
      * @param $max_check_time
      * @return boolean
      */
-    public static function check_xmltv_index($xml_cached_path, $max_check_time)
+    public static function is_xmltv_index_valid($xml_cached_path, $max_check_time)
     {
         $xmltv_index_file = $xml_cached_path . '.index';
+        hd_print(__METHOD__ . ": Cached file path: $xml_cached_path");
         if (!file_exists($xmltv_index_file)) {
+            hd_print(__METHOD__ . ": Cached file path not exist");
             return false;
         }
 
-        $check_time_file = false;
-        hd_print("cached file path: $xml_cached_path");
-        if (file_exists($xml_cached_path))
-            $check_time_file = filemtime($xml_cached_path);
-
-        $need_index = true;
-        hd_print("cached file indx: $xmltv_index_file");
-        if ($check_time_file && $check_time_file + $max_check_time > time()) {
-            hd_print(__METHOD__ . ": cached file not expired");
-            $need_index = false;
+        if (!file_exists($xml_cached_path)) {
+            hd_print(__METHOD__ . ": Cached file index not exist");
         } else {
+            $check_time_file = filemtime($xml_cached_path);
+            if ($check_time_file && $check_time_file + $max_check_time > time()) {
+                hd_print(__METHOD__ . ": Cached file index: $xmltv_index_file not expired " . date("Y-m-d H:s", $check_time_file));
+                return true;
+            }
             unlink($xmltv_index_file);
         }
 
-        return $need_index;
+        return false;
     }
 
     /**
@@ -384,10 +401,12 @@ class Epg_Manager
     {
         $xmltv_index_file = $xml_cached_path . '.index';
         $xmltv_data = null;
+        hd_print(__METHOD__ . ": load index from file '$xmltv_index_file'");
         $data = json_decode(file_get_contents($xmltv_index_file), true);
         if (false !== $data) {
-            hd_print(__METHOD__ . ": load info from file '$xmltv_index_file'");
             $xmltv_data = $data;
+        } else {
+            hd_print(__METHOD__ . ": load index failed '$xmltv_index_file'");
         }
 
         return $xmltv_data;
@@ -447,11 +466,10 @@ class Epg_Manager
     }
 
     /**
-     * @param $xmltv_url string
      * @param $xml_cached_path string
      * @return array
      */
-    public static function index_xmltv_file($xmltv_url, $xml_cached_path)
+    public static function index_xmltv_file($xml_cached_path)
     {
         $lock_file = $xml_cached_path . ".lock";
         if (file_exists($lock_file))
@@ -460,15 +478,11 @@ class Epg_Manager
         file_put_contents($lock_file, '');
 
         try {
-            if (empty($xmltv_url)) {
-                throw new Exception("xmltv url not defined");
-            }
-
             if (!file_exists($xml_cached_path)) {
                 throw new Exception("xmltv cache file not exist");
             }
 
-            hd_print(__METHOD__ . ": Reindexing...");
+            hd_print(__METHOD__ . ": Reindexing $xml_cached_path");
             $t = microtime(1);
 
             $file_object = new SplFileObject($xml_cached_path);

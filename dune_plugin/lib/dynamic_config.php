@@ -64,9 +64,9 @@ class dynamic_config
         }
 
         $int_epg = array();
-        $int_epg[Epg_Params::EPG_DOMAIN] = '';
-        $int_epg[Epg_Params::EPG_URL] = Plugin_Macros::EPG_ID;
+        $int_epg[Epg_Params::EPG_URL] = Plugin_Macros::EPG_DOMAIN . "_" . Plugin_Macros::EPG_ID;
         $this->set_epg_params(Plugin_Constants::EPG_INTERNAL, $int_epg);
+        $this->set_feature(Plugin_Constants::EPG_CUSTOM_SOURCE, $settings[Plugin_Constants::EPG_CUSTOM_SOURCE]);
 
         $servers = array();
         foreach ($settings[Plugin_Constants::SERVERS_LIST] as $pair) {

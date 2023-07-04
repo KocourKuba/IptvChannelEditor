@@ -754,11 +754,6 @@ class default_config extends dynamic_config
 
         $mapped = 0;
         $this->epg_man->clear_xmltv_urls();
-        $this->epg_man->set_xmltv_url('custom',
-            isset($plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_CUSTOM_XMLTV_EPG})
-                ? $plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_CUSTOM_XMLTV_EPG}
-                : '');
-
         foreach ($m3u_entries as $entry) {
             if ($entry->isExtM3U()) {
                 foreach (array('url-tvg', 'x-tvg-url') as $attr) {
@@ -787,6 +782,15 @@ class default_config extends dynamic_config
             } else {
                 // threat as custom url
                 $pl_entries[hash('crc32', $entry->getPath())] = array();
+            }
+        }
+
+        $custom_sources = $this->get_feature(Plugin_Constants::EPG_CUSTOM_SOURCE);
+        if (!empty($custom_sources)) {
+            hd_print("custom xmltv sources: " . count($custom_sources));
+            foreach ($custom_sources as $source) {
+                hd_print("custom xmltv sources: " . $source['id'] . " => " . $source['name']);
+                $this->epg_man->set_xmltv_url($source['id'], $source['name']);
             }
         }
 

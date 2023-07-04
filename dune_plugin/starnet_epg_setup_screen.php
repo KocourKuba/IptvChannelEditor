@@ -13,8 +13,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
     const SETUP_ACTION_EPG_SOURCE = 'epg_source';
     const SETUP_ACTION_XMLTV_EPG_IDX = 'xmltv_epg_idx';
     const SETUP_ACTION_CUSTOM_XMLTV_EPG = 'custom_xmltv_epg';
-    const SETUP_ACTION_CUSTOM_XMLTV_EPG_DLG = 'xmltv_custom_epg_dlg';
-    const SETUP_ACTION_CUSTOM_XMLTV_EPG_APPLY = 'xmltv_custom_epg_apply';
     const SETUP_ACTION_CHANGE_XMLTV_CACHE_PATH = 'xmltv_cache_path';
     const SETUP_ACTION_EPG_CACHE_TTL = 'epg_cache_ttl';
     const SETUP_ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
@@ -101,28 +99,29 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         //////////////////////////////////////
         // XMLTV EPG source
         if ($plugin_cookies->{self::SETUP_ACTION_EPG_SOURCE} === SetupControlSwitchDefs::switch_epg3) {
-            $xmltv_epg_idx = isset($plugin_cookies->{self::SETUP_ACTION_XMLTV_EPG_IDX}) ? $plugin_cookies->{self::SETUP_ACTION_XMLTV_EPG_IDX} : 'custom';
-
-            $urls = $this->plugin->config->epg_man->get_xmltv_urls();
-            if (empty($urls['custom'])) {
-                $urls['custom'] = TR::t('custom');
-            }
-            Control_Factory::add_combobox($defs, $this, null,
-                self::SETUP_ACTION_XMLTV_EPG_IDX, TR::t('setup_xmltv_epg_source'),
-                $xmltv_epg_idx, $urls, self::CONTROLS_WIDTH, true);
-
-            if ($xmltv_epg_idx === 'custom') {
-                Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CUSTOM_XMLTV_EPG_DLG,
-                    TR::t('setup_xmltv_set_epg_source'), TR::t('setup_enter_xmltv_url'), $this->plugin->get_image_path('text.png'));
-            }
-
-            $xcache_dir = Epg_Manager::get_xcache_dir($plugin_cookies);
-            $free_size = TR::t('setup_storage_info__1', HD::get_storage_size(dirname($xcache_dir)));
-            if (is_apk()) {
-                Control_Factory::add_label($defs, $free_size, $xcache_dir);
+            $all_sources = $this->plugin->config->epg_man->get_xmltv_urls();
+            if (empty($all_sources)) {
+                Control_Factory::add_label($defs, 'no xmltv sources', '');
             } else {
-                Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_XMLTV_CACHE_PATH,
-                    $free_size, $xcache_dir, $this->plugin->get_image_path('folder.png'));
+                $xmltv_idx = $this->plugin->config->epg_man->get_xmltv_idx($plugin_cookies);
+                hd_print(__METHOD__ . ": stored idx $xmltv_idx");
+                if (!isset($all_sources[$xmltv_idx])) {
+                    $xmltv_idx = array_search($all_sources, reset($all_sources));
+                    hd_print(__METHOD__ . ": selected idx $xmltv_idx");
+                }
+
+                Control_Factory::add_combobox($defs, $this, null,
+                    self::SETUP_ACTION_XMLTV_EPG_IDX, TR::t('setup_xmltv_epg_source'),
+                    $xmltv_idx, $all_sources, self::CONTROLS_WIDTH, true);
+
+                $xcache_dir = Epg_Manager::get_xcache_dir($plugin_cookies);
+                $free_size = TR::t('setup_storage_info__1', HD::get_storage_size(dirname($xcache_dir)));
+                if (is_apk()) {
+                    Control_Factory::add_label($defs, $free_size, $xcache_dir);
+                } else {
+                    Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_XMLTV_CACHE_PATH,
+                        $free_size, $xcache_dir, $this->plugin->get_image_path('folder.png'));
+                }
             }
         }
 
@@ -187,29 +186,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         return $this->do_get_control_defs($plugin_cookies);
     }
 
-    /**
-     * ott key dialog defs
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function do_get_custom_epg_defs(&$plugin_cookies)
-    {
-        $defs = array();
-        $custom_xmltv_epg = isset($plugin_cookies->{self::SETUP_ACTION_CUSTOM_XMLTV_EPG}) ? $plugin_cookies->{self::SETUP_ACTION_CUSTOM_XMLTV_EPG} : '';
-
-        Control_Factory::add_vgap($defs, 20);
-        Control_Factory::add_text_field($defs, $this, null, self::SETUP_ACTION_CUSTOM_XMLTV_EPG, TR::t('setup_enter_xmltv_url'),
-            $custom_xmltv_epg, false, false, false, true, 600);
-
-        Control_Factory::add_vgap($defs, 50);
-
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_CUSTOM_XMLTV_EPG_APPLY, TR::t('ok'), 300);
-        Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
-        Control_Factory::add_vgap($defs, 10);
-
-        return $defs;
-    }
-
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         //dump_input_handler(__METHOD__, $user_input);
@@ -235,17 +211,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 $val = $user_input->{self::SETUP_ACTION_XMLTV_EPG_IDX};
                 $plugin_cookies->{self::SETUP_ACTION_XMLTV_EPG_IDX} = $val;
                 hd_print(__METHOD__ . ": Selected xmltv epg idx: $val");
-                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
-
-            case self::SETUP_ACTION_CUSTOM_XMLTV_EPG_DLG: // show ott key dialog
-                $defs = $this->do_get_custom_epg_defs($plugin_cookies);
-                return Action_Factory::show_dialog(TR::t('setup_enter_xmltv_epg_source'), $defs, true);
-
-            case self::SETUP_ACTION_CUSTOM_XMLTV_EPG_APPLY: // handle ott key dialog result
-                $val = $user_input->{self::SETUP_ACTION_CUSTOM_XMLTV_EPG};
-                $plugin_cookies->{self::SETUP_ACTION_CUSTOM_XMLTV_EPG} = $val;
-                $this->plugin->config->epg_man->set_xmltv_url('custom', $val);
-                hd_print(__METHOD__ . ": Selected custom xmltv epg source: $val");
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case self::SETUP_ACTION_CHANGE_XMLTV_CACHE_PATH:
@@ -298,13 +263,14 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case ACTION_RELOAD:
                 hd_print(__METHOD__ . ": " . ACTION_RELOAD);
-                $this->plugin->config->epg_man->xmltv_data = null;
-
+                $this->plugin->config->epg_man->clear_epg_memory_cache();
                 $xmltv_idx = $plugin_cookies->{self::SETUP_ACTION_XMLTV_EPG_IDX};
                 $cached_file = $this->plugin->config->epg_man->get_xml_cached_file($xmltv_idx, $plugin_cookies);
                 $max_cache_time = 3600 * 24 * $plugin_cookies->epg_cache_ttl;
 
-                if (false === Epg_Manager::check_xmltv_index($cached_file, $max_cache_time)) {
+                hd_print(__METHOD__ . ": Checking: $cached_file ($xmltv_idx)");
+
+                if (false === Epg_Manager::is_xmltv_index_valid($cached_file, $max_cache_time)) {
                     $url = $this->plugin->config->epg_man->get_xmltv_url($xmltv_idx);
                     $res = Epg_Manager::download_xmltv_url($url, $cached_file);
                     if (true !== $res) {

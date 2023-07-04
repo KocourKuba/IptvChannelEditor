@@ -51,6 +51,7 @@ class Plugin_Constants
     const /* array */ STREAMS_CONFIG = 'streams_config';
 
     // epg parameters
+    const /* array */ EPG_CUSTOM_SOURCE = 'custom_epg_urls';
     const /* array */ EPG_PARAMS = 'epg_params';
 
     // server parameters
