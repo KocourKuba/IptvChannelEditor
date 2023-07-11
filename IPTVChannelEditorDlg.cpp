@@ -3276,13 +3276,15 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		dlg.m_plugin = m_plugin;
 		dlg.m_epg_idx = epg_idx;
 		dlg.m_epg_cache = &m_epg_cache;
-		dlg.m_xmltv_source = m_xmltv_sources[m_xmltvEpgSource];
 		dlg.m_params.subdomain = m_cur_account.get_subdomain();
 		dlg.m_params.token = m_cur_account.get_token();
 		dlg.m_params.login = m_cur_account.get_login();
 		dlg.m_params.password = m_cur_account.get_password();
 		dlg.m_params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 		dlg.m_params.server_idx = m_cur_account.server_id;
+
+		if (m_xmltvEpgSource >= 0 && m_xmltvEpgSource < (int)m_xmltv_sources.size())
+			dlg.m_xmltv_source = m_xmltv_sources[m_xmltvEpgSource];
 
 		UpdateExtToken(info);
 		UpdateVars(info);
