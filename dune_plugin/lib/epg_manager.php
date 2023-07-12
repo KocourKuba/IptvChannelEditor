@@ -3,8 +3,6 @@ require_once 'hd.php';
 
 class Epg_Manager
 {
-    const EPG_CACHE_PATH = 'epg/';
-
     /**
      * @var default_config
      */
@@ -46,10 +44,6 @@ class Epg_Manager
     public function __construct(default_config $config)
     {
         $this->config = $config;
-        $cache_dir = get_temp_path(self::EPG_CACHE_PATH);
-        if (!is_dir($cache_dir) && !(mkdir($cache_dir) && is_dir($cache_dir))) {
-            hd_print("Unable to create directory '$cache_dir'!!!");
-        }
     }
 
     public function clear_xmltv_urls()
@@ -211,7 +205,7 @@ class Epg_Manager
             $epg_url = str_replace('#', '%23', $epg_url);
             hd_print(__METHOD__ . ": Epg url: $epg_url");
             $hash = hash('crc32', $epg_url);
-            $epg_cache_file = get_temp_path("epg/epg_channel_$hash");
+            $epg_cache_file = self::get_xcache_dir($plugin_cookies) . ("epg_channel_$hash");
             $day_epg_cache = $epg_cache_file . "_$day_start_ts";
             if (file_exists($day_epg_cache)) {
                 //hd_print(__METHOD__ . ": Loading day entries for EPG ID: '$epg_id' from file cache: $day_epg_cache");
@@ -230,6 +224,7 @@ class Epg_Manager
                     hd_print(__METHOD__ . ": Loading all entries for EPG ID: '$epg_id' from file cache: $epg_cache_file");
                 } else {
                     hd_print(__METHOD__ . ": Cache expired at $cache_expired now $now");
+                    unlink($epg_cache_file);
                 }
             }
 
@@ -333,7 +328,13 @@ class Epg_Manager
             return false;
         }
 
-        $file_object = self::open_xmltv_file($this->get_xml_cached_file($idx, $plugin_cookies));
+        $cached_file = $this->get_xml_cached_file($idx, $plugin_cookies);
+        if (empty($cached_file)) {
+            hd_print(__METHOD__ . ": xmltv file by index: $idx not set");
+            return false;
+        }
+
+        $file_object = self::open_xmltv_file($cached_file);
         if (false === $file_object) {
             hd_print(__METHOD__ . ": Failed to open xmltv file by index: $idx");
             return false;
@@ -534,12 +535,11 @@ class Epg_Manager
         $this->epg_cache = array();
         $this->xmltv_data = null;
 
-        foreach (array(get_temp_path(self::EPG_CACHE_PATH), self::get_xcache_dir($plugin_cookies) . $this->config->plugin_info['app_name'] . "_") as $dir) {
-            hd_print(__METHOD__ . ": clear cache dir: $dir");
-            foreach (glob($dir . "*") as $file) {
-                if (is_file($file)) {
-                    unlink($file);
-                }
+        $dir = self::get_xcache_dir($plugin_cookies) . $this->config->plugin_info['app_name'] . "_";
+        hd_print(__METHOD__ . ": clear cache dir: $dir");
+        foreach (glob($dir . "*") as $file) {
+            if (is_file($file)) {
+                unlink($file);
             }
         }
     }

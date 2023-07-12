@@ -591,17 +591,19 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
             $xmltv_idx = $this->plugin->config->epg_man->get_xmltv_idx($plugin_cookies);
             $cached_file = $this->plugin->config->epg_man->get_xml_cached_file($xmltv_idx, $plugin_cookies);
-            $max_cache_time = 3600 * 24 * (isset($plugin_cookies->epg_cache_ttl) ? $plugin_cookies->epg_cache_ttl : 3);
-            hd_print(__METHOD__ . ": Checking: $cached_file ($xmltv_idx)");
-            if (Epg_Manager::is_xmltv_index_valid($cached_file, $max_cache_time)) {
-                $this->plugin->config->epg_man->xmltv_data = Epg_Manager::load_xmltv_index($cached_file);
-            } else {
-                $url = $this->plugin->config->epg_man->get_xmltv_url($xmltv_idx);
-                $res = Epg_Manager::download_xmltv_url($url, $cached_file);
-                if (true === $res) {
-                    $this->plugin->config->epg_man->xmltv_data = Epg_Manager::index_xmltv_file($cached_file);
+            if (!empty($cached_file)) {
+                $max_cache_time = 3600 * 24 * (isset($plugin_cookies->epg_cache_ttl) ? $plugin_cookies->epg_cache_ttl : 3);
+                hd_print(__METHOD__ . ": Checking: $cached_file ($xmltv_idx)");
+                if (Epg_Manager::is_xmltv_index_valid($cached_file, $max_cache_time)) {
+                    $this->plugin->config->epg_man->xmltv_data = Epg_Manager::load_xmltv_index($cached_file);
                 } else {
-                    hd_print(__METHOD__ . ": $res");
+                    $url = $this->plugin->config->epg_man->get_xmltv_url($xmltv_idx);
+                    $res = Epg_Manager::download_xmltv_url($url, $cached_file);
+                    if (true === $res) {
+                        $this->plugin->config->epg_man->xmltv_data = Epg_Manager::index_xmltv_file($cached_file);
+                    } else {
+                        hd_print(__METHOD__ . ": $res");
+                    }
                 }
             }
         }

@@ -114,15 +114,20 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                     self::SETUP_ACTION_XMLTV_EPG_IDX, TR::t('setup_xmltv_epg_source'),
                     $xmltv_idx, $all_sources, self::CONTROLS_WIDTH, true);
 
-                $xcache_dir = Epg_Manager::get_xcache_dir($plugin_cookies);
-                $free_size = TR::t('setup_storage_info__1', HD::get_storage_size(dirname($xcache_dir)));
-                if (is_apk()) {
-                    Control_Factory::add_label($defs, $free_size, $xcache_dir);
-                } else {
-                    Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_XMLTV_CACHE_PATH,
-                        $free_size, $xcache_dir, $this->plugin->get_image_path('folder.png'));
-                }
+                Control_Factory::add_image_button($defs, $this, null, ACTION_RELOAD,
+                    TR::t('setup_reload_xmltv_epg'), TR::t('refresh'), $this->plugin->get_image_path('refresh.png'));
             }
+        }
+
+        //////////////////////////////////////
+        // EPG cache dir
+        $xcache_dir = Epg_Manager::get_xcache_dir($plugin_cookies);
+        $free_size = TR::t('setup_storage_info__1', HD::get_storage_size(dirname($xcache_dir)));
+        if (is_apk()) {
+            Control_Factory::add_label($defs, $free_size, $xcache_dir);
+        } else {
+            Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_XMLTV_CACHE_PATH,
+                $free_size, $xcache_dir, $this->plugin->get_image_path('folder.png'));
         }
 
         //////////////////////////////////////
@@ -213,14 +218,13 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 }
 
                 $plugin_cookies->{self::SETUP_ACTION_XMLTV_EPG_IDX} = $xmltv_idx;
-
-                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
+                break;
 
             case self::SETUP_ACTION_XMLTV_EPG_IDX:
                 $val = $user_input->{self::SETUP_ACTION_XMLTV_EPG_IDX};
                 $plugin_cookies->{self::SETUP_ACTION_XMLTV_EPG_IDX} = $val;
                 hd_print(__METHOD__ . ": Selected xmltv epg idx: $val");
-                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
+                break;
 
             case self::SETUP_ACTION_CHANGE_XMLTV_CACHE_PATH:
                 $media_url = MediaURL::encode(
@@ -255,7 +259,8 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case self::SETUP_ACTION_CLEAR_EPG_CACHE: // clear epg cache
                 $this->plugin->config->epg_man->clear_epg_cache($plugin_cookies);
-                return Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared'));
+                return Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared'),
+                    Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)));
 
             case ACTION_RESET_DEFAULT:
                 hd_print(__METHOD__ . ": " . ACTION_RESET_DEFAULT);
@@ -275,6 +280,13 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 $this->plugin->config->epg_man->clear_epg_memory_cache();
                 $xmltv_idx = $plugin_cookies->{self::SETUP_ACTION_XMLTV_EPG_IDX};
                 $cached_file = $this->plugin->config->epg_man->get_xml_cached_file($xmltv_idx, $plugin_cookies);
+                if (empty($cached_file)) {
+                    hd_print(__METHOD__ . ": Cached xmltv file not set for index: $xmltv_idx");
+                    return Action_Factory::show_title_dialog(TR::t('err_load_xmltv_epg'),
+                        Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)),
+                        "Cached xmltv file not set for index: $xmltv_idx", 800);
+                }
+
                 $max_cache_time = 3600 * 24 * $plugin_cookies->epg_cache_ttl;
 
                 hd_print(__METHOD__ . ": Checking: $cached_file ($xmltv_idx)");
