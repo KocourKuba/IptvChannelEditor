@@ -7,7 +7,6 @@ require_once 'lib/user_input_handler.php';
 class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements User_Input_Handler
 {
     const ID = 'interface_setup';
-    const CONTROLS_WIDTH = 800;
 
     const SETUP_ACTION_SHOW_TV = 'show_tv';
     const SETUP_ACTION_VOD_LAST = 'vod_last';

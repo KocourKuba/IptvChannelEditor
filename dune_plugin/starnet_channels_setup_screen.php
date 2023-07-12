@@ -7,7 +7,6 @@ require_once 'lib/user_input_handler.php';
 class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements User_Input_Handler
 {
     const ID = 'channels_setup';
-    const CONTROLS_WIDTH = 800;
 
     const SETUP_ACTION_CHANGE_CH_LIST_PATH = 'change_list_path';
     const SETUP_ACTION_CHANGE_CH_LIST = 'change_channels_list';
@@ -166,7 +165,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
         Control_Factory::add_vgap($defs, 20);
         Control_Factory::add_text_field($defs, $this, null, 'channels_url_path', '',
-            $url_path, false, false, false, true, 800);
+            $url_path, false, false, false, true, self::CONTROLS_WIDTH);
 
         Control_Factory::add_vgap($defs, 50);
 
@@ -270,7 +269,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 hd_print(__METHOD__ . ": " . ACTION_FOLDER_SELECTED . " $data->filepath");
                 smb_tree::set_folder_info($plugin_cookies, $data, PARAM_CH_LIST_PATH);
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
-                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, 800);
+                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, self::CONTROLS_WIDTH);
 
             case ACTION_RELOAD:
                 hd_print(__METHOD__ . ": reload");

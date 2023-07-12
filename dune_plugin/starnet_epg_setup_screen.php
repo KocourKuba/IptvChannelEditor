@@ -8,7 +8,6 @@ require_once 'lib/epg_manager.php';
 class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_Input_Handler
 {
     const ID = 'epg_setup';
-    const CONTROLS_WIDTH = 800;
 
     const SETUP_ACTION_EPG_SOURCE = 'epg_source';
     const SETUP_ACTION_XMLTV_EPG_IDX = 'xmltv_epg_idx';
@@ -259,21 +258,24 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case self::SETUP_ACTION_CLEAR_EPG_CACHE: // clear epg cache
                 $this->plugin->config->epg_man->clear_epg_cache($plugin_cookies);
+                $this->plugin->tv->unload_channels();
                 return Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared'),
                     Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)));
 
             case ACTION_RESET_DEFAULT:
                 hd_print(__METHOD__ . ": " . ACTION_RESET_DEFAULT);
-                Epg_Manager::set_xcache_dir($plugin_cookies, MediaURL::make(array('filepath' => get_data_path())));
+                $this->plugin->config->epg_man->clear_epg_cache($plugin_cookies);
+                Epg_Manager::set_xcache_dir($plugin_cookies, MediaURL::make(array('filepath' => get_data_path("epg_cache"))));
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', Epg_Manager::get_xcache_dir($plugin_cookies)),
                     User_Input_Handler_Registry::create_action($this, ACTION_RELOAD));
 
             case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
                 hd_print(__METHOD__ . ": " . ACTION_FOLDER_SELECTED . " $data->filepath");
+                $this->plugin->config->epg_man->clear_epg_cache($plugin_cookies);
                 Epg_Manager::set_xcache_dir($plugin_cookies, $data);
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
-                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, 800);
+                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, self::CONTROLS_WIDTH);
 
             case ACTION_RELOAD:
                 hd_print(__METHOD__ . ": " . ACTION_RELOAD);
@@ -284,20 +286,20 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                     hd_print(__METHOD__ . ": Cached xmltv file not set for index: $xmltv_idx");
                     return Action_Factory::show_title_dialog(TR::t('err_load_xmltv_epg'),
                         Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)),
-                        "Cached xmltv file not set for index: $xmltv_idx", 800);
+                        "Cached xmltv file not set for index: $xmltv_idx", self::CONTROLS_WIDTH);
                 }
 
                 $max_cache_time = 3600 * 24 * $plugin_cookies->epg_cache_ttl;
 
                 hd_print(__METHOD__ . ": Checking: $cached_file ($xmltv_idx)");
 
-                if (false === Epg_Manager::is_xmltv_index_valid($cached_file, $max_cache_time)) {
+                if (false === Epg_Manager::is_xmltv_cache_valid($cached_file, $max_cache_time)) {
                     $url = $this->plugin->config->epg_man->get_xmltv_url($xmltv_idx);
                     $res = Epg_Manager::download_xmltv_url($url, $cached_file);
                     if (true !== $res) {
                         return Action_Factory::show_title_dialog(TR::t('err_load_xmltv_epg'),
                             Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)),
-                            $res, 800);
+                            $res, self::CONTROLS_WIDTH);
                     }
                 }
 

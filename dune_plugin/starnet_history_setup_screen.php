@@ -7,7 +7,6 @@ require_once 'lib/user_input_handler.php';
 class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements User_Input_Handler
 {
     const ID = 'history_setup';
-    const CONTROLS_WIDTH = 800;
 
     const SETUP_ACTION_HISTORY_CHANGE_FOLDER = 'history_change_folder';
     const SETUP_ACTION_TV_HISTORY_CLEAR = 'history_clear_tv';
@@ -182,7 +181,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
                 hd_print(__METHOD__ . ": " . ACTION_FOLDER_SELECTED . " $data->filepath");
                 smb_tree::set_folder_info($plugin_cookies, $data->filepath, PARAM_HISTORY_PATH);
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
-                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, 800);
+                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, self::CONTROLS_WIDTH);
 
             case ACTION_RELOAD:
                 hd_print(__METHOD__ . ": reload");

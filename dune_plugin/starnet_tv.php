@@ -46,6 +46,11 @@ class Starnet_Tv implements Tv, User_Input_Handler
     protected $channels;
 
     /**
+     * @var array
+     */
+    protected $epg_ids;
+
+    /**
      * @template Group
      * @var Hashed_Array<Group>
      */
@@ -484,6 +489,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
         $fav_channel_ids = $this->get_fav_channel_ids($plugin_cookies);
 
         // Read channels
+        $this->epg_ids = array();
         $this->channels = new Hashed_Array();
         $num = 0;
         foreach ($xml->tv_channels->children() as $xml_tv_channel) {
@@ -560,6 +566,8 @@ class Starnet_Tv implements Tv, User_Input_Handler
                     $ext_params
                 );
                 $this->channels->put($channel);
+
+                $this->epg_ids[$epg1] = '';
             }
 
             // Link group and channel.
@@ -594,13 +602,13 @@ class Starnet_Tv implements Tv, User_Input_Handler
             if (!empty($cached_file)) {
                 $max_cache_time = 3600 * 24 * (isset($plugin_cookies->epg_cache_ttl) ? $plugin_cookies->epg_cache_ttl : 3);
                 hd_print(__METHOD__ . ": Checking: $cached_file ($xmltv_idx)");
-                if (Epg_Manager::is_xmltv_index_valid($cached_file, $max_cache_time)) {
+                if (false !== Epg_Manager::is_xmltv_cache_valid($cached_file, $max_cache_time)) {
                     $this->plugin->config->epg_man->xmltv_data = Epg_Manager::load_xmltv_index($cached_file);
                 } else {
                     $url = $this->plugin->config->epg_man->get_xmltv_url($xmltv_idx);
                     $res = Epg_Manager::download_xmltv_url($url, $cached_file);
                     if (true === $res) {
-                        $this->plugin->config->epg_man->xmltv_data = Epg_Manager::index_xmltv_file($cached_file);
+                        Epg_Manager::index_xmltv_file($cached_file, $this->epg_ids);
                     } else {
                         hd_print(__METHOD__ . ": $res");
                     }

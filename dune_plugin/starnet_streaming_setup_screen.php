@@ -7,7 +7,6 @@ require_once 'lib/user_input_handler.php';
 class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements User_Input_Handler
 {
     const ID = 'stream_setup';
-    const CONTROLS_WIDTH = 800;
 
     const SETUP_ACTION_AUTO_RESUME = 'auto_resume';
     const SETUP_ACTION_AUTO_PLAY = 'auto_play';
