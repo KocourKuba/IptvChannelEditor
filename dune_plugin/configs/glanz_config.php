@@ -98,7 +98,7 @@ class glanz_config extends default_config
         foreach ($jsonItems as $movie) {
             $category = (string)$movie->category;
             if (empty($category)) {
-                $category = TR::t('no_category');
+                $category = TR::load_string('no_category');
             }
 
             if (!array_key_exists($category, $cat_info)) {
@@ -192,7 +192,7 @@ class glanz_config extends default_config
 
             $category = $movie->category;
             if (empty($category)) {
-                $category = TR::t('no_category');
+                $category = TR::load_string('no_category');
             }
 
             if ($category_id === Vod_Category::FLAG_ALL || $category_id === $category) {

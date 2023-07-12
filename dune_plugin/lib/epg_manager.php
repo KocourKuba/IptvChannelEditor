@@ -101,7 +101,7 @@ class Epg_Manager
         if (isset($plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_XMLTV_EPG_IDX}))
             return $plugin_cookies->{Starnet_Epg_Setup_Screen::SETUP_ACTION_XMLTV_EPG_IDX};
 
-        return array_search($this->xmltv_urls, reset($this->xmltv_urls));
+        return array_search(reset($this->xmltv_urls), $this->xmltv_urls);
     }
 
     /**

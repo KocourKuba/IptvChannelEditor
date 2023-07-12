@@ -105,8 +105,8 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             } else {
                 $xmltv_idx = $this->plugin->config->epg_man->get_xmltv_idx($plugin_cookies);
                 hd_print(__METHOD__ . ": stored idx $xmltv_idx");
-                if (!isset($all_sources[$xmltv_idx])) {
-                    $xmltv_idx = array_search($all_sources, reset($all_sources));
+                if (empty($xmltv_idx) || !isset($all_sources[$xmltv_idx])) {
+                    $xmltv_idx = array_search(reset($all_sources), $all_sources);
                     hd_print(__METHOD__ . ": selected idx $xmltv_idx");
                 }
 
@@ -202,10 +202,19 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 $val = $user_input->{self::SETUP_ACTION_EPG_SOURCE};
                 $plugin_cookies->{self::SETUP_ACTION_EPG_SOURCE} = $val;
                 hd_print(__METHOD__ . ": Selected epg source: $val");
-                if ($val === SetupControlSwitchDefs::switch_epg3) {
-                    return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
+                if ($val !== SetupControlSwitchDefs::switch_epg3) break;
+
+                $all_sources = $this->plugin->config->epg_man->get_xmltv_urls();
+                $xmltv_idx = $this->plugin->config->epg_man->get_xmltv_idx($plugin_cookies);
+                hd_print(__METHOD__ . ": stored idx $xmltv_idx");
+                if (!isset($all_sources[$xmltv_idx])) {
+                    $xmltv_idx = array_search(reset($all_sources), $all_sources);
+                    hd_print(__METHOD__ . ": selected idx $xmltv_idx");
                 }
-                break;
+
+                $plugin_cookies->{self::SETUP_ACTION_XMLTV_EPG_IDX} = $xmltv_idx;
+
+                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case self::SETUP_ACTION_XMLTV_EPG_IDX:
                 $val = $user_input->{self::SETUP_ACTION_XMLTV_EPG_IDX};

@@ -142,7 +142,7 @@ class Entry
             if (empty($group_title)) {
                 $this->group_title = $this->getAttribute('group-title');
                 if (empty($this->group_title) || $this->group_title === "null") {
-                    $this->group_title = TR::t('no_category');
+                    $this->group_title = TR::load_string('no_category');
                 }
             }
         }
