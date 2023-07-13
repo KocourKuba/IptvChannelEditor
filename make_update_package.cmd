@@ -94,6 +94,8 @@ echo %ROOT%dune_plugin			>>packing.lst
 echo %ROOT%ChannelsLists		>>packing.lst
 echo dune_plugin_*.zip			>>packing.lst
 
+del "%ROOT%package\dune_channel_editor_universal.7z" >nul
+
 7z a -xr!*.bin -xr!custom "%ROOT%package\dune_channel_editor_universal.7z" @packing.lst >nul
 copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%ROOT%package\dune_channel_editor_universal.7z.%BUILD%" >nul
 del packing.lst >nul 2>&1
