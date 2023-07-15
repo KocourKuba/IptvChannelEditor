@@ -77,18 +77,15 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
             case 1: // channels path
                 $display_path = smb_tree::get_folder_info($plugin_cookies, PARAM_CH_LIST_PATH, get_install_path());
 
+                if (strlen($display_path) > 36) {
+                    $display_path = "..." . substr($display_path, strlen($display_path) - 36);
+                }
+
                 if (is_apk()) {
                     Control_Factory::add_label($defs, TR::t('setup_channels_src_label'), $display_path);
                 } else {
                     Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_CH_LIST_PATH,
                         TR::t('setup_channels_src_folder_path'), $display_path, $folder_icon);
-
-                    if ($display_path !== get_install_path()) {
-                        Control_Factory::add_image_button($defs, $this, null, ACTION_RESET_DEFAULT,
-                            TR::t('reset_default'), TR::t('apply'), $refresh_icon);
-                    } else {
-                        Control_Factory::add_label($defs, TR::t('reset_default'), TR::t('apply'));
-                    }
                 }
                 break;
             case 2: // internet url

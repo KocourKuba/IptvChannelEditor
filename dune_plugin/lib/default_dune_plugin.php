@@ -1287,6 +1287,11 @@ class Default_Dune_Plugin implements DunePlugin
                     ViewParams::content_box_padding_right => 500,
                     ViewParams::item_detailed_info_title_color => DEF_LABEL_TEXT_COLOR_GREEN,
                     ViewParams::item_detailed_info_text_color => DEF_LABEL_TEXT_COLOR_WHITE,
+                    ViewParams::background_path => $this->config->plugin_info['app_background'],
+                    ViewParams::background_order => 0,
+                    ViewParams::background_height => 1080,
+                    ViewParams::background_width => 1920,
+                    ViewParams::optimize_full_screen_background => true,
                 ),
                 PluginRegularFolderView::base_view_item_params => array(
                     ViewItemParams::item_layout => 0,

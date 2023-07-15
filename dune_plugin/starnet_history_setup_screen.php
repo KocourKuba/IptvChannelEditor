@@ -65,11 +65,12 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
         // history
 
         $display_path = $this->get_history_path($plugin_cookies);
-
-        Control_Factory::add_label($defs, TR::t('setup_channels_src_folder'), $display_path);
+        if (strlen($display_path) > 36) {
+            $display_path = "..." . substr($display_path, strlen($display_path) - 36);
+        }
 
         Control_Factory::add_image_button($defs, $this, null,
-            self::SETUP_ACTION_HISTORY_CHANGE_FOLDER, TR::t('setup_history_folder_path'), TR::t('folder_screen_select_folder'), $folder_icon, self::CONTROLS_WIDTH);
+            self::SETUP_ACTION_HISTORY_CHANGE_FOLDER, TR::t('setup_history_folder_path'), $display_path, $folder_icon, self::CONTROLS_WIDTH);
 
         if ($display_path !== get_data_path()) {
             Control_Factory::add_image_button($defs, $this, null,
@@ -179,7 +180,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
             case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
                 hd_print(__METHOD__ . ": " . ACTION_FOLDER_SELECTED . " $data->filepath");
-                smb_tree::set_folder_info($plugin_cookies, $data->filepath, PARAM_HISTORY_PATH);
+                smb_tree::set_folder_info($plugin_cookies, $data, PARAM_HISTORY_PATH);
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
                     User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, self::CONTROLS_WIDTH);
 

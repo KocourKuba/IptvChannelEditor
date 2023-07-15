@@ -5,7 +5,7 @@ require_once 'screen.php';
 
 abstract class Abstract_Controls_Screen implements Screen
 {
-    const CONTROLS_WIDTH = 950;
+    const CONTROLS_WIDTH = 850;
 
     private $id;
     protected $plugin;
