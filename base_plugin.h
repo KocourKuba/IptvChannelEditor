@@ -33,11 +33,11 @@ DEALINGS IN THE SOFTWARE.
 
 class uri_stream;
 
-struct AccountInfo
+typedef struct
 {
 	std::wstring name;
 	std::wstring value;
-};
+} AccountInfo;
 
 struct EpgInfo
 {
@@ -50,6 +50,8 @@ struct EpgInfo
 	std::wstring end;
 #endif // _DEBUG
 };
+
+using EpgStorage = std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>;
 
 /// <summary>
 /// Interface for stream
@@ -133,7 +135,7 @@ public:
 	/// <param name="epg_id">channel epg id</param>
 	/// <param name="epg_map">map of downloaded epg entries, used for cache</param>
 	/// <returns>bool</returns>
-	bool parse_xml_epg(const std::wstring& internal_epg_url, std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>& epg_map);
+	bool parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage& epg_map, CProgressCtrl* pCtrl = nullptr);
 
 	/// <summary>
 	/// parse epg for channel.
@@ -143,7 +145,7 @@ public:
 	/// <param name="epg_map">map of downloaded epg entries, used for cache</param>
 	/// <param name="for_time">date to request</param>
 	/// <returns>bool</returns>
-	bool parse_json_epg(int epg_idx, const std::wstring& epg_id, std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 3>& epg_map, time_t for_time, const uri_stream* info);
+	bool parse_json_epg(int epg_idx, const std::wstring& epg_id, std::array<EpgStorage, 3>& epg_map, time_t for_time, const uri_stream* info);
 
 	/// <summary>
 	/// returns compiled epg url for channel

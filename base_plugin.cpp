@@ -312,7 +312,7 @@ std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params)
 	return url;
 }
 
-bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>& epg_map)
+bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage& epg_map, CProgressCtrl* pCtrl /*= nullptr*/)
 {
 	if (internal_epg_url.empty())
 		return false;
@@ -322,7 +322,6 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, std::unord
 	if (!download_url(internal_epg_url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
 		return false;
 
-	bool added = false;
 	data.clear();
 
 	auto cache_file = m_dl.GetCachePath(internal_epg_url);
@@ -357,6 +356,7 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, std::unord
 	auto doc = std::make_unique<rapidxml::xml_document<>>();
 	rapidxml::file<> xmlFile(utils::utf16_to_utf8(cache_file).c_str());
 
+	DWORD dwStart = GetTickCount();
 	try
 	{
 		doc->parse<rapidxml::parse_default>(xmlFile.data());
@@ -368,7 +368,24 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, std::unord
 	}
 
 	auto prog_node = doc->first_node("tv")->first_node("programme");
+	int cnt = 0;
+	while (prog_node)
+	{
+		cnt++;
+		prog_node = prog_node->next_sibling();
+	}
+
+	TRACE("\nParse time %d, Total nodes %d\n", GetTickCount() - dwStart, cnt);
+
+	if (pCtrl)
+	{
+		pCtrl->SetRange32(0, cnt);
+		pCtrl->ShowWindow(SW_SHOW);
+	}
 	// Iterate <tv_category> nodes
+	bool added = false;
+	int i = 0;
+	prog_node = doc->first_node("tv")->first_node("programme");
 	while (prog_node)
 	{
 		EpgInfo epg_info;
@@ -384,12 +401,20 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, std::unord
 
 		prog_node = prog_node->next_sibling();
 		added = true;
+		if (pCtrl && (++i % 10) == 0)
+		{
+			pCtrl->SetPos(i);
+		}
 	}
 
+	if (pCtrl)
+	{
+		pCtrl->ShowWindow(SW_HIDE);
+	}
 	return added;
 }
 
-bool base_plugin::parse_json_epg(int epg_idx, const std::wstring& epg_id, std::array<std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>, 3>& all_epg_map, time_t for_time, const uri_stream* info)
+bool base_plugin::parse_json_epg(int epg_idx, const std::wstring& epg_id, std::array<EpgStorage, 3>& all_epg_map, time_t for_time, const uri_stream* info)
 {
 	if (epg_id.empty())
 		return false;
@@ -511,9 +536,9 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	lt.tm_min = 0;
 	lt.tm_sec = 0;
 
-	auto epg_template = epg_params[epg_idx].get_epg_url();
+	auto epg_template = params.get_epg_url();
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_API_URL, get_provider_api_url());
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_DOMAIN, epg_params[epg_idx].get_epg_domain());
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_DOMAIN, params.get_epg_domain());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DOMAIN, info->domain);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->id);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, new_epg_id);

@@ -1979,7 +1979,6 @@ void CIPTVChannelEditorDlg::FillEPG()
 
 
 	UpdateExtToken(info);
-
 	DWORD dwStart = GetTickCount();
 
 	// check end time
@@ -2017,7 +2016,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 				}
 				else
 				{
-					res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache);
+					res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, &m_wndProgress);
 				}
 			}
 
