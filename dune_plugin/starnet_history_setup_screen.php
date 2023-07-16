@@ -65,8 +65,9 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
         // history
 
         $display_path = $this->get_history_path($plugin_cookies);
-        if (strlen($display_path) > 36) {
-            $display_path = "..." . substr($display_path, strlen($display_path) - 36);
+        $max_size = is_apk() ? 45 : 36;
+        if (strlen($display_path) > $max_size) {
+            $display_path = "..." . substr($display_path, strlen($display_path) - $max_size);
         }
 
         Control_Factory::add_image_button($defs, $this, null,

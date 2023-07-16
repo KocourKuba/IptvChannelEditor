@@ -122,8 +122,9 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         // EPG cache dir
         $xcache_dir = Epg_Manager::get_xcache_dir($plugin_cookies);
         $free_size = TR::t('setup_storage_info__1', HD::get_storage_size(dirname($xcache_dir)));
-        if (strlen($xcache_dir) > 36) {
-            $xcache_dir = "..." . substr($xcache_dir, strlen($xcache_dir) - 36);
+        $max_size = is_apk() ? 45 : 36;
+        if (strlen($xcache_dir) > $max_size) {
+            $xcache_dir = "..." . substr($xcache_dir, strlen($xcache_dir) - $max_size);
         }
 
         if (is_apk()) {
