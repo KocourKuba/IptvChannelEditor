@@ -371,25 +371,6 @@ class Epg_Manager
     }
 
     /**
-     * @param $xml_cached_path string
-     * @return array
-     */
-    public static function load_xmltv_index($xml_cached_path)
-    {
-        $xmltv_index_file = $xml_cached_path . '.index';
-        $xmltv_data = null;
-        hd_print(__METHOD__ . ": load index from file '$xmltv_index_file'");
-        $data = json_decode(file_get_contents($xmltv_index_file), true);
-        if (false !== $data) {
-            $xmltv_data = $data;
-        } else {
-            hd_print(__METHOD__ . ": load index failed '$xmltv_index_file'");
-        }
-
-        return $xmltv_data;
-    }
-
-    /**
      * @param $xmltv_url string
      * @param $xml_cached_path string
      * @return boolean|string
@@ -534,7 +515,9 @@ class Epg_Manager
         hd_print(__METHOD__ . ": clear cache dir: $dir");
         $files = array_diff(scandir($dir), array('.','..'));
         foreach ($files as $file) {
-            unlink("$dir/$file");
+            if (!is_dir("$dir/$file")) {
+                unlink("$dir/$file");
+            }
         }
     }
 
