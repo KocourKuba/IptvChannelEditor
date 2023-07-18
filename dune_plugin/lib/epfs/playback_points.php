@@ -84,8 +84,14 @@ class Playback_Points
      */
     private function save_points($path)
     {
-        hd_print(__METHOD__ . ": " . count($this->points) . " to: $path");
-        HD::put_items($path . self::TV_HISTORY_ITEMS, $this->points);
+        if (!is_dir($path)) {
+            hd_print(__METHOD__ . ": save path not exist: $path");
+            return;
+        }
+
+        $storage = $path . self::TV_HISTORY_ITEMS;
+        hd_print(__METHOD__ . ": " . count($this->points) . " to: $storage");
+        HD::put_items($storage, $this->points);
     }
 
     /**
@@ -126,8 +132,14 @@ class Playback_Points
         }
 
         if (!isset(self::$instance->points) || $force) {
-            $points = HD::get_items($path . self::TV_HISTORY_ITEMS, true);
-            hd_print(__METHOD__ . ": " . count($points) . " from: $path");
+            if (!is_dir($path)) {
+                hd_print(__METHOD__ . ": load path not exist: $path");
+                return;
+            }
+
+            $storage = $path . self::TV_HISTORY_ITEMS;
+            $points = HD::get_items($storage, true);
+            hd_print(__METHOD__ . ": " . count($points) . " from: $storage");
             while (count($points) > 7) {
                 array_pop($points);
             }
