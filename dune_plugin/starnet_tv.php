@@ -597,21 +597,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             && $plugin_cookies->epg_source === Plugin_Constants::EPG_INTERNAL
             && empty($this->plugin->config->epg_man->xmltv_data)) {
 
-            $xmltv_idx = $this->plugin->config->epg_man->get_xmltv_idx($plugin_cookies);
-            $cached_file = $this->plugin->config->epg_man->get_xml_cached_file($xmltv_idx, $plugin_cookies);
-            if (!empty($cached_file)) {
-                $max_cache_time = 3600 * 24 * (isset($plugin_cookies->epg_cache_ttl) ? $plugin_cookies->epg_cache_ttl : 3);
-                hd_print(__METHOD__ . ": Checking: $cached_file ($xmltv_idx)");
-                if (false === Epg_Manager::is_xmltv_cache_valid($cached_file, $max_cache_time)) {
-                    $url = $this->plugin->config->epg_man->get_xmltv_url($xmltv_idx);
-                    $res = Epg_Manager::download_xmltv_url($url, $cached_file);
-                    if (true === $res) {
-                        Epg_Manager::index_xmltv_file($cached_file, $this->epg_ids);
-                    } else {
-                        hd_print(__METHOD__ . ": $res");
-                    }
-                }
-            }
+            $this->plugin->config->epg_man->index_xmltv_file($plugin_cookies, $this->epg_ids);
         }
     }
 

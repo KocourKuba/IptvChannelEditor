@@ -82,6 +82,7 @@ setup_reload_xmltv_epg = Загрузить XMLTV EPG
 setup_storage_info__1 = Свободно: %s
 setup_epg_cache_ttl = Время кэширования EPG (дней)
 setup_epg_font = Шрифт EPG
+setup_epg_parse_all = Индексировать все EPG каналы
 setup_epg_xmltv_cache_caption = Папка кэша XMLTV
 setup_device = Номер устройства
 setup_quality = Качество

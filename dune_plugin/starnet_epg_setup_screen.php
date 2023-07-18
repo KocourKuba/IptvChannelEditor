@@ -17,6 +17,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
     const SETUP_ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
     const SETUP_ACTION_EPG_FONT_SIZE = 'epg_font_size';
     const SETUP_ACTION_EPG_SHIFT = 'epg_shift';
+    const SETUP_ACTION_EPG_PARSE_ALL = 'epg_parse_all';
 
     private static $on_off_ops = array
     (
@@ -31,8 +32,18 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
     (
         SetupControlSwitchDefs::switch_small => 'on.png',
         SetupControlSwitchDefs::switch_normal => 'off.png',
-        SetupControlSwitchDefs::switch_epg1 => 'off.png',
-        SetupControlSwitchDefs::switch_epg2 => 'on.png',
+    );
+
+    private static $off_on_ops = array
+    (
+        SetupControlSwitchDefs::switch_off => '%tr%no',
+        SetupControlSwitchDefs::switch_on => '%tr%yes',
+    );
+
+    private static $off_on_img = array
+    (
+        SetupControlSwitchDefs::switch_off => 'off.png',
+        SetupControlSwitchDefs::switch_on => 'on.png',
     );
 
     ///////////////////////////////////////////////////////////////////////
@@ -101,7 +112,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         if ($plugin_cookies->{self::SETUP_ACTION_EPG_SOURCE} === SetupControlSwitchDefs::switch_epg3) {
             $all_sources = $this->plugin->config->epg_man->get_xmltv_urls();
             if (empty($all_sources)) {
-                Control_Factory::add_label($defs, 'no xmltv sources', '');
+                Control_Factory::add_label($defs, TR::t('setup_xmltv_epg_source'), TR::t('no'));
             } else {
                 $xmltv_idx = $this->plugin->config->epg_man->get_xmltv_idx($plugin_cookies);
                 hd_print(__METHOD__ . ": stored idx $xmltv_idx");
@@ -113,6 +124,13 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 Control_Factory::add_combobox($defs, $this, null,
                     self::SETUP_ACTION_XMLTV_EPG_IDX, TR::t('setup_xmltv_epg_source'),
                     $xmltv_idx, $all_sources, self::CONTROLS_WIDTH, true);
+
+                if (!isset($plugin_cookies->{self::SETUP_ACTION_EPG_PARSE_ALL})) {
+                    $plugin_cookies->{self::SETUP_ACTION_EPG_PARSE_ALL} = SetupControlSwitchDefs::switch_off;
+                }
+                Control_Factory::add_image_button($defs, $this, null,
+                    self::SETUP_ACTION_EPG_PARSE_ALL, TR::t('setup_epg_parse_all'), self::$off_on_ops[$plugin_cookies->{self::SETUP_ACTION_EPG_PARSE_ALL}],
+                    $this->plugin->get_image_path(self::$off_on_img[$plugin_cookies->{self::SETUP_ACTION_EPG_PARSE_ALL}]), self::CONTROLS_WIDTH);
 
                 Control_Factory::add_image_button($defs, $this, null, ACTION_RELOAD,
                     TR::t('setup_reload_xmltv_epg'), TR::t('refresh'), $this->plugin->get_image_path('refresh.png'));
@@ -257,6 +275,13 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 hd_print(__METHOD__ . ": $control_id: " . $plugin_cookies->{$control_id});
                 break;
 
+            case self::SETUP_ACTION_EPG_PARSE_ALL:
+                $plugin_cookies->{$control_id} = ($plugin_cookies->{$control_id} === SetupControlSwitchDefs::switch_on)
+                    ? SetupControlSwitchDefs::switch_off
+                    : SetupControlSwitchDefs::switch_on;
+                hd_print(__METHOD__ . ": $control_id: " . $plugin_cookies->{$control_id});
+                break;
+
             case self::SETUP_ACTION_CLEAR_EPG_CACHE:
                 $this->plugin->config->epg_man->clear_epg_cache($plugin_cookies);
                 $this->plugin->tv->unload_channels();
@@ -281,28 +306,12 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case ACTION_RELOAD:
                 hd_print(__METHOD__ . ": " . ACTION_RELOAD);
-                $this->plugin->config->epg_man->clear_epg_memory_cache();
-                $xmltv_idx = $plugin_cookies->{self::SETUP_ACTION_XMLTV_EPG_IDX};
-                $cached_file = $this->plugin->config->epg_man->get_xml_cached_file($xmltv_idx, $plugin_cookies);
-                if (empty($cached_file)) {
-                    hd_print(__METHOD__ . ": Cached xmltv file not set for index: $xmltv_idx");
+                $this->plugin->config->epg_man->clear_epg_cache($plugin_cookies);
+                $res = $this->plugin->config->epg_man->is_xmltv_cache_valid($plugin_cookies);
+                if (!empty($res)) {
                     return Action_Factory::show_title_dialog(TR::t('err_load_xmltv_epg'),
                         Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)),
-                        "Cached xmltv file not set for index: $xmltv_idx", self::CONTROLS_WIDTH);
-                }
-
-                $max_cache_time = 3600 * 24 * $plugin_cookies->{self::SETUP_ACTION_EPG_CACHE_TTL};
-
-                hd_print(__METHOD__ . ": Checking: $cached_file ($xmltv_idx)");
-
-                if (false === Epg_Manager::is_xmltv_cache_valid($cached_file, $max_cache_time)) {
-                    $url = $this->plugin->config->epg_man->get_xmltv_url($xmltv_idx);
-                    $res = Epg_Manager::download_xmltv_url($url, $cached_file);
-                    if (true !== $res) {
-                        return Action_Factory::show_title_dialog(TR::t('err_load_xmltv_epg'),
-                            Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)),
-                            $res, self::CONTROLS_WIDTH);
-                    }
+                        $res, self::CONTROLS_WIDTH);
                 }
 
                 return $this->plugin->tv->reload_channels($this, $plugin_cookies);

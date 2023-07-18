@@ -257,7 +257,7 @@ class HD
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 2);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         curl_setopt($ch, CURLOPT_USERAGENT, self::get_dune_user_agent());
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
         curl_setopt($ch, CURLOPT_FILETIME, true);
@@ -272,23 +272,25 @@ class HD
 
         hd_print(__METHOD__ . ": HTTP fetching $url");
 
-        $result = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        try {
+            $result = curl_exec($ch);
+            if ($result === false) {
+                throw new Exception("curl_exec error: " . curl_error($ch));
+            }
 
-        if ($result === false) {
-            $err_msg = __METHOD__ . ": HTTP error: $http_code (" . curl_error($ch) . ')';
-            hd_print($err_msg);
-            throw new Exception($err_msg);
-        }
-
-        if ($http_code >= 300) {
-            $err_msg = __METHOD__ . ": HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
-            hd_print($err_msg);
-            throw new Exception($err_msg);
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if ($http_code >= 300) {
+                throw new Exception("HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code));
+            }
+        } catch (Exception $ex) {
+            fclose($fp);
+            unlink($file_name);
+            throw $ex;
         }
 
         $file_time = curl_getinfo($ch, CURLINFO_FILETIME);
 
+        fclose($fp);
         curl_close($ch);
 
         return $file_time;

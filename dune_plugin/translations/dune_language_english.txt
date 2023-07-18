@@ -84,6 +84,7 @@ setup_reload_xmltv_epg = Load XMLTV EPG
 setup_storage_info__1 = Free space: %s
 setup_epg_cache_ttl = EPG caching time (days)
 setup_epg_font = EPG font size
+setup_epg_parse_all = Index all EPG channels
 setup_epg_xmltv_cache_caption = XMLTV cache folder
 setup_device = Device #
 setup_quality = Quality

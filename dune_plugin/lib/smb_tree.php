@@ -513,6 +513,10 @@ class smb_tree
             }
         }
 
+        if (empty($select_folder)) {
+            $select_folder = $default;
+        }
+
         if (substr($select_folder, -1) !== '/')
             $select_folder .= '/';
 
