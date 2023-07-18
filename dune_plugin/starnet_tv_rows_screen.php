@@ -330,12 +330,14 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         }
 
         $favorites_rows = $this->get_favorites_rows($plugin_cookies);
-        if (!is_null($favorites_rows))
+        if (!is_null($favorites_rows) && (!isset($plugin_cookies->show_favorites) || $plugin_cookies->show_favorites === 'yes')) {
             $rows = array_merge($favorites_rows, $rows);
+        }
 
         $history_rows = $this->get_history_rows($plugin_cookies);
-        if (!is_null($history_rows))
+        if (!is_null($history_rows) && (!isset($plugin_cookies->show_history) || $plugin_cookies->show_history === 'yes')) {
             $rows = array_merge($history_rows, $rows);
+        }
 
         $pane = Rows_Factory::pane(
             $rows,

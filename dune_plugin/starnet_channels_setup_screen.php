@@ -10,6 +10,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
     const SETUP_ACTION_CHANGE_CH_LIST_PATH = 'change_list_path';
     const SETUP_ACTION_CHANGE_CH_LIST = 'change_channels_list';
+    const SETUP_ACTION_CHANNELS_URL_PATH = 'channels_url_path';
     const SETUP_ACTION_CHANNELS_SOURCE = 'channels_source';
     const SETUP_ACTION_CHANNELS_URL_DLG = 'channels_url_dialog';
     const SETUP_ACTION_CHANNELS_URL_APPLY = 'channels_url_apply';
@@ -67,7 +68,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         $source_ops[1] = TR::t('setup_channels_src_folder');
         $source_ops[2] = TR::t('setup_channels_src_internet');
         $source_ops[3] = TR::t('setup_channels_src_direct');
-        $channels_source = isset($plugin_cookies->channels_source) ? (int)$plugin_cookies->channels_source : 1;
+        $channels_source = isset($plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE}) ? (int)$plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE} : 1;
 
         Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANNELS_SOURCE,
             TR::t('setup_channels_src_combo'), $channels_source, $source_ops, self::CONTROLS_WIDTH, true);
@@ -146,7 +147,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         $defs = array();
 
         $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
-        $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
+        $source = isset($plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE}) ? $plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE} : 1;
         $url_path = '';
         switch ($source) {
             case 2:
@@ -227,9 +228,9 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 }
                 return $action;
 
-            case self::SETUP_ACTION_CHANNELS_SOURCE: // handle streaming settings dialog result
-                $plugin_cookies->channels_source = $user_input->channels_source;
-                hd_print(__METHOD__ . ": Selected channels source: $plugin_cookies->channels_source");
+            case self::SETUP_ACTION_CHANNELS_SOURCE:
+                $plugin_cookies->{$control_id} = $user_input->{$control_id};
+                hd_print(__METHOD__ . ": $control_id: " . $plugin_cookies->{$control_id});
                 $action = $this->plugin->tv->reload_channels($this, $plugin_cookies);
                 if ($action === null) {
                     Action_Factory::show_title_dialog(TR::t('err_load_channels_list'));
@@ -241,18 +242,20 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 return Action_Factory::show_dialog(TR::t('setup_channels_src_link_caption'), $defs, true);
 
             case self::SETUP_ACTION_CHANNELS_URL_APPLY: // handle streaming settings dialog result
-                if (isset($user_input->channels_url_path)) {
-                    $source = isset($plugin_cookies->channels_source) ? $plugin_cookies->channels_source : 1;
+                if (isset($user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH})) {
+                    $source = isset($plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE})
+                        ? $plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE}
+                        : 1;
 
                     switch ($source) {
                         case 2:
-                            if ($user_input->channels_url_path !== $plugin_cookies->channels_url) {
-                                $plugin_cookies->channels_url = $user_input->channels_url_path;
+                            if ($user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH} !== $plugin_cookies->channels_url) {
+                                $plugin_cookies->channels_url = $user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH};
                             }
                             break;
                         case 3:
-                            if ($user_input->channels_url_path !== $plugin_cookies->channels_direct_url) {
-                                $plugin_cookies->channels_direct_url = $user_input->channels_url_path;
+                            if ($user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH} !== $plugin_cookies->channels_direct_url) {
+                                $plugin_cookies->channels_direct_url = $user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH};
                             }
                             break;
                     }

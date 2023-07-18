@@ -640,7 +640,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
             User_Input_Handler_Registry::create_action($handler, RESET_CONTROLS_ACTION_ID));
 
         return Action_Factory::invalidate_folders(array(
-            Starnet_Tv_Groups_Screen::get_media_url_str(),
+            Starnet_Tv_Groups_Screen::ID,
             Starnet_Tv_Channel_List_Screen::ID
         ), $post_action);
     }

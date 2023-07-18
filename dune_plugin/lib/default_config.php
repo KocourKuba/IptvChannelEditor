@@ -1102,7 +1102,7 @@ class default_config extends dynamic_config
      */
     public function get_format($plugin_cookies)
     {
-        return isset($plugin_cookies->format) ? $plugin_cookies->format : 'hls';
+        return isset($plugin_cookies->stream_format) ? $plugin_cookies->stream_format : 'hls';
     }
 
     /**

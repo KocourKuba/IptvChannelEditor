@@ -9,7 +9,7 @@ class tvclub_config extends default_config
      */
     public function get_format($plugin_cookies)
     {
-        return isset($plugin_cookies->format) ? $plugin_cookies->format : Plugin_Constants::MPEG;
+        return isset($plugin_cookies->stream_format) ? $plugin_cookies->stream_format : Plugin_Constants::MPEG;
     }
 
     /**

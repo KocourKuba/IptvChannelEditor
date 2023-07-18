@@ -299,6 +299,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
             //hd_print("Setup: changing $control_id value to $new_value");
         }
 
+        $need_reload = false;
         switch ($control_id) {
 
             case self::SETUP_ACTION_OTTKEY_DLG: // show ott key dialog
@@ -309,7 +310,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 $plugin_cookies->ott_key = $user_input->ott_key;
                 $plugin_cookies->subdomain = $user_input->subdomain;
                 $plugin_cookies->mediateka = $user_input->vportal;
-                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
+                $need_reload = true;
+                break;
 
             case self::SETUP_ACTION_LOGIN_DLG: // token dialog
                 $defs = $this->do_get_login_control_defs($plugin_cookies);
@@ -327,7 +329,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     return Action_Factory::show_title_dialog(TR::t('setup_wrong_pass'));
                 }
 
-                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
+                $need_reload = true;
+                break;
 
             case self::SETUP_ACTION_PIN_DLG: // token dialog
                 $defs = $this->do_get_pin_control_defs($plugin_cookies);
@@ -343,7 +346,8 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     return Action_Factory::show_title_dialog(TR::t('setup_wrong_pass'));
                 }
 
-                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
+                $need_reload = true;
+                break;
 
             case self::SETUP_ACTION_CLEAR_ACCOUNT: // confirm clear account
                 if ($this->plugin->config->get_embedded_account() === null) break;
@@ -374,16 +378,18 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 return Action_Factory::open_folder(Starnet_History_Setup_Screen::get_media_url_str(), TR::t('setup_history_change_folder'));
 
             case self::SETUP_ACTION_USE_HTTPS_PROXY:
-                $old_value = $plugin_cookies->use_proxy;
-                $plugin_cookies->use_proxy = ($plugin_cookies->use_proxy === SetupControlSwitchDefs::switch_on)
+                $old_value = $plugin_cookies->{$control_id};
+                $plugin_cookies->use_proxy = ($plugin_cookies->{$control_id} === SetupControlSwitchDefs::switch_on)
                     ? SetupControlSwitchDefs::switch_off
                     : SetupControlSwitchDefs::switch_on;
                 if (HD::toggle_https_proxy($plugin_cookies) === 0) {
-                    $plugin_cookies->use_proxy = $old_value;
+                    $plugin_cookies->{$control_id} = $old_value;
                     return Action_Factory::show_title_dialog(TR::t('err_changes_failed'));
                 }
 
-                $msg = ($plugin_cookies->use_proxy === SetupControlSwitchDefs::switch_on ? TR::t('setup_use_https_proxy_enabled') : TR::t('setup_use_https_proxy_disabled'));
+                $msg = ($plugin_cookies->{$control_id} === SetupControlSwitchDefs::switch_on
+                    ? TR::t('setup_use_https_proxy_enabled')
+                    : TR::t('setup_use_https_proxy_disabled'));
                 return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'), Action_Factory::restart(), $msg);
 
             case self::SETUP_ACTION_PASS_DLG: // show pass dialog
@@ -391,7 +397,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 return Action_Factory::show_dialog(TR::t('setup_adult_password'), $defs, true);
 
             case self::SETUP_ACTION_PASS_APPLY: // handle pass dialog result
-                $need_reload = false;
                 if ($user_input->pass1 !== $plugin_cookies->pass_sex) {
                     $msg = TR::t('err_wrong_old_password');
                 } else if (empty($user_input->pass2)) {
@@ -407,7 +412,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                 }
 
                 return Action_Factory::show_title_dialog($msg, $need_reload ? $this->plugin->tv->reload_channels($this, $plugin_cookies) : null);
+        }
 
+        if ($need_reload) {
+            return $this->plugin->tv->reload_channels($this, $plugin_cookies);
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies));

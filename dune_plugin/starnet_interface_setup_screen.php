@@ -11,6 +11,8 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
     const SETUP_ACTION_SHOW_TV = 'show_tv';
     const SETUP_ACTION_VOD_LAST = 'vod_last';
     const SETUP_ACTION_SHOW_ALL = 'show_all';
+    const SETUP_ACTION_SHOW_FAVORITES = 'show_favorites';
+    const SETUP_ACTION_SHOW_HISTORY = 'show_history';
 
     private static $on_off_ops = array
     (
@@ -70,34 +72,55 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
         //////////////////////////////////////
         // Show in main screen
         if (!is_apk()) {
-            if (!isset($plugin_cookies->show_tv)) {
-                $plugin_cookies->show_tv = SetupControlSwitchDefs::switch_on;
+            if (!isset($plugin_cookies->{self::SETUP_ACTION_SHOW_TV})) {
+                $plugin_cookies->{self::SETUP_ACTION_SHOW_TV} = SetupControlSwitchDefs::switch_on;
             }
             Control_Factory::add_image_button($defs, $this, null,
-                self::SETUP_ACTION_SHOW_TV, TR::t('setup_show_in_main'), self::$on_off_ops[$plugin_cookies->show_tv],
-                $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->show_tv]), self::CONTROLS_WIDTH);
+                self::SETUP_ACTION_SHOW_TV, TR::t('setup_show_in_main'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_SHOW_TV}],
+                $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_SHOW_TV}]), self::CONTROLS_WIDTH);
         }
 
         //////////////////////////////////////
         // show all channels category
-        if (!isset($plugin_cookies->show_all)) {
-            $plugin_cookies->show_all = SetupControlSwitchDefs::switch_on;
+        if (!isset($plugin_cookies->{self::SETUP_ACTION_SHOW_ALL})) {
+            $plugin_cookies->{self::SETUP_ACTION_SHOW_ALL} = SetupControlSwitchDefs::switch_on;
         }
 
         Control_Factory::add_image_button($defs, $this, null,
-            self::SETUP_ACTION_SHOW_ALL, TR::t('setup_show_all_channels'), self::$on_off_ops[$plugin_cookies->show_all],
-            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->show_all]), self::CONTROLS_WIDTH);
+            self::SETUP_ACTION_SHOW_ALL, TR::t('setup_show_all_channels'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_SHOW_ALL}],
+            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_SHOW_ALL}]), self::CONTROLS_WIDTH);
+
+        //////////////////////////////////////
+        // show favorites category
+        if (!isset($plugin_cookies->{self::SETUP_ACTION_SHOW_FAVORITES})) {
+            $plugin_cookies->{self::SETUP_ACTION_SHOW_FAVORITES} = SetupControlSwitchDefs::switch_on;
+        }
+
+        Control_Factory::add_image_button($defs, $this, null,
+            self::SETUP_ACTION_SHOW_FAVORITES, TR::t('setup_show_favorites'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_SHOW_FAVORITES}],
+            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_SHOW_FAVORITES}]), self::CONTROLS_WIDTH);
+
+
+        //////////////////////////////////////
+        // show history category
+        if (!isset($plugin_cookies->{self::SETUP_ACTION_SHOW_HISTORY})) {
+            $plugin_cookies->{self::SETUP_ACTION_SHOW_HISTORY} = SetupControlSwitchDefs::switch_on;
+        }
+
+        Control_Factory::add_image_button($defs, $this, null,
+            self::SETUP_ACTION_SHOW_HISTORY, TR::t('setup_show_history'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_SHOW_HISTORY}],
+            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_SHOW_HISTORY}]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // show vod at the end of categories
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            if (!isset($plugin_cookies->vod_last)) {
-                $plugin_cookies->vod_last = SetupControlSwitchDefs::switch_on;
+            if (!isset($plugin_cookies->{self::SETUP_ACTION_VOD_LAST})) {
+                $plugin_cookies->{self::SETUP_ACTION_VOD_LAST} = SetupControlSwitchDefs::switch_on;
             }
 
             Control_Factory::add_image_button($defs, $this, null,
-                self::SETUP_ACTION_VOD_LAST, TR::t('setup_vod_last'), self::$on_off_ops[$plugin_cookies->vod_last],
-                $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->vod_last]), self::CONTROLS_WIDTH);
+                self::SETUP_ACTION_VOD_LAST, TR::t('setup_vod_last'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_VOD_LAST}],
+                $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_VOD_LAST}]), self::CONTROLS_WIDTH);
         }
 
         return $defs;
@@ -124,31 +147,21 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
             hd_print(__METHOD__ . ": changing $control_id value to $new_value");
         }
 
-        $need_reload = false;
         switch ($control_id) {
             case self::SETUP_ACTION_SHOW_TV:
                 if (!is_apk()) {
-                    self::toggle_param($plugin_cookies, self::SETUP_ACTION_SHOW_TV);
-                    hd_print(__METHOD__ . ": Show on main screen: $plugin_cookies->show_tv");
+                    self::toggle_param($plugin_cookies, $control_id);
                 }
                 break;
 
             case self::SETUP_ACTION_SHOW_ALL:
-                self::toggle_param($plugin_cookies, self::SETUP_ACTION_SHOW_ALL);
-                hd_print(__METHOD__ . ": Show all channels category: $plugin_cookies->show_all");
-                $need_reload = true;
-                break;
-
+            case self::SETUP_ACTION_SHOW_FAVORITES:
+            case self::SETUP_ACTION_SHOW_HISTORY:
             case self::SETUP_ACTION_VOD_LAST:
-                self::toggle_param($plugin_cookies, self::SETUP_ACTION_VOD_LAST);
-                hd_print(__METHOD__ . ": Vod at last: $plugin_cookies->vod_last");
-                $need_reload = true;
-                break;
+                self::toggle_param($plugin_cookies, $control_id);
+                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
         }
 
-        if ($need_reload) {
-            return $this->plugin->tv->reload_channels($this, $plugin_cookies);
-        }
         return Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies));
     }
 
@@ -157,5 +170,7 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
         $plugin_cookies->{$param} = ($plugin_cookies->{$param} === SetupControlSwitchDefs::switch_off)
             ? SetupControlSwitchDefs::switch_on
             : SetupControlSwitchDefs::switch_off;
+
+        hd_print(__METHOD__ . ": $param: " . $plugin_cookies->{$param});
     }
 }

@@ -109,6 +109,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
     {
         //dump_input_handler(__METHOD__, $user_input);
 
+        $action_reload = User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
         $control_id = $user_input->control_id;
         if (isset($user_input->action_type, $user_input->{$control_id})
             && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
@@ -128,9 +129,10 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
                 return Action_Factory::open_folder($media_url, TR::t('setup_history_folder_path'));
 
             case ACTION_RESET_DEFAULT:
-                hd_print(__METHOD__ . ": do set history folder to default: " . get_data_path());
-                smb_tree::set_folder_info($plugin_cookies, MediaURL::make(array('filepath' => get_data_path())), PARAM_HISTORY_PATH);
-                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
+                $data = MediaURL::make(array('filepath' => get_data_path()));
+                hd_print(__METHOD__ . ": do set history folder to default: $data->filepath");
+                smb_tree::set_folder_info($plugin_cookies, $data, PARAM_HISTORY_PATH);
+                return $action_reload;
 
             case self::SETUP_ACTION_COPY_TO_DATA:
                 $history_path = $this->get_history_path($plugin_cookies);
@@ -143,8 +145,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
                     return Action_Factory::show_title_dialog(TR::t('err_copy'));
                 }
 
-                return Action_Factory::show_title_dialog(TR::t('setup_copy_done'),
-                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD));
+                return Action_Factory::show_title_dialog(TR::t('setup_copy_done'), $action_reload);
 
             case self::SETUP_ACTION_COPY_TO_PLUGIN:
                 $history_path = $this->get_history_path($plugin_cookies);
@@ -157,16 +158,14 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
                     return Action_Factory::show_title_dialog(TR::t('err_copy'));
                 }
 
-                return Action_Factory::show_title_dialog(TR::t('setup_copy_done'),
-                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD));
+                return Action_Factory::show_title_dialog(TR::t('setup_copy_done'), $action_reload);
 
             case self::SETUP_ACTION_TV_HISTORY_CLEAR:
                 $history_path = $this->get_history_path($plugin_cookies);
                 hd_print(__METHOD__ . ": do clear TV history in $history_path");
                 Playback_Points::clear($history_path);
 
-                return Action_Factory::show_title_dialog(TR::t('setup_history_cleared'),
-                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD));
+                return Action_Factory::show_title_dialog(TR::t('setup_history_cleared'), $action_reload);
 
             case self::SETUP_ACTION_VOD_HISTORY_CLEAR:
                 $history_path = $this->get_history_path($plugin_cookies) .
@@ -175,15 +174,14 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
                 hd_print(__METHOD__ . ": do clear VOD history $history_path");
                 exec("rm -rf $history_path");
 
-                return Action_Factory::show_title_dialog(TR::t('setup_history_cleared'),
-                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD));
+                return Action_Factory::show_title_dialog(TR::t('setup_history_cleared'), $action_reload);
 
             case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
                 hd_print(__METHOD__ . ": " . ACTION_FOLDER_SELECTED . " $data->filepath");
                 smb_tree::set_folder_info($plugin_cookies, $data, PARAM_HISTORY_PATH);
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
-                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, self::CONTROLS_WIDTH);
+                    $action_reload, $data->filepath, self::CONTROLS_WIDTH);
 
             case ACTION_RELOAD:
                 hd_print(__METHOD__ . ": reload");

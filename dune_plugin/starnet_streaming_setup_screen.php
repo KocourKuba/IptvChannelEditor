@@ -73,21 +73,21 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
 
         //////////////////////////////////////
         // auto play
-        if (!isset($plugin_cookies->auto_play))
-            $plugin_cookies->auto_play = SetupControlSwitchDefs::switch_off;
+        if (!isset($plugin_cookies->{self::SETUP_ACTION_AUTO_PLAY}))
+            $plugin_cookies->{self::SETUP_ACTION_AUTO_PLAY} = SetupControlSwitchDefs::switch_off;
 
         Control_Factory::add_image_button($defs, $this, null,
-            self::SETUP_ACTION_AUTO_PLAY, TR::t('setup_autostart'), self::$on_off_ops[$plugin_cookies->auto_play],
-            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->auto_play]), self::CONTROLS_WIDTH);
+            self::SETUP_ACTION_AUTO_PLAY, TR::t('setup_autostart'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_AUTO_PLAY}],
+            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_AUTO_PLAY}]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // auto resume
-        if (!isset($plugin_cookies->auto_resume))
-            $plugin_cookies->auto_resume = SetupControlSwitchDefs::switch_on;
+        if (!isset($plugin_cookies->{self::SETUP_ACTION_AUTO_RESUME}))
+            $plugin_cookies->{self::SETUP_ACTION_AUTO_RESUME} = SetupControlSwitchDefs::switch_on;
 
         Control_Factory::add_image_button($defs, $this, null,
-            self::SETUP_ACTION_AUTO_RESUME, TR::t('setup_continue_play'),  self::$on_off_ops[$plugin_cookies->auto_resume],
-            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->auto_resume]), self::CONTROLS_WIDTH);
+            self::SETUP_ACTION_AUTO_RESUME, TR::t('setup_continue_play'),  self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_AUTO_RESUME}],
+            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_AUTO_RESUME}]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // select server
@@ -171,7 +171,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         $show_buf_time_ops[5000] = TR::t('setup_buffer_sec__1', "5");
         $show_buf_time_ops[10000] = TR::t('setup_buffer_sec__1', "10");
 
-        $buf_time = isset($plugin_cookies->buf_time) ? $plugin_cookies->buf_time : 1000;
+        $buf_time = isset($plugin_cookies->{self::SETUP_ACTION_BUF_TIME}) ? $plugin_cookies->{self::SETUP_ACTION_BUF_TIME} : 1000;
         Control_Factory::add_combobox($defs, $this, null,
             self::SETUP_ACTION_BUF_TIME, TR::t('setup_buffer_time'),
             $buf_time, $show_buf_time_ops, self::CONTROLS_WIDTH, true);
@@ -187,7 +187,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         $show_delay_time_ops[3*60] = TR::t('setup_buffer_sec__1', "180");
         $show_delay_time_ops[5*60] = TR::t('setup_buffer_sec__1', "300");
 
-        $delay_time = isset($plugin_cookies->delay_time) ? $plugin_cookies->delay_time : 60;
+        $delay_time = isset($plugin_cookies->{self::SETUP_ACTION_DELAY_TIME}) ? $plugin_cookies->{self::SETUP_ACTION_DELAY_TIME} : 60;
         Control_Factory::add_combobox($defs, $this, null,
             self::SETUP_ACTION_DELAY_TIME, TR::t('setup_delay_time'),
             $delay_time, $show_delay_time_ops, self::CONTROLS_WIDTH, true);
@@ -219,63 +219,36 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         $need_reload = false;
         switch ($control_id) {
             case self::SETUP_ACTION_AUTO_PLAY:
-                self::toggle_param($plugin_cookies, self::SETUP_ACTION_AUTO_PLAY);
-                hd_print(__METHOD__ . ": Auto play: $plugin_cookies->auto_play");
-                break;
-
             case self::SETUP_ACTION_AUTO_RESUME:
-                self::toggle_param($plugin_cookies, self::SETUP_ACTION_AUTO_RESUME);
-                hd_print(__METHOD__ . ": Auto resume: $plugin_cookies->auto_resume");
+                $plugin_cookies->{$control_id} = ($plugin_cookies->{$control_id} === SetupControlSwitchDefs::switch_off)
+                    ? SetupControlSwitchDefs::switch_on
+                    : SetupControlSwitchDefs::switch_off;
+
+                hd_print(__METHOD__ . ": $control_id: " . $plugin_cookies->{$control_id});
                 break;
 
             case self::SETUP_ACTION_SERVER:
-                if (isset($user_input->server) && $this->plugin->config->get_server_id($plugin_cookies) !== $user_input->server) {
-                    $need_reload = true;
-                    $this->plugin->config->set_server_id($user_input->server, $plugin_cookies);
-                    hd_print(__METHOD__ . ": Selected server: id: $user_input->server name: '" . $this->plugin->config->get_server_name($plugin_cookies) . "'");
-                }
-                break;
-
             case self::SETUP_ACTION_DEVICE:
-                if (isset($user_input->device) && $this->plugin->config->get_device_id($plugin_cookies) !== $user_input->device) {
-                    $need_reload = true;
-                    $this->plugin->config->set_device_id($user_input->device, $plugin_cookies);
-                    hd_print(__METHOD__ . ": Selected device: id: $user_input->device name: '" . $this->plugin->config->get_device_name($plugin_cookies) . "'");
-                }
-                break;
-
             case self::SETUP_ACTION_PROFILE:
-                if (isset($user_input->profile) && $this->plugin->config->get_profile_id($plugin_cookies) !== $user_input->profile) {
-                    $need_reload = true;
-                    $this->plugin->config->set_profile_id($user_input->profile, $plugin_cookies);
-                    hd_print(__METHOD__ . ": Selected profile: id: $user_input->profile name: '" . $this->plugin->config->get_profile_name($plugin_cookies) . "'");
-                }
-                break;
-
             case self::SETUP_ACTION_QUALITY:
-                if (isset($user_input->quality) && $this->plugin->config->get_quality_id($plugin_cookies) !== $user_input->quality) {
+                $func_get = "get_{$control_id}_id";
+                $func_set = "set_{$control_id}_id";
+                if ($this->plugin->config->{$func_get}($plugin_cookies) !== $user_input->{$control_id}) {
                     $need_reload = true;
-                    $this->plugin->config->set_quality_id($user_input->quality, $plugin_cookies);
-                    hd_print(__METHOD__ . ": Selected quality: id: $user_input->quality name: '" . $this->plugin->config->get_quality_name($plugin_cookies) . "'");
+                    $this->plugin->config->{$func_set}($user_input->{$control_id}, $plugin_cookies);
+                    hd_print(__METHOD__ . ": $control_id id: " . $user_input->{$control_id}
+                        . " name: '" . $this->plugin->config->{$func_get}($plugin_cookies) . "'");
                 }
                 break;
 
             case self::SETUP_ACTION_STREAM_FORMAT:
-                if (isset($user_input->stream_format)) {
-                    $need_reload = true;
-                    $plugin_cookies->format = $user_input->stream_format;
-                    hd_print(__METHOD__ . ": Selected stream type: $plugin_cookies->format");
-                }
-                break;
-
             case self::SETUP_ACTION_BUF_TIME:
-                $plugin_cookies->buf_time = $user_input->buf_time;
-                hd_print(__METHOD__ . ": Buffering time: $plugin_cookies->buf_time");
-                break;
-
             case self::SETUP_ACTION_DELAY_TIME:
-                $plugin_cookies->delay_time = $user_input->delay_time;
-                hd_print(__METHOD__ . ": Delay time: $plugin_cookies->delay_time");
+                if ($control_id === self::SETUP_ACTION_STREAM_FORMAT) {
+                    $need_reload = true;
+                }
+                $plugin_cookies->{$control_id} = $user_input->{$control_id};
+                hd_print(__METHOD__ . ": $control_id: " . $plugin_cookies->{$control_id});
                 break;
         }
 
@@ -284,12 +257,5 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies));
-    }
-
-    private static function toggle_param($plugin_cookies, $param)
-    {
-        $plugin_cookies->{$param} = ($plugin_cookies->{$param} === SetupControlSwitchDefs::switch_off)
-            ? SetupControlSwitchDefs::switch_on
-            : SetupControlSwitchDefs::switch_off;
     }
 }

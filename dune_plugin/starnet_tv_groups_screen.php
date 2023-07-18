@@ -126,7 +126,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print("Starnet_Tv_Groups_Screen::get_all_folder_items");
+        //hd_print(__METHOD__ . ": get_all_folder_items");
         try {
             $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
         } catch (Exception $e) {
@@ -194,11 +194,11 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             array_unshift($items, $all_item);
         }
 
-        if (isset($hist_item)) {
+        if (isset($hist_item) && (!isset($plugin_cookies->show_history) || $plugin_cookies->show_history === 'yes')) {
             array_unshift($items, $hist_item);
         }
 
-        if (isset($fav_item)) {
+        if (isset($fav_item) && (!isset($plugin_cookies->show_favorites) || $plugin_cookies->show_favorites === 'yes')) {
             array_unshift($items, $fav_item);
         }
 
