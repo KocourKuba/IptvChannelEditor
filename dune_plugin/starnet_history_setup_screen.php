@@ -51,6 +51,7 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
      */
     public function do_get_control_defs(&$plugin_cookies)
     {
+        hd_print(__METHOD__);
         $defs = array();
 
         $folder_icon = $this->plugin->get_image_path('folder.png');
@@ -64,24 +65,23 @@ class Starnet_History_Setup_Screen extends Abstract_Controls_Screen implements U
         //////////////////////////////////////
         // history
 
-        $display_path = $this->get_history_path($plugin_cookies);
+        $history_path = $this->get_history_path($plugin_cookies);
+        hd_print(__METHOD__ . ": history path: $history_path");
         $max_size = is_apk() ? 45 : 36;
-        if (strlen($display_path) > $max_size) {
+        $display_path = $history_path;
+        if (strlen($history_path) > $max_size) {
             $display_path = "..." . substr($display_path, strlen($display_path) - $max_size);
         }
 
         Control_Factory::add_image_button($defs, $this, null,
             self::SETUP_ACTION_HISTORY_CHANGE_FOLDER, TR::t('setup_history_folder_path'), $display_path, $folder_icon, self::CONTROLS_WIDTH);
 
-        if ($display_path !== get_data_path()) {
+        if ($history_path !== get_data_path()) {
             Control_Factory::add_image_button($defs, $this, null,
                 self::SETUP_ACTION_COPY_TO_DATA, TR::t('setup_copy_to_data'), TR::t('apply'), $refresh_icon, self::CONTROLS_WIDTH);
 
             Control_Factory::add_image_button($defs, $this, null,
                 self::SETUP_ACTION_COPY_TO_PLUGIN, TR::t('setup_copy_to_plugin'), TR::t('apply'), $refresh_icon, self::CONTROLS_WIDTH);
-        } else {
-            Control_Factory::add_label($defs, TR::t('setup_copy_to_data'), TR::t('apply'));
-            Control_Factory::add_label($defs, TR::t('setup_copy_to_plugin'), TR::t('apply'));
         }
 
         Control_Factory::add_image_button($defs, $this, null,

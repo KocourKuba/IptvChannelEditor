@@ -114,7 +114,7 @@ setup_history_change_folder = Сhange folder
 setup_tv_history_clear = Clear TV history info
 setup_vod_history_clear = Clear VOD history info
 setup_history_cleared = History info cleared
-setup_copy_to_data = Copy to DATA folder
+setup_copy_to_data = Copy to the selected folder
 setup_copy_to_plugin = Copy to plugin folder
 setup_copy_done = Copy done
 

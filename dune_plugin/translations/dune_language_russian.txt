@@ -112,7 +112,7 @@ setup_history_change_folder = Изменить папку
 setup_tv_history_clear = Очистить историю просмотра TV
 setup_vod_history_clear = Очистить историю просмотра VOD
 setup_history_cleared = История просмотра очищена
-setup_copy_to_data = Копировать в папку DATA
+setup_copy_to_data = Копировать в выбраную папку
 setup_copy_to_plugin = Копировать в папку плагина
 setup_copy_done = Данные скопированы
 

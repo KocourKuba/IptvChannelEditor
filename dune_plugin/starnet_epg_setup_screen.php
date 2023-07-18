@@ -72,6 +72,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
      */
     public function do_get_control_defs(&$plugin_cookies)
     {
+        hd_print(__METHOD__);
         $defs = array();
 
         $remove_icon = $this->plugin->get_image_path('brush.png');

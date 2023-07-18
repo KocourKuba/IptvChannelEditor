@@ -65,6 +65,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
      */
     public function do_get_control_defs(&$plugin_cookies)
     {
+        hd_print(__METHOD__);
         $defs = array();
 
         //////////////////////////////////////
