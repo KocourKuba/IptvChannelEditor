@@ -82,7 +82,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         $fileData['folder'] = array();
         $fileData['file'] = array();
         if ($dir === '/tmp/mnt/smb') {
-            $info = isset($plugin_cookies->smb_setup) ? (int)$plugin_cookies->smb_setup : 1;
+            $info = isset($plugin_cookies->{self::ACTION_SMB_SETUP}) ? (int)$plugin_cookies->{self::ACTION_SMB_SETUP} : 1;
             $s['smb'] = $smb_shares->get_mount_all_smb($info);
             return $s;
         }
@@ -474,7 +474,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 return Action_Factory::open_folder($selected_url, $caption);
 
             case self::ACTION_SMB_SETUP:
-                $smb_view = isset($plugin_cookies->smb_setup) ? (int)$plugin_cookies->smb_setup : 1;
+                $smb_view = isset($plugin_cookies->{self::ACTION_SMB_SETUP}) ? (int)$plugin_cookies->{self::ACTION_SMB_SETUP} : 1;
 
                 $smb_view_ops[1] = TR::t('folder_screen_net_folders');
                 $smb_view_ops[2] = TR::t('folder_screen_net_folders_smb');
@@ -500,7 +500,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 $smb_view_ops[3] = TR::t('folder_screen_search_smb');
                 if (isset($user_input->smb_view)) {
                     $smb_view = $user_input->smb_view;
-                    $plugin_cookies->smb_setup = $user_input->smb_view;
+                    $plugin_cookies->{self::ACTION_SMB_SETUP} = $user_input->smb_view;
                 }
 
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_used__1', $smb_view_ops[$smb_view]));
