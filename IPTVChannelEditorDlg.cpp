@@ -2360,6 +2360,7 @@ void CIPTVChannelEditorDlg::OnAddCategory()
 	GetConfig().set_int(true, REG_AUTO_SYNC, autoSyncOld);
 
 	LoadChannelInfo();
+	FillTreePlaylist();
 	set_allow_save();
 }
 
@@ -4351,6 +4352,7 @@ void CIPTVChannelEditorDlg::OnAddUpdateChannel()
 		UpdateChannelsTreeColors();
 		UpdatePlaylistTreeColors();
 		UpdateControlsForItem();
+		FillTreePlaylist();
 	}
 
 	set_allow_save();
