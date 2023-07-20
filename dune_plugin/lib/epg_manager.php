@@ -447,6 +447,25 @@ class Epg_Manager
                     throw new Exception("Failed to unpack $tmp_filename to $cached_file");
                 }
                 hd_print(__METHOD__ . ": $res bytes written to $cached_file");
+            } else if (preg_match('|\.zip|', $xmltv_url)) {
+                hd_print(__METHOD__ . ": unzip $tmp_filename");
+                $unzip = new ZipArchive();
+                $out = $unzip->open($tmp_filename);
+                if ($out !== true) {
+                    throw new Exception("Failed to unzip $tmp_filename (error code: $out)");
+                }
+                $filename = $unzip->getNameIndex(0);
+                if (empty($filename)) {
+                    $unzip->close();
+                    throw new Exception("empty zip file $tmp_filename");
+                }
+
+                $unzip->extractTo(self::get_xcache_dir($plugin_cookies));
+                $unzip->close();
+
+                rename($filename, $cached_file);
+                $size = filesize($cached_file);
+                hd_print(__METHOD__ . ": $size bytes written to $cached_file");
             } else {
                 if (file_exists($cached_file)) {
                     unlink($cached_file);
@@ -520,12 +539,12 @@ class Epg_Manager
                     continue;
                 }
 
-                $ch_end = strpos($line, '"', $ch_start + 9);
+                $ch_start += 9;
+                $ch_end = strpos($line, '"', $ch_start);
                 if ($ch_end === false) {
                     continue;
                 }
 
-                $ch_start += 9;
                 $channel = substr($line, $ch_start, $ch_end - $ch_start);
 
                 // if epg id not present in current channels list skip it
