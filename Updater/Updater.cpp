@@ -60,7 +60,7 @@ std::wstring DEV_PATH;
 std::wstring PACK_DLL_PATH;
 #endif // _DEBUG
 
-constexpr auto PACK_DLL = L"7za.dll";
+constexpr auto PACK_DLL = L"7z.dll";
 
 constexpr auto err_no_updates    = -1;
 constexpr auto no_error          = 0;

@@ -783,6 +783,11 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_changedChannels.clear();
 	m_wndChannels.ResetContent();
 	m_all_channels_lists.clear();
+	m_xmltv_sources.clear();
+	for (auto& item : m_epg_cache)
+	{
+		item.clear();
+	}
 
 	std::error_code err;
 	std::filesystem::directory_iterator ch_dir_iter(channelsPath, err);

@@ -289,7 +289,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 			output_path = cmdInfo.m_strFileName.GetString();
 
 		auto plugin_type = GetConfig().get_plugin_type();
-		if (!PackPlugin(plugin_type, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
+		if (!PackPlugin(plugin_type, true, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 		{
 			auto plugin = StreamContainer::get_instance(plugin_type);
 			if (plugin)

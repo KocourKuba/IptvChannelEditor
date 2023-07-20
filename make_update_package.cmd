@@ -49,7 +49,7 @@ md "%ROOT%%pkg%" >nul 2>&1
 copy "%BUILD_PATH%\%BUILD_NAME%.exe"					"%pkg%" >nul
 copy "%BUILD_PATH%\%BUILD_NAME%RUS.dll"					"%pkg%" >nul
 copy "%ROOT%Updater\%BUILD_TYPE%\Updater.exe"			"%pkg%" >nul
-copy "%ROOT%dll\7za.dll"								"%pkg%" >nul
+copy "%ROOT%dll\7z.dll"									"%pkg%" >nul
 copy "%ROOT%BugTrap\bin\BugTrapU.dll"					"%pkg%" >nul
 copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul
 copy "%ROOT%Changelog.md"								"%pkg%" >nul
@@ -71,7 +71,7 @@ echo ^<package^> >>%outfile%
 call :add_node %BUILD_NAME%.exe				>>%outfile%
 call :add_node %BUILD_NAME%RUS.dll			>>%outfile%
 call :add_node Updater.exe					>>%outfile%
-call :add_node 7za.dll						>>%outfile%
+call :add_node 7z.dll						>>%outfile%
 call :add_node BugTrapU.dll					>>%outfile%
 call :add_node dbghelp.dll					>>%outfile%
 call :add_node Changelog.md					>>%outfile%
@@ -86,7 +86,7 @@ IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom .
 echo %BUILD_NAME%.exe			>packing.lst
 echo %BUILD_NAME%RUS.dll		>>packing.lst
 echo Updater.exe				>>packing.lst
-echo 7za.dll					>>packing.lst
+echo 7z.dll 					>>packing.lst
 echo BugTrapU.dll				>>packing.lst
 echo dbghelp.dll				>>packing.lst
 echo Changelog.md				>>packing.lst

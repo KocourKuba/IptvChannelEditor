@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 constexpr auto APP_SETTINGS = L"Application";
 constexpr auto CHANNELS_LIST_VERSION = 7;
-constexpr auto PACK_DLL = L"7za.dll";
+constexpr auto PACK_DLL = L"7z.dll";
 
 constexpr auto CMP_FLAG_TITLE          = 0x01;
 constexpr auto CMP_FLAG_ICON           = 0x02;
