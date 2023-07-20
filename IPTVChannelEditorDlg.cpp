@@ -1769,6 +1769,12 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 
 void CIPTVChannelEditorDlg::UpdatePlaylistTreeColors()
 {
+	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
+	BOOL bCmpTitle = (flags & CMP_FLAG_TITLE) ? TRUE : FALSE;
+	BOOL bCmpIcon = (flags & CMP_FLAG_ICON) ? TRUE : FALSE;
+	BOOL bCmpArchive = (flags & CMP_FLAG_ARCHIVE) ? TRUE : FALSE;
+	BOOL bCmpEpg1 = (flags & CMP_FLAG_EPG1) ? TRUE : FALSE;
+
 	HTREEITEM root = m_wndPlaylistTree.GetRootItem();
 	while (root != nullptr)
 	{
@@ -1783,10 +1789,10 @@ void CIPTVChannelEditorDlg::UpdatePlaylistTreeColors()
 			{
 				color = m_colorNotChanged;
 				const auto& channel = pair->second;
-				if (channel->get_title() != entry->get_title()
-					|| (entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days())
-					|| (!entry->get_epg_id(0).empty() && channel->get_epg_id(0) != entry->get_epg_id(0))
-					|| (!entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
+				if (bCmpTitle && channel->get_title() != entry->get_title()
+					|| (bCmpIcon && !entry->get_icon_uri().get_uri().empty() && !channel->get_icon_uri().is_equal(entry->get_icon_uri(), false))
+					|| (bCmpArchive && entry->get_archive_days() != 0 && channel->get_archive_days() != entry->get_archive_days())
+					|| (bCmpEpg1 && !entry->get_epg_id(0).empty() && channel->get_epg_id(0) != entry->get_epg_id(0))
 					)
 				{
 					color = m_colorChanged;
