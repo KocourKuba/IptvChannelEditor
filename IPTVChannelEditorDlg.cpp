@@ -1674,7 +1674,7 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 		BOOL bCmpIcon = (flags & CMP_FLAG_ICON) ? TRUE : FALSE;
 		BOOL bCmpArchive = (flags & CMP_FLAG_ARCHIVE) ? TRUE : FALSE;
 		BOOL bCmpEpg1 = (flags & CMP_FLAG_EPG1) ? TRUE : FALSE;
-		BOOL bCmpEpg2 = ((flags & CMP_FLAG_EPG2) && m_plugin->get_epg_parameter(1).epg_url.empty()) ? FALSE : TRUE;
+		BOOL bCmpEpg2 = ((flags & CMP_FLAG_EPG2) && !m_plugin->get_epg_parameter(1).epg_url.empty()) ? TRUE : FALSE;
 
 		while (root != nullptr && !m_playlistMap.empty())
 		{
@@ -4417,6 +4417,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 		m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC);
 		UpdateChannelsTreeColors();
 		UpdatePlaylistTreeColors();
+		UpdateControlsForItem();
 	}
 }
 
