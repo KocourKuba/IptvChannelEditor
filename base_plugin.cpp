@@ -325,7 +325,7 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 	data.clear();
 
 	auto cache_file = m_dl.GetCachePath(internal_epg_url);
-	boost::wregex re(LR"(^.*\.gz$)");
+	boost::wregex re(LR"(^.*\.(gz|zip)$)");
 	if (boost::regex_match(internal_epg_url, re))
 	{
 		std::vector<char> buffer;
@@ -341,8 +341,11 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 
 			SevenZip::SevenZipWrapper archiver(pack_dll);
 			auto& extractor = archiver.GetExtractor();
-			extractor.SetCompressionFormat(SevenZip::CompressionFormat::GZip);
 			extractor.SetArchivePath(cache_file);
+			if (!extractor.DetectCompressionFormat())
+			{
+				extractor.SetCompressionFormat(SevenZip::CompressionFormat::GZip);
+			}
 			extractor.ExtractFileToMemory(0, (std::vector<BYTE>&)buffer);
 			std::ofstream unpacked_file(unpacked_path, std::ofstream::binary);
 			unpacked_file.write((char*)buffer.data(), buffer.size());

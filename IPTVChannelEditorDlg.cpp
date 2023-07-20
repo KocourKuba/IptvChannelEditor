@@ -1193,13 +1193,18 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			"url-tvg", "x-tvg-url"
 		};
 
+		utils::CrackedUrl check_url;
 		const auto& hdr_tags = m_playlistEntries->m3u_header.get_ext_tags();
 		for (const auto& tag : hdr_tags)
 		{
 			const auto& found = std::find(selected_tag.begin(), selected_tag.end(), tag.first);
 			if (found != selected_tag.end())
 			{
-				playlist_xmltv_sources.emplace_back(utils::utf8_to_utf16(tag.first), utils::utf8_to_utf16(tag.second));
+				const auto& epg_url = utils::utf8_to_utf16(tag.second);
+				if (check_url.CrackUrl(epg_url))
+				{
+					playlist_xmltv_sources.emplace_back(utils::utf8_to_utf16(tag.first), epg_url);
+				}
 			}
 		}
 
@@ -1291,6 +1296,7 @@ void CIPTVChannelEditorDlg::FillXmlSources()
 	}
 	m_wndXmltvEpgSource.SetCurSel(m_xmltvEpgSource);
 	m_wndXmltvEpgSource.SetDroppedWidth(max_dropdown_size);
+	m_wndXmltvEpgSource.EnableWindow(!all_xmltv_sources.empty());
 }
 
 LRESULT CIPTVChannelEditorDlg::OnInitProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
