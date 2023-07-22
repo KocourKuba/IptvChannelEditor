@@ -493,6 +493,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
                 if (isset($user_input->selected_item_id)) {
 
+                    $common_menu = array();
                     if ($media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID) {
                         $this->create_menu_item($menu_items, TR::t('delete'), "$this->images_path/remove.png", ACTION_REMOVE_PLAYBACK_POINT);
                     } else if ($media_url->group_id === Default_Dune_Plugin::FAV_CHANNEL_GROUP_ID && is_apk()) {
@@ -506,21 +507,30 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                         $add_action = $is_in_favorites ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
 
                         if (is_apk()) {
-                            $this->create_menu_item($menu_items, $caption, "$this->images_path/star.png", $add_action);
-                            $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                            $this->create_menu_item($common_menu, $caption, "$this->images_path/star.png", $add_action);
                         }
 
                         $zoom_data = HD::get_data_items(Starnet_Tv::CHANNELS_ZOOM, true);
                         $current_idx = (string)(isset($zoom_data[$channel_id]) ? $zoom_data[$channel_id] : DuneVideoZoomPresets::not_set);
 
                         //hd_print(__METHOD__ . ": Current idx: $current_idx");
-                        $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                        $common_menu[] = array(GuiMenuItemDef::is_separator => true,);
                         foreach (DuneVideoZoomPresets::$zoom_ops as $idx => $zoom_item) {
-                            $this->create_menu_item($menu_items, $zoom_item,
+                            $this->create_menu_item($common_menu, $zoom_item,
                                 strcmp($idx, $current_idx) === 0 ? "gui_skin://button_icons/proceed.aai" : null,
                                 ACTION_ZOOM_APPLY, array(ACTION_ZOOM_SELECT => (string)$idx));
                         }
                     }
+
+                    if (!is_apk()) {
+                        $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
+                            ACTION_EXTERNAL_PLAYER,
+                            TR::t('vod_screen_external_player'),
+                            'gui_skin://small_icons/playback.aai'
+                        );
+                    }
+                    $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                    $menu_items = array_merge($menu_items, $common_menu);
                 } else {
                     if ($media_url->group_id === Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID) {
                         $this->create_menu_item($menu_items, TR::t('clear_history'), $this->images_path . '/brush.png', ACTION_ITEMS_CLEAR);
@@ -594,6 +604,27 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
                 HD::put_data_items(Starnet_Tv::CHANNELS_ZOOM, $zoom_data);
                 return Starnet_Epfs_Handler::invalidate_folders();
+
+            case ACTION_EXTERNAL_PLAYER:
+                try {
+                    $url = $this->plugin->config->GenerateStreamUrl(
+                        $plugin_cookies,
+                        isset($media_url->archive_tm) ? $media_url->archive_tm : -1,
+                        $this->plugin->tv->get_channel($media_url->channel_id));
+                    $url = str_replace("ts://", "", $url);
+                    $param_pos = strpos($url, '|||dune_params');
+                    $url =  $param_pos!== false ? substr($url, 0, $param_pos) : $url;
+                    $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
+                    hd_print(__METHOD__ . ": play movie in the external player: $cmd");
+                    exec($cmd, $output);
+                    hd_print(__METHOD__ . ": external player exec result code" . HD::ArrayToStr($output));
+                } catch (Exception $ex) {
+                    hd_print(__METHOD__ . ": Movie can't played, exception info: " . $ex->getMessage());
+                    return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
+                        null,
+                        TR::t('warn_msg2__1', $ex->getMessage()));
+                }
+                break;
         }
 
         return null;

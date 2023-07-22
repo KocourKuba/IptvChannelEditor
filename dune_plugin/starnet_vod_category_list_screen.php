@@ -67,7 +67,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_M3U)) {
             $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
             if (count($all_vod_lists) > 1) {
-                $change_playlist = User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU);
+                $change_playlist = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU);
                 $change_playlist['caption'] = TR::t('vod_screen_change_playlist');
                 if (is_apk()) {
                     $actions[GUI_EVENT_KEY_POPUP_MENU] = $change_playlist;
@@ -114,7 +114,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                 }
                 break;
 
-            case ACTION_POPUP_MENU;
+            case GUI_EVENT_KEY_POPUP_MENU;
                 $menu_items = array();
                 $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
                 foreach ($all_vod_lists as $idx => $list) {

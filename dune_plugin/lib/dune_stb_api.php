@@ -74,7 +74,6 @@ const ACTION_SETTINGS = 'settings';
 const ACTION_CHANNELS_SETTINGS = 'channels_settings';
 const ACTION_NEED_CONFIGURE = 'configure';
 const ACTION_BALANCE = 'balance';
-const ACTION_POPUP_MENU = 'popup_menu';
 const ACTION_INFO = 'info';
 const ACTION_ADD_FAV = 'add_favorite';
 const ACTION_JUMP_TO_CHANNEL = 'jump_to_channel';

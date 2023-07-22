@@ -35,11 +35,12 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
     {
         $action_play = User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER);
         return array(
-            GUI_EVENT_KEY_ENTER    => $action_play,
-            GUI_EVENT_KEY_PLAY     => $action_play,
-            GUI_EVENT_KEY_B_GREEN  => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete')),
-            GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR, TR::t('clear_history')),
-            GUI_EVENT_KEY_D_BLUE   => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
+            GUI_EVENT_KEY_ENTER      => $action_play,
+            GUI_EVENT_KEY_PLAY       => $action_play,
+            GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete')),
+            GUI_EVENT_KEY_C_YELLOW   => User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR, TR::t('clear_history')),
+            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
+            GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
         );
     }
 
@@ -58,7 +59,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        dump_input_handler(__METHOD__, $user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -97,7 +98,41 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
 				$message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
 				$this->plugin->tv->change_tv_favorites($opt_type, $channel_id, $plugin_cookies);
 				return Action_Factory::show_title_dialog($message);
-		}
+
+            case GUI_EVENT_KEY_POPUP_MENU:
+                if (!is_android() || is_apk())
+                    return null;
+
+                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
+                    ACTION_EXTERNAL_PLAYER,
+                    TR::t('vod_screen_external_player'),
+                    'gui_skin://small_icons/playback.aai'
+                );
+
+                return Action_Factory::show_popup_menu($menu_items);
+
+            case ACTION_EXTERNAL_PLAYER:
+                try {
+                    $channel = $this->plugin->tv->get_channel(MediaURL::decode($user_input->selected_media_url)->channel_id);
+                    $url = $this->plugin->config->GenerateStreamUrl(
+                        $plugin_cookies,
+                        isset($media_url->archive_tm) ? $media_url->archive_tm : -1,
+                        $channel);
+                    $url = str_replace("ts://", "", $url);
+                    $param_pos = strpos($url, '|||dune_params');
+                    $url =  $param_pos!== false ? substr($url, 0, $param_pos) : $url;
+                    $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
+                    hd_print(__METHOD__ . ": play movie in the external player: $cmd");
+                    exec($cmd, $output);
+                    hd_print(__METHOD__ . ": external player exec result code" . HD::ArrayToStr($output));
+                } catch (Exception $ex) {
+                    hd_print(__METHOD__ . ": Movie can't played, exception info: " . $ex->getMessage());
+                    return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
+                        null,
+                        TR::t('warn_msg2__1', $ex->getMessage()));
+                }
+                return null;
+        }
 
         return null;
     }

@@ -43,13 +43,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
         $move_backward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('up'));
         $move_forward_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('down'));
         $remove_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete'));
-        $remove_all_favorite_action = User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR);
-
-        $menu_items[] = array(
-            GuiMenuItemDef::caption => TR::t('clear_favorites'),
-            GuiMenuItemDef::action => $remove_all_favorite_action);
-
-        $popup_menu_action = Action_Factory::show_popup_menu($menu_items);
+        $show_popup = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU);
 
         return array
         (
@@ -58,7 +52,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
             GUI_EVENT_KEY_B_GREEN    => $move_backward_favorite_action,
             GUI_EVENT_KEY_C_YELLOW   => $move_forward_favorite_action,
             GUI_EVENT_KEY_D_BLUE     => $remove_favorite_action,
-            GUI_EVENT_KEY_POPUP_MENU => $popup_menu_action,
+            GUI_EVENT_KEY_POPUP_MENU => $show_popup,
         );
     }
 
@@ -114,7 +108,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        dump_input_handler(__METHOD__, $user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -140,6 +134,43 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                 $fav_op_type = ACTION_CLEAR_FAVORITES;
                 $inc = 0;
                 break;
+
+            case GUI_EVENT_KEY_POPUP_MENU:
+                $menu_items = array();
+                if (is_android() && !is_apk()) {
+                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
+                        ACTION_EXTERNAL_PLAYER,
+                        TR::t('vod_screen_external_player'),
+                        'gui_skin://small_icons/playback.aai'
+                    );
+                    $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                }
+
+                $menu_items[] = array(
+                    GuiMenuItemDef::caption => TR::t('clear_favorites'),
+                    GuiMenuItemDef::action => User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR)
+                );
+
+                return Action_Factory::show_popup_menu($menu_items);
+
+            case ACTION_EXTERNAL_PLAYER:
+                try {
+                    $channel = $this->plugin->tv->get_channel(MediaURL::decode($user_input->selected_media_url)->channel_id);
+                    $url = $this->plugin->config->GenerateStreamUrl($plugin_cookies, -1, $channel);
+                    $url = str_replace("ts://", "", $url);
+                    $param_pos = strpos($url, '|||dune_params');
+                    $url =  $param_pos!== false ? substr($url, 0, $param_pos) : $url;
+                    $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
+                    hd_print(__METHOD__ . ": play movie in the external player: $cmd");
+                    exec($cmd, $output);
+                    hd_print(__METHOD__ . ": external player exec result code" . HD::ArrayToStr($output));
+                } catch (Exception $ex) {
+                    hd_print(__METHOD__ . ": Movie can't played, exception info: " . $ex->getMessage());
+                    return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
+                        null,
+                        TR::t('warn_msg2__1', $ex->getMessage()));
+                }
+                return null;
 
             default:
                 return null;

@@ -45,12 +45,12 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER);
         $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS);
-        $zoom_popup = User_Input_Handler_Registry::create_action($this, ACTION_ZOOM_MENU, TR::t('tv_screen_zoom_channel'));
+        $show_popup = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU);
 
         $actions = array(
             GUI_EVENT_KEY_ENTER      => $action_play,
             GUI_EVENT_KEY_PLAY       => $action_play,
-            GUI_EVENT_KEY_POPUP_MENU => $zoom_popup,
+            GUI_EVENT_KEY_POPUP_MENU => $show_popup,
             GUI_EVENT_KEY_SETUP      => $action_settings,
         );
 
@@ -156,12 +156,21 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
                 return Action_Factory::update_regular_folder($range, true, $ndx);
 
-            case ACTION_ZOOM_MENU:
+            case GUI_EVENT_KEY_POPUP_MENU:
+                $menu_items = array();
+                if (is_android() && !is_apk()) {
+                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
+                        ACTION_EXTERNAL_PLAYER,
+                        TR::t('vod_screen_external_player'),
+                        'gui_skin://small_icons/playback.aai'
+                    );
+                    $menu_items[] = array(GuiMenuItemDef::is_separator => true,);
+                }
+
                 $zoom_data = HD::get_data_items(Starnet_Tv::CHANNELS_ZOOM, true);
                 $current_idx = isset($zoom_data[$channel_id]) ? $zoom_data[$channel_id] : DuneVideoZoomPresets::not_set;
 
                 hd_print(__METHOD__ . ": Current idx: $current_idx");
-                $menu_items = array();
                 foreach (DuneVideoZoomPresets::$zoom_ops as $idx => $zoom_item) {
                     $add_param[ACTION_ZOOM_SELECT] = (string)$idx;
 
@@ -189,6 +198,24 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                     }
 
                     HD::put_data_items(Starnet_Tv::CHANNELS_ZOOM, $zoom_data);
+                }
+                break;
+
+            case ACTION_EXTERNAL_PLAYER:
+                try {
+                    $url = $this->plugin->config->GenerateStreamUrl($plugin_cookies, -1, $channel);
+                    $url = str_replace("ts://", "", $url);
+                    $param_pos = strpos($url, '|||dune_params');
+                    $url =  $param_pos!== false ? substr($url, 0, $param_pos) : $url;
+                    $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
+                    hd_print(__METHOD__ . ": play movie in the external player: $cmd");
+                    exec($cmd, $output);
+                    hd_print(__METHOD__ . ": external player exec result code" . HD::ArrayToStr($output));
+                } catch (Exception $ex) {
+                    hd_print(__METHOD__ . ": Movie can't played, exception info: " . $ex->getMessage());
+                    return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
+                        null,
+                        TR::t('warn_msg2__1', $ex->getMessage()));
                 }
                 break;
         }

@@ -65,7 +65,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
             }
         }
 
-        $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, ACTION_POPUP_MENU);
+        $actions[GUI_EVENT_KEY_POPUP_MENU] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU);
 
         return $actions;
     }
@@ -169,9 +169,9 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 }
                 break;
 
-            case ACTION_POPUP_MENU:
+            case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items = array();
-                if (!is_apk()) {
+                if (is_android() && !is_apk()) {
                     $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
                         ACTION_EXTERNAL_PLAYER,
                         TR::t('vod_screen_external_player'),
