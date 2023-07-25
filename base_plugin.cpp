@@ -348,6 +348,12 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 			else
 				extractor.SetCompressionFormat(SevenZip::CompressionFormat::GZip);
 
+			const auto& names = extractor.GetItemsNames();
+			if (names.empty())
+				return false;
+
+			const auto& sizes = extractor.GetOrigSizes();
+			buffer.reserve(sizes[0]);
 			if (!extractor.ExtractFileToMemory(0, (std::vector<BYTE>&)buffer))
 				return false;
 
