@@ -100,14 +100,14 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 			m_fixed = true;
 			break;
 		case DynamicParamsType::enLinks:
-			VERIFY(csID.LoadString(IDS_STRING_CURRENT));
-			VERIFY(csName.LoadString(IDS_STRING_NAME));
+			VERIFY(csID.LoadString(IDS_STRING_NAME));
+			VERIFY(csName.LoadString(IDS_STRING_VALUE));
 			break;
 		case DynamicParamsType::enFiles:
 		case DynamicParamsType::enPlaylistTV:
 		case DynamicParamsType::enPlaylistVOD:
 			m_isFirstColEditable = false;
-			VERIFY(csID.LoadString(IDS_STRING_CURRENT));
+			VERIFY(csID.LoadString(IDS_STRING_ENTRY));
 			VERIFY(csName.LoadString(IDS_STRING_NAME));
 			break;
 		default:
@@ -293,7 +293,7 @@ std::wstring CFillParamsInfoDlg::GetParamId(const variantInfo& info)
 {
 	return std::visit(get_id_overload{
 						[](const DynamicParamsInfo& t) { return t.get_id(); },
-						[](const PlaylistTemplateInfo& t) { return t.get_name(); }
+						[](const PlaylistTemplateInfo& t) { return t.get_id(); }
 					  }, info);
 }
 

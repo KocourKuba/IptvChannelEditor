@@ -167,6 +167,8 @@ public:
 		set_name(load_string_resource(ID));
 	}
 
+	std::wstring get_id() const { return L""; }
+
 	std::wstring get_name() const { return utils::utf8_to_utf16(name); }
 	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
 	void set_name(UINT ID) { name = utils::utf16_to_utf8(load_string_resource(ID)); }
