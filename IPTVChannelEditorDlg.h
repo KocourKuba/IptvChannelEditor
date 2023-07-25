@@ -131,7 +131,6 @@ protected:
 	afx_msg void OnBnClickedButtonCreateNewChannelsList();
 	afx_msg void OnBnClickedCheckShowChangedCh();
 	afx_msg void OnBnClickedButtonPlFilter();
-	afx_msg void OnBnClickedButtonAddPlaylist();
 	afx_msg void OnBnClickedButtonAbout();
 	afx_msg void OnBnClickedButtonCacheIcon();
 	afx_msg void OnUpdateButtonCacheIcon(CCmdUI* pCmdUI);

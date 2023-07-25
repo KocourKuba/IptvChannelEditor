@@ -684,6 +684,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	{
 		selected = 0;
 		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, 0);
+		GetConfig().SaveSettings();
 	}
 
 	if (selected < (int)m_all_credentials.size())
@@ -3640,6 +3641,7 @@ void CIPTVChannelEditorDlg::OnSave()
 		lst_idx = m_wndChannels.AddString(list_name.c_str());
 		m_wndChannels.SetCurSel(lst_idx);
 		GetConfig().set_int(false, REG_CHANNELS_TYPE, lst_idx);
+		GetConfig().SaveSettings();
 	}
 
 	// renumber categories id
@@ -5025,6 +5027,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 
 	m_plugin->set_playlist_idx(idx);
 	GetConfig().set_int(false, REG_PLAYLIST_TYPE, idx);
+	GetConfig().SaveSettings();
 	LoadPlaylist();
 }
 
@@ -5032,6 +5035,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboStreamType()
 {
 	GetConfig().set_int(false, REG_STREAM_TYPE, (int)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel()));
 	LoadChannelInfo(FindChannel(m_wndChannelsTree.GetSelectedItem()));
+	GetConfig().SaveSettings();
 }
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
@@ -5696,19 +5700,6 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckShowEpg()
 	LoadTimerEPG();
 }
 
-void CIPTVChannelEditorDlg::OnBnClickedButtonAddPlaylist()
-{
-	CCustomPlaylistDlg dlg;
-	dlg.m_url = GetConfig().get_string(false, REG_CUSTOM_PLAYLIST).c_str();
-	dlg.m_isFile = GetConfig().get_int(false, REG_CUSTOM_PL_FILE);
-	if (dlg.DoModal() == IDOK)
-	{
-		GetConfig().set_string(false, REG_CUSTOM_PLAYLIST, dlg.m_url.GetString());
-		GetConfig().set_int(false, REG_CUSTOM_PL_FILE, dlg.m_isFile);
-		LoadPlaylist();
-	}
-}
-
 void CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon()
 {
 	HTREEITEM hItem = m_wndChannelsTree.GetSelectedItem();
@@ -5834,6 +5825,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddEpg()
 		m_plugin->set_custom_epg_urls(params);
 		nlohmann::json data = params;
 		GetConfig().set_string(false, REG_CUSTOM_XMLTV_SOURCE, utils::utf8_to_utf16(nlohmann::to_string(data)));
+		GetConfig().SaveSettings();
 		FillXmlSources();
 	}
 }
