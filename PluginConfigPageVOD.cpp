@@ -272,7 +272,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 
 void CPluginConfigPageVOD::OnBnClickedButtonVodParse()
 {
-	const auto& url = fmt::format(L"https://regex101.com/?regex={:s}", m_VodParseRegex.GetString());
+	const auto& url = fmt::format(L"https://regex101.com/?regex={:s}", utils::string_replace<wchar_t>(m_VodParseRegex.GetString(), L"+", L"%2B"));
 	ShellExecute(nullptr, _T("open"), url.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 }
 

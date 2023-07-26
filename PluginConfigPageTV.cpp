@@ -408,7 +408,7 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 
 void CPluginConfigPageTV::OnBnClickedButtonStreamRegexTest()
 {
-	const auto& url = fmt::format(L"https://regex101.com/?regex={:s}", m_ParseStream.GetString());
+	const auto& url = fmt::format(L"https://regex101.com/?regex={:s}", utils::string_replace<wchar_t>(m_ParseStream.GetString(), L"+", L"%2B"));
 	ShellExecute(nullptr, _T("open"), url.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 }
 
