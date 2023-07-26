@@ -758,9 +758,12 @@ class default_config extends dynamic_config
             if ($entry->isExtM3U()) {
                 foreach (array('url-tvg', 'x-tvg-url') as $attr) {
                     $xmltv_url = $entry->getAttribute($attr);
-                    if (!empty($xmltv_url)) {
-                        hd_print(__METHOD__ . ": $attr: $xmltv_url");
-                        $this->epg_man->set_xmltv_url($attr, $xmltv_url);
+                    $urls = explode(',', $xmltv_url);
+                    foreach ($urls as $key => $url) {
+                        if (!empty($url)) {
+                            hd_print(__METHOD__ . ": $attr-$key: $xmltv_url");
+                            $this->epg_man->set_xmltv_url($attr . ($key !== 0 ? "-$key" : ""), $xmltv_url);
+                        }
                     }
                 }
             }

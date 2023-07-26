@@ -1207,9 +1207,16 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			if (found != selected_tag.end())
 			{
 				const auto& epg_url = utils::utf8_to_utf16(tag.second);
-				if (check_url.CrackUrl(epg_url))
+				const auto& urls = utils::string_split<wchar_t>(epg_url, L',');
+				int i = 0;
+				for(const auto& url : urls)
 				{
-					playlist_xmltv_sources.emplace_back(utils::utf8_to_utf16(tag.first), epg_url);
+					if (check_url.CrackUrl(url))
+					{
+						const auto& epg_name = utils::utf8_to_utf16(tag.first) + (i == 0 ? L"" : L"-" + std::to_wstring(i));
+						playlist_xmltv_sources.emplace_back(epg_name, url);
+						i++;
+					}
 				}
 			}
 		}
