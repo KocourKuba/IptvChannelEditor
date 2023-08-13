@@ -2026,27 +2026,25 @@ void CIPTVChannelEditorDlg::FillEPG()
 
 		if (need_load)
 		{
-			bool res = false;
 			if (epg_idx != 2)
 			{
-				res = m_plugin->parse_json_epg(epg_idx, epg_id, m_epg_cache, now, info);
+				bool res = m_plugin->parse_json_epg(epg_idx, epg_id, m_epg_cache, now, info);
+				if (!res)
+				{
+					need_load = false;
+				}
 			}
 			else
 			{
 				auto& epg_cache = m_epg_cache.at(epg_idx);
-				if (!epg_cache.empty() && epg_cache.find(epg_id) == epg_cache.end())
+				if (epg_cache.find(L"file already parsed") == epg_cache.end())
 				{
-					// do not load and parse xmltv again if epg_id not exist in already loaded epg
-					need_load = false;
+					bool res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, &m_wndProgress);
+					if (res)
+					{
+						epg_cache[L"file already parsed"] = std::map<time_t, EpgInfo>();
+					}
 				}
-				else
-				{
-					res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, &m_wndProgress);
-				}
-			}
-
-			if (!res)
-			{
 				need_load = false;
 			}
 		}
@@ -5834,6 +5832,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddEpg()
 		GetConfig().set_string(false, REG_CUSTOM_XMLTV_SOURCE, utils::utf8_to_utf16(nlohmann::to_string(data)));
 		GetConfig().SaveSettings();
 		FillXmlSources();
+		UpdateControlsForItem();
 	}
 }
 
