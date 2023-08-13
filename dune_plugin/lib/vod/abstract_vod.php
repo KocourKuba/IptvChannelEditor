@@ -130,13 +130,12 @@ abstract class Abstract_Vod implements Vod
         $this->short_movie_by_id = array();
         $this->movie_by_id = array();
         $this->failed_movie_ids = array();
-        $this->fav_movie_ids = null;
-        $this->history_items = null;
+        unset($this->fav_movie_ids, $this->history_items);
     }
 
     public function clear_genre_cache()
     {
-        $this->genres = null;
+        unset($this->genres);
     }
 
     ///////////////////////////////////////////////////////////////////////

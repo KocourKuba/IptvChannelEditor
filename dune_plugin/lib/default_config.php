@@ -711,7 +711,7 @@ class default_config extends dynamic_config
         if (isset($this->account_data) && !$force)
             return $this->account_data;
 
-        $this->account_data = null;
+        unset($this->account_data);
         $this->ClearPlaylistCache($plugin_cookies);
         $this->SetupM3uParser(true, $plugin_cookies, $force);
 
@@ -816,7 +816,7 @@ class default_config extends dynamic_config
     public function ClearPlaylistCache($plugin_cookies)
     {
         $tmp_file = get_temp_path($this->get_tv_list_idx($plugin_cookies) . "_playlist_tv.m3u8");
-        $this->tv_m3u_entries = null;
+        unset($this->tv_m3u_entries);
         hd_print(__METHOD__ . ": $tmp_file");
         if (file_exists($tmp_file)) {
             copy($tmp_file, $tmp_file . ".m3u");
@@ -841,7 +841,7 @@ class default_config extends dynamic_config
             copy($tmp_file, $tmp_file . ".m3u");
             unlink($tmp_file);
         }
-        $this->vod_m3u_indexes = null;
+        unset($this->vod_m3u_indexes);
     }
 
     /**

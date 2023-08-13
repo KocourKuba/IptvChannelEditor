@@ -90,8 +90,7 @@ class Starnet_Tv implements Tv, User_Input_Handler
 
     public function unload_channels()
     {
-        $this->channels = null;
-        $this->groups = null;
+        unset($this->channels, $this->groups);
     }
 
     /**
