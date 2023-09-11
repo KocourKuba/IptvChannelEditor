@@ -42,7 +42,7 @@ class Playback_Points
             return;
 
         // update point for selected channel
-        $id = ($id === null) ? $id : $this->curr_point_id;
+        $id = ($id !== null) ? $id : $this->curr_point_id;
 
         if (isset($this->points[$id])) {
             $player_state = get_player_state_assoc();
