@@ -1,4 +1,27 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * @Author: sharky72 (https://github.com/KocourKuba)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
 require_once 'user_input_handler.php';
 
@@ -40,8 +63,11 @@ class User_Input_Handler_Registry
     public static function create_action_screen($screen_id, $name, $caption = null, $add_params = null)
     {
         $handler = self::get_instance()->get_registered_handler($screen_id . "_handler");
-        if (is_null($handler))
+        if (is_null($handler)) {
+            hd_debug_print(null, true);
+            hd_debug_print("No handler registered for {$screen_id}_handler");
             return null;
+        }
 
         $params = array(
             'handler_id' => $handler->get_handler_id(),
@@ -108,7 +134,8 @@ class User_Input_Handler_Registry
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+
         if (!isset($user_input->handler_id)) {
             return null;
         }

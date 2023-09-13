@@ -1,7 +1,7 @@
 <?php
 
 require_once 'lib/abstract_regular_screen.php';
-require_once 'lib/vod/short_movie_range.php';
+require_once 'lib/short_movie_range.php';
 require_once 'starnet_vod_search_screen.php';
 
 class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_Input_Handler
@@ -9,24 +9,12 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
     const ID = 'vod_list';
 
     /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_list_folder_views());
-
-        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            $plugin->create_screen($this);
-        }
-    }
-
-    /**
      * @param string $category_id
      * @param string $genre_id
      * @param string $name
      * @return false|string
      */
-    public static function get_media_url_str($category_id, $genre_id, $name = false)
+    public static function get_media_url_string($category_id, $genre_id, $name = false)
     {
         $arr['screen_id'] = self::ID;
         $arr['category_id'] = $category_id;
@@ -36,14 +24,6 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
         }
 
         return MediaURL::encode($arr);
-    }
-
-    /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
     }
 
     /**
@@ -64,13 +44,12 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
     }
 
     /**
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return array|null
+     * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -105,7 +84,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
                 return Action_Factory::invalidate_folders(
                     array(Starnet_Vod_Search_Screen::ID),
                     Action_Factory::open_folder(
-                        static::get_media_url_str(Vod_Category::FLAG_SEARCH, $search_string),
+                        static::get_media_url_string(Vod_Category::FLAG_SEARCH, $search_string),
                         TR::t('search') . ": $search_string"));
 
             case ACTION_ADD_FAV:
@@ -113,7 +92,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
 
-                return Action_Factory::invalidate_folders(array(self::get_media_url_str($parent_media_url->category_id, $parent_media_url->genre_id)));
+                return Action_Factory::invalidate_folders(array(self::get_media_url_string($parent_media_url->category_id, $parent_media_url->genre_id)));
         }
 
         return null;
@@ -123,11 +102,12 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
      * @param MediaURL $media_url
      * @param int $from_ndx
      * @param $plugin_cookies
-     * @return Short_Movie_Range
+     * @return array
      */
-    protected function get_short_movie_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
+    public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        hd_print(__METHOD__ . ": '$media_url->category_id', from_idx: $from_ndx");
+        //hd_debug_print("$from_ndx");
+        hd_debug_print("'$media_url->category_id', from_idx: $from_ndx");
         $this->plugin->config->try_reset_pages();
         if (empty($media_url->genre_id) || $media_url->category_id === Vod_Category::FLAG_ALL) {
             $key = $media_url->category_id;
@@ -139,42 +119,30 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
 
         if ($media_url->category_id === Vod_Category::FLAG_SEARCH) {
             if ($from_ndx === 0) {
-                $movies = $this->plugin->config->getSearchList($media_url->genre_id, $plugin_cookies);
+                $movies = $this->plugin->config->getSearchList($media_url->genre_id);
             }
         } else if ($media_url->category_id === Vod_Category::FLAG_FILTER) {
-            $movies = $this->plugin->config->getFilterList($media_url->genre_id, $plugin_cookies);
+            $movies = $this->plugin->config->getFilterList($media_url->genre_id);
         } else {
-            $movies = $this->plugin->config->getMovieList($key, $plugin_cookies);
+            $movies = $this->plugin->config->getMovieList($key);
         }
 
         $count = count($movies);
-        if (!$count) {
-            return new Short_Movie_Range(0, 0);
+        if ($count) {
+            $this->plugin->config->add_movie_counter($key, $count);
+            $movie_range = new Short_Movie_Range($from_ndx, $this->plugin->config->get_movie_counter($key), $movies);
+        } else {
+            $movie_range = new Short_Movie_Range(0, 0);
         }
-
-        $this->plugin->config->add_movie_counter($key, $count);
-        return new Short_Movie_Range($from_ndx, $this->plugin->config->get_movie_counter($key), $movies);
-    }
-
-    /**
-     * @param MediaURL $media_url
-     * @param int $from_ndx
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
-    {
-        //hd_print(__METHOD__ . ": $from_ndx");
-        $movie_range = $this->get_short_movie_range($media_url, $from_ndx, $plugin_cookies);
 
         $total = $movie_range->total;
         if ($total <= 0) {
-            return HD::create_regular_folder_range(array());
+            return $this->create_regular_folder_range(array());
         }
 
         $items = array();
         foreach ($movie_range->short_movies as $movie) {
-            $media_url_str = Starnet_Vod_Movie_Screen::get_media_url_str($movie->id, $movie->name, $movie->poster_url, $movie->info);
+            $media_url_str = Starnet_Vod_Movie_Screen::get_media_url_string($movie->id, $movie->name, $movie->poster_url, $movie->info);
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => $media_url_str,
@@ -191,7 +159,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
             $this->plugin->vod->set_cached_short_movie(new Short_Movie($movie->id, $movie->name, $movie->poster_url));
         }
 
-        return HD::create_regular_folder_range($items, $movie_range->from_ndx, $total, true);
+        return $this->create_regular_folder_range($items, $movie_range->from_ndx, $total, true);
     }
 
     /**
@@ -201,11 +169,23 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
      */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print(__METHOD__);
         $this->plugin->config->reset_movie_counter();
         $this->plugin->vod->clear_movie_cache();
         $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
 
         return parent::get_folder_view($media_url, $plugin_cookies);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_folder_views()
+    {
+        hd_debug_print(null, true);
+
+        return array(
+            $this->plugin->get_screen_view('icons_5x2_movie_no_caption'),
+            $this->plugin->get_screen_view('list_1x10_movie_info_normal'),
+        );
     }
 }

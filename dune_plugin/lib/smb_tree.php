@@ -1,11 +1,31 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * @Author: Andrii Kopyniak
+ * Modification and improvements: sharky72 (https://github.com/KocourKuba)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
 require_once 'hd.php';
 
-/**
- * @author Andrii Kopyniak
- * @date   2013 Jan 10
- */
 class smb_tree
 {
     private $descriptor_spec;
@@ -45,8 +65,8 @@ class smb_tree
      */
     private function execute($args = '')
     {
-        $cmd = '/tango/firmware/bin/smbtree ' . $this->get_auth_options() . ' ' . $this->get_debug_level() . ' ' . $args;
-        //hd_print("smbtree exec: $cmd");
+        $cmd = "/tango/firmware/bin/smbtree {$this->get_auth_options()} {$this->get_debug_level()} $args";
+        hd_debug_print("smbtree exec: $cmd", true);
         $process = proc_open($cmd, $this->descriptor_spec, $pipes, '/tmp', $this->env);
 
         if (is_resource($process)) {
@@ -203,7 +223,7 @@ class smb_tree
         $my_ip = get_ip_address();
         $server_shares_smb = $this->get_server_shares_smb();
         foreach ($server_shares_smb as $k => $v) {
-            //hd_print("server shares: $k");
+            //hd_debug_print("server shares: $k");
             $out = shell_exec(self::get_nmblookup_path() . ' "' . $k . '" -R');
             if (preg_match('/(.*) (.*)<00>/', $out, $matches)) {
                 if ($my_ip === $matches[1]) {
@@ -264,7 +284,7 @@ class smb_tree
 
         $xml = simplexml_load_string(file_get_contents($path));
         if ($xml === false) {
-            hd_print(__METHOD__ . ": Error parsing $path.");
+            hd_debug_print("Error parsing $path.");
             return false;
         }
 
@@ -285,6 +305,10 @@ class smb_tree
         return false;
     }
 
+    /**
+     * @param array $ip_smb
+     * @return array
+     */
     public static function get_mount_smb($ip_smb)
     {
         $mounts = array();
@@ -327,9 +351,11 @@ class smb_tree
                 if ($wr === false) {
                     $fn = '/tmp/mnt/smb/' . $n;
                     if (!file_exists($fn) && !mkdir($fn, 0777, true) && !is_dir($fn)) {
-                        hd_print(__METHOD__ . ": Directory '$fn' was not created");
+                        hd_debug_print("Directory '$fn' was not created");
                     }
-                    $ret_code = exec("mount -t cifs -o username=$username,password=$password,posixpaths,rsize=32768,wsize=130048 \"$k\" \"$fn\" 2>&1 &");
+                    $exec_string = "mount -t cifs -o username=$username,password=$password,posixpaths,rsize=32768,wsize=130048 \"$k\" \"$fn\" 2>&1 &";
+                    hd_debug_print("Mount string: $exec_string", true);
+                    $ret_code = exec($exec_string);
                 } else {
                     $fn = $wr;
                 }
@@ -440,7 +466,7 @@ class smb_tree
                 if ($wr === false) {
                     $fn = '/tmp/mnt/network/' . $n;
                     if (!file_exists($fn) && !mkdir($fn, 0777, true) && !is_dir($fn)) {
-                        hd_print(__METHOD__ . ": Directory '$fn' was not created");
+                        hd_debug_print("Directory '$fn' was not created");
                     }
                     $q = shell_exec("mount -t nfs -o " . $vel['protocol'] . " $k $fn 2>&1");
                 } else {
@@ -463,12 +489,10 @@ class smb_tree
     }
 
     /**
-     * @param $plugin_cookies
      * @param $selected_url MediaURL
-     * @param $param string
-     * @return void
+     * @return string encoded path
      */
-    public static function set_folder_info(&$plugin_cookies, $selected_url, $param)
+    public static function set_folder_info(&$selected_url)
     {
         if (!isset($selected_url->ip_path) || $selected_url->ip_path === false) {
             $save_folder['filepath'] = $selected_url->filepath;
@@ -480,27 +504,24 @@ class smb_tree
             $save_folder[$selected_url->ip_path]['password'] = isset($selected_url->password) ? $selected_url->password : false;
         }
 
-        $plugin_cookies->{$param} = json_encode($save_folder);
+        return json_encode($save_folder);
     }
 
     /**
-     * @param $plugin_cookies
-     * @param $param string
-     * @param $default string|null
+     * @param string $encoded_data
+     * @param string|null $default
      * @return string
      */
-    public static function get_folder_info($plugin_cookies, $param, $default = null)
+    public static function get_folder_info($encoded_data, $default = null)
     {
-        if ($default === null) {
-            $default = get_data_path();
-        }
-
-        if (empty($plugin_cookies->{$param})) {
+        if (empty($encoded_data)) {
             return $default;
         }
 
-        $settings = json_decode($plugin_cookies->{$param}, true);
-        if (isset($settings['filepath'])) {
+        $settings = @json_decode($encoded_data, true);
+        if (!is_array($settings)) {
+            $select_folder = $encoded_data;
+        } else if (isset($settings['filepath'])) {
             $select_folder = $settings['filepath'];
         } else {
             $select_folder = '';
@@ -513,13 +534,7 @@ class smb_tree
             }
         }
 
-        if (empty($select_folder)) {
-            $select_folder = $default;
-        }
-
-        if (substr($select_folder, -1) !== '/')
-            $select_folder .= '/';
-
-        return $select_folder;
+        $select_folder = get_slash_trailed_path($select_folder);
+        return empty($select_folder) ? $default : $select_folder;
     }
 }

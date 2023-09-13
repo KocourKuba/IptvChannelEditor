@@ -1,22 +1,36 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
+/**
+ * The MIT License (MIT)
+ *
+ * @Author: sharky72 (https://github.com/KocourKuba)
+ * Original code from DUNE HD
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
-require_once 'screen.php';
+require_once 'abstract_screen.php';
 
-abstract class Abstract_Controls_Screen implements Screen
+abstract class Abstract_Controls_Screen extends Abstract_Screen
 {
     const CONTROLS_WIDTH = 850;
 
-    private $id;
-    protected $plugin;
-
     ///////////////////////////////////////////////////////////////////////
-
-    protected function __construct($id, Default_Dune_Plugin $plugin)
-    {
-        $this->id = $id;
-        $this->plugin = $plugin;
-    }
 
     /**
      * @param MediaURL $media_url
@@ -25,26 +39,23 @@ abstract class Abstract_Controls_Screen implements Screen
      */
     abstract public function get_control_defs(MediaURL $media_url, &$plugin_cookies);
 
-    public function get_id()
-    {
-        return $this->id;
-    }
-
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param MediaURL $media_url
-     * @param $plugin_cookies
-     * @return array|null
+     * @inheritDoc
      */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
+        hd_debug_print(null, true);
+        hd_debug_print($media_url, true);
+
         $defs = $this->get_control_defs($media_url, $plugin_cookies);
 
         $folder_view = array
         (
             PluginControlsFolderView::defs => $defs,
             PluginControlsFolderView::initial_sel_ndx => -1,
+            PluginControlsFolderView::actions => $this->get_action_map($media_url, $plugin_cookies),
             PluginControlsFolderView::params => array(
                 PluginFolderViewParams::paint_path_box => true,
                 PluginFolderViewParams::paint_content_box_background => true,
@@ -62,33 +73,30 @@ abstract class Abstract_Controls_Screen implements Screen
     }
 
     /**
-     * @param MediaURL $media_url
      * @param $plugin_cookies
-     * @return array
+     * @param string $param
+     * @param bool $default
+     * @return mixed
      */
-    public function get_action_map(MediaURL $media_url, &$plugin_cookies)
+    protected static function get_cookie_bool_param($plugin_cookies, $param, $default = true)
     {
-        return array();
+        if (!isset($plugin_cookies->{$param}))
+            $plugin_cookies->{$param} = $default ? SetupControlSwitchDefs::switch_on : SetupControlSwitchDefs::switch_off;
+
+        return $plugin_cookies->{$param};
     }
 
     /**
-     * @param MediaURL $media_url
-     * @param int $from_ndx
      * @param $plugin_cookies
-     * @return array
+     * @param string $param
+     * @return void
      */
-    public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
+    protected static function toggle_cookie_param($plugin_cookies, $param)
     {
-        return array();
-    }
+        $plugin_cookies->{$param} = $plugin_cookies->{$param} === SetupControlSwitchDefs::switch_off
+            ? SetupControlSwitchDefs::switch_on
+            : SetupControlSwitchDefs::switch_off;
 
-    /**
-     * @param MediaURL $media_url
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_next_folder_view(MediaURL $media_url, &$plugin_cookies)
-    {
-        return array();
+        hd_debug_print("$param: " . $plugin_cookies->{$param}, true);
     }
 }

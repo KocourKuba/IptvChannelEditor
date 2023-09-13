@@ -4,14 +4,11 @@ require_once 'lib/default_config.php';
 class cbilling_config extends default_config
 {
     /**
-     * Get information from the account
-     * @param &$plugin_cookies
-     * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool | array[] | string[] information collected and status valid otherwise - false
+     * @inheritDoc
      */
-    public function GetAccountInfo(&$plugin_cookies, $force = false)
+    public function GetAccountInfo($force = false)
     {
-        hd_print(__METHOD__ . ": Collect information from account: $force");
+        hd_debug_print("Collect information from account: $force");
         // this account has special API to get account info
         // {
         //    "data": {
@@ -29,7 +26,7 @@ class cbilling_config extends default_config
         //    }
         // }
 
-        $password = $this->get_password($plugin_cookies);
+        $password = $this->get_password();
         try {
             if (empty($password)) {
                 throw new Exception("Password not set");
@@ -44,23 +41,21 @@ class cbilling_config extends default_config
                 $this->account_data = $json['data'];
             }
         } catch (Exception $ex) {
-            hd_print($ex->getMessage());
+            hd_debug_print($ex->getMessage());
             return false;
         }
 
-        //foreach($this->account_data as $key => $value) hd_print("  $key => $value");
         return $this->account_data;
     }
 
     /**
      * @param array &$defs
-     * @param $plugin_cookies
      */
-    public function AddSubscriptionUI(&$defs, $plugin_cookies)
+    public function AddSubscriptionUI(&$defs)
     {
-        $account_data = $this->GetAccountInfo($plugin_cookies, true);
+        $account_data = $this->GetAccountInfo(true);
         if ($account_data === false) {
-            hd_print(__METHOD__ . ": Can't get account status");
+            hd_debug_print("Can't get account status");
             Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
             Control_Factory::add_label($defs, TR::t('description'), TR::t('warn_msg5'), 20);
             return;
@@ -76,15 +71,14 @@ class cbilling_config extends default_config
 
     /**
      * @param string $movie_id
-     * @param $plugin_cookies
      * @return Movie
      * @throws Exception
      */
-    public function TryLoadMovie($movie_id, $plugin_cookies)
+    public function TryLoadMovie($movie_id)
     {
-        hd_print(__METHOD__ . ": $movie_id");
+        hd_debug_print($movie_id);
         $movie = new Movie($movie_id, $this->parent);
-        $json = HD::DownloadJson($this->GetVodListUrl($plugin_cookies) . "/video/$movie_id", false);
+        $json = HD::DownloadJson($this->GetVodListUrl() . "/video/$movie_id", false);
         if ($json === false) {
             return $movie;
         }
@@ -123,13 +117,11 @@ class cbilling_config extends default_config
                 foreach ($season->series as $episode) {
                     $name = "Серия $episode->number" . (empty($episode->name) ? "" : " $episode->name");
                     $playback_url = sprintf($vod_url, $domain, $episode->files[0]->url, $token);
-                    //hd_print("episode playback_url: $playback_url");
                     $movie->add_series_data($episode->id, $name, '', $playback_url, $season->number);
                 }
             }
         } else {
             $playback_url = sprintf($vod_url, $domain, $movieData->files[0]->url, $token);
-            //hd_print("movie playback_url: $playback_url");
             $movie->add_series_data($movie_id, $movieData->name, '', $playback_url);
         }
 
@@ -137,14 +129,13 @@ class cbilling_config extends default_config
     }
 
     /**
-     * @param $plugin_cookies
      * @param array &$category_list
      * @param array &$category_index
      */
-    public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
+    public function fetchVodCategories(&$category_list, &$category_index)
     {
-        hd_print(__METHOD__);
-        $jsonItems = HD::DownloadJson($this->GetVodListUrl($plugin_cookies), false);
+        hd_debug_print(null, true);
+        $jsonItems = HD::DownloadJson($this->GetVodListUrl(), false);
         if ($jsonItems === false) {
             return;
         }
@@ -159,7 +150,7 @@ class cbilling_config extends default_config
             $total += $node->count;
 
             // fetch genres for category
-            $genres = HD::DownloadJson($this->GetVodListUrl($plugin_cookies) . "/cat/$id/genres", false);
+            $genres = HD::DownloadJson($this->GetVodListUrl() . "/cat/$id/genres", false);
             if ($genres === false) {
                 continue;
             }
@@ -180,32 +171,29 @@ class cbilling_config extends default_config
         array_unshift($category_list, $category);
         $category_index[Vod_Category::FLAG_ALL] = $category;
 
-        hd_print(__METHOD__ . ": Categories read: " . count($category_list));
+        hd_debug_print("Categories read: " . count($category_list));
     }
 
     /**
      * @param string $keyword
-     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function getSearchList($keyword, $plugin_cookies)
+    public function getSearchList($keyword)
     {
-        //hd_print("__METHOD__");
-        $url = $this->GetVodListUrl($plugin_cookies) . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
+        $url = $this->GetVodListUrl() . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
         $searchRes = HD::DownloadJson($url, false);
         return $searchRes === false ? array() : $this->CollectSearchResult($searchRes);
     }
 
     /**
      * @param string $query_id
-     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function getMovieList($query_id, $plugin_cookies)
+    public function getMovieList($query_id)
     {
-        hd_print(__METHOD__ . ": $query_id");
+        hd_debug_print($query_id);
         $val = $this->get_next_page($query_id);
 
         if ($query_id === Vod_Category::FLAG_ALL) {
@@ -221,7 +209,7 @@ class cbilling_config extends default_config
             $url = "/genres/$genre_id?page=$val";
         }
 
-        $categories = HD::DownloadJson($this->GetVodListUrl($plugin_cookies) . $url, false);
+        $categories = HD::DownloadJson($this->GetVodListUrl() . $url, false);
         return $categories === false ? array() : $this->CollectSearchResult($categories);
     }
 
@@ -231,7 +219,6 @@ class cbilling_config extends default_config
      */
     protected function CollectSearchResult($json)
     {
-        //hd_print("CollectSearchResult");
         $movies = array();
 
         foreach ($json->data as $entry) {
@@ -249,7 +236,7 @@ class cbilling_config extends default_config
             }
         }
 
-        hd_print(__METHOD__ . ": Movies found: " . count($movies));
+        hd_debug_print("Movies found: " . count($movies));
         return $movies;
     }
 }

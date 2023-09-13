@@ -1,29 +1,17 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
-require_once 'lib/vod/vod.php';
 
 class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'tv_history';
 
     /**
+     * @param string $group_id
      * @return false|string
      */
-    public static function get_media_url_str()
+    public static function get_media_url_string($group_id)
     {
-        return MediaURL::encode(array('screen_id' => self::ID));
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin, $plugin->GET_HISTORY_LIST_FOLDER_VIEWS());
-
-        $plugin->create_screen($this);
+        return MediaURL::encode(array('screen_id' => static::ID, 'group_id' => $group_id));
     }
 
     /**
@@ -41,100 +29,75 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
             GUI_EVENT_KEY_C_YELLOW   => User_Input_Handler_Registry::create_action($this, ACTION_ITEMS_CLEAR, TR::t('clear_history')),
             GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
             GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
+            GUI_EVENT_KEY_RETURN     => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN),
         );
     }
 
     /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID;
-    }
-
-    /**
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return array|null
+     * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;
         }
 
+        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
         $media_url = MediaURL::decode($user_input->selected_media_url);
         $channel_id = $media_url->channel_id;
+        $sel_ndx = $user_input->sel_ndx;
 
         switch ($user_input->control_id)
-		{
-            case ACTION_OPEN_FOLDER:
-                return Action_Factory::tv_play($media_url);
-
-			case ACTION_ITEM_DELETE:
-                Playback_Points::clear(smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH), $channel_id);
-				$parent_media_url = MediaURL::decode($user_input->parent_media_url);
-				$sel_ndx = $user_input->sel_ndx + 1;
-				if ($sel_ndx < 0)
-					$sel_ndx = 0;
-				$range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
-                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                return Starnet_Epfs_Handler::invalidate_folders(null,
-                    Action_Factory::update_regular_folder($range, true, $sel_ndx));
-
-            case ACTION_ITEMS_CLEAR:
-                Playback_Points::clear(smb_tree::get_folder_info($plugin_cookies, PARAM_HISTORY_PATH));
-                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
-                $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
-                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                return Starnet_Epfs_Handler::invalidate_folders(null,
-                    Action_Factory::update_regular_folder($range, true));
-
-			case ACTION_ADD_FAV:
-				$is_favorite = $this->plugin->tv->is_favorite_channel_id($channel_id, $plugin_cookies);
-				$opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
-				$message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
-				$this->plugin->tv->change_tv_favorites($opt_type, $channel_id, $plugin_cookies);
-				return Action_Factory::show_title_dialog($message);
-
-            case GUI_EVENT_KEY_POPUP_MENU:
-                if (!is_android() || is_apk())
-                    return null;
-
-                $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
-                    ACTION_EXTERNAL_PLAYER,
-                    TR::t('vod_screen_external_player'),
-                    'gui_skin://small_icons/playback.aai'
-                );
-
-                return Action_Factory::show_popup_menu($menu_items);
-
-            case ACTION_EXTERNAL_PLAYER:
+        {
+            case ACTION_PLAY_ITEM:
                 try {
-                    $channel = $this->plugin->tv->get_channel(MediaURL::decode($user_input->selected_media_url)->channel_id);
-                    $url = $this->plugin->config->GenerateStreamUrl(
-                        $plugin_cookies,
-                        isset($media_url->archive_tm) ? $media_url->archive_tm : -1,
-                        $channel);
-                    $url = str_replace("ts://", "", $url);
-                    $param_pos = strpos($url, '|||dune_params');
-                    $url =  $param_pos!== false ? substr($url, 0, $param_pos) : $url;
-                    $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
-                    hd_print(__METHOD__ . ": play movie in the external player: $cmd");
-                    exec($cmd, $output);
-                    hd_print(__METHOD__ . ": external player exec result code" . HD::ArrayToStr($output));
+                    $post_action = $this->plugin->player_exec($media_url);
                 } catch (Exception $ex) {
-                    hd_print(__METHOD__ . ": Movie can't played, exception info: " . $ex->getMessage());
+                    hd_debug_print("Movie can't played, exception info: " . $ex->getMessage());
                     return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
                         null,
                         TR::t('warn_msg2__1', $ex->getMessage()));
                 }
-                return null;
+
+                return $this->plugin->update_epfs_data($plugin_cookies, null, $post_action);
+
+            case ACTION_ITEM_DELETE:
+                $this->plugin->get_playback_points()->erase_point($channel_id);
+                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                $sel_ndx++;
+                if ($sel_ndx < 0)
+                    $sel_ndx = 0;
+                $this->plugin->invalidate_epfs();
+                if ($this->plugin->get_playback_points()->size() === 0) {
+                    return $this->plugin->update_epfs_data($plugin_cookies);
+                }
+                break;
+
+            case ACTION_ITEMS_CLEAR:
+                $this->plugin->invalidate_epfs();
+                $this->plugin->get_playback_points()->clear_points();
+                return $this->plugin->update_epfs_data($plugin_cookies);
+
+            case ACTION_ADD_FAV:
+                $is_favorite = $this->plugin->get_favorites()->in_order($channel_id);
+                $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
+                $message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
+                $this->plugin->change_tv_favorites($opt_type, $channel_id);
+                return $this->plugin->update_epfs_data($plugin_cookies, null, Action_Factory::show_title_dialog($message));
+
+            case GUI_EVENT_KEY_POPUP_MENU:
+                $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ITEMS_CLEAR, TR::t('clear_history'), "brush.png");
+
+                return Action_Factory::show_popup_menu($menu_items);
+
+            case GUI_EVENT_KEY_RETURN:
+                return $this->plugin->update_epfs_data($plugin_cookies, null, Action_Factory::close_and_run());
         }
 
-        return null;
+        return $this->invalidate_current_folder($parent_media_url, $plugin_cookies, $sel_ndx);
     }
 
     /**
@@ -145,14 +108,14 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print(__METHOD__ . ": get_all_folder_items");
+        //hd_debug_print("get_all_folder_items");
 
         $items = array();
         $now = time();
-        foreach (Playback_Points::get_all() as $channel_id => $channel_ts) {
+        foreach ($this->plugin->get_playback_points()->get_all() as $channel_id => $channel_ts) {
             if (is_null($channel = $this->plugin->tv->get_channel($channel_id))) continue;
 
-            $prog_info = $this->plugin->tv->get_program_info($channel_id, $channel_ts, $plugin_cookies);
+            $prog_info = $this->plugin->get_program_info($channel_id, $channel_ts, $plugin_cookies);
             $description = '';
             if (is_null($prog_info)) {
                 $title = $channel->get_title();
@@ -175,7 +138,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
                 PluginRegularFolderItem::media_url => MediaURL::encode(
                     array(
                         'channel_id' => $channel_id,
-                        'group_id' => Default_Dune_Plugin::PLAYBACK_HISTORY_GROUP_ID,
+                        'group_id' => HISTORY_GROUP_ID,
                         'archive_tm' => $channel_ts
                     )
                 ),
@@ -190,5 +153,18 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
         }
 
         return $items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_folder_views()
+    {
+        hd_debug_print(null, true);
+
+        return array(
+            $this->plugin->get_screen_view('list_1x11_small_info'),
+            $this->plugin->get_screen_view('list_1x11_info'),
+        );
     }
 }

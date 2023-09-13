@@ -13,62 +13,57 @@ class edem_config extends default_config
 
     /**
      * Transform url based on settings or archive playback
-     * @param $plugin_cookies
-     * @param int $archive_ts
      * @param Channel $channel
+     * @param int $archive_ts
      * @return string
      * @throws Exception
      */
-    public function GenerateStreamUrl($plugin_cookies, $archive_ts, Channel $channel)
+    public function GenerateStreamUrl(Channel $channel, $archive_ts)
     {
-        $channel->set_ext_param(Ext_Params::M_SUBDOMAIN, isset($this->embedded_account->domain) ? $this->embedded_account->domain : $plugin_cookies->subdomain);
-        $channel->set_ext_param(Ext_Params::M_TOKEN, isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $plugin_cookies->ott_key);
+        if (isset($this->embedded_account)) {
+            $channel->set_ext_param(Ext_Params::M_SUBDOMAIN, $this->embedded_account->domain);
+            $channel->set_ext_param(Ext_Params::M_TOKEN, $this->embedded_account->ott_key);
+        } else {
+            $channel->set_ext_param(Ext_Params::M_SUBDOMAIN, $this->parent->get_credentials(Ext_Params::M_SUBDOMAIN));
+            $channel->set_ext_param(Ext_Params::M_TOKEN, $this->parent->get_credentials(Ext_Params::M_TOKEN));
+        }
 
-        return parent::GenerateStreamUrl($plugin_cookies, $archive_ts, $channel);
+        return parent::GenerateStreamUrl($channel, $archive_ts);
     }
 
     /**
      * @param string $movie_id
-     * @param $plugin_cookies
      * @return Movie
      * @throws Exception
      */
-    public function TryLoadMovie($movie_id, $plugin_cookies)
+    public function TryLoadMovie($movie_id)
     {
-        hd_print(__METHOD__ . ": $movie_id");
+        hd_debug_print($movie_id);
         $movie = new Movie($movie_id, $this->parent);
-        $movieData = $this->make_json_request($plugin_cookies,
-            array('cmd' => "flick", 'fid' => (int)$movie_id, 'offset'=> 0,'limit' => 0));
+        $movieData = $this->make_json_request(array('cmd' => "flick", 'fid' => (int)$movie_id, 'offset'=> 0,'limit' => 0));
 
         if ($movieData === false) {
-            hd_print(__METHOD__ . ": failed to load movie: $movie_id");
+            hd_debug_print("failed to load movie: $movie_id");
             return $movie;
         }
 
         $series_desc = '';
         if ($movieData->type === 'multistream') {
             // collect series
-            //hd_print("movie: $movie_id \"$movieData->title\" contains " . count((array)$movieData->items) . " series");
             foreach ($movieData->items as $item) {
-                //hd_print("Try load episode $item->fid playback_url: $item->url");
-                $episodeData = $this->make_json_request($plugin_cookies,
-                    array('cmd' => "flick", 'fid' => (int)$item->fid, 'offset'=> 0,'limit' => 0));
+                $episodeData = $this->make_json_request(array('cmd' => "flick", 'fid' => (int)$item->fid, 'offset'=> 0,'limit' => 0));
 
                 if (!isset($episodeData->variants)) {
-                    //hd_print("no variants for $item->fid");
                     $movie->add_series_data($item->fid, $item->title, '', $item->url);
                 } else if (count((array)$episodeData->variants) === 1) {
-                    //hd_print("one variant for $item->fid");
                     $key = key($episodeData->variants);
                     $series_desc = ($key === 'auto' ? $key : $key . 'p');
                     $movie->add_series_data($item->fid, $item->title, $series_desc, $item->url);
                 } else {
                     $variants_data = (array)$episodeData->variants;
-                    //hd_print("episode $item->fid contains " . count($variants_data) . " variants");
                     $variants = array();
                     $qualities = '';
                     foreach ($variants_data as $key => $url) {
-                        //hd_print("variant $key playback_url: $url");
                         $quality = ($key === 'auto' ? $key : $key . 'p');
                         $variants[$key] = new Movie_Variant($item->fid . "_" . $key, $quality, $url);
                         if (!empty($qualities)) {
@@ -83,20 +78,16 @@ class edem_config extends default_config
                 }
             }
         } else if (!isset($movieData->variants)) {
-            //hd_print("no variants for $movie_id");
             $movie->add_series_data($movie_id, $movieData->title, '', $movieData->url);
         } else if (count((array)$movieData->variants) === 1) {
-            //hd_print("one variant for $movie_id");
             $key = key($movieData->variants);
             $series_desc = ($key === 'auto' ? $key : $key . 'p');
             $movie->add_series_data($movie_id, $movieData->title, $series_desc, $movieData->url);
         } else {
             $variants_data = (array)$movieData->variants;
-            //hd_print("movie $movie_id \"$movieData->title\" contains " . count($variants_data) . " variants");
             $variants = array();
             $qualities = '';
             foreach ($variants_data as $key => $url) {
-                //hd_print("variant $key playback_url: $url");
                 $quality = ($key === 'auto' ? $key : $key . 'p');
                 $variants[$key] = new Movie_Variant($movie_id . "_" . $key, $quality, $url);
                 if (!empty($qualities)) {
@@ -106,7 +97,7 @@ class edem_config extends default_config
             }
 
             $series_desc = rtrim($qualities, ' ,\0');
-            $desc = str_replace(array(',', '\n'), array('|', ''), $series_desc);
+            //$desc = str_replace(array(',', '\n'), array('|', ''), $series_desc);
             $movie->add_series_variants_data($movie_id, $movieData->title, $series_desc, $variants, $movieData->url);
         }
 
@@ -132,15 +123,12 @@ class edem_config extends default_config
     }
 
     /**
-     * @param $plugin_cookies
      * @param array &$category_list
      * @param array &$category_index
      */
-    public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
+    public function fetchVodCategories(&$category_list, &$category_index)
     {
-        //hd_print("fetch_vod_categories");
-
-        $doc = $this->make_json_request($plugin_cookies);
+        $doc = $this->make_json_request();
         if ($doc === false) {
             return;
         }
@@ -169,34 +157,31 @@ class edem_config extends default_config
 
         $this->set_filters($exist_filters);
 
-        hd_print(__METHOD__ . ": Categories read: " . count($category_list));
-        hd_print(__METHOD__ . ": Filters count: " . count($exist_filters));
+        hd_debug_print("Categories read: " . count($category_list));
+        hd_debug_print("Filters count: " . count($exist_filters));
     }
 
     /**
      * @param string $keyword
-     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function getSearchList($keyword, $plugin_cookies)
+    public function getSearchList($keyword)
     {
-        hd_print(__METHOD__ . ": getSearchList $keyword");
-        $searchRes = $this->make_json_request($plugin_cookies,
-            array('cmd' => "search", 'query' => $keyword));
+        hd_debug_print("getSearchList $keyword");
+        $searchRes = $this->make_json_request(array('cmd' => "search", 'query' => $keyword));
 
         return $searchRes === false ? array() : $this->CollectSearchResult($keyword, $searchRes);
     }
 
     /**
      * @param string $params
-     * @param $plugin_cookies
      * @return array|false
      * @throws Exception
      */
-    public function getFilterList($params, $plugin_cookies)
+    public function getFilterList($params)
     {
-        hd_print(__METHOD__ . ": getFilterList: $params");
+        hd_debug_print("getFilterList: $params");
         $pairs = explode(" ", $params);
         $post_params = array();
         foreach ($pairs as $pair) {
@@ -221,24 +206,21 @@ class edem_config extends default_config
 
         $post_params['filter'] = 'on';
         $post_params['offset'] = $this->get_next_page($params, 0);
-        $json = $this->make_json_request($plugin_cookies, $post_params);
+        $json = $this->make_json_request($post_params);
 
         return $json === false ? array() : $this->CollectSearchResult($params, $json);
     }
 
     /**
      * @param string $query_id
-     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function getMovieList($query_id, $plugin_cookies)
+    public function getMovieList($query_id)
     {
         $val = $this->get_next_page($query_id, 0);
-        //hd_print("getVideoList: $query_id, $val");
-
         $post_params = array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => $val, 'limit' => 50);
-        $json = $this->make_json_request($plugin_cookies, $post_params);
+        $json = $this->make_json_request($post_params);
 
         return $json === false ? array() : $this->CollectSearchResult($query_id, $json);
     }
@@ -250,7 +232,7 @@ class edem_config extends default_config
      */
     protected function CollectSearchResult($query_id, $json)
     {
-        hd_print(__METHOD__ . ": query_id: $query_id");
+        hd_debug_print("query_id: $query_id");
         $movies = array();
 
         $current_offset = $this->get_next_page($query_id, 0);
@@ -270,7 +252,7 @@ class edem_config extends default_config
             $this->set_next_page($query_id, -1);
         }
 
-        hd_print(__METHOD__ . ": Movies found: " . count($movies));
+        hd_debug_print("Movies found: " . count($movies));
         return $movies;
     }
 
@@ -283,18 +265,18 @@ class edem_config extends default_config
     public function AddFilterUI(&$defs, $parent, $initial = -1)
     {
         $filters = array("years", "genre");
-        hd_print(__METHOD__ . ": AddFilterUI: $initial");
+        hd_debug_print("AddFilterUI: $initial");
         $added = false;
         foreach ($filters as $name) {
             $filter = $this->get_filter($name);
             if ($filter === null) {
-                hd_print(__METHOD__ . ": AddFilterUI: no filters with '$name'");
+                hd_debug_print("AddFilterUI: no filters with '$name'");
                 continue;
             }
 
             $values = $filter['values'];
             if (empty($values)) {
-                hd_print(__METHOD__ . ": AddFilterUI: no filters values for '$name'");
+                hd_debug_print("AddFilterUI: no filters values for '$name'");
                 continue;
             }
 
@@ -342,17 +324,21 @@ class edem_config extends default_config
     }
 
     /**
-     * @param $plugin_cookies
      * @param array|null $params
      * @param bool $to_array
      * @return false|mixed
      */
-    protected function make_json_request($plugin_cookies, $params = null, $to_array = false)
+    protected function make_json_request($params = null, $to_array = false)
     {
-        $mediateka = isset($this->embedded_account->vportal) ? $this->embedded_account->vportal : $plugin_cookies->mediateka;
-        if (empty($mediateka)
-            || !preg_match('/^portal::\[key:([^]]+)\](.+)$/', $mediateka, $matches)) {
-            hd_print(__METHOD__ . ": incorrect or empty VPortal key");
+        if (isset($this->embedded_account->vportal)) {
+            $vportal = $this->embedded_account->vportal;
+        } else {
+            $vportal = $this->parent->get_credentials(Ext_Params::M_VPORTAL);
+        }
+
+        if (empty($vportal)
+            || !preg_match('/^portal::\[key:([^]]+)\](.+)$/', $vportal, $matches)) {
+            hd_debug_print("incorrect or empty VPortal key");
             return false;
         }
 
@@ -375,7 +361,7 @@ class edem_config extends default_config
             CURLOPT_POSTFIELDS => json_encode($pairs)
         );
 
-        //hd_print("post_data: " . json_encode($pairs));
+        hd_debug_print("post_data: " . json_encode($pairs), true);
 
         return HD::DownloadJson($url, $to_array, $curl_opt);
     }

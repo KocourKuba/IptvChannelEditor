@@ -1,111 +1,112 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * @Author: sharky72 (https://github.com/KocourKuba)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
-require_once 'ExtInf.php';
-require_once 'ExtGrp.php';
-require_once 'ExtM3U.php';
+require_once 'lib/json_serializer.php';
+require_once 'ExtTagDefault.php';
 
-class Entry
+class Entry extends Json_Serializer
 {
-    /**
-     * @var ExtM3U|null
-     */
-    private $extM3U;
+    const TAG_EXTM3U    = '#EXTM3U';
+    const TAG_EXTINF    = '#EXTINF';
+    const TAG_EXTGRP    = '#EXTGRP';
+    const TAG_EXTHTTP   = '#EXTHTTP';
+    const TAG_EXTVLCOPT = '#EXTVLCOPT';
 
     /**
-     * @var ExtInf|null
+     * @var bool
      */
-    private $extInf;
+    protected $is_header = false;
 
     /**
-     * @var ExtGrp|null
+     * @var ExtTag[]|null
      */
-    private $extGrp;
-
-    /**
-     * @var string
-     */
-    private $path;
+    protected $tags;
 
     /**
      * @var string
      */
-    private $group_title;
+    protected $path;
 
     /**
      * @var string
      */
-    private $parsed_title;
+    protected $group_title;
 
     /**
      * @return boolean
      */
-    public function isExtM3U()
+    public function isM3U_Header()
     {
-        return !is_null($this->extM3U);
+        return $this->is_header;
     }
 
     /**
-     * @return ExtM3U|null
+     * @return ExtTag
      */
-    public function getExtM3U()
+    public function getEntryTag($tag)
     {
-        return $this->extM3U;
+        return isset($this->tags[$tag]) ? $this->tags[$tag] : null;
     }
 
     /**
-     * @param ExtM3U $extM3U
+     * @param string $line
+     * @param bool $full
+     * @return ExtTag
      */
-    public function setExtM3U(ExtM3U $extM3U)
+    public function parseExtTag($line, $full)
     {
-        $this->extM3U = $extM3U;
+        $tag = new ExtTagDefault();
+        $parsed_tag = $full ? $tag->parseFullData($line) : $tag->parseData($line);
+        if (is_null($parsed_tag)) {
+            return null;
+        }
+
+        $this->addTag($parsed_tag);
+        $this->is_header = ($parsed_tag->isTag(self::TAG_EXTM3U));
+        return $parsed_tag;
     }
 
     /**
-     * @return boolean
+     * @param string $tag_name
+     * @return bool
      */
-    public function isExtInf()
+    public function hasTag($tag_name)
     {
-        return !is_null($this->extInf);
+        return isset($this->tags[$tag_name]);
     }
 
     /**
-     * @return ExtInf|null
+     * @param ExtTag $tag
      */
-    public function getExtInf()
+    public function addTag($tag)
     {
-        return $this->extInf;
-    }
-
-    /**
-     * @param ExtInf $extInf
-     */
-    public function setExtInf(ExtInf $extInf)
-    {
-        $this->extInf = $extInf;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isExtGrp()
-    {
-        return !is_null($this->extGrp);
-    }
-
-    /**
-     * @return ExtGrp|null
-     */
-    public function getExtGrp()
-    {
-        return $this->extGrp;
-    }
-
-    /**
-     * @param ExtGrp $extGrp
-     */
-    public function setExtGrp(ExtGrp $extGrp)
-    {
-        $this->extGrp = $extGrp;
+        if (isset($this->tags[$tag->getTagName()])) {
+            $this->tags[$tag->getTagName()]->addTagValue($tag->getTagValue());
+        } else {
+            $this->tags[$tag->getTagName()] = $tag;
+        }
     }
 
     /**
@@ -125,59 +126,247 @@ class Entry
     }
 
     /**
-     * @return string
+     * Get attributes for selected tag
+     * If tag not specified returns attributes from all tags
+     *
+     * @param string $tag
+     * @return array
      */
-    public function getTitle()
+    public function getEntryAttributes($tag = null)
     {
-        return $this->extInf !== null ? $this->extInf->getTitle() : '';
+        $attributes = array();
+        if (!is_null($this->tags) && is_null($tag)) {
+            foreach ($this->tags as $item) {
+                safe_merge_array($attributes, $item->getAttributes());
+            }
+        } else if ($this->hasTag($tag)) {
+            $attributes = $this->getEntryTag($tag);
+        }
+
+        return $attributes;
     }
 
     /**
+     * @param string $attribute_name
+     * @param string $tag
+     * @return bool
+     */
+    public function hasEntryAttribute($attribute_name, $tag = null)
+    {
+        if (!is_null($this->tags)) {
+            if (is_null($tag)) {
+                foreach ($this->tags as $item) {
+                    $val = $item->hasAttributeValue($attribute_name);
+                    if ($val) {
+                        return true;
+                    }
+                }
+            } else if ($this->hasTag($tag)) {
+                return $this->tags[$tag]->hasAttributeValue($attribute_name);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get attribute for selected tag
+     * If tag not specified search attribute in all tags
+     *
+     * @param string $attribute_name
+     * @param string|null $tag
+     * @return string
+     */
+    public function getEntryAttribute($attribute_name, $tag = null)
+    {
+        if (!is_null($this->tags)) {
+            if (is_null($tag)) {
+                foreach ($this->tags as $item) {
+                    $val = $item->getAttributeValue($attribute_name);
+                    if (!is_null($val)) {
+                        return $val;
+                    }
+                }
+            } else if ($this->hasTag($tag)) {
+                return $this->tags[$tag]->getAttributeValue($attribute_name);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array $attrs
+     * @param null $tag
+     * @param null $found_attr
+     * @return string
+     */
+    public function getAnyEntryAttribute($attrs, $tag = null, &$found_attr = null)
+    {
+        foreach ($attrs as $attr) {
+            $val = $this->getEntryAttribute($attr, $tag);
+            if (empty($val)) continue;
+
+            if ($found_attr !== null) {
+                $found_attr = $attr;
+            }
+            return $val;
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array $attrs
+     * @param null $tag
+     * @return array
+     */
+    public function getAllEntryAttributes($attrs, $tag = null)
+    {
+        $ret = array();
+        foreach ($attrs as $attr) {
+            $val = $this->getEntryAttribute($attr, $tag);
+            if (empty($val)) continue;
+
+            $ret[$attr] = $val;
+        }
+
+        return $ret;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    /// Specialized methods to get specific data
+    ///
+
+    /**
+     * Returns EXTINF Title
+     * #EXTINF:0 group-title="Базовые Россия", 1 channel
+     * example result: 1 channel
+     *
+     * @return string
+     */
+    public function getEntryTitle()
+    {
+        $extInf = $this->getEntryTag(self::TAG_EXTINF);
+        return is_null($extInf) ? null : $extInf->getTagValue();
+    }
+
+    /**
+     * Returns calculated category title
+     * value of attribute 'group-title' or #EXTGRP value or string 'no_category' if not found
+     *
      * @return string
      */
     public function getGroupTitle()
     {
-        if (empty($this->group_title)) {
-            $group_title = ($this->extGrp !== null) ? $this->extGrp->getGroup() : '';
-            if (empty($group_title)) {
-                $this->group_title = $this->getAttribute('group-title');
-                if (empty($this->group_title) || $this->group_title === "null") {
+        if (is_null($this->group_title)) {
+            $this->group_title = $this->getEntryAttribute('group-title', self::TAG_EXTINF);
+            if (empty($this->group_title)) {
+                $exgGrp = $this->getEntryTag(self::TAG_EXTGRP);
+                $this->group_title = is_null($exgGrp) ? null : $exgGrp->getTagValue();
+                if (empty($this->group_title)) {
                     $this->group_title = TR::load_string('no_category');
                 }
             }
         }
+
         return $this->group_title;
     }
 
     /**
-     * @param $attr
+     * Returns entry id. Need for identify channel if possible
+     *
      * @return string
      */
-    public function getAttribute($attr)
+    public function getEntryId()
     {
-        if ($this->isExtInf()) {
-            return $this->extInf->getAttribute($attr);
-        }
+        /*
+         * Tags used to get entry ID
+		 * "CUID", "channel-id", "tvg-chno", "tvg-name", "name",
+         */
+        static $tags = array("CUID", "channel-id", "ch-id", "tvg-chno", "ch-number");
 
-        if ($this->isExtM3U()) {
-            return $this->extM3U->getAttribute($attr);
-        }
+        $ch_id = $this->getAnyEntryAttribute($tags);
 
-        return '';
+        return empty($ch_id) ? Hashed_Array::hash($this->getPath()) : $ch_id;
     }
 
     /**
-     * @param $attrs array
+     * Get icon for channel
+     *
      * @return string
      */
-    public function getAnyAttribute($attrs)
+    public function getEntryIcon()
     {
-        foreach ($attrs as $attr) {
-            $val = $this->getAttribute($attr);
-            if (!empty($val))
-                return $val;
+        /*
+         * attributes contains picon information
+		 * "tvg-logo", "url-logo"
+         */
+        static $tags = array("tvg-logo", "url-logo");
+
+        return $this->getAnyEntryAttribute($tags);
+    }
+
+    /**
+     * Get catchup type for channel
+     *
+     * @return string
+     */
+    public function getCatchup()
+    {
+        /*
+         * attributes contains catchup information
+		 * "catchup", "catchup-type"
+         */
+        static $attrs = array("catchup", "catchup-type");
+
+        return $this->getAnyEntryAttribute($attrs);
+    }
+
+    /**
+     * Get catchup-source for channel
+     *
+     * @return string
+     */
+    public function getCatchupSource()
+    {
+        /*
+         * attributes contains catchup information
+		 * "catchup", "catchup-type"
+         */
+        static $attrs = array("catchup-source", "catchup-template");
+
+        return $this->getAnyEntryAttribute($attrs);
+    }
+
+    /**
+     * Get xmltv epg sources for playlist
+     *
+     * @return array
+     */
+    public function getEpgSources()
+    {
+        /*
+         * attributes contains xmltv epg sources
+		 * "catchup", "catchup-type"
+         */
+        static $attrs = array("url-tvg", "x-tvg-url");
+
+        return $this->getAllEntryAttributes($attrs, self::TAG_EXTM3U);
+    }
+
+    /**
+     * Get protected parameter for channel
+     *
+     * @return string
+     */
+    public function getProtectedCode() {
+        static $adult_attrs = array("adult", "parent-code", "censored");
+
+        $adult_code = $this->getAnyEntryAttribute($adult_attrs, self::TAG_EXTINF, $used_tag);
+        if ($used_tag === "adult" && (int)$adult_code !== 1) {
+            $adult_code = '';
         }
 
-        return '';
+        return $adult_code;
     }
 }

@@ -1,5 +1,31 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * @Author: sharky72 (https://github.com/KocourKuba)
+ * Some code imported from various authors of dune plugins
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
 require_once 'dune_stb_api.php';
+require_once 'dune_plugin_constants.php';
 
 class HD
 {
@@ -11,7 +37,7 @@ class HD
     /**
      * @var string
      */
-    private static $user_agent;
+    private static $default_user_agent;
 
     private static $plugin_user_agent;
 
@@ -80,51 +106,19 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
-    /**
-     * @param array $items
-     * @param int $from_ndx
-     * @param int $total
-     * @param bool $more_items_available
-     * @return array
-     */
-    public static function create_regular_folder_range($items, $from_ndx = 0, $total = -1, $more_items_available = false)
-    {
-        if ($total === -1) {
-            $total = $from_ndx + count($items);
-        }
-
-        if ($from_ndx >= $total) {
-            $from_ndx = $total;
-            $items = array();
-        } else if ($from_ndx + count($items) > $total) {
-            array_splice($items, $total - $from_ndx);
-        }
-
-        return array
-        (
-            PluginRegularFolderRange::total => (int)$total,
-            PluginRegularFolderRange::more_items_available => $more_items_available,
-            PluginRegularFolderRange::from_ndx => (int)$from_ndx,
-            PluginRegularFolderRange::count => count($items),
-            PluginRegularFolderRange::items => $items
-        );
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
     public static function print_array($opts, $ident = 0)
     {
         if (is_array($opts)) {
             foreach ($opts as $k => $v) {
                 if (is_array($v)) {
-                    hd_print(str_repeat(' ', $ident) . "$k : array");
+                    hd_debug_print(str_repeat(' ', $ident) . "$k : array");
                     self::print_array($v, $ident + 4);
                 } else {
-                    hd_print(str_repeat(' ', $ident) . "$k : $v");
+                    hd_debug_print(str_repeat(' ', $ident) . "$k : $v");
                 }
             }
         } else {
-            hd_print(str_repeat(' ', $ident) . $opts);
+            hd_debug_print(str_repeat(' ', $ident) . $opts);
         }
     }
 
@@ -136,52 +130,56 @@ class HD
 
     public static function http_init()
     {
-        if (!empty(self::$user_agent))
+        if (!empty(self::$default_user_agent))
             return;
 
-        if (empty(self::$plugin_user_agent) || self::$plugin_user_agent === "DuneHD/1.0") {
-            self::$plugin_user_agent = "DuneHD/1.0";
+        self::$default_user_agent = "DuneHD/1.0";
 
-            $extra_useragent = "";
-            $sysinfo = file("/tmp/sysinfo.txt", FILE_IGNORE_NEW_LINES);
-            if ($sysinfo !== false) {
-                foreach ($sysinfo as $line) {
-                    if (preg_match("/product_id:/", $line) ||
-                        preg_match("/firmware_version:/", $line)) {
-                        $line = trim($line);
+        $extra_useragent = "";
+        $sysinfo = file("/tmp/sysinfo.txt", FILE_IGNORE_NEW_LINES);
+        if ($sysinfo !== false) {
+            foreach ($sysinfo as $line) {
+                if (preg_match("/product_id:/", $line) ||
+                    preg_match("/firmware_version:/", $line)) {
+                    $line = trim($line);
 
-                        if (empty($extra_useragent))
-                            $extra_useragent = " (";
-                        else
-                            $extra_useragent .= "; ";
+                    if (empty($extra_useragent))
+                        $extra_useragent = " (";
+                    else
+                        $extra_useragent .= "; ";
 
-                        $extra_useragent .= $line;
-                    }
+                    $extra_useragent .= $line;
                 }
-
-                if (!empty($extra_useragent))
-                    $extra_useragent .= ")";
             }
 
-            self::$plugin_user_agent .= $extra_useragent;
+            if (!empty($extra_useragent))
+                $extra_useragent .= ")";
         }
 
-        self::$user_agent = self::$plugin_user_agent;
-        hd_print(__METHOD__ . ": HTTP UserAgent: " . self::$user_agent);
+        self::$default_user_agent .= $extra_useragent;
+
+        hd_debug_print("HTTP UserAgent: " . self::$default_user_agent);
+    }
+
+    public static function get_default_user_agent()
+    {
+        if (empty(self::$default_user_agent))
+            self::http_init();
+
+        return self::$default_user_agent;
     }
 
     public static function get_dune_user_agent()
     {
-        if (empty(self::$user_agent))
+        if (empty(self::$default_user_agent))
             self::http_init();
 
-        return self::$user_agent;
+        return (empty(self::$plugin_user_agent) || self::$default_user_agent === self::$plugin_user_agent) ? self::$default_user_agent : self::$plugin_user_agent;
     }
 
     public static function set_dune_user_agent($user_agent)
     {
         self::$plugin_user_agent = $user_agent;
-        self::$user_agent = '';
     }
 
     public static function set_plugin_dev_code($code)
@@ -216,20 +214,20 @@ class HD
             }
         }
 
-        hd_print(__METHOD__ . ": HTTP fetching $url");
+        hd_debug_print("HTTP fetching '$url'");
 
         $content = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         if ($content === false) {
-            $err_msg = __METHOD__ . ": HTTP error: $http_code (" . curl_error($ch) . ')';
-            hd_print($err_msg);
+            $err_msg = "Fetch $url failed. HTTP error: $http_code (" . curl_error($ch) . ')';
+            hd_debug_print($err_msg);
             throw new Exception($err_msg);
         }
 
         if ($http_code >= 300) {
-            $err_msg = __METHOD__ . ": HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
-            hd_print($err_msg);
+            $err_msg = "Fetch $url failed. HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
+            hd_debug_print($err_msg);
             throw new Exception($err_msg);
         }
 
@@ -242,7 +240,7 @@ class HD
      * @param $url string
      * @param $file_name string
      * @param $opts array
-     * @return bool|mixed
+     * @return array
      * @throws Exception
      */
     public static function http_save_document($url, $file_name, $opts = null)
@@ -255,11 +253,10 @@ class HD
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_MAXREDIRS, 2);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 120);
         curl_setopt($ch, CURLOPT_USERAGENT, self::get_dune_user_agent());
-        curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
         curl_setopt($ch, CURLOPT_FILETIME, true);
         curl_setopt($ch, CURLOPT_FILE, $fp);
 
@@ -270,30 +267,30 @@ class HD
             }
         }
 
-        hd_print(__METHOD__ . ": HTTP fetching $url");
+        hd_debug_print("HTTP fetching '$url'");
 
         try {
             $result = curl_exec($ch);
             if ($result === false) {
-                throw new Exception("curl_exec error: " . curl_error($ch));
+                throw new Exception($url . PHP_EOL . "curl_exec error: " . curl_error($ch));
             }
 
-            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            if ($http_code >= 300) {
-                throw new Exception("HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code));
+            $info = curl_getinfo($ch);
+            hd_debug_print(raw_json_encode($info), true);
+            if ($info['http_code'] >= 300) {
+                throw new Exception($url . PHP_EOL . "HTTP request failed ({$info['http_code']}): " . self::http_status_code_to_string($info['http_code']));
             }
         } catch (Exception $ex) {
             fclose($fp);
             unlink($file_name);
+            flush();
             throw $ex;
         }
-
-        $file_time = curl_getinfo($ch, CURLINFO_FILETIME);
 
         fclose($fp);
         curl_close($ch);
 
-        return $file_time;
+        return $info;
     }
 
     /**
@@ -418,31 +415,14 @@ class HD
 
     public static function send_log_to_developer($plugin_cookies, &$error = null)
     {
-        $product = get_product_id();
-        $firmware_version = get_raw_firmware_version();
-
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, "https://www.howsmyssl.com/a/check");
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_USERAGENT, "DuneHD/1.0 (product_id: $product; firmware_version: $firmware_version)");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-
-        $response = curl_exec($ch);
-        curl_close($ch);
-        hd_print(__METHOD__ . ": Cookies:\n" . base64_encode(gzcompress(serialize($plugin_cookies), 9)));
-        hd_print(__METHOD__ . ": PHP TLS Support:\n" . base64_encode(gzcompress($response, 9)));
-
         $serial = get_serial_number();
         if (empty($serial)) {
-            hd_print(__METHOD__ . ": Unable to get DUNE serial.");
+            hd_debug_print("Unable to get DUNE serial.");
             $serial = 'XX-XX-XX-XX-XX';
         }
         $timestamp = format_datetime('Ymd_His', time());
         $zip_file_name = "{$serial}_$timestamp.zip";
-        hd_print(__METHOD__ . ": Prepare archive $zip_file_name for send");
+        hd_debug_print("Prepare archive $zip_file_name for send");
         $zip_file = get_temp_path($zip_file_name);
         $apk_subst = getenv('FS_PREFIX');
         $plugin_name = get_plugin_name();
@@ -458,20 +438,18 @@ class HD
         $paths = array(
             get_install_path("config.json"),
             get_install_path("dune_plugin.xml"),
+            get_data_path("*.settings"),
             get_temp_path("*.xml"),
             get_temp_path("*.json"),
-            get_temp_path("*.m3u?"),
+            get_temp_path("*.m3u8"),
             "$apk_subst/tmp/run/shell.*",
             $plugin_logs,
         );
 
         $files = array();
         foreach ($paths as $path) {
-            //hd_print("search for $path");
             foreach (glob($path) as $file) {
-                //hd_print("file: $file");
                 if (is_file($file) && filesize($file) > 10) {
-                    //hd_print("file found: $file");
                     $files[] = $file;
                 }
             }
@@ -490,26 +468,30 @@ class HD
             $handle = fopen($zip_file, 'rb');
             if (is_resource($handle)) {
                 self::http_put_document(base64_decode(self::$dev_code, true) . $zip_file_name, $handle, filesize($zip_file));
-                hd_print(__METHOD__ . ": Log file sent");
+                hd_debug_print("Log file sent");
                 $ret = true;
             }
         } catch (Exception $ex) {
             $msg = ": Unable to upload log: " . $ex->getMessage();
-            hd_print(__METHOD__ . $msg);
+            hd_debug_print($msg);
             if ($error !== null) {
                 $error = $msg;
             }
         }
 
         if (is_resource($handle)) {
-            fclose($handle);
+            @fclose($handle);
         }
         @unlink($zip_file);
 
         return $ret;
     }
 
-    public static function toggle_https_proxy($plugin_cookies)
+    /**
+     * @param bool $use_proxy
+     * @return bool
+     */
+    public static function toggle_https_proxy($use_proxy)
     {
         try {
             $plugin_info = get_plugin_manifest_info();
@@ -518,12 +500,12 @@ class HD
                 throw new Exception();
             }
 
-            $use_proxy = (isset($plugin_cookies->use_proxy) && $plugin_cookies->use_proxy === 'yes')
-                || strpos(get_platform_kind(), '86') === 0;
-            //hd_print(__METHOD__ . ": Use https proxy: " . ($use_proxy ? "yes" : "no"));
+            $v = get_platform_info();
+            $use_proxy = $use_proxy || (strpos($v['type'], '86') === 0);
+            hd_debug_print("Use https proxy: " . var_export($use_proxy, true), true);
 
             $proxy_enabled = is_https_proxy_enabled();
-            //hd_print(__METHOD__ . ": Proxy enabled: " . ($proxy_enabled ? "yes" : "no"));
+            hd_debug_print("Proxy enabled: " . var_export($proxy_enabled, true), true);
 
             if (($use_proxy && $proxy_enabled) || (!$use_proxy && !$proxy_enabled)) {
                 // no need to update, already enabled or not https
@@ -542,15 +524,15 @@ class HD
             } else {
                 $new_url = substr($update_url, strlen($proxy_url));
             }
-            hd_print(__METHOD__ . ": New update url: $new_url");
+            hd_debug_print("New update url: $new_url");
 
             $new_manifest = str_replace($update_url, $new_url, @file_get_contents($plugin_info['app_manifest_path']));
-            return @file_put_contents($plugin_info['app_manifest_path'], $new_manifest);
+            return @file_put_contents($plugin_info['app_manifest_path'], $new_manifest) !== 0;
         } catch (Exception $ex) {
 
         }
 
-        return 0;
+        return false;
     }
 
     /**
@@ -563,8 +545,8 @@ class HD
         $xml = simplexml_load_string($doc);
 
         if ($xml === false) {
-            hd_print("Error: can not parse XML document.");
-            hd_print("XML-text: $doc.");
+            hd_debug_print("Error: can not parse XML document.");
+            hd_debug_print("XML-text: $doc.");
             throw new Exception('Illegal XML document');
         }
 
@@ -581,8 +563,8 @@ class HD
         $xml = simplexml_load_string(file_get_contents($path));
 
         if ($xml === false) {
-            hd_print(__METHOD__ . ": Error: can't parse XML document.");
-            hd_print(__METHOD__ . ": path to XML: $path");
+            hd_debug_print("Error: can't parse XML document.");
+            hd_debug_print("path to XML: $path");
             throw new Exception('Illegal XML document');
         }
 
@@ -704,7 +686,7 @@ class HD
      * @param boolean $preserve_keys
      * @return array|mixed
      */
-    public static function get_data_items($path, $preserve_keys = false, $json = true)
+    public static function get_data_items($path, $preserve_keys = true, $json = true)
     {
         return self::get_items(get_data_path($path), $preserve_keys, $json);
     }
@@ -714,14 +696,14 @@ class HD
      * @param boolean $preserve_keys
      * @return array|mixed
      */
-    public static function get_items($path, $preserve_keys = false, $json = true)
+    public static function get_items($path, $preserve_keys = true, $json = true)
     {
         if (file_exists($path)) {
             $contents = file_get_contents($path);
             $items = $json ? json_decode($contents, true) : unserialize($contents);
             $items = is_null($items) ? array() : $items;
         } else {
-            //hd_print(__METHOD__ . ": $path not exist");
+            //hd_debug_print("$path not exist");
             $items = array();
         }
 
@@ -743,9 +725,7 @@ class HD
      */
     public static function put_items($path, $items, $json = true)
     {
-        $data = $json ? json_encode($items) : serialize($items);
-        $written = file_put_contents($path, $data);
-        hd_print("$written bytes written to $path");
+        file_put_contents($path, $json ? json_encode($items) : serialize($items));
     }
 
     /**
@@ -762,7 +742,7 @@ class HD
     public static function erase_items($path)
     {
         if (file_exists($path)) {
-            hd_print("$path deleted");
+            hd_debug_print("$path deleted");
             unlink($path);
         }
     }
@@ -794,9 +774,9 @@ class HD
     {
         if (!preg_match("|^https?://ts://|", $url)) {
             if (preg_match("/\.mp4(?=\?|$)/i", $url)) {
-                $url = preg_replace("|^(https?)://|", "$1://mp4://", $url);
+                $url = preg_replace(HTTP_PATTERN, "$1://mp4://", $url);
             } else if (preg_match("/\.ts(?=\?|$)/i", $url)) {
-                $url = preg_replace("|^(https?)://|", "$1://ts://", $url);
+                $url = preg_replace(HTTP_PATTERN, "$1://ts://", $url);
             }
         }
 
@@ -815,12 +795,12 @@ class HD
             $doc = self::http_get_document($url, $opts);
             $contents = json_decode($doc, $to_array);
             if ($contents === null || $contents === false) {
-                hd_print("failed to decode json");
-                hd_print("doc: $doc");
+                hd_debug_print("failed to decode json");
+                hd_debug_print("doc: $doc", true);
                 return false;
             }
         } catch (Exception $ex) {
-            hd_print(__METHOD__ . ": Unable to load url: " . $ex->getMessage());
+            hd_debug_print("Unable to load url: " . $ex->getMessage());
             return false;
         }
 
@@ -834,7 +814,7 @@ class HD
     public static function StoreContentToFile($path, $content)
     {
         if (empty($path)) {
-            hd_print(__METHOD__ . ": Path not set");
+            hd_debug_print("Path not set");
         } else {
             file_put_contents($path, json_encode($content));
         }
@@ -847,7 +827,7 @@ class HD
     public static function ReadContentFromFile($path, $assoc = true)
     {
         if (empty($path) || !file_exists($path)) {
-            hd_print(__METHOD__ . ": Path not exists: $path");
+            hd_debug_print("Path not exists: $path");
             return false;
         }
 
@@ -856,7 +836,7 @@ class HD
 
     public static function ShowMemoryUsage()
     {
-        hd_print("Memory usage: " . round(memory_get_usage(true) / 1024) . "kb / " . ini_get('memory_limit'));
+        hd_debug_print("Memory usage: " . round(memory_get_usage(true) / 1024) . "kb / " . ini_get('memory_limit'));
     }
 
     public static function array_unshift_assoc(&$arr, $key, $val)
@@ -903,5 +883,175 @@ class HD
             $result .= $char;
         }
         return base64_encode($result);
+    }
+
+    /**
+     * @param string $string
+     * @param int $max_size
+     * @return string
+     */
+    public static function string_ellipsis($string, $max_size = 36)
+    {
+        if (is_null($string))
+            return "";
+
+        if (strlen($string) > $max_size) {
+            $string = "..." . substr($string, strlen($string) - $max_size);
+        }
+
+        return $string;
+    }
+
+    /**
+     * case insensitive search in array
+     * @param $needle
+     * @param $haystack
+     * @return false|int|string
+     */
+    public static function array_search_i($needle, $haystack) {
+        return array_search(strtolower($needle), array_map('strtolower', $haystack));
+    }
+
+    /**
+     * @return string
+     */
+    public static function get_last_error()
+    {
+        $error_file = get_temp_path("last_error");
+        $msg = '';
+        if (file_exists($error_file)) {
+            $msg = file_get_contents($error_file);
+            self::set_last_error(null);
+        }
+        return $msg;
+    }
+
+    /**
+     * @param string|null $error
+     */
+    public static function set_last_error($error)
+    {
+        $error_file = get_temp_path("last_error");
+
+        if (!empty($error)) {
+            file_put_contents($error_file, $error);
+        } else if (file_exists($error_file)) {
+            unlink($error_file);
+        }
+    }
+
+    public static function pretty_json_format($json, $options = 448)
+    {
+        $pretty_print = (bool)($options & JSON_PRETTY_PRINT);
+        $unescape_unicode = (bool)($options & JSON_UNESCAPED_UNICODE);
+        $unescape_slashes = (bool)($options & JSON_UNESCAPED_SLASHES);
+
+        if (!$pretty_print && !$unescape_unicode && !$unescape_slashes) {
+            return $json;
+        }
+
+        $result = '';
+        $pos = 0;
+        $strLen = strlen($json);
+        $indentStr = ' ';
+        $newLine = PHP_EOL;
+        $outOfQuotes = true;
+        $buffer = '';
+        $noescape = true;
+
+        for ($i = 0; $i < $strLen; $i++) {
+            // take the next character in the string
+            $char = substr($json, $i, 1);
+
+            // Inside a quoted string?
+            if ('"' === $char && $noescape) {
+                $outOfQuotes = !$outOfQuotes;
+            }
+
+            if (!$outOfQuotes) {
+                $buffer .= $char;
+                $noescape = !('\\' === $char) || !$noescape;
+                continue;
+            }
+
+            if ('' !== $buffer) {
+                if ($unescape_slashes) {
+                    $buffer = str_replace('\\/', '/', $buffer);
+                }
+
+                if ($unescape_unicode && function_exists('mb_convert_encoding')) {
+                    $buffer = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/',
+                        function ($match) {
+                            return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
+                        }, $buffer);
+                }
+
+                $result .= $buffer . $char;
+                $buffer = '';
+                continue;
+            }
+
+            if (false !== strpos(" \t\r\n", $char)) {
+                continue;
+            }
+
+            if (':' === $char) {
+                // Add a space after the : character
+                $char .= ' ';
+            } else if ('}' === $char || ']' === $char) {
+                $pos--;
+                $prevChar = substr($json, $i - 1, 1);
+
+                if ('{' !== $prevChar && '[' !== $prevChar) {
+                    // If this character is the end of an element,
+                    // output a new line and indent the next line
+                    $result .= $newLine . str_repeat($indentStr, $pos);
+                } else {
+                    // Collapse empty {} and []
+                    $result = rtrim($result) . "\n\n" . $indentStr;
+                }
+            }
+
+            $result .= $char;
+
+            // If the last character was the beginning of an element,
+            // output a new line and indent the next line
+            if (',' === $char || '{' === $char || '[' === $char) {
+                $result .= $newLine;
+
+                if ('{' === $char || '[' === $char) {
+                    $pos++;
+                }
+                $result .= str_repeat($indentStr, $pos);
+            }
+        }
+
+        // If buffer not empty after formating we have an unclosed quote
+        if ($buffer !== '') {
+            //json is incorrectly formatted
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    public static function copy_data($sourcePath, $source_pattern, $destPath){
+        if (empty($sourcePath) || empty($destPath)) {
+            hd_debug_print("One of is empty: sourceDir = $sourcePath | destDir = $destPath");
+            return false;
+        }
+
+        if (!create_path($destPath)) {
+            hd_debug_print("Can't create destination folder: $destPath");
+            return false;
+        }
+
+        foreach (glob_dir($sourcePath, $source_pattern) as $file) {
+            $dest_file = $destPath . $file;
+            hd_debug_print("copy $file to $dest_file");
+            if (!copy($file, $dest_file))
+                return false;
+        }
+        return true;
     }
 }

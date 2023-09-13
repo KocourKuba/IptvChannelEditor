@@ -4,17 +4,14 @@ require_once 'lib/default_config.php';
 class itv_config extends default_config
 {
     /**
-     * Get information from the account
-     * @param &$plugin_cookies
-     * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool | array[] | string[] information collected and status valid otherwise - false
+     * @inheritDoc
      */
-    public function GetAccountInfo(&$plugin_cookies, $force = false)
+    public function GetAccountInfo($force = false)
     {
-        hd_print(__METHOD__ . ": Collect information from account: $force");
+        hd_debug_print("Collect information from account: $force");
 
         // this account has special API to get account info
-        $password = $this->get_password($plugin_cookies);
+        $password = $this->get_password();
         try {
             if (empty($password)) {
                 throw new Exception("Password not set");
@@ -30,7 +27,7 @@ class itv_config extends default_config
             }
 
         } catch (Exception $ex) {
-            hd_print($ex->getMessage());
+            hd_debug_print($ex->getMessage());
             return false;
         }
 
@@ -39,13 +36,12 @@ class itv_config extends default_config
 
     /**
      * @param array &$defs
-     * @param $plugin_cookies
      */
-    public function AddSubscriptionUI(&$defs, $plugin_cookies)
+    public function AddSubscriptionUI(&$defs)
     {
-        $account_data = $this->GetAccountInfo($plugin_cookies, true);
+        $account_data = $this->GetAccountInfo(true);
         if ($account_data === false) {
-            hd_print(__METHOD__ . ": Can't get account status");
+            hd_debug_print("Can't get account status");
             Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
             Control_Factory::add_label($defs, TR::t('description') . ':', TR::t('warn_msg5'), -10);
             return;

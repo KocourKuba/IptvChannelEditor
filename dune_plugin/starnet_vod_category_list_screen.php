@@ -1,12 +1,23 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
-require_once 'lib/vod/vod_category.php';
+require_once 'lib/vod_category.php';
 require_once 'starnet_vod_list_screen.php';
 
 class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_category_list';
-    const PARAM_PLAYLIST = 'playlist';
+
+    const FAV_MOVIES_GROUP_CAPTION = 'plugin_favorites';
+    const FAV_MOVIES_GROUP_ICON = 'plugin_file://icons/fav_movie.png';
+
+    const SEARCH_MOVIES_GROUP_CAPTION = 'search';
+    const SEARCH_MOVIES_GROUP_ICON = 'plugin_file://icons/search_movie.png';
+
+    const FILTER_MOVIES_GROUP_CAPTION = 'filter';
+    const FILTER_MOVIES_GROUP_ICON = 'plugin_file://icons/filter_movie.png';
+
+    const HISTORY_MOVIES_GROUP_CAPTION = 'plugin_history';
+    const HISTORY_MOVIES_GROUP_ICON = 'plugin_file://icons/history_movie.png';
 
     /**
      * @var array
@@ -19,37 +30,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
     private $category_index;
 
     /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin, $plugin->GET_VOD_CATEGORY_LIST_FOLDER_VIEWS());
-
-        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            $plugin->create_screen($this);
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
-    }
-
-    /**
      * @param string $category_id
      * @return false|string
      */
-    public static function get_media_url_str($category_id)
+    public static function get_media_url_string($category_id)
     {
-        return MediaURL::encode(
-            array
-            (
-                'screen_id' => self::ID,
-                'category_id' => $category_id,
-            ));
+        return MediaURL::encode(array('screen_id' => self::ID, 'category_id' => $category_id,));
     }
 
     /**
@@ -65,7 +51,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         );
 
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_M3U)) {
-            $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
+            $all_vod_lists = $this->plugin->config->get_vod_list_names($current_idx);
             if (count($all_vod_lists) > 1) {
                 $change_playlist = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU);
                 $change_playlist['caption'] = TR::t('vod_screen_change_playlist');
@@ -81,14 +67,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
     }
 
     /**
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return null
-     * @throws Exception
+     * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -96,29 +80,29 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
 
         switch ($user_input->control_id) {
             case ACTION_RELOAD:
-                hd_print(__METHOD__ . ": reload categories");
-                $this->clear_vod($plugin_cookies);
+                hd_debug_print("reload categories");
+                $this->clear_vod();
                 $media_url = MediaURL::decode($user_input->parent_media_url);
                 $range = $this->get_folder_range($media_url, 0, $plugin_cookies);
                 return Action_Factory::update_regular_folder($range, true, -1);
 
             case ACTION_CHANGE_PLAYLIST:
-                $current_idx = isset($plugin_cookies->vod_idx) ? $plugin_cookies->vod_idx : 0;
+                $current_idx = $this->plugin->get_parameter(PARAM_VOD_IDX, 0);
 
-                if (isset($user_input->{self::PARAM_PLAYLIST})
-                    && $user_input->{self::PARAM_PLAYLIST} !== false
-                    && $user_input->{self::PARAM_PLAYLIST} !== $current_idx) {
-                    $plugin_cookies->vod_idx = $user_input->{self::PARAM_PLAYLIST};
-                    hd_print(__METHOD__ . ": change VOD playlist to: " . $user_input->{self::PARAM_PLAYLIST});
+                if (isset($user_input->{PARAM_PLAYLIST})
+                    && $user_input->{PARAM_PLAYLIST} !== false
+                    && $user_input->{PARAM_PLAYLIST} !== $current_idx) {
+                    $this->plugin->set_parameter(PARAM_VOD_IDX, $user_input->{PARAM_PLAYLIST});
+                    hd_debug_print("change VOD playlist to: " . $user_input->{PARAM_PLAYLIST});
                     return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
                 }
                 break;
 
             case GUI_EVENT_KEY_POPUP_MENU;
                 $menu_items = array();
-                $all_vod_lists = $this->plugin->config->get_vod_list_names($plugin_cookies, $current_idx);
+                $all_vod_lists = $this->plugin->config->get_vod_list_names($current_idx);
                 foreach ($all_vod_lists as $idx => $list) {
-                    $add_param[self::PARAM_PLAYLIST] = $idx;
+                    $add_param[PARAM_PLAYLIST] = $idx;
 
                     $icon_url = null;
                     if ($idx === (int)$current_idx) {
@@ -141,16 +125,17 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print("Starnet_Vod_Category_List_Screen: get_all_folder_items");
+        hd_debug_print(null, true);
+
         if (is_null($this->category_index) || is_null($this->category_list)) {
-            $this->plugin->config->fetchVodCategories($plugin_cookies, $this->category_list, $this->category_index);
+            $this->plugin->config->fetchVodCategories($this->category_list, $this->category_index);
         }
 
         $category_list = $this->category_list;
 
         if (isset($media_url->category_id)) {
             if (!isset($this->category_index[$media_url->category_id])) {
-                hd_print(__METHOD__ . ": Error: parent category (id: $media_url->category_id) not found.");
+                hd_debug_print("Error: parent category (id: $media_url->category_id) not found.");
                 throw new Exception('No parent category found');
             }
 
@@ -165,12 +150,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => Starnet_Vod_Favorites_Screen::ID,
-                PluginRegularFolderItem::caption => Default_Dune_Plugin::FAV_MOVIES_CATEGORY_CAPTION,
+                PluginRegularFolderItem::caption => TR::t(self::FAV_MOVIES_GROUP_CAPTION),
                 PluginRegularFolderItem::view_item_params => array
                 (
-                    ViewItemParams::icon_path => Default_Dune_Plugin::FAV_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::icon_path => self::FAV_MOVIES_GROUP_ICON,
                     ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GOLD, // Light yellow
-                    ViewItemParams::item_detailed_icon_path => Default_Dune_Plugin::FAV_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => self::FAV_MOVIES_GROUP_ICON,
                 )
             );
         }
@@ -179,12 +164,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         $items[] = array
         (
             PluginRegularFolderItem::media_url => Starnet_Vod_History_Screen::ID,
-            PluginRegularFolderItem::caption => Default_Dune_Plugin::HISTORY_MOVIES_CATEGORY_CAPTION,
+            PluginRegularFolderItem::caption => TR::t(self::HISTORY_MOVIES_GROUP_CAPTION),
             PluginRegularFolderItem::view_item_params => array
             (
-                ViewItemParams::icon_path => Default_Dune_Plugin::HISTORY_MOVIES_CATEGORY_ICON_PATH,
+                ViewItemParams::icon_path => self::HISTORY_MOVIES_GROUP_ICON,
                 ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_TURQUOISE, // Cyan
-                ViewItemParams::item_detailed_icon_path => Default_Dune_Plugin::HISTORY_MOVIES_CATEGORY_ICON_PATH,
+                ViewItemParams::item_detailed_icon_path => self::HISTORY_MOVIES_GROUP_ICON,
             )
         );
 
@@ -192,12 +177,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         $items[] = array
         (
             PluginRegularFolderItem::media_url => Starnet_Vod_Search_Screen::ID,
-            PluginRegularFolderItem::caption => Default_Dune_Plugin::SEARCH_MOVIES_CATEGORY_CAPTION,
+            PluginRegularFolderItem::caption => TR::t(self::SEARCH_MOVIES_GROUP_CAPTION),
             PluginRegularFolderItem::view_item_params => array
             (
-                ViewItemParams::icon_path => Default_Dune_Plugin::SEARCH_MOVIES_CATEGORY_ICON_PATH,
+                ViewItemParams::icon_path => self::SEARCH_MOVIES_GROUP_ICON,
                 ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GREEN, // Green
-                ViewItemParams::item_detailed_icon_path => Default_Dune_Plugin::SEARCH_MOVIES_CATEGORY_ICON_PATH,
+                ViewItemParams::item_detailed_icon_path => self::SEARCH_MOVIES_GROUP_ICON,
             )
         );
 
@@ -206,12 +191,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => Starnet_Vod_Filter_Screen::ID,
-                PluginRegularFolderItem::caption => Default_Dune_Plugin::FILTER_MOVIES_CATEGORY_CAPTION,
+                PluginRegularFolderItem::caption => TR::t(self::FILTER_MOVIES_GROUP_CAPTION),
                 PluginRegularFolderItem::view_item_params => array
                 (
-                    ViewItemParams::icon_path => Default_Dune_Plugin::FILTER_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::icon_path => self::FILTER_MOVIES_GROUP_ICON,
                     ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GREEN, // Green
-                    ViewItemParams::item_detailed_icon_path => Default_Dune_Plugin::FILTER_MOVIES_CATEGORY_ICON_PATH,
+                    ViewItemParams::item_detailed_icon_path => self::FILTER_MOVIES_GROUP_ICON,
                 )
             );
         }
@@ -220,16 +205,16 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             foreach ($category_list as $category) {
                 $category_id = $category->get_id();
                 if (!is_null($category->get_sub_categories())) {
-                    $media_url_str = self::get_media_url_str($category_id);
+                    $media_url_str = self::get_media_url_string($category_id);
                 } else if ($category_id === Vod_Category::FLAG_ALL
                     || $category_id === Vod_Category::FLAG_SEARCH
                     || $category_id === Vod_Category::FLAG_FILTER) {
                     // special category id's
-                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($category_id, null);
+                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_string($category_id, null);
                 } else if ($category->get_parent() !== null) {
-                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($category->get_parent()->get_id(), $category_id);
+                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_string($category->get_parent()->get_id(), $category_id);
                 } else {
-                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_str($category_id, null);
+                    $media_url_str = Starnet_Vod_List_Screen::get_media_url_string($category_id, null);
                 }
 
                 $items[] = array
@@ -250,13 +235,24 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
 
     /**
      * Clear vod information
-     * @param $plugin_cookies
      * @return void
      */
-    public function clear_vod($plugin_cookies)
+    public function clear_vod()
     {
         unset($this->category_list, $this->category_index);
         $this->plugin->vod->clear_movie_cache();
-        $this->plugin->config->ClearVodCache($plugin_cookies);
+        $this->plugin->config->ClearPlaylistCache(false);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_folder_views()
+    {
+        hd_debug_print(null, true);
+
+        return array(
+            $this->plugin->get_screen_view('list_1x12_vod_info_normal'),
+        );
     }
 }

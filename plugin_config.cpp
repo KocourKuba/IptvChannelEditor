@@ -92,8 +92,8 @@ void plugin_config::load_default()
 		{"boot", "" },
 		{"boot_end", "bin/update_suppliers.sh" },
 		{"gui_start", "" },
-		{"install", "" },
-		{"uninstall", "" },
+		{"install", "#install" },
+		{"uninstall", "#uninstall" },
 		{"update", "" },
 	};
 

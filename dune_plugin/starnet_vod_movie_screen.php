@@ -1,7 +1,6 @@
 <?php
 require_once 'lib/abstract_controls_screen.php';
 require_once 'lib/user_input_handler.php';
-require_once 'lib/vod/vod.php';
 require_once 'lib/default_config.php';
 require_once 'starnet_vod_series_list_screen.php';
 
@@ -16,7 +15,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
      * @param string|false $info
      * @return false|string
      */
-    public static function get_media_url_str($movie_id, $name = false, $poster_url = false, $info = false)
+    public static function get_media_url_string($movie_id, $name = false, $poster_url = false, $info = false)
     {
         $arr['screen_id'] = self::ID;
         $arr['movie_id'] = $movie_id;
@@ -30,35 +29,13 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             $arr['info'] = $info;
         }
 
-        //hd_print(__METHOD__ . ": Movie ID: $movie_id, Movie name: $name, Movie Poster: $poster_url");
+        //hd_debug_print("Movie ID: $movie_id, Movie name: $name, Movie Poster: $poster_url");
 
         return MediaURL::encode($arr);
     }
 
     /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin);
-
-        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            $plugin->create_screen($this);
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
-    }
-
-    /**
-     * @param MediaURL $media_url
-     * @param $plugin_cookies
-     * @return array
+     * @inheritDoc
      */
     public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
     {
@@ -75,13 +52,12 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
      */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print(__METHOD__ . ": MediaUrl: " . $media_url->get_raw_string());
         $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if (is_null($movie) || empty($movie->series_list)) {
             if (is_null($movie)) {
                 $movie = new Movie($media_url->movie_id, $this->plugin);
             }
-            hd_print(__METHOD__ . ": empty movie or no series data");
+            hd_debug_print("empty movie or no series data");
             HD::print_backtrace();
             $movie->description = TR::t('warn_msg3');
             return array
@@ -111,11 +87,11 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
 
         $save_folder = HD::get_data_items('save_folder');
         if (isset($save_folder[$movie->id]))
-            $screen_media_url = Starnet_Vod_Series_List_Screen::get_media_url_str($movie->id, key($save_folder[$movie->id]));
+            $screen_media_url = Starnet_Vod_Series_List_Screen::get_media_url_string($movie->id, key($save_folder[$movie->id]));
         else if (!isset($movie->season_list)) {
-            $screen_media_url = Starnet_Vod_Series_List_Screen::get_media_url_str($movie->id);
+            $screen_media_url = Starnet_Vod_Series_List_Screen::get_media_url_string($movie->id);
         } else {
-            $screen_media_url = Starnet_Vod_Seasons_List_Screen::get_media_url_str($movie->id);
+            $screen_media_url = Starnet_Vod_Seasons_List_Screen::get_media_url_string($movie->id);
         }
 
         $movie_folder_view = array(
@@ -142,13 +118,12 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
     }
 
     /**
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return array|null
+     * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         if ($user_input->control_id === 'favorites') {
             $movie_id = $user_input->movie_id;
@@ -161,7 +136,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
 
             return Action_Factory::show_title_dialog($message,
                 Action_Factory::invalidate_folders(array(
-                        self::get_media_url_str($movie_id),
+                        self::get_media_url_string($movie_id),
                         Starnet_Vod_Favorites_Screen::get_media_url_str())
                 )
             );

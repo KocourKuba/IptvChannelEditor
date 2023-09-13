@@ -1,7 +1,7 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////
 
-require_once 'lib/tr.php';
+require_once 'tr.php';
 require_once 'action_factory.php';
 require_once 'dune_exception.php';
 
@@ -42,11 +42,11 @@ class Default_Dune_Plugin_Fw extends DunePluginFw
 
         if (is_null($plugin)) {
             try {
-                hd_print('Instantiating plugin...');
+                hd_print("Instantiating plugin...");
                 $plugin = $this->create_plugin();
-                hd_print('Plugin instance created.');
+                hd_debug_print("Plugin instance created.");
             } catch (Exception $e) {
-                hd_print('Error: can not instantiate plugin (' . $e->getMessage() . ')');
+                hd_debug_print("Error: can not instantiate plugin (" . $e->getMessage() . ')');
 
                 return
                     array
@@ -69,8 +69,10 @@ class Default_Dune_Plugin_Fw extends DunePluginFw
 
         try {
             $out_data = $this->invoke_operation($plugin, $call_ctx);
-        } catch (Dune_Exception $e) {
-            hd_print("Error: DuneException caught: " . $e->getMessage());
+        }
+        /** @noinspection PhpRedundantCatchClauseInspection */
+        catch (Dune_Exception $e) {
+            hd_debug_print("Error: DuneException caught: " . $e->getMessage());
             return
                 array
                 (
@@ -80,7 +82,7 @@ class Default_Dune_Plugin_Fw extends DunePluginFw
                     PluginOutputData::error_action => $e->get_error_action()
                 );
         } catch (Exception $e) {
-            hd_print("Error: Exception caught: " . $e->getMessage());
+            hd_debug_print("Error: Exception caught: " . $e->getMessage());
 
             return
                 array

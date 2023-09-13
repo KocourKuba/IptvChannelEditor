@@ -1,4 +1,4 @@
-*.gitattributes text
+﻿*.gitattributes text
 .gitignore      text
 
 *.md            text diff=markdown

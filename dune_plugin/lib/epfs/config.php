@@ -73,6 +73,7 @@ class TitleRowsParams
 class RowsItemsParams
 {
 	const width						= 250;
+    const width_sq					= 178;
 	const height					= 230;
 	const icon_width				= 230;
     const icon_width_sq				= 158;
@@ -84,9 +85,11 @@ class RowsItemsParams
     const sel_caption_color			= '#FFFFE0FF';
     const inactive_caption_color	= '#00000000';
     const caption_font_size			= 28; # size in pt
-    const icon_loading_url			= '/loading.png';
-    const icon_loading_failed_url	= '/unset.png';
-    const fav_sticker_icon_url		= '/star.png';
+    const icon_loading_url			= 'loading.png';
+    const icon_sq_loading_url		= 'loading_square.png';
+    const icon_loading_failed_url	= 'unset.png';
+    const icon_sq_loading_failed_url = 'unset_square.png';
+    const fav_sticker_icon_url		= 'star.png';
     const fav_sticker_bg_width		= 40;
     const fav_sticker_bg_height		= 40;
     const fav_sticker_icon_width	= 36;

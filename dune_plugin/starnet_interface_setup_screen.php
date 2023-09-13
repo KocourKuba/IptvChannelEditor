@@ -8,51 +8,7 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
 {
     const ID = 'interface_setup';
 
-    const SETUP_ACTION_SHOW_TV = 'show_tv';
-    const SETUP_ACTION_VOD_LAST = 'vod_last';
-    const SETUP_ACTION_SHOW_ALL = 'show_all';
-    const SETUP_ACTION_SHOW_FAVORITES = 'show_favorites';
-    const SETUP_ACTION_SHOW_HISTORY = 'show_history';
-
-    private static $on_off_ops = array
-    (
-        SetupControlSwitchDefs::switch_on => '%tr%yes',
-        SetupControlSwitchDefs::switch_off => '%tr%no',
-    );
-
-    private static $on_off_img = array
-    (
-        SetupControlSwitchDefs::switch_on => 'on.png',
-        SetupControlSwitchDefs::switch_off => 'off.png',
-    );
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @return false|string
-     */
-    public static function get_media_url_str()
-    {
-        return MediaURL::encode(array('screen_id' => self::ID));
-    }
-
-    /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin);
-
-        $plugin->create_screen($this);
-    }
-
-    /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
-    }
+    const CONTROL_SHOW_TV = 'show_tv';
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -63,7 +19,6 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
      */
     public function do_get_control_defs(&$plugin_cookies)
     {
-        hd_print(__METHOD__);
         $defs = array();
 
         //////////////////////////////////////
@@ -73,56 +28,65 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
         //////////////////////////////////////
         // Show in main screen
         if (!is_apk()) {
-            if (!isset($plugin_cookies->{self::SETUP_ACTION_SHOW_TV})) {
-                $plugin_cookies->{self::SETUP_ACTION_SHOW_TV} = SetupControlSwitchDefs::switch_on;
-            }
+            $show_tv = self::get_cookie_bool_param($plugin_cookies, self::CONTROL_SHOW_TV);
             Control_Factory::add_image_button($defs, $this, null,
-                self::SETUP_ACTION_SHOW_TV, TR::t('setup_show_in_main'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_SHOW_TV}],
-                $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_SHOW_TV}]), self::CONTROLS_WIDTH);
+                self::CONTROL_SHOW_TV, TR::t('setup_show_in_main'), SetupControlSwitchDefs::$on_off_translated[$show_tv],
+                get_image_path(SetupControlSwitchDefs::$on_off_img[$show_tv]), self::CONTROLS_WIDTH);
         }
+
+        //////////////////////////////////////
+        // ask exit parameter
+        $ask_exit = $this->plugin->get_parameter(PARAM_ASK_EXIT, SetupControlSwitchDefs::switch_on);
+        Control_Factory::add_image_button($defs, $this, null,
+            PARAM_ASK_EXIT, TR::t('setup_ask_exit'), SetupControlSwitchDefs::$on_off_translated[$ask_exit],
+            get_image_path(SetupControlSwitchDefs::$on_off_img[$ask_exit]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // show all channels category
-        if (!isset($plugin_cookies->{self::SETUP_ACTION_SHOW_ALL})) {
-            $plugin_cookies->{self::SETUP_ACTION_SHOW_ALL} = SetupControlSwitchDefs::switch_on;
-        }
-
+        $show_all = $this->plugin->get_parameter(PARAM_SHOW_ALL, SetupControlSwitchDefs::switch_on);
         Control_Factory::add_image_button($defs, $this, null,
-            self::SETUP_ACTION_SHOW_ALL, TR::t('setup_show_all_channels'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_SHOW_ALL}],
-            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_SHOW_ALL}]), self::CONTROLS_WIDTH);
+            PARAM_SHOW_ALL, TR::t('setup_show_all_channels'), SetupControlSwitchDefs::$on_off_translated[$show_all],
+            get_image_path(SetupControlSwitchDefs::$on_off_img[$show_all]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // show favorites category
-        if (!isset($plugin_cookies->{self::SETUP_ACTION_SHOW_FAVORITES})) {
-            $plugin_cookies->{self::SETUP_ACTION_SHOW_FAVORITES} = SetupControlSwitchDefs::switch_on;
-        }
-
+        $show_fav = $this->plugin->get_parameter(PARAM_SHOW_FAVORITES, SetupControlSwitchDefs::switch_on);
         Control_Factory::add_image_button($defs, $this, null,
-            self::SETUP_ACTION_SHOW_FAVORITES, TR::t('setup_show_favorites'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_SHOW_FAVORITES}],
-            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_SHOW_FAVORITES}]), self::CONTROLS_WIDTH);
-
+            PARAM_SHOW_FAVORITES, TR::t('setup_show_favorites'), SetupControlSwitchDefs::$on_off_translated[$show_fav],
+            get_image_path(SetupControlSwitchDefs::$on_off_img[$show_fav]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // show history category
-        if (!isset($plugin_cookies->{self::SETUP_ACTION_SHOW_HISTORY})) {
-            $plugin_cookies->{self::SETUP_ACTION_SHOW_HISTORY} = SetupControlSwitchDefs::switch_on;
-        }
-
+        $show_history = $this->plugin->get_parameter(PARAM_SHOW_HISTORY, SetupControlSwitchDefs::switch_on);
         Control_Factory::add_image_button($defs, $this, null,
-            self::SETUP_ACTION_SHOW_HISTORY, TR::t('setup_show_history'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_SHOW_HISTORY}],
-            $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_SHOW_HISTORY}]), self::CONTROLS_WIDTH);
+            PARAM_SHOW_HISTORY, TR::t('setup_show_history'), SetupControlSwitchDefs::$on_off_translated[$show_history],
+            get_image_path(SetupControlSwitchDefs::$on_off_img[$show_history]), self::CONTROLS_WIDTH);
+
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
+            //////////////////////////////////////
+            // show history category
+            $show_vod = $this->plugin->get_parameter(PARAM_SHOW_VOD, SetupControlSwitchDefs::switch_on);
+            Control_Factory::add_image_button($defs, $this, null,
+                PARAM_SHOW_VOD, TR::t('setup_show_vod'), SetupControlSwitchDefs::$on_off_translated[$show_vod],
+                get_image_path(SetupControlSwitchDefs::$on_off_img[$show_vod]), self::CONTROLS_WIDTH);
+
+            //////////////////////////////////////
+            // show vod at the end of categories
+            $vod_last = $this->plugin->get_parameter(PARAM_VOD_LAST, SetupControlSwitchDefs::switch_on);
+            Control_Factory::add_image_button($defs, $this, null,
+                PARAM_VOD_LAST, TR::t('setup_vod_last'), SetupControlSwitchDefs::$on_off_translated[$vod_last],
+                get_image_path(SetupControlSwitchDefs::$on_off_img[$vod_last]), self::CONTROLS_WIDTH);
+        }
 
         //////////////////////////////////////
-        // show vod at the end of categories
-        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            if (!isset($plugin_cookies->{self::SETUP_ACTION_VOD_LAST})) {
-                $plugin_cookies->{self::SETUP_ACTION_VOD_LAST} = SetupControlSwitchDefs::switch_on;
-            }
+        // epg font size
+        $font_size = $this->plugin->get_parameter(PARAM_EPG_FONT_SIZE, SetupControlSwitchDefs::switch_off);
+        $font_ops_translated[SetupControlSwitchDefs::switch_on] = TR::t('setup_small');
+        $font_ops_translated[SetupControlSwitchDefs::switch_off] = TR::t('setup_normal');
 
-            Control_Factory::add_image_button($defs, $this, null,
-                self::SETUP_ACTION_VOD_LAST, TR::t('setup_vod_last'), self::$on_off_ops[$plugin_cookies->{self::SETUP_ACTION_VOD_LAST}],
-                $this->plugin->get_image_path(self::$on_off_img[$plugin_cookies->{self::SETUP_ACTION_VOD_LAST}]), self::CONTROLS_WIDTH);
-        }
+        Control_Factory::add_image_button($defs, $this, null,
+            PARAM_EPG_FONT_SIZE, TR::t('setup_epg_font'), $font_ops_translated[$font_size],
+            get_image_path(SetupControlSwitchDefs::$on_off_img[$font_size]), self::CONTROLS_WIDTH);
 
         return $defs;
     }
@@ -137,41 +101,46 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
         return $this->do_get_control_defs($plugin_cookies);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         $control_id = $user_input->control_id;
         if (isset($user_input->action_type, $user_input->{$control_id})
             && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $new_value = $user_input->{$control_id};
-            hd_print(__METHOD__ . ": changing $control_id value to $new_value");
+            hd_debug_print("changing $control_id value to $new_value");
         }
 
         switch ($control_id) {
-            case self::SETUP_ACTION_SHOW_TV:
+            case self::CONTROL_SHOW_TV:
                 if (!is_apk()) {
-                    self::toggle_param($plugin_cookies, $control_id);
+                    self::toggle_cookie_param($plugin_cookies, $control_id);
                 }
                 break;
 
-            case self::SETUP_ACTION_SHOW_ALL:
-            case self::SETUP_ACTION_SHOW_FAVORITES:
-            case self::SETUP_ACTION_SHOW_HISTORY:
-            case self::SETUP_ACTION_VOD_LAST:
-                self::toggle_param($plugin_cookies, $control_id);
-                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
+            case PARAM_ASK_EXIT:
+            case PARAM_SHOW_ALL:
+            case PARAM_SHOW_FAVORITES:
+            case PARAM_SHOW_HISTORY:
+            case PARAM_SHOW_VOD:
+            case PARAM_VOD_LAST:
+                $this->plugin->toggle_parameter($control_id);
+                if ($control_id !== PARAM_ASK_EXIT) {
+                    $this->plugin->tv->reload_channels();
+                }
+                return Action_Factory::invalidate_all_folders($plugin_cookies,
+                    Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)));
+
+            case PARAM_EPG_FONT_SIZE:
+                $this->plugin->toggle_parameter(PARAM_EPG_FONT_SIZE, false);
+                break;
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies));
-    }
-
-    private static function toggle_param($plugin_cookies, $param)
-    {
-        $plugin_cookies->{$param} = ($plugin_cookies->{$param} === SetupControlSwitchDefs::switch_off)
-            ? SetupControlSwitchDefs::switch_on
-            : SetupControlSwitchDefs::switch_off;
-
-        hd_print(__METHOD__ . ": $param: " . $plugin_cookies->{$param});
     }
 }

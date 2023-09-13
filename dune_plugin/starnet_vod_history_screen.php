@@ -1,32 +1,11 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
-require_once 'lib/vod/vod.php';
 
 class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_history';
 
-    /**
-     * @return false|string
-     */
-    public static function get_media_url_str()
-    {
-        return MediaURL::encode(array('screen_id' => self::ID));
-    }
-
     ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_list_folder_views());
-
-        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            $plugin->create_screen($this);
-        }
-    }
 
     /**
      * @param MediaURL $media_url
@@ -45,36 +24,25 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
     }
 
     /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID;
-    }
-
-    /**
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return array|null
+     * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;
         }
 
-        $media_url = MediaURL::decode($user_input->selected_media_url);
-        $movie_id = $media_url->movie_id;
+        $movie_id = MediaURL::decode($user_input->selected_media_url)->movie_id;
+        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
 
         switch ($user_input->control_id)
 		{
 			case ACTION_ITEM_DELETE:
-				$media_url = MediaURL::decode($user_input->selected_media_url);
-                //hd_print(__METHOD__ . ": Delete movie_id: $media_url->movie_id");
-                $this->plugin->vod->remove_movie_from_history($media_url->movie_id, $plugin_cookies);
-				$parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                //hd_debug_print("Delete movie_id: $media_url->movie_id");
+                $this->plugin->vod->remove_movie_from_history($movie_id, $plugin_cookies);
 				$sel_ndx = $user_input->sel_ndx + 1;
 				if ($sel_ndx < 0)
 					$sel_ndx = 0;
@@ -82,9 +50,8 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 				return Action_Factory::update_regular_folder($range, true, $sel_ndx);
 
             case ACTION_ITEMS_CLEAR:
-                $this->plugin->vod->set_history_items(array(), $plugin_cookies);
-                HD::erase_items(Starnet_Vod::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name($plugin_cookies));
-                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                $this->plugin->vod->set_history_items(array());
+                HD::erase_items(Starnet_Vod::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name());
                 $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
                 return Action_Factory::update_regular_folder($range, true);
 
@@ -107,9 +74,9 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print("Starnet_Vod_History_Screen: get_all_folder_items");
+        hd_debug_print(null, true);
 
-        $this->plugin->vod->ensure_history_loaded($plugin_cookies);
+        $this->plugin->vod->ensure_history_loaded();
         $history_items = $this->plugin->vod->get_history_movies();
 
         $items = array();
@@ -127,7 +94,6 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
                 foreach ($movie_infos as $info) {
                     if (isset($info[Movie::WATCHED_DATE])) {
                         $last_viewed = max($last_viewed, $info[Movie::WATCHED_DATE]);
-                        //hd_print("get_all_folder_items: info $key => {$info[Movie::WATCHED_DATE]}");
                     }
                 }
 
@@ -141,7 +107,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 
             $items[] = array
             (
-                PluginRegularFolderItem::media_url => Starnet_Vod_Movie_Screen::get_media_url_str($movie_id),
+                PluginRegularFolderItem::media_url => Starnet_Vod_Movie_Screen::get_media_url_string($movie_id),
                 PluginRegularFolderItem::caption => $caption,
                 PluginRegularFolderItem::view_item_params => array
                 (
@@ -151,5 +117,18 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
         }
 
         return $items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_folder_views()
+    {
+        hd_debug_print(null, true);
+
+        return array(
+            $this->plugin->get_screen_view('list_1x11_small_info'),
+            $this->plugin->get_screen_view('list_1x11_info'),
+        );
     }
 }

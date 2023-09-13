@@ -1,5 +1,4 @@
 <?php
-
 ###############################################################################
 #
 # Dune STB API
@@ -65,47 +64,7 @@ const PLAYBACK_DEINITIALIZING = 'deinitializing';
 const PLAYBACK_PCR_DISCONTINUITY = 'pcr_discontinuity';
 const PLAYBACK_MEDIA_OPEN_FAILED = 'media_open_failed';
 
-# Common actions
-const ACTION_ITEM_UP = 'item_up';
-const ACTION_ITEM_DOWN = 'item_down';
-const ACTION_ITEM_DELETE = 'item_delete';
-const ACTION_ITEMS_CLEAR = 'items_clear';
-const ACTION_SETTINGS = 'settings';
-const ACTION_CHANNELS_SETTINGS = 'channels_settings';
-const ACTION_NEED_CONFIGURE = 'configure';
-const ACTION_BALANCE = 'balance';
-const ACTION_INFO = 'info';
-const ACTION_ADD_FAV = 'add_favorite';
-const ACTION_JUMP_TO_CHANNEL = 'jump_to_channel';
-const ACTION_CREATE_SEARCH = 'create_search';
-const ACTION_NEW_SEARCH = 'new_search';
-const ACTION_RUN_SEARCH = 'run_search';
-const ACTION_RELOAD = 'reload';
-const ACTION_FOLDER_SELECTED = 'folder_selected';
-const ACTION_CHANGE_PLAYLIST = 'change_playlist';
-const ACTION_WATCHED = 'watched';
-const ACTION_QUALITY = 'quality';
-const ACTION_EXTERNAL_PLAYER = 'use_external_player';
-const ACTION_CREATE_FILTER = 'create_filter';
-const ACTION_RUN_FILTER = 'run_filter';
-const ACTION_OPEN_FOLDER = 'open_folder';
-const ACTION_PLAY_FOLDER = 'play_folder';
-const ACTION_ZOOM_MENU = 'zoom_menu';
-const ACTION_ZOOM_SELECT = 'zoom_select';
-const ACTION_ZOOM_APPLY = 'zoom_apply';
-const ACTION_REFRESH_SCREEN = 'refresh_screen';
-const ACTION_REMOVE_PLAYBACK_POINT = 'remove_playback_point';
-const ACTION_CLEAR_PLAYBACK_POINTS = 'clear_playback_points';
-const ACTION_CLEAR_FAVORITES = 'clear_favorites';
-const ACTION_RESET_DEFAULT = 'reset_default';
-
-const PARAM_CH_LIST_PATH = 'channels_list_path';
-const PARAM_HISTORY_PATH = 'history_path';
-const PARAM_XMLTV_CACHE_PATH = 'xmltv_cache_path';
-const PARAM_XMLTV_INDEX = 'xmltv_index';
-
-# Mounted storages path
-const DUNE_MOUNTED_STORAGES_PATH = '/tmp/mnt/storage/';
+const CACHED_IMAGE_SUBDIR = 'cached_img';
 
 # Hard-coded constants.
 if (!defined('FONT_SIZE_LARGE')) define('FONT_SIZE_LARGE', 4);
@@ -181,15 +140,73 @@ const CMD_STATUS_GREP = '" /firmware/ext_command/cgi-bin/do | grep "command_stat
 
 ///////////////////////////////////////////////////////////////////////////////
 
+class LogSeverity
+{
+    /**
+     * @var bool
+     */
+    public static $is_debug = false;
+}
+
+class KnownCatchupSourceTags
+{
+    const cu_unknown     = 'unknown';
+    const cu_default     = 'default'; // only replace variables
+    const cu_shift       = 'shift'; // ?utc=startUnix&lutc=nowUnix
+    const cu_append      = 'append'; // appending value specified in catchup-source attribute to the base channel url
+    const cu_archive     = 'archive'; // ?archive=startUnix&archive_end=toUnix
+    const cu_timeshift   = 'timeshift'; // timeshift=startUnix&timenow=nowUnix
+    const cu_flussonic   = 'flussonic';
+    const cu_xstreamcode = 'xs'; // xstream codes
+
+    public static $catchup_tags = array(
+        self::cu_default => array('default'),
+        self::cu_shift => array('shift', 'archive'),
+        self::cu_append => array('append'),
+        self::cu_archive => array('archive'),
+        self::cu_timeshift => array('timeshift'),
+        self::cu_flussonic => array('flussonic', 'flussonic-hls', 'fs', 'flussonic-ts'),
+        self::cu_xstreamcode => array('xc'),
+    );
+
+    /**
+     * @param $tag
+     * @param mixed $value
+     * @return bool
+     */
+    public static function is_tag($tag, $value)
+    {
+        if (!isset(self::$catchup_tags[$tag]))
+            return false;
+
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                if (in_array($item, self::$catchup_tags[$tag])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return in_array($value, self::$catchup_tags[$tag]);
+    }
+}
+
 class SetupControlSwitchDefs
 {
     const switch_on  = 'yes';
     const switch_off = 'no';
-    const switch_normal  = 'normal';
-    const switch_small = 'small';
-    const switch_epg1  = Plugin_Constants::EPG_FIRST;
-    const switch_epg2 = Plugin_Constants::EPG_SECOND;
-    const switch_epg3 = Plugin_Constants::EPG_INTERNAL;
+
+    public static $on_off_translated = array
+    (
+        self::switch_on => '%tr%yes',
+        self::switch_off => '%tr%no',
+    );
+
+    public static $on_off_img = array
+    (
+        self::switch_on => 'on.png',
+        self::switch_off => 'off.png',
+    );
 }
 
 # Video zoom values for media_url string (|||dune_params|||zoom:value)
@@ -219,16 +236,16 @@ class DuneVideoZoomPresets
     );
 
     public static $zoom_ops = array(
-        DuneVideoZoomPresets::not_set => '%tr%tv_screen_zoom_not_set',
-        DuneVideoZoomPresets::normal => '%tr%tv_screen_zoom_normal',
-        DuneVideoZoomPresets::enlarge => '%tr%tv_screen_zoom_enlarge',
-        DuneVideoZoomPresets::make_wider => '%tr%tv_screen_zoom_make_wider',
-        DuneVideoZoomPresets::fill_screen => '%tr%tv_screen_zoom_fill_screen',
-        DuneVideoZoomPresets::full_fill_screen => '%tr%tv_screen_zoom_full_fill_screen',
-        DuneVideoZoomPresets::make_taller => '%tr%tv_screen_zoom_make_taller',
-        DuneVideoZoomPresets::cut_edges => '%tr%tv_screen_zoom_cut_edges',
-        DuneVideoZoomPresets::full_enlarge => '%tr%tv_screen_zoom_full_enlarge',
-        DuneVideoZoomPresets::full_stretch => '%tr%tv_screen_zoom_full_stretch'
+        DuneVideoZoomPresets::not_set => 'tv_screen_zoom_not_set',
+        DuneVideoZoomPresets::normal => 'tv_screen_zoom_normal',
+        DuneVideoZoomPresets::enlarge => 'tv_screen_zoom_enlarge',
+        DuneVideoZoomPresets::make_wider => 'tv_screen_zoom_make_wider',
+        DuneVideoZoomPresets::fill_screen => 'tv_screen_zoom_fill_screen',
+        DuneVideoZoomPresets::full_fill_screen => 'tv_screen_zoom_full_fill_screen',
+        DuneVideoZoomPresets::make_taller => 'tv_screen_zoom_make_taller',
+        DuneVideoZoomPresets::cut_edges => 'tv_screen_zoom_cut_edges',
+        DuneVideoZoomPresets::full_enlarge => 'tv_screen_zoom_full_enlarge',
+        DuneVideoZoomPresets::full_stretch => 'tv_screen_zoom_full_stretch'
     );
 }
 
@@ -321,23 +338,38 @@ function is_apk(){
 }
 
 /**
- * return type of platform: android, 8670, etc.
- * @return string
+ * return type of platform: android, apk, 8670, etc.
+ * @return array
  */
-function get_platform_kind()
+function get_platform_info()
 {
-    static $platform_kind = null;
-    if (is_null($platform_kind)){
+    static $platform = null;
+
+    if (is_null($platform)){
         if (getenv("HD_APK")) {
-            $platform_kind = 'apk';
+            $platform['platform'] = 'android';
+            $platform['type'] = 'apk';
         } else {
             $ini_arr = parse_ini_file('/tmp/run/versions.txt');
             if (isset($ini_arr['platform_kind'])) {
-                $platform_kind = $ini_arr['platform_kind'];
+                if ($ini_arr['platform_kind'] === 'android') {
+                    $platform['platform'] = $ini_arr['platform_kind'];
+                    if (isset($ini_arr['android_platform'])) {
+                        $platform['type'] = $ini_arr['android_platform'];
+                    } else {
+                        $platform['type'] = "not android";
+                    }
+                } else {
+                    $platform['platform'] = 'sigma';
+                    $platform['type'] = $ini_arr['platform_kind'];
+                }
+            } else {
+                $platform['platform'] = 'unknown';
+                $platform['type'] = 'unknown';
             }
         }
     }
-    return $platform_kind;
+    return $platform;
 }
 
 function get_bug_platform_kind()
@@ -345,29 +377,14 @@ function get_bug_platform_kind()
     static $bug_platform_kind = null;
 
     if (is_null($bug_platform_kind)) {
-        $v = get_platform_kind();
-        $bug_platform_kind = ($v === '8672' || $v === '8673' || $v === '8758');
+        $v = get_platform_info();
+        if ($v['platform'] !== 'android') {
+            $bug_platform_kind = ($v['type'] === '8672' || $v['type'] === '8673' || $v['type'] === '8758');
+        }
     }
     return $bug_platform_kind;
 }
 
-function get_android_platform()
-{
-    static $result = null;
-
-    if (is_null($result)) {
-        if (getenv("HD_APK")) {
-            $result = 'apk';
-        } else {
-            $ini_arr = parse_ini_file('/tmp/run/versions.txt');
-            if (isset($ini_arr['android_platform'])) {
-                $result = $ini_arr['android_platform'];
-            }
-        }
-    }
-
-    return $result;
-}
 /**
  * return product id
  * @return string
@@ -399,6 +416,16 @@ function get_raw_firmware_version()
 }
 
 /**
+ * @param bool $is_debug
+ * @return void
+ */
+function set_debug_log($is_debug)
+{
+    hd_print("Set debug logging: " . var_export($is_debug, true));
+    LogSeverity::$is_debug = $is_debug;
+}
+
+/**
  * return firmware version
  * @return array
  */
@@ -416,12 +443,12 @@ function get_parsed_firmware_ver()
     static $result = null;
 
     if (is_null($result)) {
-        preg_match_all('/^(\d*)_(\d*)_(\D*)(\d*)(.*)$/', get_raw_firmware_version(), $matches, PREG_SET_ORDER);
+        preg_match_all('/^(\d*)_(\d*)_(\D*)(\d*)(.*)?$/', get_raw_firmware_version(), $matches, PREG_SET_ORDER);
         $matches[0][5] = ltrim($matches[0][5], '_');
         $result = array_combine(array('string', 'build_date', 'build_number', 'rev_literal', 'rev_number', 'features'), $matches[0]);
     }
 
-    return $result;
+    return is_array($result) ? $result : array();
 }
 
 /**
@@ -444,7 +471,8 @@ function get_serial_number()
  */
 function get_ip_address()
 {
-    if (get_platform_kind() === '8670') {
+    $v = get_platform_info();
+    if ($v['type'] === '8670') {
         $active_network_connection = parse_ini_file('/tmp/run/active_network_connection.txt', 0, INI_SCANNER_RAW);
         $ip = isset($active_network_connection['ip']) ? trim($active_network_connection['ip']) : '';
     } else {
@@ -465,8 +493,8 @@ function get_ip_address()
  */
 function get_dns_address()
 {
-    $platform = get_platform_kind();
-    if ($platform === 'android' || $platform === 'apk') {
+    $platform = get_platform_info();
+    if ($platform['platform'] === 'android') {
         $dns = explode(PHP_EOL, shell_exec('getprop | grep "net.dns"'));
     } else {
         $dns = explode(PHP_EOL, shell_exec('cat /etc/resolv.conf | grep "nameserver"'));
@@ -616,25 +644,30 @@ function format_datetime($fmt, $ts)
 }
 
 /**
- * @param string $msecs
+ * @param string $ticks
  * @return string
  */
-function format_duration($msecs)
+function format_duration($ticks, $point = false)
 {
-    $n = (int)$msecs;
-
-    if ($n <= 0 || strlen($msecs) <= 0) {
+    $n = (int)$ticks;
+    if ($n <= 0 || strlen($ticks) <= 0) {
         return "--:--";
     }
 
-    $n /= 1000;
-    $hours = $n / 3600;
-    $remainder = $n % 3600;
-    $minutes = $remainder / 60;
-    $seconds = $remainder % 60;
+    $hours = (int)($n / 3600000);
+    $remainder = $n % 3600000;
+    $minutes = (int)($remainder / 60000);
+    $seconds = (int)(($remainder % 60000) / 1000);
+    if ($point) {
+        $msecond = $remainder % 1000;
+    }
 
     if ($hours > 0) {
         return sprintf("%d:%02d:%02d", $hours, $minutes, $seconds);
+    }
+
+    if ($point) {
+        return sprintf("%02d:%02d.%03d", $minutes, $seconds, $msecond);
     }
 
     return sprintf("%02d:%02d", $minutes, $seconds);
@@ -694,7 +727,7 @@ function send_ir_code($key)
         return shell_exec('echo ' . DuneIrControl::$key_codes[$key] . ' > /proc/ir/button');
     }
 
-    hd_print(__METHOD__ . ": Error in class " . get_class($this) . "::" . __FUNCTION__ . "! Code of key '$key' not found in base!");
+    hd_debug_print("Error in class " . get_class($this) . "::" . __FUNCTION__ . "! Code of key '$key' not found in base!");
     return '0';
 }
 
@@ -711,7 +744,7 @@ function send_ir_code_return_status($key)
         return get_shell_exec($cmd);
     }
 
-    hd_print(__METHOD__ . ": Error in class " . get_class($this) . "::" . __FUNCTION__ . "! Code of key '$key' not found in base!");
+    hd_debug_print("Error in class " . get_class($this) . "::" . __FUNCTION__ . "! Code of key '$key' not found in base!");
     return '0';
 }
 
@@ -756,6 +789,20 @@ function set_standby_mode($mode)
 
     $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=ir_code&ir_code=' . (($mode === STANDBY_MODE_OFF) ? GUI_EVENT_DISCRETE_POWER_ON : GUI_EVENT_DISCRETE_POWER_OFF) . CMD_STATUS_GREP;
     return get_shell_exec($cmd);
+}
+
+/**
+ * @param string $setting
+ * @return string|null
+ */
+function get_shell_settings($setting)
+{
+    $settings = array();
+    if (file_exists('/config/settings.properties')) {
+        $settings = parse_ini_file('/config/settings.properties', 0, INI_SCANNER_RAW);
+    }
+
+    return isset($settings[$setting]) ? $settings[$setting] : '';
 }
 
 ###############################################################################
@@ -1366,32 +1413,43 @@ function get_zoom_value($preset)
 
 function get_temp_path($path = '')
 {
-    return DuneSystem::$properties['tmp_dir_path'] . '/' . $path;
+    return DuneSystem::$properties['tmp_dir_path'] . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR);
 }
 
 function get_data_path($path = '')
 {
-    return DuneSystem::$properties['data_dir_path'] . '/' . $path;
+    return DuneSystem::$properties['data_dir_path'] . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR);
 }
 
 function get_install_path($path = '')
 {
-    return DuneSystem::$properties['install_dir_path'] . '/' . $path;
+    return DuneSystem::$properties['install_dir_path'] . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR);
 }
 
 function get_plugin_cgi_url($path = '')
 {
-    return DuneSystem::$properties['plugin_cgi_url'] . $path;
+    return DuneSystem::$properties['plugin_cgi_url'] . ltrim($path, DIRECTORY_SEPARATOR);
 }
 
 function get_plugin_www_url($path = '')
 {
-    return DuneSystem::$properties['plugin_www_url'] . $path;
+    return DuneSystem::$properties['plugin_www_url'] . ltrim($path, DIRECTORY_SEPARATOR);
 }
 
 function get_plugin_name()
 {
     return DuneSystem::$properties['plugin_name'];
+}
+
+/**
+ * @param string $image
+ * @return string
+ */
+function get_cached_image_path($image = '')
+{
+    $cache_image_path = get_data_path(CACHED_IMAGE_SUBDIR);
+    create_path($cache_image_path);
+    return $cache_image_path . DIRECTORY_SEPARATOR . ltrim($image, DIRECTORY_SEPARATOR);
 }
 
 function get_plugin_manifest_info()
@@ -1400,19 +1458,19 @@ function get_plugin_manifest_info()
     try {
         $manifest_path = get_install_path("dune_plugin.xml");
         if (!file_exists($manifest_path)) {
-            throw new Exception(__METHOD__ . ": Plugin manifest not found!");
+            throw new Exception("Plugin manifest not found!");
         }
 
         $xml = HD::parse_xml_file($manifest_path);
         if ($xml === null) {
-            throw new Exception(__METHOD__ . ": Empty plugin manifest!");
+            throw new Exception("Empty plugin manifest!");
         }
 
         $direct_links = array();
         foreach ($xml->channels_direct_links->children() as $links_info) {
             if ($links_info->getName() !== 'links_info') {
                 $error_string = __METHOD__ . ": Error: unexpected node '{$links_info->getName()}'. Expected: 'links_info'";
-                hd_print($error_string);
+                hd_debug_print($error_string);
             }
 
             $direct_links[(string)$links_info->list] = (string)$links_info->link;
@@ -1437,7 +1495,7 @@ function get_plugin_manifest_info()
             $result[$node_name] = json_decode(json_encode($xml->xpath("//$node_name")), true);
         }
     } catch (Exception $ex) {
-        hd_print($ex->getMessage());
+        hd_debug_print($ex->getMessage());
     }
 
     return $result;
@@ -1456,15 +1514,24 @@ function is_https_proxy_enabled()
 }
 
 /**
+ * @param string $image
+ * @return string
+ */
+function get_image_path($image = '')
+{
+    return get_install_path("img" . DIRECTORY_SEPARATOR . ltrim($image, DIRECTORY_SEPARATOR));
+}
+
+/**
  * @return array array of local storages
  */
-function get_local_storages_list()
+function get_local_storages_list($path)
 {
     $i = 0;
     $result = array();
 
-    foreach (scandir(DUNE_MOUNTED_STORAGES_PATH) as $item) {
-        if (($item === '.') || ($item === '..') || !is_dir(DUNE_MOUNTED_STORAGES_PATH . $item)) {
+    foreach (scandir($path) as $item) {
+        if (($item === '.') || ($item === '..') || !is_dir($path . DIRECTORY_SEPARATOR . $item)) {
             continue;
         }
 
@@ -1501,25 +1568,51 @@ function get_active_skin_path()
     # Returns the path to the directory of the active skin (no trailing slash)
 
     if (file_exists('/tmp/dune_skin_dir.txt')) {
-        return rtrim(trim(preg_replace('/^.*=/', '', file_get_contents('/tmp/dune_skin_dir.txt'))), '/');
+        return rtrim(trim(preg_replace('/^.*=/', '', file_get_contents('/tmp/dune_skin_dir.txt'))), DIRECTORY_SEPARATOR);
     }
 
-    hd_print("Error in class " . __METHOD__ . " ! Can not determine the path to the active skin.");
+    hd_debug_print("Error in class " . __METHOD__ . " ! Can not determine the path to the active skin.");
     return '';
 }
 
+# Returns the specified path (no trailing slash), creating directories along the way
 function get_paved_path($path, $dir_mode = 0777)
 {
-    # Returns the specified path (no trailing slash), creating directories along the way
-
-    if (!file_exists($path) && !mkdir($path, $dir_mode, true) && !is_dir($path)) {
-        hd_print(__METHOD__ . ": Directory '$path' was not created");
+    if (!create_path($path, $dir_mode)) {
+        hd_debug_print("Directory '$path' was not created");
     }
 
-    return rtrim($path, '/');
+    return rtrim($path, DIRECTORY_SEPARATOR);
 }
 
-function json_encode_unicode($data)
+function get_slash_trailed_path($path)
+{
+    if (!empty($path) && substr($path, -1) !== DIRECTORY_SEPARATOR) {
+        $path .= DIRECTORY_SEPARATOR;
+    }
+
+    return $path;
+}
+
+function get_filename($path)
+{
+    $ar = explode(DIRECTORY_SEPARATOR, $path);
+    return (count($ar) === 1) ? $path : end($ar);
+}
+
+# creating directories along the way
+function create_path($path, $dir_mode = 0777)
+{
+    if (!file_exists($path) && !mkdir($path, $dir_mode, true) && !is_dir($path)) {
+        hd_debug_print("Directory '$path' was not created");
+        return false;
+    }
+
+    return true;
+}
+
+/** @noinspection PhpUnusedParameterInspection */
+function json_encode_unicode($data, $flags = 0)
 {
     # Analog of json_encode() with the JSON_UNESCAPED_UNICODE option available in PHP 5.4.0 and higher
 
@@ -1538,20 +1631,27 @@ function json_encode_unicode($data)
 function print_sysinfo()
 {
     hd_print("----------------------------------------------------");
-    $platform = get_platform_kind();
+    $platform = get_platform_info();
     $dns = get_dns_address();
     $values = curl_version();
     $table = array(
         'Dune Product' => get_product_id(),
+        'Dune Model' => get_dune_model(),
         'Dune FW' => get_raw_firmware_version(),
         'Dune Serial' => get_serial_number(),
-        'Dune Platform' => $platform . ($platform === 'android' ? (" (" . get_android_platform() . ")") : ''),
+        'Dune Platform' => "{$platform['platform']} ({$platform['type']})",
         'Dune MAC Addr' => get_mac_address(),
         'Dune IP Addr' => get_ip_address(),
         'Dune DNS servers' => $dns,
         'PHP Version' => PHP_VERSION,
         'libCURL Version' => "{$values['version']} ({$values['ssl_version']})",
     );
+
+    if (class_exists("SQLite3")) {
+        $sqlite_ver = SQLite3::version();
+        $table['SQLite3 Version'] = $sqlite_ver['versionString'];
+    }
+
     $table = array_merge($table, DuneSystem::$properties);
 
     $max = 0;
@@ -1561,6 +1661,89 @@ function print_sysinfo()
     foreach ($table as $key => $value) {
         hd_print(str_pad($key, $max + 2) . $value);
     }
+}
+
+/**
+ * @return string Model name
+ */
+function get_dune_model() {
+    static $models = array(
+        // android models
+        'boxy_apk' => 'Boxy',
+        'dune_apk' => 'Homatics Box',
+        // android models
+        'tv994a' => 'Ultra 4K Vision',
+        'tv794a' => 'Max 4K Vision',
+        'tv175v' => 'Pro Vision 4K Solo',
+        'tv494b' => 'Real Vision 4K Duo',
+        'tv175y' => 'Real Vision 4K Plus',
+        'tv175u' => 'Real Vision 4K',
+        'tv175j' => 'Pro 4K Plus II',
+        'tv175h' => 'Pro 4K II',
+        'tv175r' => 'Magic 4K Plus',
+        'tv175q' => 'Magic 4K',
+        'tv175o' => 'SmartBox 4K Plus II',
+        'tv175n' => 'SmartBox 4K Plus',
+        'tv175l' => 'SmartBox 4K',
+        'tv175x' => 'RealBox 4K',
+        'tv993a' => 'Ultra 4K',
+        'tv793a' => 'Max 4K',
+        'tv393a' => 'Pro 4K Plus',
+        'tv292b' => 'Pro 4K',
+        'tv292a' => 'Pro 4K',
+        'tv175p' => 'Traveler',
+        'tv274a' => 'Sky 4K Plus',
+        'tv174c' => 'Neo 4K T2 Plus (revsion tv174c)',
+        'tv174b' => 'Neo 4K T2 Plus (revision tv174b)',
+        'tv174a' => 'Neo 4K T2',
+        'tv175f' => 'Neo 4K Plus',
+        'tv175e' => 'Neo 4K (revision tv175e)',
+        'tv173b' => 'Neo 4K (revision tv173b)',
+
+        // sigma chipsets r11
+        // SMP8672
+        'tv303d' => 'TV 303D',
+        'tv303d2' => 'TV 303D v2',
+        'base3d' => 'Base3D',
+        'base3d2' => 'Base3D v2',
+        // SMP8674
+        'connect' => 'Connect',
+        'tv102' => 'TV 102',
+        'tv102v2' => 'TV 102 v2',
+        // SMP8756
+        'tv203' => 'TV 203',
+        'tv204' => 'TV 204',
+        // SMP8758
+        'tv205' => 'TV 205',
+        'tv206' => 'TV 206',
+        'solo4k' => 'Solo 4K',
+        'sololite' => 'Solo Lite',
+        'duo4k' => 'Duo 4K',
+        'duobase4k' => 'Duo Base 4K',
+        //
+        'hdduo' => 'HD Duo',
+        'hdmax' => 'HD Max',
+        'hdsmart_b1' => 'HD Smart B1',
+        'hdsmart_d1' => 'HD Smart D1',
+        'hdsmart_h1' => 'HD Smart H1',
+        'hdbase3' => 'HD Base 3.0',
+        'bdprime3' => 'HD Prime 3.0',
+
+        // sigma chipsets < r11 (not supported)
+        // SMP8670
+        'hdtv_301' => 'HD TV 301',
+        'hdtv_102p' => 'HD TV 102p',
+        'hdtv_101' => 'HD TV 101',
+        'hdlite_53d' => 'HD Lite 53D',
+        'hdbase2' => 'HD Base 2.0',
+        'hdcenter_sony' => 'HD Center',
+        'bdprime_sony' => 'BD Prime',
+        'hdmini' => 'HD Mini',
+        'hdultra' => 'HD Ultra',
+    );
+
+    $product_code = get_product_id();
+    return isset($models[$product_code]) ? $models[$product_code] : "Unknown model";
 }
 
 function get_canonize_string($str, $encoding = 'UTF-8')
@@ -1585,7 +1768,7 @@ function get_system_language_string_value($string_key)
         }
     }
 
-    hd_print("Error in class " . __METHOD__ . " ! Not found value for key '$string_key'!");
+    hd_debug_print("Error in class " . __METHOD__ . " ! Not found value for key '$string_key'!");
     return '';
 }
 
@@ -1604,12 +1787,153 @@ function debug_print(/*mixed $var1, $var2...*/)
             }
         }
 
-        hd_print("Debug alert! " . rtrim($chain, '->') . (empty($var) ? '' : ' >> ') . ltrim($var, "\n"));
+        hd_debug_print("Debug alert! " . rtrim($chain, '->') . (empty($var) ? '' : ' >> ') . ltrim($var, "\n"));
     }
 }
 
-function dump_input_handler($method, $user_input)
+/**
+ * @param Object $user_input
+ * @return void
+ */
+function dump_input_handler($user_input)
 {
-    hd_print($method);
-    foreach ($user_input as $key => $value) hd_print("  $key => $value");
+    if (!LogSeverity::$is_debug)
+        return;
+
+    hd_debug_print(null, true);
+
+    foreach ($user_input as $key => $value) {
+        $decoded_value = html_entity_decode(preg_replace("/(\\\u([0-9A-Fa-f]{4}))/", "&#x\\2;", $value), ENT_NOQUOTES, 'UTF-8');
+        hd_print("  $key => $decoded_value");
+    }
+}
+
+/**
+ * Replace for glob (not works with non ansi symbols in path)
+ *
+ * @param string $path
+ * @param string $pattern regex pattern
+ * @param bool $exclude_dir
+ * @return array
+ */
+function glob_dir($path, $pattern = null, $exclude_dir = true)
+{
+    $list = array();
+    $path = rtrim($path, DIRECTORY_SEPARATOR);
+    if (is_dir($path)) {
+        $files = array_diff(scandir($path), array('.', '..'));
+        if ($pattern !== null) {
+            $files = preg_grep($pattern, $files);
+        }
+
+        if ($files !== false) {
+            foreach ($files as $file) {
+                $full_path = $path . DIRECTORY_SEPARATOR . $file;
+                if ($exclude_dir && !is_file($full_path)) continue;
+
+                $list[] = $full_path;
+            }
+        }
+    }
+    return $list;
+}
+
+function delete_directory($dir)
+{
+    if (!file_exists($dir)) {
+        return true;
+    }
+
+    if (!is_dir($dir)) {
+        return unlink($dir);
+    }
+
+    foreach (scandir($dir) as $item) {
+        if ($item === '.' || $item === '..') continue;
+        if (!delete_directory($dir . DIRECTORY_SEPARATOR . $item)) {
+            return false;
+        }
+    }
+
+    return rmdir($dir);
+}
+
+/**
+ * This is more efficient then merge_array in the loops
+ *
+ * @param array $ar1
+ * @param array|null $ar2
+ * @return array
+ */
+function safe_merge_array($ar1, $ar2)
+{
+    if (is_array($ar2)) {
+        foreach ($ar2 as $key => $itm) {
+            $ar1[$key] = $itm;
+        }
+    }
+
+    return $ar1;
+}
+
+/**
+ * @param mixed $val
+ * @param bool $is_debug
+ * @return void
+ */
+function hd_debug_print($val = null, $is_debug = false)
+{
+    if ($is_debug && !LogSeverity::$is_debug)
+        return;
+
+    $bt = debug_backtrace();
+    $caller = array_shift($bt);
+    $caller_name = array_shift($bt);
+    $prefix = "(" . str_pad($caller['line'], 4) . ") ";
+    if (isset($caller_name['class'])) {
+        if (!is_null($val)) {
+            $val = str_replace(array('"{', '}"', '\"'), array('{', '}', '"'), (string)raw_json_encode($val));
+        }
+        $prefix .= "{$caller_name['class']}::";
+    }
+    $prefix .= "{$caller_name['function']}(): ";
+
+    if ($val === null) {
+        $val = '';
+        $parent_caller = array_shift($bt);
+        $prefix .= "called from: (". str_pad($caller_name['line'], 4) . ") ";
+        if (isset($parent_caller['class'])) {
+            $prefix .= "{$parent_caller['class']}:";
+        }
+
+        $prefix .= "{$parent_caller['function']}(): ";
+    }
+    else if (is_bool($val)) {
+        $val = $val ? 'true' : 'false';
+    }
+
+    hd_print($prefix . $val);
+}
+
+function raw_json_encode($arr)
+{
+    $pattern = "/\\\\u([0-9a-fA-F]{4})/";
+    $callback = function ($m) {
+        return html_entity_decode("&#x$m[1];", ENT_QUOTES, 'UTF-8');
+    };
+
+    return str_replace('\\/', '/', preg_replace_callback($pattern, $callback, json_encode($arr)));
+}
+
+function wrap_string_to_lines($str, $max_chars)
+{
+    return array_slice(
+        explode("\n",
+            iconv('Windows-1251', 'UTF-8',
+                wordwrap(iconv('UTF-8', 'Windows-1251',
+                    trim(preg_replace('/([!?])\.+\s*$/Uu', '$1', $str))),
+                    $max_chars, "\n", true))
+        ),
+        0, 2
+    );
 }

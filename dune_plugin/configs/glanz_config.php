@@ -12,18 +12,17 @@ class glanz_config extends default_config
 
     /**
      * @param string $movie_id
-     * @param $plugin_cookies
      * @return Movie
      * @throws Exception
      */
-    public function TryLoadMovie($movie_id, $plugin_cookies)
+    public function TryLoadMovie($movie_id)
     {
-        hd_print(__METHOD__ . ": $movie_id");
+        hd_debug_print($movie_id);
         $movie = new Movie($movie_id, $this->parent);
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
 
         if ($jsonItems === false) {
-            hd_print(__METHOD__ . ": failed to load movie: $movie_id");
+            hd_debug_print("failed to load movie: $movie_id");
             return $movie;
         }
 
@@ -64,7 +63,7 @@ class glanz_config extends default_config
                 ''               // budget
             );
 
-            hd_print(__METHOD__ . ": movie playback_url: $item->url");
+            hd_debug_print("movie playback_url: $item->url");
             $movie->add_series_data($movie_id, $item->name, '', $item->url);
             break;
         }
@@ -73,13 +72,12 @@ class glanz_config extends default_config
     }
 
     /**
-     * @param $plugin_cookies
      * @param array &$category_list
      * @param array &$category_index
      */
-    public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
+    public function fetchVodCategories(&$category_list, &$category_index)
     {
-        $jsonItems = HD::DownloadJson($this->GetVodListUrl($plugin_cookies), false);
+        $jsonItems = HD::DownloadJson($this->GetVodListUrl(), false);
         if ($jsonItems === false) {
             return;
         }
@@ -135,22 +133,21 @@ class glanz_config extends default_config
 
         $this->set_filters($filters);
 
-        hd_print(__METHOD__ . ": Categories read: " . count($category_list));
+        hd_debug_print("Categories read: " . count($category_list));
     }
 
     /**
      * @param string $keyword
-     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function getSearchList($keyword, $plugin_cookies)
+    public function getSearchList($keyword)
     {
-        hd_print(__METHOD__ . ": $keyword");
+        hd_debug_print($keyword);
         $movies = array();
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
         if ($jsonItems === false) {
-            hd_print(__METHOD__ . ": failed to load movies");
+            hd_debug_print("failed to load movies");
             return $movies;
         }
 
@@ -162,23 +159,22 @@ class glanz_config extends default_config
             }
         }
 
-        hd_print(__METHOD__ . ": Movies found: " . count($movies));
+        hd_debug_print("Movies found: " . count($movies));
         return $movies;
     }
 
     /**
      * @param string $query_id
-     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function getMovieList($query_id, $plugin_cookies)
+    public function getMovieList($query_id)
     {
         $movies = array();
 
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
         if ($jsonItems === false) {
-            hd_print(__METHOD__ . ": failed to load movies");
+            hd_debug_print("failed to load movies");
             return $movies;
         }
 
@@ -201,24 +197,23 @@ class glanz_config extends default_config
         }
         $this->get_next_page($query_id, $pos - $current_offset);
 
-        hd_print(__METHOD__ . ": Movies read for query: $query_id - " . count($movies));
+        hd_debug_print("Movies read for query: $query_id - " . count($movies));
         return $movies;
     }
 
     /**
      * @param string $params
-     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function getFilterList($params, $plugin_cookies)
+    public function getFilterList($params)
     {
-        hd_print(__METHOD__ . ": $params");
+        hd_debug_print($params);
         $movies = array();
 
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
         if ($jsonItems === false) {
-            hd_print(__METHOD__ . ": failed to load movies");
+            hd_debug_print("failed to load movies");
             return $movies;
         }
 
@@ -260,7 +255,7 @@ class glanz_config extends default_config
             }
         }
 
-        hd_print(__METHOD__ . ": Movies found: " . count($movies));
+        hd_debug_print("Movies found: " . count($movies));
         return $movies;
     }
 
@@ -299,19 +294,19 @@ class glanz_config extends default_config
     public function AddFilterUI(&$defs, $parent, $initial = -1)
     {
         $filters = array("genre", "from", "to");
-        hd_print(__METHOD__ . ": $initial");
+        hd_debug_print($initial);
         Control_Factory::add_vgap($defs, 20);
         $added = false;
         foreach ($filters as $name) {
             $filter = $this->get_filter($name);
             if ($filter === null) {
-                hd_print(__METHOD__ . ": no filters with '$name'");
+                hd_debug_print("no filters with '$name'");
                 continue;
             }
 
             $values = $filter['values'];
             if (empty($values)) {
-                hd_print(__METHOD__ . ": no filters values for '$name'");
+                hd_debug_print("no filters values for '$name'");
                 continue;
             }
 

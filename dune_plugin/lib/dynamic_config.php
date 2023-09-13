@@ -21,8 +21,7 @@ class dynamic_config
      */
     public function init_defaults()
     {
-        hd_print(__METHOD__);
-        $this->features[Plugin_Constants::TV_FAVORITES_SUPPORTED] = true; // always true
+        hd_debug_print(null, true);
         $this->features[Plugin_Constants::VOD_QUALITY_SUPPORTED] = false; // currently supported only in edem
         $this->features[Plugin_Constants::VOD_FILTER_SUPPORTED] = false; // filter list screen
     }
@@ -33,7 +32,8 @@ class dynamic_config
      */
     public function load_config()
     {
-        hd_print(__METHOD__);
+        hd_debug_print(null, true);
+
         $settings = HD::parse_json_file(get_install_path('config.json'), true);
 
         $this->set_feature(Plugin_Constants::ACCESS_TYPE, $settings[Plugin_Constants::ACCESS_TYPE]);
@@ -52,20 +52,13 @@ class dynamic_config
         foreach ($settings[Plugin_Constants::STREAMS_CONFIG] as $config) {
             $param_idx = $config[Stream_Params::STREAM_TYPE];
             $this->set_stream_params($param_idx, $config);
-            //hd_print(__METHOD__ . ": stream config: $param_idx");
-            //foreach($this->get_stream_params($param_idx) as $key=>$value) hd_print("$key: $value");
         }
 
         foreach ($settings[Plugin_Constants::EPG_PARAMS] as $epg) {
             $param_idx = $epg[Epg_Params::EPG_PARAM];
             $this->set_epg_params($param_idx, $epg);
-            //hd_print(__METHOD__ . ": epg_param: $param_idx");
-            //foreach($epg as $key=>$value) hd_print("$key: $value");
         }
 
-        $int_epg = array();
-        $int_epg[Epg_Params::EPG_URL] = Plugin_Macros::EPG_DOMAIN . "_" . Plugin_Macros::EPG_ID;
-        $this->set_epg_params(Plugin_Constants::EPG_INTERNAL, $int_epg);
         $this->set_feature(Plugin_Constants::EPG_CUSTOM_SOURCE, $settings[Plugin_Constants::EPG_CUSTOM_SOURCE]);
 
         $servers = array();
@@ -192,7 +185,7 @@ class dynamic_config
     /**
      * @return array
      */
-    public function get_servers($plugin_cookies)
+    public function get_servers()
     {
         return $this->servers;
     }
@@ -208,7 +201,7 @@ class dynamic_config
     /**
      * @return array
      */
-    public function get_devices($plugin_cookies)
+    public function get_devices()
     {
         return $this->devices;
     }
@@ -224,7 +217,7 @@ class dynamic_config
     /**
      * @return array
      */
-    public function get_qualities($plugin_cookies)
+    public function get_qualities()
     {
         return $this->qualities;
     }
@@ -240,7 +233,7 @@ class dynamic_config
     /**
      * @return array
      */
-    public function get_profiles($plugin_cookies)
+    public function get_profiles()
     {
         return $this->profiles;
     }

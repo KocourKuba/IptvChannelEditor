@@ -1,4 +1,28 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * @Author: sharky72 (https://github.com/KocourKuba)
+ * Original code from DUNE HD
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
 require_once 'action_factory.php';
 
@@ -158,14 +182,16 @@ class Control_Factory
      * @param array &$defs
      * @param string $caption
      * @param int $width
+     * @param bool $caption_centered
      */
-    public static function add_close_dialog_button(&$defs, $caption, $width)
+    public static function add_close_dialog_button(&$defs, $caption, $width, $caption_centered = false)
     {
         $defs[] = array
         (
             GuiControlDef::name => 'close',
             GuiControlDef::title => null,
             GuiControlDef::kind => GUI_CONTROL_BUTTON,
+            GuiControlDef::params => array('button_caption_centered' => $caption_centered),
             GuiControlDef::specific_def => array
             (
                 GuiButtonDef::caption => $caption,

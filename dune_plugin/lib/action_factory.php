@@ -1,13 +1,37 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * @Author: sharky72 (https://github.com/KocourKuba)
+ * Original code from DUNE HD
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
 class Action_Factory
 {
     /**
-     * @param null $media_url_str
+     * @param string|null $media_url_str
      * @param string|null $caption
-     * @param null $id
-     * @param null $sel_id
-     * @param null $post_action
+     * @param string|null $id
+     * @param int|null $sel_id
+     * @param array|null $post_action
      * @param bool $keep_osd_context
      * @return array
      */
@@ -51,10 +75,10 @@ class Action_Factory
             return $action;
 
         if (is_string($media_url)) {
-            //hd_print("tv_play str: " . $media_url);
+            //hd_debug_print("tv_play str: " . $media_url);
             $action[GuiAction::params] = array('selected_media_url' => $media_url);
         } else if (is_object($media_url)) {
-            //hd_print("tv_play MediaUrl: " . $media_url->get_media_url_str());
+            //hd_debug_print("tv_play MediaUrl: " . $media_url);
             $action[GuiAction::data] = array(
                 PluginTvPlayActionData::initial_group_id => isset($media_url->group_id) ? $media_url->group_id : null,
                 PluginTvPlayActionData::initial_channel_id => isset($media_url->channel_id) ? $media_url->channel_id : null,
@@ -168,7 +192,7 @@ class Action_Factory
     /**
      * @param string $title
      * @param array|null $post_action
-     * @param string|null $multiline
+     * @param array|string|null $multiline
      * @param int $preferred_width
      * @return array
      */
@@ -178,7 +202,12 @@ class Action_Factory
 
         if ($multiline !== null) {
             if ($preferred_width === 0) {
-                foreach (explode("\n", $multiline) as $line) {
+                if (is_array($multiline)) {
+                    $lines = $multiline;
+                } else {
+                    $lines = explode("\n", $multiline);
+                }
+                foreach ($lines as $line) {
                     $px = mb_strlen($line, 'UTF-8') * 21;
                     if ($px > $preferred_width)
                         $preferred_width = (int)$px;
@@ -220,7 +249,7 @@ class Action_Factory
     }
 
     /**
-     * @param string $status
+     * @param int $status
      * @return array
      */
     public static function status($status)
@@ -228,7 +257,7 @@ class Action_Factory
         return array(
             GuiAction::handler_string_id => STATUS_ACTION_ID,
             GuiAction::caption => null,
-            GuiAction::data => array(StatusActionData::status => $status,),
+            GuiAction::data => array(StatusActionData::status => $status),
             GuiAction::params => null,
         );
     }
@@ -238,13 +267,14 @@ class Action_Factory
      * @param array $post_action
      * @return array
      */
-    public static function invalidate_folders($media_urls, $post_action = null)
+    public static function invalidate_folders($media_urls, $post_action = null, $all_except = false)
     {
         return array(
             GuiAction::handler_string_id => PLUGIN_INVALIDATE_FOLDERS_ACTION_ID,
             GuiAction::data => array(
                 PluginInvalidateFoldersActionData::media_urls => $media_urls,
                 PluginInvalidateFoldersActionData::post_action => $post_action,
+                PluginInvalidateFoldersActionData::all_except => $all_except,
             ),
         );
     }
@@ -326,8 +356,8 @@ class Action_Factory
      */
     public static function replace_path($erase_count = null, $elements = null, $post_action = null)
     {
-        //hd_print("replace_path: erase_count: $erase_count,  elements: $elements, post_action: " . json_encode($post_action));
-        if ($erase_count === null || is_newer_versions() === false) {
+        //hd_debug_print("replace_path: erase_count: $erase_count,  elements: $elements, post_action: " . json_encode($post_action));
+        if ($erase_count === null) {
             return $post_action;
         }
 
@@ -413,6 +443,18 @@ class Action_Factory
             GuiAction::data => null,
             GuiAction::params => $params,
         );
+    }
+
+    /**
+     * @param $plugin_cookies
+     * @param array|null $post_action
+     * @param array|null $except_media_urls
+     * @return array|null
+     */
+    public static function invalidate_all_folders($plugin_cookies, $post_action = null, $except_media_urls = null)
+    {
+        Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+        return self::invalidate_folders($except_media_urls, $post_action, true);
     }
 
     /**
@@ -593,8 +635,8 @@ class Action_Factory
         return array(
             GuiAction::handler_string_id => PLUGIN_UPDATE_ROWS_INFO_ACTION_ID,
             GuiAction::data => array(
-                    PluginUpdateRowsInfoActionData::info => $info,
-                    PluginUpdateRowsInfoActionData::post_action => $post_action,
+                PluginUpdateRowsInfoActionData::info => $info,
+                PluginUpdateRowsInfoActionData::post_action => $post_action,
                 ),
         );
     }

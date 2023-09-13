@@ -36,8 +36,7 @@ class Plugin_Constants
     const /* (char *) */ VOD_SUPPORTED = 'vod_support';
     const /* (bool)   */ VOD_M3U = 'vod_m3u';
     const /* (array)  */ VOD_TEMPLATES = 'vod_templates';
-
-    const PARAM_PLAYLIST = 'playlist';
+    const /* (array)  */ XMLTV_SOURCES = 'xmltv_sources';
 
     const /* (char*)  */ PLAYLIST_NAME = 'name';
     const /* (char *) */ PL_DOMAIN = 'pl_domain';

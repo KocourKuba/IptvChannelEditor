@@ -10,53 +10,26 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin, $plugin->GET_TV_GROUP_LIST_FOLDER_VIEWS());
-
-        $plugin->create_screen($this);
-    }
-
-    /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
-    }
-
-    /**
-     * @return false|string
-     */
-    public static function get_media_url_str()
-    {
-        return MediaURL::encode(array('screen_id' => self::ID));
-    }
-
-    /**
      * @param MediaURL $media_url
      * @param $plugin_cookies
      * @return array
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        // if token not set force to open setup screen
-        //hd_print(__METHOD__);
+        hd_debug_print(null, true);
 
         $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS, TR::t('entry_setup'));
 
         $actions = array(
             GUI_EVENT_KEY_ENTER      => User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER),
             GUI_EVENT_KEY_PLAY       => User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER),
+            GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_CHANNELS_SETTINGS, TR::t('tv_screen_channels_setup')),
             GUI_EVENT_KEY_SETUP      => $action_settings,
-            GUI_EVENT_KEY_B_GREEN    => $action_settings,
-            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_CHANNELS_SETTINGS, TR::t('tv_screen_channels_setup')),
+            GUI_EVENT_KEY_D_BLUE     => $action_settings,
         );
 
-        if ($this->IsSetupNeeds($plugin_cookies) !== false) {
-            hd_print(__METHOD__ . ": Create setup action");
+        if ($this->IsSetupNeeds() !== false) {
+            hd_debug_print("Create setup action");
             $configure = User_Input_Handler_Registry::create_action($this, ACTION_NEED_CONFIGURE);
             $actions[GUI_EVENT_KEY_PLAY] = $configure;
             $actions[GUI_EVENT_KEY_ENTER] = $configure;
@@ -70,18 +43,17 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
     }
 
     /**
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return array|null
+     * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         switch ($user_input->control_id) {
             case ACTION_NEED_CONFIGURE:
-                if ($this->IsSetupNeeds($plugin_cookies)) {
-                    hd_print(__METHOD__ . ": Setup required!");
+                if ($this->IsSetupNeeds()) {
+                    hd_debug_print("Setup required!");
                     return Action_Factory::show_title_dialog(TR::t('err_no_account_data'),
                         Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), TR::t('entry_setup')));
                 }
@@ -107,7 +79,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
 
             case ACTION_BALANCE:
                 $defs = array();
-                $this->plugin->config->AddSubscriptionUI($defs, $plugin_cookies);
+                $this->plugin->config->AddSubscriptionUI($defs);
                 Control_Factory::add_close_dialog_button($defs, TR::t('ok'), 150);
                 return Action_Factory::show_dialog(TR::t('tv_screen_information'), $defs);
 
@@ -126,111 +98,126 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print(__METHOD__ . ": get_all_folder_items");
-        try {
-            $this->plugin->tv->ensure_channels_loaded($plugin_cookies);
-        } catch (Exception $e) {
-            hd_print(__METHOD__ . ": Channels not loaded");
+        hd_debug_print(null, true);
+        hd_debug_print($media_url, true);
+
+        if ($this->plugin->tv->load_channels() === 0) {
+            hd_debug_print("Channels not loaded");
         }
 
-        $items = array();
-
-        /** @var Default_Group $group */
-        foreach ($this->plugin->tv->get_groups() as $group) {
-
-            //hd_print("group: {$group->get_title()} , icon: {$group->get_icon_url()}");
-            $icons_param = array(
-                ViewItemParams::icon_path => $group->get_icon_url(),
-                ViewItemParams::item_detailed_icon_path => $group->get_icon_url()
-            );
-
-            if ($group->is_favorite_group()) {
-                $fav_item = array(
-                    PluginRegularFolderItem::media_url => Starnet_Tv_Favorites_Screen::get_media_url_str(),
-                    PluginRegularFolderItem::caption => Default_Dune_Plugin::FAV_CHANNEL_GROUP_CAPTION,
-                    PluginRegularFolderItem::view_item_params => $icons_param
-                );
-            } else if ($group->is_all_channels_group()) {
-                $all_item = array(
-                    PluginRegularFolderItem::media_url => Starnet_Tv_Channel_List_Screen::get_media_url_str(
-                        Default_Dune_Plugin::ALL_CHANNEL_GROUP_ID),
-                    PluginRegularFolderItem::caption => Default_Dune_Plugin::ALL_CHANNEL_GROUP_CAPTION,
-                    PluginRegularFolderItem::view_item_params => $icons_param
-                );
-            } else if ($group->is_history_group()) {
-                $hist_item = array(
-                    PluginRegularFolderItem::media_url => Starnet_TV_History_Screen::get_media_url_str(),
-                    PluginRegularFolderItem::caption => Default_Dune_Plugin::PLAYBACK_HISTORY_CAPTION,
-                    PluginRegularFolderItem::view_item_params => $icons_param
-                );
-            } else {
-                $items[] = array(
-                    PluginRegularFolderItem::media_url => Starnet_Tv_Channel_List_Screen::get_media_url_str($group->get_id()),
-                    PluginRegularFolderItem::caption => $group->get_title(),
-                    PluginRegularFolderItem::view_item_params => $icons_param
-                );
-            }
-        }
-
-        if ($this->plugin->tv->get_vod_group() !== null) {
+        $vod_group = $this->plugin->tv->get_special_group(VOD_GROUP_ID);
+        if ($vod_group !== null && !$vod_group->is_disabled()) {
             $vod_item = array(
                 PluginRegularFolderItem::media_url => MediaURL::encode(
                     array('screen_id' => Starnet_Vod_Category_List_Screen::ID, 'name' => 'VOD')
                 ),
-                PluginRegularFolderItem::caption => Default_Dune_Plugin::VOD_GROUP_CAPTION,
+                PluginRegularFolderItem::caption => TR::t(Default_Group::VOD_GROUP_CAPTION),
                 PluginRegularFolderItem::view_item_params => array(
-                    ViewItemParams::icon_path => $this->plugin->tv->get_vod_group()->get_icon_url(),
-                    ViewItemParams::item_detailed_icon_path => $this->plugin->tv->get_vod_group()->get_icon_url()
+                    ViewItemParams::icon_path => $vod_group->get_icon_url(),
+                    ViewItemParams::item_detailed_icon_path => $vod_group->get_icon_url()
                 )
             );
         }
 
-        $vod_last = !isset($plugin_cookies->vod_last) || $plugin_cookies->vod_last === 'yes';
-        if (isset($vod_item) && $vod_last === false) {
-            array_unshift($items, $vod_item);
+        $items = array();
+
+        /** @var Group $group */
+        foreach ($this->plugin->tv->get_special_groups() as $group) {
+            if ($group === null) continue;
+
+            hd_debug_print("group: {$group->get_title()} disabled: " . var_export($group->is_disabled(), true), true);
+            if ($group->is_disabled() || $group->get_id() === VOD_GROUP_ID) continue;
+
+            if ($group->get_id() === HISTORY_GROUP_ID) {
+                $item_detailed_info = TR::t('tv_screen_group_info__2', $group->get_title(), $this->plugin->get_playback_points()->size());
+            } else {
+                $item_detailed_info = TR::t('tv_screen_group_info__2', $group->get_title(), $group->get_group_channels()->size());
+            }
+
+            $items[] = array(
+                PluginRegularFolderItem::media_url => $group->get_media_url_str(),
+                PluginRegularFolderItem::caption => $group->get_title(),
+                PluginRegularFolderItem::view_item_params => array(
+                    ViewItemParams::icon_path => $group->get_icon_url(),
+                    ViewItemParams::item_detailed_icon_path => $group->get_icon_url(),
+                    ViewItemParams::item_detailed_info => $item_detailed_info,
+                )
+            );
         }
 
-        if (isset($all_item) && (!isset($plugin_cookies->show_all) || $plugin_cookies->show_all === 'yes')) {
-            array_unshift($items, $all_item);
-        }
-
-        if (isset($hist_item) && (!isset($plugin_cookies->show_history) || $plugin_cookies->show_history === 'yes')) {
-            array_unshift($items, $hist_item);
-        }
-
-        if (isset($fav_item) && (!isset($plugin_cookies->show_favorites) || $plugin_cookies->show_favorites === 'yes')) {
-            array_unshift($items, $fav_item);
-        }
-
-        if (isset($vod_item) && $vod_last !== false) {
+        $vod_last = $this->plugin->get_parameter(PARAM_VOD_LAST,'yes') === 'yes';
+        if (isset($vod_item) && !$vod_last) {
             $items[] = $vod_item;
         }
 
-        //hd_print("Loaded items " . count($items));
+        /** @var Default_Group $group */
+        foreach ($this->plugin->tv->get_groups() as $group) {
+            $items[] = array(
+                PluginRegularFolderItem::media_url => Starnet_Tv_Channel_List_Screen::get_media_url_string($group->get_id()),
+                PluginRegularFolderItem::caption => $group->get_title(),
+                PluginRegularFolderItem::view_item_params => array(
+                    ViewItemParams::icon_path => $group->get_icon_url(),
+                    ViewItemParams::item_detailed_icon_path => $group->get_icon_url(),
+                    ViewItemParams::item_detailed_info => TR::t('tv_screen_group_info__2', $group->get_title(), $group->get_group_channels()->size()),
+                )
+            );
+        }
+
+        if (isset($vod_item) && $vod_last) {
+            $items[] = $vod_item;
+        }
+
         return $items;
     }
 
     /**
-     * @param $plugin_cookies
+     * @inheritDoc
+     */
+    public function get_folder_views()
+    {
+        hd_debug_print(null, true);
+
+        return array(
+            $this->plugin->get_screen_view('icons_4x3_no_caption'),
+            $this->plugin->get_screen_view('icons_4x3_caption'),
+            $this->plugin->get_screen_view('icons_3x3_no_caption'),
+            $this->plugin->get_screen_view('icons_3x3_caption'),
+            $this->plugin->get_screen_view('icons_5x3_no_caption'),
+            $this->plugin->get_screen_view('icons_5x3_caption'),
+            $this->plugin->get_screen_view('icons_5x4_no_caption'),
+            $this->plugin->get_screen_view('icons_5x4_caption'),
+
+            $this->plugin->get_screen_view('list_1x11_info'),
+            $this->plugin->get_screen_view('list_2x11_small_info'),
+            $this->plugin->get_screen_view('list_3x11_no_info'),
+        );
+    }
+
+    /**
      * @return bool
      */
-    protected function IsSetupNeeds($plugin_cookies)
+    protected function IsSetupNeeds()
     {
         switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
             case Plugin_Constants::ACCOUNT_OTT_KEY:
-                $setup_needs = empty($plugin_cookies->ott_key) && empty($plugin_cookies->subdomain) && ($this->plugin->config->get_embedded_account() === null);
+                $ott_key = $this->plugin->get_parameter(Ext_Params::M_TOKEN);
+                $subdomain = $this->plugin->get_parameter(Ext_Params::M_SUBDOMAIN);
+                $setup_needs = empty($ott_key) && empty($subdomain) && ($this->plugin->config->get_embedded_account() === null);
                 break;
             case Plugin_Constants::ACCOUNT_LOGIN:
-                $setup_needs = empty($plugin_cookies->login) && empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
+                $login = $this->plugin->get_parameter(Ext_Params::M_LOGIN);
+                $password = $this->plugin->get_parameter(Ext_Params::M_PASSWORD);
+                $setup_needs = empty($login) && empty($password);
                 break;
             case Plugin_Constants::ACCOUNT_PIN:
-                $setup_needs = empty($plugin_cookies->password) && ($this->plugin->config->get_embedded_account() === null);
+                $password = $this->plugin->get_parameter(Ext_Params::M_PASSWORD);
+                $setup_needs = empty($password);
                 break;
             default:
-                hd_print(__METHOD__ . ": Access type not set");
-                $setup_needs = false;
+                hd_debug_print("Access type not set");
+                return false;
         }
 
-        return $setup_needs;
+        return $setup_needs && ($this->plugin->config->get_embedded_account() === null);
     }
 }

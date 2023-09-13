@@ -9,7 +9,7 @@ class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen 
      * @param $movie_id
      * @return false|string
      */
-    public static function get_media_url_str($movie_id)
+    public static function get_media_url_string($movie_id)
     {
         return MediaURL::encode(array('screen_id' => self::ID, 'movie_id' => $movie_id));
     }
@@ -17,33 +17,10 @@ class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen 
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin, $plugin->GET_VOD_SERIES_FOLDER_VIEW());
-
-        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            $plugin->create_screen($this);
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
-    }
-
-    /**
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return null
+     * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
         return null;
     }
     ///////////////////////////////////////////////////////////////////////
@@ -71,7 +48,8 @@ class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen 
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print("Vod_Seasons_List_Screen::get_all_folder_items: MediaUrl: " . $media_url->get_raw_string());
+        hd_debug_print(null, true);
+
         $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if (is_null($movie)) {
             return array();
@@ -80,7 +58,7 @@ class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen 
         $items = array();
 
         foreach ($movie->season_list as $season) {
-            hd_print(__METHOD__ . ": movie_id: $movie->id season_id: $season->id season_name: $season->name");
+            hd_debug_print("movie_id: $movie->id season_id: $season->id season_name: $season->name");
             $items[] = array
             (
                 PluginRegularFolderItem::media_url => MediaURL::encode(array
@@ -95,5 +73,18 @@ class Starnet_Vod_Seasons_List_Screen extends Abstract_Preloaded_Regular_Screen 
         }
 
         return $items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_folder_views()
+    {
+        hd_debug_print(null, true);
+
+        return array(
+            $this->plugin->get_screen_view('list_1x11_small_info'),
+            $this->plugin->get_screen_view('list_1x11_info'),
+        );
     }
 }

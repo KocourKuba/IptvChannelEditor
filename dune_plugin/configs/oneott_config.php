@@ -4,18 +4,15 @@ require_once 'lib/default_config.php';
 class oneott_config extends default_config
 {
     /**
-     * Get information from the account
-     * @param &$plugin_cookies
-     * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool | array[] | string[] information collected and status valid otherwise - false
+     * @inheritDoc
      */
-    public function GetAccountInfo(&$plugin_cookies, $force = false)
+    public function GetAccountInfo($force = false)
     {
-        hd_print(__METHOD__ . ": Collect information from account: $force");
+        hd_debug_print("Collect information from account: $force");
 
         // this account has special API to get account info
-        $login = $this->get_login($plugin_cookies);
-        $password = $this->get_password($plugin_cookies);
+        $login = $this->get_login();
+        $password = $this->get_password();
 
         try {
             if (empty($login) || empty($password)) {
@@ -30,11 +27,11 @@ class oneott_config extends default_config
                     throw new Exception("User token not loaded");
                 }
 
-                $plugin_cookies->token = $json['token'];
+                $this->parent->set_credentials(Ext_Params::M_TOKEN, $json['token']);
                 $this->account_data = $json;
             }
         } catch (Exception $ex) {
-            hd_print($ex->getMessage());
+            hd_debug_print($ex->getMessage());
             return false;
         }
 

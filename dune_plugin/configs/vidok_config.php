@@ -4,13 +4,12 @@ require_once 'lib/default_config.php';
 class vidok_config extends default_config
 {
     /**
-     * @param $plugin_cookies
-     * @return array
+     * @inheritDoc
      */
-    public function get_servers($plugin_cookies)
+    public function get_servers()
     {
-        $servers = parent::get_servers($plugin_cookies);
-        if (empty($servers) && $this->load_settings($plugin_cookies)) {
+        $servers = parent::get_servers();
+        if (empty($servers) && $this->load_settings()) {
             $servers = array();
             foreach ($this->account_data['settings']['lists']['servers'] as $item) {
                 $servers[$item['id']] = $item['name'];
@@ -21,38 +20,26 @@ class vidok_config extends default_config
     }
 
     /**
-     * @param $plugin_cookies
-     * @return mixed
+     * @inheritDoc
      */
-    public function get_server_id($plugin_cookies)
+    public function get_server_id()
     {
-        if ($this->load_settings($plugin_cookies)) {
+        if ($this->load_settings()) {
             $server = $this->account_data['settings']['current']['server']['id'];
         } else {
-            $server = parent::get_server_id($plugin_cookies);
+            $server = parent::get_server_id();
         }
 
         return $server;
     }
 
     /**
-     * @param $server
-     * @param $plugin_cookies
+     * @inheritDoc
      */
-    public function set_server_id($server, $plugin_cookies)
+    public function get_qualities()
     {
-        $this->save_settings($plugin_cookies, 'server');
-        parent::set_server_id($server, $plugin_cookies);
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_qualities($plugin_cookies)
-    {
-        $quality = parent::get_qualities($plugin_cookies);
-        if (empty($quality) && $this->load_settings($plugin_cookies)) {
+        $quality = parent::get_qualities();
+        if (empty($quality) && $this->load_settings()) {
             $quality = array();
             foreach ($this->account_data['settings']['lists']['quality'] as $item) {
                 $quality[$item['id']] = $item['name'];
@@ -63,34 +50,23 @@ class vidok_config extends default_config
     }
 
     /**
-     * @param $quality
-     * @param $plugin_cookies
-     */
-    public function set_quality_id($quality, $plugin_cookies)
-    {
-        $this->save_settings($plugin_cookies, 'quality');
-        parent::set_quality_id($quality, $plugin_cookies);
-    }
-
-    /**
-     * @param $plugin_cookies
      * return bool
      */
-    protected function load_settings(&$plugin_cookies)
+    protected function load_settings()
     {
         try {
-            if (!$this->ensure_token_loaded($plugin_cookies)) {
+            if (!$this->ensure_token_loaded()) {
                 throw new Exception("Token not loaded");
             }
 
             if (empty($this->account_data)) {
-                $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/settings?token=$plugin_cookies->token";
+                $token = $this->parent->get_credentials(Ext_Params::M_TOKEN);
+                $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/settings?token=$token";
                 // provider returns token used to download playlist
                 $this->account_data = HD::DownloadJson($url);
-                //hd_print(json_encode(self::$settings));
             }
         } catch (Exception $ex) {
-            hd_print($ex->getMessage());
+            hd_debug_print($ex->getMessage());
             return false;
         }
 
@@ -98,22 +74,20 @@ class vidok_config extends default_config
     }
 
     /**
-     * Get information from the account
-     * @param &$plugin_cookies
-     * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool | array[] | string[] information collected and status valid otherwise - false
+     * @inheritDoc
      */
-    public function GetAccountInfo(&$plugin_cookies, $force = false)
+    public function GetAccountInfo($force = false)
     {
-        hd_print(__METHOD__ . ": Collect information from account: $force");
+        hd_debug_print("Collect information from account: $force");
 
         try {
-            if (!$this->ensure_token_loaded($plugin_cookies)) {
+            if (!$this->ensure_token_loaded()) {
                 throw new Exception("User token not loaded");
             }
 
             if ($force !== false || empty($this->account_data)) {
-                $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$plugin_cookies->token";
+                $token = $this->parent->get_credentials(Ext_Params::M_TOKEN);
+                $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$token";
                 // provider returns token used to download playlist
                 $this->account_data = HD::DownloadJson($url);
                 if (!isset($this->account_data['account']['login'])) {
@@ -121,21 +95,20 @@ class vidok_config extends default_config
                 }
             }
         } catch (Exception $ex) {
-            hd_print($ex->getMessage());
+            hd_debug_print($ex->getMessage());
             return false;
         }
         return $this->account_data;
     }
 
     /**
-     * @param array &$defs
-     * @param $plugin_cookies
+     * @inheritDoc
      */
-    public function AddSubscriptionUI(&$defs, $plugin_cookies)
+    public function AddSubscriptionUI(&$defs)
     {
-        $account_data = $this->GetAccountInfo($plugin_cookies, true);
+        $account_data = $this->GetAccountInfo(true);
         if ($account_data === false) {
-            hd_print(__METHOD__ . ": Can't get account status");
+            hd_debug_print("Can't get account status");
             Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
             Control_Factory::add_label($defs, TR::t('description'), TR::t('warn_msg5'), 20);
             return;
@@ -157,27 +130,26 @@ class vidok_config extends default_config
     }
 
     /**
-     * @param $plugin_cookies
      * @param string $param
      * @return bool
      */
-    protected function save_settings(&$plugin_cookies, $param)
+    protected function save_settings($param)
     {
-        hd_print(__METHOD__ . ": $param to {$plugin_cookies->$param}");
-
         try {
-            if (!$this->ensure_token_loaded($plugin_cookies)) {
+            if (!$this->ensure_token_loaded()) {
                 throw new Exception("User token not loaded");
             }
 
-            $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/settings_set?$param={$plugin_cookies->$param}&token=$plugin_cookies->token";
+            $token = $this->parent->get_credentials(Ext_Params::M_TOKEN);
+            $param_set = $this->parent->get_parameter($param, '');
+            $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/settings_set?token=$token&$param=$param_set";
             $json = HD::DownloadJson($url);
             if (isset($json['error'])) {
                 throw new Exception($json['error']['msg']);
             }
             return true;
         } catch (Exception $ex) {
-            hd_print($ex->getMessage());
+            hd_debug_print($ex->getMessage());
         }
 
         return false;
@@ -186,22 +158,22 @@ class vidok_config extends default_config
     //////////////////////////////////////////////////////////////////////
 
     /**
-     * @param $plugin_cookies
      * @return bool
      */
-    protected function ensure_token_loaded(&$plugin_cookies)
+    protected function ensure_token_loaded()
     {
-        $login = $this->get_login($plugin_cookies);
-        $password = $this->get_password($plugin_cookies);
+        $login = $this->get_login();
+        $password = $this->get_password();
 
         if (empty($login) || empty($password)) {
-            hd_print(__METHOD__ . ": Login or password not set");
+            hd_debug_print("Login or password not set");
             return false;
         }
 
         $token = md5(strtolower($login) . md5($password));
-        if (!isset($plugin_cookies->token) || $plugin_cookies->token !== $token) {
-            $plugin_cookies->token = $token;
+        $old_token = $this->parent->get_credentials(Ext_Params::M_TOKEN);
+        if (!empty($old_token) || $old_token !== $token) {
+            $this->parent->set_credentials(Ext_Params::M_TOKEN, $token);
         }
 
         return true;

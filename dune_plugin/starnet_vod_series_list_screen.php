@@ -15,32 +15,12 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
      * @param null $series_id
      * @return false|string
      */
-    public static function get_media_url_str($movie_id, $series_id = null)
+    public static function get_media_url_string($movie_id, $series_id = null)
     {
         return MediaURL::encode(array('screen_id' => self::ID, 'movie_id' => $movie_id, 'series_id' => $series_id));
     }
 
     ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin, $plugin->GET_VOD_SERIES_FOLDER_VIEW());
-
-        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            $plugin->create_screen($this);
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
-    }
 
     /**
      * @param MediaURL $media_url
@@ -70,14 +50,10 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
         return $actions;
     }
 
-    /**
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return null
-     */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         switch ($user_input->control_id) {
             case ACTION_QUALITY:
@@ -112,7 +88,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
                 if (is_null($movie)) break;
 
-                $this->plugin->vod->ensure_history_loaded($plugin_cookies);
+                $this->plugin->vod->ensure_history_loaded();
                 $viewed_items = $this->plugin->vod->get_history_movies();
 
                 if ((isset($user_input->{ACTION_WATCHED}) && $user_input->{ACTION_WATCHED} !== false)
@@ -130,21 +106,19 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 }
 
                 $viewed_items[$media_url->movie_id][$user_input->sel_ndx] = $movie_info;
-                $this->plugin->vod->set_history_items($viewed_items, $plugin_cookies);
+                $this->plugin->vod->set_history_items($viewed_items);
 
-                if (isset($user_input->parent_media_url)) {
-                    //hd_print("Refresh folder");
-                    $parent_media_url = MediaURL::decode($user_input->parent_media_url);
-                    $sel_ndx = $user_input->sel_ndx;
-                    if ($sel_ndx < 0)
-                        $sel_ndx = 0;
-                    $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
-                } else {
-                    //hd_print("not set");
+                if (!isset($user_input->parent_media_url)) {
+                    hd_debug_print("not set");
                     break;
                 }
 
-                //hd_print("range: " . json_encode($range));
+                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                $sel_ndx = $user_input->sel_ndx;
+                if ($sel_ndx < 0)
+                    $sel_ndx = 0;
+                $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
+
                 return Action_Factory::update_regular_folder($range, true, $sel_ndx);
 
             case ACTION_EXTERNAL_PLAYER:
@@ -159,13 +133,13 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                         $param_pos = strpos($url, '|||dune_params');
                         $url =  $param_pos!== false ? substr($url, 0, $param_pos) : $url;
                         $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
-                        hd_print(__METHOD__ . ": play movie in the external player: $cmd");
+                        hd_debug_print("play movie in the external player: $cmd");
                         exec($cmd, $output);
-                        hd_print(__METHOD__ . ": external player exec result code" . HD::ArrayToStr($output));
+                        hd_debug_print("external player exec result code" . HD::ArrayToStr($output));
                         return $post_action;
                     }
                 } catch (Exception $e) {
-                    hd_print(__METHOD__ . ": Movie can't played, exception info: " . $e->getMessage());
+                    hd_debug_print("Movie can't played, exception info: " . $e->getMessage());
                 }
                 break;
 
@@ -174,7 +148,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 if (is_android() && !is_apk()) {
                     $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
                         ACTION_EXTERNAL_PLAYER,
-                        TR::t('vod_screen_external_player'),
+                        TR::t('tv_screen_external_player'),
                         'gui_skin://small_icons/playback.aai'
                     );
                 }
@@ -204,7 +178,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        //hd_print("Vod_Series_List_Screen::get_all_folder_items: MediaUrl: " . $media_url->get_raw_string());
+        hd_debug_print(null, true);
 
         $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
         if (is_null($movie)) {
@@ -213,16 +187,14 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         $items = array();
 
-        $this->plugin->vod->ensure_history_loaded($plugin_cookies);
+        $this->plugin->vod->ensure_history_loaded();
         $viewed_items = $this->plugin->vod->get_history_movies();
 
         $viewed_item = isset($viewed_items[$media_url->movie_id]) ? $viewed_items[$media_url->movie_id] : array();
         $counter = 0;
-        //hd_print("movie_id: $movie->id");
         foreach ($movie->series_list as $series) {
             if (isset($media_url->season_id) && $media_url->season_id !== $series->season_id) continue;
 
-            //hd_print("series_idx: $counter name: $series->name pb_url: $series->playback_url");
             if (isset($viewed_item[$counter])) {
                 $item_info = $viewed_item[$counter];
 
@@ -250,7 +222,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
             $this->variants = $series->variants;
             $items[] = array
             (
-                PluginRegularFolderItem::media_url => self::get_media_url_str($movie->id, $series->id),
+                PluginRegularFolderItem::media_url => self::get_media_url_string($movie->id, $series->id),
                 PluginRegularFolderItem::caption => $info,
                 PluginRegularFolderItem::view_item_params => array
                 (
@@ -264,5 +236,18 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
         }
 
         return $items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_folder_views()
+    {
+        hd_debug_print(null, true);
+
+        return array(
+            $this->plugin->get_screen_view('list_1x11_small_info'),
+            $this->plugin->get_screen_view('list_1x11_info'),
+        );
     }
 }

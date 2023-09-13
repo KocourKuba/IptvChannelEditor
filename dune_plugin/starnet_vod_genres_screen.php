@@ -5,26 +5,6 @@ class Starnet_Vod_Genres_Screen extends Abstract_Preloaded_Regular_Screen implem
 {
     const ID = 'vod_genres';
 
-    /**
-     * @return false|string
-     */
-    public static function get_media_url_str()
-    {
-        return MediaURL::encode(array('screen_id' => self::ID));
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_genres_folder_views());
-
-        $plugin->create_screen($this);
-    }
-
     ///////////////////////////////////////////////////////////////////////
 
     /**
@@ -38,21 +18,12 @@ class Starnet_Vod_Genres_Screen extends Abstract_Preloaded_Regular_Screen implem
     }
 
     /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
-    }
-
-    /**
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return array|null
+     * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         if ($user_input->control_id === 'select_genre') {
             if (!isset($user_input->selected_media_url)) {
@@ -79,7 +50,7 @@ class Starnet_Vod_Genres_Screen extends Abstract_Preloaded_Regular_Screen implem
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->plugin->vod->ensure_genres_loaded($plugin_cookies);
+        $this->plugin->vod->ensure_genres_loaded();
 
         $genre_ids = $this->plugin->vod->get_genre_ids();
 
@@ -102,5 +73,17 @@ class Starnet_Vod_Genres_Screen extends Abstract_Preloaded_Regular_Screen implem
         }
 
         return $items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_folder_views()
+    {
+        hd_debug_print(null, true);
+
+        return array(
+            $this->plugin->get_screen_view('list_1x11_info'),
+        );
     }
 }

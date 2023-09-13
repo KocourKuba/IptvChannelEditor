@@ -932,11 +932,24 @@ bool PackPlugin(const PluginType plugin_type,
 			if (entry.name.empty()) continue;
 
 			auto action_entry = doc->allocate_node(rapidxml::node_type::node_element, entry.id.c_str());
-			action_entry->append_node(rapidxml::alloc_node(*doc, "type", "plugin_system"));
+			if (entry.name[0] == '#')
+			{
+				const auto& param = entry.name.substr(1);
+				action_entry->append_node(rapidxml::alloc_node(*doc, "type", "plugin_handle_user_input"));
+				auto node_data = doc->allocate_node(rapidxml::node_type::node_element, "params");
+				node_data->append_node(rapidxml::alloc_node(*doc, "handler_id", "entry_handler"));
+				node_data->append_node(rapidxml::alloc_node(*doc, "control_id", "plugin_entry"));
+				node_data->append_node(rapidxml::alloc_node(*doc, "action_id", param.c_str()));
+				action_entry->append_node(node_data);
+			}
+			else
+			{
+				action_entry->append_node(rapidxml::alloc_node(*doc, "type", "plugin_system"));
 
-			auto node_data = doc->allocate_node(rapidxml::node_type::node_element, "data");
-			node_data->append_node(rapidxml::alloc_node(*doc, "run_string", entry.name.c_str()));
-			action_entry->append_node(node_data);
+				auto node_data = doc->allocate_node(rapidxml::node_type::node_element, "data");
+				node_data->append_node(rapidxml::alloc_node(*doc, "run_string", entry.name.c_str()));
+				action_entry->append_node(node_data);
+			}
 
 			actions_node->append_node(action_entry);
 		}

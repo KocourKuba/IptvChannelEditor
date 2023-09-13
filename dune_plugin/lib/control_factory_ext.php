@@ -1,14 +1,29 @@
 <?php
 
-###############################################################################
-#
-# Controls Factory Extended
-#
-# Author: Brigadir (forum.mydune.ru)
-# Date: 04-11-2018
-# Latest update: 30-01-2021
-#
-###############################################################################
+/**
+ * The MIT License (MIT)
+ *
+ * @Author: sharky72 (https://github.com/KocourKuba)
+ * Original code: Brigadir (forum.mydune.ru)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
 require_once 'dune_stb_api.php';
 require_once 'control_factory.php';
@@ -132,7 +147,7 @@ class Control_Factory_Ext extends Control_Factory
                 }
             } else {
                 unset($indexed_colors_map[$idx]);
-                hd_print(__METHOD__ . ": Warning in " . get_class(self::$instance) . "! Wrong colors map value $argb_color, color index $idx is skipped.");
+                hd_debug_print("Warning in " . get_class(self::$instance) . "! Wrong colors map value $argb_color, color index $idx is skipped.");
             }
         }
     }
@@ -177,24 +192,24 @@ class Control_Factory_Ext extends Control_Factory
             }
 
             if (empty($path)) {
-                self::add_smart_label($defs, null, '<gap width=20/><icon>' . PLUGIN_IMG_PATH . '/drive.png</icon><text size=small> ' . $dir . '</text>');
+                self::add_smart_label($defs, null, '<gap width=20/><icon>' . get_image_path('drive.png') . '</icon><text size=small> ' . $dir . '</text>');
             } else {
                 if ((($c - $i + (int)!empty($n)) > $max_visible_lines)) {
                     if (empty($n)) {
-                        self::add_smart_label($defs, null, '<gap width=50/><icon>' . PLUGIN_IMG_PATH . '/pass.png</icon><text size=small> </text>');
+                        self::add_smart_label($defs, null, '<gap width=50/><icon>' . get_image_path('pass.png') . '</icon><text size=small> </text>');
                         self::add_vgap($defs, -34);
                     }
 
                     $n++;
-                    $path .= '/' . $dir;
+                    $path .= DIRECTORY_SEPARATOR . $dir;
                     continue;
                 }
 
-                self::add_smart_label($defs, null, '<gap width=' . (20 + 35 * ($i - $n)) . '/><icon>' . PLUGIN_IMG_PATH . (($i < $c - 1) ? '/folder.png' : '/file.png') . '</icon><text size=small>' . $dir . '</text>');
+                self::add_smart_label($defs, null, '<gap width=' . (20 + 35 * ($i - $n)) . '/><icon>' . get_image_path((($i < $c - 1) ? 'folder.png' : 'file.png')) . '</icon><text size=small>' . $dir . '</text>');
             }
 
             self::add_vgap($defs, -34);
-            $path .= '/' . $dir;
+            $path .= DIRECTORY_SEPARATOR . $dir;
         }
 
         self::add_vgap($defs, 150);

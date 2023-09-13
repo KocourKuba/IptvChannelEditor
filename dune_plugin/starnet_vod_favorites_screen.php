@@ -1,33 +1,10 @@
 <?php
 
 require_once 'lib/abstract_preloaded_regular_screen.php';
-require_once 'lib/vod/vod.php';
 
 class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'vod_favorites';
-
-    /**
-     * @return false|string
-     */
-    public static function get_media_url_str()
-    {
-        return MediaURL::encode(array('screen_id' => self::ID));
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin, $plugin->vod->get_vod_list_folder_views());
-
-        if ($plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
-            $plugin->create_screen($this);
-        }
-    }
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -63,21 +40,12 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
     }
 
     /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
-    }
-
-    /**
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return array|null
+     * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         if (!isset($user_input->selected_media_url)) {
             return null;
@@ -97,7 +65,7 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
                 $inc = 0;
                 break;
             case ACTION_ITEMS_CLEAR:
-                $fav_op_type = ACTION_CLEAR_FAVORITES;
+                $fav_op_type = ACTION_ITEMS_CLEAR;
                 $inc = 0;
                 break;
             default:
@@ -106,24 +74,10 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
 
         $movie_id = MediaURL::decode($user_input->selected_media_url)->movie_id;
         $this->plugin->vod->change_vod_favorites($fav_op_type, $movie_id, $plugin_cookies);
-        return $this->get_update_action($inc, $user_input, $plugin_cookies);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param int $sel_increment
-     * @param $user_input
-     * @param &$plugin_cookies
-     * @return array
-     */
-    private function get_update_action($sel_increment, $user_input, &$plugin_cookies)
-    {
-        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
 
         $num_favorites = count($this->plugin->vod->get_favorite_movie_ids());
 
-        $sel_ndx = $user_input->sel_ndx + $sel_increment;
+        $sel_ndx = $user_input->sel_ndx + $inc;
         if ($sel_ndx < 0) {
             $sel_ndx = 0;
         }
@@ -131,9 +85,12 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
             $sel_ndx = $num_favorites - 1;
         }
 
-        $range = HD::create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
+        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+        $range = $this->create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
         return Action_Factory::update_regular_folder($range, true, $sel_ndx);
     }
+
+    ///////////////////////////////////////////////////////////////////////
 
     /**
      * @param MediaURL $media_url
@@ -160,7 +117,7 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
 
             $items[] = array
             (
-                PluginRegularFolderItem::media_url => Starnet_Vod_Movie_Screen::get_media_url_str($movie_id),
+                PluginRegularFolderItem::media_url => Starnet_Vod_Movie_Screen::get_media_url_string($movie_id),
                 PluginRegularFolderItem::caption => $caption,
                 PluginRegularFolderItem::view_item_params => array
                 (
@@ -170,5 +127,18 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
         }
 
         return $items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_folder_views()
+    {
+        hd_debug_print(null, true);
+
+        return array(
+            $this->plugin->get_screen_view('icons_5x2_movie_no_caption'),
+            $this->plugin->get_screen_view('list_1x12_vod_info_normal'),
+        );
     }
 }

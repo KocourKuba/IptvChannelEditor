@@ -12,46 +12,44 @@ class sharaclub_config extends default_config
 
     /**
      * @param $command
-     * @param $plugin_cookies
      * @return string
      */
-    private function replace_api_command($command, $plugin_cookies)
+    private function replace_api_command($command)
     {
         return str_replace(
             array(Plugin_Macros::API_URL, Plugin_Macros::LOGIN, Plugin_Macros::PASSWORD, Plugin_Macros::COMMAND),
             array($this->get_feature(Plugin_Constants::PROVIDER_API_URL),
-                $this->get_login($plugin_cookies),
-                $this->get_password($plugin_cookies),
+                $this->get_login(),
+                $this->get_password(),
                 $command),
             Plugin_Macros::API_URL . "/api/players.php?a=" . Plugin_Macros::COMMAND .
             "&u=" . Plugin_Macros::LOGIN. "-" . Plugin_Macros::PASSWORD . "&source=dune_editor");
     }
 
     /**
-     * @param $plugin_cookies
      * @return string[]
      */
-    public function get_servers($plugin_cookies)
+    public function get_servers()
     {
-        $servers = parent::get_servers($plugin_cookies);
+        $servers = parent::get_servers();
         if (empty($servers)) {
             $servers = array();
             try {
-                $url = $this->replace_api_command('ch_cdn', $plugin_cookies);
+                $url = $this->replace_api_command('ch_cdn');
                 $content = HD::DownloadJson($url);
 
                 if ($content !== false && $content['status'] === '1') {
                     foreach ($content['allow_nums'] as $server) {
                         $servers[$server['id']] = $server['name'];
                     }
-                    $plugin_cookies->server = $content['current'];
-                    hd_print(__METHOD__ . ": Current server: $plugin_cookies->server");
+                    $this->parent->set_parameter(Ext_Params::M_SERVER_ID, $content['current']);
+                    hd_debug_print("Current server: {$content['current']}");
                     $this->set_servers($servers);
                 } else {
-                    hd_print(__METHOD__ . ": Unable to download servers information");
+                    hd_debug_print("Unable to download servers information");
                 }
             } catch (Exception $ex) {
-                hd_print(__METHOD__ . ": Error during downloading servers information");
+                hd_debug_print("Error during downloading servers information");
             }
         }
 
@@ -60,48 +58,50 @@ class sharaclub_config extends default_config
 
     /**
      * @param $server
-     * @param $plugin_cookies
      */
-    public function set_server_id($server, $plugin_cookies)
+    public function set_server_id($server)
     {
         try {
-            $url = $this->replace_api_command('ch_cdn', $plugin_cookies) . "&num=$server";
-            hd_print(__METHOD__ . ": change server to: $server");
+            $url = $this->replace_api_command('ch_cdn') . "&num=$server";
+            hd_debug_print("change server to: $server", true);
             $content = HD::DownloadJson($url);
             if ($content !== false) {
-                hd_print(__METHOD__ . ": changing result: {$content['msg']}");
+                hd_debug_print("changing result: {$content['msg']}");
                 if ($content['status'] === '1') {
-                    parent::set_server_id($server, $plugin_cookies);
+                    parent::set_server_id($server);
                 }
             } else {
-                hd_print(__METHOD__ . ": Unable to change server");
+                hd_debug_print("Unable to change server");
             }
         } catch (Exception $ex) {
-            hd_print(__METHOD__ . ": Failed to change server");
+            hd_debug_print("Failed to change server");
         }
     }
 
-    public function get_profiles($plugin_cookies)
+    /**
+     * @inheritDoc
+     */
+    public function get_profiles()
     {
-        $profiles = parent::get_profiles($plugin_cookies);
+        $profiles = parent::get_profiles();
         if (empty($profiles)) {
             $profiles = array("0" => TR::t('by_default'));
             try {
-                $url = $this->replace_api_command('list_profiles', $plugin_cookies);
+                $url = $this->replace_api_command('list_profiles');
                 $content = HD::DownloadJson($url);
 
                 if ($content !== false && isset($content['profiles'])) {
                     foreach ($content['profiles'] as $profile) {
                         $profiles[$profile['id']] = $profile['name'];
                     }
-                    $plugin_cookies->profile = isset($content['current']) ? $content['current'] : "0";
-                    hd_print(__METHOD__ . ": Current profile: {$profiles[$plugin_cookies->profile]} ($plugin_cookies->profile)");
+                    $profile = isset($content['current']) ? $content['current'] : "0";
+                    $this->parent->set_parameter(Ext_Params::M_PROFILE_ID, $profile);
                     $this->set_profiles($profiles);
                 } else {
-                    hd_print(__METHOD__ . ": Unable to download profiles information");
+                    hd_debug_print("Unable to download profiles information");
                 }
             } catch (Exception $ex) {
-                hd_print(__METHOD__ . ": Error during downloading profiles information");
+                hd_debug_print("Error during downloading profiles information");
             }
         }
 
@@ -109,55 +109,50 @@ class sharaclub_config extends default_config
     }
 
     /**
-     * @param $profile
-     * @param $plugin_cookies
+     * @inheritDoc
      */
-    public function set_profile_id($profile, $plugin_cookies)
+    public function set_profile_id($profile_id)
     {
         try {
-            $url = $this->replace_api_command('list_profiles', $plugin_cookies) . "&num=$profile";
-            hd_print(__METHOD__ . ": change profile to: $profile");
+            $url = $this->replace_api_command('list_profiles') . "&num=$profile_id";
+            hd_debug_print("change profile to: $profile_id");
             $content = HD::DownloadJson($url);
             if ($content !== false) {
-                hd_print(__METHOD__ . ": changing result: {$content['msg']}");
+                hd_debug_print("changing result: {$content['msg']}");
                 if ($content['status'] === '1') {
-                    parent::set_profile_id($profile, $plugin_cookies);
+                    parent::set_profile_id($profile_id);
                 }
             } else {
-                hd_print(__METHOD__ . ": Unable to change profile");
+                hd_debug_print("Unable to change profile");
             }
         } catch (Exception $ex) {
-            hd_print(__METHOD__ . ": Failed to change profile");
+            hd_debug_print("Failed to change profile");
         }
     }
 
     /**
-     * @param $plugin_cookies
-     * @return string
+     * @inheritDoc
      */
-    protected function GetPlaylistUrl($plugin_cookies)
+    protected function GetPlaylistUrl()
     {
-        $url = parent::GetPlaylistUrl($plugin_cookies);
+        $url = parent::GetPlaylistUrl();
 
-        $id = $this->get_profile_id($plugin_cookies);
+        $id = $this->get_profile_id();
         $url .= (empty($id) ? "" : "/" . $id);
 
         return $url;
     }
 
     /**
-     * Get information from the account
-     * @param &$plugin_cookies
-     * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool | array[] | string[] information collected and status valid otherwise - false
+     * @inheritDoc
      */
-    public function GetAccountInfo(&$plugin_cookies, $force = false)
+    public function GetAccountInfo($force = false)
     {
-        hd_print(__METHOD__ . ": Collect information from account: $force");
+        hd_debug_print("Collect information from account: $force");
 
         // this account has special API to get account info
-        $login = $this->get_login($plugin_cookies);
-        $password = $this->get_password($plugin_cookies);
+        $login = $this->get_login();
+        $password = $this->get_password();
 
         try {
             if (empty($login) || empty($password)) {
@@ -165,15 +160,15 @@ class sharaclub_config extends default_config
             }
 
             if ($force !== false || empty($this->account_data)) {
-                hd_print(__METHOD__ . ": Load player configuration");
+                hd_debug_print("Load player configuration");
                 $api = HD::DownloadJson(base64_decode("aHR0cDovL2NvbmYucGxheXR2LnByby9hcGkvY29uOGZpZy5waHA/c291cmNlPWR1bmVfZWRpdG9y"), false);
                 if ($api === false) {
-                    hd_print(__METHOD__ . ": Unable to load player configuration");
+                    hd_debug_print("Unable to load player configuration");
                 } else {
                     $this->set_feature(Plugin_Constants::PROVIDER_API_URL, "http://$api->listdomain");
                     $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_DOMAIN, "http://$api->jsonEpgDomain");
 
-                    $url = $this->replace_api_command('subscr_info', $plugin_cookies);
+                    $url = $this->replace_api_command('subscr_info');
                     $json = HD::DownloadJson($url);
                     if ($json === false || !isset($json['status']) || $json['status'] !== '1') {
                         throw new Exception("Account status unknown");
@@ -182,7 +177,7 @@ class sharaclub_config extends default_config
                 }
             }
         } catch (Exception $ex) {
-            hd_print(__METHOD__ . ": " . $ex->getMessage());
+            hd_debug_print($ex->getMessage());
             return false;
         }
 
@@ -191,13 +186,12 @@ class sharaclub_config extends default_config
 
     /**
      * @param array &$defs
-     * @param $plugin_cookies
      */
-    public function AddSubscriptionUI(&$defs, $plugin_cookies)
+    public function AddSubscriptionUI(&$defs)
     {
-        $account_data = $this->GetAccountInfo($plugin_cookies, true);
+        $account_data = $this->GetAccountInfo( true);
         if ($account_data === false) {
-            hd_print(__METHOD__ . ": Can't get account status");
+            hd_debug_print("Can't get account status");
             Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
             Control_Factory::add_label($defs, TR::t('description'), TR::t('warn_msg5'), -10);
             return;
@@ -223,18 +217,17 @@ class sharaclub_config extends default_config
 
     /**
      * @param string $movie_id
-     * @param $plugin_cookies
      * @return Movie
      * @throws Exception
      */
-    public function TryLoadMovie($movie_id, $plugin_cookies)
+    public function TryLoadMovie($movie_id)
     {
-        hd_print(__METHOD__ . ": $movie_id");
+        hd_debug_print($movie_id);
         $movie = new Movie($movie_id, $this->parent);
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
 
         if ($jsonItems === false) {
-            hd_print(__METHOD__ . ": failed to load movie: $movie_id");
+            hd_debug_print("failed to load movie: $movie_id");
             return $movie;
         }
 
@@ -283,12 +276,12 @@ class sharaclub_config extends default_config
                     $movie->add_season_data($season->season,
                         !empty($season->info->name) ? $season->info->name : TR::t('vod_screen_season__1', $season->season), '');
                     foreach ($season->episodes as $episode) {
-                        hd_print(__METHOD__ . ": movie playback_url: $episode->video");
+                        hd_debug_print("movie playback_url: $episode->video");
                         $movie->add_series_data($episode->id, TR::t('vod_screen_series__1', $episode->episode), '', $episode->video, $season->season);
                     }
                 }
             } else {
-                hd_print(__METHOD__ . ": movie playback_url: $item->video");
+                hd_debug_print("movie playback_url: $item->video");
                 $movie->add_series_data($movie_id, $item->name, '', $item->video);
             }
 
@@ -299,13 +292,12 @@ class sharaclub_config extends default_config
     }
 
     /**
-     * @param $plugin_cookies
      * @param array &$category_list
      * @param array &$category_index
      */
-    public function fetchVodCategories($plugin_cookies, &$category_list, &$category_index)
+    public function fetchVodCategories(&$category_list, &$category_index)
     {
-        $jsonItems = HD::DownloadJson($this->GetVodListUrl($plugin_cookies), false);
+        $jsonItems = HD::DownloadJson($this->GetVodListUrl(), false);
         if ($jsonItems === false) {
             return;
         }
@@ -361,24 +353,23 @@ class sharaclub_config extends default_config
 
         $this->set_filters($filters);
 
-        hd_print(__METHOD__ . ": Categories read: " . count($category_list));
+        hd_debug_print("Categories read: " . count($category_list));
     }
 
     ///////////////////////////////////////////////////////////////////////
 
     /**
      * @param string $keyword
-     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function getSearchList($keyword, $plugin_cookies)
+    public function getSearchList($keyword)
     {
-        hd_print(__METHOD__ . ": $keyword");
+        hd_debug_print($keyword);
         $movies = array();
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
         if ($jsonItems === false) {
-            hd_print(__METHOD__ . ": failed to load movies");
+            hd_debug_print("failed to load movies");
             return $movies;
         }
 
@@ -390,23 +381,22 @@ class sharaclub_config extends default_config
             }
         }
 
-        hd_print(__METHOD__ . ": Movies found: " . count($movies));
+        hd_debug_print("Movies found: " . count($movies));
         return $movies;
     }
 
     /**
      * @param string $query_id
-     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function getMovieList($query_id, $plugin_cookies)
+    public function getMovieList($query_id)
     {
         $movies = array();
 
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
         if ($jsonItems === false) {
-            hd_print(__METHOD__ . ": failed to load movies");
+            hd_debug_print("failed to load movies");
             return $movies;
         }
 
@@ -433,24 +423,23 @@ class sharaclub_config extends default_config
         }
         $this->get_next_page($query_id, $pos - $current_offset);
 
-        hd_print(__METHOD__ . ": Movies read for query: $query_id - " . count($movies));
+        hd_debug_print("Movies read for query: $query_id - " . count($movies));
         return $movies;
     }
 
     /**
      * @param string $params
-     * @param $plugin_cookies
      * @return array
      * @throws Exception
      */
-    public function getFilterList($params, $plugin_cookies)
+    public function getFilterList($params)
     {
-        hd_print(__METHOD__ . ": $params");
+        hd_debug_print($params);
         $movies = array();
 
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
         if ($jsonItems === false) {
-            hd_print(__METHOD__ . ": failed to load movies");
+            hd_debug_print("failed to load movies");
             return $movies;
         }
 
@@ -458,13 +447,13 @@ class sharaclub_config extends default_config
         $post_params = array();
         foreach ($pairs as $pair) {
             if (preg_match("/^(.+):(.+)$/", $pair, $m)) {
-                hd_print(__METHOD__ . ": Filter: $m[1] Value: $m[2]");
+                hd_debug_print("Filter: $m[1] Value: $m[2]");
                 $filter = $this->get_filter($m[1]);
                 if ($filter !== null && !empty($filter['values'])) {
                     $item_idx = array_search($m[2], $filter['values']);
                     if ($item_idx !== false && $item_idx !== -1) {
                         $post_params[$m[1]] = $item_idx;
-                        hd_print(__METHOD__ . ": Param: $item_idx");
+                        hd_debug_print("Param: $item_idx");
                     }
                 }
             }
@@ -495,7 +484,7 @@ class sharaclub_config extends default_config
             }
         }
 
-        hd_print(__METHOD__ . ": Movies found: " . count($movies));
+        hd_debug_print("Movies found: " . count($movies));
         return $movies;
     }
 
@@ -530,19 +519,19 @@ class sharaclub_config extends default_config
     public function AddFilterUI(&$defs, $parent, $initial = -1)
     {
         $filters = array("genre", "from", "to");
-        hd_print(__METHOD__ . ": $initial");
+        hd_debug_print($initial);
         $added = false;
         Control_Factory::add_vgap($defs, 20);
         foreach ($filters as $name) {
             $filter = $this->get_filter($name);
             if ($filter === null) {
-                hd_print(__METHOD__ . ": no filters with '$name'");
+                hd_debug_print("no filters with '$name'");
                 continue;
             }
 
             $values = $filter['values'];
             if (empty($values)) {
-                hd_print(__METHOD__ . ": no filters values for '$name'");
+                hd_debug_print("no filters values for '$name'");
                 continue;
             }
 

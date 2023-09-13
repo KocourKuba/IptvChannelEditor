@@ -11,7 +11,7 @@ require_once 'starnet_channels_setup_screen.php';
 require_once 'starnet_interface_setup_screen.php';
 require_once 'starnet_epg_setup_screen.php';
 require_once 'starnet_streaming_setup_screen.php';
-require_once 'starnet_history_setup_screen.php';
+require_once 'starnet_ext_setup_screen.php';
 require_once 'starnet_folder_screen.php';
 require_once 'starnet_tv.php';
 require_once 'starnet_tv_channel_list_screen.php';
@@ -45,33 +45,37 @@ class Starnet_Plugin extends Default_Dune_Plugin
         $this->tv = new Starnet_Tv($this);
         $this->vod = new Starnet_Vod($this);
 
-        $this->tv_groups_screen = new Starnet_Tv_Groups_Screen($this);
-        $this->tv_channels_screen = new Starnet_Tv_Channel_List_Screen($this);
-        $this->tv_favorites_screen = new Starnet_Tv_Favorites_Screen($this);
-        $this->tv_history_screen = new Starnet_TV_History_Screen($this);
+        $this->create_screen(new Starnet_Tv_Groups_Screen($this));
+        $this->create_screen(new Starnet_Tv_Channel_List_Screen($this));
+        $this->create_screen(new Starnet_Tv_Favorites_Screen($this));
+        $this->create_screen(new Starnet_TV_History_Screen($this));
 
-        $this->main_setup_screen = new Starnet_Setup_Screen($this);
-        $this->channels_setup_screen = new Starnet_Channels_Setup_Screen($this);
-        $this->interface_setup_screen = new Starnet_Interface_Setup_Screen($this);
-        $this->epg_setup_screen = new Starnet_Epg_Setup_Screen($this);
-        $this->stream_setup_screen = new Starnet_Streaming_Setup_Screen($this);
-        $this->history_setup_screen = new Starnet_History_Setup_Screen($this);
+        $this->create_screen(new Starnet_Setup_Screen($this));
+        $this->create_screen(new Starnet_Channels_Setup_Screen($this));
+        $this->create_screen(new Starnet_Interface_Setup_Screen($this));
+        $this->create_screen(new Starnet_Epg_Setup_Screen($this));
+        $this->create_screen(new Starnet_Streaming_Setup_Screen($this));
+        $this->create_screen(new Starnet_Ext_Setup_Screen($this));
 
-        $this->folder_screen = new Starnet_Folder_Screen($this);
+        $this->create_screen(new Starnet_Folder_Screen($this));
 
-        $this->vod_favorites_screen = new Starnet_Vod_Favorites_Screen($this);
-        $this->vod_category_list_Screen = new Starnet_Vod_Category_List_Screen($this);
-        $this->vod_list_screen = new Starnet_Vod_List_Screen($this);
-        $this->vod_movie_screen = new Starnet_Vod_Movie_Screen($this);
-        $this->vod_season_List_Screen = new Starnet_Vod_Seasons_List_Screen($this);
-        $this->vod_series_list_screen = new Starnet_Vod_Series_List_Screen($this);
-        $this->vod_search_screen = new Starnet_Vod_Search_Screen($this);
-        $this->vod_filter_screen = new Starnet_Vod_Filter_Screen($this);
-        $this->vod_history_screen = new Starnet_Vod_History_Screen($this);
+        if ($this->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
+            $this->create_screen(new Starnet_Vod_Favorites_Screen($this));
+            $this->create_screen(new Starnet_Vod_History_Screen($this));
+            $this->create_screen(new Starnet_Vod_Category_List_Screen($this));
+            $this->create_screen(new Starnet_Vod_List_Screen($this));
+            $this->create_screen(new Starnet_Vod_Movie_Screen($this));
+            $this->create_screen(new Starnet_Vod_Seasons_List_Screen($this));
+            $this->create_screen(new Starnet_Vod_Series_List_Screen($this));
+            $this->create_screen(new Starnet_Vod_Search_Screen($this));
+        }
 
-        Playback_Points::init();
+        if ($this->config->get_feature(Plugin_Constants::VOD_FILTER_SUPPORTED)) {
+            $this->create_screen(new Starnet_Vod_Filter_Screen($this));
+        }
+
         Starnet_Epfs_Handler::init($this);
 
-        hd_print(__METHOD__ . ": Init done.");
+        hd_debug_print("Plugin loading complete.");
     }
 }

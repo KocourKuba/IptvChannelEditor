@@ -9,55 +9,25 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
     const ID = 'channels_setup';
 
     const SETUP_ACTION_CHANGE_CH_LIST_PATH = 'change_list_path';
-    const SETUP_ACTION_CHANGE_CH_LIST = 'change_channels_list';
     const SETUP_ACTION_CHANNELS_URL_PATH = 'channels_url_path';
-    const SETUP_ACTION_CHANNELS_SOURCE = 'channels_source';
     const SETUP_ACTION_CHANNELS_URL_DLG = 'channels_url_dialog';
     const SETUP_ACTION_CHANNELS_URL_APPLY = 'channels_url_apply';
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @return false|string
-     */
-    public static function get_media_url_str()
-    {
-        return MediaURL::encode(array('screen_id' => self::ID));
-    }
-
-    /**
-     * @param Default_Dune_Plugin $plugin
-     */
-    public function __construct(Default_Dune_Plugin $plugin)
-    {
-        parent::__construct(self::ID, $plugin);
-
-        $plugin->create_screen($this);
-    }
-
-    /**
-     * @return string
-     */
-    public function get_handler_id()
-    {
-        return self::ID . '_handler';
-    }
+    const CONTROL_CHANNELS_FOLDER = 'channels_folder';
 
     ///////////////////////////////////////////////////////////////////////
 
     /**
      * defs for all controls on screen
-     * @param $plugin_cookies
      * @return array
      */
-    public function do_get_control_defs(&$plugin_cookies)
+    public function do_get_control_defs()
     {
-        hd_print(__METHOD__);
+        hd_debug_print(null, true);
         $defs = array();
 
-        $folder_icon = $this->plugin->get_image_path('folder.png');
-        $web_icon = $this->plugin->get_image_path('web.png');
-        $link_icon = $this->plugin->get_image_path('link.png');
-        $refresh_icon = $this->plugin->get_image_path('refresh.png');
+        $folder_icon = get_image_path('folder.png');
+        $web_icon = get_image_path('web.png');
+        $link_icon = get_image_path('link.png');
 
         //////////////////////////////////////
         // Plugin name
@@ -68,19 +38,20 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         $source_ops[1] = TR::t('setup_channels_src_folder');
         $source_ops[2] = TR::t('setup_channels_src_internet');
         $source_ops[3] = TR::t('setup_channels_src_direct');
-        $channels_source = isset($plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE}) ? (int)$plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE} : 1;
-
-        Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANNELS_SOURCE,
+        $channels_source = $this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1);
+        Control_Factory::add_combobox($defs, $this, null, PARAM_CHANNELS_SOURCE,
             TR::t('setup_channels_src_combo'), $channels_source, $source_ops, self::CONTROLS_WIDTH, true);
 
         switch ($channels_source)
         {
             case 1: // channels path
-                $display_path = smb_tree::get_folder_info($plugin_cookies, PARAM_CH_LIST_PATH, get_install_path());
+                $channels_list = smb_tree::get_folder_info($this->plugin->get_parameter(PARAM_CHANNELS_LIST_PATH, get_install_path()));
 
                 $max_size = is_apk() ? 45 : 36;
-                if (strlen($display_path) > $max_size) {
-                    $display_path = "..." . substr($display_path, strlen($display_path) - $max_size);
+                if (strlen($channels_list) > $max_size) {
+                    $display_path = "..." . substr($channels_list, strlen($channels_list) - $max_size);
+                } else {
+                    $display_path = $channels_list;
                 }
 
                 if (is_apk()) {
@@ -102,18 +73,18 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
         //////////////////////////////////////
         // channels lists
-        $all_channels = $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
+        $all_channels = $this->plugin->config->get_channel_list($channels_list);
         if (empty($all_channels)) {
             Control_Factory::add_label($defs, TR::t('setup_channels_src_used_label'), TR::t('setup_channels_src_no_channels'));
         } else {
-            Control_Factory::add_combobox($defs, $this, null, self::SETUP_ACTION_CHANGE_CH_LIST,
+            Control_Factory::add_combobox($defs, $this, null, PARAM_CHANNELS_LIST_NAME,
                 TR::t('setup_channels_src_used_label'), $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
         }
 
         //////////////////////////////////////
         // playlist source
-        $all_tv_lists = $this->plugin->config->get_tv_list_names($plugin_cookies, $play_list_idx);
-        hd_print(__METHOD__ . ": current playlist index: $play_list_idx");
+        $all_tv_lists = $this->plugin->config->get_tv_list_names($play_list_idx);
+        hd_debug_print("current playlist index: $play_list_idx");
 
         if (count($all_tv_lists) > 1) {
             Control_Factory::add_combobox($defs, $this, null, ACTION_CHANGE_PLAYLIST,
@@ -133,21 +104,19 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
      */
     public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
     {
-        return $this->do_get_control_defs($plugin_cookies);
+        return $this->do_get_control_defs();
     }
 
     /**
      * channels list url dialog defs
-     * @param $plugin_cookies
      * @return array
      */
-    public function do_get_channels_url_control_defs(&$plugin_cookies)
+    public function do_get_channels_url_control_defs()
     {
-        hd_print(__METHOD__);
         $defs = array();
 
-        $this->plugin->config->get_channel_list($plugin_cookies, $channels_list);
-        $source = isset($plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE}) ? $plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE} : 1;
+        $this->plugin->config->get_channel_list($channels_list);
+        $source = $this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1);
         $url_path = '';
         switch ($source) {
             case 2:
@@ -177,111 +146,100 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
     }
 
     /**
-     * user remote input handler Implementation of UserInputHandler
-     * @param $user_input
-     * @param $plugin_cookies
-     * @return array|null
+     * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        //dump_input_handler(__METHOD__, $user_input);
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
 
         $control_id = $user_input->control_id;
         $new_value = '';
         if (isset($user_input->action_type, $user_input->{$control_id})
             && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $new_value = $user_input->{$control_id};
-            //hd_print(__METHOD__ . ": Setup: changing $control_id value to $new_value");
         }
 
         switch ($control_id) {
 
-            case ACTION_CHANGE_PLAYLIST:
-                $old_value = $plugin_cookies->playlist_idx;
-                $plugin_cookies->playlist_idx = $new_value;
-                hd_print(__METHOD__ . ": current playlist idx: $new_value");
-                $action = $this->plugin->tv->reload_channels($this, $plugin_cookies);
-                if ($action === null) {
-                    $plugin_cookies->playlist_idx = $old_value;
-                    Action_Factory::show_title_dialog(TR::t('err_load_playlist'));
-                }
-                return $action;
-
             case self::SETUP_ACTION_CHANGE_CH_LIST_PATH:
-                $media_url = MediaURL::encode(
+                $media_url_str = MediaURL::encode(
                     array(
                         'screen_id' => Starnet_Folder_Screen::ID,
-                        'parent_id' => self::ID,
-                        'save_data' => self::ID,
+                        'source_window_id' => static::ID,
+                        'choose_folder' => array(
+                            'action' => self::CONTROL_CHANNELS_FOLDER,
+                        ),
+                        'allow_reset' => true,
+                        'allow_network' => !is_apk(),
                         'windowCounter' => 1,
                     )
                 );
-                return Action_Factory::open_folder($media_url, TR::t('setup_channels_src_folder_caption'));
+                return Action_Factory::open_folder($media_url_str, TR::t('setup_channels_src_folder_caption'));
 
-            case self::SETUP_ACTION_CHANGE_CH_LIST:
-                $old_value = $plugin_cookies->channels_list;
-                $plugin_cookies->channels_list = $new_value;
-                $action = $this->plugin->tv->reload_channels($this, $plugin_cookies);
-                if ($action === null) {
-                    $plugin_cookies->channels_list = $old_value;
-                    Action_Factory::show_title_dialog(TR::t('err_load_channels_list'));
-                }
-                return $action;
+            case ACTION_CHANGE_PLAYLIST:
+            case PARAM_CHANNELS_SOURCE:
+                hd_debug_print("$control_id: " . $new_value);
+                $this->plugin->set_parameter($control_id, $new_value);
+                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
-            case self::SETUP_ACTION_CHANNELS_SOURCE:
-                $plugin_cookies->{$control_id} = $user_input->{$control_id};
-                hd_print(__METHOD__ . ": $control_id: " . $plugin_cookies->{$control_id});
-                $action = $this->plugin->tv->reload_channels($this, $plugin_cookies);
-                if ($action === null) {
-                    Action_Factory::show_title_dialog(TR::t('err_load_channels_list'));
+            case PARAM_CHANNELS_LIST_NAME:
+                hd_debug_print("$control_id: " . $new_value);
+                $this->plugin->set_parameter($control_id, $new_value);
+                $channel_list = empty($new_value) ? 'default' : $new_value;
+                $favorites = 'favorite_channels_' . hash('crc32', $channel_list);
+
+                if (isset($plugin_cookies->{$favorites})) {
+                    $ids = array_filter(explode(",", $plugin_cookies->{$favorites}));
+                    HD::put_data_items($favorites, $ids);
+                    unset($plugin_cookies->{$favorites});
                 }
-                return $action;
+                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case self::SETUP_ACTION_CHANNELS_URL_DLG:
-                $defs = $this->do_get_channels_url_control_defs($plugin_cookies);
+                $defs = $this->do_get_channels_url_control_defs();
                 return Action_Factory::show_dialog(TR::t('setup_channels_src_link_caption'), $defs, true);
 
             case self::SETUP_ACTION_CHANNELS_URL_APPLY: // handle streaming settings dialog result
-                if (isset($user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH})) {
-                    $source = isset($plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE})
-                        ? $plugin_cookies->{self::SETUP_ACTION_CHANNELS_SOURCE}
-                        : 1;
+                if (!isset($user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH})) break;
 
-                    switch ($source) {
-                        case 2:
-                            if ($user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH} !== $plugin_cookies->channels_url) {
-                                $plugin_cookies->channels_url = $user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH};
-                            }
-                            break;
-                        case 3:
-                            if ($user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH} !== $plugin_cookies->channels_direct_url) {
-                                $plugin_cookies->channels_direct_url = $user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH};
-                            }
-                            break;
-                    }
-
-                    hd_print(__METHOD__ . ": Selected channels path: $plugin_cookies->channels_url");
+                $url_path = $user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH};
+                $source = $this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1);
+                switch ($source) {
+                    case 2:
+                    case 3:
+                        if ($url_path !== $this->plugin->get_parameter($source === 2 ? PARAM_CHANNELS_URL : PARAM_CHANNELS_DIRECT_URL)) {
+                            $this->plugin->set_parameter($source === 2 ? PARAM_CHANNELS_URL : PARAM_CHANNELS_DIRECT_URL, $url_path);
+                        }
+                        break;
                 }
 
-                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
+                hd_debug_print("Selected channels path: $url_path");
+                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
-            case ACTION_FOLDER_SELECTED:
+            case self::CONTROL_CHANNELS_FOLDER:
                 $data = MediaURL::decode($user_input->selected_data);
-                hd_print(__METHOD__ . ": " . ACTION_FOLDER_SELECTED . " $data->filepath");
-                smb_tree::set_folder_info($plugin_cookies, $data, PARAM_CH_LIST_PATH);
+                hd_debug_print(self::CONTROL_CHANNELS_FOLDER . " $data->filepath");
+                $this->plugin->set_parameter(PARAM_CHANNELS_LIST_PATH, smb_tree::set_folder_info($user_input->selected_data));
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
                     User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, self::CONTROLS_WIDTH);
 
-            case ACTION_RELOAD:
-                hd_print(__METHOD__ . ": reload");
-                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
-
             case ACTION_RESET_DEFAULT:
-                //hd_print(__METHOD__ . ": reset_folder");
-                $plugin_cookies->ch_list_path = '';
-                return $this->plugin->tv->reload_channels($this, $plugin_cookies);
+                hd_debug_print(ACTION_RESET_DEFAULT);
+                $this->plugin->remove_parameter(PARAM_CHANNELS_LIST_PATH);
+                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
+
+            case ACTION_RELOAD:
+                hd_debug_print(ACTION_RELOAD);
+                $res = $this->plugin->tv->reload_channels();
+                if ($res === 0) {
+                    return Action_Factory::show_title_dialog(TR::t('err_load_channels_list'));
+                }
+
+                return Action_Factory::invalidate_all_folders($plugin_cookies,
+                    Action_Factory::reset_controls($this->do_get_control_defs()));
         }
 
-        return Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies));
+        return Action_Factory::reset_controls($this->do_get_control_defs());
     }
 }
