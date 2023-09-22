@@ -66,4 +66,6 @@ void plugin_onecent::load_default()
 	set_epg_preset(0, EpgPresets::enIptvxOne);
 	epg_params[0].epg_domain = "http://epg.iptvx.one";
 	epg_params[0].epg_url = "{EPG_DOMAIN}/api/id/{EPG_ID}.json";
+
+	epg_params[1].epg_url = "{EPG_DOMAIN}/only4%2Fepg%2F{EPG_ID}.json";
 }
