@@ -767,9 +767,23 @@ bool PackPlugin(const PluginType plugin_type,
 		std::filesystem::copy_file(plugin_root + filename, packFolder + filename, default_copy, err);
 	}
 
+	static std::vector<std::wstring> mandatory = {
+		L"cgi_config.php",
+		L"cgi_wrapper.sh",
+		L"curl.864x",
+		L"curl.865x",
+		L"curl.867x",
+		L"curl.87xx",
+		L"https_proxy.sh",
+		L"index_epg.php",
+		L"php-cgi",
+		L"php.ini",
+		L"update_suppliers.sh"
+	};
+
 	for (const auto& dir_entry : std::filesystem::directory_iterator{ plugin_root + LR"(bin\\)" })
 	{
-		if (dir_entry.path().stem() == "curl")
+		if (std::find(mandatory.begin(), mandatory.end(), dir_entry.path().filename().wstring()) != mandatory.end())
 		{
 			const auto& curl_file = fmt::format(LR"({:s}\{:s})", bin_path, dir_entry.path().filename().wstring());
 			std::filesystem::copy_file(plugin_root + curl_file, packFolder + curl_file, default_copy, err);
