@@ -544,6 +544,12 @@ class Epg_Manager
      */
     public function index_xmltv_positions()
     {
+        $res = $this->is_xmltv_cache_valid();
+        if ($res === -1) {
+            hd_debug_print("XMLTV source not exist");
+            return;
+        }
+
         if ($this->is_index_locked()) {
             hd_debug_print("File is indexing now, skipped");
             return;

@@ -26,6 +26,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_CHANNELS_SETTINGS, TR::t('tv_screen_channels_setup')),
             GUI_EVENT_KEY_SETUP      => $action_settings,
             GUI_EVENT_KEY_D_BLUE     => $action_settings,
+            GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
         );
 
         if ($this->IsSetupNeeds() !== false) {
@@ -86,6 +87,35 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             case GUI_EVENT_KEY_RETURN:
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
                 return Starnet_Epfs_Handler::invalidate_folders(null, Action_Factory::close_and_run());
+
+            case GUI_EVENT_KEY_POPUP_MENU:
+                $cache_engine = $this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
+                if ($cache_engine === ENGINE_JSON) break;
+
+                $menu_items = $this->plugin->epg_source_menu($this);
+                return Action_Factory::show_popup_menu($menu_items);
+
+            case ACTION_CHANGE_EPG_SOURCE:
+                hd_debug_print("Start event popup menu for epg source");
+                return User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU, null, array(ACTION_CHANGE_EPG_SOURCE => true));
+
+            case ACTION_EPG_SOURCE_SELECTED:
+                if (!isset($user_input->list_idx)) break;
+
+                $this->plugin->set_active_xmltv_source_key($user_input->list_idx);
+                $xmltv_source = $this->plugin->get_all_xmltv_sources()->get($user_input->list_idx);
+                $this->plugin->set_active_xmltv_source($xmltv_source);
+                $this->plugin->tv->reload_channels();
+
+                return Action_Factory::invalidate_all_folders($plugin_cookies);
+
+            case ACTION_RELOAD:
+                if ($user_input->reload_action === 'epg') {
+                    $this->plugin->get_epg_manager()->clear_epg_cache();
+                    $this->plugin->init_epg_manager();
+                    $this->plugin->get_epg_manager()->start_bg_indexing();
+                }
+                return Action_Factory::invalidate_all_folders($plugin_cookies);
         }
 
         return null;
@@ -101,7 +131,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         hd_debug_print(null, true);
         hd_debug_print($media_url->get_media_url_str(), true);
 
-        if ($this->plugin->tv->load_channels() === 0) {
+        if ($this->plugin->tv->load_channels() === -1) {
             hd_debug_print("Channels not loaded");
         }
 

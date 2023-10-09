@@ -232,7 +232,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
             case ACTION_RELOAD:
                 hd_debug_print(ACTION_RELOAD);
                 $res = $this->plugin->tv->reload_channels();
-                if ($res === 0) {
+                if ($res === -1) {
                     return Action_Factory::show_title_dialog(TR::t('err_load_channels_list'));
                 }
 

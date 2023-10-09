@@ -182,7 +182,7 @@ class Starnet_Tv implements User_Input_Handler
     public function load_channels()
     {
         if (isset($this->channels)) {
-            return 1;
+            return 0;
         }
 
         HD::ShowMemoryUsage();
@@ -196,15 +196,6 @@ class Starnet_Tv implements User_Input_Handler
         $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo();
 
         $this->plugin->init_epg_manager();
-        if ($this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE) !== ENGINE_JSON) {
-            $res = $this->plugin->get_epg_manager()->is_xmltv_cache_valid();
-            if ($res !== -1) {
-                if ($res === 0) {
-                    $this->plugin->get_epg_manager()->download_xmltv_source();
-                }
-                $this->plugin->get_epg_manager()->index_xmltv_channels();
-            }
-        }
 
         $channels_list_path = '';
         try {
@@ -249,7 +240,7 @@ class Starnet_Tv implements User_Input_Handler
                 } catch (Exception $ex) {
                     if (!file_exists($channels_list_path)) {
                         hd_debug_print("Can't fetch channel_list from $url_path " . $ex->getMessage());
-                        return 0;
+                        return -1;
                     }
                 }
             }
@@ -258,14 +249,14 @@ class Starnet_Tv implements User_Input_Handler
             $xml = HD::parse_xml_file($channels_list_path);
         } catch (Exception $ex) {
             hd_debug_print("Can't fetch channel_list $channels_list_path " . $ex->getMessage());
-            return 0;
+            return -1;
         }
 
         if ($xml->getName() !== 'tv_info') {
             $msg = "Error: unexpected node '" . $xml->getName() . "'. Expected: 'tv_info'";
             hd_debug_print($msg);
             $this->plugin->config->set_last_error($msg);
-            return 0;
+            return -1;
         }
 
         $max_support_ch_list_ver = $this->plugin->config->plugin_info['app_ch_list_version'];
@@ -313,7 +304,7 @@ class Starnet_Tv implements User_Input_Handler
             if ($xml_tv_category->getName() !== 'tv_category') {
                 $error_string = __METHOD__ . ": Error: unexpected node '{$xml_tv_category->getName()}'. Expected: 'tv_category'";
                 hd_debug_print($error_string);
-                return 0;
+                return -1;
             }
 
             if (isset($xml_tv_category->special_group)) {
@@ -465,16 +456,15 @@ class Starnet_Tv implements User_Input_Handler
         $this->special_groups->set($history_channels->get_id(), $history_channels);
         $this->special_groups->set($vod_group->get_id(), $vod_group);
 
-        unset($xml);
-
         hd_debug_print("Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
         HD::ShowMemoryUsage();
 
         if ($this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE) !== ENGINE_JSON) {
-            $this->plugin->epg_manager->index_xmltv_positions();
+            $this->plugin->get_epg_manager()->start_bg_indexing();
+            sleep(1);
         }
 
-        return 2;
+        return 1;
     }
 
     /**
@@ -501,7 +491,7 @@ class Starnet_Tv implements User_Input_Handler
         hd_debug_print("channel: $channel_id archive_ts: $archive_ts, protect code: $protect_code");
 
         try {
-            if ($this->load_channels() === 0) {
+            if ($this->load_channels() === -1) {
                 throw new Exception("Channels not loaded!");
             }
 
@@ -557,7 +547,7 @@ class Starnet_Tv implements User_Input_Handler
             ? PLUGIN_FONT_SMALL
             : PLUGIN_FONT_NORMAL;
 
-        if ($this->load_channels() === 0) {
+        if ($this->load_channels() === -1) {
             hd_debug_print("Channels not loaded!");
             return array();
         }
@@ -670,10 +660,15 @@ class Starnet_Tv implements User_Input_Handler
 
     public function get_action_map()
     {
-        $actions = array();
-        $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
+        hd_debug_print(null, true);
 
-        return $actions;
+        return array(
+            GUI_EVENT_PLAYBACK_STOP => User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP),
+            GUI_EVENT_TIMER => User_Input_Handler_Registry::create_action($this,
+                GUI_EVENT_TIMER,
+                null,
+                $this->plugin->get_epg_manager()->is_index_locked() ? array('locked' => true) : null),
+        );
     }
 
     /**
@@ -696,6 +691,7 @@ class Starnet_Tv implements User_Input_Handler
                     $this->plugin->invalidate_epfs();
                     $post_action = $this->plugin->update_epfs_data($plugin_cookies, array(Starnet_TV_History_Screen::ID));
                 } else if (isset($user_input->locked)) {
+                    clearstatcache();
                     if ($this->plugin->get_epg_manager()->is_index_locked()) {
                         $new_actions = $this->get_action_map();
                         $new_actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this,
@@ -703,8 +699,10 @@ class Starnet_Tv implements User_Input_Handler
                             null,
                             array('locked' => true));
 
-                        $post_action = Action_Factory::change_behaviour($new_actions, 1000);
+                        hd_debug_print("EPG still indexed...");
+                        $post_action = Action_Factory::change_behaviour($new_actions, 5000);
                     } else {
+                        hd_debug_print("Index EPG done");
                         foreach($this->plugin->get_epg_manager()->get_delayed_epg() as $channel_id) {
                             hd_debug_print("Refresh EPG for channel ID: $channel_id");
                             $day_start_ts = strtotime(date("Y-m-d")) + get_local_time_zone_offset();

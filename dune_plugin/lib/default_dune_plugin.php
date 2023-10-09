@@ -73,7 +73,7 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * @var Epg_Manager
      */
-    public $epg_manager;
+    protected $epg_manager;
 
     /**
      * @var array
@@ -1153,6 +1153,49 @@ class Default_Dune_Plugin implements DunePlugin
 
         return User_Input_Handler_Registry::create_popup_item($handler,
             $action_id, $caption, ($icon === null) ? null : get_image_path($icon), $add_params);
+    }
+
+    /**
+     * @param User_Input_Handler $handler
+     * @return array
+     */
+    public function epg_source_menu($handler)
+    {
+        $menu_items = array();
+
+        $sources = $this->get_all_xmltv_sources();
+        $source_key = $this->get_active_xmltv_source_key();
+
+        $idx = 0;
+        foreach ($sources as $key => $item) {
+            if ($idx !== 0 && ($idx % 15) === 0)
+                $menu_items[] = $this->create_menu_item($handler, GuiMenuItemDef::is_separator);
+            $idx++;
+
+            if ($item === EPG_SOURCES_SEPARATOR_TAG) {
+                $menu_items[] = $this->create_menu_item($handler, GuiMenuItemDef::is_separator);
+                continue;
+            }
+
+            /** @var Hashed_Array $xmltv_sources */
+            $xmltv_sources = $this->get_parameter(PARAM_XMLTV_SOURCE_NAMES, new Hashed_Array());
+            $name = $xmltv_sources->get(Hashed_Array::hash($item));
+            if (is_null($name)) {
+                $name = HD::string_ellipsis($item);
+            }
+
+            $menu_items[] = $this->create_menu_item($handler,
+                ACTION_EPG_SOURCE_SELECTED,
+                $name,
+                ($source_key === $key) ? "check.png" : null,
+                array('list_idx' => $key)
+            );
+        }
+
+        $menu_items[] = $this->create_menu_item($handler, GuiMenuItemDef::is_separator);
+        $menu_items[] = $this->create_menu_item($handler, ACTION_RELOAD, TR::t('refresh_epg'), "refresh.png", array('reload_action' => 'epg'));
+
+        return $menu_items;
     }
 
     ///////////////////////////////////////////////////////////////////////

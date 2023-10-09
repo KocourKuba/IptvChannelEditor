@@ -49,42 +49,11 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
         if ($cache_engine !== ENGINE_JSON) {
             //////////////////////////////////////
-            // XMLTV sources
-
-            $sources = $this->plugin->get_all_xmltv_sources();
-            $source_key = $this->plugin->get_active_xmltv_source_key();
-            $display_sources = array();
-            foreach ($sources as $key => $source) {
-                if ($source === EPG_SOURCES_SEPARATOR_TAG) continue;
-
-                $display_sources[$key] = HD::string_ellipsis($source);
-            }
-
-            $item = $sources->get($source_key);
-            if (empty($item) && $sources->size()) {
-                $order = $sources->get_order();
-                $source_key = reset($order);
-            }
-
-            if ($sources->size() === 0) {
-                Control_Factory::add_label($defs, TR::t('setup_xmltv_epg_source'), TR::t('no'));
-            } else {
-                Control_Factory::add_combobox($defs, $this, null,
-                    self::CONTROL_XMLTV_EPG_IDX, TR::t('setup_xmltv_epg_source'),
-                    $source_key, $display_sources, self::CONTROLS_WIDTH, true);
-
-                //////////////////////////////////////
-                // Fuzzy search
-                $fuzzy_search = $this->plugin->get_parameter(PARAM_FUZZY_SEARCH_EPG, SetupControlSwitchDefs::switch_off);
-                Control_Factory::add_image_button($defs, $this, null,
-                    PARAM_FUZZY_SEARCH_EPG, TR::t('entry_epg_fuzzy_search'), SetupControlSwitchDefs::$on_off_translated[$fuzzy_search],
-                    get_image_path(SetupControlSwitchDefs::$on_off_img[$fuzzy_search]), self::CONTROLS_WIDTH);
-
-                //////////////////////////////////////
-                // Reload XMLTV source
-                Control_Factory::add_image_button($defs, $this, null, self::ACTION_RELOAD_EPG,
-                    TR::t('setup_reload_xmltv_epg'), TR::t('refresh'), get_image_path('refresh.png'));
-            }
+            // Fuzzy search
+            $fuzzy_search = $this->plugin->get_parameter(PARAM_FUZZY_SEARCH_EPG, SetupControlSwitchDefs::switch_off);
+            Control_Factory::add_image_button($defs, $this, null,
+                PARAM_FUZZY_SEARCH_EPG, TR::t('entry_epg_fuzzy_search'), SetupControlSwitchDefs::$on_off_translated[$fuzzy_search],
+                get_image_path(SetupControlSwitchDefs::$on_off_img[$fuzzy_search]), self::CONTROLS_WIDTH);
         }
 
         //////////////////////////////////////

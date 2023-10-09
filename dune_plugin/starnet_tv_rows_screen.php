@@ -545,6 +545,11 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                         $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ITEMS_CLEAR, TR::t('clear_favorites'), "brush.png");
                     }
 
+                    $cache_engine = $this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
+                    if ($cache_engine !== ENGINE_JSON) {
+                        $menu_items = $this->plugin->epg_source_menu($this);
+                    }
+
                     $menu_items[] = $this->plugin->create_menu_item($this, GuiMenuItemDef::is_separator);
                     $menu_items[] = $this->plugin->create_menu_item($this, ACTION_REFRESH_SCREEN, TR::t('refresh'), "refresh.png");
                 }
@@ -564,6 +569,16 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 }
 
                 return Action_Factory::show_popup_menu($menu_items);
+
+            case ACTION_EPG_SOURCE_SELECTED:
+                if (!isset($user_input->list_idx)) break;
+
+                $this->plugin->set_active_xmltv_source_key($user_input->list_idx);
+                $xmltv_source = $this->plugin->get_all_xmltv_sources()->get($user_input->list_idx);
+                $this->plugin->set_active_xmltv_source($xmltv_source);
+                $this->plugin->tv->reload_channels();
+
+                return $this->plugin->update_epfs_data($plugin_cookies);
 
             case PLUGIN_FAVORITES_OP_ADD:
             case PLUGIN_FAVORITES_OP_REMOVE:
