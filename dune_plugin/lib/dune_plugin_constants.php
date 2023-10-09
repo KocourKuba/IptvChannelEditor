@@ -111,6 +111,7 @@ const PARAM_FUZZY_SEARCH_EPG = 'fuzzy_search_epg';
 const PARAM_FAKE_EPG = 'fake_epg';
 const PARAM_USE_HTTPS_PROXY = 'use_proxy';
 const PARAM_STREAM_FORMAT = 'stream_format';
+const PARAM_VOD_DEFAULT_VARIANT = 'variant';
 
 const PARAM_LOGIN = 'login';
 const PARAM_PASSWORD = 'password';

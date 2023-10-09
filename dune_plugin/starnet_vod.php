@@ -40,9 +40,9 @@ class Starnet_Vod extends Abstract_Vod
     // Favorites.
 
     /**
-     * @param $plugin_cookies
+     * @inheritDoc
      */
-    protected function load_favorites($plugin_cookies)
+    protected function load_favorites()
     {
         $fav_movie_ids = HD::get_data_items(self::VOD_FAVORITES_LIST . "_" . $this->plugin->config->get_vod_template_name());
         $this->set_fav_movie_ids($fav_movie_ids);
@@ -52,7 +52,7 @@ class Starnet_Vod extends Abstract_Vod
     /**
      * @inheritDoc
      */
-    protected function do_save_favorite_movies($fav_movie_ids, $plugin_cookies)
+    protected function do_save_favorite_movies($fav_movie_ids)
     {
         HD::put_data_items(self::VOD_FAVORITES_LIST . "_" . $this->plugin->config->get_vod_template_name(), $fav_movie_ids);
     }
@@ -78,19 +78,19 @@ class Starnet_Vod extends Abstract_Vod
 
     protected function do_save_history_movies($history_items)
     {
-        $history_path = smb_tree::get_folder_info($this->plugin->get_parameter(PARAM_HISTORY_PATH, get_data_path(HISTORY_SUBDIR))) .
-            self::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name();
-
-        HD::put_items($history_path, $history_items);
+        $filename = self::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name();
+        $path = $this->plugin->get_history_path($filename);
+        if (empty($history_items)) {
+            HD::erase_items($path);
+        } else {
+            HD::put_items($path, $history_items);
+        }
     }
 
     protected function load_history()
     {
-        $history_path = smb_tree::get_folder_info($this->plugin->get_parameter(PARAM_HISTORY_PATH, get_data_path(HISTORY_SUBDIR))) .
-            self::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name();
-
-        $history_items = HD::get_items($history_path);
-        $this->set_history_items($history_items);
-        hd_debug_print("movies loaded from history: " . count($history_items));
+        $filename = self::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name();
+        $this->history_items = HD::get_items($this->plugin->get_history_path($filename));
+        hd_debug_print("movies loaded from history: " . count($this->history_items));
     }
 }

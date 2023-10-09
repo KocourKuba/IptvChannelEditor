@@ -7,7 +7,7 @@ require_once 'movie_variant.php';
 
 class Movie implements User_Input_Handler
 {
-    const ID = 'smart_movie';
+    const ID = 'movie';
 
     const WATCHED_FLAG = 'watched';
     const WATCHED_POSITION = 'position';
@@ -143,18 +143,27 @@ class Movie implements User_Input_Handler
         return self::ID;
     }
 
+    public function get_action_map()
+    {
+        User_Input_Handler_Registry::get_instance()->register_handler($this);
+
+        $actions = array();
+        $actions[GUI_EVENT_PLAYBACK_STOP] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP);
+
+        return $actions;
+    }
 
     /**
      * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
-        // handler_id => smart_movie
+        // handler_id => movie
         // control_id => playback_stop
         // osd_active => 1
         // plugin_vod_id => 99842
         // plugin_vod_series_ndx => 0
-        // plugin_vod_stop_position => 2880
+        // plugin_vod_stop_position => 43
         // plugin_vod_duration => 3075
         // plugin_vod_start_tm => 1696530358
         // plugin_vod_stop_tm => 1696530376
@@ -167,27 +176,18 @@ class Movie implements User_Input_Handler
         hd_debug_print(null, true);
         dump_input_handler($user_input);
 
-        if ($user_input->control_id !== GUI_EVENT_PLAYBACK_STOP) {
+        if (!isset($user_input->control_id) || $user_input->control_id !== GUI_EVENT_PLAYBACK_STOP)
             return null;
-        }
 
         $series_list = array_values($this->series_list);
-        $movie = $series_list[$user_input->plugin_vod_series_ndx];
-
-        if (!empty($movie->id)) {
-            $save_folder = HD::get_data_items('save_folder');
-            if (isset($save_folder[$user_input->plugin_vod_id][$movie->id])) {
-                $save_folder[$user_input->plugin_vod_id][$movie->id][] = $movie->playback_url;
-                HD::put_data_items('save_folder', $save_folder);
-            }
-        }
+        $episode = $series_list[$user_input->plugin_vod_series_ndx];
 
         $watched = (isset($user_input->playback_end_of_stream) && (int)$user_input->playback_end_of_stream !== 0)
-                    || ($user_input->plugin_vod_duration - $user_input->plugin_vod_stop_position) < 5;
+                    || ($user_input->plugin_vod_duration - $user_input->plugin_vod_stop_position) < 60;
 
         $this->plugin->vod->add_movie_to_history(
             $user_input->plugin_vod_id,
-            $user_input->plugin_vod_series_ndx,
+            empty($episode->id) ? $user_input->plugin_vod_series_ndx : $episode->id,
             array(
                 self::WATCHED_FLAG => $watched,
                 self::WATCHED_POSITION => $user_input->plugin_vod_stop_position,
@@ -195,22 +195,12 @@ class Movie implements User_Input_Handler
                 self::WATCHED_DATE => $user_input->plugin_vod_stop_tm
             ));
 
-        return Action_Factory::invalidate_folders(
-            array(
-                Starnet_Vod_Series_List_Screen::get_media_url_string($user_input->plugin_vod_id),
-                Starnet_Vod_Movie_Screen::get_media_url_string($user_input->plugin_vod_id),
-                Starnet_Vod_History_Screen::get_media_url_str(),
-            )
-        );
-    }
-
-    /**
-     * @return array
-     */
-    protected function get_movie_actions()
-    {
-        User_Input_Handler_Registry::get_instance()->register_handler($this);
-        return array(GUI_EVENT_PLAYBACK_STOP => User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP));
+        if (empty($episode->season_id)) {
+            $series_media_url_str = Starnet_Vod_Series_List_Screen::get_media_url_string($user_input->plugin_vod_id);
+        } else {
+            $series_media_url_str = Starnet_Vod_Series_List_Screen::get_media_url_string($user_input->plugin_vod_id, $episode->season_id);
+        }
+        return Action_Factory::invalidate_folders(array($series_media_url_str, Starnet_Vod_History_Screen::get_media_url_str()));
     }
 
     /**
@@ -318,6 +308,7 @@ class Movie implements User_Input_Handler
         $series->season_id = $this->to_string($season_id);
         $series->playback_url = $this->to_string($playback_url);
         $series->playback_url_is_stream_url = $playback_url_is_stream_url;
+
         $this->series_list[$id] = $series;
     }
 
@@ -368,6 +359,9 @@ class Movie implements User_Input_Handler
         );
     }
 
+    /**
+     * @return bool
+     */
     public function has_variants()
     {
         if (empty($this->series_list)) {
@@ -381,11 +375,13 @@ class Movie implements User_Input_Handler
 
     /**
      * @param MediaURL $media_url
-     * @param $plugin_cookies
      * @return array
      */
-    public function get_movie_play_info($media_url, &$plugin_cookies)
+    public function get_movie_play_info(MediaURL $media_url)
     {
+        hd_debug_print(null, true);
+        hd_debug_print($media_url->get_media_url_str(), true);
+
         if (!isset($media_url->screen_id)) {
             hd_debug_print("get_movie_play_info: List screen in media url not set: " . $media_url->get_raw_string());
             HD::print_backtrace();
@@ -420,10 +416,10 @@ class Movie implements User_Input_Handler
         $viewed_items = $this->plugin->vod->get_history_movies();
         $viewed_movie = isset($viewed_items[$media_url->movie_id]) ? $viewed_items[$media_url->movie_id] : array();
 
-        $sel_id = isset($media_url->series_id) ? $media_url->series_id : null;
+        $sel_id = isset($media_url->episode_id) ? $media_url->episode_id : null;
         $series_array = array();
         $initial_series_ndx = 0;
-        $variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : "auto";
+        $variant = $this->plugin->get_parameter(PARAM_VOD_DEFAULT_VARIANT, 'auto');
         $counter = 0; // series index. Not the same as the key of series list
         $initial_start_array = array();
         foreach ($list as $series) {
@@ -454,8 +450,8 @@ class Movie implements User_Input_Handler
 
             $pos = 0;
             $name = $series->name;
-            if (isset($viewed_movie[$counter])) {
-                $viewed_series = $viewed_movie[$counter];
+            if (isset($viewed_movie[$series->id])) {
+                $viewed_series = $viewed_movie[$series->id];
 
                 if ($viewed_series[self::WATCHED_FLAG] === false && $viewed_series[self::WATCHED_DURATION] !== -1) {
                     $name .= " [" . format_duration($viewed_series[self::WATCHED_POSITION]) . "]";
@@ -472,8 +468,8 @@ class Movie implements User_Input_Handler
             $initial_start_array[$counter] = $pos * 1000;
             $playback_url = $this->plugin->config->UpdateVodUrlParams($playback_url);
             $playback_url = $this->plugin->config->UpdateDuneParams($playback_url, Plugin_Constants::HLS);
-            hd_debug_print("Start playback movie $media_url->movie_id ($variant)");
-            hd_debug_print("Url: $playback_url from $initial_start_array[$counter]");
+            hd_debug_print("Playback movie: $media_url->movie_id, episode: $series->id ($variant)", true);
+            hd_debug_print("Url: $playback_url from $initial_start_array[$counter]", true);
             $series_array[] = array(
                 PluginVodSeriesInfo::name => $name,
                 PluginVodSeriesInfo::playback_url => $playback_url,
@@ -487,7 +483,7 @@ class Movie implements User_Input_Handler
         if (isset($initial_start_array[$initial_series_ndx])) {
             $initial_start = $initial_start_array[$initial_series_ndx];
         }
-        hd_debug_print("starting vod index $initial_series_ndx at position $initial_start");
+        hd_debug_print("starting vod index $initial_series_ndx at position $initial_start", true);
 
         return array(
             PluginVodInfo::id => $this->id,
@@ -497,7 +493,7 @@ class Movie implements User_Input_Handler
             PluginVodInfo::series => $series_array,
             PluginVodInfo::initial_series_ndx => $initial_series_ndx,
             PluginVodInfo::buffering_ms => (int)$this->plugin->get_parameter(PARAM_BUFFERING_TIME,1000),
-            PluginVodInfo::actions => $this->get_movie_actions(),
+            PluginVodInfo::actions => $this->get_action_map(),
             PluginVodInfo::initial_position_ms => $initial_start,
         );
     }

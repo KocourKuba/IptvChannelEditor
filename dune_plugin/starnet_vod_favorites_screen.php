@@ -73,7 +73,7 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
         }
 
         $movie_id = MediaURL::decode($user_input->selected_media_url)->movie_id;
-        $this->plugin->vod->change_vod_favorites($fav_op_type, $movie_id, $plugin_cookies);
+        $this->plugin->vod->change_vod_favorites($fav_op_type, $movie_id);
 
         $num_favorites = count($this->plugin->vod->get_favorite_movie_ids());
 
@@ -99,12 +99,12 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
+        $this->plugin->vod->ensure_favorites_loaded();
         $movie_ids = $this->plugin->vod->get_favorite_movie_ids();
 
         $items = array();
         foreach ($movie_ids as $movie_id) {
-            $this->plugin->vod->ensure_movie_loaded($movie_id, $plugin_cookies);
+            $this->plugin->vod->ensure_movie_loaded($movie_id);
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
 
             if (is_null($short_movie)) {

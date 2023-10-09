@@ -72,9 +72,9 @@ class edem_config extends default_config
                         $qualities .= $quality;
                     }
 
+                    $qualities = TR::load_string('setup_quality') . "|$qualities";
                     $series_desc = rtrim($qualities, ' ,\0');
-                    $desc = str_replace(array(',', '\n'), array('|', ''), $series_desc);
-                    $movie->add_series_variants_data($item->fid, $item->title, $desc, $variants, $item->url);
+                    $movie->add_series_variants_data($item->fid, $item->title, $series_desc, $variants, $item->url);
                 }
             }
         } else if (!isset($movieData->variants)) {
@@ -96,8 +96,8 @@ class edem_config extends default_config
                 $qualities .= $quality;
             }
 
+            $qualities = TR::load_string('setup_quality') . "|$qualities";
             $series_desc = rtrim($qualities, ' ,\0');
-            //$desc = str_replace(array(',', '\n'), array('|', ''), $series_desc);
             $movie->add_series_variants_data($movie_id, $movieData->title, $series_desc, $variants, $movieData->url);
         }
 

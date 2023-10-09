@@ -33,6 +33,7 @@ class Default_Dune_Plugin implements DunePlugin
     const DEFAULT_MOV_ICON_PATH = 'plugin_file://icons/mov_unset.png';
     const VOD_ICON_PATH = 'gui_skin://small_icons/movie.aai';
     const RESOURCE_URL = 'http://iptv.esalecrm.net/res';
+    const HISTORY_FOLDER = 'history/';
 
     /**
      * @var bool
@@ -660,7 +661,6 @@ class Default_Dune_Plugin implements DunePlugin
     public function handle_user_input(&$user_input, &$plugin_cookies)
     {
         hd_debug_print(null, true);
-        dump_input_handler($user_input);
 
         return User_Input_Handler_Registry::get_instance()->handle_user_input($user_input, $plugin_cookies);
     }
@@ -709,7 +709,7 @@ class Default_Dune_Plugin implements DunePlugin
             return array();
         }
 
-        return $this->vod->get_vod_info(MediaURL::decode($media_url), $plugin_cookies);
+        return $this->vod->get_vod_info(MediaURL::decode($media_url));
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -920,6 +920,7 @@ class Default_Dune_Plugin implements DunePlugin
             PARAM_VOD_LAST => PARAM_VOD_LAST,
             PARAM_PLAYLIST_IDX => PARAM_PLAYLIST_IDX,
             PARAM_CHANNELS_LIST_PATH => PARAM_CHANNELS_LIST_PATH,
+            PARAM_VOD_DEFAULT_VARIANT => PARAM_VOD_DEFAULT_VARIANT,
             'channels_list' => PARAM_CHANNELS_LIST_NAME,
             'buf_time' => PARAM_BUFFERING_TIME,
             'delay_time' => PARAM_ARCHIVE_DELAY_TIME,
@@ -1041,7 +1042,7 @@ class Default_Dune_Plugin implements DunePlugin
      * @param int $archive_ts
      * @throws Exception
      */
-    public function player_exec($media_url, $archive_ts = -1)
+    public function tv_player_exec($media_url, $archive_ts = -1)
     {
         $url = $this->config->GenerateStreamUrl($this->tv->get_channel($media_url->channel_id), $archive_ts);
 
@@ -1060,20 +1061,57 @@ class Default_Dune_Plugin implements DunePlugin
     }
 
     /**
+     * @param array $vod_info
+     * @param bool $is_external
+     * @param null $post_action
+     * @return array|null
+     */
+    public function vod_player_exec($vod_info, $is_external = false, $post_action = null)
+    {
+        if (!isset($vod_info[PluginVodInfo::initial_series_ndx], $vod_info[PluginVodInfo::series][$vod_info[PluginVodInfo::initial_series_ndx]])) {
+            return null;
+        }
+
+        if (!$is_external) {
+            return Action_Factory::vod_play($vod_info);
+        }
+
+        $series = $vod_info[PluginVodInfo::series];
+        $idx = $vod_info[PluginVodInfo::initial_series_ndx];
+        $url = $series[$idx][PluginVodSeriesInfo::playback_url];
+        $param_pos = strpos($url, '|||dune_params');
+        $url = $param_pos !== false ? substr($url, 0, $param_pos) : $url;
+        $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
+        hd_debug_print("play movie in the external player: $cmd");
+        exec($cmd, $output);
+        hd_debug_print("external player exec result code" . HD::ArrayToStr($output));
+        return $post_action;
+    }
+
+    /**
+     * @param string|null $filename
      * @return string
      */
-    public function get_history_path()
+    public function get_history_path($filename = null)
     {
-        $path = smb_tree::get_folder_info($this->get_parameter(PARAM_HISTORY_PATH), get_data_path('history'));
-        $path = get_slash_trailed_path($path);
-        if ($path === get_data_path() || $path === get_data_path('history/')) {
-            // reset old settings to new
-            $this->remove_parameter(PARAM_HISTORY_PATH);
-            $path = get_data_path('history');
+        $param = $this->get_parameter(PARAM_HISTORY_PATH);
+        if (empty($param)) {
+            $path = get_data_path(self::HISTORY_FOLDER);
+        } else {
+            $path = smb_tree::get_folder_info($param);
+            $path = get_slash_trailed_path($path);
+            if ($path === get_data_path() || $path === get_data_path(self::HISTORY_FOLDER)) {
+                // reset old settings to new
+                $this->remove_parameter(PARAM_HISTORY_PATH);
+                $path = get_data_path(self::HISTORY_FOLDER);
+            }
         }
-        hd_debug_print($path, true);
 
-        return rtrim($path, DIRECTORY_SEPARATOR);
+        if ($filename !== null) {
+            $path .= $filename;
+        }
+
+        return $path;
     }
 
     /**

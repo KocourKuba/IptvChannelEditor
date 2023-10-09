@@ -58,7 +58,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
             case 'do_send_log':
                 hd_debug_print("do_send_log");
                 $error_msg = '';
-                $msg = HD::send_log_to_developer($plugin_cookies, $error_msg) ? TR::t('entry_log_sent') : TR::t('entry_log_not_sent') . " $error_msg";
+                $msg = HD::send_log_to_developer($error_msg) ? TR::t('entry_log_sent') : TR::t('entry_log_not_sent') . " $error_msg";
                 return Action_Factory::show_title_dialog($msg);
 
             case 'do_clear_epg':

@@ -196,6 +196,6 @@ class Playback_Points
 
         $channel_list = $this->plugin->get_parameter(PARAM_CHANNELS_LIST_NAME, 'default');
         $channel_list = empty($channel_list) ? 'default' : $channel_list;
-        return $this->plugin->get_history_path() . DIRECTORY_SEPARATOR . Hashed_Array::hash($channel_list);
+        return $this->plugin->get_history_path(Hashed_Array::hash($channel_list));
     }
 }

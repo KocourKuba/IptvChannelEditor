@@ -113,9 +113,9 @@ class cbilling_config extends default_config
         $vod_url = 'http://%s%s?token=%s';
         if (isset($movieData->seasons)) {
             foreach ($movieData->seasons as $season) {
-                $movie->add_season_data($season->number, !empty($season->name) ? $season->name : "Сезон $season->number", '');
+                $movie->add_season_data($season->number, !empty($season->name) ? $season->name : TR::t('vod_screen_season__1', $season->number), '');
                 foreach ($season->series as $episode) {
-                    $name = "Серия $episode->number" . (empty($episode->name) ? "" : " $episode->name");
+                    $name = TR::t('vod_screen_series__2', $episode->number, (empty($episode->name) ? "" : $episode->name));
                     $playback_url = sprintf($vod_url, $domain, $episode->files[0]->url, $token);
                     $movie->add_series_data($episode->id, $name, '', $playback_url, $season->number);
                 }
@@ -214,7 +214,7 @@ class cbilling_config extends default_config
     }
 
     /**
-     * @param $json
+     * @param Object $json
      * @return array
      */
     protected function CollectSearchResult($json)

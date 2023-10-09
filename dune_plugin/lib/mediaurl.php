@@ -55,6 +55,8 @@ require_once 'json_serializer.php';
  * @property string|null $postpone_save // name of controlled postpone save status
  * @property bool|null $allow_reset // show reset to default button and call action ACTION_RESET_DEFAULT
  * @property string|null movie_id // Movie id
+ * @property string|null season_id // Season id
+ * @property string|null episode_id // Episode id
  * @property string|null genre_id // Movie genre id
  * @property string|null name // Movie name
  * @property string|null category_id // Category ID for Movie

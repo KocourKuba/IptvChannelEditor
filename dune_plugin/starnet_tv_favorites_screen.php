@@ -11,7 +11,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
      */
     public static function get_media_url_string($group_id)
     {
-        return MediaURL::encode(array('screen_id' => static::ID, 'group_id' => $group_id, 'is_favorites' => true));
+        return MediaURL::encode(array('screen_id' => static::ID, 'group_id' => $group_id));
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $action_play = Action_Factory::tv_play();
+        $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_ITEM);
 
         return array
         (
@@ -51,14 +51,14 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
 
         $sel_ndx = $user_input->sel_ndx;
         $parent_media_url = MediaURL::decode($user_input->parent_media_url);
-        $media_url = MediaURL::decode($user_input->selected_media_url);
+        $selected_media_url = MediaURL::decode($user_input->selected_media_url);
 
         switch ($user_input->control_id) {
             case ACTION_PLAY_ITEM:
                 try {
-                    $post_action = $this->plugin->player_exec($media_url);
+                    $post_action = $this->plugin->tv_player_exec($selected_media_url);
                 } catch (Exception $ex) {
-                    hd_debug_print("Movie can't played, exception info: " . $ex->getMessage());
+                    hd_debug_print("Channel can't played, exception info: " . $ex->getMessage());
                     return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
                         null,
                         TR::t('warn_msg2__1', $ex->getMessage()));
@@ -67,7 +67,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                 return $this->plugin->update_epfs_data($plugin_cookies, null, $post_action);
 
             case ACTION_ITEM_UP:
-                $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_MOVE_UP, $media_url->channel_id);
+                $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_MOVE_UP, $selected_media_url->channel_id);
                 $sel_ndx--;
                 if ($sel_ndx < 0) {
                     $sel_ndx = 0;
@@ -75,7 +75,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                 break;
 
             case ACTION_ITEM_DOWN:
-                $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_MOVE_DOWN, $media_url->channel_id);
+                $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_MOVE_DOWN, $selected_media_url->channel_id);
                 $sel_ndx++;
                 if ($sel_ndx >= $this->plugin->get_favorites()->size()) {
                     $sel_ndx = $this->plugin->get_favorites()->size() - 1;
@@ -83,7 +83,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                 break;
 
             case ACTION_ITEM_DELETE:
-                $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_REMOVE, $media_url->channel_id);
+                $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_REMOVE, $selected_media_url->channel_id);
                 break;
 
             case ACTION_ITEMS_CLEAR:
@@ -112,7 +112,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         hd_debug_print(null, true);
-        hd_debug_print($media_url, true);
+        hd_debug_print($media_url->get_media_url_str(), true);
 
         $items = array();
 

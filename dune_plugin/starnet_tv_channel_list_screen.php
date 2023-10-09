@@ -16,12 +16,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public static function get_media_url_string($group_id)
     {
-        return MediaURL::encode(
-            array
-            (
-                'screen_id' => self::ID,
-                'group_id' => $group_id,
-            ));
+        return MediaURL::encode(array('screen_id' => static::ID, 'group_id' => $group_id));
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -35,7 +30,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
     {
         //hd_debug_print("" . $media_url->get_raw_string());
 
-        $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER);
+        $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_ITEM);
         $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS);
         $show_popup = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU);
 
@@ -79,9 +74,9 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         }
 
         switch ($user_input->control_id) {
-            case ACTION_PLAY_FOLDER:
+            case ACTION_PLAY_ITEM:
                 try {
-                    $post_action = $this->plugin->player_exec($selected_media_url);
+                    $post_action = $this->plugin->tv_player_exec($selected_media_url);
                 } catch (Exception $ex) {
                     hd_debug_print("Movie can't played, exception info: " . $ex->getMessage());
                     return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),

@@ -12,12 +12,22 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
     /**
      * @param $movie_id
-     * @param null $series_id
+     * @param string|null $season_id
+     * @param string|null $episode_id
      * @return false|string
      */
-    public static function get_media_url_string($movie_id, $series_id = null)
+    public static function get_media_url_string($movie_id, $season_id = null, $episode_id = null)
     {
-        return MediaURL::encode(array('screen_id' => self::ID, 'movie_id' => $movie_id, 'series_id' => $series_id));
+        $arr = array('screen_id' => self::ID, 'movie_id' => $movie_id);
+        if ($season_id !== null) {
+            $arr['season_id'] = $season_id;
+        }
+
+        if ($episode_id !== null) {
+            $arr['episode_id'] = $episode_id;
+        }
+
+        return MediaURL::encode($arr);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -29,15 +39,17 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
+        $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_ITEM);
+
         $actions = array(
-            GUI_EVENT_KEY_ENTER   => Action_Factory::vod_play(),
-            GUI_EVENT_KEY_PLAY    => Action_Factory::vod_play(),
+            GUI_EVENT_KEY_ENTER   => $action_play,
+            GUI_EVENT_KEY_PLAY    => $action_play,
             GUI_EVENT_KEY_B_GREEN => User_Input_Handler_Registry::create_action($this, ACTION_WATCHED, TR::t('vod_screen_viewed_not_viewed')),
         );
 
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED)) {
-            $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
-            $variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : "auto";
+            $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id);
+            $variant = $this->plugin->get_parameter(PARAM_VOD_DEFAULT_VARIANT, 'auto');
             if (!is_null($movie) && isset($movie->variants_list) && count($movie->variants_list) > 1) {
                 $q_exist = (in_array($variant, $movie->variants_list) ? "" : "?");
                 $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this,
@@ -55,16 +67,42 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
         hd_debug_print(null, true);
         dump_input_handler($user_input);
 
+        if (!isset($user_input->selected_media_url)) {
+            return null;
+        }
+
+        $selected_media_url = MediaURL::decode($user_input->selected_media_url);
+
         switch ($user_input->control_id) {
+            case ACTION_PLAY_ITEM:
+                try {
+                    $vod_info = $this->plugin->vod->get_vod_info($selected_media_url);
+                    $post_action = $this->plugin->vod_player_exec(
+                        $vod_info,
+                        isset($user_input->external),
+                        isset($user_input->external)
+                            ? User_Input_Handler_Registry::create_action($this, ACTION_WATCHED, null, array(ACTION_WATCHED => true))
+                            : null
+                    );
+                } catch (Exception $ex) {
+                    hd_debug_print("Movie can't played, exception info: " . $ex->getMessage());
+                    return Action_Factory::show_title_dialog(
+                        TR::t('err_channel_cant_start'),
+                        null,
+                        TR::t('warn_msg2__1', $ex->getMessage())
+                    );
+                }
+
+                return $post_action;
+
             case ACTION_QUALITY:
-                $media_url = MediaURL::decode($user_input->selected_media_url);
-                $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
+                $movie = $this->plugin->vod->get_loaded_movie($selected_media_url->movie_id);
                 if (is_null($movie)) break;
 
                 $menu_items = array();
                 if (!isset($this->variants) || count($this->variants) < 2) break;
 
-                $current_variant = isset($plugin_cookies->variant) ? $plugin_cookies->variant : 'auto';
+                $current_variant = $this->plugin->get_parameter(PARAM_VOD_DEFAULT_VARIANT, 'auto');
                 $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
                     'auto', 'auto',
                     $current_variant === 'auto' ? 'gui_skin://small_icons/video_settings.aai' : null
@@ -82,84 +120,62 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 return Action_Factory::show_popup_menu($menu_items);
 
             case ACTION_WATCHED:
-                if (!isset($user_input->selected_media_url)) break;
-
-                $media_url = MediaURL::decode($user_input->selected_media_url);
-                $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
+                $movie = $this->plugin->vod->get_loaded_movie($selected_media_url->movie_id);
                 if (is_null($movie)) break;
 
-                $this->plugin->vod->ensure_history_loaded();
                 $viewed_items = $this->plugin->vod->get_history_movies();
-
-                if ((isset($user_input->{ACTION_WATCHED}) && $user_input->{ACTION_WATCHED} !== false)
-                    || !isset($viewed_items[$media_url->movie_id][$user_input->sel_ndx])) {
-                    $movie_info[Movie::WATCHED_FLAG] = true;
-                } else {
-                    $movie_info = $viewed_items[$media_url->movie_id][$user_input->sel_ndx];
-                    if ($movie_info[Movie::WATCHED_FLAG] !== false) {
-                        $movie_info[Movie::WATCHED_FLAG] = false;
-                        $movie_info[Movie::WATCHED_POSITION] = 0;
-                        $movie_info[Movie::WATCHED_DURATION] = -1;
-                    } else {
+                if ($viewed_items !== null) {
+                    if ((isset($user_input->{ACTION_WATCHED}) && $user_input->{ACTION_WATCHED} !== false)
+                        || !isset($viewed_items[$selected_media_url->movie_id][$selected_media_url->episode_id])) {
                         $movie_info[Movie::WATCHED_FLAG] = true;
+                        $movie_info[Movie::WATCHED_DATE] = time();
+                    } else {
+                        $movie_info = $viewed_items[$selected_media_url->movie_id][$selected_media_url->episode_id];
+                        if ($movie_info[Movie::WATCHED_FLAG] !== false) {
+                            $movie_info = null;
+                        } else {
+                            $movie_info[Movie::WATCHED_FLAG] = true;
+                            $movie_info[Movie::WATCHED_DATE] = time();
+                        }
                     }
+
+                    if ($movie_info === null) {
+                        unset($viewed_items[$selected_media_url->movie_id][$selected_media_url->episode_id]);
+                        if (empty($viewed_items[$selected_media_url->movie_id])) {
+                            unset($viewed_items[$selected_media_url->movie_id]);
+                        }
+                    } else {
+                        $viewed_items[$selected_media_url->movie_id][$selected_media_url->episode_id] = $movie_info;
+                    }
+                    $this->plugin->vod->set_history_movies($viewed_items);
                 }
 
-                $viewed_items[$media_url->movie_id][$user_input->sel_ndx] = $movie_info;
-                $this->plugin->vod->set_history_items($viewed_items);
-
-                if (!isset($user_input->parent_media_url)) {
-                    hd_debug_print("not set");
-                    break;
-                }
-
-                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
                 $sel_ndx = $user_input->sel_ndx;
                 if ($sel_ndx < 0)
                     $sel_ndx = 0;
-                $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
+                $range = $this->get_folder_range(MediaURL::decode($user_input->parent_media_url), 0, $plugin_cookies);
 
                 return Action_Factory::update_regular_folder($range, true, $sel_ndx);
-
-            case ACTION_EXTERNAL_PLAYER:
-                try {
-                    $add_params[ACTION_WATCHED] = true;
-                    $post_action = User_Input_Handler_Registry::create_action($this, ACTION_WATCHED, null, $add_params);
-                    $info = $this->plugin->get_vod_info($user_input->selected_media_url, $plugin_cookies);
-                    if (isset($info[PluginVodInfo::initial_series_ndx], $info[PluginVodInfo::series][$info[PluginVodInfo::initial_series_ndx]])) {
-                        $series = $info[PluginVodInfo::series];
-                        $idx = $info[PluginVodInfo::initial_series_ndx];
-                        $url = $series[$idx][PluginVodSeriesInfo::playback_url];
-                        $param_pos = strpos($url, '|||dune_params');
-                        $url =  $param_pos!== false ? substr($url, 0, $param_pos) : $url;
-                        $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
-                        hd_debug_print("play movie in the external player: $cmd");
-                        exec($cmd, $output);
-                        hd_debug_print("external player exec result code" . HD::ArrayToStr($output));
-                        return $post_action;
-                    }
-                } catch (Exception $e) {
-                    hd_debug_print("Movie can't played, exception info: " . $e->getMessage());
-                }
-                break;
 
             case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items = array();
                 if (is_android() && !is_apk()) {
                     $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
-                        ACTION_EXTERNAL_PLAYER,
+                        ACTION_PLAY_ITEM,
                         TR::t('tv_screen_external_player'),
-                        'gui_skin://small_icons/playback.aai'
+                        'gui_skin://small_icons/playback.aai',
+                        array('external' => true)
                     );
                 }
                 return Action_Factory::show_popup_menu($menu_items);
 
             default:
+                hd_debug_print("default");
                 if (isset($this->variants)) {
                     foreach ($this->variants as $key => $variant) {
                         if ($user_input->control_id !== (string)$key) continue;
 
-                        $plugin_cookies->variant = $key;
+                        $this->plugin->set_parameter(PARAM_VOD_DEFAULT_VARIANT, (string)$key);
                         $parent_url = MediaURL::decode($user_input->parent_media_url);
                         return Action_Factory::change_behaviour($this->get_action_map($parent_url, $plugin_cookies));
                     }
@@ -179,60 +195,49 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         hd_debug_print(null, true);
+        hd_debug_print($media_url->get_media_url_str(), true);
 
-        $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
+        $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id);
         if (is_null($movie)) {
             return array();
         }
 
-        $items = array();
-
-        $this->plugin->vod->ensure_history_loaded();
         $viewed_items = $this->plugin->vod->get_history_movies();
-
         $viewed_item = isset($viewed_items[$media_url->movie_id]) ? $viewed_items[$media_url->movie_id] : array();
-        $counter = 0;
-        foreach ($movie->series_list as $series) {
-            if (isset($media_url->season_id) && $media_url->season_id !== $series->season_id) continue;
 
-            if (isset($viewed_item[$counter])) {
-                $item_info = $viewed_item[$counter];
+        $items = array();
+        foreach ($movie->series_list as $episode) {
+            if (isset($media_url->season_id) && $media_url->season_id !== $episode->season_id) continue;
 
+            $info = $episode->name;
+            $color = 15;
+            if (isset($viewed_item[$episode->id])) {
+                $item_info = $viewed_item[$episode->id];
+                hd_debug_print("viewed item: " . json_encode($item_info));
                 if ($item_info[Movie::WATCHED_FLAG]) {
-                    $info = TR::t('vod_screen_viewed__1', $series->name);
-                } else if (isset($item_info[Movie::WATCHED_DURATION])) {
-                    if ($item_info[Movie::WATCHED_DURATION] === -1) {
-                        $info = $series->name;
-                    } else {
-                        $start = format_duration_seconds($item_info[Movie::WATCHED_POSITION]);
-                        $total = format_duration_seconds($item_info[Movie::WATCHED_DURATION]);
-                        $date = format_datetime("d.m.Y H:i", $item_info[Movie::WATCHED_DATE]);
-                        $info = $series->name . " [$start/$total] $date";
-                    }
-                } else {
-                    $info = $series->name;
+                    $date = format_datetime("d.m.Y H:i", $item_info[Movie::WATCHED_DATE]);
+                    $info = TR::t('vod_screen_viewed__2', $episode->name, $date);
+                } else if (isset($item_info[Movie::WATCHED_DURATION]) && $item_info[Movie::WATCHED_DURATION] !== -1) {
+                    $start = format_duration_seconds($item_info[Movie::WATCHED_POSITION]);
+                    $total = format_duration_seconds($item_info[Movie::WATCHED_DURATION]);
+                    $date = format_datetime("d.m.Y H:i", $item_info[Movie::WATCHED_DATE]);
+                    $info = $episode->name . " [$start/$total] $date";
                 }
 
                 $color = 5;
-            } else {
-                $color = 15;
-                $info = $series->name;
             }
 
-            $this->variants = $series->variants;
-            $items[] = array
-            (
-                PluginRegularFolderItem::media_url => self::get_media_url_string($movie->id, $series->id),
+            $this->variants = $episode->variants;
+            $items[] = array(
+                PluginRegularFolderItem::media_url => self::get_media_url_string($movie->id, $episode->season_id, $episode->id),
                 PluginRegularFolderItem::caption => $info,
                 PluginRegularFolderItem::view_item_params => array
                 (
                     ViewItemParams::icon_path => 'gui_skin://small_icons/movie.aai',
-                    ViewItemParams::item_detailed_info => $series->series_desc,
+                    ViewItemParams::item_detailed_info => $episode->series_desc,
                     ViewItemParams::item_caption_color => $color,
                 ),
             );
-
-            $counter++;
         }
 
         return $items;

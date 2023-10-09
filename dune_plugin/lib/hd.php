@@ -413,7 +413,7 @@ class HD
 
     ///////////////////////////////////////////////////////////////////////
 
-    public static function send_log_to_developer($plugin_cookies, &$error = null)
+    public static function send_log_to_developer(&$error = null)
     {
         $serial = get_serial_number();
         if (empty($serial)) {
@@ -429,7 +429,7 @@ class HD
 
         if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name.log")) {
             $plugin_logs = "$apk_subst/D/dune_plugin_logs/$plugin_name.*";
-        } else if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name.log")) {
+        } else if (file_exists("$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.log")) {
             $plugin_logs = "$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.*";
         } else {
             $plugin_logs = "$apk_subst/tmp/run/$plugin_name.*";

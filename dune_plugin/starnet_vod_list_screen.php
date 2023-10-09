@@ -11,19 +11,11 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
     /**
      * @param string $category_id
      * @param string $genre_id
-     * @param string $name
      * @return false|string
      */
-    public static function get_media_url_string($category_id, $genre_id, $name = false)
+    public static function get_media_url_string($category_id, $genre_id)
     {
-        $arr['screen_id'] = self::ID;
-        $arr['category_id'] = $category_id;
-        $arr['genre_id'] = $genre_id;
-        if ($name !== false) {
-            $arr['name'] = $name;
-        }
-
-        return MediaURL::encode($arr);
+        return MediaURL::encode(array('screen_id' => self::ID, 'category_id' => $category_id, 'genre_id' => $genre_id));
     }
 
     /**
@@ -90,7 +82,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
             case ACTION_ADD_FAV:
                 $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
-                $this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
+                $this->plugin->vod->change_vod_favorites($opt_type, $movie_id);
 
                 return Action_Factory::invalidate_folders(array(self::get_media_url_string($parent_media_url->category_id, $parent_media_url->genre_id)));
         }
@@ -106,8 +98,9 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
      */
     public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
-        //hd_debug_print("$from_ndx");
-        hd_debug_print("'$media_url->category_id', from_idx: $from_ndx");
+        hd_debug_print(null, true);
+        hd_debug_print("from_ndx: $from_ndx, MediaURL: " . $media_url->get_media_url_str(), true);
+
         $this->plugin->config->try_reset_pages();
         if (empty($media_url->genre_id) || $media_url->category_id === Vod_Category::FLAG_ALL) {
             $key = $media_url->category_id;
@@ -171,7 +164,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
     {
         $this->plugin->config->reset_movie_counter();
         $this->plugin->vod->clear_movie_cache();
-        $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
+        $this->plugin->vod->ensure_favorites_loaded();
 
         return parent::get_folder_view($media_url, $plugin_cookies);
     }

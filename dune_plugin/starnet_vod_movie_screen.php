@@ -17,19 +17,20 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
      */
     public static function get_media_url_string($movie_id, $name = false, $poster_url = false, $info = false)
     {
-        $arr['screen_id'] = self::ID;
-        $arr['movie_id'] = $movie_id;
+        $arr = array('screen_id' => self::ID, 'movie_id' => $movie_id);
         if ($name !== false) {
             $arr['name'] = $name;
         }
+
         if ($poster_url !== false) {
             $arr['poster_url'] = $poster_url;
         }
+
         if ($info !== false) {
             $arr['info'] = $info;
         }
 
-        //hd_debug_print("Movie ID: $movie_id, Movie name: $name, Movie Poster: $poster_url");
+        hd_debug_print("Movie ID: $movie_id, Movie name: $name, Movie Poster: $poster_url", true);
 
         return MediaURL::encode($arr);
     }
@@ -52,7 +53,10 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
      */
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
-        $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id, $plugin_cookies);
+        hd_debug_print(null, true);
+        hd_debug_print($media_url->get_media_url_str(), true);
+
+        $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id);
         if (is_null($movie) || empty($movie->series_list)) {
             if (is_null($movie)) {
                 $movie = new Movie($media_url->movie_id, $this->plugin);
@@ -80,18 +84,15 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             );
         }
 
-        $this->plugin->vod->ensure_favorites_loaded($plugin_cookies);
+        $this->plugin->vod->ensure_favorites_loaded();
         $right_button_caption = $this->plugin->vod->is_favorite_movie_id($movie->id)
             ? TR::t('delete_from_favorite') : TR::t('add_to_favorite');
-        $right_button_action = User_Input_Handler_Registry::create_action($this, 'favorites', null, array('movie_id' => $movie->id));
+        $right_button_action = User_Input_Handler_Registry::create_action($this, PARAM_FAVORITES, null, array('movie_id' => $movie->id));
 
-        $save_folder = HD::get_data_items('save_folder');
-        if (isset($save_folder[$movie->id]))
-            $screen_media_url = Starnet_Vod_Series_List_Screen::get_media_url_string($movie->id, key($save_folder[$movie->id]));
-        else if (!isset($movie->season_list)) {
-            $screen_media_url = Starnet_Vod_Series_List_Screen::get_media_url_string($movie->id);
-        } else {
+        if (isset($movie->season_list)) {
             $screen_media_url = Starnet_Vod_Seasons_List_Screen::get_media_url_string($movie->id);
+        } else {
+            $screen_media_url = Starnet_Vod_Series_List_Screen::get_media_url_string($movie->id);
         }
 
         $movie_folder_view = array(
@@ -125,20 +126,18 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
         hd_debug_print(null, true);
         dump_input_handler($user_input);
 
-        if ($user_input->control_id === 'favorites') {
+        if ($user_input->control_id === PARAM_FAVORITES) {
             $movie_id = $user_input->movie_id;
 
             $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
             $opt_type = $this->plugin->vod->is_favorite_movie_id($movie_id) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
-            $this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
+            $this->plugin->vod->change_vod_favorites($opt_type, $movie_id);
 
             $message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
 
-            return Action_Factory::show_title_dialog($message,
-                Action_Factory::invalidate_folders(array(
-                        self::get_media_url_string($movie_id),
-                        Starnet_Vod_Favorites_Screen::get_media_url_str())
-                )
+            return Action_Factory::show_title_dialog(
+                $message,
+                Action_Factory::invalidate_folders(array(self::get_media_url_string($movie_id), Starnet_Vod_Favorites_Screen::ID))
             );
         }
 

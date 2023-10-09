@@ -50,8 +50,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 				return Action_Factory::update_regular_folder($range, true, $sel_ndx);
 
             case ACTION_ITEMS_CLEAR:
-                $this->plugin->vod->set_history_items(array());
-                HD::erase_items(Starnet_Vod::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name());
+                $this->plugin->vod->set_history_movies(array());
                 $range = $this->get_folder_range($parent_media_url, 0, $plugin_cookies);
                 return Action_Factory::update_regular_folder($range, true);
 
@@ -59,7 +58,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 				$is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
 				$opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
 				$message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
-				$this->plugin->vod->change_vod_favorites($opt_type, $movie_id, $plugin_cookies);
+				$this->plugin->vod->change_vod_favorites($opt_type, $movie_id);
 				return Action_Factory::show_title_dialog($message);
 		}
 
@@ -76,14 +75,13 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
     {
         hd_debug_print(null, true);
 
-        $this->plugin->vod->ensure_history_loaded();
         $history_items = $this->plugin->vod->get_history_movies();
 
         $items = array();
         foreach ($history_items as $movie_id => $movie_infos) {
             if (empty($movie_infos)) continue;
 
-            $this->plugin->vod->ensure_movie_loaded($movie_id, $plugin_cookies);
+            $this->plugin->vod->ensure_movie_loaded($movie_id);
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
 
             if (is_null($short_movie)) {

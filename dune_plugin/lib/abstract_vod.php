@@ -6,32 +6,32 @@ abstract class Abstract_Vod
     /**
      * @var array|Short_Movie[]
      */
-    private $short_movie_by_id = array();
+    protected $short_movie_by_id = array();
 
     /**
      * @var array|Movie[]
      */
-    private $movie_by_id = array();
+    protected $movie_by_id = array();
 
     /**
      * @var array|bool[]
      */
-    private $failed_movie_ids = array();
+    protected $failed_movie_ids = array();
 
     /**
      * @var array
      */
-    private $fav_movie_ids;
+    protected $fav_movie_ids;
 
     /**
      * @var array
      */
-    private $history_items;
+    protected $history_items;
 
     /**
      * @var array
      */
-    private $genres;
+    protected $genres;
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -63,12 +63,10 @@ abstract class Abstract_Vod
     /**
      * @param array $fav_movie_ids
      */
-    public function set_fav_movie_ids($fav_movie_ids, $plugin_cookies = null)
+    public function set_fav_movie_ids($fav_movie_ids)
     {
         $this->fav_movie_ids = $fav_movie_ids;
-        if (!is_null($plugin_cookies)) {
-            $this->do_save_favorite_movies($fav_movie_ids, $plugin_cookies);
-        }
+        $this->do_save_favorite_movies($this->fav_movie_ids);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -137,9 +135,8 @@ abstract class Abstract_Vod
 
     /**
      * @param string $movie_id
-     * @param $plugin_cookies
      */
-    public function ensure_movie_loaded($movie_id, &$plugin_cookies)
+    public function ensure_movie_loaded($movie_id)
     {
         if (!isset($movie_id)) {
             hd_debug_print("Movie ID is not set");
@@ -163,12 +160,11 @@ abstract class Abstract_Vod
 
     /**
      * @param string $movie_id
-     * @param $plugin_cookies
      * @return Movie|null
      */
-    public function get_loaded_movie($movie_id, &$plugin_cookies)
+    public function get_loaded_movie($movie_id)
     {
-        $this->ensure_movie_loaded($movie_id, $plugin_cookies);
+        $this->ensure_movie_loaded($movie_id);
 
         return $this->get_cached_movie($movie_id);
     }
@@ -177,17 +173,16 @@ abstract class Abstract_Vod
 
     /**
      * @param MediaURL $media_url
-     * @param $plugin_cookies
      * @return array|null
      */
-    public function get_vod_info(MediaURL $media_url, &$plugin_cookies)
+    public function get_vod_info(MediaURL $media_url)
     {
-        $movie = $this->get_loaded_movie($media_url->movie_id, $plugin_cookies);
+        $movie = $this->get_loaded_movie($media_url->movie_id);
         if ($movie === null) {
             return null;
         }
 
-        return $movie->get_movie_play_info($media_url, $plugin_cookies);
+        return $movie->get_movie_play_info($media_url);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -200,18 +195,16 @@ abstract class Abstract_Vod
      *  - each of these movie ids should have loaded ShortMovie in
      *  short_movie_by_id map.
      *
-     * @param $plugin_cookies
      */
-    abstract protected function load_favorites($plugin_cookies);
+    abstract protected function load_favorites();
 
 
     /**
      * This function should not fail.
      * @param array $fav_movie_ids
-     * @param $plugin_cookies
      * @return mixed
      */
-    abstract protected function do_save_favorite_movies($fav_movie_ids, $plugin_cookies);
+    abstract protected function do_save_favorite_movies($fav_movie_ids);
 
     /**
      * @param string $movie_id
@@ -220,16 +213,15 @@ abstract class Abstract_Vod
     abstract public function try_load_movie($movie_id);
 
     /**
-     * @param $plugin_cookies
      * @return void
      */
-    public function ensure_favorites_loaded($plugin_cookies)
+    public function ensure_favorites_loaded()
     {
-        if (!is_null($this->fav_movie_ids)) {
+        if (!empty($this->fav_movie_ids)) {
             return;
         }
 
-        $this->load_favorites($plugin_cookies);
+        $this->load_favorites();
     }
 
     /**
@@ -258,14 +250,13 @@ abstract class Abstract_Vod
     /**
      * @param string $fav_op_type
      * @param string $movie_id
-     * @param $plugin_cookies
      * @return array
      */
-    public function change_vod_favorites($fav_op_type, $movie_id, &$plugin_cookies)
+    public function change_vod_favorites($fav_op_type, $movie_id)
     {
         hd_debug_print(null, true);
 
-        $this->ensure_favorites_loaded($plugin_cookies);
+        $this->ensure_favorites_loaded();
         $fav_movie_ids = $this->get_favorite_movie_ids();
 
         switch ($fav_op_type) {
@@ -306,9 +297,9 @@ abstract class Abstract_Vod
                 break;
         }
 
-        $this->set_fav_movie_ids($fav_movie_ids, $plugin_cookies);
+        $this->set_fav_movie_ids($fav_movie_ids);
 
-        return Action_Factory::invalidate_folders(array(Starnet_Vod_Favorites_Screen::get_media_url_str()));
+        return Action_Factory::invalidate_folders(array(Starnet_Vod_Favorites_Screen::ID));
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -323,13 +314,15 @@ abstract class Abstract_Vod
      */
     public function get_history_movies()
     {
-        return $this->history_items;
+        $this->ensure_history_loaded();
+
+        return isset($this->history_items) ? $this->history_items : null;
     }
 
     /**
      * @param array $history_items
      */
-    public function set_history_items($history_items)
+    public function set_history_movies($history_items)
     {
         $this->history_items = $history_items;
         $this->do_save_history_movies($history_items);
@@ -337,7 +330,7 @@ abstract class Abstract_Vod
 
     public function ensure_history_loaded()
     {
-        if (!is_null($this->history_items)) {
+        if (isset($this->history_items)) {
             return;
         }
 
@@ -346,7 +339,7 @@ abstract class Abstract_Vod
 
     public function add_movie_to_history($id, $series_idx, $item)
     {
-        //hd_debug_print("add movie to history: id: $id, series: $series_idx");
+        hd_debug_print("add movie to history: id: $id, series: $series_idx", true);
         $this->ensure_history_loaded();
 
         if (isset($this->history_items[$id])) {
@@ -359,7 +352,7 @@ abstract class Abstract_Vod
             array_pop($this->history_items);
         }
 
-        $this->set_history_items($this->history_items);
+        $this->set_history_movies($this->history_items);
     }
 
     public function remove_movie_from_history($id, $plugin_cookies)
@@ -368,7 +361,7 @@ abstract class Abstract_Vod
 
         unset($this->history_items[$id]);
 
-        $this->set_history_items($this->history_items);
+        $this->set_history_movies($this->history_items);
     }
 
     ///////////////////////////////////////////////////////////////////////

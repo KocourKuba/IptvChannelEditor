@@ -99,7 +99,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         hd_debug_print(null, true);
-        hd_debug_print($media_url, true);
+        hd_debug_print($media_url->get_media_url_str(), true);
 
         if ($this->plugin->tv->load_channels() === 0) {
             hd_debug_print("Channels not loaded");

@@ -21,7 +21,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $action_play = User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER);
+        $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_ITEM);
         return array(
             GUI_EVENT_KEY_ENTER      => $action_play,
             GUI_EVENT_KEY_PLAY       => $action_play,
@@ -54,7 +54,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
         {
             case ACTION_PLAY_ITEM:
                 try {
-                    $post_action = $this->plugin->player_exec($media_url);
+                    $post_action = $this->plugin->tv_player_exec($media_url);
                 } catch (Exception $ex) {
                     hd_debug_print("Movie can't played, exception info: " . $ex->getMessage());
                     return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),

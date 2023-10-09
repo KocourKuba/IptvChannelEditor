@@ -192,6 +192,20 @@ class Starnet_Tv implements User_Input_Handler
         $pass_sex = $this->plugin->get_parameter(PARAM_ADULT_PASSWORD, '0000');
         $enable_protected = !empty($pass_sex);
 
+        $this->plugin->config->GetAccountInfo();
+        $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo();
+
+        $this->plugin->init_epg_manager();
+        if ($this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE) !== ENGINE_JSON) {
+            $res = $this->plugin->get_epg_manager()->is_xmltv_cache_valid();
+            if ($res !== -1) {
+                if ($res === 0) {
+                    $this->plugin->get_epg_manager()->download_xmltv_source();
+                }
+                $this->plugin->get_epg_manager()->index_xmltv_channels();
+            }
+        }
+
         $channels_list_path = '';
         try {
             $this->plugin->config->get_channel_list($channels_list);
@@ -339,8 +353,6 @@ class Starnet_Tv implements User_Input_Handler
             }
         }
 
-        $this->plugin->config->GetAccountInfo();
-        $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo();
         $fav_channel_ids = $this->plugin->get_favorites();
 
         // Read channels
@@ -619,7 +631,7 @@ class Starnet_Tv implements User_Input_Handler
             );
         }
 
-        if (isset($media_url->is_favorites)) {
+        if ((string)$media_url->group_id === FAVORITES_GROUP_ID) {
             $initial_group_id = null;
             $initial_is_favorite = 1;
         } else {

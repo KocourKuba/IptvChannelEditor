@@ -68,13 +68,13 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
 
         $history_path = $this->plugin->get_history_path();
         hd_debug_print("history path: $history_path");
-        $display_path = HD::string_ellipsis(get_slash_trailed_path($history_path));
+        $display_path = HD::string_ellipsis($history_path);
 
         Control_Factory::add_image_button($defs, $this, null,
             self::CONTROL_HISTORY_CHANGE_FOLDER, TR::t('setup_history_folder_path'), $display_path, $folder_icon, self::CONTROLS_WIDTH);
 
         $path = $this->plugin->get_parameter(PARAM_HISTORY_PATH);
-        if (!is_null($path) && $history_path !== get_data_path()) {
+        if (!is_null($path) && $history_path !== get_data_path(Default_Dune_Plugin::HISTORY_FOLDER)) {
             Control_Factory::add_image_button($defs, $this, null,
                 self::CONTROL_COPY_TO_DATA, TR::t('setup_copy_to_data'), TR::t('apply'), $refresh_icon, self::CONTROLS_WIDTH);
 
@@ -193,24 +193,25 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
                     $action_reload, $data->filepath, self::CONTROLS_WIDTH);
 
             case ACTION_RESET_DEFAULT:
-                $data = MediaURL::make(array('filepath' => get_data_path()));
-                hd_debug_print("do set history folder to default: $data->filepath");
-                $media_url_str =  MediaURL::decode($data);
-                $this->plugin->set_parameter(PARAM_HISTORY_PATH, smb_tree::set_folder_info($media_url_str));
+                hd_debug_print("do set history folder to default");
+                $this->plugin->remove_parameter(PARAM_HISTORY_PATH);
                 return $action_reload;
 
             case self::CONTROL_COPY_TO_DATA:
                 $history_path = $this->plugin->get_history_path();
                 hd_debug_print("copy to: $history_path");
-                if (!HD::copy_data(get_data_path('history'), "/" . PARAM_TV_HISTORY_ITEMS ."$/", $history_path)) {
+                if (!HD::copy_data(get_data_path(Default_Dune_Plugin::HISTORY_FOLDER),
+                    "/" . PARAM_TV_HISTORY_ITEMS ."$/", $history_path)) {
+
                     return Action_Factory::show_title_dialog(TR::t('err_copy'));
                 }
 
                 return Action_Factory::show_title_dialog(TR::t('setup_copy_done'), $action_reload);
 
             case self::CONTROL_COPY_TO_PLUGIN:
-                hd_debug_print("copy to: " . get_data_path());
-                if (!HD::copy_data($this->plugin->get_history_path(), "/" . PARAM_TV_HISTORY_ITEMS ."$/", get_data_path('history'))) {
+                hd_debug_print("copy to: " . get_data_path(Default_Dune_Plugin::HISTORY_FOLDER));
+                if (!HD::copy_data($this->plugin->get_history_path(),
+                    "/" . PARAM_TV_HISTORY_ITEMS ."$/", get_data_path(Default_Dune_Plugin::HISTORY_FOLDER))) {
                     return Action_Factory::show_title_dialog(TR::t('err_copy'));
                 }
 
@@ -235,8 +236,8 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
                 return Action_Factory::show_title_dialog(TR::t('setup_history_cleared'), $action_reload);
 
             case self::CONTROL_VOD_HISTORY_CLEAR:
-                $history_path = $this->plugin->get_history_path() .
-                    Starnet_Vod::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name();
+                $filename = Starnet_Vod::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name();
+                $history_path = $this->plugin->get_history_path($filename);
 
                 hd_debug_print("do clear VOD history $history_path");
                 exec("rm -rf $history_path");
