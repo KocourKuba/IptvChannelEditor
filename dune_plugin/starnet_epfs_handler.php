@@ -41,17 +41,17 @@ class Starnet_Epfs_Handler
     /**
      * @var string
      */
+    public static $epf_id;
+
+    /**
+     * @var string
+     */
     protected static $dir_path;
 
     /**
      * @var bool
      */
     protected static $enabled;
-
-    /**
-     * @var string
-     */
-    protected static $epf_id;
 
     /**
      * @var string
@@ -159,8 +159,9 @@ class Starnet_Epfs_Handler
         if (!self::$enabled)
             return null;
 
-        if ($first_run)
+        if ($first_run) {
             hd_debug_print("First run", true);
+        }
 
         self::ensure_no_internet_epfs_created($first_run, $plugin_cookies);
 

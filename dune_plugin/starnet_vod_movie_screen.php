@@ -84,7 +84,6 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             );
         }
 
-        $this->plugin->vod->ensure_favorites_loaded();
         $right_button_caption = $this->plugin->vod->is_favorite_movie_id($movie->id)
             ? TR::t('delete_from_favorite') : TR::t('add_to_favorite');
         $right_button_action = User_Input_Handler_Registry::create_action($this, PARAM_FAVORITES, null, array('movie_id' => $movie->id));
@@ -131,13 +130,9 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
 
             $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
             $opt_type = $this->plugin->vod->is_favorite_movie_id($movie_id) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
-            $this->plugin->vod->change_vod_favorites($opt_type, $movie_id);
-
-            $message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
-
             return Action_Factory::show_title_dialog(
-                $message,
-                Action_Factory::invalidate_folders(array(self::get_media_url_string($movie_id), Starnet_Vod_Favorites_Screen::ID))
+                $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite'),
+                $this->plugin->vod->change_vod_favorites($opt_type, $movie_id)
             );
         }
 

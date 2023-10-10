@@ -40,20 +40,6 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
     }
 
     /**
-     * @param $user_input
-     * @param $sel_inc
-     * @param &$plugin_cookies
-     * @return array
-     */
-    private function get_update_action($user_input, $sel_inc, &$plugin_cookies)
-    {
-        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
-        $range = $this->create_regular_folder_range($this->get_all_folder_items($parent_media_url, $plugin_cookies));
-
-        return Action_Factory::update_regular_folder($range, false, $user_input->sel_ndx + $sel_inc);
-    }
-
-    /**
      * @inheritDoc
      */
     public function handle_user_input(&$user_input, &$plugin_cookies)
@@ -92,13 +78,9 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
             case ACTION_RUN_SEARCH:
                 $search_string = $user_input->{ACTION_NEW_SEARCH};
                 hd_debug_print("search string: $search_string");
-                $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
-                $i = array_search($search_string, $search_items);
-                if ($i !== false) {
-                    unset ($search_items [$i]);
-                }
-                array_unshift($search_items, $search_string);
-                HD::put_data_items(self::VOD_SEARCH_LIST, $search_items);
+                $search_items = new Ordered_Array(HD::get_data_items(self::VOD_SEARCH_LIST));
+                $search_items->insert_item($search_string, false);
+                HD::put_data_items(self::VOD_SEARCH_LIST, $search_items->get_order());
                 $action = Action_Factory::open_folder(
                     Starnet_Vod_List_Screen::get_media_url_string(Vod_Category::FLAG_SEARCH, $search_string),
                     TR::t('search__1', ": $search_string"));
@@ -106,49 +88,30 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
                 return Action_Factory::invalidate_folders(array(self::ID), $action);
 
             case ACTION_ITEM_UP:
-                if (!isset($user_input->selected_media_url)) break;
-
-                $media_url = MediaURL::decode($user_input->selected_media_url);
-                $video_id = $media_url->genre_id;
-                $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
-                $i = array_search($video_id, $search_items);
-                if ($i === false || $i === 0)  break;
-
-                $t = $search_items[$i - 1];
-                $search_items[$i - 1] = $search_items[$i];
-                $search_items[$i] = $t;
-                HD::put_data_items(self::VOD_SEARCH_LIST, $search_items);
-
-                return $this->get_update_action($user_input, -1, $plugin_cookies);
-
             case ACTION_ITEM_DOWN:
-                if (!isset($user_input->selected_media_url)) break;
-
-                $media_url = MediaURL::decode($user_input->selected_media_url);
-                $video_id = $media_url->genre_id;
-                $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
-                $i = array_search($video_id, $search_items);
-                if ($i === false || $i === count($search_items) - 1) break;
-
-                $t = $search_items[$i + 1];
-                $search_items[$i + 1] = $search_items[$i];
-                $search_items[$i] = $t;
-                HD::put_data_items(self::VOD_SEARCH_LIST, $search_items);
-
-                return $this->get_update_action($user_input, 1, $plugin_cookies);
-
             case ACTION_ITEM_DELETE:
                 if (!isset($user_input->selected_media_url)) break;
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
-                $video_id = $media_url->genre_id;
-                $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
-                $i = array_search($video_id, $search_items);
-                if ($i !== false) {
-                    unset ($search_items[$i]);
-                }
-                HD::put_data_items(self::VOD_SEARCH_LIST, $search_items);
+                $filter_items = new Ordered_Array(HD::get_data_items(self::VOD_SEARCH_LIST));
 
+                switch ($user_input->control_id) {
+                    case ACTION_ITEM_UP:
+                        $user_input->sel_ndx--;
+                        $filter_items->arrange_item($media_url->genre_id, Ordered_Array::UP);
+                        break;
+
+                    case ACTION_ITEM_DOWN:
+                        $user_input->sel_ndx++;
+                        $filter_items->arrange_item($media_url->genre_id, Ordered_Array::DOWN);
+                        break;
+
+                    case ACTION_ITEM_DELETE:
+                        $filter_items->remove_item($media_url->genre_id);
+                        break;
+                }
+
+                HD::put_data_items(self::VOD_SEARCH_LIST, $filter_items->get_order());
                 return Action_Factory::invalidate_folders(array(self::ID));
         }
 
@@ -166,13 +129,9 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
     {
         hd_debug_print(null, true);
 
-        $items = array();
-
-        $items[] = array
-        (
+        $items[] = array(
             PluginRegularFolderItem::caption => TR::t('new_search'),
-            PluginRegularFolderItem::view_item_params => array
-            (
+            PluginRegularFolderItem::view_item_params => array(
                 ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
                 ViewItemParams::item_layout => HALIGN_LEFT,
                 ViewItemParams::icon_valign => VALIGN_CENTER,
@@ -187,11 +146,9 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
         $search_items = HD::get_data_items(self::VOD_SEARCH_LIST);
         foreach ($search_items as $item) {
             if (!empty($item)) {
-                $items[] = array
-                (
+                $items[] = array(
                     PluginRegularFolderItem::caption => TR::t('search__1', ": $item"),
-                    PluginRegularFolderItem::view_item_params => array
-                    (
+                    PluginRegularFolderItem::view_item_params => array(
                         ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
                         ViewItemParams::item_layout => HALIGN_LEFT,
                         ViewItemParams::icon_valign => VALIGN_CENTER,
@@ -215,8 +172,8 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
         hd_debug_print(null, true);
 
         return array(
-            $this->plugin->get_screen_view('list_1x11_small_info'),
             $this->plugin->get_screen_view('list_1x11_info'),
+            $this->plugin->get_screen_view('list_1x11_small_info'),
         );
     }
 }

@@ -1,7 +1,7 @@
-﻿*.gitattributes text
+*.gitattributes text
 .gitignore      text
 
-*.md            text diff=markdown
+*.md            text diff=markdown eol=lf
 *.sh			text eol=lf
 *.c				text eol=crlf
 *.cpp			text eol=crlf

@@ -19,11 +19,6 @@ class Starnet_Tv implements User_Input_Handler
     protected $plugin;
 
     /**
-     * @var int
-     */
-    protected $playback_runtime;
-
-    /**
      * @var string
      */
     protected $playback_url_is_stream_url;
@@ -128,16 +123,7 @@ class Starnet_Tv implements User_Input_Handler
             return null;
         }
 
-        $group = $this->groups->get($group_id);
-        if (is_null($group)) {
-            $group = $this->special_groups->get($group_id);
-            if (is_null($group)) {
-                hd_debug_print("Unknown group: $group_id");
-                return null;
-            }
-        }
-
-        return $group;
+        return $this->groups->get($group_id);
     }
 
     /**
@@ -173,7 +159,7 @@ class Starnet_Tv implements User_Input_Handler
         $this->channels = null;
         $this->groups = null;
         $this->special_groups = null;
-        $this->plugin->invalidate_epfs();
+        $this->plugin->set_need_update_epfs();
     }
 
     /**
@@ -196,7 +182,7 @@ class Starnet_Tv implements User_Input_Handler
         $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo();
 
         $this->plugin->init_epg_manager();
-
+        $this->plugin->set_favorites(null);
         $channels_list_path = '';
         try {
             $this->plugin->config->get_channel_list($channels_list);
@@ -449,6 +435,7 @@ class Starnet_Tv implements User_Input_Handler
         }
 
         $this->plugin->set_favorites($fav_channel_ids);
+        $this->plugin->save_favorites();
 
         $this->special_groups = new Hashed_Array();
         $this->special_groups->set($all_channels->get_id(), $all_channels);
@@ -543,16 +530,13 @@ class Starnet_Tv implements User_Input_Handler
      */
     public function get_tv_info(MediaURL $media_url)
     {
-        $epg_font_size = $this->plugin->get_bool_parameter(PARAM_EPG_FONT_SIZE, false)
-            ? PLUGIN_FONT_SMALL
-            : PLUGIN_FONT_NORMAL;
+        hd_debug_print(null, true);
+        hd_debug_print($media_url->get_media_url_str(), true);
 
         if ($this->load_channels() === -1) {
             hd_debug_print("Channels not loaded!");
             return array();
         }
-
-        $this->playback_runtime = PHP_INT_MAX;
 
         $group_all = $this->get_special_group(ALL_CHANNEL_GROUP_ID);
         $show_all = !$group_all->is_disabled();
@@ -564,7 +548,7 @@ class Starnet_Tv implements User_Input_Handler
 
             $all_groups_ids[] = $group->get_id();
             $group_id_arr = new Hashed_Array();
-            if($show_all) {
+            if ($show_all) {
                 $group_id_arr->put(ALL_CHANNEL_GROUP_ID, '');
             }
 
@@ -606,11 +590,20 @@ class Starnet_Tv implements User_Input_Handler
             }
         }
 
-        $groups_order = array_merge($show_all ? array(ALL_CHANNEL_GROUP_ID) : array(), $all_groups_ids);
+        if ($show_all) {
+            $group = $this->get_special_group(ALL_CHANNEL_GROUP_ID);
+            if ($group !== null) {
+                $groups[] = array(
+                    PluginTvGroup::id => $group->get_id(),
+                    PluginTvGroup::caption => $group->get_title(),
+                    PluginTvGroup::icon_url => $group->get_icon_url()
+                );
+            }
+        }
 
         $groups = array();
         /** @var Group $group */
-        foreach ($groups_order as $id) {
+        foreach ($all_groups_ids as $id) {
             $group = $this->get_group($id);
             if (is_null($group)) continue;
 
@@ -631,7 +624,6 @@ class Starnet_Tv implements User_Input_Handler
 
         if (LogSeverity::$is_debug) {
             hd_debug_print("All groups: " . raw_json_encode($groups));
-            hd_debug_print("All channels: " . raw_json_encode($all_channels->get_ordered_values()));
         }
 
         return array(
@@ -651,7 +643,7 @@ class Starnet_Tv implements User_Input_Handler
 
             PluginTvInfo::initial_archive_tm => isset($media_url->archive_tm) ? (int)$media_url->archive_tm : -1,
 
-            PluginTvInfo::epg_font_size => $epg_font_size,
+            PluginTvInfo::epg_font_size => $this->plugin->get_bool_parameter(PARAM_EPG_FONT_SIZE, false) ? PLUGIN_FONT_SMALL : PLUGIN_FONT_NORMAL,
 
             PluginTvInfo::actions => $this->get_action_map(),
             PluginTvInfo::timer => Action_Factory::timer(1000),
@@ -688,8 +680,8 @@ class Starnet_Tv implements User_Input_Handler
 
                 if (isset($user_input->stop_play)) {
                     // rising after playback end + 100 ms
-                    $this->plugin->invalidate_epfs();
-                    $post_action = $this->plugin->update_epfs_data($plugin_cookies, array(Starnet_TV_History_Screen::ID));
+                    $this->plugin->set_need_update_epfs();
+                    $post_action = $this->plugin->invalidate_epfs_folders($plugin_cookies, array(Starnet_TV_History_Screen::ID));
                 } else if (isset($user_input->locked)) {
                     clearstatcache();
                     if ($this->plugin->get_epg_manager()->is_index_locked()) {

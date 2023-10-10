@@ -96,6 +96,11 @@ class Default_Dune_Plugin implements DunePlugin
     protected $credentials;
 
     /**
+     * @var Ordered_Array
+     */
+    protected $favorite_ids;
+
+    /**
      * @var Playback_Points
      */
     protected $playback_points;
@@ -225,7 +230,7 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * @return Playback_Points
      */
-    public function get_playback_points()
+    public function &get_playback_points()
     {
         return $this->playback_points;
     }
@@ -627,10 +632,12 @@ class Default_Dune_Plugin implements DunePlugin
 
             case PLUGIN_FAVORITES_OP_MOVE_UP:
                 $favorites->arrange_item($channel_id, Ordered_Array::UP);
+                hd_debug_print("Move channel $channel_id up", true);
                 break;
 
             case PLUGIN_FAVORITES_OP_MOVE_DOWN:
                 $favorites->arrange_item($channel_id, Ordered_Array::DOWN);
+                hd_debug_print("Move channel $channel_id down", true);
                 break;
 
             case ACTION_ITEMS_CLEAR:
@@ -640,15 +647,9 @@ class Default_Dune_Plugin implements DunePlugin
         }
 
         $this->set_favorites($favorites);
-        $this->invalidate_epfs();
-        if ($favorites->size() === 0) {
-            return $this->update_epfs_data($plugin_cookies, array(
-                Starnet_Tv_Favorites_Screen::ID,
-                Starnet_Tv_Channel_List_Screen::get_media_url_string(ALL_CHANNEL_GROUP_ID)));
-        }
-
+        $this->set_need_update_epfs();
         return Starnet_Epfs_Handler::invalidate_folders(array(
-                Starnet_Tv_Favorites_Screen::ID,
+                Starnet_Tv_Favorites_Screen::get_media_url_string(FAVORITES_GROUP_ID),
                 Starnet_Tv_Channel_List_Screen::get_media_url_string(ALL_CHANNEL_GROUP_ID))
         );
     }
@@ -666,20 +667,22 @@ class Default_Dune_Plugin implements DunePlugin
     }
 
     /**
+     * @param bool $is_durty
      * @return void
      */
-    public function invalidate_epfs()
+    public function set_need_update_epfs($is_durty = true)
     {
-        $this->need_update_epfs = true;
+        $this->need_update_epfs = $is_durty;
     }
 
     /**
      * @param $plugin_cookies
      * @param array|null $media_urls
-     * @param null $post_action
+     * @param array|null $post_action
+     * @param bool $all_except
      * @return array
      */
-    public function update_epfs_data($plugin_cookies, $media_urls = null, $post_action = null)
+    public function invalidate_epfs_folders($plugin_cookies, $media_urls = null, $post_action = null, $all_except = false)
     {
         hd_debug_print(null, true);
 
@@ -687,9 +690,34 @@ class Default_Dune_Plugin implements DunePlugin
             $this->need_update_epfs = false;
             Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
         }
-        return Starnet_Epfs_Handler::invalidate_folders($media_urls, $post_action);
+        return Starnet_Epfs_Handler::invalidate_folders($media_urls, $post_action, $all_except);
     }
 
+    /**
+     * @param $plugin_cookies
+     * @param array|null $action
+     * @param array|null $media_urls
+     * @param array|null $post_action
+     * @return array
+     */
+    public function update_invalidate_epfs_folders($plugin_cookies, $action, $media_urls = null, $post_action = null)
+    {
+        hd_debug_print(null, true);
+
+        if ($this->need_update_epfs) {
+            $this->need_update_epfs = false;
+            Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+        }
+
+        $action = Action_Factory::update_invalidate_folders(
+            Action_Factory::update_invalidate_folders($action, Starnet_Tv_Rows_Screen::ID),
+            $media_urls,
+            $post_action
+        );
+
+        hd_debug_print(raw_json_encode($action));
+        return $action;
+    }
     ///////////////////////////////////////////////////////////////////////
     //
     // VOD support.
@@ -1119,22 +1147,34 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_favorites()
     {
-        $channel_list = $this->get_parameter(PARAM_CHANNELS_LIST_NAME);
-        $channel_list = empty($channel_list) ? 'default' : $channel_list;
-        $ids = HD::get_data_items('favorite_channels_' . hash('crc32', $channel_list));
+        if ($this->favorite_ids === null) {
+            $channel_list = $this->get_parameter(PARAM_CHANNELS_LIST_NAME);
+            $channel_list = empty($channel_list) ? 'default' : $channel_list;
+            $ids = HD::get_data_items('favorite_channels_' . hash('crc32', $channel_list));
 
-        return new Ordered_Array(array_unique($ids));
+            $this->favorite_ids = new Ordered_Array(array_unique($ids));
+        }
+
+        return $this->favorite_ids;
     }
 
     /**
-     * @param Ordered_Array $order
+     * @param Ordered_Array|null $order
      * @return void
      */
     public function set_favorites($order)
     {
+        $this->favorite_ids = $order;
+    }
+
+    /**
+     * @return void
+     */
+    public function save_favorites()
+    {
         $channel_list = $this->get_parameter(PARAM_CHANNELS_LIST_NAME);
         $channel_list = empty($channel_list) ? 'default' : $channel_list;
-        HD::put_data_items('favorite_channels_' . hash('crc32', $channel_list), $order->get_order());
+        HD::put_data_items('favorite_channels_' . hash('crc32', $channel_list), $this->favorite_ids->get_order());
     }
 
     /**

@@ -7,6 +7,8 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
 {
     const ID = 'tv_groups';
 
+    const ACTION_CONFIRM_DLG_APPLY = 'apply_dlg';
+
     ///////////////////////////////////////////////////////////////////////
 
     /**
@@ -27,6 +29,8 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             GUI_EVENT_KEY_SETUP      => $action_settings,
             GUI_EVENT_KEY_D_BLUE     => $action_settings,
             GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
+            GUI_EVENT_KEY_RETURN     => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN),
+            GUI_EVENT_KEY_TOP_MENU   => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_TOP_MENU),
         );
 
         if ($this->IsSetupNeeds() !== false) {
@@ -52,6 +56,18 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         dump_input_handler($user_input);
 
         switch ($user_input->control_id) {
+            case GUI_EVENT_KEY_TOP_MENU:
+            case GUI_EVENT_KEY_RETURN:
+                if ($this->plugin->get_bool_parameter(PARAM_ASK_EXIT)) {
+                    return Action_Factory::show_confirmation_dialog(TR::t('yes_no_confirm_msg'), $this, self::ACTION_CONFIRM_DLG_APPLY);
+                }
+
+                return User_Input_Handler_Registry::create_action($this, self::ACTION_CONFIRM_DLG_APPLY);
+
+            case self::ACTION_CONFIRM_DLG_APPLY:
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+                return Starnet_Epfs_Handler::invalidate_folders(null, Action_Factory::close_and_run());
+
             case ACTION_NEED_CONFIGURE:
                 if ($this->IsSetupNeeds()) {
                     hd_debug_print("Setup required!");
@@ -84,10 +100,6 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 Control_Factory::add_close_dialog_button($defs, TR::t('ok'), 150);
                 return Action_Factory::show_dialog(TR::t('tv_screen_information'), $defs);
 
-            case GUI_EVENT_KEY_RETURN:
-                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                return Starnet_Epfs_Handler::invalidate_folders(null, Action_Factory::close_and_run());
-
             case GUI_EVENT_KEY_POPUP_MENU:
                 $cache_engine = $this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
                 if ($cache_engine === ENGINE_JSON) break;
@@ -107,7 +119,8 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 $this->plugin->set_active_xmltv_source($xmltv_source);
                 $this->plugin->tv->reload_channels();
 
-                return Action_Factory::invalidate_all_folders($plugin_cookies);
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+                return Action_Factory::invalidate_all_folders();
 
             case ACTION_RELOAD:
                 if ($user_input->reload_action === 'epg') {
@@ -115,7 +128,9 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                     $this->plugin->init_epg_manager();
                     $this->plugin->get_epg_manager()->start_bg_indexing();
                 }
-                return Action_Factory::invalidate_all_folders($plugin_cookies);
+
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+                return Action_Factory::invalidate_all_folders();
         }
 
         return null;

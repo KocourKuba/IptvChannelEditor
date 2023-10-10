@@ -412,7 +412,6 @@ class Movie implements User_Input_Handler
                 return array();
         }
 
-        $this->plugin->vod->ensure_history_loaded();
         $viewed_items = $this->plugin->vod->get_history_movies();
         $viewed_movie = isset($viewed_items[$media_url->movie_id]) ? $viewed_items[$media_url->movie_id] : array();
 

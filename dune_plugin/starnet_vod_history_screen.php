@@ -42,7 +42,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 		{
 			case ACTION_ITEM_DELETE:
                 //hd_debug_print("Delete movie_id: $media_url->movie_id");
-                $this->plugin->vod->remove_movie_from_history($movie_id, $plugin_cookies);
+                $this->plugin->vod->remove_movie_from_history($movie_id);
 				$sel_ndx = $user_input->sel_ndx + 1;
 				if ($sel_ndx < 0)
 					$sel_ndx = 0;
@@ -58,8 +58,8 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 				$is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
 				$opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
 				$message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
-				$this->plugin->vod->change_vod_favorites($opt_type, $movie_id);
-				return Action_Factory::show_title_dialog($message);
+				return Action_Factory::show_title_dialog($message,
+                    $this->plugin->vod->change_vod_favorites($opt_type, $movie_id));
 		}
 
         return null;

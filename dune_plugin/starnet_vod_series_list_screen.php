@@ -150,24 +150,21 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                     $this->plugin->vod->set_history_movies($viewed_items);
                 }
 
-                $sel_ndx = $user_input->sel_ndx;
-                if ($sel_ndx < 0)
-                    $sel_ndx = 0;
                 $range = $this->get_folder_range(MediaURL::decode($user_input->parent_media_url), 0, $plugin_cookies);
-
-                return Action_Factory::update_regular_folder($range, true, $sel_ndx);
+                return Action_Factory::update_regular_folder($range, true, $user_input->sel_ndx);
 
             case GUI_EVENT_KEY_POPUP_MENU:
-                $menu_items = array();
                 if (is_android() && !is_apk()) {
-                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this,
+                    $menu_items[] = $this->plugin->create_menu_item($this,
                         ACTION_PLAY_ITEM,
                         TR::t('tv_screen_external_player'),
-                        'gui_skin://small_icons/playback.aai',
-                        array('external' => true)
-                    );
+                        'play.png',
+                        array('external' => true));
+
+                    return Action_Factory::show_popup_menu($menu_items);
                 }
-                return Action_Factory::show_popup_menu($menu_items);
+
+                return null;
 
             default:
                 hd_debug_print("default");

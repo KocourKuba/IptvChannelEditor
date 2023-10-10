@@ -45,10 +45,8 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
             return null;
         }
 
-        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
         $media_url = MediaURL::decode($user_input->selected_media_url);
         $channel_id = $media_url->channel_id;
-        $sel_ndx = $user_input->sel_ndx;
 
         switch ($user_input->control_id)
         {
@@ -62,31 +60,30 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
                         TR::t('warn_msg2__1', $ex->getMessage()));
                 }
 
-                return $this->plugin->update_epfs_data($plugin_cookies, null, $post_action);
+                return $this->plugin->invalidate_epfs_folders($plugin_cookies, null, $post_action);
 
             case ACTION_ITEM_DELETE:
                 $this->plugin->get_playback_points()->erase_point($channel_id);
-                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
-                $sel_ndx++;
-                if ($sel_ndx < 0)
-                    $sel_ndx = 0;
-                $this->plugin->invalidate_epfs();
+                $this->plugin->set_need_update_epfs();
                 if ($this->plugin->get_playback_points()->size() === 0) {
-                    return $this->plugin->update_epfs_data($plugin_cookies);
+                    return $this->plugin->invalidate_epfs_folders($plugin_cookies, null, Action_Factory::close_and_run());
                 }
                 break;
 
             case ACTION_ITEMS_CLEAR:
-                $this->plugin->invalidate_epfs();
+                $this->plugin->set_need_update_epfs();
                 $this->plugin->get_playback_points()->clear_points();
-                return $this->plugin->update_epfs_data($plugin_cookies);
+                return $this->plugin->invalidate_epfs_folders($plugin_cookies, null, Action_Factory::close_and_run());
 
             case ACTION_ADD_FAV:
                 $is_favorite = $this->plugin->get_favorites()->in_order($channel_id);
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
-                $this->plugin->change_tv_favorites($opt_type, $channel_id);
-                return $this->plugin->update_epfs_data($plugin_cookies, null, Action_Factory::show_title_dialog($message));
+                $action = $this->plugin->change_tv_favorites($opt_type, $channel_id);
+                $this->plugin->save_favorites();
+                return Action_Factory::update_invalidate_folders($action,
+                    self::get_media_url_string(HISTORY_GROUP_ID),
+                    Action_Factory::show_title_dialog($message));
 
             case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ITEMS_CLEAR, TR::t('clear_history'), "brush.png");
@@ -94,10 +91,11 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
                 return Action_Factory::show_popup_menu($menu_items);
 
             case GUI_EVENT_KEY_RETURN:
-                return $this->plugin->update_epfs_data($plugin_cookies, null, Action_Factory::close_and_run());
+                return $this->plugin->invalidate_epfs_folders($plugin_cookies, null, Action_Factory::close_and_run());
         }
 
-        return $this->invalidate_current_folder($parent_media_url, $plugin_cookies, $sel_ndx);
+        return Action_Factory::invalidate_folders($user_input->parent_media_url);
+        //return $this->invalidate_current_folder($parent_media_url, $plugin_cookies, $sel_ndx);
     }
 
     /**

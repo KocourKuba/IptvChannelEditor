@@ -124,16 +124,19 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
                 break;
 
             case PARAM_ASK_EXIT:
+                $this->plugin->toggle_parameter($control_id);
+                break;
+
             case PARAM_SHOW_ALL:
             case PARAM_SHOW_FAVORITES:
             case PARAM_SHOW_HISTORY:
             case PARAM_SHOW_VOD:
             case PARAM_VOD_LAST:
                 $this->plugin->toggle_parameter($control_id);
-                if ($control_id !== PARAM_ASK_EXIT) {
-                    $this->plugin->tv->reload_channels();
-                }
-                return Action_Factory::invalidate_all_folders($plugin_cookies,
+                $this->plugin->tv->reload_channels();
+                $this->plugin->set_need_update_epfs();
+                return $this->plugin->invalidate_epfs_folders($plugin_cookies,
+                    null,
                     Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)));
 
             case PARAM_EPG_FONT_SIZE:

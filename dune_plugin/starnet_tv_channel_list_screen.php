@@ -41,7 +41,8 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             GUI_EVENT_KEY_SETUP      => $action_settings,
         );
 
-        if ((string)$media_url->group_id === ALL_CHANNEL_GROUP_ID) {
+        $group_id = (string)$media_url->group_id;
+        if ($group_id !== FAVORITES_GROUP_ID && $group_id !== HISTORY_GROUP_ID) {
             $search_action = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, TR::t('search'));
             $actions[GUI_EVENT_KEY_C_YELLOW] = $search_action;
             $actions[GUI_EVENT_KEY_SEARCH] = $search_action;
@@ -84,16 +85,13 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                         TR::t('warn_msg2__1', $ex->getMessage()));
                 }
 
-                return $this->plugin->update_epfs_data($plugin_cookies, null, $post_action);
+                return $this->plugin->invalidate_epfs_folders($plugin_cookies, null, $post_action);
 
             case ACTION_ADD_FAV:
                 $opt_type = $this->plugin->get_favorites()->in_order($channel_id) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
-                $this->plugin->change_tv_favorites($opt_type, $channel_id);
-
-                return $this->plugin->update_epfs_data($plugin_cookies, array(
-                    Starnet_Tv_Favorites_Screen::ID,
-                    $user_input->parent_media_url,
-                    self::get_media_url_string(ALL_CHANNEL_GROUP_ID)));
+                $action = $this->plugin->change_tv_favorites($opt_type, $channel_id);
+                $this->plugin->save_favorites();
+                return $this->plugin->update_invalidate_epfs_folders($plugin_cookies, $action, $user_input->parent_media_url);
 
             case ACTION_SETTINGS:
                 return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), TR::t('entry_setup'));
@@ -111,7 +109,10 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             case ACTION_RUN_SEARCH:
                 $find_text = $user_input->{self::ACTION_NEW_SEARCH};
                 hd_debug_print("Search in group: $parent_media_url->group_id", true);
-                $parent_group = $this->plugin->tv->get_group($parent_media_url->group_id);
+                $parent_group = $parent_media_url->group_id === ALL_CHANNEL_GROUP_ID
+                    ? $this->plugin->tv->get_group($parent_media_url->group_id)
+                    : $this->plugin->tv->get_special_group($parent_media_url->group_id);
+
                 if (is_null($parent_group)) {
                     hd_debug_print("unknown parent group", true);
                     break;
@@ -314,21 +315,21 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 throw new Exception("Channels not loaded!");
             }
 
-            $this_group = $this->plugin->tv->get_group($media_url->group_id);
+            $this_group = ($media_url->group_id === ALL_CHANNEL_GROUP_ID)
+                ? $this->plugin->tv->get_special_group($media_url->group_id)
+                : $this->plugin->tv->get_group($media_url->group_id);
+
             if (is_null($this_group)) {
                 throw new Exception("Group $media_url->group_id not found");
             }
-
             $channels_order = new Hashed_Array();
             /** @var Channel $channel */
             if ($media_url->group_id === ALL_CHANNEL_GROUP_ID) {
                 foreach($this->plugin->tv->get_groups()->get_order() as $group_id) {
-                    hd_debug_print("group_id: $group_id");
                     $group = $this->plugin->tv->get_group($group_id);
                     if (is_null($group)) continue;
 
                     foreach ($group->get_group_channels()->get_order() as $channel_id) {
-                        hd_debug_print("channel_id: $channel_id");
                         $channels_order->put($channel_id, $channel_id);
                     }
                 }
@@ -410,41 +411,5 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             ),
             PluginRegularFolderItem::starred => $this->plugin->get_favorites()->in_order($channel->get_id()),
         );
-    }
-
-    /**
-     * @param $group_id
-     * @return array
-     */
-    protected function get_group_channels($group_id)
-    {
-        $channels = array();
-        if ($group_id === ALL_CHANNEL_GROUP_ID) {
-            /** @var Default_Group $group */
-            foreach($this->plugin->tv->get_groups() as $group) {
-                hd_debug_print($group->__toString(), true);
-                if ($group->is_disabled()) continue;
-
-                foreach ($group->get_group_channels() as $channel) {
-                    if ($channel !== null) {
-                        hd_debug_print($channel->__toString(), true);
-                        $channels[] = $channel;
-                    }
-                }
-            }
-            $channels = array_unique($channels);
-        } else {
-            $group = $this->plugin->tv->get_group($group_id);
-            if ($group !== null && !$group->is_disabled()) {
-                /** @var Default_Channel $channel */
-                foreach ($group->get_group_channels() as $channel) {
-                    if ($channel !== null) {
-                        $channels[] = $channel;
-                    }
-                }
-            }
-        }
-
-        return $channels;
     }
 }

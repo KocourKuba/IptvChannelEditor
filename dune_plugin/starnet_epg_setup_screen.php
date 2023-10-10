@@ -226,8 +226,8 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             case ACTION_RELOAD:
                 hd_debug_print(ACTION_RELOAD);
                 $this->plugin->tv->reload_channels();
-                return Action_Factory::invalidate_all_folders($plugin_cookies,
-                    Action_Factory::reset_controls($this->do_get_control_defs()));
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+                return Action_Factory::invalidate_all_folders(Action_Factory::reset_controls($this->do_get_control_defs()));
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs());

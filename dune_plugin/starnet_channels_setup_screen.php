@@ -236,8 +236,8 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                     return Action_Factory::show_title_dialog(TR::t('err_load_channels_list'));
                 }
 
-                return Action_Factory::invalidate_all_folders($plugin_cookies,
-                    Action_Factory::reset_controls($this->do_get_control_defs()));
+                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
+                return Action_Factory::invalidate_all_folders(Action_Factory::reset_controls($this->do_get_control_defs()));
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs());

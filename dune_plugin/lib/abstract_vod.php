@@ -21,16 +21,6 @@ abstract class Abstract_Vod
     /**
      * @var array
      */
-    protected $fav_movie_ids;
-
-    /**
-     * @var array
-     */
-    protected $history_items;
-
-    /**
-     * @var array
-     */
     protected $genres;
 
     ///////////////////////////////////////////////////////////////////////
@@ -58,15 +48,6 @@ abstract class Abstract_Vod
     public function set_failed_movie_id($movie_id)
     {
         $this->failed_movie_ids[$movie_id] = true;
-    }
-
-    /**
-     * @param array $fav_movie_ids
-     */
-    public function set_fav_movie_ids($fav_movie_ids)
-    {
-        $this->fav_movie_ids = $fav_movie_ids;
-        $this->do_save_favorite_movies($this->fav_movie_ids);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -116,6 +97,9 @@ abstract class Abstract_Vod
         return isset($this->short_movie_by_id[$movie_id]) ? $this->short_movie_by_id[$movie_id] : null;
     }
 
+    /**
+     * @return void
+     */
     public function clear_movie_cache()
     {
         hd_debug_print("Abstract_Vod::clear_movie_cache: movie cache cleared");
@@ -123,12 +107,12 @@ abstract class Abstract_Vod
         $this->short_movie_by_id = array();
         $this->movie_by_id = array();
         $this->failed_movie_ids = array();
-        unset($this->fav_movie_ids, $this->history_items);
     }
 
     public function clear_genre_cache()
     {
         unset($this->genres);
+        $this->genres = null;
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -185,184 +169,11 @@ abstract class Abstract_Vod
         return $movie->get_movie_play_info($media_url);
     }
 
-    ///////////////////////////////////////////////////////////////////////
-    // Favorites.
-
-    /**
-     * This function is responsible for the following:
-     *  - $this->fav_movie_ids should be initialized with array of movie
-     *  ids
-     *  - each of these movie ids should have loaded ShortMovie in
-     *  short_movie_by_id map.
-     *
-     */
-    abstract protected function load_favorites();
-
-
-    /**
-     * This function should not fail.
-     * @param array $fav_movie_ids
-     * @return mixed
-     */
-    abstract protected function do_save_favorite_movies($fav_movie_ids);
-
     /**
      * @param string $movie_id
      * @return mixed
      */
     abstract public function try_load_movie($movie_id);
-
-    /**
-     * @return void
-     */
-    public function ensure_favorites_loaded()
-    {
-        if (!empty($this->fav_movie_ids)) {
-            return;
-        }
-
-        $this->load_favorites();
-    }
-
-    /**
-     * @return array
-     */
-    public function get_favorite_movie_ids()
-    {
-        return $this->fav_movie_ids;
-    }
-
-    /**
-     * @param string $movie_id
-     * @return bool
-     */
-    public function is_favorite_movie_id($movie_id)
-    {
-        if (!$this->is_favorites_supported()) {
-            hd_debug_print("Favorites not supported");
-            return false;
-        }
-
-        $fav_movie_ids = $this->get_favorite_movie_ids();
-        return !is_null($fav_movie_ids) && in_array($movie_id, $fav_movie_ids);
-    }
-
-    /**
-     * @param string $fav_op_type
-     * @param string $movie_id
-     * @return array
-     */
-    public function change_vod_favorites($fav_op_type, $movie_id)
-    {
-        hd_debug_print(null, true);
-
-        $this->ensure_favorites_loaded();
-        $fav_movie_ids = $this->get_favorite_movie_ids();
-
-        switch ($fav_op_type) {
-            case PLUGIN_FAVORITES_OP_ADD:
-                hd_debug_print("Try to add movie id: $movie_id");
-                if (!is_null($movie_id) && in_array($movie_id, $fav_movie_ids) === false) {
-                    hd_debug_print("Movie id: $movie_id added to favorites");
-                    $fav_movie_ids[] = $movie_id;
-                }
-                break;
-            case PLUGIN_FAVORITES_OP_REMOVE:
-                hd_debug_print("Try to remove movie id: $movie_id");
-                $k = array_search($movie_id, $fav_movie_ids);
-                if ($k !== false) {
-                    hd_debug_print("Movie id: $movie_id removed from favorites");
-                    unset ($fav_movie_ids[$k]);
-                }
-                break;
-            case ACTION_ITEMS_CLEAR:
-                hd_debug_print("Movie favorites cleared");
-                $fav_movie_ids = array();
-                break;
-            case PLUGIN_FAVORITES_OP_MOVE_UP:
-                $k = array_search($movie_id, $fav_movie_ids);
-                if ($k !== false && $k !== 0) {
-                    $t = $fav_movie_ids[$k - 1];
-                    $fav_movie_ids[$k - 1] = $fav_movie_ids[$k];
-                    $fav_movie_ids[$k] = $t;
-                }
-                break;
-            case PLUGIN_FAVORITES_OP_MOVE_DOWN:
-                $k = array_search($movie_id, $fav_movie_ids);
-                if ($k !== false && $k !== count($fav_movie_ids) - 1) {
-                    $t = $fav_movie_ids[$k + 1];
-                    $fav_movie_ids[$k + 1] = $fav_movie_ids[$k];
-                    $fav_movie_ids[$k] = $t;
-                }
-                break;
-        }
-
-        $this->set_fav_movie_ids($fav_movie_ids);
-
-        return Action_Factory::invalidate_folders(array(Starnet_Vod_Favorites_Screen::ID));
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    // History.
-
-    abstract protected function load_history();
-
-    abstract protected function do_save_history_movies($history_items);
-
-    /**
-     * @return array
-     */
-    public function get_history_movies()
-    {
-        $this->ensure_history_loaded();
-
-        return isset($this->history_items) ? $this->history_items : null;
-    }
-
-    /**
-     * @param array $history_items
-     */
-    public function set_history_movies($history_items)
-    {
-        $this->history_items = $history_items;
-        $this->do_save_history_movies($history_items);
-    }
-
-    public function ensure_history_loaded()
-    {
-        if (isset($this->history_items)) {
-            return;
-        }
-
-        $this->load_history();
-    }
-
-    public function add_movie_to_history($id, $series_idx, $item)
-    {
-        hd_debug_print("add movie to history: id: $id, series: $series_idx", true);
-        $this->ensure_history_loaded();
-
-        if (isset($this->history_items[$id])) {
-            HD::array_unshift_assoc($this->history_items, $id, $this->history_items[$id]);
-        }
-
-        $this->history_items[$id][$series_idx] = $item;
-
-        if (count($this->history_items) === 64) {
-            array_pop($this->history_items);
-        }
-
-        $this->set_history_movies($this->history_items);
-    }
-
-    public function remove_movie_from_history($id, $plugin_cookies)
-    {
-        $this->ensure_history_loaded();
-
-        unset($this->history_items[$id]);
-
-        $this->set_history_movies($this->history_items);
-    }
 
     ///////////////////////////////////////////////////////////////////////
     // Genres.
@@ -435,15 +246,6 @@ abstract class Abstract_Vod
 
         return $this->genres[$genre_id];
     }
-
-    ///////////////////////////////////////////////////////////////////////
-    // Search.
-
-    ///////////////////////////////////////////////////////////////////////
-    // Filter.
-
-    ///////////////////////////////////////////////////////////////////////
-    // Folder views.
 
     /**
      * @return array|null
