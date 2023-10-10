@@ -1414,12 +1414,20 @@ void CAccessInfoPage::OnBnClickedButtonBrowseDirectLink()
 	{
 		if (dlg.m_url.Find(L"www.dropbox.com") != -1)
 		{
+			dlg.m_url.Replace(L"www.dropbox.com", L"dl.dropboxusercontent.com");
 			int pos = dlg.m_url.Find('?');
 			if (pos != -1)
 			{
-				dlg.m_url = dlg.m_url.Mid(0, pos);
+				int new_pos = dlg.m_url.Find(L"?rlkey");
+				if (new_pos == -1)
+				{
+					dlg.m_url = dlg.m_url.Mid(0, pos);
+				}
+				else
+				{
+					dlg.m_url.Replace(L"&dl=0", L"");
+				}
 			}
-			dlg.m_url.Replace(L"www.dropbox.com", L"dl.dropboxusercontent.com");
 			selectedAccount.m_direct_links[ch_list] = get_utf8(dlg.m_url);
 		}
 		else
@@ -1489,7 +1497,16 @@ bool CAccessInfoPage::TransformDropboxPath(std::wstring& dropbox_link, const std
 			AfxMessageBox(IDS_STRING_ERR_WRONG_UPLOADED_NAME, MB_ICONERROR | MB_OK);
 			return false;
 		}
-		dropbox_link = fmt::format(L"{:s}://{:s}{:s}/", cracked.scheme, cracked.host, file_path.parent_path().wstring());
+
+		if (cracked.extra_info.find(L"?rlkey") != std::wstring::npos)
+		{
+			utils::string_replace_inplace<wchar_t>(cracked.extra_info, L"&dl=0", L"");
+			dropbox_link = fmt::format(L"{:s}://{:s}{:s}{:s}", cracked.scheme, cracked.host, file_path.wstring(), cracked.extra_info);
+		}
+		else
+		{
+			dropbox_link = fmt::format(L"{:s}://{:s}{:s}/", cracked.scheme, cracked.host, file_path.parent_path().wstring());
+		}
 	}
 
 	return true;

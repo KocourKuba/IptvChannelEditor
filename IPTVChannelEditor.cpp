@@ -880,10 +880,13 @@ bool PackPlugin(const PluginType plugin_type,
 																   ? cred.get_update_name() : utils::DUNE_UPDATE_INFO_NAME), cred);
 
 	const auto& version_string = fmt::format("{:s}.{:s}", STRPRODUCTVER, date_string);
-	std::string update_url;
+	std::string update_url(cred.update_url);
 	if (!cred.update_url.empty())
 	{
-		update_url = fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
+		if (cred.update_url.find("?rlkey") == std::string::npos)
+		{
+			update_url = fmt::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
+		}
 	}
 
 	// rewrite xml nodes
