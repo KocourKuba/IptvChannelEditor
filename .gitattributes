@@ -1,0 +1,30 @@
+*.gitattributes text
+.gitignore      text
+
+*.md            text diff=markdown
+*.sh			text eol=lf
+*.c				text eol=crlf
+*.cpp			text eol=crlf
+*.h				text eol=crlf
+*.hpp			text eol=crlf
+*.rc?			text eol=crlf
+
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
+
+# Images
+*.jpg binary -text
+*.png binary -text
+
+#
+# Exclude files from exporting
+#
+
+.gitattributes  export-ignore
+.gitignore      export-ignore
+
+*.php diff=php text eol=lf
+
+*.txt text eol=lf
+*.tpl html eol=lf
+*.xml html eol=lf
