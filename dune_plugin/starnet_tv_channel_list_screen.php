@@ -89,7 +89,11 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             case ACTION_ADD_FAV:
                 $opt_type = $this->plugin->get_favorites()->in_order($channel_id) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $this->plugin->change_tv_favorites($opt_type, $channel_id);
-                break;
+
+                return $this->plugin->update_epfs_data($plugin_cookies, array(
+                    Starnet_Tv_Favorites_Screen::ID,
+                    $user_input->parent_media_url,
+                    self::get_media_url_string(ALL_CHANNEL_GROUP_ID)));
 
             case ACTION_SETTINGS:
                 return Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), TR::t('entry_setup'));
@@ -121,10 +125,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items = array();
 
-                $menu_items[] = $this->plugin->create_menu_item($this, self::ACTION_CREATE_SEARCH, TR::t('search'), "search.png");
-
                 if (is_android() && !is_apk()) {
-                    $menu_items[] = $this->plugin->create_menu_item($this, GuiMenuItemDef::is_separator);
                     $is_external = $this->plugin->is_channel_for_ext_player($channel_id);
                     $menu_items[] = $this->plugin->create_menu_item($this,
                         ACTION_EXTERNAL_PLAYER,
@@ -260,7 +261,8 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 }
             }
         } else {
-            foreach ($parent_group->get_group_channels() as $channel) {
+            foreach ($parent_group->get_items_order() as $item) {
+                $channel = $this->plugin->tv->get_channel($item);
                 if (!is_null($channel) && !$channel->is_disabled()) {
                     $channels[] = $channel;
                 }
@@ -294,45 +296,6 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         return Action_Factory::show_dialog(TR::t('search'), $defs, true);
     }
 
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param Group $group
-     * @param Channel $channel
-     * @return array
-     */
-    private function get_regular_folder_item($group, $channel)
-    {
-        $zoom_data = $this->plugin->get_channel_zoom($channel->get_id());
-        if ($zoom_data === DuneVideoZoomPresets::not_set) {
-            $detailed_info = TR::t('tv_screen_channel_info__3',
-                $channel->get_title(),
-                $channel->get_archive(),
-                implode(", ", $channel->get_epg_ids())
-            );
-        } else {
-            $detailed_info = TR::t('tv_screen_channel_info__4',
-                $channel->get_title(),
-                $channel->get_archive(),
-                implode(", ", $channel->get_epg_ids()),
-                TR::load_string(DuneVideoZoomPresets::$zoom_ops[$zoom_data])
-            );
-        }
-
-        return array
-        (
-            PluginRegularFolderItem::media_url => MediaURL::encode(array('channel_id' => $channel->get_id(), 'group_id' => $group->get_id())),
-            PluginRegularFolderItem::caption => $channel->get_title(),
-            PluginRegularFolderItem::view_item_params => array
-            (
-                ViewItemParams::icon_path => $channel->get_icon_url(),
-                ViewItemParams::item_detailed_icon_path => $channel->get_icon_url(),
-                ViewItemParams::item_detailed_info => $detailed_info,
-            ),
-            PluginRegularFolderItem::starred => $this->plugin->get_favorites()->in_order($channel->get_id()),
-        );
-    }
-
     /**
      * @param MediaURL $media_url
      * @param $plugin_cookies
@@ -341,27 +304,48 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
-        try {
-            $this->plugin->tv->load_channels();
-        } catch (Exception $e) {
-            hd_debug_print("Failed loading playlist! " . $e->getMessage());
-            return array();
-        }
-
-        $group = $this->plugin->tv->get_group($media_url->group_id);
-        if ($group === null) {
-            return array();
-        }
-
-        if ($group->get_id() === ALL_CHANNEL_GROUP_ID) {
-            $channels = $this->plugin->tv->get_channels();
-        } else {
-            $channels = $group->get_group_channels();
-        }
+        hd_debug_print(null, true);
+        hd_debug_print($media_url->get_media_url_str(), true);
 
         $items = array();
-        foreach ($channels as $channel) {
-            $items[] = $this->get_regular_folder_item($group, $channel);
+
+        try {
+            if ($this->plugin->tv->load_channels() === -1) {
+                throw new Exception("Channels not loaded!");
+            }
+
+            $this_group = $this->plugin->tv->get_group($media_url->group_id);
+            if (is_null($this_group)) {
+                throw new Exception("Group $media_url->group_id not found");
+            }
+
+            $channels_order = new Hashed_Array();
+            /** @var Channel $channel */
+            if ($media_url->group_id === ALL_CHANNEL_GROUP_ID) {
+                foreach($this->plugin->tv->get_groups()->get_order() as $group_id) {
+                    hd_debug_print("group_id: $group_id");
+                    $group = $this->plugin->tv->get_group($group_id);
+                    if (is_null($group)) continue;
+
+                    foreach ($group->get_group_channels()->get_order() as $channel_id) {
+                        hd_debug_print("channel_id: $channel_id");
+                        $channels_order->put($channel_id, $channel_id);
+                    }
+                }
+            } else {
+                foreach ($this_group->get_group_channels()->get_order() as $channel_id) {
+                    $channels_order->put($channel_id, $channel_id);
+                }
+            }
+
+            foreach ($channels_order as $item) {
+                $channel = $this->plugin->tv->get_channel($item);
+                if (is_null($channel) || $channel->is_disabled()) continue;
+
+                $items[] = $this->get_folder_item($this_group, $channel);
+            }
+        } catch (Exception $e) {
+            hd_debug_print("Failed collect folder items! " . $e->getMessage());
         }
 
         return $items;
@@ -388,5 +372,79 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             $this->plugin->get_screen_view('list_2x11_small_info'),
             $this->plugin->get_screen_view('list_3x11_no_info'),
         );
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+
+    /**
+     * @param string $group_id
+     * @param Channel $channel
+     * @return array
+     */
+    private function get_folder_item($group_id, $channel)
+    {
+        $zoom_data = $this->plugin->get_channel_zoom($channel->get_id());
+        if ($zoom_data === DuneVideoZoomPresets::not_set) {
+            $detailed_info = TR::t('tv_screen_channel_info__3',
+                $channel->get_title(),
+                $channel->get_archive(),
+                implode(", ", $channel->get_epg_ids())
+            );
+        } else {
+            $detailed_info = TR::t('tv_screen_channel_info__4',
+                $channel->get_title(),
+                $channel->get_archive(),
+                implode(", ", $channel->get_epg_ids()),
+                TR::load_string(DuneVideoZoomPresets::$zoom_ops[$zoom_data])
+            );
+        }
+
+        return array
+        (
+            PluginRegularFolderItem::media_url => MediaURL::encode(array('channel_id' => $channel->get_id(), 'group_id' => $group_id)),
+            PluginRegularFolderItem::caption => $channel->get_title(),
+            PluginRegularFolderItem::view_item_params => array(
+                ViewItemParams::icon_path => $channel->get_icon_url(),
+                ViewItemParams::item_detailed_icon_path => $channel->get_icon_url(),
+                ViewItemParams::item_detailed_info => $detailed_info,
+            ),
+            PluginRegularFolderItem::starred => $this->plugin->get_favorites()->in_order($channel->get_id()),
+        );
+    }
+
+    /**
+     * @param $group_id
+     * @return array
+     */
+    protected function get_group_channels($group_id)
+    {
+        $channels = array();
+        if ($group_id === ALL_CHANNEL_GROUP_ID) {
+            /** @var Default_Group $group */
+            foreach($this->plugin->tv->get_groups() as $group) {
+                hd_debug_print($group->__toString(), true);
+                if ($group->is_disabled()) continue;
+
+                foreach ($group->get_group_channels() as $channel) {
+                    if ($channel !== null) {
+                        hd_debug_print($channel->__toString(), true);
+                        $channels[] = $channel;
+                    }
+                }
+            }
+            $channels = array_unique($channels);
+        } else {
+            $group = $this->plugin->tv->get_group($group_id);
+            if ($group !== null && !$group->is_disabled()) {
+                /** @var Default_Channel $channel */
+                foreach ($group->get_group_channels() as $channel) {
+                    if ($channel !== null) {
+                        $channels[] = $channel;
+                    }
+                }
+            }
+        }
+
+        return $channels;
     }
 }

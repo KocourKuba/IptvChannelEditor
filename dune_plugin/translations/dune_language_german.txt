@@ -208,6 +208,10 @@ tv_screen_zoom_cut_edges = Kanten schneiden
 tv_screen_zoom_full_enlarge = Vollständige Vergrößerung
 tv_screen_zoom_full_stretch = Volle Strecke
 tv_screen_group_info__2 = %s|Kanäle: %s
+tv_screen_group_info__3 = %s|Kanäle: %s|Versteckt: %s
+tv_screen_ch_channel_info__4 = %s|Kategorien: %s|Archiv: %s day(s)|EPG ID: %s
+tv_screen_channel_info__3 = %s|Archiv: %s Tage|EPG ID: %s
+tv_screen_channel_info__4 = %s|Archiv: %s Tage|EPG ID: %s|Seitenverhältnis: %s
 tv_screen_external_player = externer Spieler
 tv_screen_internal_player = internen Spieler
 
