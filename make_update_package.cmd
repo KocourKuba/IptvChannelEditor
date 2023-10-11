@@ -52,9 +52,9 @@ copy "%ROOT%Updater\%BUILD_TYPE%\Updater.exe"			"%pkg%" >nul
 copy "%ROOT%dll\7z.dll"									"%pkg%" >nul
 copy "%ROOT%BugTrap\bin\BugTrapU.dll"					"%pkg%" >nul
 copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul
-copy "%ROOT%Changelog.md"								"%pkg%" >nul
-copy "%ROOT%Changelog.md" "%ROOT%package\Changelog.md" >nul
-copy "%ROOT%Changelog.md" "%ROOT%package\Changelog.md.%BUILD%" >nul
+copy "%ROOT%dune_plugin\Changelog.md"					"%pkg%" >nul
+copy "%ROOT%dune_plugin\Changelog.md" "%ROOT%package\Changelog.md" >nul
+copy "%ROOT%dune_plugin\Changelog.md" "%ROOT%package\Changelog.md.%BUILD%" >nul
 
 pushd "package\%BUILD%"
 mklink /D dune_plugin "%ROOT%dune_plugin" >nul 2>&1

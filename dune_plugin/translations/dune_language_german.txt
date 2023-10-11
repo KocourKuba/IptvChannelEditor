@@ -130,6 +130,7 @@ setup_copy_to_data = In den ausgewählten Ordner kopieren
 setup_copy_to_plugin = In den Plugin-Ordner kopieren
 setup_copy_done = Kopieren erledigt
 setup_ask_exit = Bestätigen Sie das Beenden des Plugin
+setup_changelog = Geschichte der Veränderungen
 setup_debug = Aktivieren Sie die Debug-Protokollierung
 setup_per_channel_zoom = Aktivieren Sie den Zoom pro Kanal
 

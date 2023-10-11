@@ -609,7 +609,7 @@
     <None Include="res\IPTVChannelEditor.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Changelog.md" />
+    <None Include="dune_plugin\changelog.md" />
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
