@@ -244,6 +244,7 @@ warn_msg4 = Abonnementdetails können nicht angezeigt werden.
 warn_msg5 = Falscher Benutzername oder Passwort.
 fake_epg_program = Program
 
+err_too_old_player = Dieser DUNE HD-Player ist zu alt und wird nicht unterstützt
 err_load_playlist = Fehler beim Laden der Playlist!
 err_load_channels_list = Fehler beim Laden der Kanalliste!
 err_load_any = Fehler beim Laden der Playlist oder Kanalliste!
