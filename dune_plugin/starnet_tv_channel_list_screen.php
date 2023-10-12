@@ -343,7 +343,32 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $channel = $this->plugin->tv->get_channel($item);
                 if (is_null($channel) || $channel->is_disabled()) continue;
 
-                $items[] = $this->get_folder_item($this_group, $channel);
+                $zoom_data = $this->plugin->get_channel_zoom($channel->get_id());
+                if ($zoom_data === DuneVideoZoomPresets::not_set) {
+                    $detailed_info = TR::t('tv_screen_channel_info__3',
+                        $channel->get_title(),
+                        $channel->get_archive(),
+                        implode(", ", $channel->get_epg_ids())
+                    );
+                } else {
+                    $detailed_info = TR::t('tv_screen_channel_info__4',
+                        $channel->get_title(),
+                        $channel->get_archive(),
+                        implode(", ", $channel->get_epg_ids()),
+                        TR::load_string(DuneVideoZoomPresets::$zoom_ops[$zoom_data])
+                    );
+                }
+
+                $items[] = array(
+                    PluginRegularFolderItem::media_url => MediaURL::encode(array('channel_id' => $channel->get_id(), 'group_id' => $this_group->get_id())),
+                    PluginRegularFolderItem::caption => $channel->get_title(),
+                    PluginRegularFolderItem::view_item_params => array(
+                        ViewItemParams::icon_path => $channel->get_icon_url(),
+                        ViewItemParams::item_detailed_icon_path => $channel->get_icon_url(),
+                        ViewItemParams::item_detailed_info => $detailed_info,
+                    ),
+                    PluginRegularFolderItem::starred => $this->plugin->get_favorites()->in_order($channel->get_id()),
+                );
             }
         } catch (Exception $e) {
             hd_debug_print("Failed collect folder items! " . $e->getMessage());
@@ -372,44 +397,6 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             $this->plugin->get_screen_view('list_1x11_info'),
             $this->plugin->get_screen_view('list_2x11_small_info'),
             $this->plugin->get_screen_view('list_3x11_no_info'),
-        );
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param string $group_id
-     * @param Channel $channel
-     * @return array
-     */
-    private function get_folder_item($group_id, $channel)
-    {
-        $zoom_data = $this->plugin->get_channel_zoom($channel->get_id());
-        if ($zoom_data === DuneVideoZoomPresets::not_set) {
-            $detailed_info = TR::t('tv_screen_channel_info__3',
-                $channel->get_title(),
-                $channel->get_archive(),
-                implode(", ", $channel->get_epg_ids())
-            );
-        } else {
-            $detailed_info = TR::t('tv_screen_channel_info__4',
-                $channel->get_title(),
-                $channel->get_archive(),
-                implode(", ", $channel->get_epg_ids()),
-                TR::load_string(DuneVideoZoomPresets::$zoom_ops[$zoom_data])
-            );
-        }
-
-        return array
-        (
-            PluginRegularFolderItem::media_url => MediaURL::encode(array('channel_id' => $channel->get_id(), 'group_id' => $group_id)),
-            PluginRegularFolderItem::caption => $channel->get_title(),
-            PluginRegularFolderItem::view_item_params => array(
-                ViewItemParams::icon_path => $channel->get_icon_url(),
-                ViewItemParams::item_detailed_icon_path => $channel->get_icon_url(),
-                ViewItemParams::item_detailed_info => $detailed_info,
-            ),
-            PluginRegularFolderItem::starred => $this->plugin->get_favorites()->in_order($channel->get_id()),
         );
     }
 }
