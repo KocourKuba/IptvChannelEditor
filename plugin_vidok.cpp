@@ -61,14 +61,14 @@ void plugin_vidok::load_default()
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_domain = "http://vidok.tv";
 	info.pl_template = "{PL_DOMAIN}/p/{TOKEN}";
-	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	requested_token = true;
 
 	streams_config[0].cu_type = CatchupType::cu_append;
-	streams_config[0].uri_template = "http://{DOMAIN}/p/{TOKEN}/{ID}";
+	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/p/{TOKEN}/{ID}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}";
 
 	set_epg_preset(0, EpgPresets::enVidok);

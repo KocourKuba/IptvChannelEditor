@@ -3,6 +3,7 @@
 class Ext_Params
 {
     const /* (char *) */ M_SUBDOMAIN  = 'subdomain'; // subdomain (used in edem)
+    const /* (char *) */ M_SCHEME     = 'scheme';    // scheme (http/https)
     const /* (char *) */ M_DOMAIN     = 'domain';    // domain
     const /* (char *) */ M_VPORTAL    = 'vportal';   // vportal
     const /* (char *) */ M_PORT       = 'port';      // port

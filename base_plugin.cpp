@@ -162,6 +162,7 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 		utils::string_replace_inplace<wchar_t>(url, REPL_LIVE_URL, live_url);
 
 	utils::string_replace_inplace<wchar_t>(url, REPL_CGI_BIN, fmt::format(L"http://127.0.0.1/cgi-bin/plugins/{:s}/", utils::utf8_to_utf16(get_name())));
+	utils::string_replace_inplace<wchar_t>(url, REPL_SCHEME, info->scheme);
 	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, info->domain);
 	utils::string_replace_inplace<wchar_t>(url, REPL_PORT, info->port);
 	utils::string_replace_inplace<wchar_t>(url, REPL_ID, info->get_id());

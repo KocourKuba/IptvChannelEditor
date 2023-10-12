@@ -122,6 +122,7 @@ constexpr auto REG_ACTIVE_CH_LIST      = _T("ActiveChannelsList");
 constexpr auto REPL_API_URL            = L"{API_URL}";       // special url used to get information from provider
 constexpr auto REPL_LIVE_URL           = L"{LIVE_URL}";      // live url, used in archive template substitution
 constexpr auto REPL_CGI_BIN            = L"{CGI_BIN}";       // Url points to plugin cgi_bin folder
+constexpr auto REPL_SCHEME             = L"{SCHEME}";        // stream url scheme (set from playlist)
 constexpr auto REPL_DOMAIN             = L"{DOMAIN}";        // stream url domain (set from playlist)
 constexpr auto REPL_PORT               = L"{PORT}";          // stream url port (set from playlist)
 constexpr auto REPL_ID                 = L"{ID}";            // id (set from playlist)

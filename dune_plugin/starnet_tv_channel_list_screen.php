@@ -191,7 +191,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $info .= "Timeshift hours: {$channel->get_timeshift_hours()}\n";
                 $groups = array();
                 foreach ($channel->get_groups() as $group) {
-                    $groups[] = $group->get_id();
+                    $groups[] = $group->get_title();
                 }
                 $info .= "Categories: " . implode(', ', $groups) . "\n\n";
 

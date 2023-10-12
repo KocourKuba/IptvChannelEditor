@@ -586,6 +586,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 						  REPL_SERVER_ID,
 						  REPL_DEVICE_ID,
 						  REPL_QUALITY_ID,
+						  REPL_SCHEME,
 						  REPL_DOMAIN,
 						  REPL_PORT,
 						  REPL_ID,
@@ -1708,6 +1709,13 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 				if (const auto& found = m_playlistMap.find(id); found != m_playlistMap.end())
 				{
 					const auto& entry = found->second;
+					if (channel->get_scheme().empty()
+						&& !entry->get_scheme().empty()
+						&& channel->get_domain() != entry->get_scheme())
+					{
+						channel->set_scheme(entry->get_scheme());
+					}
+
 					if (channel->get_domain().empty()
 						&& !entry->get_domain().empty()
 						&& channel->get_domain() != entry->get_domain())

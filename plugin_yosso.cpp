@@ -56,14 +56,14 @@ void plugin_yosso::load_default()
 	info.pl_domain = "https://streaming-elbrus.su";
 	info.pl_template = "{PL_DOMAIN}/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<login>.+)\/(?<password>.+)\/(?<server>.+)\/.*$)";
-	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>\d+)\/(?<var1>[^\/].+\/)?(?<id>.+)\/(?<var2>.+)\.m3u8\?token=(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+):(?<port>\d+)\/(?<var1>[^\/].+\/)?(?<id>.+)\/(?<var2>.+)\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/{VAR1}{ID}/{VAR2}.m3u8?token={TOKEN}";
-	streams_config[0].uri_arc_template = "http://{DOMAIN}:{PORT}/{VAR1}{ID}/{VAR2}-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}:{PORT}/{VAR1}{ID}/{VAR2}.m3u8?token={TOKEN}";
+	streams_config[0].uri_arc_template = "{SCHEME}://{DOMAIN}:{PORT}/{VAR1}{ID}/{VAR2}-{START}-{DURATION}.m3u8?token={TOKEN}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/yosso%2Fepg%2F{EPG_ID}.json";
 

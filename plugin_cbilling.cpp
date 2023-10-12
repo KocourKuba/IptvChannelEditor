@@ -65,14 +65,14 @@ void plugin_cbilling::load_default()
 	info.pl_domain = "http://248on.com";
 	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<token>.+)_otp_dev.*$)";
-	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
-	streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
+	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	streams_config[1].uri_template = "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_template = "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	set_epg_preset(0, EpgPresets::enCbilling);
 	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";

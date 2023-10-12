@@ -146,6 +146,7 @@ void CPluginConfigPageTV::AssignMacros()
 	{
 		L"(?<id>)",
 		L"(?<epg_id>)",
+		L"(?<scheme>)",
 		L"(?<domain>)",
 		L"(?<port>)",
 		L"(?<login>)",
@@ -179,6 +180,7 @@ void CPluginConfigPageTV::AssignMacros()
 	strm_params.insert(strm_params.end(),
 					   {
 						   REPL_CGI_BIN,
+						   REPL_SCHEME,
 						   REPL_DOMAIN,
 						   REPL_PORT,
 						   REPL_ID,

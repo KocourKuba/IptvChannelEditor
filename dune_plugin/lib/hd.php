@@ -39,10 +39,24 @@ class HD
      */
     private static $default_user_agent;
 
+    /**
+     * @var string
+     */
+    private static $default_raw_user_agent;
+
+    /**
+     * @var string
+     */
     private static $plugin_user_agent;
 
+    /**
+     * @var string
+     */
     private static $dev_code;
 
+    /**
+     * @var string
+     */
     private static $token = '05ba6358d39c4f298f43024b654b7387';
 
     ///////////////////////////////////////////////////////////////////////
@@ -133,7 +147,7 @@ class HD
         if (!empty(self::$default_user_agent))
             return;
 
-        self::$default_user_agent = "DuneHD/1.0";
+        self::$default_user_agent = self::$default_raw_user_agent = "DuneHD/1.0";
 
         $extra_useragent = "";
         $sysinfo = file("/tmp/sysinfo.txt", FILE_IGNORE_NEW_LINES);
@@ -158,7 +172,7 @@ class HD
 
         self::$default_user_agent .= $extra_useragent;
 
-        hd_debug_print("HTTP UserAgent: " . self::$default_user_agent);
+        hd_debug_print("Default UserAgent: " . self::$default_user_agent);
     }
 
     public static function get_default_user_agent()
@@ -174,7 +188,7 @@ class HD
         if (empty(self::$default_user_agent))
             self::http_init();
 
-        return (empty(self::$plugin_user_agent) || self::$default_user_agent === self::$plugin_user_agent) ? self::$default_user_agent : self::$plugin_user_agent;
+        return (empty(self::$plugin_user_agent) || self::$default_raw_user_agent === self::$plugin_user_agent) ? self::$default_user_agent : self::$plugin_user_agent;
     }
 
     public static function set_dune_user_agent($user_agent)
@@ -208,12 +222,12 @@ class HD
         curl_setopt($ch, CURLOPT_URL, $url);
 
         if (isset($opts)) {
-            //self::dump_curl_opts($opts);
             foreach ($opts as $k => $v) {
                 curl_setopt($ch, $k, $v);
             }
         }
 
+        hd_debug_print("Using UserAgent: " . self::get_dune_user_agent());
         hd_debug_print("HTTP fetching '$url'");
 
         $content = curl_exec($ch);

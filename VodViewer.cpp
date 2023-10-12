@@ -1034,7 +1034,7 @@ void CVodViewer::FilterList()
 					movie->title = utils::get_json_wstring("title", movie_item);
 					movie->description = utils::get_json_wstring("description", movie_item);
 					movie->poster_url.set_uri(utils::get_json_wstring("img", movie_item));
-					movie->poster_url.set_schema(L"http://");
+					movie->poster_url.set_scheme(L"http://");
 					movie->rating = utils::get_json_wstring("rating", movie_item);
 					movie->country = utils::get_json_wstring("country", movie_item);
 					movie->year = utils::get_json_wstring("year", movie_item);

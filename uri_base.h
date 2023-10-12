@@ -43,13 +43,13 @@ public:
 	/// <summary>
 	/// clear uri
 	/// </summary>
-	virtual void clear() { schema.clear(); path.clear(); }
+	virtual void clear() { scheme.clear(); path.clear(); }
 
 	/// <summary>
 	/// get combined uri
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::wstring get_uri() const { return schema + path; }
+	virtual std::wstring get_uri() const { return scheme + path; }
 
 	/// <summary>
 	/// set combined uri
@@ -73,24 +73,24 @@ public:
 	/// get schema (http://, https://, plugin_file://)
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::wstring get_schema() const { return schema; }
+	virtual std::wstring get_scheme() const { return scheme; }
 	/// <summary>
 	/// set schema
 	/// </summary>
 	/// <returns></returns>
-	virtual void set_schema(const std::wstring& val) { schema = val; };
+	virtual void set_scheme(const std::wstring& val) { scheme = val; };
 
 	/// <summary>
 	/// is uri local (plugin_file), internal schema for plugin
 	/// </summary>
 	/// <returns>string</returns>
-	bool is_local() const { return schema == PLUGIN_SCHEME; }
+	bool is_local() const { return scheme == PLUGIN_SCHEME; }
 
 	/// <summary>
 	/// is uri valid
 	/// </summary>
 	/// <returns>bool</returns>
-	virtual bool is_valid() const { return !schema.empty() && !path.empty();  }
+	virtual bool is_valid() const { return !scheme.empty() && !path.empty();  }
 
 	/// <summary>
 	/// get filesystem path
@@ -121,7 +121,7 @@ public:
 	/// <returns></returns>
 	bool operator==(const uri_base& src) const
 	{
-		return src.get_schema() == schema && src.get_path() == path;
+		return src.get_scheme() == scheme && src.get_path() == path;
 	}
 
 	/// <summary>
@@ -131,7 +131,7 @@ public:
 	/// <returns></returns>
 	bool operator!=(const uri_base& src) const
 	{
-		return src.get_schema() != schema || src.get_path() != path;
+		return src.get_scheme() != scheme || src.get_path() != path;
 	}
 
 	/// <summary>
@@ -142,7 +142,7 @@ public:
 	{
 		if (&src != this)
 		{
-			set_schema(src.get_schema());
+			set_scheme(src.get_scheme());
 			set_path(src.get_path());
 		}
 
@@ -150,6 +150,6 @@ public:
 	}
 
 protected:
-	std::wstring schema;
+	std::wstring scheme;
 	std::wstring path;
 };

@@ -182,6 +182,7 @@ public:
 
 	std::map<std::wstring, pointer_to_setter> parser_mapper = {
 		{L"id"       , &uri_stream::set_id},
+		{L"scheme"   , &uri_stream::set_scheme},
 		{L"domain"   , &uri_stream::set_domain},
 		{L"port"     , &uri_stream::set_port},
 		{L"login"    , &uri_stream::set_login},

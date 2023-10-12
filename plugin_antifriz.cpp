@@ -61,16 +61,16 @@ void plugin_antifriz::load_default()
 	info.pl_domain = "https://af-play.com";
 	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<password>.+)\.m3u8?$)";
-	info.parse_regex = R"(^https?:\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/(?<id>.+)\/video\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "http://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
-	streams_config[0].uri_arc_template = "http://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
+	streams_config[0].uri_arc_template = "{SCHEME}://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}";
 
 	streams_config[1].cu_type = CatchupType::cu_flussonic;
-	streams_config[1].uri_template = "http://{DOMAIN}:80/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_template = "{SCHEME}://{DOMAIN}:80/{ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	set_epg_preset(0, EpgPresets::enCbilling);
 	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";

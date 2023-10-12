@@ -5,6 +5,7 @@ class Plugin_Macros
     const API_URL        = "{API_URL}";       // special url used to get information from provider
     const LIVE_URL       = "{LIVE_URL}";      // live url, used in archive template substitution
     const CGI_BIN        = "{CGI_BIN}";       // Url points to plugin cgi_bin folder
+    const SCHEME         = "{SCHEME}";        // stream url scheme (set from playlist)
     const DOMAIN         = "{DOMAIN}";        // stream url domain (set from playlist)
     const PORT           = "{PORT}";          // stream url port (set from playlist)
     const ID             = "{ID}";            // id (set from playlist)

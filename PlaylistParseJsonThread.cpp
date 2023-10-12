@@ -126,7 +126,7 @@ void CPlaylistParseJsonThread::ParseSharaclub()
 			if (!info.empty())
 			{
 				movie->poster_url.set_uri(utils::get_json_wstring("poster", info));
-				movie->poster_url.set_schema(L"http://");
+				movie->poster_url.set_scheme(L"http://");
 				movie->description = utils::get_json_wstring("plot", info);
 				movie->rating = utils::get_json_wstring("rating", info);
 				movie->year = utils::get_json_wstring("year", info);
@@ -246,7 +246,7 @@ void CPlaylistParseJsonThread::ParseCbilling()
 						movie->id = utils::get_json_wstring("id", movie_item);
 						movie->title = utils::get_json_wstring("name", movie_item);
 						movie->poster_url.set_uri(utils::get_json_wstring("poster", movie_item));
-						movie->poster_url.set_schema(L"http://");
+						movie->poster_url.set_scheme(L"http://");
 						movie->rating = utils::get_json_wstring("rating", movie_item);
 						movie->country = utils::get_json_wstring("country", movie_item);
 						movie->year = utils::get_json_wstring("year", movie_item);
@@ -412,7 +412,7 @@ void CPlaylistParseJsonThread::ParseEdem()
 					movie->title = utils::get_json_wstring("title", movie_item);
 					movie->description = utils::get_json_wstring("description", movie_item);
 					movie->poster_url.set_uri(utils::get_json_wstring("img", movie_item));
-					movie->poster_url.set_schema(L"http://");
+					movie->poster_url.set_scheme(L"http://");
 					movie->rating = utils::get_json_wstring("rating", movie_item);
 					movie->country = utils::get_json_wstring("country", movie_item);
 					movie->year = utils::get_json_wstring("year", movie_item);
@@ -505,7 +505,7 @@ void CPlaylistParseJsonThread::ParseGlanz()
 			movie->url = utils::get_json_wstring("url", val);
 
 			movie->poster_url.set_uri(utils::get_json_wstring("cover", val));
-			movie->poster_url.set_schema(L"http://");
+			movie->poster_url.set_scheme(L"http://");
 			movie->description = utils::get_json_wstring("description", val);
 			movie->rating = utils::get_json_wstring("rating", val);
 			movie->year = utils::get_json_wstring("year", val);

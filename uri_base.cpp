@@ -41,7 +41,7 @@ void uri_base::set_uri(const std::wstring& url)
 	boost::wsmatch m;
 	if (boost::regex_match(url, m, re))
 	{
-		schema = m[1].str();
+		scheme = m[1].str();
 		path = m[2].str();
 	}
 }

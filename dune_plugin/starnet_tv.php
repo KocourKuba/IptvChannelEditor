@@ -438,9 +438,9 @@ class Starnet_Tv implements User_Input_Handler
         $this->plugin->save_favorites();
 
         $this->special_groups = new Hashed_Array();
-        $this->special_groups->set($all_channels->get_id(), $all_channels);
         $this->special_groups->set($fav_group->get_id(), $fav_group);
         $this->special_groups->set($history_channels->get_id(), $history_channels);
+        $this->special_groups->set($all_channels->get_id(), $all_channels);
         $this->special_groups->set($vod_group->get_id(), $vod_group);
 
         hd_debug_print("Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
@@ -590,6 +590,8 @@ class Starnet_Tv implements User_Input_Handler
             }
         }
 
+        $groups = array();
+
         if ($show_all) {
             $group = $this->get_special_group(ALL_CHANNEL_GROUP_ID);
             if ($group !== null) {
@@ -601,7 +603,6 @@ class Starnet_Tv implements User_Input_Handler
             }
         }
 
-        $groups = array();
         /** @var Group $group */
         foreach ($all_groups_ids as $id) {
             $group = $this->get_group($id);

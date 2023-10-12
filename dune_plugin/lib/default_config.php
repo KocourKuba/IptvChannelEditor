@@ -570,6 +570,7 @@ class default_config extends dynamic_config
             Stream_Params::CU_STOP       => Plugin_Macros::STOP,
             Stream_Params::CU_OFFSET     => Plugin_Macros::OFFSET,
             Ext_Params::M_SUBDOMAIN      => Plugin_Macros::SUBDOMAIN,
+            Ext_Params::M_SCHEME         => Plugin_Macros::SCHEME,
             Ext_Params::M_DOMAIN         => Plugin_Macros::DOMAIN,
             Ext_Params::M_PORT           => Plugin_Macros::PORT,
             Ext_Params::M_LOGIN          => Plugin_Macros::LOGIN,

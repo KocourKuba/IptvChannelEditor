@@ -53,14 +53,14 @@ void plugin_viplime::load_default()
 	info.pl_domain = "http://cdntv.online";
 	info.pl_template = "{PL_DOMAIN}/high/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/.*\/(?<password>.+)\/.*$)";
-	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
 	playlist_templates.emplace_back(info);
 
-	streams_config[0].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.m3u8";
+	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	streams_config[1].cu_type = CatchupType::cu_shift;
-	streams_config[1].uri_template = "http://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg";
+	streams_config[1].uri_template = "{SCHEME}://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/viplime%2Fepg%2F{EPG_ID}.json";

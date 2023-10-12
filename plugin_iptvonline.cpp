@@ -54,17 +54,17 @@ void plugin_iptvonline::load_default()
 	info.pl_domain = "http://iptv.online";
 	info.pl_template = "{PL_DOMAIN}/play/{PASSWORD}/m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.+\/play\/(?<password>.+)\/m3u8?$)";
-	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
-	streams_config[0].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8";
+	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
+	streams_config[0].uri_arc_template = "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8";
 
-	streams_config[1].uri_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
-	streams_config[1].uri_arc_template = "http://{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts";
+	streams_config[1].uri_template = "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
+	streams_config[1].uri_arc_template = "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json";
 	epg_params[1].epg_url = "{EPG_DOMAIN}/ottiptv%2Fepg%2F{EPG_ID}.json";
