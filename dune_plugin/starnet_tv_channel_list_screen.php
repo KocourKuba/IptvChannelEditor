@@ -240,11 +240,11 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
     }
 
     /**
-     * @param Default_Group $parent_group
+     * @param Group $parent_group
      * @param string $find_text
      * @return array
      */
-    protected function do_search(Default_Group $parent_group, $find_text)
+    protected function do_search(Group $parent_group, $find_text)
     {
         hd_debug_print("Find text: $find_text in group id: {$parent_group->get_id()}", true);
 
