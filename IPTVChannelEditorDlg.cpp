@@ -5732,9 +5732,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonChangelog()
 	GetStartupInfo(&si);
 	CString csCmd;
 #ifdef _DEBUG
-	csCmd.Format(_T("\"notepad.exe\" \"%s\\..\\Changelog.md\""), GetAppPath().c_str());
+	csCmd.Format(_T("\"notepad.exe\" \"%s\\..\\dune_plugin\\changelog.md\""), GetAppPath().c_str());
 #else
-	csCmd.Format(_T("\"notepad.exe\" \"%s\\Changelog.md\""), GetAppPath().c_str());
+	csCmd.Format(_T("\"notepad.exe\" \"%s\\changelog.md\""), GetAppPath().c_str());
 #endif // _DEBUG
 	CreateProcess(nullptr, csCmd.GetBuffer(0), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi);
 	CloseHandle(pi.hProcess);

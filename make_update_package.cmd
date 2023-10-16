@@ -52,9 +52,9 @@ copy "%ROOT%Updater\%BUILD_TYPE%\Updater.exe"			"%pkg%" >nul
 copy "%ROOT%dll\7z.dll"									"%pkg%" >nul
 copy "%ROOT%BugTrap\bin\BugTrapU.dll"					"%pkg%" >nul
 copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul
-copy "%ROOT%dune_plugin\Changelog.md"					"%pkg%" >nul
-copy "%ROOT%dune_plugin\Changelog.md" "%ROOT%package\Changelog.md" >nul
-copy "%ROOT%dune_plugin\Changelog.md" "%ROOT%package\Changelog.md.%BUILD%" >nul
+copy "%ROOT%dune_plugin\changelog.md"					"%pkg%" >nul
+copy "%ROOT%dune_plugin\changelog.md" "%ROOT%package\changelog.md" >nul
+copy "%ROOT%dune_plugin\changelog.md" "%ROOT%package\changelog.md.%BUILD%" >nul
 
 pushd "package\%BUILD%"
 mklink /D dune_plugin "%ROOT%dune_plugin" >nul 2>&1
@@ -74,7 +74,7 @@ call :add_node Updater.exe					>>%outfile%
 call :add_node 7z.dll						>>%outfile%
 call :add_node BugTrapU.dll					>>%outfile%
 call :add_node dbghelp.dll					>>%outfile%
-call :add_node Changelog.md					>>%outfile%
+call :add_node changelog.md					>>%outfile%
 call :add_node dune_plugin.7z				>>%outfile%
 call :add_node ChannelsLists.7z	true		>>%outfile%
 echo ^</package^> >>%outfile%
@@ -89,7 +89,7 @@ echo Updater.exe				>>packing.lst
 echo 7z.dll 					>>packing.lst
 echo BugTrapU.dll				>>packing.lst
 echo dbghelp.dll				>>packing.lst
-echo Changelog.md				>>packing.lst
+echo changelog.md				>>packing.lst
 echo %ROOT%dune_plugin			>>packing.lst
 echo %ROOT%ChannelsLists		>>packing.lst
 echo dune_plugin_*.zip			>>packing.lst
