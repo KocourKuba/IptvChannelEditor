@@ -33,7 +33,7 @@ public:
 
 	plugin_itv();
 
-	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
+	std::map<std::wstring, std::wstring> parse_access_info(TemplateParams& params) override;
 
 protected:
 	void load_default() override;

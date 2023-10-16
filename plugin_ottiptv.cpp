@@ -55,7 +55,6 @@ void plugin_ottiptv::load_default()
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(https?://.+/(?<login>.+)/(?<password>.+)/.+$)";
 	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<var1>.+)\/(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
-	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;

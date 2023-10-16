@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include "AccountSettings.h"
 #include "Constants.h"
 #include "IPTVChannelEditor.h"
+#include "Credentials.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -279,6 +280,36 @@ PluginType AccountSettings::get_plugin_type() const
 void AccountSettings::set_plugin_type(PluginType val)
 {
 	m_pluginType = val;
+}
+
+std::vector<Credentials> AccountSettings::LoadCredentials()
+{
+	std::vector<Credentials> credentials;
+	nlohmann::json creds;
+	JSON_ALL_TRY;
+	{
+		creds = nlohmann::json::parse(GetConfig().get_string(false, REG_ACCOUNT_DATA));
+	}
+	JSON_ALL_CATCH;
+	for (const auto& item : creds.items())
+	{
+		const auto& val = item.value();
+		if (val.empty()) continue;
+
+		Credentials cred;
+		JSON_ALL_TRY;
+		{
+			cred = val.get<Credentials>();
+			if (get_plugin_type() == PluginType::enEdem && (cred.ott_key.empty() || cred.subdomain.empty())) {
+				std::swap(cred.ott_key, cred.token);
+				std::swap(cred.subdomain, cred.domain);
+			}
+		}
+		JSON_ALL_CATCH;
+		credentials.emplace_back(cred);
+	}
+
+	return credentials;
 }
 
 std::wstring AccountSettings::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const

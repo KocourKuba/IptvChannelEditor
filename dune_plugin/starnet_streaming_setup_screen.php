@@ -211,7 +211,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
     public function do_get_ott_key_control_defs()
     {
         $defs = array();
-        $ott_key = $this->plugin->get_credentials(Ext_Params::M_TOKEN);
+        $ott_key = $this->plugin->get_credentials(Ext_Params::M_OTT_KEY);
         $subdomain = $this->plugin->get_credentials(Ext_Params::M_SUBDOMAIN);
         $vportal = $this->plugin->get_credentials(Ext_Params::M_VPORTAL);
 
@@ -339,7 +339,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
                 return Action_Factory::show_dialog(TR::t('setup_enter_key'), $defs, true);
 
             case self::SETUP_ACTION_OTTKEY_APPLY: // handle ott key dialog result
-                $this->plugin->set_credentials(Ext_Params::M_TOKEN, $user_input->ott_key);
+                $this->plugin->set_credentials(Ext_Params::M_OTT_KEY, $user_input->ott_key);
                 $this->plugin->set_credentials(Ext_Params::M_SUBDOMAIN, $user_input->subdomain);
 
                 if (!empty($user_input->vportal) && !preg_match('/^portal::\[key:([^]]+)\](.+)$/', $user_input->vportal)) {

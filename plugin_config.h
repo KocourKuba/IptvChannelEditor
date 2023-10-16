@@ -131,9 +131,11 @@ using namespace epg_enum;
 struct TemplateParams
 {
 	StreamType streamSubtype = StreamType::enHLS;
+	std::wstring ott_key;
 	std::wstring subdomain;
 	std::wstring port;
 	std::wstring token;
+	std::wstring s_token;
 	std::wstring login;
 	std::wstring password;
 	std::wstring host;
@@ -194,9 +196,6 @@ public:
 	std::wstring get_tag_id_match() const { return utils::utf8_to_utf16(tag_id_match); }
 	void set_tag_id_match(const std::wstring& val) { tag_id_match = utils::utf16_to_utf8(val); }
 
-	bool get_per_channel_token() const { return per_channel_token; }
-	void set_per_channel_token(bool val) { per_channel_token = val; }
-
 	bool get_epg_id_from_id() const { return epg_id_from_id; }
 	void set_epg_id_from_id(bool val) { epg_id_from_id = val; }
 
@@ -210,7 +209,6 @@ public:
 		SERIALIZE_STRUCT(j, c, url_prefix);
 		SERIALIZE_STRUCT(j, c, url_params);
 		SERIALIZE_STRUCT(j, c, tag_id_match);
-		SERIALIZE_STRUCT(j, c, per_channel_token); //-V601
 		SERIALIZE_STRUCT(j, c, epg_id_from_id); //-V601
 	}
 
@@ -224,7 +222,6 @@ public:
 		DESERIALIZE_STRUCT(j, c, url_prefix);
 		DESERIALIZE_STRUCT(j, c, url_params);
 		DESERIALIZE_STRUCT(j, c, tag_id_match);
-		DESERIALIZE_STRUCT(j, c, per_channel_token);
 		DESERIALIZE_STRUCT(j, c, epg_id_from_id);
 	}
 
@@ -236,7 +233,6 @@ public:
 	std::string url_prefix;
 	std::string url_params;
 	std::string tag_id_match;
-	bool per_channel_token = false; // use token from uri instead of account settings
 	bool epg_id_from_id = false;
 	bool is_custom = false;
 };
@@ -597,13 +593,6 @@ public:
 	/// </summary>
 	std::wstring get_tag_id_match(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_tag_id_match() : L""; }
 	void set_tag_id_match(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_tag_id_match(val); }
-
-	/// <summary>
-	/// property token used per channel, not the global
-	/// </summary>
-	/// <summary>
-	bool get_per_channel_token(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_per_channel_token() : false; }
-	void set_per_channel_token(int idx, const bool val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_per_channel_token(val); }
 
 	/// <summary>
 	/// property uri id parse template

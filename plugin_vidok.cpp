@@ -60,7 +60,7 @@ void plugin_vidok::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_domain = "http://vidok.tv";
-	info.pl_template = "{PL_DOMAIN}/p/{TOKEN}";
+	info.pl_template = "{PL_DOMAIN}/p/{S_TOKEN}";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
 	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 	playlist_templates.emplace_back(info);
@@ -72,7 +72,7 @@ void plugin_vidok::load_default()
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}";
 
 	set_epg_preset(0, EpgPresets::enVidok);
-	epg_params[0].epg_url = "{API_URL}/epg2?cid={EPG_ID}&token={TOKEN}";
+	epg_params[0].epg_url = "{API_URL}/epg2?cid={EPG_ID}&token={S_TOKEN}";
 }
 
 std::wstring plugin_vidok::get_api_token(const Credentials& creds) const
@@ -82,47 +82,43 @@ std::wstring plugin_vidok::get_api_token(const Credentials& creds) const
 	return utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
 }
 
-bool plugin_vidok::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
+std::map<std::wstring, std::wstring> plugin_vidok::parse_access_info(TemplateParams& params)
 {
+	std::map<std::wstring, std::wstring> info;
+
 	Credentials creds;
 	creds.set_login(params.login);
 	creds.set_password(params.password);
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!download_url(fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"account", get_api_token(creds)), data))
+	if (download_url(fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"account", get_api_token(creds)), data))
 	{
-		return false;
-	}
-
-	JSON_ALL_TRY
-	{
-		const auto& parsed_json = nlohmann::json::parse(data.str());
-		if (parsed_json.contains("account"))
+		JSON_ALL_TRY
 		{
-			const auto& js_account = parsed_json["account"];
-
-			put_account_info("login", js_account, info_list);
-			put_account_info("balance", js_account, info_list);
-
-			if (js_account.contains("packages"))
+			const auto& parsed_json = nlohmann::json::parse(data.str());
+			if (parsed_json.contains("account"))
 			{
-				for (auto& item : js_account["packages"].items())
+				const auto& js_account = parsed_json["account"];
+
+				set_json_info("login", js_account, info);
+				set_json_info("balance", js_account, info);
+
+				if (js_account.contains("packages"))
 				{
-					const auto& val = item.value();
-					COleDateTime dt(utils::char_to_int64(val.value("expire", "")));
-					const auto& value = fmt::format("expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
-					AccountInfo info{ utils::utf8_to_utf16(val.value("name", "")), utils::utf8_to_utf16(value) };
-					info_list.emplace_back(info);
+					for (auto& item : js_account["packages"].items())
+					{
+						COleDateTime dt(utils::char_to_int64(item.value().value("expire", "")));
+						info.emplace(utils::utf8_to_utf16(item.value().value("name", "")),
+									 utils::utf8_to_utf16(fmt::format("expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear())));
+					}
 				}
 			}
-
-			return true;
 		}
+		JSON_ALL_CATCH;
 	}
-	JSON_ALL_CATCH;
 
-	return false;
+	return info;
 }
 
 void plugin_vidok::fill_servers_list(TemplateParams* params /*= nullptr*/)

@@ -83,7 +83,6 @@ protected:
 	CComboBox m_wndTags;
 
 	CButton m_wndBtnEditTemplates;
-	CButton m_wndChkPerChannelToken;
 	CButton m_wndChkEpgIdFromID;
 	CButton m_wndBtnPlaylistTest;
 	CButton m_wndBtnStreamParseTest;

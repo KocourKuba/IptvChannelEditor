@@ -80,6 +80,9 @@ public:
 	const std::wstring& get_subdomain() const { return subdomain; }
 	void set_subdomain(const std::wstring& val) { subdomain = val; }
 
+	const std::wstring& get_ott_key() const { return ott_key; }
+	void set_ott_key(const std::wstring& val) { ott_key = val; }
+
 	const std::wstring& get_token() const { return token; }
 	void set_token(const std::wstring& val) { token = val; }
 
@@ -97,6 +100,9 @@ public:
 
 	const std::wstring& get_var2() const { return var2; }
 	void set_var2(const std::wstring& val) { var2 = val; }
+
+	const std::wstring& get_var3() const { return var3; }
+	void set_var3(const std::wstring& val) { var3 = val; }
 
 	/// <summary>
 	/// is uri template
@@ -181,19 +187,21 @@ public:
 	uri_stream& operator=(const uri_stream& src);
 
 	std::map<std::wstring, pointer_to_setter> parser_mapper = {
-		{L"id"       , &uri_stream::set_id},
 		{L"scheme"   , &uri_stream::set_scheme},
 		{L"domain"   , &uri_stream::set_domain},
 		{L"port"     , &uri_stream::set_port},
+		{L"id"       , &uri_stream::set_id},
 		{L"login"    , &uri_stream::set_login},
 		{L"password" , &uri_stream::set_password},
 		{L"subdomain", &uri_stream::set_subdomain},
+		{L"ott_key"  , &uri_stream::set_ott_key},
 		{L"token"    , &uri_stream::set_token},
 		{L"int_id"   , &uri_stream::set_int_id},
 		{L"quality"  , &uri_stream::set_quality},
 		{L"host"     , &uri_stream::set_host},
 		{L"var1"     , &uri_stream::set_var1},
 		{L"var2"     , &uri_stream::set_var2},
+		{L"var3"     , &uri_stream::set_var3},
 	};
 
 protected:
@@ -216,12 +224,14 @@ protected:
 	std::wstring login;
 	std::wstring password;
 	std::wstring subdomain;
+	std::wstring ott_key;
 	std::wstring token;
 	std::wstring int_id;
 	std::wstring quality;
 	std::wstring host;
 	std::wstring var1;
 	std::wstring var2;
+	std::wstring var3;
 
 	// parsed #EXTINF variables
 	std::wstring title;

@@ -31,6 +31,8 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\json_wrapper.h"
 
+class Credentials;
+
 class AccountSettings
 {
 public:
@@ -68,6 +70,8 @@ public:
 
 	BOOL IsPortable() const { return m_bPortable; }
 	void SetPortable(BOOL val) { m_bPortable = val; }
+
+	std::vector<Credentials> LoadCredentials();
 
 public:
 	std::wstring get_string(bool isApp, const std::wstring& key, const wchar_t* def = L"") const;

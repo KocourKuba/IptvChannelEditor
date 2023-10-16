@@ -56,7 +56,7 @@ void plugin_ipstream::load_default()
 	info.pl_domain = "http://file.ipstr.im";
 	info.pl_template = "{PL_DOMAIN}/iptv/m3u_plus-{PASSWORD}-m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.+\/iptv\/m3u_plus-(?<password>.+)-m3u8$)";
-	info.parse_regex = R"(^?<scheme>https?):\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u\d?$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u\d?$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;

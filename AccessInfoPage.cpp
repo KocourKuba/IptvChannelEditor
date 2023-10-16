@@ -217,24 +217,7 @@ BOOL CAccessInfoPage::OnInitDialog()
 	CHeaderCtrl* header = m_wndAccounts.GetHeaderCtrl();
 	header->ModifyStyle(0, HDS_CHECKBOXES);
 
-	nlohmann::json creds;
-	JSON_ALL_TRY;
-	{
-		creds = nlohmann::json::parse(GetConfig().get_string(false, REG_ACCOUNT_DATA));
-	}
-	JSON_ALL_CATCH;
-	for (const auto& item : creds.items())
-	{
-		const auto& val = item.value();
-		if (val.empty()) continue;
-
-		JSON_ALL_TRY;
-		{
-			auto cred = val.get<Credentials>();
-			m_all_credentials.emplace_back(cred);
-		}
-		JSON_ALL_CATCH;
-	}
+	m_all_credentials = GetConfig().LoadCredentials();
 
 	std::vector<std::wstring> macroses =
 	{
@@ -325,7 +308,7 @@ void CAccessInfoPage::CreateAccountsList()
 				break;
 
 			case AccountAccessType::enOtt:
-				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_token().c_str());
+				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_ott_key().c_str());
 				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_subdomain().c_str());
 				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_portal().c_str());
 				break;
@@ -534,7 +517,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 						m_wndAccounts.SetItemText(cnt, 2, subdomain.c_str());
 
 						Credentials cred;
-						cred.set_token(access_key);
+						cred.set_ott_key(access_key);
 						cred.set_subdomain(subdomain);
 						m_all_credentials.emplace_back(cred);
 						break;
@@ -672,7 +655,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_token(CString(dispinfo->item.pszText));
+					cred.set_ott_key(CString(dispinfo->item.pszText));
 					break;
 				case 2:
 					cred.set_subdomain(CString(dispinfo->item.pszText));
@@ -1024,51 +1007,26 @@ void CAccessInfoPage::GetAccountInfo()
 	TemplateParams params;
 	params.login = selected_cred.get_login();
 	params.password = selected_cred.get_password();
+	params.ott_key = selected_cred.get_ott_key();
 	params.subdomain = selected_cred.get_subdomain();
+	params.s_token = m_plugin->get_api_token(selected_cred);
 	params.server_idx = selected_cred.server_id;
 	params.device_idx = selected_cred.device_id;
 	params.profile_idx = selected_cred.profile_id;
 	params.quality_idx = selected_cred.quality_id;
 
-	if (plugin_type == PluginType::enTVClub || plugin_type == PluginType::enVidok)
-	{
-		params.token = m_plugin->get_api_token(selected_cred);
-	}
-	else
-	{
-		params.token = selected_cred.get_token();
-	}
-
-	auto& pl_url = m_plugin->get_playlist_url(params);
-	std::list<AccountInfo> acc_info;
-	if (m_plugin->parse_access_info(params, acc_info))
-	{
-		for (auto it = acc_info.begin(); it != acc_info.end(); )
-		{
-			// currently supported only in sharaclub, oneott use this to obtain token
-			if (it->name == (L"token"))
-			{
-				selected_cred.set_token(it->value);
-				it = acc_info.erase(it);
-			}
-			else if (it->name == (L"url"))
-			{
-				pl_url = it->value;
-				it = acc_info.erase(it);
-			}
-			else
-			{
-				++it;
-			}
-		}
-	}
-
 	CWaitCursor cur;
+	auto& pl_url = m_plugin->get_playlist_url(params);
+	auto& acc_info = m_plugin->parse_access_info(params);
+	if (const auto& it = acc_info.find(L"url"); it != acc_info.end())
+	{
+		pl_url = it->second;
+	}
+
 	std::stringstream data;
 	if (!pl_url.empty() && m_plugin->download_url(pl_url, data, min_cache_ttl))
 	{
 		std::istringstream stream(data.str());
-
 		if (stream.good())
 		{
 			int step = 0;
@@ -1076,19 +1034,18 @@ void CAccessInfoPage::GetAccountInfo()
 			while (std::getline(stream, line))
 			{
 				utils::string_rtrim(line, "\r");
-				if (entry->Parse(line) && !entry->get_token().empty())
+				if (entry->Parse(line))
 				{
-					// do not override fake ott and domain for edem
-					if (m_plugin->get_access_type() != AccountAccessType::enOtt)
-					{
-						selected_cred.set_token(entry->get_token());
-						selected_cred.set_subdomain(entry->get_domain());
-					}
 					m_status = _T("Ok");
 					break;
 				}
 			}
 		}
+	}
+
+	if (const auto& it = acc_info.find(L"token"); it != acc_info.end())
+	{
+		selected_cred.set_s_token(it->second);
 	}
 
 	if (plugin_type == PluginType::enSmile || plugin_type == PluginType::en101film)
@@ -1102,8 +1059,7 @@ void CAccessInfoPage::GetAccountInfo()
 		{
 			if (std::find(skipped_tag.begin(), skipped_tag.end(), tag.first) != skipped_tag.end()) continue;
 
-			AccountInfo info{ utils::utf8_to_utf16(tag.first), utils::utf8_to_utf16(tag.second) };
-			acc_info.emplace_back(info);
+			acc_info.emplace(utils::utf8_to_utf16(tag.first), utils::utf8_to_utf16(tag.second));
 		}
 	}
 
@@ -1112,8 +1068,8 @@ void CAccessInfoPage::GetAccountInfo()
 	m_wndInfo.SetItemText(idx, 1, m_status);
 	for (const auto& item : acc_info)
 	{
-		m_wndInfo.InsertItem(++idx, item.name.c_str());
-		m_wndInfo.SetItemText(idx, 1, item.value.c_str());
+		m_wndInfo.InsertItem(++idx, item.first.c_str());
+		m_wndInfo.SetItemText(idx, 1, item.second.c_str());
 	}
 
 	UpdateData(FALSE);

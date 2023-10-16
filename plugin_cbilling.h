@@ -37,7 +37,7 @@ public:
 
 public:
 	void fill_devices_list(TemplateParams* params = nullptr) override;
-	bool parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list) override;
+	std::map<std::wstring, std::wstring> parse_access_info(TemplateParams& params) override;
 
 protected:
 	void load_default() override;

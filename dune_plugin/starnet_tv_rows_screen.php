@@ -822,21 +822,18 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             }
         }
 
-        // create view history group
-        if (!empty($items)) {
-            $new_rows = $this->create_rows($items,
-                json_encode(array('group_id' => HISTORY_GROUP_ID)),
-                TR::t('tv_screen_continue'),
-                TR::t('tv_screen_continue_view'),
-                null,
-                TitleRowsParams::history_caption_color
-            );
-
-            $rows = array_merge($rows, $new_rows);
+        if (empty($items)) {
+            return null;
         }
 
-        //hd_debug_print("History rows: " . count($rows));
-        return $rows;
+        // create view history group
+        return $this->create_rows($items,
+            json_encode(array('group_id' => HISTORY_GROUP_ID)),
+            TR::t('tv_screen_continue'),
+            TR::t('tv_screen_continue_view'),
+            null,
+            TitleRowsParams::history_caption_color
+        );
     }
 
     /**
@@ -857,34 +854,28 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             return null;
         }
 
-        $fav_idx = 0;
-        $rows = array();
         foreach ($this->plugin->get_favorites() as $channel_id) {
             $channel = $this->plugin->tv->get_channel($channel_id);
             if (is_null($channel) || $channel->is_disabled()) continue;
 
             $items[] = Rows_Factory::add_regular_item(
-                json_encode(array('group_id' => FAVORITES_GROUP_ID, 'channel_id' => $channel_id, 'fav_idx' => $fav_idx)),
+                json_encode(array('group_id' => FAVORITES_GROUP_ID, 'channel_id' => $channel_id)),
                 $channel->get_icon_url(),
                 $channel->get_title()
             );
-            $fav_idx++;
         }
 
-        if (!empty($items)) {
-            $action_enter = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_ENTER);
-            $new_rows = $this->create_rows($items,
-                json_encode(array('group_id' => FAVORITES_GROUP_ID)),
-                $group->get_title(),
-                $group->get_title(),
-                $action_enter,
-                TitleRowsParams::fav_caption_color
-            );
-
-            $rows = array_merge($rows, $new_rows);
+        if (empty($items)) {
+            return null;
         }
 
-        return $rows;
+        return $this->create_rows($items,
+            json_encode(array('group_id' => FAVORITES_GROUP_ID)),
+            $group->get_title(),
+            $group->get_title(),
+            User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_ENTER),
+            TitleRowsParams::fav_caption_color
+        );
     }
 
     /**
@@ -905,7 +896,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             return null;
         }
 
-        $rows = array();
         $items = array();
         $square_icons =  $this->plugin->config->get_feature(Plugin_Constants::SQUARE_ICONS);
         $row_item_width = $square_icons ? RowsItemsParams::width_sq : RowsItemsParams::width;
@@ -948,20 +938,17 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             );
         }
 
-        if (!empty($items)) {
-            $action_enter = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_ENTER);
-            $new_rows = $this->create_rows(
-                $items,
-                json_encode(array('group_id' => ALL_CHANNEL_GROUP_ID)),
-                $all_group->get_title(),
-                $all_group->get_title(),
-                $action_enter
-            );
-
-            $rows = array_merge($rows, $new_rows);
+        if (empty($items)) {
+            return null;
         }
 
-        return $rows;
+        return $this->create_rows(
+            $items,
+            json_encode(array('group_id' => ALL_CHANNEL_GROUP_ID)),
+            $all_group->get_title(),
+            $all_group->get_title(),
+            User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_ENTER)
+        );
     }
 
     /**
@@ -978,30 +965,28 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         $square_icons =  $this->plugin->config->get_feature(Plugin_Constants::SQUARE_ICONS);
         $row_item_width = $square_icons ? RowsItemsParams::width_sq : RowsItemsParams::width;
 
+        $fav_stickers[] = Rows_Factory::add_regular_sticker_rect(
+            RowsItemsParams::fav_sticker_bg_color,
+            Rows_Factory::r(
+                $row_item_width - RowsItemsParams::fav_sticker_bg_width - 21,
+                0,
+                RowsItemsParams::fav_sticker_bg_width,
+                RowsItemsParams::fav_sticker_bg_width));
+
+        $fav_stickers[] = Rows_Factory::add_regular_sticker_image(
+            get_image_path(RowsItemsParams::fav_sticker_icon_url),
+            Rows_Factory::r(
+                $row_item_width - RowsItemsParams::fav_sticker_icon_width - 23,
+                2,
+                RowsItemsParams::fav_sticker_icon_width,
+                RowsItemsParams::fav_sticker_icon_height));
+
         /** @var Group $group */
         /** @var Channel $channel */
         foreach ($this->plugin->tv->get_groups() as $group) {
             if (is_null($group)) continue;
 
             $items = array();
-            $fav_stickers = null;
-
-            $fav_stickers[] = Rows_Factory::add_regular_sticker_rect(
-                RowsItemsParams::fav_sticker_bg_color,
-                Rows_Factory::r(
-                    $row_item_width - RowsItemsParams::fav_sticker_bg_width - 21,
-                    0,
-                    RowsItemsParams::fav_sticker_bg_width,
-                    RowsItemsParams::fav_sticker_bg_width));
-
-            $fav_stickers[] = Rows_Factory::add_regular_sticker_image(
-                get_image_path(RowsItemsParams::fav_sticker_icon_url),
-                Rows_Factory::r(
-                    $row_item_width - RowsItemsParams::fav_sticker_icon_width - 23,
-                    2,
-                    RowsItemsParams::fav_sticker_icon_width,
-                    RowsItemsParams::fav_sticker_icon_height));
-
             foreach ($group->get_group_channels() as $channel) {
                 if (is_null($channel) || $channel->is_disabled()) continue;
 
@@ -1013,18 +998,18 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 );
             }
 
-            if (!empty($items)) {
-                $action_enter = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_ENTER);
-                $new_rows = $this->create_rows($items,
-                    json_encode(array('group_id' => $group->get_id())),
-                    $group->get_title(),
-                    $group->get_title(),
-                    $action_enter
-                );
+            if (empty($items)) continue;
 
-                foreach ($new_rows as $row) {
-                    $rows[] = $row;
-                }
+            $action_enter = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_ENTER);
+            $new_rows = $this->create_rows($items,
+                json_encode(array('group_id' => $group->get_id())),
+                $group->get_title(),
+                $group->get_title(),
+                $action_enter
+            );
+
+            foreach ($new_rows as $row) {
+                $rows[] = $row;
             }
         }
 

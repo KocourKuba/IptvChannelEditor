@@ -53,7 +53,6 @@ void plugin_kineskop::load_default()
 	info.pl_domain = "http://knkp.in";
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/{SERVER}/1";
 	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
-	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";

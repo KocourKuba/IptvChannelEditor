@@ -108,7 +108,7 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, get_playlist_domain(params.playlist_idx));
 
 	if (!params.token.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.token);
+		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.s_token);
 
 	if (!params.login.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
@@ -118,6 +118,9 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+
+	if (!params.ott_key.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.ott_key);
 
 	fill_servers_list(&params);
 	if (!servers_list.empty())
@@ -176,6 +179,9 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
 
+	if (!params.ott_key.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.ott_key);
+
 	if (!params.login.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
 
@@ -200,6 +206,10 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 
 	if (!qualities_list.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[params.quality_idx].get_id());
+
+	if (!devices_list.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[params.device_idx].get_id());
+
 
 	return url;
 }
@@ -302,10 +312,17 @@ std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params)
 		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
 
 	if (!params.login.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.s_token);
+
+
+	if (!params.login.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
 
 	if (!params.password.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+
+	if (!params.ott_key.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.ott_key);
 
 	if (!params.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
@@ -567,35 +584,32 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	return epg_template;
 }
 
-void base_plugin::put_account_info(const std::string& name, const nlohmann::json& js_data, std::list<AccountInfo>& params) const
+void base_plugin::set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring>& info) const
 {
 	JSON_ALL_TRY
 	{
-		if (!js_data.contains(name))
-			return;
+		if (js_data.contains(name))
+		{
+			const auto& w_name = utils::utf8_to_utf16(name);
+			const auto& js_param = js_data[name];
 
-		const auto & js_param = js_data[name];
-
-		AccountInfo info;
-		info.name = std::move(utils::utf8_to_utf16(name));
-		if (js_param.is_boolean())
-		{
-			info.value = load_string_resource(js_param.get<bool>() ? IDS_STRING_YES : IDS_STRING_NO);
+			if (js_param.is_boolean())
+			{
+				info.emplace(w_name, load_string_resource(js_param.get<bool>() ? IDS_STRING_YES : IDS_STRING_NO));
+			}
+			else if (js_param.is_number_integer())
+			{
+				info.emplace(w_name, std::to_wstring(js_param.get<int>()));
+			}
+			else if (js_param.is_number_float())
+			{
+				info.emplace(w_name, std::to_wstring(js_param.get<float>()));
+			}
+			else if (js_param.is_string())
+			{
+				info.emplace(w_name, utils::utf8_to_utf16(js_param.get<std::string>()));
+			}
 		}
-		else if (js_param.is_number_integer())
-		{
-			info.value = std::move(std::to_wstring(js_param.get<int>()));
-		}
-		else if (js_param.is_number_float())
-		{
-			info.value = std::move(std::to_wstring(js_param.get<float>()));
-		}
-		else if (js_param.is_string())
-		{
-			info.value = std::move(utils::utf8_to_utf16(js_param.get<std::string>()));
-		}
-
-		params.emplace_back(info);
 	}
 	JSON_ALL_CATCH;
 }

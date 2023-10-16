@@ -126,40 +126,37 @@ std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wst
 	return base_plugin::get_playlist_url(params, url);
 }
 
-bool plugin_sharaclub::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
+std::map<std::wstring, std::wstring> plugin_sharaclub::parse_access_info(TemplateParams& params)
 {
 	const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"subscr_info", params.login, params.password);
 
+	std::map<std::wstring, std::wstring> info;
+
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!download_url(url, data))
+	if (download_url(url, data))
 	{
-		return false;
+		JSON_ALL_TRY;
+		{
+			const auto& parsed_json = nlohmann::json::parse(data.str());
+			if (parsed_json.contains("status"))
+			{
+				info.emplace(L"state", utils::utf8_to_utf16(parsed_json.value("status", "")));
+			}
+
+			if (parsed_json.contains("data"))
+			{
+				const auto& js_data = parsed_json["data"];
+				set_json_info("login", js_data, info);
+				set_json_info("money", js_data, info);
+				set_json_info("money_need", js_data, info);
+				set_json_info("abon", js_data, info);
+			}
+		}
+		JSON_ALL_CATCH;
 	}
 
-	JSON_ALL_TRY;
-	{
-		const auto& parsed_json = nlohmann::json::parse(data.str());
-		if (parsed_json.contains("status"))
-		{
-			AccountInfo info{ L"state", utils::utf8_to_utf16(parsed_json.value("status", "")) };
-			info_list.emplace_back(info);
-		}
-
-		if (parsed_json.contains("data"))
-		{
-			const auto& js_data = parsed_json["data"];
-			put_account_info("login", js_data, info_list);
-			put_account_info("money", js_data, info_list);
-			put_account_info("money_need", js_data, info_list);
-			put_account_info("abon", js_data, info_list);
-		}
-
-		return true;
-	}
-	JSON_ALL_CATCH;
-
-	return false;
+	return info;
 }
 
 void plugin_sharaclub::fill_servers_list(TemplateParams* params /*= nullptr*/)

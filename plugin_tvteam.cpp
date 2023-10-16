@@ -54,7 +54,6 @@ void plugin_tvteam::load_default()
 	info.pl_template = "{PL_DOMAIN}/pl/11/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl\/11\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
-	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;

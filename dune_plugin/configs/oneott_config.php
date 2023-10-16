@@ -27,7 +27,7 @@ class oneott_config extends default_config
                     throw new Exception("User token not loaded");
                 }
 
-                $this->parent->set_credentials(Ext_Params::M_TOKEN, $json['token']);
+                $this->parent->set_credentials(Ext_Params::M_S_TOKEN, $json['token']);
                 $this->account_data = $json;
             }
         } catch (Exception $ex) {

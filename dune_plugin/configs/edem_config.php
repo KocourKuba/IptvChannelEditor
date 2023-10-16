@@ -12,24 +12,21 @@ class edem_config extends default_config
     }
 
     /**
-     * Transform url based on settings or archive playback
-     * @param Channel $channel
-     * @param int $archive_ts
      * @return string
-     * @throws Exception
      */
-    public function GenerateStreamUrl(Channel $channel, $archive_ts)
+    public function get_subdomain()
     {
-        if (isset($this->embedded_account)) {
-            $channel->set_ext_param(Ext_Params::M_SUBDOMAIN, $this->embedded_account->domain);
-            $channel->set_ext_param(Ext_Params::M_TOKEN, $this->embedded_account->ott_key);
-        } else {
-            $channel->set_ext_param(Ext_Params::M_SUBDOMAIN, $this->parent->get_credentials(Ext_Params::M_SUBDOMAIN));
-            $channel->set_ext_param(Ext_Params::M_TOKEN, $this->parent->get_credentials(Ext_Params::M_TOKEN));
-        }
-
-        return parent::GenerateStreamUrl($channel, $archive_ts);
+        return isset($this->embedded_account->subdomain) ? $this->embedded_account->subdomain : $this->parent->get_credentials(Ext_Params::M_SUBDOMAIN);
     }
+
+    /**
+     * @return string
+     */
+    public function get_ott_key()
+    {
+        return isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $this->parent->get_credentials(Ext_Params::M_OTT_KEY);
+    }
+
 
     /**
      * @param string $movie_id

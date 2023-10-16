@@ -70,7 +70,6 @@ void plugin_fox::load_default()
 	info.pl_parse_regex = R"(^https?:\/\/[^\/]+\/(?<login>.+)\/(?<password>.+)\/(?<server>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
 	info.tag_id_match = "CUID";
-	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;

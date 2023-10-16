@@ -338,6 +338,8 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 			}
 		}
 
+		if (!bResults && !bSaveBadCache) break;
+
 		if (m_cache_ttl_sec && vData.good() || bSaveBadCache)
 		{
 			std::ofstream out_stream(cache_file, std::ofstream::binary);

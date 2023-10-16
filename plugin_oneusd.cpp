@@ -54,7 +54,6 @@ void plugin_oneusd::load_default()
 	info.pl_template = "{PL_DOMAIN}/pl-{PASSWORD}-hls";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl-(?<password>.+)-hls$)";
 	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
-	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;

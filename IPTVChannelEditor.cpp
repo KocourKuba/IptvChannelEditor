@@ -659,26 +659,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 	auto plugin = StreamContainer::get_instance(plugin_type);
 
-	std::vector<Credentials> all_credentials;
-	nlohmann::json creds;
-	JSON_ALL_TRY;
-	{
-		creds = nlohmann::json::parse(GetConfig().get_string(false, REG_ACCOUNT_DATA));
-	}
-	JSON_ALL_CATCH;
-	for (const auto& item : creds.items())
-	{
-		const auto& val = item.value();
-		if (val.empty()) continue;
-
-		Credentials cred;
-		JSON_ALL_TRY;
-		{
-			cred = val.get<Credentials>();
-		}
-		JSON_ALL_CATCH;
-		all_credentials.emplace_back(cred);
-	}
+	const auto& all_credentials = GetConfig().LoadCredentials();
 
 	if (selected >= (int)all_credentials.size())
 	{
@@ -1041,8 +1022,8 @@ bool PackPlugin(const PluginType plugin_type,
 					node["password"] = cred.password;
 					break;
 				case AccountAccessType::enOtt:
-					node["domain"] = cred.subdomain;
-					node["ott_key"] = cred.token;
+					node["subdomain"] = cred.subdomain;
+					node["ott_key"] = cred.ott_key;
 					node["vportal"] = cred.portal;
 					break;
 				default:

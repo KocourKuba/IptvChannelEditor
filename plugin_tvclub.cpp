@@ -61,7 +61,7 @@ void plugin_tvclub::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_domain = "http://celn.shott.top";
-	info.pl_template = "{PL_DOMAIN}/p/{TOKEN}";
+	info.pl_template = "{PL_DOMAIN}/p/{S_TOKEN}";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
 	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
 	playlist_templates.emplace_back(info);
@@ -73,7 +73,7 @@ void plugin_tvclub::load_default()
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
 
 	set_epg_preset(0, EpgPresets::enTVClub);
-	epg_params[0].epg_url = "{API_URL}/epg?token={TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24";
+	epg_params[0].epg_url = "{API_URL}/epg?token={S_TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24";
 }
 
 std::wstring plugin_tvclub::get_api_token(const Credentials& creds) const
@@ -83,8 +83,10 @@ std::wstring plugin_tvclub::get_api_token(const Credentials& creds) const
 	return utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
 }
 
-bool plugin_tvclub::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
+std::map<std::wstring, std::wstring> plugin_tvclub::parse_access_info(TemplateParams& params)
 {
+	std::map<std::wstring, std::wstring> info;
+
 	Credentials creds;
 	creds.set_login(params.login);
 	creds.set_password(params.password);
@@ -93,52 +95,46 @@ bool plugin_tvclub::parse_access_info(TemplateParams& params, std::list<AccountI
 	const auto& url = fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"account", get_api_token(creds));
 
 	CWaitCursor cur;
-	if (!download_url(url, data))
+	if (download_url(url, data))
 	{
-		return false;
-	}
-
-	JSON_ALL_TRY;
-	{
-		const auto& parsed_json = nlohmann::json::parse(data.str());
-		if (parsed_json.contains("account"))
+		JSON_ALL_TRY;
 		{
-			const auto& js_account = parsed_json["account"];
-			if (js_account.contains("info"))
+			const auto& parsed_json = nlohmann::json::parse(data.str());
+			if (parsed_json.contains("account"))
 			{
-				const auto& js_info = js_account["info"];
-				put_account_info("login", js_info, info_list);
-				put_account_info("balance", js_info, info_list);
-			}
-
-			if (js_account.contains("settings"))
-			{
-				const auto& js_settings = js_account["settings"];
-				put_account_info("server_name", js_settings, info_list);
-				put_account_info("tz_name", js_settings, info_list);
-				put_account_info("tz_gmt", js_settings, info_list);
-			}
-
-			if (js_account.contains("services"))
-			{
-				for (auto& item : js_account["services"].items())
+				const auto& js_account = parsed_json["account"];
+				if (js_account.contains("info"))
 				{
-					const auto& val = item.value();
-					COleDateTime dt((time_t)val.value("expire", 0));
-					const auto& value = fmt::format(L"expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
-					const auto& name = utils::utf8_to_utf16(fmt::format("{:s} {:s}", val.value("name", ""), val.value("type", "")));
+					const auto& js_info = js_account["info"];
+					set_json_info("login", js_info, info);
+					set_json_info("balance", js_info, info);
+				}
 
-					AccountInfo info{ name, value };
-					info_list.emplace_back(info);
+				if (js_account.contains("settings"))
+				{
+					const auto& js_settings = js_account["settings"];
+					set_json_info("server_name", js_settings, info);
+					set_json_info("tz_name", js_settings, info);
+					set_json_info("tz_gmt", js_settings, info);
+				}
+
+				if (js_account.contains("services"))
+				{
+					for (auto& item : js_account["services"].items())
+					{
+						const auto& val = item.value();
+						COleDateTime dt((time_t)val.value("expire", 0));
+						const auto& value = fmt::format(L"expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
+						const auto& name = utils::utf8_to_utf16(fmt::format("{:s} {:s}", val.value("name", ""), val.value("type", "")));
+						info.emplace(name, value);
+					}
 				}
 			}
-
-			return true;
 		}
+		JSON_ALL_CATCH;
 	}
-	JSON_ALL_CATCH;
 
-	return false;
+	return info;
 }
 
 void plugin_tvclub::fill_servers_list(TemplateParams* params /*= nullptr*/)

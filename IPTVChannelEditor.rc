@@ -202,7 +202,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_CUSTOM_XMLTV_EPG,328,164,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Preview EPG",IDC_CHECK_SHOW_EPG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,177,249,84,10
     PUSHBUTTON      "View EPG",IDC_BUTTON_TEST_EPG,265,247,77,14
-    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL | WS_TABSTOP,176,179,232,65,WS_EX_STATICEDGE
+    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",WS_VSCROLL | WS_TABSTOP | 0x844,176,179,232,65,WS_EX_STATICEDGE
     LTEXT           "23:59:59",IDC_STATIC_CUR_TIME,170,269,30,9
     CONTROL         "",IDC_PROGRESS_PROGRAM,"msctls_progress32",WS_BORDER,203,269,182,9
     LTEXT           "00::00",IDC_STATIC_TIME_LEFT,390,269,21,9
@@ -588,8 +588,7 @@ BEGIN
     PUSHBUTTON      "Test",IDC_BUTTON_STREAM_PARSE,338,72,32,14
     CONTROL         "Map #EXTINF Tag to ID",IDC_CHECK_MAP_TAG_TO_ID,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,32,116,10
     COMBOBOX        IDC_COMBO_TAGS,7,44,97,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Per channel token",IDC_CHECK_PER_CHANNEL_TOKEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,62,114,10
-    CONTROL         "Set EPG ID from ID",IDC_CHECK_EPG_ID_FROM_ID,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,74,114,10
+    CONTROL         "Set EPG ID from ID",IDC_CHECK_EPG_ID_FROM_ID,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,59,114,10
     LTEXT           "Streams",-1,7,87,35,8
     CONTROL         "",-1,"Static",SS_ETCHEDHORZ,45,91,324,1
     LTEXT           "Stream Type",-1,7,97,60,8
@@ -1207,7 +1206,6 @@ BEGIN
     0, 0, 0, 0,
     0, 0, 100, 0,
     100, 0, 0, 0,
-    0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
@@ -2115,8 +2113,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_STRING_CHECK_PER_CHANNEL_TOKEN 
-                            "If url contains token it can be global for entire playlist or can be different for each channel. Choose type of the using token"
     IDS_STRING_COMBO_TAGS   "Choose the attribute in the #EXTINF tag that will be threated as Channel ID. Special case for ""Name"". This is not a attribute it is a name of the channel."
     IDS_STRING_CHECK_MAP_TAG_TO_ID 
                             "If url does not contain Channel ID, use this option to choose what attribute in the #EXTINF tag will be used as ID."

@@ -55,7 +55,7 @@ void plugin_oneott::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_domain = "http://list.1ott.net";
-	info.pl_template = "{PL_DOMAIN}/api/{TOKEN}/high/ottplay.m3u8";
+	info.pl_template = "{PL_DOMAIN}/api/{S_TOKEN}/high/ottplay.m3u8";
 	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 	info.epg_id_from_id = true;
 	playlist_templates.emplace_back(info);
@@ -75,36 +75,33 @@ void plugin_oneott::load_default()
 	epg_params[1].epg_url = "{EPG_DOMAIN}/1ott%2Fepg%2F{EPG_ID}.json";
 }
 
-bool plugin_oneott::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
+std::map<std::wstring, std::wstring> plugin_oneott::parse_access_info(TemplateParams& params)
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"http://list.1ott.net/PinApi/{:s}/{:s}";
 
+	std::map<std::wstring, std::wstring> info;
+
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!download_url(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data))
+	if (download_url(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data))
 	{
-		return false;
-	}
-
-	JSON_ALL_TRY
-	{
-		const auto& parsed_json = nlohmann::json::parse(data.str());
-		if (parsed_json.contains("token"))
+		JSON_ALL_TRY
 		{
-			const auto& token = utils::utf8_to_utf16(parsed_json.value("token", ""));
-			AccountInfo info_token{ L"token", token };
-			info_list.emplace_back(info_token);
+			const auto& parsed_json = nlohmann::json::parse(data.str());
+			if (parsed_json.contains("token"))
+			{
+				const auto& token = utils::utf8_to_utf16(parsed_json.value("token", ""));
+				info.emplace(L"token", token);
 
-			TemplateParams param;
-			param.token = token;
+				TemplateParams param;
+				param.token = token;
 
-			AccountInfo info_url{ L"url", get_playlist_url(param) };
-			info_list.emplace_back(info_url);
+				info.emplace(L"url", get_playlist_url(param));
+			}
 		}
-
-		return true;
+		JSON_ALL_CATCH;
 	}
-	JSON_ALL_CATCH;
 
-	return false;
+
+	return info;
 }

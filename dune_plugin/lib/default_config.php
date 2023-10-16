@@ -14,7 +14,15 @@ class default_config extends dynamic_config
     protected $is_entered = false;
     protected $movie_counter = array();
     protected $filters = array();
+
+    /**
+     * @var Object|null
+     */
     protected $embedded_account;
+
+    /**
+     * @var string
+     */
     protected $last_error;
 
     /**
@@ -110,7 +118,7 @@ class default_config extends dynamic_config
      */
     public function get_embedded_account()
     {
-        return $this->embedded_account;
+        return isset($this->embedded_account) ? $this->embedded_account : null;
     }
 
     /**
@@ -140,6 +148,22 @@ class default_config extends dynamic_config
     /**
      * @return string
      */
+    public function get_subdomain()
+    {
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_ott_key()
+    {
+        return null;
+    }
+
+    /**
+     * @return string
+     */
     public function get_server_name()
     {
         $servers = $this->get_servers();
@@ -151,12 +175,13 @@ class default_config extends dynamic_config
      */
     public function get_server_id()
     {
+        $server = $this->parent->get_parameter(Ext_Params::M_SERVER_ID);
         $embedded_acc = $this->get_embedded_account();
-        if (isset($embedded_acc, $embedded_acc->server_id)) {
+        if (!is_null($embedded_acc) && isset($embedded_acc->server_id) && empty($server)) {
             $this->parent->set_parameter(Ext_Params::M_SERVER_ID, $embedded_acc->server_id);
+            $server = $embedded_acc->server_id;
         }
 
-        $server = $this->parent->get_parameter(Ext_Params::M_SERVER_ID);
         $servers = $this->get_servers();
         reset($servers);
         return !empty($server) && isset($servers[$server]) ? $server : key($servers);
@@ -185,11 +210,12 @@ class default_config extends dynamic_config
     public function get_device_id()
     {
         $embedded_acc = $this->get_embedded_account();
-        if (isset($embedded_acc, $embedded_acc->device_id)) {
+        $device = $this->parent->get_parameter(Ext_Params::M_DEVICE_ID);
+        if (!is_null($embedded_acc) && isset($embedded_acc->device_id) && empty($device)) {
             $this->parent->set_parameter(Ext_Params::M_DEVICE_ID, $embedded_acc->device_id);
+            $device = $embedded_acc->device_id;
         }
 
-        $device = $this->parent->get_parameter(Ext_Params::M_DEVICE_ID);
         $devices = $this->get_devices();
         /** @noinspection PhpArrayIndexResetIsUnnecessaryInspection */
         reset($devices);
@@ -219,11 +245,12 @@ class default_config extends dynamic_config
     public function get_quality_id()
     {
         $embedded_acc = $this->get_embedded_account();
-        if (isset($embedded_acc, $embedded_acc->quality_id)) {
+        $quality = $this->parent->get_parameter(Ext_Params::M_QUALITY_ID);
+        if (!is_null($embedded_acc) && isset($embedded_acc->quality_id) && empty($quality)) {
             $this->parent->set_parameter(Ext_Params::M_QUALITY_ID, $embedded_acc->quality_id);
+            $quality = $embedded_acc->quality_id;
         }
 
-        $quality = $this->parent->get_parameter(Ext_Params::M_QUALITY_ID);
         $qualities = $this->get_qualities();
         reset($qualities);
         return !empty($quality) && isset($qualities[$quality]) ? $quality : key($qualities);
@@ -252,11 +279,12 @@ class default_config extends dynamic_config
     public function get_profile_id()
     {
         $embedded_acc = $this->get_embedded_account();
-        if (isset($embedded_acc, $embedded_acc->profile_id)) {
+        $profile = $this->parent->get_parameter(Ext_Params::M_PROFILE_ID);
+        if (!is_null($embedded_acc) && isset($embedded_acc->device_id) && empty($profile)) {
             $this->parent->set_parameter(Ext_Params::M_PROFILE_ID, $embedded_acc->profile_id);
+            $profile = $embedded_acc->profile_id;
         }
 
-        $profile = $this->parent->get_parameter(Ext_Params::M_PROFILE_ID);
         $profiles = $this->get_profiles();
         reset($profiles);
         return !empty($profile) && isset($profiles[$profile]) ? $profile : key($profiles);
@@ -555,11 +583,6 @@ class default_config extends dynamic_config
         $ext_params[Stream_Params::CU_OFFSET] = $now - $archive_ts;
         $ext_params[Stream_Params::CU_STOP] = $archive_ts + $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
         $ext_params[Stream_Params::CU_DURATION] = $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
-        $ext_params[Ext_Params::M_DEVICE_ID] = $this->get_device_id();
-        $ext_params[Ext_Params::M_SERVER_ID] = $this->get_server_id();
-        $ext_params[Ext_Params::M_PROFILE_ID] = $this->get_profile_id();
-        $ext_params[Ext_Params::M_QUALITY_ID] = $this->get_quality_id();
-        $ext_params[Ext_Params::M_PASSWORD] = $this->parent->get_credentials(PARAM_PASSWORD);
 
         $replaces = array(
             Plugin_Constants::CGI_BIN    => Plugin_Macros::CGI_BIN,
@@ -569,19 +592,12 @@ class default_config extends dynamic_config
             Stream_Params::CU_DURATION   => Plugin_Macros::DURATION,
             Stream_Params::CU_STOP       => Plugin_Macros::STOP,
             Stream_Params::CU_OFFSET     => Plugin_Macros::OFFSET,
-            Ext_Params::M_SUBDOMAIN      => Plugin_Macros::SUBDOMAIN,
             Ext_Params::M_SCHEME         => Plugin_Macros::SCHEME,
             Ext_Params::M_DOMAIN         => Plugin_Macros::DOMAIN,
             Ext_Params::M_PORT           => Plugin_Macros::PORT,
-            Ext_Params::M_LOGIN          => Plugin_Macros::LOGIN,
-            Ext_Params::M_PASSWORD       => Plugin_Macros::PASSWORD,
             Ext_Params::M_TOKEN          => Plugin_Macros::TOKEN,
             Ext_Params::M_INT_ID         => Plugin_Macros::INT_ID,
             Ext_Params::M_HOST           => Plugin_Macros::HOST,
-            Ext_Params::M_QUALITY_ID     => Plugin_Macros::QUALITY_ID,
-            Ext_Params::M_DEVICE_ID      => Plugin_Macros::DEVICE_ID,
-            Ext_Params::M_SERVER_ID      => Plugin_Macros::SERVER_ID,
-            Ext_Params::M_PROFILE_ID     => Plugin_Macros::PROFILE_ID,
             Ext_Params::M_VAR1           => Plugin_Macros::VAR1,
             Ext_Params::M_VAR2           => Plugin_Macros::VAR2,
             Ext_Params::M_VAR3           => Plugin_Macros::VAR3,
@@ -621,6 +637,8 @@ class default_config extends dynamic_config
             $play_template_url = $live_url;
             $custom_stream_type = $channel->get_custom_url_type();
         }
+
+        $play_template_url = $this->replace_account_vars($play_template_url);
 
         // replace all macros
         foreach ($replaces as $key => $value) {
@@ -1073,7 +1091,7 @@ class default_config extends dynamic_config
         hd_debug_print("Get playlist url for " . $this->get_tv_template_name());
         $template = $this->get_current_tv_template();
         $url = isset($template[Plugin_Constants::PL_TEMPLATE]) ? $template[Plugin_Constants::PL_TEMPLATE] : '';
-        return $this->replace_subs_vars($url);
+        return $this->replace_account_vars($url);
     }
 
     /**
@@ -1081,14 +1099,14 @@ class default_config extends dynamic_config
      */
     protected function GetVodListUrl()
     {
-        return $this->replace_subs_vars($this->get_vod_uri());
+        return $this->replace_account_vars($this->get_vod_uri());
     }
 
     /**
      * @param string $url
      * @return string
      */
-    protected function replace_subs_vars($url)
+    protected function replace_account_vars($url)
     {
         if (!empty($url)) {
 
@@ -1119,11 +1137,20 @@ class default_config extends dynamic_config
             }
 
             if (strpos($url, Plugin_Macros::SUBDOMAIN) !== false) {
-                $subdomain = $this->parent->get_credentials(Ext_Params::M_SUBDOMAIN);
+                $subdomain = $this->get_subdomain();
                 if (empty($subdomain)) {
                     hd_debug_print("Subdomain not set, but macro was used");
                 } else {
                     $url = str_replace(Plugin_Macros::SUBDOMAIN, $subdomain, $url);
+                }
+            }
+
+            if (strpos($url, Plugin_Macros::OTT_KEY) !== false) {
+                $ott_key = $this->get_ott_key();
+                if (empty($ott_key)) {
+                    hd_debug_print("OTT key not set, but macro was used");
+                } else {
+                    $url = str_replace(Plugin_Macros::OTT_KEY, $ott_key, $url);
                 }
             }
 
@@ -1143,13 +1170,13 @@ class default_config extends dynamic_config
                     $url = str_replace(Plugin_Macros::PASSWORD, $password, $url);
             }
 
-            if (strpos($url, Plugin_Macros::TOKEN) !== false) {
+            if (strpos($url, Plugin_Macros::S_TOKEN) !== false) {
                 $this->ensure_token_loaded();
-                $token = $this->parent->get_credentials(Ext_Params::M_TOKEN);
+                $token = $this->parent->get_credentials(Ext_Params::M_S_TOKEN);
                 if (empty($token))
                     hd_debug_print("Token not set, but macro was used");
                 else
-                    $url = str_replace(Plugin_Macros::TOKEN, $token, $url);
+                    $url = str_replace(Plugin_Macros::S_TOKEN, $token, $url);
             }
 
             if (strpos($url, Plugin_Macros::SERVER) !== false) {
@@ -1182,6 +1209,14 @@ class default_config extends dynamic_config
                     hd_debug_print("Device ID not set, but macro was used");
                 else
                 $url = str_replace(Plugin_Macros::DEVICE_ID, $device, $url);
+            }
+
+            if (strpos($url, Plugin_Macros::PROFILE_ID) !== false) {
+                $profile = $this->get_profile_id();
+                if (empty($profile))
+                    hd_debug_print("Profile ID not set, but macro was used");
+                else
+                    $url = str_replace(Plugin_Macros::PROFILE_ID, $profile, $url);
             }
         }
         return $url;

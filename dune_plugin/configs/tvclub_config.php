@@ -20,7 +20,7 @@ class tvclub_config extends default_config
         $servers = parent::get_servers();
         if (empty($servers)) {
             try {
-                $token = $this->parent->get_credentials(Ext_Params::M_TOKEN);
+                $token = $this->parent->get_credentials(Ext_Params::M_S_TOKEN);
                 $json = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/servers?token=$token");
                 $servers = array();
                 foreach ($json['servers'] as $item) {
@@ -93,7 +93,7 @@ class tvclub_config extends default_config
                 throw new Exception("Token not loaded");
             }
 
-            $token = $this->parent->get_credentials(Ext_Params::M_TOKEN);
+            $token = $this->parent->get_credentials(Ext_Params::M_S_TOKEN);
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$token";
             // provider returns token used to download playlist
             $json = HD::DownloadJson($url);
@@ -120,7 +120,7 @@ class tvclub_config extends default_config
         }
 
         try {
-            $token = $this->parent->get_credentials(Ext_Params::M_TOKEN);
+            $token = $this->parent->get_credentials(Ext_Params::M_S_TOKEN);
             $param_set = $this->parent->get_parameter($param, '');
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/set?token=$token&$param=$param_set";
             HD::http_get_document($url);
@@ -149,9 +149,9 @@ class tvclub_config extends default_config
         }
 
         $token = md5($login . md5($password));
-        $old_token = $this->parent->get_credentials(Ext_Params::M_TOKEN);
+        $old_token = $this->parent->get_credentials(Ext_Params::M_S_TOKEN);
         if (!empty($old_token) || $old_token !== $token) {
-            $this->parent->set_credentials(Ext_Params::M_TOKEN, $token);
+            $this->parent->set_credentials(Ext_Params::M_S_TOKEN, $token);
         }
 
         return true;

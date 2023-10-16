@@ -921,7 +921,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         $creds = array(
             'subdomain' => Ext_Params::M_SUBDOMAIN,
-            'ott_key' => Ext_Params::M_TOKEN,
+            'ott_key' => Ext_Params::M_OTT_KEY,
             'mediateka'=> Ext_Params::M_VPORTAL,
             'login' => Ext_Params::M_LOGIN,
             'password' => Ext_Params::M_PASSWORD,

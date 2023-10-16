@@ -123,10 +123,6 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
                 }
                 break;
 
-            case PARAM_ASK_EXIT:
-                $this->plugin->toggle_parameter($control_id, false);
-                break;
-
             case PARAM_SHOW_ALL:
             case PARAM_SHOW_FAVORITES:
             case PARAM_SHOW_HISTORY:
@@ -139,8 +135,9 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
                     array(Starnet_Tv_Groups_Screen::ID),
                     Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)));
 
+            case PARAM_ASK_EXIT:
             case PARAM_EPG_FONT_SIZE:
-                $this->plugin->toggle_parameter(PARAM_EPG_FONT_SIZE, false);
+                $this->plugin->toggle_parameter($control_id, false);
                 break;
         }
 

@@ -123,10 +123,44 @@ BOOL CVodViewer::OnInitDialog()
 
 	m_wndMoviesList.InsertColumn(0, load_string_resource(IDS_STRING_COL_INFO).c_str(), LVCFMT_LEFT, vWidth, 0);
 
-	if (auto pos = m_account.subdomain.find(':'); pos != std::string::npos)
+	TemplateParams params;
+	params.login = m_account.get_login();
+	params.password = m_account.get_password();
+	params.ott_key = m_account.get_ott_key();
+	params.subdomain = m_account.get_subdomain();
+	params.s_token = m_plugin->get_api_token(m_account);
+	params.server_idx = m_account.server_id;
+	params.device_idx = m_account.device_id;
+	params.profile_idx = m_account.profile_id;
+	params.quality_idx = m_account.quality_id;
+
+	const auto& acc_info = m_plugin->parse_access_info(params);
+	switch (m_plugin->get_plugin_type())
 	{
-		m_account.subdomain = m_account.subdomain.substr(0, pos);
+		case PluginType::enAntifriz:
+		case PluginType::enCbilling:
+		{
+			if (const auto& it = acc_info.find(L"server"); it != acc_info.end())
+			{
+				m_account.set_subdomain(it->second);
+			}
+			if (const auto& it = acc_info.find(L"private_token"); it != acc_info.end())
+			{
+				m_account.set_s_token(it->second);
+			}
+		}
+		break;
+
+		case PluginType::enEdem:
+		{
+			if (auto pos = m_account.subdomain.find(':'); pos != std::string::npos)
+			{
+				m_account.subdomain = m_account.subdomain.substr(0, pos);
+			}
+		}
+		break;
 	}
+
 
 	SetButtonImage(IDB_PNG_RELOAD, m_wndBtnReload);
 
@@ -565,7 +599,7 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 				const auto& season = movie->seasons[m_season_idx];
 				url = season.episodes[m_episode_idx].url;
 			}
-			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_token());
+			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_s_token());
 			break;
 		}
 		case PluginType::enEdem:
@@ -1294,7 +1328,7 @@ void CVodViewer::GetUrl(int idx)
 				const auto& season = movie->seasons[m_season_idx];
 				url = season.episodes[m_episode_idx].url;
 			}
-			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_token());
+			url = fmt::format(L"{:s}{:s}?token={:s}", m_plugin->get_provider_api_url(), url, m_account.get_password());
 			break;
 		}
 		case PluginType::enEdem:

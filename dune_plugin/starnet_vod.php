@@ -86,7 +86,7 @@ class Starnet_Vod extends Abstract_Vod
     public function set_movie_favorites($fav_movie_ids)
     {
         $this->fav_movie_ids = $fav_movie_ids;
-        $this->do_save_favorite_movies();
+        $this->save_movie_favorites();
     }
 
     /**
@@ -123,7 +123,7 @@ class Starnet_Vod extends Abstract_Vod
      * This function should not fail.
      * @return void
      */
-    protected function do_save_favorite_movies()
+    public function save_movie_favorites()
     {
         $path = self::VOD_FAVORITES_LIST . "_" . $this->plugin->config->get_vod_template_name();
         $fav_movie_ids = $this->get_favorite_movie_ids();
@@ -143,36 +143,32 @@ class Starnet_Vod extends Abstract_Vod
     {
         hd_debug_print(null, true);
 
-        $favorites = $this->get_favorite_movie_ids();
-
         switch ($fav_op_type) {
             case PLUGIN_FAVORITES_OP_ADD:
-                if ($favorites->add_item($movie_id)) {
+                if ($this->get_favorite_movie_ids()->add_item($movie_id)) {
                     hd_debug_print("Movie id: $movie_id added to favorites");
                 }
                 break;
 
             case PLUGIN_FAVORITES_OP_REMOVE:
-                if ($favorites->remove_item($movie_id)) {
+                if ($this->get_favorite_movie_ids()->remove_item($movie_id)) {
                     hd_debug_print("Movie id: $movie_id removed from favorites");
                 }
                 break;
 
             case ACTION_ITEMS_CLEAR:
                 hd_debug_print("Movie favorites cleared");
-                $favorites->clear();
+                $this->get_favorite_movie_ids()->clear();
                 break;
 
             case PLUGIN_FAVORITES_OP_MOVE_UP:
-                $favorites->arrange_item($movie_id, Ordered_Array::UP);
+                $this->get_favorite_movie_ids()->arrange_item($movie_id, Ordered_Array::UP);
                 break;
 
             case PLUGIN_FAVORITES_OP_MOVE_DOWN:
-                $favorites->arrange_item($movie_id, Ordered_Array::DOWN);
+                $this->get_favorite_movie_ids()->arrange_item($movie_id, Ordered_Array::DOWN);
                 break;
         }
-
-        $this->set_movie_favorites($favorites);
 
         return Action_Factory::invalidate_folders(array(Starnet_Vod_Favorites_Screen::ID));
     }

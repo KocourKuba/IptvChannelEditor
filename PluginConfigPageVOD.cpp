@@ -234,9 +234,10 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	auto& cred = GetPropertySheet()->m_selected_cred;
 
 	TemplateParams params;
-	params.token = cred.get_token();
+	params.s_token = GetPropertySheet()->m_plugin->get_api_token(cred);
 	params.login = cred.get_login();
 	params.password = cred.get_password();
+	params.ott_key = cred.get_ott_key();
 	params.subdomain = cred.get_subdomain();
 	params.server_idx = cred.server_id;
 	params.device_idx = cred.device_id;

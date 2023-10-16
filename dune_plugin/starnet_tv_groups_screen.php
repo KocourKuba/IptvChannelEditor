@@ -58,7 +58,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         switch ($user_input->control_id) {
             case GUI_EVENT_KEY_TOP_MENU:
             case GUI_EVENT_KEY_RETURN:
-                if ($this->plugin->get_bool_parameter(PARAM_ASK_EXIT)) {
+                if ($this->plugin->get_bool_parameter(PARAM_ASK_EXIT, false)) {
                     return Action_Factory::show_confirmation_dialog(TR::t('yes_no_confirm_msg'), $this, self::ACTION_CONFIRM_DLG_APPLY);
                 }
 
@@ -245,7 +245,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
     {
         switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
             case Plugin_Constants::ACCOUNT_OTT_KEY:
-                $ott_key = $this->plugin->get_parameter(Ext_Params::M_TOKEN);
+                $ott_key = $this->plugin->get_parameter(Ext_Params::M_OTT_KEY);
                 $subdomain = $this->plugin->get_parameter(Ext_Params::M_SUBDOMAIN);
                 $setup_needs = empty($ott_key) && empty($subdomain) && ($this->plugin->config->get_embedded_account() === null);
                 break;

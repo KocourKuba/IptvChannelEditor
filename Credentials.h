@@ -36,9 +36,10 @@ public:
 
 	MAKE_ACCESSORS(login);
 	MAKE_ACCESSORS(password);
-	MAKE_ACCESSORS(token);
+	MAKE_ACCESSORS(ott_key);
 	MAKE_ACCESSORS(subdomain);
 	MAKE_ACCESSORS(portal);
+	MAKE_ACCESSORS(s_token);
 	MAKE_ACCESSORS(comment);
 	MAKE_ACCESSORS(config);
 	MAKE_ACCESSORS(caption);
@@ -55,8 +56,8 @@ public:
 	{
 		SERIALIZE_STRUCT(j, c, login);
 		SERIALIZE_STRUCT(j, c, password);
-		SERIALIZE_STRUCT(j, c, token);
-		SERIALIZE_STRUCT2(j, c, subdomain, domain);
+		SERIALIZE_STRUCT(j, c, ott_key);
+		SERIALIZE_STRUCT(j, c, subdomain);
 		SERIALIZE_STRUCT(j, c, portal);
 		SERIALIZE_STRUCT(j, c, comment);
 		SERIALIZE_STRUCT(j, c, config);
@@ -91,8 +92,11 @@ public:
 		DESERIALIZE_STRUCT(j, c, login);
 		DESERIALIZE_STRUCT(j, c, password);
 		DESERIALIZE_STRUCT(j, c, token);
-		DESERIALIZE_STRUCT2(j, c, subdomain, domain);
+		DESERIALIZE_STRUCT(j, c, ott_key);
+		DESERIALIZE_STRUCT(j, c, subdomain);
+		DESERIALIZE_STRUCT(j, c, domain);
 		DESERIALIZE_STRUCT(j, c, portal);
+		DESERIALIZE_STRUCT(j, c, s_token);
 		DESERIALIZE_STRUCT(j, c, comment);
 		DESERIALIZE_STRUCT(j, c, config);
 		DESERIALIZE_STRUCT(j, c, caption);
@@ -124,8 +128,9 @@ public:
 public:
 	std::string login;
 	std::string password;
-	std::string token;
+	std::string ott_key;
 	std::string subdomain;
+	std::string s_token;
 	std::string portal;
 	std::string comment;
 	std::string config;
@@ -139,6 +144,9 @@ public:
 	std::string update_name;
 	std::string package_name;
 	std::string ch_web_path;
+
+	std::string token;
+	std::string domain;
 
 	int custom_caption = 0;
 	int custom_logo = 0;

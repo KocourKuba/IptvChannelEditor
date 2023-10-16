@@ -134,6 +134,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
                     case 'update_epfs':
                         hd_debug_print("update_epfs");
+                        $this->plugin->tv->load_channels();
                         return Starnet_Epfs_Handler::update_all_epfs($plugin_cookies, isset($user_input->first_run_after_boot) || isset($user_input->restore_from_sleep));
                     default:
                         break;

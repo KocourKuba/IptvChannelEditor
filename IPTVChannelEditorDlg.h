@@ -393,6 +393,7 @@ private:
 
 	CString m_toolTipText;
 	std::wstring m_plFileName;
+	std::wstring m_playlist_url;
 
 	bool m_allow_save = false;
 	bool m_loading = false;

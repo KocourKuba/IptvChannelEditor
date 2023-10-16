@@ -2,7 +2,7 @@
 setlocal
 set PATH=%PATH%;"C:\Program Files\Git\usr\bin\"
 pushd "%~dp0"
-findstr "#define BUILD" VerGIT.h >tmp
+findstr /C:"#define BUILD" VerGIT.h >tmp
 set /p str=<tmp
 del tmp
 set t=%str%

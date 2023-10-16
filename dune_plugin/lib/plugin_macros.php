@@ -11,9 +11,11 @@ class Plugin_Macros
     const ID             = "{ID}";            // id (set from playlist)
     const PL_DOMAIN      = "{PL_DOMAIN}";     // playlist domain (set from settings or set by provider)
     const VOD_DOMAIN     = "{VOD_DOMAIN}";    // vod domain (set from settings or set by provider)
-    const SUBDOMAIN      = "{SUBDOMAIN}";     // domain (set from settings or set by provider)
-    const TOKEN          = "{TOKEN}";         // token (set from playlist or set by provider)
+    const SUBDOMAIN      = "{SUBDOMAIN}";     // sub domain (used in edem)
+    const OTT_KEY        = "{OTT_KEY}";       // ott key (used in edem)
+    const TOKEN          = "{TOKEN}";         // token (set from playlist)
     const COMMAND        = "{COMMAND}";       // command in url
+    const S_TOKEN        = "{S_TOKEN}";       // session token (used to get info or playlist from provider)
     const LOGIN          = "{LOGIN}";         // login (set from settings)
     const PASSWORD       = "{PASSWORD}";      // password (set from settings)
     const INT_ID         = "{INT_ID}";        // internal id (reads from playlist)

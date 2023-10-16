@@ -61,7 +61,6 @@ void plugin_itv::load_default()
 	info.pl_template = "{PL_DOMAIN}/p/{PASSWORD}/hls.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)\/.+$)";
 	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<id>.+)\/[^\?]+\?token=(?<token>.+)$)";
-	info.per_channel_token = true;
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
@@ -78,50 +77,48 @@ void plugin_itv::load_default()
 	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}";
 }
 
-bool plugin_itv::parse_access_info(TemplateParams& params, std::list<AccountInfo>& info_list)
+std::map<std::wstring, std::wstring> plugin_itv::parse_access_info(TemplateParams& params)
 {
+	std::map<std::wstring, std::wstring> info;
+
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!download_url(fmt::format(ACCOUNT_TEMPLATE, params.password), data))
+	if (download_url(fmt::format(ACCOUNT_TEMPLATE, params.password), data))
 	{
-		return false;
-	}
-
-	JSON_ALL_TRY
-	{
-		const auto& parsed_json = nlohmann::json::parse(data.str());
-		if (parsed_json.contains("user_info"))
+		JSON_ALL_TRY
 		{
-			const auto& js_data = parsed_json["user_info"];
-
-			put_account_info("login", js_data, info_list);
-			put_account_info("pay_system", js_data, info_list);
-			put_account_info("cash", js_data, info_list);
-		}
-
-		std::wstring subscription;
-		if (!parsed_json.contains("package_info"))
-		{
-			subscription = L"No packages";
-		}
-		else
-		{
-			const auto& pkg_data = parsed_json["package_info"];
-			for (const auto& item : pkg_data)
+			const auto& parsed_json = nlohmann::json::parse(data.str());
+			if (parsed_json.contains("user_info"))
 			{
-				if (!subscription.empty())
-					subscription += L", ";
+				const auto& js_data = parsed_json["user_info"];
 
-				subscription += fmt::format(L"{:s}", utils::utf8_to_utf16(item.value("name", "")));
+				set_json_info("login", js_data, info);
+				set_json_info("pay_system", js_data, info);
+				set_json_info("cash", js_data, info);
 			}
+
+			std::wstring subscription;
+			if (!parsed_json.contains("package_info"))
+			{
+				subscription = L"No packages";
+			}
+			else
+			{
+				const auto& pkg_data = parsed_json["package_info"];
+				for (const auto& item : pkg_data)
+				{
+					if (!subscription.empty())
+						subscription += L", ";
+
+					subscription += fmt::format(L"{:s}", utils::utf8_to_utf16(item.value("name", "")));
+				}
+			}
+
+			info.emplace(L"package_info", subscription);
 		}
-
-		AccountInfo info{ L"package_info", subscription };
-		info_list.emplace_back(info);
-
-		return true;
+		JSON_ALL_CATCH;
 	}
-	JSON_ALL_CATCH;
 
-	return false;
+
+	return info;
 }
