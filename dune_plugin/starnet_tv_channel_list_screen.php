@@ -110,8 +110,8 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $find_text = $user_input->{self::ACTION_NEW_SEARCH};
                 hd_debug_print("Search in group: $parent_media_url->group_id", true);
                 $parent_group = $parent_media_url->group_id === ALL_CHANNEL_GROUP_ID
-                    ? $this->plugin->tv->get_group($parent_media_url->group_id)
-                    : $this->plugin->tv->get_special_group($parent_media_url->group_id);
+                    ? $this->plugin->tv->get_special_group($parent_media_url->group_id)
+                    : $this->plugin->tv->get_group($parent_media_url->group_id);
 
                 if (is_null($parent_group)) {
                     hd_debug_print("unknown parent group", true);
@@ -240,19 +240,19 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
     }
 
     /**
-     * @param Group $parent_group
-     * @param $find_text
+     * @param Default_Group $parent_group
+     * @param string $find_text
      * @return array
      */
-    protected function do_search(Group $parent_group, $find_text)
+    protected function do_search(Default_Group $parent_group, $find_text)
     {
-        hd_debug_print($parent_group, true);
+        hd_debug_print("Find text: $find_text in group id: {$parent_group->get_id()}", true);
 
         /** @var Channel $channel */
         $channels = array();
         if ($parent_group->get_id() === ALL_CHANNEL_GROUP_ID) {
             foreach($this->plugin->tv->get_channels() as $channel) {
-                if ($channel->is_disabled()) continue;
+                if (!is_null($channel) && $channel->is_disabled()) continue;
 
                 foreach ($channel->get_groups() as $group) {
                     if (!$group->is_disabled()) {
@@ -262,8 +262,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 }
             }
         } else {
-            foreach ($parent_group->get_items_order() as $item) {
-                $channel = $this->plugin->tv->get_channel($item);
+            foreach ($parent_group->get_group_channels() as $channel) {
                 if (!is_null($channel) && !$channel->is_disabled()) {
                     $channels[] = $channel;
                 }

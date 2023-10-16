@@ -263,6 +263,7 @@ class Default_Group extends Json_Serializer implements Group
         if ($this->_order_settings !== null && $this->_id !== ALL_CHANNEL_GROUP_ID && !$channel->is_disabled()) {
             $order = $this->get_items_order();
             $order->add_item($channel->get_id());
+            $this->set_items_order($order);
         }
     }
 }
