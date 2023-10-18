@@ -84,7 +84,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                                 ));
                         }
 
-                        if (HD::toggle_https_proxy($this->plugin->get_bool_parameter(PARAM_USE_HTTPS_PROXY))) {
+                        if (HD::toggle_https_proxy($this->plugin->get_bool_parameter(PARAM_USE_HTTPS_PROXY, false))) {
                             return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'),
                                 Action_Factory::restart(), TR::t('entry_https_proxy_enabled'));
                         }
@@ -134,7 +134,6 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
                     case 'update_epfs':
                         hd_debug_print("update_epfs");
-                        $this->plugin->tv->load_channels();
                         return Starnet_Epfs_Handler::update_all_epfs($plugin_cookies, isset($user_input->first_run_after_boot) || isset($user_input->restore_from_sleep));
                     default:
                         break;
