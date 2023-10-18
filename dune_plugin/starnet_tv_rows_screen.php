@@ -309,6 +309,12 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
      */
     public function get_folder_view_for_epf(&$plugin_cookies)
     {
+        hd_debug_print(null, true);
+
+        if ($this->plugin->tv->load_channels() === 0) {
+            hd_debug_print("Channels not loaded!");
+        }
+
         return $this->get_folder_view(MediaURL::decode(self::ID), $plugin_cookies);
     }
 
