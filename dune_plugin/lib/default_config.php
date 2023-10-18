@@ -52,6 +52,7 @@ class default_config extends dynamic_config
 
     public function load_embedded_account()
     {
+        hd_debug_print("Loading embedded account");
         $plugin_account = get_install_path('account.dat');
         $plugin_data = '';
         if (file_exists($plugin_account)) {
@@ -68,12 +69,14 @@ class default_config extends dynamic_config
             $backup_data = file_get_contents($backup_account, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         }
 
-        if (empty($plugin_data) && empty($backup_data))
+        if (empty($plugin_data) && empty($backup_data)) {
+            hd_debug_print("No embedded account in main and backup locations");
             return;
+        }
 
         if (!empty($plugin_data)) {
             if ($plugin_data !== $backup_data) {
-                hd_debug_print("backup account data.");
+                hd_debug_print("backup main account data.");
                 $backup_data = $plugin_data;
                 file_put_contents($backup_account, $backup_data);
             }
