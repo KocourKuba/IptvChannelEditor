@@ -92,7 +92,7 @@ void plugin_config::load_default()
 		{"gui_start", "" },
 		{"install", "#install" },
 		{"uninstall", "#uninstall" },
-		{"update", "" },
+		{"update", "#update" },
 	};
 
 	StreamParameters hls;

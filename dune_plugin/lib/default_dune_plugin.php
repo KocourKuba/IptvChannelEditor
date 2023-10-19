@@ -919,6 +919,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function upgrade_old_settings(&$plugin_cookies)
     {
+        hd_debug_print("upgrade old settings");
         $creds = array(
             'subdomain' => Ext_Params::M_SUBDOMAIN,
             'ott_key' => Ext_Params::M_OTT_KEY,

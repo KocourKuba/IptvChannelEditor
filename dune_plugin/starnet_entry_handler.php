@@ -142,6 +142,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         $this->plugin->get_epg_manager()->clear_all_epg_cache();
                         break;
 
+                    case 'update':
                     case 'install':
                         $this->plugin->upgrade_old_settings($plugin_cookies);
                         break;

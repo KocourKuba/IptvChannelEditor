@@ -16,6 +16,10 @@ class edem_config extends default_config
      */
     public function get_subdomain()
     {
+        if (isset($this->embedded_account->domain)) {
+            $this->embedded_account->subdomain = $this->embedded_account->domain;
+        }
+
         return isset($this->embedded_account->subdomain) ? $this->embedded_account->subdomain : $this->parent->get_credentials(Ext_Params::M_SUBDOMAIN);
     }
 
@@ -29,7 +33,7 @@ class edem_config extends default_config
 
 
     /**
-     * @param string $movie_id
+     * @param string $movie_id+/
      * @return Movie
      * @throws Exception
      */
