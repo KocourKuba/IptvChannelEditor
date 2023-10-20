@@ -219,10 +219,6 @@ void CPluginConfigPageEPG::FillControls()
 
 	int epg_type = m_wndEpgType.GetCurSel();
 	m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(epg_type).c_str();
-	if (GetPropertySheet()->m_plugin->get_plugin_type() == PluginType::enIptvOnline && m_SetID.Left(1) == 'X')
-	{
-		m_SetID = m_SetID.Mid(1);
-	}
 
 	m_wndEpgPreset.SetCurSel(GetPropertySheet()->m_plugin->get_epg_preset_idx(epg_type));
 

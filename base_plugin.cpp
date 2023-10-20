@@ -554,12 +554,6 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 {
 	const auto& params = epg_params[epg_idx];
 
-	std::wstring new_epg_id(epg_id);
-	if (plugin_type == PluginType::enIptvOnline && epg_idx != 2 && epg_id.front() == 'X')
-	{
-		new_epg_id = epg_id.substr(1);
-	}
-
 	COleDateTime dt(for_time ? for_time : COleDateTime::GetCurrentTime());
 	// set to begin of the day
 	std::tm lt =  fmt::localtime(for_time);
@@ -572,7 +566,7 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_DOMAIN, params.get_epg_domain());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DOMAIN, info->domain);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->id);
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, new_epg_id);
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, epg_id);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, info->token);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DATE, params.get_epg_date_format());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_YEAR, std::to_wstring(dt.GetYear()));

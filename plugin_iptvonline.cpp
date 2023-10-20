@@ -37,7 +37,6 @@ static char THIS_FILE[] = __FILE__;
 plugin_iptvonline::plugin_iptvonline()
 {
 	type_name = "iptvonline";
-	class_name = "iptvonline_config";
 }
 
 void plugin_iptvonline::load_default()

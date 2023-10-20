@@ -791,7 +791,7 @@ class Epg_Manager
             $t = microtime(true);
             if (empty($this->xmltv_positions)) {
                 $index_file = $this->get_index_name(true);
-                hd_debug_print("load positions index $$index_file");
+                hd_debug_print("load positions index $index_file");
                 $data = HD::ReadContentFromFile($index_file);
                 if (empty($data)) {
                     throw new Exception("load positions index failed '$index_file'");
