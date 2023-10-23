@@ -53,7 +53,8 @@ void plugin_viplime::load_default()
 	info.pl_domain = "http://cdntv.online";
 	info.pl_template = "{PL_DOMAIN}/high/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/.*\/(?<password>.+)\/.*$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/(?<id>.+).m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/.+$)";
+	info.tag_id_match = "tvg-id";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.m3u8";

@@ -57,7 +57,8 @@ void plugin_russkoetv::load_default()
 	info.pl_domain = "http://russkoetv.tv";
 	info.pl_template = "{PL_DOMAIN}/play/{PASSWORD}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<password>.+)\.m3u8?$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/s\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/s\/(?<token>.+)\/.+\.m3u8$)";
+	info.tag_id_match = "tvg-id";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/s/{TOKEN}/{ID}.m3u8";

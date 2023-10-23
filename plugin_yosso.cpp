@@ -56,7 +56,7 @@ void plugin_yosso::load_default()
 	info.pl_domain = "https://streaming-elbrus.su";
 	info.pl_template = "{PL_DOMAIN}/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<login>.+)\/(?<password>.+)\/(?<server>.+)\/.*$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+):(?<port>\d+)\/(?<var1>[^\/].+\/)?(?<id>.+)\/(?<var2>.+)\.m3u8\?token=(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+):(?<port>\d+)\/(?:.+\/)?(?<id>.+)\/(?<var2>.+)\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;

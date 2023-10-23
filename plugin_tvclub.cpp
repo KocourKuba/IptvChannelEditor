@@ -63,7 +63,8 @@ void plugin_tvclub::load_default()
 	info.pl_domain = "http://celn.shott.top";
 	info.pl_template = "{PL_DOMAIN}/p/{S_TOKEN}";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/p\/(?<token>.+)\/(?<id>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/p\/(?<token>.+)\/.+$)";
+	info.tag_id_match = "tvg-id";
 	playlist_templates.emplace_back(info);
 
 	requested_token = true;
