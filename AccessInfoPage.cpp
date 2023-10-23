@@ -44,6 +44,9 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
+#define LVS_ITEM_CHECKED 8192
+#define LVS_ITEM_UNCHECKED 4096
+
 constexpr int min_cache_ttl = 5;
 
 inline std::string get_utf8(const std::wstring& value)
@@ -244,7 +247,6 @@ BOOL CAccessInfoPage::OnInitDialog()
 
 	int account_idx = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
 	m_wndAccounts.SetCheck(account_idx, TRUE);
-	m_wndAccounts.SetItemState(account_idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 	m_wndAccounts.EnsureVisible(account_idx, FALSE);
 	m_wndRemove.EnableWindow(m_wndAccounts.GetSelectionMark() != -1);
 
@@ -622,10 +624,10 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_password(CString(dispinfo->item.pszText));
+					cred.set_password(std::wstring(dispinfo->item.pszText));
 					break;
 				case 2:
-					cred.set_comment(CString(dispinfo->item.pszText));
+					cred.set_comment(std::wstring(dispinfo->item.pszText));
 					break;
 				default:
 					changed = false;
@@ -637,13 +639,13 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_login(CString(dispinfo->item.pszText));
+					cred.set_login(std::wstring(dispinfo->item.pszText));
 					break;
 				case 2:
-					cred.set_password(CString(dispinfo->item.pszText));
+					cred.set_password(std::wstring(dispinfo->item.pszText));
 					break;
 				case 3:
-					cred.set_comment(CString(dispinfo->item.pszText));
+					cred.set_comment(std::wstring(dispinfo->item.pszText));
 					break;
 				default:
 					changed = false;
@@ -655,16 +657,16 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_ott_key(CString(dispinfo->item.pszText));
+					cred.set_ott_key(std::wstring(dispinfo->item.pszText));
 					break;
 				case 2:
-					cred.set_subdomain(CString(dispinfo->item.pszText));
+					cred.set_subdomain(std::wstring(dispinfo->item.pszText));
 					break;
 				case 3:
-					cred.set_portal(CString(dispinfo->item.pszText));
+					cred.set_portal(std::wstring(dispinfo->item.pszText));
 					break;
 				case 4:
-					cred.set_comment(CString(dispinfo->item.pszText));
+					cred.set_comment(std::wstring(dispinfo->item.pszText));
 					break;
 				default:
 					changed = false;
@@ -676,7 +678,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_comment(CString(dispinfo->item.pszText));
+					cred.set_comment(std::wstring(dispinfo->item.pszText));
 					break;
 				default:
 					changed = false;
@@ -699,32 +701,27 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	*pResult = 0;
 
-	if (!(pNMLV->uChanged & LVIF_STATE))
+	if ((pNMLV->uChanged & LVIF_STATE) == 0)
 		return;
 
-	int selected = 0;
-	if ((pNMLV->uNewState & LVIS_SELECTED) == LVIS_SELECTED)
+	if (pNMLV->uNewState & LVS_ITEM_CHECKED)
 	{
-		m_wndAccounts.SetCheck(pNMLV->iItem, TRUE);
-		selected = LVIS_SELECTED;
-	}
-	else if (pNMLV->uNewState == 0)
-	{
-		if (m_wndAccounts.GetItemState(pNMLV->iItem, LVIS_SELECTED) == 0)
-		{
-			m_wndAccounts.SetCheck(pNMLV->iItem, 0);
-			selected = 0;
-		}
-	}
-	else
-	{
-		selected = m_wndAccounts.GetCheck(pNMLV->iItem) ? LVIS_SELECTED : 0;
-		m_wndAccounts.SetItemState(pNMLV->iItem, selected, LVIS_SELECTED);
+		m_wndAccounts.SetItemState(pNMLV->iItem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+		return;
 	}
 
-	m_wndRemove.EnableWindow(selected != 0);
+	if (pNMLV->uNewState & LVS_ITEM_UNCHECKED)
+	{
+		m_wndAccounts.SetItemState(pNMLV->iItem, 0, 0);
+		return;
+	}
 
-	if (selected != 0)
+	BOOL selected = (pNMLV->uNewState & LVIS_SELECTED) == LVIS_SELECTED;
+
+	m_wndAccounts.SetCheck(pNMLV->iItem, selected);
+	m_wndRemove.EnableWindow(selected);
+
+	if (selected)
 	{
 		m_plugin->clear_servers_list();
 		m_plugin->clear_device_list();
@@ -1009,11 +1006,16 @@ void CAccessInfoPage::GetAccountInfo()
 	params.password = selected_cred.get_password();
 	params.ott_key = selected_cred.get_ott_key();
 	params.subdomain = selected_cred.get_subdomain();
-	params.s_token = m_plugin->get_api_token(selected_cred);
+	params.s_token = selected_cred.get_s_token();
 	params.server_idx = selected_cred.server_id;
 	params.device_idx = selected_cred.device_id;
 	params.profile_idx = selected_cred.profile_id;
 	params.quality_idx = selected_cred.quality_id;
+
+	if (m_plugin->get_requested_token())
+	{
+		params.s_token = m_plugin->get_api_token(selected_cred);
+	}
 
 	CWaitCursor cur;
 	auto& pl_url = m_plugin->get_playlist_url(params);
@@ -1117,7 +1119,7 @@ void CAccessInfoPage::OnCbnSelchangeComboConfigs()
 	{
 		CString value;
 		m_wndConfigs.GetLBText(idx, value);
-		selected.set_config(value);
+		selected.set_config(value.GetString());
 		m_plugin->load_plugin_parameters(selected.get_config());
 		CreateAccountsList();
 		m_wndAccounts.SetCheck(account_idx);
@@ -1167,7 +1169,7 @@ void CAccessInfoPage::OnEnChangeEditPluginCaption()
 	UpdateData(TRUE);
 	m_caption.Trim();
 	auto& selected = GetCheckedAccount();
-	selected.set_caption(m_caption);
+	selected.set_caption(m_caption.GetString());
 }
 
 void CAccessInfoPage::OnBnClickedCheckCustomPluginNameTemplate()
@@ -1187,7 +1189,7 @@ void CAccessInfoPage::OnEnChangeEditPluginNameTemplate()
 	if (utils::is_ascii(m_pluginNameTemplate.GetString()))
 	{
 		m_pluginNameTemplate.Trim();
-		selected.set_plugin_name(m_pluginNameTemplate);
+		selected.set_plugin_name(m_pluginNameTemplate.GetString());
 	}
 	else
 	{
@@ -1216,7 +1218,7 @@ void CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo()
 	m_logo.Trim();
 	if (utils::is_ascii(std::filesystem::path(m_logo.GetString()).filename().wstring().c_str()))
 	{
-		selected.set_logo(m_logo);
+		selected.set_logo(m_logo.GetString());
 	}
 	else
 	{
@@ -1241,7 +1243,7 @@ void CAccessInfoPage::OnEnChangeMfceditbrowsePluginBackground()
 	if (utils::is_ascii(std::filesystem::path(m_background.GetString()).filename().wstring().c_str()))
 	{
 		m_background.Trim();
-		selected.set_background(m_background);
+		selected.set_background(m_background.GetString());
 	}
 	else
 	{
@@ -1264,7 +1266,7 @@ void CAccessInfoPage::OnEnChangeEditPluginUpdateVersion()
 	UpdateData(TRUE);
 	auto& selected = GetCheckedAccount();
 
-	selected.set_version_id(m_versionIdx);
+	selected.set_version_id(m_versionIdx.GetString());
 }
 
 void CAccessInfoPage::OnBnClickedCheckCustomUpdateNameTemplate()
@@ -1285,7 +1287,7 @@ void CAccessInfoPage::OnEnChangeEditPluginUpdateNameTemplate()
 	if (utils::is_ascii(m_updateNameTemplate.GetString()))
 	{
 		m_updateNameTemplate.Trim();
-		selected.set_update_name(m_updateNameTemplate);
+		selected.set_update_name(m_updateNameTemplate.GetString());
 	}
 	else
 	{
@@ -1303,7 +1305,7 @@ void CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath()
 	UpdateData(TRUE);
 
 	auto& selected = GetCheckedAccount();
-	selected.set_ch_web_path(m_channelsWebPath);
+	selected.set_ch_web_path(m_channelsWebPath.GetString());
 }
 
 void CAccessInfoPage::OnBnClickedButtonEditConfig()

@@ -117,7 +117,6 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
 
 	const auto& cache_file = GetCachePath(hash_str);
-	ATLTRACE(L"\ncache file: %s\n", cache_file.c_str());
 	if (!CheckIsCacheExpired(cache_file))
 	{
 		std::ifstream in_file(cache_file.c_str());
@@ -126,7 +125,7 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 			vData << in_file.rdbuf();
 			in_file.close();
 			size_t data_size = vData.rdbuf()->_Get_buffer_view()._Size;
-			ATLTRACE(L"\nloaded from cache: %d bytes\n", data_size);
+			ATLTRACE(L"\nloaded: %d bytes from cache %s\n", data_size, cache_file.c_str());
 			if (data_size != 0)
 			{
 				return true;

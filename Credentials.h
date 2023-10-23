@@ -34,23 +34,56 @@ public:
 	Credentials() = default;
 	void Clear();
 
-	MAKE_ACCESSORS(login);
-	MAKE_ACCESSORS(password);
-	MAKE_ACCESSORS(ott_key);
-	MAKE_ACCESSORS(subdomain);
-	MAKE_ACCESSORS(portal);
-	MAKE_ACCESSORS(s_token);
-	MAKE_ACCESSORS(comment);
-	MAKE_ACCESSORS(config);
-	MAKE_ACCESSORS(caption);
-	MAKE_ACCESSORS(logo);
-	MAKE_ACCESSORS(background);
-	MAKE_ACCESSORS(update_url);
-	MAKE_ACCESSORS(update_package_url);
-	MAKE_ACCESSORS(version_id);
-	MAKE_ACCESSORS(plugin_name);
-	MAKE_ACCESSORS(update_name);
-	MAKE_ACCESSORS(ch_web_path);
+	std::wstring get_login() const { return utils::utf8_to_utf16(login); }
+	void set_login(const std::wstring& value) { login = utils::utf16_to_utf8(value); }
+
+	std::wstring get_password() const { return utils::utf8_to_utf16(password); }
+	void set_password(const std::wstring& value) { password = utils::utf16_to_utf8(value); }
+
+	std::wstring get_ott_key() const { return utils::utf8_to_utf16(ott_key); }
+	void set_ott_key(const std::wstring& value) { ott_key = utils::utf16_to_utf8(value); }
+
+	std::wstring get_subdomain() const { return utils::utf8_to_utf16(subdomain); }
+	void set_subdomain(const std::wstring& value) { subdomain = utils::utf16_to_utf8(value); }
+
+	std::wstring get_portal() const { return utils::utf8_to_utf16(portal); }
+	void set_portal(const std::wstring& value) { portal = utils::utf16_to_utf8(value); }
+
+	std::wstring get_s_token() const { return utils::utf8_to_utf16(s_token); }
+	void set_s_token(const std::wstring& value) { s_token = utils::utf16_to_utf8(value); }
+
+	std::wstring get_comment() const { return utils::utf8_to_utf16(comment); }
+	void set_comment(const std::wstring& value) { comment = utils::utf16_to_utf8(value); }
+
+	std::wstring get_config() const { return utils::utf8_to_utf16(config); }
+	void set_config(const std::wstring& value) { config = utils::utf16_to_utf8(value); }
+
+	std::wstring get_caption() const { return utils::utf8_to_utf16(caption); }
+	void set_caption(const std::wstring& value) { caption = utils::utf16_to_utf8(value); }
+
+	std::wstring get_logo() const { return utils::utf8_to_utf16(logo); }
+	void set_logo(const std::wstring& value) { logo = utils::utf16_to_utf8(value); }
+
+	std::wstring get_background() const { return utils::utf8_to_utf16(background); }
+	void set_background(const std::wstring& value) { background = utils::utf16_to_utf8(value); }
+
+	std::wstring get_update_url() const { return utils::utf8_to_utf16(update_url); }
+	void set_update_url(const std::wstring& value) { update_url = utils::utf16_to_utf8(value); }
+
+	std::wstring get_update_package_url() const { return utils::utf8_to_utf16(update_package_url); }
+	void set_update_package_url(const std::wstring& value) { update_package_url = utils::utf16_to_utf8(value); }
+
+	std::wstring get_version_id() const { return utils::utf8_to_utf16(version_id); }
+	void set_version_id(const std::wstring& value) { version_id = utils::utf16_to_utf8(value); }
+
+	std::wstring get_plugin_name() const { return utils::utf8_to_utf16(plugin_name); }
+	void set_plugin_name(const std::wstring& value) { plugin_name = utils::utf16_to_utf8(value); }
+
+	std::wstring get_update_name() const { return utils::utf8_to_utf16(update_name); }
+	void set_update_name(const std::wstring& value) { update_name = utils::utf16_to_utf8(value); }
+
+	std::wstring get_ch_web_path() const { return utils::utf8_to_utf16(ch_web_path); }
+	void set_ch_web_path(const std::wstring& value) { ch_web_path = utils::utf16_to_utf8(value); }
 
 	friend void to_json(nlohmann::json& j, const Credentials& c)
 	{
@@ -59,6 +92,7 @@ public:
 		SERIALIZE_STRUCT(j, c, ott_key);
 		SERIALIZE_STRUCT(j, c, subdomain);
 		SERIALIZE_STRUCT(j, c, portal);
+		SERIALIZE_STRUCT(j, c, s_token);
 		SERIALIZE_STRUCT(j, c, comment);
 		SERIALIZE_STRUCT(j, c, config);
 		SERIALIZE_STRUCT(j, c, caption);
@@ -71,6 +105,7 @@ public:
 		SERIALIZE_STRUCT(j, c, update_name);
 		SERIALIZE_STRUCT(j, c, package_name);
 		SERIALIZE_STRUCT(j, c, ch_web_path);
+
 		SERIALIZE_STRUCT(j, c, custom_caption);
 		SERIALIZE_STRUCT(j, c, custom_logo);
 		SERIALIZE_STRUCT(j, c, custom_background);
@@ -109,6 +144,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, update_name);
 		DESERIALIZE_STRUCT(j, c, package_name);
 		DESERIALIZE_STRUCT(j, c, ch_web_path);
+
 		DESERIALIZE_STRUCT(j, c, custom_caption);
 		DESERIALIZE_STRUCT(j, c, custom_logo);
 		DESERIALIZE_STRUCT(j, c, custom_background);

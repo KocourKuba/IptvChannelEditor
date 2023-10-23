@@ -33,11 +33,6 @@ DEALINGS IN THE SOFTWARE.
 #define DESERIALIZE_STRUCT(j, c, s) if (j.contains(""#s"")) j.at(""#s"").get_to(c.s);
 #define DESERIALIZE_STRUCT2(j, c, s, f) if (j.contains(""#f"")) j.at(""#f"").get_to(c.s);
 
-#define MAKE_ACCESSORS(var) \
-	std::wstring get_##var() const { return utils::utf8_to_utf16(var); } \
-	void set_##var(const std::wstring& value) { var = utils::utf16_to_utf8(value); } \
-	void set_##var(const CString& value) { var = utils::utf16_to_utf8(value.GetString(), value.GetLength()); }
-
 #define JSON_ALL_TRY try {
 #define JSON_ALL_CATCH } \
 		catch (const nlohmann::json::parse_error& ex) \

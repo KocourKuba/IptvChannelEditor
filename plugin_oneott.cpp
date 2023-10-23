@@ -83,7 +83,8 @@ std::map<std::wstring, std::wstring> plugin_oneott::parse_access_info(TemplatePa
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (download_url(fmt::format(ACCOUNT_TEMPLATE, params.login, params.password), data))
+	const auto& url = fmt::format(ACCOUNT_TEMPLATE, params.login, params.password);
+	if (download_url(url, data))
 	{
 		JSON_ALL_TRY
 		{
@@ -94,7 +95,7 @@ std::map<std::wstring, std::wstring> plugin_oneott::parse_access_info(TemplatePa
 				info.emplace(L"token", token);
 
 				TemplateParams param;
-				param.token = token;
+				param.s_token = token;
 
 				info.emplace(L"url", get_playlist_url(param));
 			}

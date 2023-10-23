@@ -107,7 +107,7 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 	if (!get_playlist_domain(params.playlist_idx).empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, get_playlist_domain(params.playlist_idx));
 
-	if (!params.token.empty())
+	if (!params.s_token.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.s_token);
 
 	if (!params.login.empty())
