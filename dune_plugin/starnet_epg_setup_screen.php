@@ -105,7 +105,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         $epg_shift = $this->plugin->get_parameter(PARAM_EPG_SHIFT, 0);
         Control_Factory::add_combobox($defs, $this, null,
             PARAM_EPG_SHIFT, TR::t('setup_epg_shift'),
-            $epg_shift, $show_epg_shift_ops, self::CONTROLS_WIDTH);
+            $epg_shift, $show_epg_shift_ops, self::CONTROLS_WIDTH, true);
 
         return $defs;
     }
