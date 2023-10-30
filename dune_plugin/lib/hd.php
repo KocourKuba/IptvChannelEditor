@@ -456,6 +456,7 @@ class HD
             get_temp_path("*.xml"),
             get_temp_path("*.json"),
             get_temp_path("*.m3u8"),
+            "$apk_subst/$plugin_name-updater.log",
             "$apk_subst/tmp/run/shell.*",
             $plugin_logs,
         );
