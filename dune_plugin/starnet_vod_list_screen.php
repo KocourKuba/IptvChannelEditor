@@ -47,7 +47,6 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
             return null;
         }
 
-        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
         $media_url = MediaURL::decode($user_input->selected_media_url);
         $movie_id = $media_url->movie_id;
 
@@ -82,9 +81,9 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
             case ACTION_ADD_FAV:
                 $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
-                return Action_Factory::update_invalidate_folders(
-                    $this->plugin->vod->change_vod_favorites($opt_type, $movie_id),
-                    self::get_media_url_string($parent_media_url->category_id, $parent_media_url->genre_id));
+                $this->plugin->vod->change_vod_favorites($opt_type, $movie_id);
+                $this->plugin->vod->save_movie_favorites();
+                return Action_Factory::invalidate_folders(array($user_input->parent_media_url, Starnet_Vod_Favorites_Screen::ID));
         }
 
         return null;

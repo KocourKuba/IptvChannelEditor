@@ -168,6 +168,8 @@ class Starnet_Vod extends Abstract_Vod
             case PLUGIN_FAVORITES_OP_MOVE_DOWN:
                 $this->get_favorite_movie_ids()->arrange_item($movie_id, Ordered_Array::DOWN);
                 break;
+            default:
+                return null;
         }
 
         return Action_Factory::invalidate_folders(array(Starnet_Vod_Favorites_Screen::ID));
