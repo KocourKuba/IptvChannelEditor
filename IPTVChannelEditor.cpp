@@ -748,7 +748,7 @@ bool PackPlugin(const PluginType plugin_type,
 		std::filesystem::copy_file(plugin_root + filename, packFolder + filename, default_copy, err);
 	}
 
-	static std::vector<std::wstring> mandatory = {
+	static std::vector<std::wstring> mandatory_bin = {
 		L"cgi_config.php",
 		L"cgi_wrapper.sh",
 		L"curl.864x",
@@ -762,11 +762,26 @@ bool PackPlugin(const PluginType plugin_type,
 		L"update_suppliers.sh"
 	};
 
+	// copy bin scripts
 	for (const auto& dir_entry : std::filesystem::directory_iterator{ plugin_root + LR"(bin\\)" })
 	{
-		if (std::find(mandatory.begin(), mandatory.end(), dir_entry.path().filename().wstring()) != mandatory.end())
+		if (std::find(mandatory_bin.begin(), mandatory_bin.end(), dir_entry.path().filename().wstring()) != mandatory_bin.end())
 		{
 			const auto& curl_file = fmt::format(LR"({:s}\{:s})", bin_path, dir_entry.path().filename().wstring());
+			std::filesystem::copy_file(plugin_root + curl_file, packFolder + curl_file, default_copy, err);
+		}
+	}
+
+	static std::vector<std::wstring> mandatory_www = {
+		L"updater.sh"
+	};
+
+	// copy cgi-bin scripts
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ plugin_root + LR"(www\\cgi-bin)" })
+	{
+		if (std::find(mandatory_www.begin(), mandatory_www.end(), dir_entry.path().filename().wstring()) != mandatory_www.end())
+		{
+			const auto& curl_file = fmt::format(LR"({:s}\{:s})", www_path, dir_entry.path().filename().wstring());
 			std::filesystem::copy_file(plugin_root + curl_file, packFolder + curl_file, default_copy, err);
 		}
 	}
@@ -1178,9 +1193,17 @@ bool PackPlugin(const PluginType plugin_type,
 			version_info->append_node(rapidxml::alloc_node(*doc, "version", version_string.c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "beta", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "critical", "no"));
-			version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}.tar.gz",
-																					cred.update_package_url,
-																					utils::utf16_to_utf8(package_info_name)).c_str()));
+
+			if (cred.update_package_url.find(".dropbox") != std::string::npos)
+			{
+				version_info->append_node(rapidxml::alloc_node(*doc, "url", cred.update_package_url.c_str()));
+			}
+			else
+			{
+				version_info->append_node(rapidxml::alloc_node(*doc, "url", fmt::format("{:s}{:s}.tar.gz",
+																						cred.update_package_url,
+																						utils::utf16_to_utf8(package_info_name)).c_str()));
+			}
 			version_info->append_node(rapidxml::alloc_node(*doc, "md5", utils::md5_hash_file(packed_file).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "size", std::to_string(plugin_installed_size).c_str()));
 			version_info->append_node(rapidxml::alloc_node(*doc, "caption", plugin_caption.c_str()));

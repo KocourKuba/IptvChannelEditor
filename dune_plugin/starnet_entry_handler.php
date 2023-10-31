@@ -84,7 +84,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                                 ));
                         }
 
-                        if (HD::toggle_https_proxy($this->plugin->get_bool_parameter(PARAM_USE_HTTPS_PROXY, false))) {
+                        if (toggle_https_proxy($this->plugin->get_bool_parameter(PARAM_USE_HTTPS_PROXY, false))) {
                             return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'),
                                 Action_Factory::restart(), TR::t('entry_https_proxy_enabled'));
                         }
@@ -145,6 +145,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                     case 'update':
                     case 'install':
                         $this->plugin->upgrade_old_settings($plugin_cookies);
+                        toggle_https_proxy($this->plugin->get_bool_parameter(PARAM_USE_HTTPS_PROXY, false));
                         break;
                 }
                 break;

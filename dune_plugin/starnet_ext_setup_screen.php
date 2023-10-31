@@ -92,8 +92,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
 
         //////////////////////////////////////
         // https proxy settings
-        $v = get_platform_info();
-        if (strpos($v['type'], '86') !== 0 && (is_update_url_https() || is_https_proxy_enabled())) {
+        if (is_https_proxy_needs()) {
             $use_proxy = $this->plugin->get_parameter(PARAM_USE_HTTPS_PROXY, SetupControlSwitchDefs::switch_off);
             Control_Factory::add_image_button($defs, $this, null, PARAM_USE_HTTPS_PROXY,
                 TR::t('setup_https_proxy'), SetupControlSwitchDefs::$on_off_translated[$use_proxy],
@@ -220,7 +219,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
             case PARAM_USE_HTTPS_PROXY:
                 $old_val = $this->plugin->get_bool_parameter(PARAM_USE_HTTPS_PROXY, false);
                 $use_proxy = $this->plugin->toggle_parameter(PARAM_USE_HTTPS_PROXY, false);
-                if (!HD::toggle_https_proxy($use_proxy)) {
+                if (!toggle_https_proxy($use_proxy)) {
                     $this->plugin->set_bool_parameter(PARAM_USE_HTTPS_PROXY, $old_val);
                     return Action_Factory::show_title_dialog(TR::t('err_changes_failed'));
                 }

@@ -503,54 +503,6 @@ class HD
     }
 
     /**
-     * @param bool $use_proxy
-     * @return bool
-     */
-    public static function toggle_https_proxy($use_proxy)
-    {
-        try {
-            $plugin_info = get_plugin_manifest_info();
-            if (empty($plugin_info['app_update_path'])) {
-                // no need to update
-                throw new Exception();
-            }
-
-            $v = get_platform_info();
-            $use_proxy = $use_proxy || (strpos($v['type'], '86') === 0);
-            hd_debug_print("Use https proxy: " . var_export($use_proxy, true), true);
-
-            $proxy_enabled = is_https_proxy_enabled();
-            hd_debug_print("Proxy enabled: " . var_export($proxy_enabled, true), true);
-
-            if (($use_proxy && $proxy_enabled) || (!$use_proxy && !$proxy_enabled)) {
-                // no need to update, already enabled or not https
-                throw new Exception();
-            }
-
-            $update_url = $plugin_info['app_update_path'];
-            if ($proxy_enabled === false && strpos($update_url, 'https://') !== 0) {
-                // no need to update, not https
-                throw new Exception();
-            }
-
-            $proxy_url = get_plugin_cgi_url("https_proxy.sh?");
-            if ($use_proxy) {
-                $new_url = $proxy_url . $update_url;
-            } else {
-                $new_url = substr($update_url, strlen($proxy_url));
-            }
-            hd_debug_print("New update url: $new_url");
-
-            $new_manifest = str_replace($update_url, $new_url, @file_get_contents($plugin_info['app_manifest_path']));
-            return @file_put_contents($plugin_info['app_manifest_path'], $new_manifest) !== 0;
-        } catch (Exception $ex) {
-
-        }
-
-        return false;
-    }
-
-    /**
      * @param string $doc
      * @return SimpleXMLElement
      * @throws Exception

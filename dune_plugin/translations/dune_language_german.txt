@@ -70,7 +70,7 @@ setup_account_login = Anmeldung und Pawwort eingeben
 setup_account_pin = Zugangsschlüssel eingeben
 setup_epg_settings = EPG-Einstellungen
 setup_streaming_settings = Wiedergabeeinstellungen
-setup_https_proxy = https-Proxy für Plugin-Web-Update
+setup_https_proxy = Proxy für Plugin-Web-Update
 setup_adult_title = Passwort für Erwachsenenkanäle
 setup_adult_change = Passwort ändern
 setup_show_in_main = Auf dem Hauptbildschirm anzeigen
@@ -162,7 +162,7 @@ entry_reboot = Starten Sie Dune neu
 entry_reboot_need = Neustart erforderlich
 entry_shutdown = Abschalten Dune
 entry_setup = Plugin-Einstellung
-entry_https_proxy_enabled = Plugin eingerichtet, um Web-Updates über https-Proxy zu erhalten
+entry_https_proxy_enabled = Plugin eingerichtet, um Web-Updates über update-Proxy zu erhalten
 
 folder_screen_select_folder = Ordner auswählen
 folder_screen_open_folder = Ordner öffnen

@@ -1501,16 +1501,59 @@ function get_plugin_manifest_info()
     return $result;
 }
 
-function is_update_url_https()
+function is_https_proxy_needs()
 {
+    $v = get_platform_info();
     $plugin_info = get_plugin_manifest_info();
-    return strpos($plugin_info['app_update_path'], 'https://') === 0;
+    return (strpos($plugin_info['app_update_path'], '.dropbox') !== false
+        || (strpos($v['type'], '86') !== 0 &&  strpos($plugin_info['app_update_path'], 'https://') === 0));
 }
 
 function is_https_proxy_enabled()
 {
     $plugin_info = get_plugin_manifest_info();
-    return strpos($plugin_info['app_update_path'], get_plugin_cgi_url("https_proxy.sh?")) === 0;
+    return strpos($plugin_info['app_update_path'], get_plugin_cgi_url("updater.sh?")) === 0;
+}
+
+/**
+ * @param bool $use_proxy
+ * @return bool
+ */
+function toggle_https_proxy($use_proxy)
+{
+    try {
+        $plugin_info = get_plugin_manifest_info();
+        $update_url = $plugin_info['app_update_path'];
+        if (empty($update_url)) {
+            // no need to update
+            throw new Exception();
+        }
+
+        hd_debug_print("Use https proxy: " . var_export($use_proxy, true), true);
+
+        $proxy_enabled = is_https_proxy_enabled();
+        hd_debug_print("Proxy enabled: " . var_export($proxy_enabled, true), true);
+
+        if (($use_proxy && $proxy_enabled) || (!$use_proxy && !$proxy_enabled)) {
+            // no need to update, already enabled or not https
+            throw new Exception();
+        }
+
+        $proxy_url = get_plugin_cgi_url("updater.sh?");
+        if ($use_proxy) {
+            $new_url = $proxy_url . $update_url;
+        } else {
+            $new_url = substr($update_url, strlen($proxy_url));
+        }
+        hd_debug_print("New update url: $new_url");
+
+        $new_manifest = str_replace($update_url, $new_url, @file_get_contents($plugin_info['app_manifest_path']));
+        return @file_put_contents($plugin_info['app_manifest_path'], $new_manifest) !== 0;
+    } catch (Exception $ex) {
+
+    }
+
+    return false;
 }
 
 /**

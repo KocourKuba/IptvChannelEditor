@@ -70,7 +70,7 @@ setup_account_login = Введите логин и пароль
 setup_account_pin = Введите ключ доступа
 setup_epg_settings = Настройки EPG
 setup_streaming_settings = Настройки проигрывания
-setup_https_proxy = https proxy для веб обновления
+setup_https_proxy = Включить proxy для веб обновления
 setup_adult_title = Пароль для взрослых каналов
 setup_adult_change = Изменить пароль
 setup_show_in_main = Показывать в главном меню
@@ -161,7 +161,7 @@ entry_reboot = Перезагрузить плейер
 entry_reboot_need = Требуется перезагрузка
 entry_shutdown = Выключить Dune
 entry_setup = Настройки плагина
-entry_https_proxy_enabled = Плагин настроен на обновление через https прокси
+entry_https_proxy_enabled = Плагин настроен на обновление через прокси
 
 folder_screen_select_folder = Выбрать папку
 folder_screen_open_folder = Открыть папку
