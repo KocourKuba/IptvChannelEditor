@@ -90,7 +90,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         if (!empty($servers)) {
             $server_id = $this->plugin->config->get_server_id();
             $server_name = $this->plugin->config->get_server_name();
-            hd_debug_print("Selected server: id: $server_id name: '$server_name'");
+            hd_debug_print("Selected server: id: '$server_id' name: '$server_name'");
             Control_Factory::add_combobox($defs, $this, null,
                 self::CONTROL_SERVER, TR::t('server'),
                 $server_id, $servers, self::CONTROLS_WIDTH, true);
@@ -102,7 +102,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         if (!empty($devices)) {
             $device_id = $this->plugin->config->get_device_id();
             $device_name = $this->plugin->config->get_device_name();
-            hd_debug_print("Selected device: id: $device_id name: '$device_name'");
+            hd_debug_print("Selected device: id: '$device_id' name: '$device_name'");
             Control_Factory::add_combobox($defs, $this, null,
                 self::CONTROL_DEVICE, TR::t('setup_device'),
                 $device_id, $devices,self::CONTROLS_WIDTH, true);
@@ -114,7 +114,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         if (!empty($qualities)) {
             $quality_id = $this->plugin->config->get_quality_id();
             $quality_name = $this->plugin->config->get_quality_name();
-            hd_debug_print("Selected quality: id: $quality_id name: '$quality_name'");
+            hd_debug_print("Selected quality: id: '$quality_id' name: '$quality_name'");
             Control_Factory::add_combobox($defs, $this, null,
                 self::CONTROL_QUALITY, TR::t('setup_quality'),
                 $quality_id, $qualities, self::CONTROLS_WIDTH, true);
@@ -126,7 +126,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         if (!empty($profiles)) {
             $profile_id = $this->plugin->config->get_profile_id();
             $profile_name = $this->plugin->config->get_profile_name();
-            hd_debug_print("Selected profile: id: $profile_id name: '$profile_name'");
+            hd_debug_print("Selected profile: id: '$profile_id' name: '$profile_name'");
             Control_Factory::add_combobox($defs, $this, null,
                 self::CONTROL_PROFILE, TR::t('setup_profile'),
                 $profile_id, $profiles, self::CONTROLS_WIDTH, true);
@@ -296,7 +296,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         if (isset($user_input->action_type, $user_input->{$control_id})
             && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
             $new_value = $user_input->{$control_id};
-            hd_debug_print("Setup: changing $control_id value to $new_value");
+            hd_debug_print("Setup: changing '$control_id' value to '$new_value'");
         }
 
         $need_reload = false;

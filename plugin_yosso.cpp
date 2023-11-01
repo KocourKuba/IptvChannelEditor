@@ -54,9 +54,9 @@ void plugin_yosso::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_domain = "https://streaming-elbrus.su";
-	info.pl_template = "{PL_DOMAIN}/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}/playlist.m3u8";
+	info.pl_template = "{PL_DOMAIN}/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<login>.+)\/(?<password>.+)\/(?<server>.+)\/.*$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+):(?<port>\d+)\/(?:.+\/)?(?<id>.+)\/(?<var2>.+)\.m3u8\?token=(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+):(?<port>\d+)\/(?<var1>.+\/)?(?<id>.+)\/(?<var2>.+)\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
@@ -80,7 +80,7 @@ void plugin_yosso::fill_servers_list(TemplateParams* params /*= nullptr*/)
 	for (int i = 0; i <= IDS_STRING_YOSSO_ID10 - IDS_STRING_YOSSO_ID1; i++)
 	{
 		DynamicParamsInfo info;
-		info.set_id(utils::string_trim(load_string_resource(1033, IDS_STRING_YOSSO_ID1 + i)));
+		info.set_id(load_string_resource(1033, IDS_STRING_YOSSO_ID1 + i));
 		info.set_name(load_string_resource(1033, IDS_STRING_YOSSO_P1 + i));
 		servers.emplace_back(info);
 	}

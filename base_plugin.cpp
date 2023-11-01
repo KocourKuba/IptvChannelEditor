@@ -127,7 +127,7 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 	{
 		int server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[server].get_id());
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
 	}
 
 	fill_devices_list(&params);
@@ -199,7 +199,7 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 	}
 
 	if (!servers_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[params.server_idx].get_id());
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[params.server_idx].get_id()));
 
 	if (!profiles_list.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[params.profile_idx].get_id());
@@ -302,7 +302,7 @@ std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params)
 	{
 		int server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, servers_list[server].get_id());
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
 	}
 
 	if (!get_vod_domain(idx).empty())

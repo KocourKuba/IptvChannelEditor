@@ -180,14 +180,14 @@ class default_config extends dynamic_config
     {
         $server = $this->parent->get_parameter(Ext_Params::M_SERVER_ID);
         $embedded_acc = $this->get_embedded_account();
-        if (!is_null($embedded_acc) && isset($embedded_acc->server_id) && empty($server)) {
+        if (!is_null($embedded_acc) && isset($embedded_acc->server_id) && is_null($server)) {
             $this->parent->set_parameter(Ext_Params::M_SERVER_ID, $embedded_acc->server_id);
             $server = $embedded_acc->server_id;
         }
 
         $servers = $this->get_servers();
         reset($servers);
-        return !empty($server) && isset($servers[$server]) ? $server : key($servers);
+        return !is_null($server) && isset($servers[$server]) ? $server : key($servers);
     }
 
     /**
