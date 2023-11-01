@@ -60,7 +60,7 @@ void plugin_itv::load_default()
 	info.pl_domain = "http://itv.ooo";
 	info.pl_template = "{PL_DOMAIN}/p/{PASSWORD}/hls.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)\/.+$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/.+\?token=(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/.+\/video\.m3u8\?token=(?<token>.+)$)";
 	info.tag_id_match = "tvg-id";
 	playlist_templates.emplace_back(info);
 
