@@ -508,7 +508,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 					utils::string_rtrim(line, "\r");
 					if (!entry->Parse(line)) continue;
 
-					const auto& access_key = entry->get_token();
+					const auto& access_key = entry->get_ott_key();
 					const auto& subdomain = entry->get_subdomain();
 					if (!access_key.empty() && !subdomain.empty() && access_key != L"00000000000000" && subdomain != L"localhost")
 					{
