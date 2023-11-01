@@ -547,14 +547,14 @@ class Starnet_Tv implements User_Input_Handler
             if ($group->is_disabled()) continue;
 
             $all_groups_ids[] = $group->get_id();
-            $group_id_arr = new Hashed_Array();
-            if ($show_all) {
-                $group_id_arr->put(ALL_CHANNEL_GROUP_ID, '');
-            }
-
             /** @var Group $group */
             foreach ($group->get_group_channels() as $channel) {
                 if (is_null($channel)) continue;
+
+                $group_id_arr = new Hashed_Array();
+                if ($show_all) {
+                    $group_id_arr->put(ALL_CHANNEL_GROUP_ID, '');
+                }
 
                 foreach ($channel->get_groups() as $in_group) {
                     $group_id_arr->put($in_group->get_id(), '');
@@ -621,10 +621,6 @@ class Starnet_Tv implements User_Input_Handler
         } else {
             $initial_group_id = (string)$media_url->group_id;
             $initial_is_favorite = 0;
-        }
-
-        if (LogSeverity::$is_debug) {
-            hd_debug_print("All groups: " . raw_json_encode($groups));
         }
 
         return array(
