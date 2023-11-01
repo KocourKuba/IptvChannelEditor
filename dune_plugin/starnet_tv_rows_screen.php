@@ -311,7 +311,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
     {
         hd_debug_print(null, true);
 
-        if ($this->plugin->tv->load_channels() === 0) {
+        if ($this->plugin->tv->load_channels() === -1) {
             hd_debug_print("Channels not loaded!");
         }
 
@@ -582,8 +582,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 if (!isset($user_input->list_idx)) break;
 
                 $this->plugin->set_active_xmltv_source_key($user_input->list_idx);
-                $xmltv_source = $this->plugin->get_all_xmltv_sources()->get($user_input->list_idx);
-                $this->plugin->set_active_xmltv_source($xmltv_source);
                 $this->plugin->tv->reload_channels();
                 $this->plugin->set_need_update_epfs();
 

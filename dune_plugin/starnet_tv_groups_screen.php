@@ -115,8 +115,6 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 if (!isset($user_input->list_idx)) break;
 
                 $this->plugin->set_active_xmltv_source_key($user_input->list_idx);
-                $xmltv_source = $this->plugin->get_all_xmltv_sources()->get($user_input->list_idx);
-                $this->plugin->set_active_xmltv_source($xmltv_source);
                 $this->plugin->tv->reload_channels();
 
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);

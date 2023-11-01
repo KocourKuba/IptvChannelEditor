@@ -254,12 +254,24 @@ class Default_Dune_Plugin implements DunePlugin
         $engine = $this->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
         if ($engine === ENGINE_JSON) {
             $this->epg_manager = new Epg_Manager_Json($this);
-        } else if (class_exists('SQLite3') && $engine === ENGINE_SQLITE) {
-            hd_print("Using sqlite cache engine");
-            $this->epg_manager = new Epg_Manager_Sql($this->config->plugin_info['app_version'], $this->get_cache_dir(), $this->get_active_xmltv_source());
         } else {
-            hd_print("Using legacy cache engine");
-            $this->epg_manager = new Epg_Manager($this->config->plugin_info['app_version'], $this->get_cache_dir(), $this->get_active_xmltv_source());
+            $cache_dir = $this->get_cache_dir();
+            $xmltv_source = $this->get_active_xmltv_source();
+            $all_source = $this->get_all_xmltv_sources();
+            if (empty($xmltv_source) && $all_source->size()) {
+                $all_source->rewind();
+                $key = $all_source->key();
+                $this->set_active_xmltv_source_key($key);
+                $xmltv_source = $all_source->get($key);
+            }
+
+            if (class_exists('SQLite3') && $engine === ENGINE_SQLITE) {
+                hd_print("Using sqlite cache engine");
+                $this->epg_manager = new Epg_Manager_Sql($this->config->plugin_info['app_version'], $cache_dir, $xmltv_source);
+            } else {
+                hd_print("Using legacy cache engine");
+                $this->epg_manager = new Epg_Manager($this->config->plugin_info['app_version'], $cache_dir, $xmltv_source);
+            }
         }
 
         $flags = $this->get_bool_parameter(PARAM_FUZZY_SEARCH_EPG, false) ? EPG_FUZZY_SEARCH : 0;
@@ -333,7 +345,12 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function set_active_xmltv_source_key($key)
     {
+        $xmltv_source = $this->get_all_xmltv_sources()->get($key);
+        $this->postpone_save = true;
         $this->set_parameter(PARAM_XMLTV_SOURCE_KEY, $key);
+        $this->set_parameter(PARAM_CUR_XMLTV_SOURCE, $xmltv_source);
+        $this->postpone_save = false;
+        $this->save();
     }
 
     /**
@@ -342,15 +359,6 @@ class Default_Dune_Plugin implements DunePlugin
     public function get_active_xmltv_source()
     {
         return $this->get_parameter(PARAM_CUR_XMLTV_SOURCE, '');
-    }
-
-    /**
-     * @param string $source
-     * @return void
-     */
-    public function set_active_xmltv_source($source)
-    {
-        $this->set_parameter(PARAM_CUR_XMLTV_SOURCE, $source);
     }
 
     ///////////////////////////////////////////////////////////////////////

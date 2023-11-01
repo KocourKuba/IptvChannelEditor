@@ -12,7 +12,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
     const ACTION_RELOAD_EPG = 'reload_epg';
     const ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
     const ACTION_EPG_SHIFT = 'epg_shift';
-    const CONTROL_XMLTV_EPG_IDX = 'xmltv_epg_idx';
     const CONTROL_CHANGE_CACHE_PATH = 'xmltv_cache_path';
     const CONTROL_EPG_FOLDER = 'epg_folder';
 
@@ -139,14 +138,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 $this->plugin->tv->unload_channels();
                 $this->plugin->set_parameter(PARAM_EPG_CACHE_ENGINE, $user_input->{$control_id});
                 $this->plugin->init_epg_manager();
-                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
-
-            case self::CONTROL_XMLTV_EPG_IDX:
-                $index = $user_input->{$control_id};
-                $this->plugin->set_active_xmltv_source_key($index);
-                $xmltv_source = $this->plugin->get_all_xmltv_sources()->get($index);
-                $this->plugin->set_active_xmltv_source($xmltv_source);
-                hd_debug_print("Selected xmltv epg: ($index): $xmltv_source");
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case self::CONTROL_CHANGE_CACHE_PATH:

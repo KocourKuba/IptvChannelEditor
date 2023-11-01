@@ -1211,7 +1211,7 @@ class default_config extends dynamic_config
                 if (empty($device))
                     hd_debug_print("Device ID not set, but macro was used");
                 else
-                $url = str_replace(Plugin_Macros::DEVICE_ID, $device, $url);
+                    $url = str_replace(Plugin_Macros::DEVICE_ID, $device, $url);
             }
 
             if (strpos($url, Plugin_Macros::PROFILE_ID) !== false) {
