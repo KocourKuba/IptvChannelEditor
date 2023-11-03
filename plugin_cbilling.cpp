@@ -103,6 +103,21 @@ void plugin_cbilling::fill_devices_list(TemplateParams* params /*= nullptr*/)
 
 std::map<std::wstring, std::wstring> plugin_cbilling::parse_access_info(TemplateParams& params)
 {
+	/*
+	{
+		"data": {
+			"public_token": "2f5787bd53fcaeeae27ba3ed3669babc",
+			"private_token": "5acf87d0206da05b73f8923a703gf666",
+			"end_time": 1706129968,
+			"end_date": "2024-01-24 23:59:28",
+			"devices_num": 1,
+			"server": "s01.wsbof.com",
+			"vod": true,
+			"ssl": false,
+			"disable_adult": false
+	}
+}	*/
+
 	static constexpr auto ACCOUNT_HEADER_TEMPLATE = "x-public-key: {:s}";
 	static constexpr auto ACCOUNT_TEMPLATE = L"/auth/info";
 

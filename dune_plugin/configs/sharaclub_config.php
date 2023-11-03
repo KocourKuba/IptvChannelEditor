@@ -197,19 +197,17 @@ class sharaclub_config extends default_config
             return;
         }
 
-        $title = 'Пакеты: ';
-
         Control_Factory::add_label($defs, TR::t('balance'), $account_data['data']['money'] . ' RUR', -10);
         Control_Factory::add_label($defs, TR::t('tv_screen_subscription'), $account_data['data']['money_need'] . ' RUR', -10);
         $packages = $account_data['data']['abon'];
         if (count($packages) === 0) {
-            Control_Factory::add_label($defs, $title, TR::t('no_packages'), 20);
+            Control_Factory::add_label($defs, TR::t('package'), TR::t('no_packages'), 20);
             return;
         }
 
         foreach ($packages as $package)
         {
-            Control_Factory::add_label($defs, $title, $package);
+            Control_Factory::add_label($defs, TR::t('package'), $package);
         }
 
         Control_Factory::add_vgap($defs, 20);

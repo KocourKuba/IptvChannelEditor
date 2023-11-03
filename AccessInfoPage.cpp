@@ -1456,15 +1456,9 @@ bool CAccessInfoPage::TransformDropboxPath(std::wstring& dropbox_link, const std
 			return false;
 		}
 
-		if (cracked.extra_info.find(L"?rlkey") != std::wstring::npos)
-		{
-			utils::string_replace_inplace<wchar_t>(cracked.extra_info, L"&dl=0", L"");
-			dropbox_link = fmt::format(L"{:s}://{:s}{:s}{:s}", cracked.scheme, cracked.host, file_path.wstring(), cracked.extra_info);
-		}
-		else
-		{
-			dropbox_link = fmt::format(L"{:s}://{:s}{:s}/", cracked.scheme, cracked.host, file_path.parent_path().wstring());
-		}
+		utils::string_replace_inplace<wchar_t>(cracked.extra_info, L"&dl=0", L"");
+		utils::string_replace_inplace<wchar_t>(cracked.extra_info, L"?dl=0", L"");
+		dropbox_link = fmt::format(L"{:s}://{:s}{:s}{:s}", cracked.scheme, cracked.host, file_path.wstring(), cracked.extra_info);
 	}
 
 	return true;

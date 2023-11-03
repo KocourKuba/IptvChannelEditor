@@ -35,7 +35,7 @@ class cbilling_config extends default_config
             if ($force !== false || empty($this->account_data)) {
                 $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
                 $json = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . '/auth/info', true, $headers);
-                if (!isset($json['data'])) {
+                if ($json === false || !isset($json['data'])) {
                     throw new Exception("Account info not loaded");
                 }
                 $this->account_data = $json['data'];

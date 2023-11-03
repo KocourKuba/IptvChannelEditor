@@ -47,12 +47,10 @@ class itv_config extends default_config
             return;
         }
 
-        $title = 'Пакеты: ';
-
         Control_Factory::add_label($defs, TR::t('balance'), $account_data['user_info']['cash'] . ' $', -10);
         $packages = $account_data['package_info'];
         if (count($packages) === 0) {
-            Control_Factory::add_label($defs, $title, TR::t('no_packages'), 20);
+            Control_Factory::add_label($defs, TR::t('package'), TR::t('no_packages'), 20);
             return;
         }
 
@@ -61,7 +59,7 @@ class itv_config extends default_config
             $list[] = $item['name'];
         }
 
-        $emptyTitle = str_repeat(' ', strlen($title));
+        $emptyTitle = str_repeat(' ', strlen(TR::load_string('package')));
         $list_collected = array();
         $isFirstLabel = true;
         foreach($list as $item) {
@@ -71,7 +69,7 @@ class itv_config extends default_config
                 continue;
             }
 
-            Control_Factory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, $collected, -10);
+            Control_Factory::add_label($defs, $isFirstLabel ? TR::t('package') : $emptyTitle, $collected, -10);
 
             if ($isFirstLabel) {
                 $isFirstLabel = false;
@@ -81,7 +79,7 @@ class itv_config extends default_config
         }
 
         if (count($list_collected) !== 0) {
-            Control_Factory::add_label($defs, $isFirstLabel ? $title : $emptyTitle, implode(', ', $list_collected));
+            Control_Factory::add_label($defs, $isFirstLabel ? TR::t('package') : $emptyTitle, implode(', ', $list_collected));
         }
 
         Control_Factory::add_vgap($defs, 20);
