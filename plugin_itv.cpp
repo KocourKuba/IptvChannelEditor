@@ -57,7 +57,7 @@ void plugin_itv::load_default()
 	provider_api_url = "http://api.itv.live";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://itv.ooo";
+	info.pl_domain = "https://itv.ooo";
 	info.pl_template = "{PL_DOMAIN}/p/{PASSWORD}/hls.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)\/.+$)";
 	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/.+\/video\.m3u8\?token=(?<token>.+)$)";
