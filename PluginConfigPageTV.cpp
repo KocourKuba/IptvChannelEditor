@@ -38,6 +38,7 @@ IMPLEMENT_DYNAMIC(CPluginConfigPageTV, CTooltipPropertyPage)
 
 BEGIN_MESSAGE_MAP(CPluginConfigPageTV, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_STREAM_TYPE, &CPluginConfigPageTV::OnCbnSelchangeComboStreamType)
+	ON_BN_CLICKED(IDC_CHECK_PLAYLIST_SHOW_LINK, &CPluginConfigPageTV::OnBnClickedButtonPlaylistShowLink)
 	ON_BN_CLICKED(IDC_BUTTON_PLAYLIST_SHOW, &CPluginConfigPageTV::OnBnClickedButtonPlaylistShow)
 	ON_BN_CLICKED(IDC_BUTTON_STREAM_PARSE, &CPluginConfigPageTV::OnBnClickedButtonStreamRegexTest)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST_TEMPLATE, &CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate)
@@ -82,6 +83,7 @@ void CPluginConfigPageTV::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_DOMAIN, m_PlaylistDomain);
 	DDX_Control(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_wndPlaylistTemplate);
 	DDX_Text(pDX, IDC_EDIT_PLAYLIST_TEMPLATE, m_PlaylistTemplate);
+	DDX_Control(pDX, IDC_CHECK_PLAYLIST_SHOW_LINK, m_wndBtnPlaylistShow);
 	DDX_Control(pDX, IDC_BUTTON_PLAYLIST_SHOW, m_wndBtnPlaylistTest);
 	DDX_Control(pDX, IDC_BUTTON_STREAM_PARSE, m_wndBtnStreamParseTest);
 	DDX_Control(pDX, IDC_COMBO_TAGS, m_wndTags);
@@ -97,6 +99,7 @@ BOOL CPluginConfigPageTV::OnInitDialog()
 
 	AddTooltip(IDC_EDIT_PLAYLIST_TEMPLATE, IDS_STRING_EDIT_PLAYLIST_TEMPLATE);
 	AddTooltip(IDC_EDIT_PARSE_PATTERN, IDS_STRING_EDIT_PARSE_PATTERN);
+	AddTooltip(IDC_CHECK_PLAYLIST_SHOW_LINK, IDS_STRING_BUTTON_PLAYLIST_SHOW_LINK);
 	AddTooltip(IDC_BUTTON_PLAYLIST_SHOW, IDS_STRING_BUTTON_PLAYLIST_SHOW);
 	AddTooltip(IDC_BUTTON_STREAM_PARSE, IDS_STRING_BUTTON_STREAM_PARSE);
 	AddTooltip(IDC_EDIT_DURATION, IDS_STRING_EDIT_DURATION);
@@ -117,6 +120,7 @@ BOOL CPluginConfigPageTV::OnInitDialog()
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 	m_wndToolTipCtrl.SetMaxTipWidth(300);
 	m_wndToolTipCtrl.Activate(TRUE);
+	m_wndBtnPlaylistShow.SetCheck(FALSE);
 
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnEditTemplates);
 
@@ -251,6 +255,7 @@ void CPluginConfigPageTV::UpdateControls()
 	// common
 	m_wndPlaylistDomain.SetReadOnly(readOnly);
 	m_wndBtnEditTemplates.EnableWindow(!readOnly);
+	m_wndBtnPlaylistShow.EnableWindow(readOnly);
 	m_wndPlaylistTemplate.SetReadOnly(readOnly);
 	m_wndChkEpgIdFromID.EnableWindow(!readOnly);
 	m_wndParseStream.SetReadOnly(readOnly);
@@ -440,4 +445,32 @@ void CPluginConfigPageTV::OnBnClickedButtonEditTemplates()
 		FillControls();
 		AllowSave();
 	}
+}
+
+void CPluginConfigPageTV::OnBnClickedButtonPlaylistShowLink()
+{
+	BOOL show = m_wndBtnPlaylistShow.GetCheck();
+
+	if (show)
+	{
+		const auto& cred = GetPropertySheet()->m_selected_cred;
+		TemplateParams params;
+		params.login = cred.get_login();
+		params.password = cred.get_password();
+		params.ott_key = cred.get_ott_key();
+		params.subdomain = cred.get_subdomain();
+		params.server_idx = cred.server_id;
+		params.device_idx = cred.device_id;
+		params.profile_idx = cred.profile_id;
+		params.quality_idx = cred.quality_id;
+		params.playlist_idx = m_wndPlaylistTemplates.GetCurSel();
+
+		m_PlaylistTemplate = GetPropertySheet()->m_plugin->get_playlist_url(params).c_str();
+	}
+	else
+	{
+		FillControls();
+	}
+
+	UpdateData(FALSE);
 }

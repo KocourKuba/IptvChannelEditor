@@ -581,8 +581,9 @@ BEGIN
     LTEXT           "Playlist domain",-1,128,7,155,8
     EDITTEXT        IDC_EDIT_PLAYLIST_DOMAIN,128,17,205,12,ES_AUTOHSCROLL
     LTEXT           "Playlist template or URL",-1,128,33,155,8
-    EDITTEXT        IDC_EDIT_PLAYLIST_TEMPLATE,128,44,205,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Test",IDC_BUTTON_PLAYLIST_SHOW,338,43,32,14
+    EDITTEXT        IDC_EDIT_PLAYLIST_TEMPLATE,128,44,196,12,ES_AUTOHSCROLL
+    CONTROL         "<>",IDC_CHECK_PLAYLIST_SHOW_LINK,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,325,43,15,14
+    PUSHBUTTON      "Test",IDC_BUTTON_PLAYLIST_SHOW,341,43,29,14
     LTEXT           "Stream Parse Regex",-1,128,60,155,8
     EDITTEXT        IDC_EDIT_PARSE_PATTERN,128,73,205,12,ES_AUTOHSCROLL
     PUSHBUTTON      "Test",IDC_BUTTON_STREAM_PARSE,338,72,32,14
@@ -1202,6 +1203,7 @@ BEGIN
     0, 0, 100, 0,
     0, 0, 0, 0,
     0, 0, 100, 0,
+    100, 0, 0, 0,
     100, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 100, 0,
@@ -2186,6 +2188,7 @@ BEGIN
                             "EPG domain URL. This value used for {EPG_DOMAIN} macros"
     IDS_STRING_CHECK_ENABLE_BALANCE 
                             "Enable show balance/account info in the plugin (if supported)"
+    IDS_STRING_BUTTON_PLAYLIST_SHOW_LINK "Show playlist url"
 END
 
 #endif    // English (United States) resources

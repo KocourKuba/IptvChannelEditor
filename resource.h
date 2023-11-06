@@ -405,6 +405,7 @@
 #define IDS_STRING_EDIT_VOD_PLAYLIST_DOMAIN 620
 #define IDS_STRING_EDIT_EPG_DOMAIN      621
 #define IDS_STRING_CHECK_ENABLE_BALANCE 622
+#define IDS_STRING_BUTTON_PLAYLIST_SHOW_LINK 623
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -638,6 +639,7 @@
 #define IDC_CHECK_ENABLE_BALANCE        1202
 #define IDC_BUTTON_STREAM_PARSE         1203
 #define IDC_COMBO_VOD_TEMPLATE          1204
+#define IDC_BUTTON_PLAYLIST_SHOW_LINK   1204
 #define IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE 1205
 #define IDC_BUTTON_EDIT_SERVERS         1206
 #define IDC_BUTTON_EDIT_DEVICES         1207
@@ -683,6 +685,7 @@
 #define IDC_BUTTON_EDIT_MANIFEST        1237
 #define IDC_EDIT_VOD_PARAMS             1238
 #define IDC_EDIT_PLUGIN_CLASS_NAME      1239
+#define IDC_CHECK_PLAYLIST_SHOW_LINK    1240
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -716,12 +719,12 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281
 #define _APS_NEXT_COMMAND_VALUE         32809
-#define _APS_NEXT_CONTROL_VALUE         1240
+#define _APS_NEXT_CONTROL_VALUE         1241
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

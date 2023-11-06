@@ -55,6 +55,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void SaveParameters();
+	afx_msg void OnBnClickedButtonPlaylistShowLink();
 	afx_msg void OnBnClickedButtonEditTemplates();
 	afx_msg void OnCbnSelchangeComboPlaylistTemplate();
 	afx_msg void OnBnClickedButtonPlaylistShow();
@@ -84,6 +85,7 @@ protected:
 
 	CButton m_wndBtnEditTemplates;
 	CButton m_wndChkEpgIdFromID;
+	CButton m_wndBtnPlaylistShow;
 	CButton m_wndBtnPlaylistTest;
 	CButton m_wndBtnStreamParseTest;
 	CButton m_wndCheckMapTags;
