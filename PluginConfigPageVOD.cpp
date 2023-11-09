@@ -38,6 +38,7 @@ IMPLEMENT_DYNAMIC(CPluginConfigPageVOD, CTooltipPropertyPage)
 
 BEGIN_MESSAGE_MAP(CPluginConfigPageVOD, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_VOD_TEMPLATE, &CPluginConfigPageVOD::OnCbnSelchangeComboVodTemplate)
+	ON_BN_CLICKED(IDC_CHECK_PLAYLIST_SHOW_LINK, &CPluginConfigPageVOD::OnBnClickedCheckPlaylistShowLink)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_VOD_TEMPLATES, &CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates)
 	ON_BN_CLICKED(IDC_BUTTON_VOD_TEMPLATE, &CPluginConfigPageVOD::OnBnClickedButtonVodTemplate)
 	ON_BN_CLICKED(IDC_BUTTON_VOD_PARSE, &CPluginConfigPageVOD::OnBnClickedButtonVodParse)
@@ -72,6 +73,7 @@ void CPluginConfigPageVOD::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_VOD_REGEX, m_wndVodRegex);
 	DDX_Text(pDX, IDC_EDIT_VOD_REGEX, m_VodParseRegex);
 	DDX_Control(pDX, IDC_BUTTON_VOD_PARSE, m_wndBtnVodParseTest);
+	DDX_Control(pDX, IDC_CHECK_PLAYLIST_SHOW_LINK, m_wndBtnPlaylistShow);
 	DDX_Control(pDX, IDC_BUTTON_VOD_TEMPLATE, m_wndBtnVodTemplateTest);
 	DDX_Control(pDX, IDC_EDIT_VOD_PREFIX, m_wndVodUrlPrefix);
 	DDX_Text(pDX, IDC_EDIT_VOD_PREFIX, m_VodUrlPrefix);
@@ -90,6 +92,7 @@ BOOL CPluginConfigPageVOD::OnInitDialog()
 	AddTooltip(IDC_EDIT_VOD_REGEX, IDS_STRING_EDIT_VOD_REGEX);
 	AddTooltip(IDC_EDIT_PROVIDER_VOD_URL, IDS_STRING_EDIT_PROVIDER_VOD_URL);
 	AddTooltip(IDC_BUTTON_VOD_PARSE, IDS_STRING_BUTTON_VOD_PARSE);
+	AddTooltip(IDC_CHECK_PLAYLIST_SHOW_LINK, IDS_STRING_BUTTON_PLAYLIST_SHOW_LINK);
 	AddTooltip(IDC_BUTTON_VOD_TEMPLATE, IDS_STRING_BUTTON_VOD_TEMPLATE);
 	AddTooltip(IDC_EDIT_PLAYLIST_DOMAIN, IDS_STRING_EDIT_VOD_PLAYLIST_DOMAIN);
 
@@ -161,6 +164,7 @@ void CPluginConfigPageVOD::UpdateControls()
 	m_wndVodPlaylistDomain.EnableWindow(enableVod);
 	m_wndVodPlaylistDomain.SetReadOnly(readOnly);
 	m_wndVodTemplates.EnableWindow(enableVod);
+	m_wndBtnPlaylistShow.EnableWindow(readOnly);
 	m_wndBtnEditVodTemplates.EnableWindow(!readOnly && enableVod);
 	m_wndVodUrlTemplate.EnableWindow(enableVod);
 	m_wndVodUrlTemplate.SetReadOnly(readOnly);
@@ -316,4 +320,34 @@ void CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates()
 
 		AllowSave();
 	}
+}
+
+void CPluginConfigPageVOD::OnBnClickedCheckPlaylistShowLink()
+{
+	BOOL show = m_wndBtnPlaylistShow.GetCheck();
+
+	if (show)
+	{
+		auto& cred = GetPropertySheet()->m_selected_cred;
+
+		TemplateParams params;
+		params.s_token = GetPropertySheet()->m_plugin->get_api_token(cred);
+		params.login = cred.get_login();
+		params.password = cred.get_password();
+		params.ott_key = cred.get_ott_key();
+		params.subdomain = cred.get_subdomain();
+		params.server_idx = cred.server_id;
+		params.device_idx = cred.device_id;
+		params.profile_idx = cred.profile_id;
+		params.quality_idx = cred.quality_id;
+		params.playlist_idx = m_wndVodTemplates.GetCurSel();
+
+		m_VodPlaylistTemplate = GetPropertySheet()->m_plugin->get_vod_url(params).c_str();
+	}
+	else
+	{
+		FillControls();
+	}
+
+	UpdateData(FALSE);
 }

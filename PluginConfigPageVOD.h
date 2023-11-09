@@ -53,6 +53,7 @@ protected:
 
 	afx_msg void OnCbnSelchangeComboVodTemplate();
 	afx_msg void OnBnClickedButtonEditVodTemplates();
+	afx_msg void OnBnClickedCheckPlaylistShowLink();
 	afx_msg void OnBnClickedButtonVodTemplate();
 	afx_msg void OnBnClickedButtonVodParse();
 	afx_msg void SaveParameters();
@@ -73,6 +74,7 @@ protected:
 	CButton m_wndChkVodM3U;
 	CButton m_wndChkFilterSupport;
 	CButton m_wndBtnVodParseTest;
+	CButton m_wndBtnPlaylistShow;
 	CButton m_wndBtnVodTemplateTest;
 	CButton m_wndBtnEditVodTemplates;
 
