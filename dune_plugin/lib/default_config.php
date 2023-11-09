@@ -917,12 +917,13 @@ class default_config extends dynamic_config
         while($pos < $ubound) {
             $index = $indexes[$pos++];
             $entry = $this->parent->get_m3u_parser()->getEntryByIdx($index);
-            if ($entry === null) continue;
+            if ($entry === null || $entry->isM3U_Header()) continue;
 
             $title = $entry->getEntryTitle();
             if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match)) {
                 $title = isset($match['title']) ? $match['title'] : $title;
             }
+            $title = trim($title);
 
             $movies[] = new Short_Movie($index, $title, $entry->getEntryAttribute('tvg-logo'));
         }

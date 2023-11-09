@@ -116,7 +116,7 @@ class Starnet_Vod extends Abstract_Vod
     {
         $fav_movie_ids = HD::get_data_items(self::VOD_FAVORITES_LIST . "_" . $this->plugin->config->get_vod_template_name());
         $this->fav_movie_ids = new Ordered_Array($fav_movie_ids);
-        hd_debug_print("Movies loaded from favorites: " . count($fav_movie_ids));
+        hd_debug_print("Movies loaded from favorites: " . $this->fav_movie_ids->size());
     }
 
     /**

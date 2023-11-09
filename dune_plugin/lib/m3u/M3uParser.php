@@ -143,7 +143,7 @@ class M3uParser extends Json_Serializer
         $entry = new Entry();
         $pos = $this->m3u_file->ftell();
         while (!$this->m3u_file->eof()) {
-            if ($this->parseLineFast($this->m3u_file->fgets(), $entry)) {
+            if ($this->parseLine($this->m3u_file->fgets(), $entry)) {
                 $group_name = $entry->getGroupTitle();
                 if (!array_key_exists($group_name, $data)) {
                     $data[$group_name] = array();
@@ -296,7 +296,6 @@ class M3uParser extends Json_Serializer
         }
 
         $tag = $entry->parseExtTag($line, false);
-        hd_debug_print(json_encode($tag), true);
         if (is_null($tag)) {
             // untagged line must be a stream url
             $entry->setPath($line);
