@@ -53,10 +53,10 @@ void plugin_sharatv::load_default()
 	info.pl_domain = "http://tvfor.pro";
 	info.pl_template = "{PL_DOMAIN}/g/{LOGIN}:{PASSWORD}/1/playlist.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+):(?<password>.+)\/.+\/.*$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<id>.+)\/(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{ID}/{TOKEN}";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{ID}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/shara-tv%2Fepg%2F{EPG_ID}.json";

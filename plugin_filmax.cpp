@@ -53,16 +53,16 @@ void plugin_filmax::load_default()
 	info.pl_domain = "http://lk.filmax-tv.ru";
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+)\/(?<password>.+)\/(?:hls|ts)\/(?<server>.+)\/playlist\.m3u8$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 	info.tag_id_match = "tvg-name";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{INT_ID}/index.m3u8?token={TOKEN}";
-	streams_config[0].uri_arc_template = "{SCHEME}://{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{INT_ID}/index.m3u8?token={TOKEN}";
+	streams_config[0].uri_arc_template = "{SCHEME}{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-	streams_config[1].uri_template = "{SCHEME}://{DOMAIN}/{INT_ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "{SCHEME}://{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/{INT_ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/filmax%2Fepg%2F{EPG_ID}.json";
 

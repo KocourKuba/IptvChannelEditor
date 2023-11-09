@@ -68,14 +68,14 @@ void plugin_smile::load_default()
 	info.pl_domain = "http://pl.smile-tv.live";
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u?srv={SERVER_ID}";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+)\/(?<password>.+)\/.*$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>[^\/]+)\/(?<token>.+)$)";
 	info.tag_id_match = "CUID";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
 	static_servers = true;
 
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{TOKEN}";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/smile%2Fepg%2F{EPG_ID}.json";

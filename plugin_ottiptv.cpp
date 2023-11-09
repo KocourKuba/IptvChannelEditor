@@ -54,17 +54,17 @@ void plugin_ottiptv::load_default()
 	info.pl_domain = "https://ottiptv.ru";
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(https?://.+/(?<login>.+)/(?<password>.+)/.+$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<var1>.+)\/(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<var1>.+)\/(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{VAR1}/{ID}/video.m3u8?token={TOKEN}";
-	streams_config[0].uri_arc_template = "{SCHEME}://{DOMAIN}/{VAR1}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{VAR1}/{ID}/video.m3u8?token={TOKEN}";
+	streams_config[0].uri_arc_template = "{SCHEME}{DOMAIN}/{VAR1}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-	streams_config[1].uri_template = "{SCHEME}://{DOMAIN}/{VAR1}/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "{SCHEME}://{DOMAIN}/{VAR1}/{ID}/index-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/{VAR1}/{ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{VAR1}/{ID}/index-{START}-{DURATION}.ts?token={TOKEN}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/ottiptv%2Fepg%2F{EPG_ID}.json";
 }

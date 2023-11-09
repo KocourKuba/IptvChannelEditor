@@ -53,18 +53,18 @@ void plugin_tvteam::load_default()
 	info.pl_domain = "http://tv.team";
 	info.pl_template = "{PL_DOMAIN}/pl/11/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl\/11\/(?<password>.+)\/.*$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/.+\/.+\?token=(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/.+\/.+\?token=(?<token>.+)$)";
 	info.tag_id_match = "tvg-name";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
-	streams_config[0].uri_arc_template = "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";
+	streams_config[0].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}";
 
-	streams_config[1].uri_template = "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	epg_params[0].epg_domain = "http://tv.team";
 	epg_params[0].epg_url = "{EPG_DOMAIN}/{EPG_ID}.json";

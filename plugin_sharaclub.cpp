@@ -98,15 +98,15 @@ void plugin_sharaclub::load_default()
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
 	info.pl_template = "{API_URL}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
 	info.pl_parse_regex = R"(https?:\/\/[^\/]+\/tv-m3u8\/(?<login>[^-]+)-(?<password>.+)$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].cu_type = CatchupType::cu_append;
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}";
 
 	streams_config[1].cu_type = CatchupType::cu_append;
-	streams_config[1].uri_template = "{SCHEME}://{DOMAIN}/live/{TOKEN}/{ID}.ts";
+	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}.ts";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
 
 	set_epg_preset(0, EpgPresets::enCbilling);

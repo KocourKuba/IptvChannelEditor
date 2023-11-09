@@ -53,7 +53,7 @@ void plugin_mymagic::load_default()
 	info.pl_domain = "http://pl.mymagic.tv";
 	info.pl_template = "{PL_DOMAIN}/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/srv\/(?<server>.+)\/(?<quality>.+)\/(?<login>.+)\/(?<password>.+)\/.*$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>[^\/]+)\/(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>[^\/]+)\/(?<token>.+)$)";
 	info.tag_id_match = "CUID";
 	playlist_templates.emplace_back(info);
 
@@ -61,7 +61,7 @@ void plugin_mymagic::load_default()
 	static_servers = true;
 	static_qualities = true;
 
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{TOKEN}";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/magic%2Fepg%2F{EPG_ID}.json";

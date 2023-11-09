@@ -53,12 +53,12 @@ void plugin_onecent::load_default()
 	info.pl_domain = "http://only4.tv";
 	info.pl_template = "{PL_DOMAIN}/pl/{PASSWORD}/102/only4tv.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl\/(?<password>.+)\/.*$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
 
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}&utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json";

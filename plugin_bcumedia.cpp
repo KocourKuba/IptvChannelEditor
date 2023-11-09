@@ -53,18 +53,18 @@ void plugin_bcumedia::load_default()
 	info.pl_domain = "https://bcumedia.pro";
 	info.pl_template = "{PL_DOMAIN}/playlist/hls/{PASSWORD}.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/hls\/(?<password>.+)\.m3u8?$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
 	info.tag_id_match = "tvg-id";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
-	streams_config[0].uri_arc_template = "{SCHEME}://{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";
+	streams_config[0].uri_arc_template = "{SCHEME}{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}";
 
-	streams_config[1].uri_template = "{SCHEME}://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
-	streams_config[1].uri_arc_template = "{SCHEME}://{DOMAIN}/{TOKEN}/archive-{START}-{DURATION}.ts?token={PASSWORD}";
+	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}";
+	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{TOKEN}/archive-{START}-{DURATION}.ts?token={PASSWORD}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/bcu%2Fepg%2F{EPG_ID}.json";
 }

@@ -52,10 +52,10 @@ void plugin_shuratv::load_default()
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_domain = "http://pl.tvshka.net";
 	info.pl_template = "{PL_DOMAIN}/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?archive={START}&lutc={NOW}";
 
 	set_epg_preset(0, EpgPresets::enPropgNet);

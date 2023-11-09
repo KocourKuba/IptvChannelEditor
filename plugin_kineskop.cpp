@@ -52,10 +52,10 @@ void plugin_kineskop::load_default()
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_domain = "http://knkp.in";
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/{SERVER}/1";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}.com/kineskop%2Fepg%2F{EPG_ID}.json";

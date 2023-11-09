@@ -54,11 +54,11 @@ void plugin_ottclub::load_default()
 	info.pl_domain = "http://myott.top";
 	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}/m3u";
 	info.pl_parse_regex= R"(^https?:\/\/.*\/playlist\/(?<password>.+)\/.*$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
 	info.epg_id_from_id = true;
 	playlist_templates.emplace_back(info);
 
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/stream/{TOKEN}/{ID}.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_domain = "http://myott.top";

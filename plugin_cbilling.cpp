@@ -69,11 +69,11 @@ void plugin_cbilling::load_default()
 	info.tag_id_match = "tvg-id";
 	playlist_templates.emplace_back(info);
 
-	streams_config[0].uri_template = "{SCHEME}://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	streams_config[1].uri_template = "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
+	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}";
+	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	set_epg_preset(0, EpgPresets::enCbilling);
 	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";
