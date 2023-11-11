@@ -280,9 +280,8 @@ void CAccessInfoPage::CreateAccountsList()
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		case AccountAccessType::enOtt:
-			vWidth /= 4;
+			vWidth /= 3;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
-			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_DOMAIN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		default: break;
@@ -311,7 +310,6 @@ void CAccessInfoPage::CreateAccountsList()
 
 			case AccountAccessType::enOtt:
 				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_ott_key().c_str());
-				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_subdomain().c_str());
 				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_portal().c_str());
 				break;
 
@@ -509,18 +507,15 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 					if (!entry->Parse(line)) continue;
 
 					const auto& access_key = entry->get_ott_key();
-					const auto& subdomain = entry->get_subdomain();
-					if (!access_key.empty() && !subdomain.empty() && access_key != L"00000000000000" && subdomain != L"localhost")
+					if (!access_key.empty() && access_key != L"00000000000000")
 					{
 						int cnt = m_wndAccounts.GetItemCount();
 
 						m_wndAccounts.InsertItem(cnt, L"", 0);
 						m_wndAccounts.SetItemText(cnt, 1, access_key.c_str());
-						m_wndAccounts.SetItemText(cnt, 2, subdomain.c_str());
 
 						Credentials cred;
 						cred.set_ott_key(access_key);
-						cred.set_subdomain(subdomain);
 						m_all_credentials.emplace_back(cred);
 						break;
 					}
@@ -660,12 +655,9 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 					cred.set_ott_key(std::wstring(dispinfo->item.pszText));
 					break;
 				case 2:
-					cred.set_subdomain(std::wstring(dispinfo->item.pszText));
-					break;
-				case 3:
 					cred.set_portal(std::wstring(dispinfo->item.pszText));
 					break;
-				case 4:
+				case 3:
 					cred.set_comment(std::wstring(dispinfo->item.pszText));
 					break;
 				default:

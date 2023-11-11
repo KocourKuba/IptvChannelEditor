@@ -50,7 +50,7 @@ void plugin_edem::load_default()
 	info.pl_domain = "http://epg.it999.ru";
 	info.pl_template = "{PL_DOMAIN}/edem_epg_ico.m3u8";
 	info.pl_parse_regex = R"(^https?:\/.*\/playlists\/uplist\/.*\/playlist\.m3u8$)";
-	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<subdomain>.+)\/iptv\/(?<ott_key>.+)\/(?<id>.+)\/.*\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/).+\/iptv\/(?<ott_key>.+)\/(?<id>.+)\/.*\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_EDEM_THEMATIC);
@@ -68,7 +68,7 @@ void plugin_edem::load_default()
 
 	provider_url = "https://ilook.tv/";
 
-	streams_config[0].uri_template = "{SCHEME}{SUBDOMAIN}/iptv/{OTT_KEY}/{ID}/index.m3u8";
+	streams_config[0].uri_template = "{SCHEME}junior.edmonst.net/iptv/{OTT_KEY}/{ID}/index.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 	//streams_config[0].dune_params = "hls_forced_type:event";
 

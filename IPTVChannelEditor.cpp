@@ -549,7 +549,6 @@ void ConvertAccounts()
 
 						case AccountAccessType::enOtt:
 							cred.token = get_array_value(creds, last);
-							cred.subdomain = get_array_value(creds, last);
 							cred.portal = get_array_value(creds, last);
 							if (cred.token == token)
 							{
@@ -585,7 +584,6 @@ void ConvertAccounts()
 
 						case AccountAccessType::enOtt:
 							cred.token = token;
-							cred.subdomain = domain;
 							cred.portal = portal;
 							break;
 
