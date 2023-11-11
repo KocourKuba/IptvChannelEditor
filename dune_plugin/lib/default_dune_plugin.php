@@ -623,7 +623,7 @@ class Default_Dune_Plugin implements DunePlugin
             return array();
         }
 
-        $favorites = $this->get_favorites();
+        $favorites = &$this->get_favorites();
         switch ($op_type) {
 
             case PLUGIN_FAVORITES_OP_ADD:
@@ -654,7 +654,7 @@ class Default_Dune_Plugin implements DunePlugin
                 break;
         }
 
-        $this->set_favorites($favorites);
+        $this->save_favorites();
         $this->set_need_update_epfs();
         return Starnet_Epfs_Handler::invalidate_folders(array(
                 Starnet_Tv_Favorites_Screen::get_media_url_string(FAVORITES_GROUP_ID),
@@ -1154,7 +1154,7 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * @return Ordered_Array
      */
-    public function get_favorites()
+    public function &get_favorites()
     {
         if ($this->favorite_ids === null) {
             $channel_list = $this->get_parameter(PARAM_CHANNELS_LIST_NAME);
@@ -1162,18 +1162,20 @@ class Default_Dune_Plugin implements DunePlugin
             $ids = HD::get_data_items('favorite_channels_' . hash('crc32', $channel_list));
 
             $this->favorite_ids = new Ordered_Array(array_unique($ids));
+            if (LogSeverity::$is_debug) {
+                hd_debug_print("Load favorites: " . $this->favorite_ids);
+            }
         }
 
         return $this->favorite_ids;
     }
 
     /**
-     * @param Ordered_Array|null $order
      * @return void
      */
-    public function set_favorites($order)
+    public function unload_favorites()
     {
-        $this->favorite_ids = $order;
+        $this->favorite_ids = null;
     }
 
     /**
@@ -1183,6 +1185,9 @@ class Default_Dune_Plugin implements DunePlugin
     {
         $channel_list = $this->get_parameter(PARAM_CHANNELS_LIST_NAME);
         $channel_list = empty($channel_list) ? 'default' : $channel_list;
+        if (LogSeverity::$is_debug) {
+            hd_debug_print("Save favorites: " . $this->favorite_ids);
+        }
         HD::put_data_items('favorite_channels_' . hash('crc32', $channel_list), $this->favorite_ids->get_order());
     }
 

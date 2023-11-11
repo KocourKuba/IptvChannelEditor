@@ -182,7 +182,7 @@ class Starnet_Tv implements User_Input_Handler
         $pl_entries = $this->plugin->config->GetPlaylistStreamsInfo();
 
         $this->plugin->init_epg_manager();
-        $this->plugin->set_favorites(null);
+        $this->plugin->unload_favorites();
         $channels_list_path = '';
         try {
             $this->plugin->config->get_channel_list($channels_list);
@@ -331,6 +331,7 @@ class Starnet_Tv implements User_Input_Handler
         }
 
         $fav_channel_ids = $this->plugin->get_favorites();
+        $fav_cnt = $fav_channel_ids->size();
 
         // Read channels
         $this->channels = new Hashed_Array();
@@ -434,8 +435,9 @@ class Starnet_Tv implements User_Input_Handler
             }
         }
 
-        $this->plugin->set_favorites($fav_channel_ids);
-        $this->plugin->save_favorites();
+        if ($fav_cnt !== $fav_channel_ids->size()) {
+            $this->plugin->save_favorites();
+        }
 
         $this->special_groups = new Hashed_Array();
         $this->special_groups->set($fav_group->get_id(), $fav_group);

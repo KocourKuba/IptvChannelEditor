@@ -47,7 +47,6 @@ abstract class Abstract_Regular_Screen extends Abstract_Screen
         $index = $this->get_folder_view_index($plugin_cookies);
         $folder_views = $this->get_folder_views();
         $folder_view = $folder_views[$index];
-        hd_debug_print(json_encode($folder_view));
         $folder_view[PluginRegularFolderView::actions] = $this->get_action_map($media_url, $plugin_cookies);
         $folder_view[PluginRegularFolderView::initial_range] = $this->get_folder_range($media_url, 0, $plugin_cookies);
 
