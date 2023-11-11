@@ -749,7 +749,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         // Fill view history data
         $now = time();
-        $rows = array();
         $watched = array();
         foreach ($this->plugin->get_playback_points()->get_all() as $channel_id => $channel_ts) {
             if (is_null($channel = $this->plugin->tv->get_channel($channel_id))) continue;

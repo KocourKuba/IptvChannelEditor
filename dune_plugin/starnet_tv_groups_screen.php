@@ -243,17 +243,17 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
     {
         switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
             case Plugin_Constants::ACCOUNT_OTT_KEY:
-                $ott_key = $this->plugin->get_parameter(Ext_Params::M_OTT_KEY);
-                $subdomain = $this->plugin->get_parameter(Ext_Params::M_SUBDOMAIN);
+                $ott_key = $this->plugin->get_credentials(Ext_Params::M_OTT_KEY);
+                $subdomain = $this->plugin->get_credentials(Ext_Params::M_SUBDOMAIN);
                 $setup_needs = empty($ott_key) && empty($subdomain) && ($this->plugin->config->get_embedded_account() === null);
                 break;
             case Plugin_Constants::ACCOUNT_LOGIN:
-                $login = $this->plugin->get_parameter(Ext_Params::M_LOGIN);
-                $password = $this->plugin->get_parameter(Ext_Params::M_PASSWORD);
+                $login = $this->plugin->get_credentials(Ext_Params::M_LOGIN);
+                $password = $this->plugin->get_credentials(Ext_Params::M_PASSWORD);
                 $setup_needs = empty($login) && empty($password);
                 break;
             case Plugin_Constants::ACCOUNT_PIN:
-                $password = $this->plugin->get_parameter(Ext_Params::M_PASSWORD);
+                $password = $this->plugin->get_credentials(Ext_Params::M_PASSWORD);
                 $setup_needs = empty($password);
                 break;
             default:

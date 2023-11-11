@@ -151,14 +151,6 @@ class default_config extends dynamic_config
     /**
      * @return string
      */
-    public function get_subdomain()
-    {
-        return null;
-    }
-
-    /**
-     * @return string
-     */
     public function get_ott_key()
     {
         return null;
@@ -1138,15 +1130,6 @@ class default_config extends dynamic_config
                     hd_debug_print("Vod domain not set, but macro was used");
                 else
                     $url = str_replace(Plugin_Macros::VOD_DOMAIN, $vod_domain, $url);
-            }
-
-            if (strpos($url, Plugin_Macros::SUBDOMAIN) !== false) {
-                $subdomain = $this->get_subdomain();
-                if (empty($subdomain)) {
-                    hd_debug_print("Subdomain not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::SUBDOMAIN, $subdomain, $url);
-                }
             }
 
             if (strpos($url, Plugin_Macros::OTT_KEY) !== false) {

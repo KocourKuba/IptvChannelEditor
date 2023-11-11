@@ -14,18 +14,6 @@ class edem_config extends default_config
     /**
      * @return string
      */
-    public function get_subdomain()
-    {
-        if (isset($this->embedded_account->domain)) {
-            $this->embedded_account->subdomain = $this->embedded_account->domain;
-        }
-
-        return isset($this->embedded_account->subdomain) ? $this->embedded_account->subdomain : $this->parent->get_credentials(Ext_Params::M_SUBDOMAIN);
-    }
-
-    /**
-     * @return string
-     */
     public function get_ott_key()
     {
         return isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $this->parent->get_credentials(Ext_Params::M_OTT_KEY);
