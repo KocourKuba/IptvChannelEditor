@@ -572,10 +572,6 @@ class Default_Dune_Plugin implements DunePlugin
                     PluginTvEpgProgram::name => $value[Epg_Params::EPG_NAME],
                     PluginTvEpgProgram::description => $value[Epg_Params::EPG_DESC],
                 );
-
-//                if (LogSeverity::$is_debug) {
-//                    hd_debug_print(format_datetime("m-d H:i", $tm_start) . " - " . format_datetime("m-d H:i", $tm_end) . " {$value[Epg_Params::EPG_NAME]}");
-//                }
             }
         } catch (Exception $ex) {
             $msg = $ex->getMessage();
