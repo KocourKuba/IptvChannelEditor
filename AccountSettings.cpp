@@ -300,7 +300,7 @@ std::vector<Credentials> AccountSettings::LoadCredentials()
 		JSON_ALL_TRY;
 		{
 			cred = val.get<Credentials>();
-			if (get_plugin_type() == PluginType::enEdem && (cred.ott_key.empty() || cred.subdomain.empty())) {
+			if (get_plugin_type() == PluginType::enEdem && (cred.ott_key.empty())) {
 				std::swap(cred.ott_key, cred.token);
 				std::swap(cred.subdomain, cred.domain);
 			}
