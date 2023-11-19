@@ -302,6 +302,7 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	lt.tm_sec = 0;
 	time_t dayTime = std::mktime(&lt);
 
+	utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, GetPropertySheet()->m_plugin->get_provider_api_url());
 	utils::string_replace_inplace<wchar_t>(url, REPL_EPG_DOMAIN, m_EpgDomain.GetString());
 	utils::string_replace_inplace<wchar_t>(url, REPL_EPG_ID, m_SetID.GetString());
 	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, m_Token.GetString());
