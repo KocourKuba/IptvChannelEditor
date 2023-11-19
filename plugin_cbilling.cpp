@@ -65,7 +65,7 @@ void plugin_cbilling::load_default()
 	info.pl_domain = "http://248on.com";
 	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<token>.+)_otp_dev.*$)";
-	info.parse_regex = R"(^(?<scheme>https?):\/\/(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/.+\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/.+\.m3u8$)";
 	info.tag_id_match = "tvg-id";
 	playlist_templates.emplace_back(info);
 
