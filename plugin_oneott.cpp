@@ -55,9 +55,8 @@ void plugin_oneott::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_domain = "http://list.1ott.net";
-	info.pl_template = "{PL_DOMAIN}/api/{S_TOKEN}/high/ottplay.m3u8";
-	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
-	info.epg_id_from_id = true;
+	info.pl_template = "{PL_DOMAIN}/api/{S_TOKEN}/high/unix.m3u8";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hlsx?\/.+\.m3u8$)";
 	playlist_templates.emplace_back(info);
 
 	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
