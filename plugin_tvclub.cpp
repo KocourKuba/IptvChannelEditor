@@ -74,6 +74,7 @@ void plugin_tvclub::load_default()
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
 
 	set_epg_preset(0, EpgPresets::enTVClub);
+	epg_params[0].epg_domain = "";
 	epg_params[0].epg_url = "{API_URL}/epg?token={S_TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24";
 }
 

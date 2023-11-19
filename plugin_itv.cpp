@@ -75,6 +75,7 @@ void plugin_itv::load_default()
 	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	set_epg_preset(0, EpgPresets::enItvLive);
+	epg_params[0].epg_domain = "";
 	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}";
 }
 

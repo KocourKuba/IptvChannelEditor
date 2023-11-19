@@ -58,7 +58,7 @@ void plugin_kineskop::load_default()
 	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
-	epg_params[0].epg_url = "{EPG_DOMAIN}.com/kineskop%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/kineskop%2Fepg%2F{EPG_ID}.json";
 
 	static_servers = true;
 	fill_servers_list();

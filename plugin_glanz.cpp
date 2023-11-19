@@ -79,7 +79,7 @@ void plugin_glanz::load_default()
 	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/{ID}/mpegts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?username={LOGIN}&password={PASSWORD}&token={TOKEN}&ch_id={INT_ID}&req_host={HOST}";
 
-	epg_params[0].epg_url = "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/ottg%2Fepg%2F{EPG_ID}.json";
 
 	set_epg_preset(1, EpgPresets::enIptvxOne);
 	epg_params[1].epg_domain = "http://epg.iptvx.one";

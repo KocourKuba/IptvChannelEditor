@@ -76,6 +76,7 @@ void plugin_cbilling::load_default()
 	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
 
 	set_epg_preset(0, EpgPresets::enCbilling);
+	epg_params[0].epg_domain = "";
 	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";
 
 	epg_params[1].epg_url = "{EPG_DOMAIN}/cbilling%2Fepg%2F{EPG_ID}.json";
