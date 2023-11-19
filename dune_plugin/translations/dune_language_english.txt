@@ -29,6 +29,7 @@ clear_favorites = Clear Favorites
 clear_history = Clear History
 no_category = No Category
 yes_no_confirm_msg = Are you sure?
+genre = Genre
 year_from = Year from
 year_to = Year to
 package = Package

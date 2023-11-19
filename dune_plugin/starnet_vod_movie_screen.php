@@ -71,6 +71,8 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
                 PluginFolderView::view_kind => PLUGIN_FOLDER_VIEW_MOVIE,
                 PluginFolderView::data => array(
                     PluginMovieFolderView::movie => $movie->get_movie_array(),
+                    PluginMovieFolderView::left_button_caption => TR::t('ok'),
+                    PluginMovieFolderView::left_button_action => Action_Factory::close_and_run(),
                     PluginMovieFolderView::has_right_button => false,
                     PluginMovieFolderView::has_multiple_series => false,
                     PluginMovieFolderView::series_media_url => null,

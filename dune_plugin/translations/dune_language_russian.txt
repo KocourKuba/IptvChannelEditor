@@ -29,6 +29,7 @@ clear_favorites = Очистить Избранное
 clear_history = Очистить Историю
 no_category = Без категории
 yes_no_confirm_msg = Вы уверены?
+genre = Жанр
 year_from = Год от
 year_to = Год до
 package = Пакет
