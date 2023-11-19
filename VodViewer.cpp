@@ -1328,7 +1328,7 @@ void CVodViewer::GetUrl(int idx)
 				const auto& season = movie->seasons[m_season_idx];
 				url = season.episodes[m_episode_idx].url;
 			}
-			url = fmt::format(L"{:s}{:s}?token={:s}", m_plugin->get_provider_api_url(), url, m_account.get_password());
+			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_s_token());
 			break;
 		}
 		case PluginType::enEdem:
