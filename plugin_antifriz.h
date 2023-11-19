@@ -34,6 +34,7 @@ class plugin_antifriz : public base_plugin
 public:
 
 	plugin_antifriz();
+	std::map<std::wstring, std::wstring> parse_access_info(TemplateParams& params) override;
 
 protected:
 	void load_default() override;

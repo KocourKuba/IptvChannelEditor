@@ -61,7 +61,7 @@ void plugin_antifriz::load_default()
 	info.pl_domain = "https://af-play.com";
 	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<password>.+)\.m3u8?$)";
-	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/.+\/video\.m3u8$)";
+	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/.+\/.+\.m3u8$)";
 	info.tag_id_match = "tvg-id";
 	playlist_templates.emplace_back(info);
 
@@ -77,4 +77,57 @@ void plugin_antifriz::load_default()
 	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";
 
 	epg_params[1].epg_url = "{EPG_DOMAIN}/antifriz%2Fepg%2F{EPG_ID}.json";
+}
+
+
+std::map<std::wstring, std::wstring> plugin_antifriz::parse_access_info(TemplateParams& params)
+{
+	/*
+	{
+		"data": {
+			"public_token": "2f5787bd53fcaeeae27ba3ed3669babc",
+			"private_token": "5acf87d0206da05b73f8923a703gf666",
+			"end_time": 1706129968,
+			"end_date": "2024-01-24 23:59:28",
+			"devices_num": 1,
+			"server": "s01.wsbof.com",
+			"vod": true,
+			"ssl": false,
+			"disable_adult": false
+	}
+}	*/
+
+	static constexpr auto ACCOUNT_HEADER_TEMPLATE = "x-public-key: {:s}";
+	static constexpr auto ACCOUNT_TEMPLATE = L"/auth/info";
+
+	std::map<std::wstring, std::wstring> info;
+
+	CWaitCursor cur;
+	std::vector<std::string> headers;
+	headers.emplace_back("accept: */*");
+	headers.emplace_back(fmt::format(ACCOUNT_HEADER_TEMPLATE, utils::utf16_to_utf8(params.password)));
+	std::stringstream data;
+	if (download_url(get_provider_api_url() + ACCOUNT_TEMPLATE, data, 0, &headers))
+	{
+		JSON_ALL_TRY
+		{
+			const auto & parsed_json = nlohmann::json::parse(data.str());
+			if (parsed_json.contains("data"))
+			{
+				const auto& js_data = parsed_json["data"];
+
+				set_json_info("package", js_data, info);
+				set_json_info("end_date", js_data, info);
+				set_json_info("devices_num", js_data, info);
+				set_json_info("server", js_data, info);
+				set_json_info("vod", js_data, info);
+				set_json_info("ssl", js_data, info);
+				set_json_info("public_token", js_data, info);
+				set_json_info("private_token", js_data, info);
+			}
+		}
+		JSON_ALL_CATCH;
+	}
+
+	return info;
 }
