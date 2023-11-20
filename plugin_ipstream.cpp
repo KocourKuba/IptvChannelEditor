@@ -68,4 +68,8 @@ void plugin_ipstream::load_default()
 	streams_config[1].cu_type = CatchupType::cu_append;
 	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}.ts";
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
+
+	set_epg_preset(0, EpgPresets::enCbilling);
+	epg_params[0].epg_domain = "http://api.playtv.pro";
+	epg_params[0].epg_url = "{EPG_DOMAIN}/get/?type=epg&ch={EPG_ID}";
 }
