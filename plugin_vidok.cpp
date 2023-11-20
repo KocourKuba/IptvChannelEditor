@@ -59,7 +59,7 @@ void plugin_vidok::load_default()
 	provider_api_url = "http://sapi.ott.st/v2.4/json";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://vidok.tv";
+	info.pl_domain = "http://bddpv.plist.top";
 	info.pl_template = "{PL_DOMAIN}/p/{S_TOKEN}";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/p\/(?<token>.+)\/.+$)";
