@@ -324,7 +324,7 @@ void CPluginConfigPropertySheet::OnBnClickedButtonSaveAsConfig()
 		return;
 
 	std::filesystem::path new_conf = dlg.m_name.GetString();
-	if (new_conf.extension().empty())
+	if (new_conf.extension() != L".json")
 		new_conf += (L".json");
 
 	if (!m_plugin->save_plugin_parameters(new_conf))
