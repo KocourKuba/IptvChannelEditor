@@ -142,8 +142,10 @@ public:
 	const std::wstring& get_title() const { return title; }
 	void set_title(const std::wstring& val) { title = val; }
 
-	std::wstring get_epg_id(int idx = 0) const { return idx == 2 ? epg_id[0] : epg_id[idx]; }
+	std::wstring get_epg_id(int idx = 0) const { return epg_id[idx]; }
 	void set_epg_id(int idx, const std::wstring& val) { epg_id[idx] = val; }
+
+	std::array<std::wstring, 2> get_epg_ids() const { return epg_id; }
 
 	int get_adult() const { return adult; }
 	void set_adult(int val) { adult = val; }

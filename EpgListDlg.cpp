@@ -112,12 +112,46 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 	int i = 0;
 	int current_idx = -1;
-	const auto& epg_id = m_info->get_epg_id(m_epg_idx);
+	auto epg_id = m_info->get_epg_id(m_epg_idx);
+
 	m_csEpgUrl = (m_epg_idx == 2) ? m_xmltv_source.c_str() : m_plugin->compile_epg_url(m_epg_idx, epg_id, start_time, m_info).c_str();
 
+	auto epg_ids = m_info->get_epg_ids();
 	bool need_load = true;
 	while (need_load)
 	{
+		if (m_epg_idx != 2)
+		{
+			auto epg_id = epg_ids[m_epg_idx];
+			epg_ids[0] = L"";
+			epg_ids[1] = L"";
+			epg_ids[m_epg_idx] = epg_id;
+			bool res = m_plugin->parse_json_epg(m_epg_idx, epg_ids, *m_epg_cache, now, m_info);
+			if (!res)
+			{
+				need_load = false;
+			}
+		}
+		else
+		{
+			auto& epg_cache = m_epg_cache->at(m_epg_idx);
+			if (epg_cache.find(L"file already parsed") == epg_cache.end())
+			{
+				bool res = m_plugin->parse_xml_epg(m_xmltv_source, epg_cache);
+				if (res)
+				{
+					epg_cache[L"file already parsed"] = std::map<time_t, EpgInfo>();
+				}
+			}
+			need_load = false;
+		}
+	}
+
+	bool found = false;
+	for (const auto& epg_id : epg_ids)
+	{
+		if (found || epg_id.empty()) continue;
+
 		if (auto& it = m_epg_cache->at(m_epg_idx).find(epg_id); it != m_epg_cache->at(m_epg_idx).end())
 		{
 			m_pEpgChannelMap = &(m_epg_cache->at(m_epg_idx)[epg_id]);
@@ -125,34 +159,9 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 			{
 				if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
 				{
-					need_load = false;
+					found = true;
 					break;
 				}
-			}
-		}
-
-		if (need_load)
-		{
-			if (m_epg_idx != 2)
-			{
-				bool res = m_plugin->parse_json_epg(m_epg_idx, epg_id, *m_epg_cache, now, m_info);
-				if (!res)
-				{
-					need_load = false;
-				}
-			}
-			else
-			{
-				auto& epg_cache = m_epg_cache->at(m_epg_idx);
-				if (epg_cache.find(L"file already parsed") == epg_cache.end())
-				{
-					bool res = m_plugin->parse_xml_epg(m_xmltv_source, epg_cache);
-					if (res)
-					{
-						epg_cache[L"file already parsed"] = std::map<time_t, EpgInfo>();
-					}
-				}
-				need_load = false;
 			}
 		}
 	}

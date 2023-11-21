@@ -1964,17 +1964,49 @@ void CIPTVChannelEditorDlg::FillEPG()
 	ATLTRACE(L"\n%s\n", snow.c_str());
 #endif // _DEBUG
 
-	auto& epg_id = info->get_epg_id(epg_idx);
 
 
 	UpdateExtToken(info);
 	DWORD dwStart = GetTickCount();
 
 	// check end time
+	auto epg_ids = info->get_epg_ids();
 	EpgInfo epg_info{};
 	bool need_load = true;
 	while(need_load)
 	{
+		if (epg_idx != 2)
+		{
+			auto epg_id = epg_ids[epg_idx];
+			epg_ids[0] = L"";
+			epg_ids[1] = L"";
+			epg_ids[epg_idx] = epg_id;
+			bool res = m_plugin->parse_json_epg(epg_idx, epg_ids, m_epg_cache, now, info);
+			if (!res)
+			{
+				need_load = false;
+			}
+		}
+		else
+		{
+			auto& epg_cache = m_epg_cache.at(epg_idx);
+			if (epg_cache.find(L"file already parsed") == epg_cache.end())
+			{
+				bool res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, &m_wndProgress);
+				if (res)
+				{
+					epg_cache[L"file already parsed"] = std::map<time_t, EpgInfo>();
+				}
+			}
+			need_load = false;
+		}
+	}
+
+	bool found = false;
+	for(const auto& epg_id : epg_ids)
+	{
+		if (found || epg_id.empty()) continue;
+
 		if (auto& it = m_epg_cache[epg_idx].find(epg_id); it != m_epg_cache[epg_idx].end())
 		{
 			for (auto& epg_pair : it->second)
@@ -1982,34 +2014,9 @@ void CIPTVChannelEditorDlg::FillEPG()
 				if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
 				{
 					epg_info = epg_pair.second;
-					need_load = false;
+					found = true;
 					break;
 				}
-			}
-		}
-
-		if (need_load)
-		{
-			if (epg_idx != 2)
-			{
-				bool res = m_plugin->parse_json_epg(epg_idx, epg_id, m_epg_cache, now, info);
-				if (!res)
-				{
-					need_load = false;
-				}
-			}
-			else
-			{
-				auto& epg_cache = m_epg_cache.at(epg_idx);
-				if (epg_cache.find(L"file already parsed") == epg_cache.end())
-				{
-					bool res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, &m_wndProgress);
-					if (res)
-					{
-						epg_cache[L"file already parsed"] = std::map<time_t, EpgInfo>();
-					}
-				}
-				need_load = false;
 			}
 		}
 	}

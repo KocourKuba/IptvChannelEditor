@@ -445,8 +445,9 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 	return added;
 }
 
-bool base_plugin::parse_json_epg(int epg_idx, const std::wstring& epg_id, std::array<EpgStorage, 3>& all_epg_map, time_t for_time, const uri_stream* info)
+bool base_plugin::parse_json_epg(int epg_idx, const std::array<std::wstring, 2>& epg_ids, std::array<EpgStorage, 3>& all_epg_map, time_t for_time, const uri_stream* info)
 {
+	const auto& epg_id = epg_ids[epg_idx];
 	if (epg_id.empty())
 		return false;
 
