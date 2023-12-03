@@ -49,22 +49,21 @@ void plugin_glanz::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "http://ottg.cc/";
-	provider_api_url = "http://api.ottg.cc";
 
 	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
-	vod_info.pl_template = "{API_URL}/playlist/vod?login={LOGIN}&password={PASSWORD}";
+	vod_info.pl_template = "http://api.{PL_DOMAIN}/playlist/vod?login={LOGIN}&password={PASSWORD}";
 	vod_templates.emplace_back(vod_info);
 	vod_support = true;
 	vod_filter = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
+	info.pl_template = "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
 	info.pl_parse_regex = R"(^https?:\/\/.+\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<id>.+)\/.+\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>.+)&req_host=(?<host>.+)$)";
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_NO_ADULT);
-	info.pl_template = "{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0";
+	info.pl_template = "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
@@ -93,23 +92,23 @@ void plugin_glanz::fill_domains_list(TemplateParams* params /*= nullptr*/)
 
 	DynamicParamsInfo info;
 	info.set_id(L"0");
-	info.set_name(L"http://pl.ottg.cc");
+	info.set_name(L"ottg.cc");
 	domains.emplace_back(info);
 
 	info.set_id(L"1");
-	info.set_name(L"http://pl.ottg.in");
+	info.set_name(L"ottg.in");
 	domains.emplace_back(info);
 
 	info.set_id(L"2");
-	info.set_name(L"http://pl.ottg.tv");
+	info.set_name(L"ottg.tv");
 	domains.emplace_back(info);
 
 	info.set_id(L"3");
-	info.set_name(L"http://pl.ottg.space");
+	info.set_name(L"ottg.space");
 	domains.emplace_back(info);
 
 	info.set_id(L"4");
-	info.set_name(L"http://pl.ottg.eu");
+	info.set_name(L"ottg.eu");
 	domains.emplace_back(info);
 
 	set_domains_list(domains);
