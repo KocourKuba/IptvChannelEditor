@@ -39,6 +39,7 @@ public:
 	std::map<std::wstring, std::wstring> parse_access_info(TemplateParams& params) override;
 	void fill_servers_list(TemplateParams* params = nullptr) override;
 	bool set_server(TemplateParams& params) override;
+	void fill_domains_list(TemplateParams* params = nullptr) override;
 
 protected:
 	void load_default() override;

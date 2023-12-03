@@ -50,7 +50,6 @@ void plugin_viplime::load_default()
 	provider_url = "http://viplime.fun/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://cdntv.online";
 	info.pl_template = "{PL_DOMAIN}/high/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/.*\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/.+$)";
@@ -67,7 +66,6 @@ void plugin_viplime::load_default()
 	epg_params[0].epg_url = "{EPG_DOMAIN}/viplime%2Fepg%2F{EPG_ID}.json";
 
 	static_qualities = true;
-	fill_qualities_list();
 }
 
 void plugin_viplime::fill_qualities_list(TemplateParams* params /*= nullptr*/)
@@ -100,4 +98,19 @@ void plugin_viplime::fill_qualities_list(TemplateParams* params /*= nullptr*/)
 	}
 
 	set_qualities_list(quality);
+}
+
+void plugin_viplime::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://cdntv.online");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

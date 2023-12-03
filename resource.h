@@ -686,6 +686,10 @@
 #define IDC_EDIT_VOD_PARAMS             1238
 #define IDC_EDIT_PLUGIN_CLASS_NAME      1239
 #define IDC_CHECK_PLAYLIST_SHOW_LINK    1240
+#define IDC_BUTTON_EDIT_TV_DOMAINS      1241
+#define IDC_CHECK_STATIC_TV_DOMAINS     1242
+#define IDC_COMBO_DOMAIN                1243
+#define IDC_STATIC_DOMAIN               1244
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -724,7 +728,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281
 #define _APS_NEXT_COMMAND_VALUE         32809
-#define _APS_NEXT_CONTROL_VALUE         1241
+#define _APS_NEXT_CONTROL_VALUE         1245
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

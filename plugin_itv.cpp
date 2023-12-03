@@ -57,7 +57,6 @@ void plugin_itv::load_default()
 	provider_api_url = "http://api.itv.live";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "https://itv.ooo";
 	info.pl_template = "{PL_DOMAIN}/p/{PASSWORD}/hls.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)\/.+$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/.+\/video\.m3u8\?token=(?<token>.+)$)";
@@ -123,4 +122,19 @@ std::map<std::wstring, std::wstring> plugin_itv::parse_access_info(TemplateParam
 
 
 	return info;
+}
+
+void plugin_itv::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"https://itv.ooo");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

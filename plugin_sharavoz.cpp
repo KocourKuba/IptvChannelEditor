@@ -50,7 +50,6 @@ void plugin_sharavoz::load_default()
 	provider_url = "https://www.sharavoz.tv/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://www.sharavoz.tv";
 	info.pl_template = "{PL_DOMAIN}/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/iptv\/p\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<id>.+)\/(?:mpegts|index\.m3u8)\?token=(?<token>.+)$)";
@@ -58,7 +57,6 @@ void plugin_sharavoz::load_default()
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_SHARAVOZ_DIRECT);
-	info.pl_domain = "http://www.spr24.net";
 	info.pl_template = "{PL_DOMAIN}/iptv/p/{PASSWORD}/Playlist.navigator-ott.m3u";
 	playlist_templates.emplace_back(info);
 
@@ -78,7 +76,6 @@ void plugin_sharavoz::load_default()
 	epg_params[1].epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 
 	static_servers = true;
-	fill_servers_list();
 }
 
 void plugin_sharavoz::fill_servers_list(TemplateParams* params /*= nullptr*/)
@@ -99,4 +96,19 @@ void plugin_sharavoz::fill_servers_list(TemplateParams* params /*= nullptr*/)
 	};
 
 	set_servers_list(servers);
+}
+
+void plugin_sharavoz::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	std::vector<DynamicParamsInfo> domains;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://www.sharavoz.tv");
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

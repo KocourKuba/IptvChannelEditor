@@ -47,10 +47,12 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_DEVICES, &CPluginConfigPage::OnBnClickedButtonEditDevices)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_QUALITY, &CPluginConfigPage::OnBnClickedButtonEditQuality)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_PROFILES, &CPluginConfigPage::OnBnClickedButtonEditProfiles)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_TV_DOMAINS, &CPluginConfigPage::OnBnClickedButtonEditDomains)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_SERVERS, &CPluginConfigPage::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_DEVICES, &CPluginConfigPage::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_QUALITIES, &CPluginConfigPage::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_PROFILES, &CPluginConfigPage::SaveParameters)
+	ON_BN_CLICKED(IDC_CHECK_STATIC_TV_DOMAINS, &CPluginConfigPage::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_SQUARE_ICONS, &CPluginConfigPage::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_ENABLE_BALANCE, &CPluginConfigPage::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_NAME, &CPluginConfigPage::SaveParameters)
@@ -94,6 +96,8 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_EDIT_QUALITY, m_wndBtnQualities);
 	DDX_Control(pDX, IDC_CHECK_STATIC_PROFILES, m_wndChkStaticProfiles);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_PROFILES, m_wndBtnProfiles);
+	DDX_Control(pDX, IDC_CHECK_STATIC_TV_DOMAINS, m_wndChkStaticDomains);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_TV_DOMAINS, m_wndBtnDomains);
 }
 
 BOOL CPluginConfigPage::OnInitDialog()
@@ -125,6 +129,7 @@ BOOL CPluginConfigPage::OnInitDialog()
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnDevices);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnQualities);
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnProfiles);
+	SetButtonImage(IDB_PNG_EDIT, m_wndBtnDomains);
 
 	FillControls();
 
@@ -180,6 +185,11 @@ void CPluginConfigPage::UpdateControls()
 	m_wndChkStaticProfiles.SetCheck(plugin->get_static_profiles());
 	m_wndChkStaticProfiles.EnableWindow(!readOnly);
 	m_wndBtnProfiles.EnableWindow(plugin->get_static_profiles());
+
+	// domains
+	m_wndChkStaticDomains.SetCheck(plugin->get_static_domains());
+	m_wndChkStaticDomains.EnableWindow(!readOnly);
+	m_wndBtnDomains.EnableWindow(plugin->get_static_domains());
 }
 
 void CPluginConfigPage::FillControls()
@@ -362,6 +372,32 @@ void CPluginConfigPage::OnBnClickedButtonEditProfiles()
 	}
 }
 
+
+void CPluginConfigPage::OnBnClickedButtonEditDomains()
+{
+	CFillParamsInfoDlg dlg;
+	std::vector<CFillParamsInfoDlg::variantInfo> info;
+	for (const auto& item : GetPropertySheet()->m_plugin->get_domains_list())
+	{
+		info.emplace_back(item);
+	}
+
+	dlg.m_type = DynamicParamsType::enDomains;
+	dlg.m_paramsList = std::move(info);
+	dlg.m_readonly = GetPropertySheet()->GetSelectedConfig().empty();
+
+	if (dlg.DoModal() == IDOK)
+	{
+		std::vector<DynamicParamsInfo> params;
+		for (const auto& item : dlg.m_paramsList)
+		{
+			params.emplace_back(std::get<DynamicParamsInfo>(item));
+		}
+		GetPropertySheet()->m_plugin->set_domains_list(params);
+		AllowSave();
+	}
+}
+
 void CPluginConfigPage::SaveParameters()
 {
 	UpdateData(TRUE);
@@ -386,6 +422,7 @@ void CPluginConfigPage::SaveParameters()
 	m_wndBtnDevices.EnableWindow(m_wndChkStaticDevices.GetCheck());
 	m_wndBtnQualities.EnableWindow(m_wndChkStaticQualities.GetCheck());
 	m_wndBtnProfiles.EnableWindow(m_wndChkStaticProfiles.GetCheck());
+	m_wndBtnDomains.EnableWindow(m_wndChkStaticDomains.GetCheck());
 
 	AllowSave();
 }

@@ -94,18 +94,16 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 
 std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring url /*= L""*/)
 {
-	set_regex_parse_stream(get_uri_parse_pattern(params.playlist_idx));
+	const auto& info = get_playlist_info(params.playlist_idx);
+	set_regex_parse_stream(info.get_parse_regex());
 
 	if (url.empty())
 	{
-		url = get_playlist_template(params.playlist_idx);
+		url = info.get_pl_template();
 	}
 
 	if (!get_provider_api_url().empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
-
-	if (!get_playlist_domain(params.playlist_idx).empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, get_playlist_domain(params.playlist_idx));
 
 	if (!params.s_token.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.s_token);
@@ -121,6 +119,13 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 
 	if (!params.ott_key.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.ott_key);
+
+	fill_domains_list(&params);
+	if (!domains_list.empty())
+	{
+		int domain = (params.domain_idx >= (int)domains_list.size()) ? domains_list.size() - 1 : params.domain_idx;
+		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
+	}
 
 	fill_servers_list(&params);
 	if (!servers_list.empty())
@@ -290,12 +295,20 @@ void base_plugin::set_regex_parse_stream(const std::wstring& val)
 
 std::wstring base_plugin::get_vod_url(TemplateParams& params)
 {
-	return get_vod_url(get_vod_template_idx(), params);
+	return get_vod_url(get_vod_info_idx(), params);
 }
 
 std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params)
 {
-	std::wstring url = get_vod_template(idx);
+	const auto& info = get_vod_info(idx);
+	std::wstring url = info.get_pl_template();
+
+	fill_domains_list(&params);
+	if (!domains_list.empty())
+	{
+		int domain = (params.domain_idx >= (int)domains_list.size()) ? domains_list.size() - 1 : params.domain_idx;
+		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
+	}
 
 	fill_servers_list(&params);
 	if (!servers_list.empty())
@@ -304,9 +317,6 @@ std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params)
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
 	}
-
-	if (!get_vod_domain(idx).empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_VOD_DOMAIN, get_vod_domain(idx));
 
 	if (!get_provider_api_url().empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());

@@ -53,7 +53,6 @@ void plugin_yosso::load_default()
 	provider_url = "https://streaming-elbrus.su/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "https://streaming-elbrus.su";
 	info.pl_template = "{PL_DOMAIN}/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<login>.+)\/(?<password>.+)\/(?<server>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+):(?<port>\d+)\/(?<var1>.+\/)?(?<id>.+)\/(?<var2>.+)\.m3u8\?token=(?<token>.+)$)";
@@ -68,7 +67,6 @@ void plugin_yosso::load_default()
 	epg_params[0].epg_url = "{EPG_DOMAIN}/yosso%2Fepg%2F{EPG_ID}.json";
 
 	static_servers = true;
-	fill_servers_list();
 }
 
 void plugin_yosso::fill_servers_list(TemplateParams* params /*= nullptr*/)
@@ -86,4 +84,19 @@ void plugin_yosso::fill_servers_list(TemplateParams* params /*= nullptr*/)
 	}
 
 	set_servers_list(servers);
+}
+
+void plugin_yosso::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"https://streaming-elbrus.su");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

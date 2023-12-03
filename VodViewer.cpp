@@ -164,16 +164,16 @@ BOOL CVodViewer::OnInitDialog()
 
 	SetButtonImage(IDB_PNG_RELOAD, m_wndBtnReload);
 
-	const auto& vods = m_plugin->get_vod_templates();
+	const auto& vods = m_plugin->get_vod_infos();
 	for (const auto& vod : vods)
 	{
 		int idx = m_wndPlaylist.AddString(vod.get_name().c_str());
 	}
 
-	int idx = m_plugin->get_vod_template_idx();
+	int idx = m_plugin->get_vod_info_idx();
 	m_wndPlaylist.SetCurSel(idx);
 	m_wndPlaylist.EnableWindow(m_wndPlaylist.GetCount() > 1);
-	m_current_vod = m_vod_storages[m_plugin->get_vod_template(idx)];
+	m_current_vod = m_vod_storages[m_plugin->get_vod_info(idx).get_pl_template()];
 
 	LoadPlaylist();
 
@@ -262,10 +262,6 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	if (m_plugin->get_plugin_type() == PluginType::enEdem)
 	{
 		params.subdomain = m_account.get_portal();
-	}
-	else if (m_plugin->get_plugin_type() == PluginType::enSharaclub)
-	{
-		params.subdomain = m_plugin->get_playlist_domain(m_plugin->get_playlist_idx());
 	}
 
 	params.login = m_account.get_login();
@@ -404,7 +400,8 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	boost::wregex re;
 	try
 	{
-		const auto& pattern = m_plugin->get_vod_parse_regex(m_wndPlaylist.GetCurSel());
+		const auto& info = m_plugin->get_vod_info(m_wndPlaylist.GetCurSel());
+		const auto& pattern = info.get_parse_regex();
 		if (!pattern.empty())
 		{
 			re = pattern;

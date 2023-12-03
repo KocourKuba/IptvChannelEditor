@@ -55,10 +55,8 @@ void plugin_sharaclub::configure_provider_plugin()
 
 	CWaitCursor cur;
 	std::stringstream data;
-	const auto& epg_domain = get_epg_domain(0);
-	const auto& playlist_domain = get_playlist_domain(get_playlist_idx());
 
-	if ((epg_domain.empty() || playlist_domain.empty()))
+	if (provider_api_url.empty())
 	{
 		if (download_url(L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor", data))
 		{
@@ -110,12 +108,13 @@ void plugin_sharaclub::load_default()
 	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
 
 	set_epg_preset(0, EpgPresets::enCbilling);
+	epg_params[0].epg_domain.clear();
 	epg_params[0].epg_url = "{EPG_DOMAIN}/get/?type=epg&ch={EPG_ID}";
 }
 
 std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)
 {
-	auto& url = get_playlist_template(params.playlist_idx);
+	auto& url = get_playlist_info(params.playlist_idx).get_pl_template();
 	if (params.profile_idx != 0)
 	{
 		fill_profiles_list(&params);

@@ -91,6 +91,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_SERVER_ID, &CAccessInfoPage::OnCbnSelchangeComboServerId)
 	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoPage::OnCbnSelchangeComboProfile)
 	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CAccessInfoPage::OnCbnSelchangeComboQuality)
+	ON_CBN_SELCHANGE(IDC_COMBO_DOMAIN, &CAccessInfoPage::OnCbnSelchangeComboDomain)
 	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoPage::OnBnClickedCheckEmbed)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoPage::OnEnChangeEditPluginCaption)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PLUGIN_NAME, &CAccessInfoPage::OnBnClickedCheckCustomPluginNameTemplate)
@@ -131,6 +132,7 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndDevices);
 	DDX_Control(pDX, IDC_COMBO_PROFILE, m_wndProfiles);
 	DDX_Control(pDX, IDC_COMBO_QUALITY, m_wndQualities);
+	DDX_Control(pDX, IDC_COMBO_DOMAIN, m_wndDomains);
 	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
 	DDX_Control(pDX, IDC_COMBO_CONFIGS, m_wndConfigs);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_ARCHIVE_TEMPLATE, m_wndPluginNameTemplate);
@@ -420,6 +422,11 @@ BOOL CAccessInfoPage::OnApply()
 	if (m_wndProfiles.GetCount())
 	{
 		m_plugin->set_profile(params);
+	}
+
+	if (m_wndDomains.GetCount())
+	{
+		m_plugin->set_domain(params);
 	}
 
 	GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, GetCheckedAccountIdx());
@@ -745,6 +752,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	m_wndChLists.EnableWindow(enable);
 	m_wndServers.EnableWindow(enable);
 	m_wndProfiles.EnableWindow(enable);
+	m_wndDomains.EnableWindow(enable);
 	m_wndEmbed.EnableWindow(enable);
 	m_wndCustomLogo.EnableWindow(enable);
 	m_wndCustomBackground.EnableWindow(enable);
@@ -786,6 +794,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	params.device_idx = selected.device_id;
 	params.profile_idx = selected.profile_id;
 	params.quality_idx = selected.quality_id;
+	params.domain_idx = selected.domain_id;
 
 	m_plugin->fill_servers_list(&params);
 	m_servers = m_plugin->get_servers_list();
@@ -864,6 +873,25 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 
 		m_wndProfiles.SetCurSel(params.profile_idx);
 	}
+
+	m_domains = m_plugin->get_domains_list();
+	m_wndDomains.ResetContent();
+
+	if (!m_domains.empty())
+	{
+		for (const auto& info : m_domains)
+		{
+			m_wndDomains.AddString(info.get_name().c_str());
+		}
+
+		if (params.domain_idx >= (int)m_domains.size())
+		{
+			params.domain_idx = 0;
+		}
+
+		m_wndDomains.SetCurSel(params.domain_idx);
+	}
+	m_wndDomains.EnableWindow(m_domains.size() > 1 && enable);
 
 	m_wndCustomCaption.SetCheck(selected.custom_caption);
 	m_wndCaption.EnableWindow(selected.custom_caption && enable);
@@ -1140,6 +1168,12 @@ void CAccessInfoPage::OnCbnSelchangeComboQuality()
 {
 	auto& selected = GetCheckedAccount();
 	selected.quality_id = m_wndQualities.GetCurSel();
+}
+
+void CAccessInfoPage::OnCbnSelchangeComboDomain()
+{
+	auto& selected = GetCheckedAccount();
+	selected.domain_id = m_wndDomains.GetCurSel();
 }
 
 void CAccessInfoPage::OnBnClickedCheckEmbed()

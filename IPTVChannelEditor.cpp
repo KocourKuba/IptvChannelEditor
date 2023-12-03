@@ -1051,6 +1051,8 @@ bool PackPlugin(const PluginType plugin_type,
 				node["quality_id"] = plugin->get_qualities_list().at(cred.quality_id).id;
 			if (!plugin->get_profiles_list().empty())
 				node["profile_id"] = plugin->get_profiles_list().at(cred.profile_id).id;
+			if (!plugin->get_domains_list().empty())
+				node["domain_id"] = plugin->get_domains_list().at(cred.domain_id).id;
 
 			if (!node.empty())
 			{

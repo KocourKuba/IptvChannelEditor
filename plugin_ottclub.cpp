@@ -51,7 +51,6 @@ void plugin_ottclub::load_default()
 
 	PlaylistTemplateInfo info;
 	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
-	info.pl_domain = "http://myott.top";
 	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}/m3u";
 	info.pl_parse_regex= R"(^https?:\/\/.*\/playlist\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/stream\/(?<token>.+)\/(?<id>.+)\.m3u8$)";
@@ -63,4 +62,23 @@ void plugin_ottclub::load_default()
 
 	epg_params[0].epg_domain = "http://myott.top";
 	epg_params[0].epg_url = "{EPG_DOMAIN}/api/channel/{EPG_ID}";
+}
+
+void plugin_ottclub::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	std::vector<DynamicParamsInfo> domains;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://myott.top");
+	domains.emplace_back(info);
+
+	info.set_id(L"1");
+	info.set_name(L"http://myott.tv");
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

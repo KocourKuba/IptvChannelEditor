@@ -34,6 +34,7 @@ public:
 	plugin_filmax();
 
 	void fill_servers_list(TemplateParams* params = nullptr) override;
+	void fill_domains_list(TemplateParams* params = nullptr) override;
 
 protected:
 	void load_default() override;

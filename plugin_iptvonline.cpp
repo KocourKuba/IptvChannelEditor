@@ -50,7 +50,6 @@ void plugin_iptvonline::load_default()
 	provider_url = "https://iptv.online/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://iptv.online";
 	info.pl_template = "{PL_DOMAIN}/play/{PASSWORD}/m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.+\/play\/(?<password>.+)\/m3u8?$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
@@ -67,4 +66,19 @@ void plugin_iptvonline::load_default()
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json";
 	epg_params[1].epg_url = "{EPG_DOMAIN}/ottiptv%2Fepg%2F{EPG_ID}.json";
+}
+
+void plugin_iptvonline::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://iptv.online");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

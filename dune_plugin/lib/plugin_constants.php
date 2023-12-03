@@ -65,6 +65,9 @@ class Plugin_Constants
     // profile parameters
     const /* array */ PROFILES_LIST = 'profiles_list';
 
+    // domains parameters
+    const /* array */ DOMAINS_LIST = 'domains_list';
+
     const LIST_ID = 'id';
     const LIST_NAME = 'name';
 

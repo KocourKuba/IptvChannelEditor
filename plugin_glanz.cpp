@@ -51,15 +51,13 @@ void plugin_glanz::load_default()
 	provider_url = "http://ottg.cc/";
 	provider_api_url = "http://api.ottg.cc";
 
-	PlaylistTemplateInfo vod_info;
-	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
+	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_info.pl_template = "{API_URL}/playlist/vod?login={LOGIN}&password={PASSWORD}";
 	vod_templates.emplace_back(vod_info);
 	vod_support = true;
 	vod_filter = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://pl.ottg.cc";
 	info.pl_template = "{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
 	info.pl_parse_regex = R"(^https?:\/\/.+\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<id>.+)\/.+\?username=(?<login>.+)&password=(?<password>.+)&token=(?<token>.+)&ch_id=(?<int_id>.+)&req_host=(?<host>.+)$)";
@@ -84,4 +82,35 @@ void plugin_glanz::load_default()
 	set_epg_preset(1, EpgPresets::enIptvxOne);
 	epg_params[1].epg_domain = "http://epg.iptvx.one";
 	epg_params[1].epg_url = "{EPG_DOMAIN}/api/id/{EPG_ID}.json";
+}
+
+void plugin_glanz::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	std::vector<DynamicParamsInfo> domains;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://pl.ottg.cc");
+	domains.emplace_back(info);
+
+	info.set_id(L"1");
+	info.set_name(L"http://pl.ottg.in");
+	domains.emplace_back(info);
+
+	info.set_id(L"2");
+	info.set_name(L"http://pl.ottg.tv");
+	domains.emplace_back(info);
+
+	info.set_id(L"3");
+	info.set_name(L"http://pl.ottg.space");
+	domains.emplace_back(info);
+
+	info.set_id(L"4");
+	info.set_name(L"http://pl.ottg.eu");
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

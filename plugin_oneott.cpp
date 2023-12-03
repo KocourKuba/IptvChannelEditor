@@ -54,7 +54,6 @@ void plugin_oneott::load_default()
 	provider_url = "http://1ott.net/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://list.1ott.net";
 	info.pl_template = "{PL_DOMAIN}/api/{S_TOKEN}/high/unix.m3u8";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hlsx?\/.+\.m3u8$)";
 	playlist_templates.emplace_back(info);
@@ -104,4 +103,19 @@ std::map<std::wstring, std::wstring> plugin_oneott::parse_access_info(TemplatePa
 
 
 	return info;
+}
+
+void plugin_oneott::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://list.1ott.net");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

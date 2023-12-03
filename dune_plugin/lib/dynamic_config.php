@@ -14,6 +14,7 @@ class dynamic_config
     private $devices = array();
     private $qualities = array();
     private $profiles = array();
+    private $domains = array();
 
     /**
      * load configuration
@@ -84,6 +85,12 @@ class dynamic_config
             $profiles[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
         $this->set_profiles($profiles);
+
+        $domains = array();
+        foreach ($settings[Plugin_Constants::DOMAINS_LIST] as $pair) {
+            $domains[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
+        }
+        $this->set_domains($domains);
 
         //HD::print_array($this->features);
     }
@@ -244,5 +251,21 @@ class dynamic_config
     public function set_profiles($val)
     {
         $this->profiles = $val;
+    }
+
+    /**
+     * @return array
+     */
+    public function get_domains()
+    {
+        return $this->domains;
+    }
+
+    /**
+     * @param array $val
+     */
+    public function set_domains($val)
+    {
+        $this->domains = $val;
     }
 }

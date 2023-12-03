@@ -62,7 +62,6 @@ void plugin_cbilling::load_default()
 	vod_support = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://248on.com";
 	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<token>.+)_otp_dev.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/.+\.m3u8$)";
@@ -82,7 +81,6 @@ void plugin_cbilling::load_default()
 	epg_params[1].epg_url = "{EPG_DOMAIN}/cbilling%2Fepg%2F{EPG_ID}.json";
 
 	static_devices = true;
-	fill_devices_list();
 }
 
 void plugin_cbilling::fill_devices_list(TemplateParams* params /*= nullptr*/)
@@ -152,4 +150,19 @@ std::map<std::wstring, std::wstring> plugin_cbilling::parse_access_info(Template
 	}
 
 	return info;
+}
+
+void plugin_cbilling::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://248on.com");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

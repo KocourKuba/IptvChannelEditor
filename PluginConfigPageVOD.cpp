@@ -43,7 +43,6 @@ BEGIN_MESSAGE_MAP(CPluginConfigPageVOD, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_VOD_TEMPLATE, &CPluginConfigPageVOD::OnBnClickedButtonVodTemplate)
 	ON_BN_CLICKED(IDC_BUTTON_VOD_PARSE, &CPluginConfigPageVOD::OnBnClickedButtonVodParse)
 	ON_CBN_DROPDOWN(IDC_COMBO_VOD_TEMPLATE, &CPluginConfigPageVOD::SaveParameters)
-	ON_EN_CHANGE(IDC_EDIT_PLAYLIST_DOMAIN, &CPluginConfigPageVOD::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_PROVIDER_VOD_URL, &CPluginConfigPageVOD::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_VOD_REGEX, &CPluginConfigPageVOD::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_VOD_SUPPORT, &CPluginConfigPageVOD::SaveParameters)
@@ -66,8 +65,6 @@ void CPluginConfigPageVOD::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_VOD_FILTER, m_wndChkFilterSupport);
 	DDX_Control(pDX, IDC_COMBO_VOD_TEMPLATE, m_wndVodTemplates);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_VOD_TEMPLATES, m_wndBtnEditVodTemplates);
-	DDX_Control(pDX, IDC_EDIT_PLAYLIST_DOMAIN, m_wndVodPlaylistDomain);
-	DDX_Text(pDX, IDC_EDIT_PLAYLIST_DOMAIN, m_VodPlaylistDomain);
 	DDX_Control(pDX, IDC_EDIT_PROVIDER_VOD_URL, m_wndVodUrlTemplate);
 	DDX_Text(pDX, IDC_EDIT_PROVIDER_VOD_URL, m_VodPlaylistTemplate);
 	DDX_Control(pDX, IDC_EDIT_VOD_REGEX, m_wndVodRegex);
@@ -94,7 +91,6 @@ BOOL CPluginConfigPageVOD::OnInitDialog()
 	AddTooltip(IDC_BUTTON_VOD_PARSE, IDS_STRING_BUTTON_VOD_PARSE);
 	AddTooltip(IDC_CHECK_PLAYLIST_SHOW_LINK, IDS_STRING_BUTTON_PLAYLIST_SHOW_LINK);
 	AddTooltip(IDC_BUTTON_VOD_TEMPLATE, IDS_STRING_BUTTON_VOD_TEMPLATE);
-	AddTooltip(IDC_EDIT_PLAYLIST_DOMAIN, IDS_STRING_EDIT_VOD_PLAYLIST_DOMAIN);
 
 	SetButtonImage(IDB_PNG_EDIT, m_wndBtnEditVodTemplates);
 
@@ -110,7 +106,7 @@ void CPluginConfigPageVOD::AssignMacros()
 	std::vector<std::wstring> pl_params =
 	{
 		REPL_API_URL,
-		REPL_VOD_DOMAIN,
+		REPL_PL_DOMAIN,
 		REPL_SUBDOMAIN,
 		REPL_LOGIN,
 		REPL_PASSWORD,
@@ -161,8 +157,6 @@ void CPluginConfigPageVOD::UpdateControls()
 	m_wndChkEnableVOD.EnableWindow(!readOnly);
 	m_wndChkFilterSupport.EnableWindow(!readOnly && enableVod);
 	m_wndChkVodM3U.EnableWindow(!readOnly && enableVod);
-	m_wndVodPlaylistDomain.EnableWindow(enableVod);
-	m_wndVodPlaylistDomain.SetReadOnly(readOnly);
 	m_wndVodTemplates.EnableWindow(enableVod);
 	m_wndBtnPlaylistShow.EnableWindow(readOnly);
 	m_wndBtnEditVodTemplates.EnableWindow(!readOnly && enableVod);
@@ -177,15 +171,14 @@ void CPluginConfigPageVOD::UpdateControls()
 void CPluginConfigPageVOD::FillControls()
 {
 	auto& plugin = GetPropertySheet()->m_plugin;
-	if (!plugin) return;
 
 	m_wndChkFilterSupport.SetCheck(plugin->get_vod_filter() != false);
 	m_wndChkEnableVOD.SetCheck(plugin->get_vod_support() != false);
 	m_wndChkVodM3U.SetCheck(plugin->get_vod_m3u() != false);
 
-	int vod_idx = plugin->get_vod_template_idx();
+	int vod_idx = plugin->get_vod_info_idx();
 	m_wndVodTemplates.ResetContent();
-	for (const auto& entry : plugin->get_vod_templates())
+	for (const auto& entry : plugin->get_vod_infos())
 	{
 		m_wndVodTemplates.AddString(entry.get_name().c_str());
 	}
@@ -193,15 +186,15 @@ void CPluginConfigPageVOD::FillControls()
 	if (vod_idx >= m_wndVodTemplates.GetCount())
 	{
 		vod_idx = 0;
-		plugin->set_vod_template_idx(vod_idx);
+		plugin->set_vod_info_idx(vod_idx);
 	}
 
 	m_wndVodTemplates.SetCurSel(vod_idx);
-	m_VodPlaylistDomain = plugin->get_vod_domain(vod_idx).c_str();
-	m_VodPlaylistTemplate = plugin->get_vod_template(vod_idx).c_str();
-	m_VodParseRegex = plugin->get_vod_parse_regex(vod_idx).c_str();
-	m_VodUrlPrefix = plugin->get_vod_url_prefix(vod_idx).c_str();
-	m_VodUrlParams = plugin->get_vod_url_params(vod_idx).c_str();
+	const auto& info = plugin->get_vod_info(vod_idx);
+	m_VodPlaylistTemplate = info.get_pl_template().c_str();
+	m_VodParseRegex = info.get_parse_regex().c_str();
+	m_VodUrlPrefix = info.get_url_prefix().c_str();
+	m_VodUrlParams = info.get_url_params().c_str();
 
 	UpdateData(FALSE);
 
@@ -212,14 +205,14 @@ void CPluginConfigPageVOD::SaveParameters()
 {
 	UpdateData(TRUE);
 
-	auto& plugin = GetPropertySheet()->m_plugin;
 	int idx = m_wndVodTemplates.GetCurSel();
+	auto& plugin = GetPropertySheet()->m_plugin;
+	auto& info = plugin->get_vod_info(idx);
 
-	plugin->set_vod_domain(idx, m_VodPlaylistDomain.GetString());
-	plugin->set_vod_template(idx, m_VodPlaylistTemplate.GetString());
-	plugin->set_vod_parse_regex(idx, m_VodParseRegex.GetString());
-	plugin->set_vod_url_prefix(idx, m_VodUrlPrefix.GetString());
-	plugin->set_vod_url_params(idx, m_VodUrlParams.GetString());
+	info.set_pl_template(m_VodPlaylistTemplate.GetString());
+	info.set_parse_regex(m_VodParseRegex.GetString());
+	info.set_url_prefix(m_VodUrlPrefix.GetString());
+	info.set_url_params(m_VodUrlParams.GetString());
 
 	plugin->set_vod_support(m_wndChkEnableVOD.GetCheck() != 0);
 	plugin->set_vod_m3u(m_wndChkVodM3U.GetCheck() != 0);
@@ -285,9 +278,9 @@ void CPluginConfigPageVOD::OnCbnSelchangeComboVodTemplate()
 {
 	int idx = m_wndVodTemplates.GetCurSel();
 
-	const auto& plugin = GetPropertySheet()->m_plugin;
-	m_VodPlaylistTemplate = plugin->get_vod_template(idx).c_str();
-	m_VodParseRegex = plugin->get_vod_parse_regex(idx).c_str();
+	auto& info = GetPropertySheet()->m_plugin->get_vod_info(idx);
+	m_VodPlaylistTemplate = info.get_pl_template().c_str();
+	m_VodParseRegex = info.get_parse_regex().c_str();
 
 	UpdateData(FALSE);
 
@@ -297,7 +290,7 @@ void CPluginConfigPageVOD::OnCbnSelchangeComboVodTemplate()
 void CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates()
 {
 	std::vector<CFillParamsInfoDlg::variantInfo> info;
-	for (const auto& item : GetPropertySheet()->m_plugin->get_vod_templates())
+	for (const auto& item : GetPropertySheet()->m_plugin->get_vod_infos())
 	{
 		info.emplace_back(item);
 	}
@@ -314,7 +307,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates()
 		{
 			playlists.emplace_back(std::get<PlaylistTemplateInfo>(item));
 		}
-		GetPropertySheet()->m_plugin->set_vod_templates(playlists);
+		GetPropertySheet()->m_plugin->set_vod_infos(playlists);
 
 		FillControls();
 

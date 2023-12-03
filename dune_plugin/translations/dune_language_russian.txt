@@ -98,6 +98,7 @@ setup_epg_xmltv_cache_caption = Папка кэша XMLTV
 setup_device = Номер устройства
 setup_quality = Качество
 setup_profile = Профиль
+setup_domain = Домен
 setup_stream = Выбор потока
 setup_buffer_no = Без буферизации
 setup_buffer_sec__1 = %s сек.

@@ -35,6 +35,7 @@ public:
 
 	plugin_antifriz();
 	std::map<std::wstring, std::wstring> parse_access_info(TemplateParams& params) override;
+	void fill_domains_list(TemplateParams* params = nullptr) override;
 
 protected:
 	void load_default() override;

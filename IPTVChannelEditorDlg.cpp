@@ -543,7 +543,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		if (!plugin) continue;
 
 		std::wstring title(plugin->get_title());
-		if (!plugin->get_vod_templates().empty())
+		if (!plugin->get_vod_infos().empty())
 			title += L" (VOD)";
 
 		int idx = m_wndPluginType.AddString(title.c_str());
@@ -952,12 +952,8 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	params.profile_idx = m_cur_account.profile_id;
 	params.quality_idx = m_cur_account.quality_id;
 	params.device_idx = m_cur_account.device_id;
+	params.domain_idx = m_cur_account.domain_id;
 	params.playlist_idx = idx;
-
-	if (m_plugin_type == PluginType::enSharaclub)
-	{
-		params.subdomain = m_plugin->get_playlist_domain(m_plugin->get_playlist_idx());
-	}
 
 	if (m_plugin->get_requested_token())
 	{

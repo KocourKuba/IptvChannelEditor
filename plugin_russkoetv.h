@@ -32,6 +32,7 @@ class plugin_russkoetv : public base_plugin
 public:
 
 	plugin_russkoetv();
+	void fill_domains_list(TemplateParams* params = nullptr) override;
 
 protected:
 	void load_default() override;

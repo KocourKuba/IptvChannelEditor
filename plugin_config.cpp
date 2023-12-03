@@ -33,6 +33,11 @@ DEALINGS IN THE SOFTWARE.
 
 std::array<EpgParameters, (size_t)EpgPresets::enCustom> plugin_config::known_presets;
 
+plugin_config::plugin_config()
+{
+	FillEpgPresets();
+}
+
 void plugin_config::set_plugin_defaults(PluginType val)
 {
 	plugin_type = val;
@@ -59,9 +64,34 @@ const PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx) const
 	return playlist_templates[idx];
 }
 
-plugin_config::plugin_config()
+PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx)
 {
-	FillEpgPresets();
+	if (idx != -1 && idx >= (int)playlist_templates.size())
+	{
+		idx = 0;
+	}
+
+	return playlist_templates[idx];
+}
+
+const PlaylistTemplateInfo& plugin_config::get_vod_info(int idx) const
+{
+	if (idx != -1 && idx >= (int)vod_templates.size())
+	{
+		idx = 0;
+	}
+
+	return vod_templates[idx];
+}
+
+PlaylistTemplateInfo& plugin_config::get_vod_info(int idx)
+{
+	if (idx != -1 && idx >= (int)vod_templates.size())
+	{
+		idx = 0;
+	}
+
+	return vod_templates[idx];
 }
 
 void plugin_config::load_default()
@@ -76,6 +106,7 @@ void plugin_config::load_default()
 	qualities_list.clear();
 	devices_list.clear();
 	profiles_list.clear();
+	domains_list.clear();
 	square_icons = false;
 	vod_support = false;
 	vod_m3u = false;
@@ -113,6 +144,12 @@ void plugin_config::load_default()
 	set_epg_preset(1, EpgPresets::enDRM);
 	epg_params[1].epg_param = "second";
 	epg_params[1].epg_domain = "http://epg.drm-play.com";
+
+	fill_servers_list();
+	fill_devices_list();
+	fill_qualities_list();
+	fill_profiles_list();
+	fill_domains_list();
 }
 
 bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)

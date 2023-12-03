@@ -49,24 +49,20 @@ void plugin_ping::load_default()
 
 	provider_url = "http://ping-tv.com/";
 
-	PlaylistTemplateInfo vod_info;
-	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
-	vod_info.pl_domain = "http://pl.ping-tv.com";
-	vod_info.pl_template = "{VOD_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u";
+	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
+	vod_info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u";
 	vod_info.parse_regex = R"((?<title>[^\/]+)\/(?<title_orig>.+)\s(?<year>\d+)$)";
 	vod_templates.emplace_back(vod_info);
 
-	vod_info.set_name(load_string_resource(0, IDS_STRING_NO_ADULT));
-	vod_info.pl_template = "{VOD_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u";
+	vod_info.set_name(load_string_resource(IDS_STRING_NO_ADULT));
+	vod_info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u";
 	vod_info.parse_regex = R"((?<title>[^\/]+)\/(?<title_orig>.+)\s(?<year>\d+)$)";
 	vod_templates.emplace_back(vod_info);
 
 	vod_support = true;
 	vod_m3u = true;
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
-	info.pl_domain = "http://pl.ping-tv.com";
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+)\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>[^\/]+)\/(?<token>.+)$)";
@@ -79,4 +75,19 @@ void plugin_ping::load_default()
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/fox-tv%2Fepg%2F{EPG_ID}.json";
+}
+
+void plugin_ping::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://pl.ping-tv.com");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

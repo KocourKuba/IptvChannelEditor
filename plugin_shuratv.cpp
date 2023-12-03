@@ -50,7 +50,6 @@ void plugin_shuratv::load_default()
 	provider_url = "http://shura.tv/b/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://pl.tvshka.net";
 	info.pl_template = "{PL_DOMAIN}/?uid={PASSWORD}&srv={SERVER_ID}&type=halva";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hls\/.+\.m3u8$)";
 	playlist_templates.emplace_back(info);
@@ -64,7 +63,6 @@ void plugin_shuratv::load_default()
 	epg_params[0].epg_date_format = "{YEAR}-{MONTH}-{DAY}";
 
 	static_servers = true;
-	fill_servers_list();
 }
 
 void plugin_shuratv::fill_servers_list(TemplateParams* params /*= nullptr*/)
@@ -82,4 +80,19 @@ void plugin_shuratv::fill_servers_list(TemplateParams* params /*= nullptr*/)
 	}
 
 	set_servers_list(servers);
+}
+
+void plugin_shuratv::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://pl.tvshka.net");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

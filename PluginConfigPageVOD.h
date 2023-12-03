@@ -62,7 +62,6 @@ private:
 	void UpdateControls();
 
 protected:
-	CEdit m_wndVodPlaylistDomain;
 	CMenuEdit m_wndVodUrlTemplate;
 	CMenuEdit m_wndVodRegex;
 	CMenuEdit m_wndVodUrlPrefix;
@@ -78,7 +77,6 @@ protected:
 	CButton m_wndBtnVodTemplateTest;
 	CButton m_wndBtnEditVodTemplates;
 
-	CString m_VodPlaylistDomain;
 	CString m_VodPlaylistTemplate;
 	CString m_VodParseRegex;
 	CString m_VodUrlPrefix;

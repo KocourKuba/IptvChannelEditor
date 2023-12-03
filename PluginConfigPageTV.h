@@ -69,7 +69,6 @@ private:
 
 protected:
 
-	CEdit m_wndPlaylistDomain;
 	CMenuEdit m_wndPlaylistTemplate;
 	CMenuEdit m_wndParseStream;
 	CEdit m_wndDuration;
@@ -90,7 +89,6 @@ protected:
 	CButton m_wndBtnStreamParseTest;
 	CButton m_wndCheckMapTags;
 
-	CString m_PlaylistDomain;
 	CString m_PlaylistTemplate;
 	CString m_ParseStream;
 	CString m_DuneParams;

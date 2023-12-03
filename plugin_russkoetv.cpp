@@ -52,9 +52,7 @@ void plugin_russkoetv::load_default()
 	provider_url = "https://russkoetv.tv/";
 	provider_api_url = "http://protected-api.com";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
-	info.pl_domain = "http://russkoetv.tv";
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "{PL_DOMAIN}/play/{PASSWORD}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<password>.+)\.m3u8?$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/s\/(?<token>.+)\/.+\.m3u8$)";
@@ -67,4 +65,19 @@ void plugin_russkoetv::load_default()
 	set_epg_preset(0, EpgPresets::enCbilling);
 	epg_params[0].epg_domain = "";
 	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";
+}
+
+void plugin_russkoetv::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://russkoetv.tv");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

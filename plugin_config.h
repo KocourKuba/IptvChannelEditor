@@ -152,6 +152,7 @@ struct TemplateParams
 	int device_idx = 0;
 	int profile_idx = 0;
 	int quality_idx = 0;
+	int domain_idx = 0;
 };
 
 /// <summary>
@@ -174,9 +175,6 @@ public:
 	std::wstring get_name() const { return utils::utf8_to_utf16(name); }
 	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
 	void set_name(UINT ID) { name = utils::utf16_to_utf8(load_string_resource(ID)); }
-
-	std::wstring get_pl_domain() const { return utils::utf8_to_utf16(pl_domain); }
-	void set_pl_domain(const std::wstring& val) { pl_domain = utils::utf16_to_utf8(val); }
 
 	std::wstring get_pl_template() const { return utils::utf8_to_utf16(pl_template); }
 	void set_pl_template(const std::wstring& val) { pl_template = utils::utf16_to_utf8(val); }
@@ -202,7 +200,6 @@ public:
 	friend void to_json(nlohmann::json& j, const PlaylistTemplateInfo& c)
 	{
 		SERIALIZE_STRUCT(j, c, name);
-		SERIALIZE_STRUCT(j, c, pl_domain);
 		SERIALIZE_STRUCT(j, c, pl_template);
 		SERIALIZE_STRUCT(j, c, pl_parse_regex);
 		SERIALIZE_STRUCT(j, c, parse_regex);
@@ -215,7 +212,6 @@ public:
 	friend void from_json(const nlohmann::json& j, PlaylistTemplateInfo& c)
 	{
 		DESERIALIZE_STRUCT(j, c, name);
-		DESERIALIZE_STRUCT(j, c, pl_domain);
 		DESERIALIZE_STRUCT(j, c, pl_template);
 		DESERIALIZE_STRUCT(j, c, pl_parse_regex);
 		DESERIALIZE_STRUCT(j, c, parse_regex);
@@ -226,7 +222,6 @@ public:
 	}
 
 	std::string name;
-	std::string pl_domain;
 	std::string pl_template;
 	std::string pl_parse_regex;
 	std::string parse_regex;
@@ -387,6 +382,7 @@ enum class DynamicParamsType
 	enManifest,
 	enPlaylistTV,
 	enPlaylistVOD,
+	enDomains,
 };
 
 struct DynamicParamsInfo
@@ -563,42 +559,15 @@ public:
 	void set_playlist_idx(size_t idx) { playlist_template_index = idx; }
 
 	/// <summary>
-	/// property playlist domain
-	/// </summary>
-	std::wstring get_playlist_domain(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_pl_domain() : L""; }
-	void set_playlist_domain(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_pl_domain(val); }
-
-	/// <summary>
-	/// property playlist template or url
-	/// </summary>
-	std::wstring get_playlist_template(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_pl_template() : L""; }
-	void set_playlist_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_pl_template(val); }
-
-	/// <summary>
 	/// property playlist templates
 	/// </summary>
-	const std::vector <PlaylistTemplateInfo>& get_playlist_infos() const { return playlist_templates; }
+	const std::vector<PlaylistTemplateInfo>& get_playlist_infos() const { return playlist_templates; }
 	void set_playlist_infos(const std::vector<PlaylistTemplateInfo>& val) { playlist_templates = val; }
 
 	const PlaylistTemplateInfo& get_playlist_info(int idx) const;
+	PlaylistTemplateInfo& get_playlist_info(int idx);
 
-	/// <summary>
-	/// property uri parse template
-	/// </summary>
-	std::wstring get_uri_parse_pattern(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_parse_regex() : L""; }
-	void set_uri_parse_pattern(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_parse_regex(val); }
-
-	/// <summary>
-	/// property uri id parse template
-	/// </summary>
-	std::wstring get_tag_id_match(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_tag_id_match() : L""; }
-	void set_tag_id_match(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_tag_id_match(val); }
-
-	/// <summary>
-	/// property uri id parse template
-	/// </summary>
-	bool get_epg_id_from_id(int idx) const { return (idx != -1 && idx < (int)playlist_templates.size()) ? playlist_templates[idx].get_epg_id_from_id() : false; }
-	void set_epg_id_from_id(int idx, const bool val) { if ((idx != -1 && idx < (int)playlist_templates.size())) playlist_templates[idx].set_epg_id_from_id(val); }
+	const PlaylistTemplateInfo& get_current_playlist_info() const { return get_playlist_info(get_playlist_idx()); };
 
 	/// <summary>
 	/// plugin supports vod
@@ -623,49 +592,19 @@ public:
 	/// <summary>
 	/// property vod templates
 	/// </summary>
-	const std::vector <PlaylistTemplateInfo>& get_vod_templates() const { return vod_templates; }
-	void set_vod_templates(const std::vector<PlaylistTemplateInfo>& val) { vod_templates = val; }
+	const std::vector<PlaylistTemplateInfo>& get_vod_infos() const { return vod_templates; }
+	void set_vod_infos(const std::vector<PlaylistTemplateInfo>& val) { vod_templates = val; }
 
 	/// <summary>
 	/// selected vod template index
 	/// </summary>
-	size_t get_vod_template_idx() const { return vod_template_index; }
-	void set_vod_template_idx(size_t idx) { vod_template_index = idx; }
+	size_t get_vod_info_idx() const { return vod_template_index; }
+	void set_vod_info_idx(size_t idx) { vod_template_index = idx; }
 
-	/// <summary>
-	/// vod domain
-	/// </summary>
-	/// <returns>wstring</returns>
-	std::wstring get_vod_domain(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_pl_domain() : L""; }
-	void set_vod_domain(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_pl_domain(val); }
+	const PlaylistTemplateInfo& get_vod_info(int idx) const;
+	PlaylistTemplateInfo& get_vod_info(int idx);
 
-	/// <summary>
-	/// vod url template
-	/// </summary>
-	/// <returns>wstring</returns>
-	std::wstring get_vod_template(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_pl_template() : L""; }
-	void set_vod_template(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_pl_template(val); }
-
-	/// <summary>
-	/// regex for parsing title
-	/// </summary>
-	/// <returns>wstring</returns>
-	std::wstring get_vod_parse_regex(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_parse_regex() : L""; }
-	void set_vod_parse_regex(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_parse_regex(val); }
-
-	/// <summary>
-	/// url prefix
-	/// </summary>
-	/// <returns>wstring</returns>
-	std::wstring get_vod_url_prefix(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_url_prefix() : L""; }
-	void set_vod_url_prefix(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_url_prefix(val); }
-
-	/// <summary>
-	/// url parameters
-	/// </summary>
-	/// <returns>wstring</returns>
-	std::wstring get_vod_url_params(int idx) const { return (idx != -1 && idx < (int)vod_templates.size()) ? vod_templates[idx].get_url_params() : L""; }
-	void set_vod_url_params(int idx, const std::wstring& val) { if ((idx != -1 && idx < (int)vod_templates.size())) vod_templates[idx].set_url_params(val); }
+	const PlaylistTemplateInfo& get_current_vod_info() const { return get_vod_info(get_vod_info_idx()); };
 
 	/// <summary>
 	/// property square icons, php GUI setting
@@ -750,6 +689,12 @@ public:
 	void set_static_profiles(bool val) { static_profiles = val; }
 
 	/// <summary>
+	/// property domain list static, not loaded from provider settings
+	/// </summary>
+	bool get_static_domains() const { return static_domains; }
+	void set_static_domains(bool val) { static_domains = val; }
+
+	/// <summary>
 	/// property list external bin files (puts in /bin folder)
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
@@ -817,7 +762,7 @@ public:
 	void clear_qualities_list() { qualities_list.clear(); }
 
 	/// <summary>
-	/// returns list of quality variants
+	/// fill list of quality variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<QualityInfo></returns>
@@ -842,7 +787,7 @@ public:
 	void clear_profiles_list() { profiles_list.clear(); }
 
 	/// <summary>
-	/// returns list of profiles variants
+	/// fill list of profiles variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
 	/// <returns>vector<QualityInfo></returns>
@@ -860,6 +805,26 @@ public:
 	/// <param name="params">Template parameters. Can be changed</param>
 	virtual const std::vector<DynamicParamsInfo>& get_profiles_list() { return profiles_list; }
 	virtual void set_profiles_list(const std::vector<DynamicParamsInfo>& info) { profiles_list = info; }
+
+	/// <summary>
+	/// set profile
+	/// </summary>
+	/// <param name="params">Template parameters.</param>
+	virtual bool set_domain(TemplateParams& /*params*/) { return true; }
+
+	/// <summary>
+	/// fill list of domains variants
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	/// <returns>vector<QualityInfo></returns>
+	virtual void fill_domains_list(TemplateParams* params = nullptr) {}
+
+	/// <summary>
+	/// property list of domains
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	virtual const std::vector<DynamicParamsInfo>& get_domains_list() { return domains_list; }
+	virtual void set_domains_list(const std::vector<DynamicParamsInfo>& info) { domains_list = info; }
 
 	friend void to_json(nlohmann::json& j, const plugin_config& c)
 	{
@@ -885,6 +850,7 @@ public:
 		SERIALIZE_STRUCT(j, c, static_qualities); //-V601
 		SERIALIZE_STRUCT(j, c, static_devices); //-V601
 		SERIALIZE_STRUCT(j, c, static_profiles); //-V601
+		SERIALIZE_STRUCT(j, c, static_domains); //-V601
 		SERIALIZE_STRUCT(j, c, streams_config);
 		SERIALIZE_STRUCT(j, c, epg_params);
 		SERIALIZE_STRUCT(j, c, files_list);
@@ -893,6 +859,7 @@ public:
 		SERIALIZE_STRUCT(j, c, qualities_list);
 		SERIALIZE_STRUCT(j, c, devices_list);
 		SERIALIZE_STRUCT(j, c, profiles_list);
+		SERIALIZE_STRUCT(j, c, domains_list);
 		SERIALIZE_STRUCT(j, c, custom_epg_urls);
 	}
 
@@ -919,6 +886,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, static_qualities);
 		DESERIALIZE_STRUCT(j, c, static_devices);
 		DESERIALIZE_STRUCT(j, c, static_profiles);
+		DESERIALIZE_STRUCT(j, c, static_domains);
 		DESERIALIZE_STRUCT(j, c, streams_config);
 		DESERIALIZE_STRUCT(j, c, epg_params);
 		DESERIALIZE_STRUCT(j, c, files_list);
@@ -927,6 +895,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, qualities_list);
 		DESERIALIZE_STRUCT(j, c, devices_list);
 		DESERIALIZE_STRUCT(j, c, profiles_list);
+		DESERIALIZE_STRUCT(j, c, domains_list);
 		DESERIALIZE_STRUCT(j, c, custom_epg_urls);
 	}
 
@@ -978,6 +947,7 @@ protected:
 	bool static_qualities = false;
 	bool static_devices = false;
 	bool static_profiles = false;
+	bool static_domains = true;
 	// selected playlist template
 	size_t playlist_template_index = 0;
 	// available playlist templates
@@ -996,6 +966,7 @@ protected:
 	std::vector<DynamicParamsInfo> qualities_list;
 	std::vector<DynamicParamsInfo> devices_list;
 	std::vector<DynamicParamsInfo> profiles_list;
+	std::vector<DynamicParamsInfo> domains_list;
 	std::array<EpgParameters, 4> epg_presets;
 	std::vector<DynamicParamsInfo> custom_epg_urls;
 };

@@ -50,7 +50,6 @@ void plugin_kineskop::load_default()
 	provider_url = "http://kineskop.club/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://knkp.in";
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/{SERVER}/1";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<host>.+)\/(?<id>.+)\/(?<token>.+)\.m3u8$)";
 	playlist_templates.emplace_back(info);
@@ -61,7 +60,6 @@ void plugin_kineskop::load_default()
 	epg_params[0].epg_url = "{EPG_DOMAIN}/kineskop%2Fepg%2F{EPG_ID}.json";
 
 	static_servers = true;
-	fill_servers_list();
 }
 
 void plugin_kineskop::fill_servers_list(TemplateParams* params /*= nullptr*/)
@@ -79,4 +77,19 @@ void plugin_kineskop::fill_servers_list(TemplateParams* params /*= nullptr*/)
 	}
 
 	set_servers_list(servers);
+}
+
+void plugin_kineskop::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://knkp.in");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

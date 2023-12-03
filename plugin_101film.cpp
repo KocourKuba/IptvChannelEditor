@@ -49,15 +49,13 @@ void plugin_101film::load_default()
 
 	provider_url = "http://101film.org/";
 
-	PlaylistTemplateInfo vod_info;
-	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
-	vod_info.pl_domain = "http://pl.101film.org";
-	vod_info.pl_template = "{VOD_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u?srv={SERVER_ID}";
+	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
+	vod_info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u?srv={SERVER_ID}";
 	vod_info.parse_regex = R"((?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$)";
 	vod_templates.emplace_back(vod_info);
 
 	vod_info.set_name(load_string_resource(IDS_STRING_NO_ADULT));
-	vod_info.pl_template = "{VOD_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u?srv={SERVER_ID}";
+	vod_info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u?srv={SERVER_ID}";
 	vod_info.parse_regex = R"((?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$)";
 	vod_templates.emplace_back(vod_info);
 
@@ -65,7 +63,6 @@ void plugin_101film::load_default()
 	vod_m3u = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://pl.101film.org";
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u?srv={SERVER_ID}";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+)\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>[^\/]+)\/(?<token>.+)$)";
@@ -79,8 +76,6 @@ void plugin_101film::load_default()
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/smile%2Fepg%2F{EPG_ID}.json";
-
-	fill_servers_list();
 }
 
 void plugin_101film::fill_servers_list(TemplateParams* params /*= nullptr*/)
@@ -99,4 +94,19 @@ void plugin_101film::fill_servers_list(TemplateParams* params /*= nullptr*/)
 	}
 
 	set_servers_list(servers);
+}
+
+void plugin_101film::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://pl.101film.org");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

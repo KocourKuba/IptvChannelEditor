@@ -50,7 +50,6 @@ void plugin_mymagic::load_default()
 	provider_url = "http://mymagic.tv/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://pl.mymagic.tv";
 	info.pl_template = "{PL_DOMAIN}/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/srv\/(?<server>.+)\/(?<quality>.+)\/(?<login>.+)\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>[^\/]+)\/(?<token>.+)$)";
@@ -65,9 +64,6 @@ void plugin_mymagic::load_default()
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/magic%2Fepg%2F{EPG_ID}.json";
-
-	fill_servers_list();
-	fill_qualities_list();
 }
 
 void plugin_mymagic::fill_servers_list(TemplateParams* params /*= nullptr*/)
@@ -102,4 +98,19 @@ void plugin_mymagic::fill_qualities_list(TemplateParams* params /*= nullptr*/)
 	}
 
 	set_qualities_list(quality);
+}
+
+void plugin_mymagic::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://pl.mymagic.tv");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

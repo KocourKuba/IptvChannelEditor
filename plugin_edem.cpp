@@ -47,7 +47,6 @@ void plugin_edem::load_default()
 	vod_filter = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://epg.it999.ru";
 	info.pl_template = "{PL_DOMAIN}/edem_epg_ico.m3u8";
 	info.pl_parse_regex = R"(^https?:\/.*\/playlists\/uplist\/.*\/playlist\.m3u8$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/).+\/iptv\/(?<ott_key>.+)\/(?<id>.+)\/.*\.m3u8$)";
@@ -58,7 +57,7 @@ void plugin_edem::load_default()
 	playlist_templates.emplace_back(info);
 
 	PlaylistTemplateInfo vod_info;
-	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
+	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
 	vod_info.pl_template = "{SUBDOMAIN}";
 	vod_templates.emplace_back(vod_info);
 
@@ -73,4 +72,19 @@ void plugin_edem::load_default()
 	//streams_config[0].dune_params = "hls_forced_type:event";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/edem%2Fepg%2F{EPG_ID}.json";
+}
+
+void plugin_edem::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://epg.it999.ru");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

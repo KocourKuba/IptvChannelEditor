@@ -49,9 +49,7 @@ void plugin_ottiptv::load_default()
 
 	provider_url = "https://ottiptv.ru/";
 
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
-	info.pl_domain = "https://ottiptv.ru";
+	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(https?://.+/(?<login>.+)/(?<password>.+)/.+$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<var1>.+)\/(?<id>.+)\/video\.m3u8\?token=(?<token>.+)$)";
@@ -67,4 +65,19 @@ void plugin_ottiptv::load_default()
 	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{VAR1}/{ID}/index-{START}-{DURATION}.ts?token={TOKEN}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/ottiptv%2Fepg%2F{EPG_ID}.json";
+}
+
+void plugin_ottiptv::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"https://ottiptv.ru");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

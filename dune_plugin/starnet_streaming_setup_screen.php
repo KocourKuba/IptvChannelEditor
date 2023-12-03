@@ -23,6 +23,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
     const CONTROL_DEVICE = 'device';
     const CONTROL_PROFILE = 'profile';
     const CONTROL_QUALITY = 'quality';
+    const CONTROL_DOMAIN = 'domain';
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -130,6 +131,18 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
             Control_Factory::add_combobox($defs, $this, null,
                 self::CONTROL_PROFILE, TR::t('setup_profile'),
                 $profile_id, $profiles, self::CONTROLS_WIDTH, true);
+        }
+
+        //////////////////////////////////////
+        // select domain
+        $domains = $this->plugin->config->get_domains();
+        if (count($domains) > 1) {
+            $domain_id = $this->plugin->config->get_domain_id();
+            $domain_name = $this->plugin->config->get_domain_name();
+            hd_debug_print("Selected domain: id: '$domain_id' name: '$domain_name'");
+            Control_Factory::add_combobox($defs, $this, null,
+                self::CONTROL_DOMAIN, TR::t('setup_domain'),
+                $domain_id, $domains, self::CONTROLS_WIDTH, true);
         }
 
         //////////////////////////////////////
@@ -311,6 +324,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
             case self::CONTROL_DEVICE:
             case self::CONTROL_PROFILE:
             case self::CONTROL_QUALITY:
+            case self::CONTROL_DOMAIN:
                 $func_get = "get_{$control_id}_id";
                 $func_set = "set_{$control_id}_id";
                 if ($this->plugin->config->{$func_get}() !== $user_input->{$control_id}) {

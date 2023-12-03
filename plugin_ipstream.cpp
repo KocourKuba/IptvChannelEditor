@@ -53,7 +53,6 @@ void plugin_ipstream::load_default()
 	provider_url = "https://www.ipstream.one/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://file.ipstr.im";
 	info.pl_template = "{PL_DOMAIN}/iptv/m3u_plus-{PASSWORD}-m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.+\/iptv\/m3u_plus-(?<password>.+)-m3u8$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u\d?$)";
@@ -72,4 +71,19 @@ void plugin_ipstream::load_default()
 	set_epg_preset(0, EpgPresets::enCbilling);
 	epg_params[0].epg_domain = "http://api.playtv.pro";
 	epg_params[0].epg_url = "{EPG_DOMAIN}/get/?type=epg&ch={EPG_ID}";
+}
+
+void plugin_ipstream::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://file.ipstr.im");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

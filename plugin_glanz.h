@@ -32,6 +32,7 @@ class plugin_glanz	: public base_plugin
 public:
 
 	plugin_glanz();
+	void fill_domains_list(TemplateParams* params = nullptr) override;
 
 protected:
 	void load_default() override;

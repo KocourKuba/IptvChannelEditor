@@ -50,7 +50,6 @@ void plugin_tvteam::load_default()
 	provider_url = "https://tv.team/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://tv.team";
 	info.pl_template = "{PL_DOMAIN}/pl/11/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl\/11\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/.+\/.+\?token=(?<token>.+)$)";
@@ -70,4 +69,19 @@ void plugin_tvteam::load_default()
 	epg_params[0].epg_url = "{EPG_DOMAIN}/{EPG_ID}.json";
 
 	epg_params[1].epg_url = "{EPG_DOMAIN}/tvteam%2Fepg%2F{EPG_ID}.json";
+}
+
+void plugin_tvteam::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://tv.team");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

@@ -33,6 +33,7 @@ class plugin_edem : public base_plugin
 public:
 
 	plugin_edem();
+	void fill_domains_list(TemplateParams* params = nullptr) override;
 
 protected:
 	void load_default() override;

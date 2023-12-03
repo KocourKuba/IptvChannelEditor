@@ -50,7 +50,6 @@ void plugin_bcumedia::load_default()
 	provider_url = "https://bcumedia.pro/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "https://bcumedia.pro";
 	info.pl_template = "{PL_DOMAIN}/playlist/hls/{PASSWORD}.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/hls\/(?<password>.+)\.m3u8?$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
@@ -67,4 +66,19 @@ void plugin_bcumedia::load_default()
 	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{TOKEN}/archive-{START}-{DURATION}.ts?token={PASSWORD}";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/bcu%2Fepg%2F{EPG_ID}.json";
+}
+
+void plugin_bcumedia::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"https://bcumedia.pro");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

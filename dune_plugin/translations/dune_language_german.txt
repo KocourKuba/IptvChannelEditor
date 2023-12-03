@@ -98,6 +98,7 @@ setup_epg_xmltv_cache_caption = XMLTV-Cache-Ordner
 setup_device = Gerät #
 setup_quality = Qualität
 setup_profile = Profil
+setup_domain = Domain
 setup_stream = Stream-Typ
 setup_buffer_no = Keine Pufferung
 setup_buffer_sec__1 = %s s

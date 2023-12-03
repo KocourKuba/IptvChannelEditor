@@ -50,7 +50,6 @@ void plugin_filmax::load_default()
 	provider_url = "https://filmax-tv.ru/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "http://lk.filmax-tv.ru";
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/(?<login>.+)\/(?<password>.+)\/(?:hls|ts)\/(?<server>.+)\/playlist\.m3u8$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<int_id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
@@ -67,7 +66,6 @@ void plugin_filmax::load_default()
 	epg_params[0].epg_url = "{EPG_DOMAIN}/filmax%2Fepg%2F{EPG_ID}.json";
 
 	static_servers = true;
-	fill_servers_list();
 }
 
 void plugin_filmax::fill_servers_list(TemplateParams* params /*= nullptr*/)
@@ -81,8 +79,24 @@ void plugin_filmax::fill_servers_list(TemplateParams* params /*= nullptr*/)
 		DynamicParamsInfo info;
 		info.set_id(std::to_wstring(i + 1));
 		info.set_name(load_string_resource(1049, IDS_STRING_FILMAX_P1 + i));
+		if (info.get_name().empty()) continue;
 		servers.emplace_back(info);
 	}
 
 	set_servers_list(servers);
+}
+
+void plugin_filmax::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"http://lk.filmax-tv.ru");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

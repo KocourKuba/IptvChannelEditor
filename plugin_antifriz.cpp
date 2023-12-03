@@ -58,7 +58,6 @@ void plugin_antifriz::load_default()
 	vod_support = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_domain = "https://af-play.com";
 	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<password>.+)\.m3u8?$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/.+\/.+\.m3u8$)";
@@ -131,4 +130,19 @@ std::map<std::wstring, std::wstring> plugin_antifriz::parse_access_info(Template
 	}
 
 	return info;
+}
+
+void plugin_antifriz::fill_domains_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_domains_list().empty())
+		return;
+
+	DynamicParamsInfo info;
+	info.set_id(L"0");
+	info.set_name(L"https://af-play.com");
+
+	std::vector<DynamicParamsInfo> domains;
+	domains.emplace_back(info);
+
+	set_domains_list(domains);
 }

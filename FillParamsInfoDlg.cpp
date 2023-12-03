@@ -208,6 +208,7 @@ void CFillParamsInfoDlg::OnBnClickedButtonAdd()
 		case DynamicParamsType::enQuality:
 		case DynamicParamsType::enProfiles:
 		case DynamicParamsType::enFiles:
+		case DynamicParamsType::enDomains:
 			param = DynamicParamsInfo(std::to_string(cnt), fmt::format("name{:d}", cnt));
 			break;
 		case DynamicParamsType::enPlaylistTV:

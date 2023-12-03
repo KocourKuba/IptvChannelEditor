@@ -54,6 +54,7 @@ protected:
 	afx_msg void OnBnClickedButtonEditDevices();
 	afx_msg void OnBnClickedButtonEditQuality();
 	afx_msg void OnBnClickedButtonEditProfiles();
+	afx_msg void OnBnClickedButtonEditDomains();
 
 	afx_msg void OnCbnSelchangeComboAccessType();
 
@@ -79,15 +80,17 @@ protected:
 	CComboBox m_wndAccessType;
 	CButton m_wndBtnExtFiles;
 	CButton m_wndBtnManifest;
-	CButton m_wndChkStaticServers;
 	CButton m_wndBtnServers;
-	CButton m_wndChkStaticDevices;
+	CButton m_wndChkStaticServers;
 	CButton m_wndBtnDevices;
-	CButton m_wndChkStaticQualities;
-	CButton m_wndChkStaticProfiles;
+	CButton m_wndChkStaticDevices;
 	CButton m_wndBtnQualities;
-	CButton m_wndChkSquareIcons;
+	CButton m_wndChkStaticQualities;
 	CButton m_wndBtnProfiles;
+	CButton m_wndChkStaticProfiles;
+	CButton m_wndBtnDomains;
+	CButton m_wndChkStaticDomains;
+	CButton m_wndChkSquareIcons;
 	CButton m_wndChkEnableBalance;
 
 	CString m_Name;
