@@ -57,6 +57,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_bcumedia.h"
 #include "plugin_101film.h"
 #include "plugin_ipstream.h"
+#include "plugin_onlineott.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -195,6 +196,10 @@ std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 
 		case PluginType::enIpstream:
 			plugin = std::make_shared<plugin_ipstream>();
+			break;
+
+		case PluginType::enOnlineOtt:
+			plugin = std::make_shared<plugin_onlineott>();
 			break;
 
 		default:

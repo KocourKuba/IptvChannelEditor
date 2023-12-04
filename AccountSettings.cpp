@@ -154,6 +154,7 @@ static std::vector<PluginType> all_plugins = {
 	{ PluginType::enOttIptv,    },
 	{ PluginType::en101film,    },
 	{ PluginType::enIpstream,   },
+	{ PluginType::enOnlineOtt,   },
 	{ PluginType::enCustom,     },
 };
 

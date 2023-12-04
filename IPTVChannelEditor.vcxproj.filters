@@ -348,6 +348,9 @@
     <ClInclude Include="plugin_ipstream.h">
       <Filter>Header Files\plugin\append</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_onlineott.h">
+      <Filter>Header Files\plugin\shift</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -598,6 +601,9 @@
     </ClCompile>
     <ClCompile Include="plugin_ipstream.cpp">
       <Filter>Source Files\plugin\append</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_onlineott.cpp">
+      <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

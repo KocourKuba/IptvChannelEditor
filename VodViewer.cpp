@@ -352,6 +352,14 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	TemplateParams params;
 	params.login = m_account.get_login();
 	params.password = m_account.get_password();
+	params.ott_key = m_account.get_ott_key();
+	params.subdomain = m_account.get_subdomain();
+	params.domain_idx = m_account.domain_id;
+	params.server_idx = m_account.server_id;
+	params.device_idx = m_account.device_id;
+	params.profile_idx = m_account.profile_id;
+	params.quality_idx = m_account.quality_id;
+
 	const auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
 
 	std::stringstream data;
