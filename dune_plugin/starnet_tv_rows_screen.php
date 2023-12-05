@@ -554,7 +554,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     }
 
                     $cache_engine = $this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
-                    if ($cache_engine !== ENGINE_JSON) {
+                    if ($cache_engine === ENGINE_XMLTV) {
                         $menu_items = $this->plugin->epg_source_menu($this);
                     }
 

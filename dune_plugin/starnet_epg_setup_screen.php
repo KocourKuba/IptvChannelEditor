@@ -35,10 +35,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         // EPG Source
         $epg_source_ops = array();
         $epg_source_ops[ENGINE_JSON] = TR::t('setup_epg_engine_json');
-        if (class_exists('SQLite3')) {
-            $epg_source_ops[ENGINE_SQLITE] = TR::t('setup_epg_engine_sqlite');
-        }
-        $epg_source_ops[ENGINE_LEGACY] = TR::t('setup_epg_engine_legacy');
+        $epg_source_ops[ENGINE_XMLTV] = TR::t('setup_epg_engine_xmltv');
 
         $cache_engine = $this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
 
@@ -46,7 +43,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             PARAM_EPG_CACHE_ENGINE, TR::t('setup_epg_source'),
             $cache_engine, $epg_source_ops, self::CONTROLS_WIDTH, true);
 
-        if ($cache_engine !== ENGINE_JSON) {
+        if ($cache_engine === ENGINE_XMLTV) {
             //////////////////////////////////////
             // Fuzzy search
             $fuzzy_search = $this->plugin->get_parameter(PARAM_FUZZY_SEARCH_EPG, SetupControlSwitchDefs::switch_off);

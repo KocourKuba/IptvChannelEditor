@@ -265,7 +265,7 @@ class Default_Dune_Plugin implements DunePlugin
                 $xmltv_source = $all_source->get($key);
             }
 
-            if (class_exists('SQLite3') && $engine === ENGINE_SQLITE) {
+            if (class_exists('SQLite3')) {
                 hd_print("Using sqlite cache engine");
                 $this->epg_manager = new Epg_Manager_Sql($this->config->plugin_info['app_version'], $cache_dir, $xmltv_source);
             } else {

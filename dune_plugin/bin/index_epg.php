@@ -28,16 +28,7 @@ if ($cache_engine === ENGINE_JSON) {
     return;
 }
 
-if ($cache_engine === ENGINE_SQLITE) {
-    if (!class_exists('SQLite3')) {
-        hd_print("Selected Engine SQLite but this Dune do not support it. Switching to Legacy");
-        $cache_engine = ENGINE_LEGACY;
-    }
-} else {
-    $cache_engine = ENGINE_LEGACY;
-}
-
-if ($cache_engine === ENGINE_SQLITE) {
+if (class_exists('SQLite3')) {
     hd_debug_print("Using sqlite cache engine");
     $epg_man = new Epg_Manager_Sql(DuneSystem::$properties['plugin_version'], $cache_dir, $xmltv_url);
 } else {

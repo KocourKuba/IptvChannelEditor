@@ -103,7 +103,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             case GUI_EVENT_KEY_POPUP_MENU:
                 $cache_engine = $this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
                 $menu_items = array();
-                if ($cache_engine !== ENGINE_JSON) {
+                if ($cache_engine === ENGINE_XMLTV) {
                     $menu_items = $this->plugin->epg_source_menu($this);
                 }
                 return Action_Factory::show_popup_menu($menu_items);
