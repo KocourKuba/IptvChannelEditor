@@ -63,7 +63,7 @@ void plugin_onlineott::load_default()
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u";
-	info.pl_parse_regex = R"(^https?:\/\/[^\/]+\/(?<login>.+)\/(?<password>.+)\/(?<server>.+)\/.*$)";
+	info.pl_parse_regex = R"(^https?:\/\/[^\/]+\/(?<login>.+)\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>[^\/]+)\/(?<token>.+)$)";
 	info.tag_id_match = "CUID";
 	playlist_templates.emplace_back(info);
