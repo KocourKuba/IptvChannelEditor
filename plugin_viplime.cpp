@@ -49,8 +49,15 @@ void plugin_viplime::load_default()
 
 	provider_url = "http://viplime.fun/";
 
+	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
+	vod_info.pl_template = "http://m.{PL_DOMAIN}/f/{PASSWORD}/playlist.m3u8";
+	vod_info.parse_regex = R"((?<title>[^\(]*)\s\((?<year>\d+)\)$)";
+	vod_templates.emplace_back(vod_info);
+	vod_support = true;
+	vod_m3u = true;
+
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "{PL_DOMAIN}/high/{PASSWORD}/playlist.m3u8";
+	info.pl_template = "http://{PL_DOMAIN}/high/{PASSWORD}/playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/.*\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<quality>.+)\/(?<token>.+)\/.+$)";
 	info.tag_id_match = "tvg-id";
@@ -107,7 +114,7 @@ void plugin_viplime::fill_domains_list(TemplateParams* params /*= nullptr*/)
 
 	DynamicParamsInfo info;
 	info.set_id(L"0");
-	info.set_name(L"http://cdntv.online");
+	info.set_name(L"cdntv.online");
 
 	std::vector<DynamicParamsInfo> domains;
 	domains.emplace_back(info);
