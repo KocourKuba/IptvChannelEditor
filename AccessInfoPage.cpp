@@ -568,6 +568,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			case PluginType::enItv:
 			case PluginType::enOneCent:
 			case PluginType::enTVClub:
+			case PluginType::enTvizi:
 			case PluginType::enLightIptv:
 			case PluginType::enOneUsd:
 			case PluginType::enOttclub:

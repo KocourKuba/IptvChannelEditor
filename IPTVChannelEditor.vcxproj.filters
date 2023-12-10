@@ -351,6 +351,9 @@
     <ClInclude Include="plugin_onlineott.h">
       <Filter>Header Files\plugin\shift</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_tvizi.h">
+      <Filter>Header Files\plugin\flussionic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -604,6 +607,9 @@
     </ClCompile>
     <ClCompile Include="plugin_onlineott.cpp">
       <Filter>Source Files\plugin\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_tvizi.cpp">
+      <Filter>Source Files\plugin\flussonic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

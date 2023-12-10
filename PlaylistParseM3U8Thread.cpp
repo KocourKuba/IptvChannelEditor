@@ -95,7 +95,8 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					if (!m_parent_plugin->get_epg_parameter(1).epg_url.empty())
 					{
 						entry->set_epg_id(1, entry->get_epg_id(0));
-						if (m_parent_plugin->get_plugin_type() == PluginType::enIptvOnline && entry->get_epg_id(0).front() == 'X')
+						const auto& type = m_parent_plugin->get_plugin_type();
+						if ((type == PluginType::enIptvOnline || type == PluginType::enTvizi) && entry->get_epg_id(0).front() == 'X')
 						{
 							entry->set_epg_id(0, entry->get_epg_id(0).substr(1));
 						}

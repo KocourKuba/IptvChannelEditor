@@ -58,6 +58,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_101film.h"
 #include "plugin_ipstream.h"
 #include "plugin_onlineott.h"
+#include "plugin_tvizi.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -200,6 +201,10 @@ std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 
 		case PluginType::enOnlineOtt:
 			plugin = std::make_shared<plugin_onlineott>();
+			break;
+
+		case PluginType::enTvizi:
+			plugin = std::make_shared<plugin_tvizi>();
 			break;
 
 		default:

@@ -249,6 +249,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="plugin_ipstream.h" />
     <ClInclude Include="plugin_onlineott.h" />
     <ClInclude Include="plugin_ottiptv.h" />
+    <ClInclude Include="plugin_tvizi.h" />
     <ClInclude Include="plugin_yosso.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="TooltipPropertyPage.h" />
@@ -366,6 +367,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="plugin_ipstream.cpp" />
     <ClCompile Include="plugin_onlineott.cpp" />
     <ClCompile Include="plugin_ottiptv.cpp" />
+    <ClCompile Include="plugin_tvizi.cpp" />
     <ClCompile Include="plugin_yosso.cpp" />
     <ClCompile Include="TooltipPropertyPage.cpp" />
     <ClCompile Include="ResizedPropertySheet.cpp" />
