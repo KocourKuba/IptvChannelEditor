@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20231203212022" scan="293" scanned="20231203211951">
+<document created="20211012165442" version="4.0.374" date="20231210154358" scan="294" scanned="20231210154303">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20231203201804" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20231210143646" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -5321,6 +5321,36 @@
         <row id="IDS_STRING_YOSSO_P10" locked="1">RHLS (GlobalCache CDN)</row>
         <row id="IDS_STRING_YOSSO_P9" locked="1">GN (Ukraine, Kiev)</row>
       </node>
+      <node class="TWindowsStringNode" name="35" state="0" created="20231210154303" resid="35" langid="1033">
+        <row id="IDS_STRING_IPTVONLINE_P0" state="0">
+          <native>Poland</native>
+          <lang id="ru" date="20231210154310">Польша</lang>
+        </row>
+        <row id="IDS_STRING_IPTVONLINE_P1" state="0">
+          <native>Germany</native>
+          <lang id="ru" date="20231210154315">Германия</lang>
+        </row>
+        <row id="IDS_STRING_IPTVONLINE_P2" state="0">
+          <native>Netherlands</native>
+          <lang id="ru" date="20231210154329">Нидерланды</lang>
+        </row>
+        <row id="IDS_STRING_IPTVONLINE_P3" state="0">
+          <native>Russia</native>
+          <lang id="ru" date="20231210154333">Россия</lang>
+        </row>
+        <row id="IDS_STRING_IPTVONLINE_P4" state="0">
+          <native>Canada</native>
+          <lang id="ru" date="20231210154338">Канада</lang>
+        </row>
+        <row id="IDS_STRING_IPTVONLINE_P5" state="0">
+          <native>Greece</native>
+          <lang id="ru" date="20231210154343">Греция</lang>
+        </row>
+        <row id="IDS_STRING_IPTVONLINE_P6" state="0">
+          <native>Ukraine</native>
+          <lang id="ru" date="20231210154348">Украина</lang>
+        </row>
+      </node>
       <node class="TWindowsStringNode" name="38" created="20230501182521" resid="38" langid="1033">
         <row id="IDS_STRING_BUTTON_RESET">
           <native>Reset colors to the default</native>
@@ -5439,9 +5469,9 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20231203211951">
-          <prev>7.1.1832, 3 Nov 2023</prev>
-          <native>7.1.1858, 21 Nov 2023</native>
+        <row id="FileVersion" locked="1" state="3" changed="20231210154303">
+          <prev>7.1.1858, 21 Nov 2023</prev>
+          <native>7.1.1868, 5 Dec 2023</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" state="3" changed="20231106150713">
           <prev>6</prev>
@@ -5451,16 +5481,16 @@
           <prev>8</prev>
           <native>1</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20231203211951">
-          <prev>1832</prev>
-          <native>1858</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20231210154303">
+          <prev>1858</prev>
+          <native>1868</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20231203211951">
-          <prev>7.1.1832</prev>
-          <native>7.1.1858</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20231210154303">
+          <prev>7.1.1858</prev>
+          <native>7.1.1868</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" state="3" changed="20231106150713">
           <prev>6</prev>
@@ -5470,9 +5500,9 @@
           <prev>8</prev>
           <native>1</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20231203211951">
-          <prev>1832</prev>
-          <native>1858</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20231210154303">
+          <prev>1858</prev>
+          <native>1868</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

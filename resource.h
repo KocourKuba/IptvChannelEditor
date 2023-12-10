@@ -393,6 +393,13 @@
 #define IDS_STRING_SMILE_P2             532
 #define IDS_STRING_SMILE_P3             533
 #define IDS_STRING_SMILE_P4             534
+#define IDS_STRING_IPTVONLINE_P0        550
+#define IDS_STRING_IPTVONLINE_P1        551
+#define IDS_STRING_IPTVONLINE_P2        552
+#define IDS_STRING_IPTVONLINE_P3        553
+#define IDS_STRING_IPTVONLINE_P4        554
+#define IDS_STRING_IPTVONLINE_P5        555
+#define IDS_STRING_IPTVONLINE_P6        556
 #define IDS_STRING_BUTTON_RESET         600
 #define IDS_STRING_CHECK_CMP_TITLE      601
 #define IDS_STRING_CHECK_CMP_EPG1       613
@@ -723,7 +730,7 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281

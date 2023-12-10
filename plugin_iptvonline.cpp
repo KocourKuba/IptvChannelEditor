@@ -58,14 +58,33 @@ void plugin_iptvonline::load_default()
 	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8";
-	streams_config[0].uri_arc_template = "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8";
+	streams_config[0].uri_template = "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video.m3u8";
+	streams_config[0].uri_arc_template = "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8";
 
-	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/mpegts";
-	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts";
+	streams_config[1].uri_template = "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/mpegts";
+	streams_config[1].uri_arc_template = "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts";
 
 	epg_params[0].epg_url = "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json";
 	epg_params[1].epg_url = "{EPG_DOMAIN}/ottiptv%2Fepg%2F{EPG_ID}.json";
+}
+
+void plugin_iptvonline::fill_servers_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_servers_list().empty())
+		return;
+
+	std::vector<DynamicParamsInfo> servers =
+	{
+		{ "pl.iptv.monster", utils::utf16_to_utf8(load_string_resource(IDS_STRING_IPTVONLINE_P0)) },
+		{ "de.iptv.monster", utils::utf16_to_utf8(load_string_resource(IDS_STRING_IPTVONLINE_P1)) },
+		{ "nl.iptv.monster", utils::utf16_to_utf8(load_string_resource(IDS_STRING_IPTVONLINE_P2)) },
+		{ "ru.iptv.monster", utils::utf16_to_utf8(load_string_resource(IDS_STRING_IPTVONLINE_P3)) },
+		{ "ca.iptv.monster", utils::utf16_to_utf8(load_string_resource(IDS_STRING_IPTVONLINE_P4)) },
+		{ "gr.iptv.monster", utils::utf16_to_utf8(load_string_resource(IDS_STRING_IPTVONLINE_P0)) },
+		{ "ukr.iptv.monster", utils::utf16_to_utf8(load_string_resource(IDS_STRING_IPTVONLINE_P6)) },
+	};
+
+	set_servers_list(servers);
 }
 
 void plugin_iptvonline::fill_domains_list(TemplateParams* params /*= nullptr*/)
