@@ -50,6 +50,7 @@ void plugin_glanz::load_default()
 
 	provider_url = "http://ottg.cc/";
 
+	vod_templates.clear();
 	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_info.pl_template = "http://api.{PL_DOMAIN}/playlist/vod?login={LOGIN}&password={PASSWORD}";
 	vod_templates.emplace_back(vod_info);

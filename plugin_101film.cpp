@@ -49,6 +49,7 @@ void plugin_101film::load_default()
 
 	provider_url = "http://101film.org/";
 
+	vod_templates.clear();
 	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u?srv={SERVER_ID}";
 	vod_info.parse_regex = R"((?<title>[^\(]*)\((?<country>[^\d]+)\s(?<year>\d+)\)$)";

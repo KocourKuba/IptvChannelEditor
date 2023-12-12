@@ -49,6 +49,7 @@ void plugin_onlineott::load_default()
 
 	provider_url = "https://www.onlineott-tv.site/";
 
+	vod_templates.clear();
 	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u";
 	vod_info.parse_regex = R"((?<title>[^\/]+)\s+\((?<country>.+)\s(?<year>\d+)\)$)";

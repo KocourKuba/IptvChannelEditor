@@ -43,6 +43,17 @@ void plugin_edem::load_default()
 {
 	base_plugin::load_default();
 
+	title = "iEdem/iLook TV";
+	name = "iedem.tv";
+	access_type = AccountAccessType::enOtt;
+
+	provider_url = "https://ilook.tv/";
+
+	vod_templates.clear();
+	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
+	vod_info.pl_template = "{SUBDOMAIN}";
+	vod_templates.emplace_back(vod_info);
+
 	vod_support = true;
 	vod_filter = true;
 
@@ -55,17 +66,6 @@ void plugin_edem::load_default()
 	info.set_name(IDS_STRING_EDEM_THEMATIC);
 	info.pl_template = "{PL_DOMAIN}/edem_epg_ico2.m3u8";
 	playlist_templates.emplace_back(info);
-
-	PlaylistTemplateInfo vod_info;
-	vod_info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
-	vod_info.pl_template = "{SUBDOMAIN}";
-	vod_templates.emplace_back(vod_info);
-
-	title = "iEdem/iLook TV";
-	name = "iedem.tv";
-	access_type = AccountAccessType::enOtt;
-
-	provider_url = "https://ilook.tv/";
 
 	streams_config[0].uri_template = "{SCHEME}junior.edmonst.net/iptv/{OTT_KEY}/{ID}/index.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";

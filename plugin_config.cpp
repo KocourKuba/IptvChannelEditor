@@ -126,6 +126,9 @@ void plugin_config::load_default()
 		{"update", "#update" },
 	};
 
+	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
+	vod_templates.emplace_back(vod_info);
+
 	StreamParameters hls;
 	hls.uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 	hls.uri_custom_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";

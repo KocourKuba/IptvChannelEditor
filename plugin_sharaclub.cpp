@@ -83,8 +83,8 @@ void plugin_sharaclub::load_default()
 
 	provider_url = "https://shara.club/";
 
-	PlaylistTemplateInfo vod_info;
-	vod_info.set_name(load_string_resource(0, IDS_STRING_EDEM_STANDARD));
+	vod_templates.clear();
+	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_info.pl_template = "{API_URL}/kino-full/{LOGIN}-{PASSWORD}";
 	vod_templates.emplace_back(vod_info);
 

@@ -543,7 +543,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		if (!plugin) continue;
 
 		std::wstring title(plugin->get_title());
-		if (!plugin->get_vod_infos().empty())
+		if (plugin->get_vod_support())
 			title += L" (VOD)";
 
 		int idx = m_wndPluginType.AddString(title.c_str());
