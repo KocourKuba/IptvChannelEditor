@@ -50,6 +50,8 @@ custom = Custom
 video_aspect_ratio = Video aspect ratio
 channel_info_dlg = Channel info
 scroll_page = Scroll page
+storage = Storage
+internal = Internal storage
 
 plugin_all_channels = All channels
 plugin_favorites = Favorites

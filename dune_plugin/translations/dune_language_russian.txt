@@ -50,6 +50,8 @@ custom = Произвольный
 video_aspect_ratio = Масштабирование изображения
 channel_info_dlg = Информация о канале
 scroll_page = Прокрутка страницы
+storage = Системный диск
+internal = Внутреннее хранилище
 
 plugin_all_channels = Все каналы
 plugin_favorites = Избранное

@@ -50,6 +50,8 @@ custom = Brauch
 video_aspect_ratio = Video-Seitenverhältnis
 channel_info_dlg = Kanalinformationen
 scroll_page = Seite scrollen
+storage = Lagerung
+internal = intern
 
 plugin_all_channels = Alle Kanäle
 plugin_favorites = Favoriten
