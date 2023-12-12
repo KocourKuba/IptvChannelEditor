@@ -708,7 +708,7 @@ class Epg_Manager
             return;
         }
 
-        $files = $this->cache_dir . DIRECTORY_SEPARATOR . "$filename*";
+        $files = get_slash_trailed_path($this->cache_dir) . "$filename*";
         hd_debug_print("clear cache files: $files");
         shell_exec('rm -f '. $files);
         flush();
@@ -721,7 +721,7 @@ class Epg_Manager
      */
     public function get_cache_stem($ext)
     {
-        return $this->cache_dir . DIRECTORY_SEPARATOR . $this->url_hash . $ext;
+        return get_slash_trailed_path($this->cache_dir) . $this->url_hash . $ext;
     }
 
     /**

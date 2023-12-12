@@ -63,7 +63,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         // EPG cache dir
         $xcache_dir = $this->plugin->get_cache_dir();
         $free_size = TR::t('setup_storage_info__1', HD::get_storage_size($xcache_dir));
-        $xcache_dir = HD::string_ellipsis($xcache_dir . DIRECTORY_SEPARATOR);
+        $xcache_dir = HD::string_ellipsis($xcache_dir);
         Control_Factory::add_image_button($defs, $this, null, self::CONTROL_CHANGE_CACHE_PATH,
             $free_size, $xcache_dir, get_image_path('folder.png'), self::CONTROLS_WIDTH);
 

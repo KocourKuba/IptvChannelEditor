@@ -124,7 +124,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                 }
 
                 $select_folder = User_Input_Handler_Registry::create_action($this,
-                    self::ACTION_SELECT_FOLDER, TR::t('select_folder'));
+                    self::ACTION_SELECT_FOLDER, TR::t('folder_screen_select_folder'));
 
                 $actions[GUI_EVENT_KEY_D_BLUE] = $select_folder;
                 $actions[GUI_EVENT_KEY_SELECT] = $select_folder;
@@ -238,7 +238,6 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
                     $type = $item_type;
                     $path_parts = pathinfo($caption);
                     if (isset($media_url->choose_file->extension)) {
-                        $info = TR::t('folder_screen_select_file__2', $caption, $size);
                         $detailed_icon = $icon_file;
 
                         if (!isset($path_parts['extension'])
@@ -770,7 +769,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
         $post_action = null;
         if ($url->choose_folder !== false) {
             $post_action = User_Input_Handler_Registry::create_action_screen($url->source_window_id,
-                ACTION_FOLDER_SELECTED,
+                $url->choose_folder->action,
                 '',
                 array('selected_data' => $url->get_media_url_str()));
         }
