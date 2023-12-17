@@ -104,7 +104,7 @@ BOOL CTooltipPropertyPage::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 
 	// to be thorough we will need to handle UNICODE versions of the message also !!
 
-	UINT nID = pNMHDR->idFrom;
+	UINT_PTR nID = pNMHDR->idFrom;
 	TOOLTIPTEXT* pTTT = (TOOLTIPTEXT*)pNMHDR;
 
 	if (pNMHDR->code == TTN_NEEDTEXT && (pTTT->uFlags & TTF_IDISHWND))

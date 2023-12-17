@@ -302,23 +302,23 @@ void CAccessInfoPage::CreateAccountsList()
 		switch (m_plugin->get_access_type())
 		{
 			case AccountAccessType::enPin:
-				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_password().c_str());
+				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_password().c_str());
 				break;
 
 			case AccountAccessType::enLoginPass:
-				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_login().c_str());
-				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_password().c_str());
+				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_login().c_str());
+				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_password().c_str());
 				break;
 
 			case AccountAccessType::enOtt:
-				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_ott_key().c_str());
-				m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_portal().c_str());
+				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_ott_key().c_str());
+				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_portal().c_str());
 				break;
 
 			default:break;
 		}
 
-		m_wndAccounts.SetItemText(idx, ++sub_idx, cred.get_comment().c_str());
+		m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_comment().c_str());
 
 		++idx;
 	}
@@ -573,6 +573,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			case PluginType::enOneUsd:
 			case PluginType::enOttclub:
 			case PluginType::enRusskoeTV:
+			case PluginType::enSatq:
 			case PluginType::enSharavoz:
 			case PluginType::enVidok:
 			case PluginType::enVipLime:
@@ -783,7 +784,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	int sel_idx = 0;
 	if (it != m_configs.end())
 	{
-		sel_idx = std::distance(m_configs.begin(), it);
+		sel_idx = (int)std::distance(m_configs.begin(), it);
 		m_plugin->load_plugin_parameters(selected.get_config());
 	}
 	m_wndConfigs.SetCurSel(sel_idx);

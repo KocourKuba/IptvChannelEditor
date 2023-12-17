@@ -354,6 +354,9 @@
     <ClInclude Include="plugin_tvizi.h">
       <Filter>Header Files\plugin\flussionic</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_satq.h">
+      <Filter>Header Files\plugin\flussionic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -609,6 +612,9 @@
       <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
     <ClCompile Include="plugin_tvizi.cpp">
+      <Filter>Source Files\plugin\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_satq.cpp">
       <Filter>Source Files\plugin\flussonic</Filter>
     </ClCompile>
   </ItemGroup>

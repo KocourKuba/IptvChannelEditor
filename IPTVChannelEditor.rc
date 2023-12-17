@@ -2035,6 +2035,18 @@ END
 
 STRINGTABLE
 BEGIN
+    IDS_STRING_SATQ_P0       "Germany"
+    IDS_STRING_SATQ_P1       "Poland 1"
+    IDS_STRING_SATQ_P2       "Poland 2"
+    IDS_STRING_SATQ_P3       "Moscow 1"
+    IDS_STRING_SATQ_P4       "Moscow 2"
+    IDS_STRING_SATQ_P5       "Netherlands 1"
+    IDS_STRING_SATQ_P6       "Netherlands 2"
+    IDS_STRING_SATQ_P7       "Netherlands 3"
+END
+
+STRINGTABLE
+BEGIN
     ID_MAKE_ALL             "Make All"
     ID_MAKE_ALL_ACCOUNTS    "Make All Accounts"
 END

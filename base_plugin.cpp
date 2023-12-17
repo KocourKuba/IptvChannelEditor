@@ -123,14 +123,14 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 	fill_domains_list(&params);
 	if (!domains_list.empty())
 	{
-		int domain = (params.domain_idx >= (int)domains_list.size()) ? domains_list.size() - 1 : params.domain_idx;
+		size_t domain = ((params.domain_idx >= (int)domains_list.size()) ? domains_list.size() - 1 : params.domain_idx);
 		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
 	}
 
 	fill_servers_list(&params);
 	if (!servers_list.empty())
 	{
-		int server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
+		size_t server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
 	}
@@ -138,21 +138,21 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 	fill_devices_list(&params);
 	if (!devices_list.empty())
 	{
-		int device = (params.device_idx >= (int)devices_list.size()) ? devices_list.size() - 1 : params.device_idx;
+		size_t device = (params.device_idx >= (int)devices_list.size()) ? devices_list.size() - 1 : params.device_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[device].get_id());
 	}
 
 	fill_qualities_list(&params);
 	if (!qualities_list.empty())
 	{
-		int quality = (params.quality_idx >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.quality_idx;
+		size_t quality = (params.quality_idx >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.quality_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[quality].get_id());
 	}
 
 	fill_profiles_list(&params);
 	if (!profiles_list.empty())
 	{
-		int profile = (params.profile_idx >= (int)profiles_list.size()) ? profiles_list.size() - 1 : params.profile_idx;
+		size_t profile = (params.profile_idx >= (int)profiles_list.size()) ? profiles_list.size() - 1 : params.profile_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[profile].get_id());
 	}
 
@@ -306,14 +306,14 @@ std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params)
 	fill_domains_list(&params);
 	if (!domains_list.empty())
 	{
-		int domain = (params.domain_idx >= (int)domains_list.size()) ? domains_list.size() - 1 : params.domain_idx;
+		size_t domain = (params.domain_idx >= (int)domains_list.size()) ? domains_list.size() - 1 : params.domain_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
 	}
 
 	fill_servers_list(&params);
 	if (!servers_list.empty())
 	{
-		int server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
+		size_t server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
 	}
@@ -394,58 +394,57 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 	}
 
 	// Parse the buffer using the xml file parsing library into doc
-	auto doc = std::make_unique<rapidxml::xml_document<>>();
-	rapidxml::file<> xmlFile(utils::utf16_to_utf8(cache_file).c_str());
-
+	bool added = false;
 	DWORD dwStart = GetTickCount();
 	try
 	{
+		auto doc = std::make_unique<rapidxml::xml_document<>>();
+		rapidxml::file<> xmlFile(utils::utf16_to_utf8(cache_file).c_str());
 		doc->parse<rapidxml::parse_default>(xmlFile.data());
+
+		auto prog_node = doc->first_node("tv")->first_node("programme");
+		int cnt = 0;
+		while (prog_node)
+		{
+			cnt++;
+			prog_node = prog_node->next_sibling();
+		}
+
+		TRACE("\nParse time %d, Total nodes %d\n", GetTickCount() - dwStart, cnt);
+
+		if (pCtrl)
+		{
+			pCtrl->SetRange32(0, cnt);
+			pCtrl->ShowWindow(SW_SHOW);
+		}
+		// Iterate <tv_category> nodes
+		int i = 0;
+		prog_node = doc->first_node("tv")->first_node("programme");
+		while (prog_node)
+		{
+			EpgInfo epg_info;
+			const auto& channel = rapidxml::get_value_wstring(prog_node->first_attribute("channel"));
+			const auto& attr_start = prog_node->first_attribute("start");
+			epg_info.time_start = utils::parse_xmltv_date(attr_start->value(), attr_start->value_size());
+			const auto& attr_stop = prog_node->first_attribute("stop");
+			epg_info.time_end = utils::parse_xmltv_date(attr_stop->value(), attr_stop->value_size());
+			epg_info.name = rapidxml::get_value_string(prog_node->first_node("title"));
+			epg_info.desc = rapidxml::get_value_string(prog_node->first_node("desc"));
+
+			epg_map[channel].emplace(epg_info.time_start, epg_info);
+
+			prog_node = prog_node->next_sibling();
+			added = true;
+			if (pCtrl && (++i % 10) == 0)
+			{
+				pCtrl->SetPos(i);
+			}
+		}
 	}
 	catch (rapidxml::parse_error& ex)
 	{
 		ex;
 		return false;
-	}
-
-	auto prog_node = doc->first_node("tv")->first_node("programme");
-	int cnt = 0;
-	while (prog_node)
-	{
-		cnt++;
-		prog_node = prog_node->next_sibling();
-	}
-
-	TRACE("\nParse time %d, Total nodes %d\n", GetTickCount() - dwStart, cnt);
-
-	if (pCtrl)
-	{
-		pCtrl->SetRange32(0, cnt);
-		pCtrl->ShowWindow(SW_SHOW);
-	}
-	// Iterate <tv_category> nodes
-	bool added = false;
-	int i = 0;
-	prog_node = doc->first_node("tv")->first_node("programme");
-	while (prog_node)
-	{
-		EpgInfo epg_info;
-		const auto& channel = rapidxml::get_value_wstring(prog_node->first_attribute("channel"));
-		const auto& attr_start = prog_node->first_attribute("start");
-		epg_info.time_start = utils::parse_xmltv_date(attr_start->value(), attr_start->value_size());
-		const auto& attr_stop = prog_node->first_attribute("stop");
-		epg_info.time_end = utils::parse_xmltv_date(attr_stop->value(), attr_stop->value_size());
-		epg_info.name = rapidxml::get_value_string(prog_node->first_node("title"));
-		epg_info.desc = rapidxml::get_value_string(prog_node->first_node("desc"));
-
-		epg_map[channel].emplace(epg_info.time_start, epg_info);
-
-		prog_node = prog_node->next_sibling();
-		added = true;
-		if (pCtrl && (++i % 10) == 0)
-		{
-			pCtrl->SetPos(i);
-		}
 	}
 
 	if (pCtrl)

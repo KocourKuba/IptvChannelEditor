@@ -156,6 +156,7 @@ static std::vector<PluginType> all_plugins = {
 	{ PluginType::enIpstream,   },
 	{ PluginType::enOnlineOtt,  },
 	{ PluginType::enTvizi,      },
+	{ PluginType::enSatq,       },
 	{ PluginType::enCustom,     },
 };
 

@@ -170,7 +170,7 @@ BOOL CVodViewer::OnInitDialog()
 		int idx = m_wndPlaylist.AddString(vod.get_name().c_str());
 	}
 
-	int idx = m_plugin->get_vod_info_idx();
+	int idx = (int)m_plugin->get_vod_info_idx();
 	m_wndPlaylist.SetCurSel(idx);
 	m_wndPlaylist.EnableWindow(m_wndPlaylist.GetCount() > 1);
 	m_current_vod = m_vod_storages[m_plugin->get_vod_info(idx).get_pl_template()];
@@ -473,7 +473,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 					size_t pos = 1;
 					for (const auto& group : regex_named_groups)
 					{
-						*movie->parser_mapper[group] = std::move(m[pos++].str());
+						*movie->parser_mapper[group] = std::move(m[(int)(pos++)].str());
 					}
 				}
 			}

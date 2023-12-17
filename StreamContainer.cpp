@@ -59,6 +59,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_ipstream.h"
 #include "plugin_onlineott.h"
 #include "plugin_tvizi.h"
+#include "plugin_satq.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -205,6 +206,10 @@ std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 
 		case PluginType::enTvizi:
 			plugin = std::make_shared<plugin_tvizi>();
+			break;
+
+		case PluginType::enSatq:
+			plugin = std::make_shared<plugin_satq>();
 			break;
 
 		default:

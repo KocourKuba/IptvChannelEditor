@@ -263,7 +263,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams* params /*= nullptr*/)
 					info.set_id(utils::get_json_wstring("id", profile));
 					info.set_name(utils::get_json_wstring("name", profile));
 					if (info.get_id() == current)
-						params->profile_idx = profiles.size();
+						params->profile_idx = (int)profiles.size();
 
 					profiles.emplace_back(info);
 				}

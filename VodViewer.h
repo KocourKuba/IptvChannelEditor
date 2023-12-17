@@ -122,7 +122,7 @@ private:
 	int m_season_idx = -1;
 	int m_episode_idx = -1;
 	int m_quality_idx = -1;
-	int m_total = 0;
+	size_t m_total = 0;
 	vod_category_storage m_current_vod;
 	std::map<std::wstring, vod_category_storage>& m_vod_storages;
 	vod_movie_storage m_filtered_movies;

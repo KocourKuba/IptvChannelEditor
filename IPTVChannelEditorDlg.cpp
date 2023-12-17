@@ -640,7 +640,7 @@ BOOL CIPTVChannelEditorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 
 	// to be thorough we will need to handle UNICODE versions of the message also !!
 
-	UINT nID = pNMHDR->idFrom;
+	UINT_PTR nID = pNMHDR->idFrom;
 	TOOLTIPTEXT* pTTT = (TOOLTIPTEXT*)pNMHDR;
 
 	if (pNMHDR->code == TTN_NEEDTEXT && (pTTT->uFlags & TTF_IDISHWND))
@@ -874,8 +874,12 @@ void CIPTVChannelEditorDlg::LoadCustomXmltvSources()
 {
 	JSON_ALL_TRY;
 	{
-		const auto& sources = nlohmann::json::parse(GetConfig().get_string(false, REG_CUSTOM_XMLTV_SOURCE));
-		m_plugin->set_custom_epg_urls(sources.get<std::vector<DynamicParamsInfo>>());
+		const auto& custom_source = GetConfig().get_string(false, REG_CUSTOM_XMLTV_SOURCE);
+		if (!custom_source.empty())
+		{
+			const auto& sources = nlohmann::json::parse(custom_source);
+			m_plugin->set_custom_epg_urls(sources.get<std::vector<DynamicParamsInfo>>());
+		}
 	}
 	JSON_ALL_CATCH;
 }
@@ -1223,7 +1227,7 @@ void CIPTVChannelEditorDlg::FillXmlSources()
 	int old_data = 0;
 	if (m_wndXmltvEpgSource.GetCount())
 	{
-		old_data = m_wndXmltvEpgSource.GetItemData(m_xmltvEpgSource != -1 ? m_xmltvEpgSource : 0);
+		old_data = (int)m_wndXmltvEpgSource.GetItemData(m_xmltvEpgSource != -1 ? m_xmltvEpgSource : 0);
 	}
 
 	m_wndXmltvEpgSource.ResetContent();
@@ -1960,8 +1964,6 @@ void CIPTVChannelEditorDlg::FillEPG()
 	ATLTRACE(L"\n%s\n", snow.c_str());
 #endif // _DEBUG
 
-
-
 	UpdateExtToken(info);
 	DWORD dwStart = GetTickCount();
 
@@ -1985,13 +1987,16 @@ void CIPTVChannelEditorDlg::FillEPG()
 		}
 		else
 		{
-			auto& epg_cache = m_epg_cache.at(epg_idx);
-			if (epg_cache.find(L"file already parsed") == epg_cache.end())
+			if (!m_xmltv_sources.empty())
 			{
-				bool res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, &m_wndProgress);
-				if (res)
+				auto& epg_cache = m_epg_cache.at(epg_idx);
+				if (epg_cache.find(L"file already parsed") == epg_cache.end())
 				{
-					epg_cache[L"file already parsed"] = std::map<time_t, EpgInfo>();
+					bool res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, &m_wndProgress);
+					if (res)
+					{
+						epg_cache[L"file already parsed"] = std::map<time_t, EpgInfo>();
+					}
 				}
 			}
 			need_load = false;
@@ -2019,7 +2024,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 
 	TRACE("\nLoad time %d\n", GetTickCount() - dwStart);
 
-	if (epg_info.time_start != 0)
+	if (found && epg_info.time_start != 0)
 	{
 		COleDateTime time_n(now);
 		COleDateTime time_s(epg_info.time_start - time_shift);
@@ -4000,7 +4005,7 @@ void CIPTVChannelEditorDlg::OnMakeAllAccounts()
 
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
-	m_wndProgress.SetRange32(0, m_all_credentials.size());
+	m_wndProgress.SetRange32(0, (int)m_all_credentials.size());
 	m_wndProgress.SetPos(0);
 	bool success = true;
 	int i = 0;

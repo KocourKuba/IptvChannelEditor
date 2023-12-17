@@ -564,8 +564,8 @@ public:
 	const std::vector<PlaylistTemplateInfo>& get_playlist_infos() const { return playlist_templates; }
 	void set_playlist_infos(const std::vector<PlaylistTemplateInfo>& val) { playlist_templates = val; }
 
-	const PlaylistTemplateInfo& get_playlist_info(int idx) const;
-	PlaylistTemplateInfo& get_playlist_info(int idx);
+	const PlaylistTemplateInfo& get_playlist_info(size_t idx) const;
+	PlaylistTemplateInfo& get_playlist_info(size_t idx);
 
 	const PlaylistTemplateInfo& get_current_playlist_info() const { return get_playlist_info(get_playlist_idx()); };
 
@@ -601,8 +601,8 @@ public:
 	size_t get_vod_info_idx() const { return vod_template_index; }
 	void set_vod_info_idx(size_t idx) { vod_template_index = idx; }
 
-	const PlaylistTemplateInfo& get_vod_info(int idx) const;
-	PlaylistTemplateInfo& get_vod_info(int idx);
+	const PlaylistTemplateInfo& get_vod_info(size_t idx) const;
+	PlaylistTemplateInfo& get_vod_info(size_t idx);
 
 	const PlaylistTemplateInfo& get_current_vod_info() const { return get_vod_info(get_vod_info_idx()); };
 

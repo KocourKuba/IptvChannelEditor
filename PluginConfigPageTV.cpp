@@ -233,7 +233,7 @@ void CPluginConfigPageTV::FillControls()
 		idx++;
 	}
 
-	m_wndPlaylistTemplates.SetCurSel(current);
+	m_wndPlaylistTemplates.SetCurSel((int)current);
 
 	FillPlaylistSettings(current);
 

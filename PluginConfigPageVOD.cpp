@@ -176,7 +176,7 @@ void CPluginConfigPageVOD::FillControls()
 	m_wndChkEnableVOD.SetCheck(plugin->get_vod_support() != false);
 	m_wndChkVodM3U.SetCheck(plugin->get_vod_m3u() != false);
 
-	int vod_idx = plugin->get_vod_info_idx();
+	int vod_idx = (int)plugin->get_vod_info_idx();
 	m_wndVodTemplates.ResetContent();
 	for (const auto& entry : plugin->get_vod_infos())
 	{

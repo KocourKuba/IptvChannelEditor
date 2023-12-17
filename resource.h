@@ -400,6 +400,14 @@
 #define IDS_STRING_IPTVONLINE_P4        554
 #define IDS_STRING_IPTVONLINE_P5        555
 #define IDS_STRING_IPTVONLINE_P6        556
+#define IDS_STRING_SATQ_P0              560
+#define IDS_STRING_SATQ_P1              561
+#define IDS_STRING_SATQ_P2              562
+#define IDS_STRING_SATQ_P3              563
+#define IDS_STRING_SATQ_P4              564
+#define IDS_STRING_SATQ_P5              565
+#define IDS_STRING_SATQ_P6              566
+#define IDS_STRING_SATQ_P7              567
 #define IDS_STRING_BUTTON_RESET         600
 #define IDS_STRING_CHECK_CMP_TITLE      601
 #define IDS_STRING_CHECK_CMP_EPG1       613

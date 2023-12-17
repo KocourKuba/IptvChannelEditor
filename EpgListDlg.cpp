@@ -112,9 +112,14 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 	int i = 0;
 	int current_idx = -1;
-	auto epg_id = m_info->get_epg_id(m_epg_idx);
-
-	m_csEpgUrl = (m_epg_idx == 2) ? m_xmltv_source.c_str() : m_plugin->compile_epg_url(m_epg_idx, epg_id, start_time, m_info).c_str();
+	if (m_epg_idx == 2)
+	{
+		m_csEpgUrl = m_xmltv_source.c_str();
+	}
+	else
+	{
+		m_csEpgUrl = m_plugin->compile_epg_url(m_epg_idx, m_info->get_epg_id(m_epg_idx), start_time, m_info).c_str();
+	}
 
 	auto epg_ids = m_info->get_epg_ids();
 	bool need_load = true;
@@ -147,10 +152,10 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		}
 	}
 
-	bool found = false;
+	std::wstring found_id;
 	for (const auto& epg_id : epg_ids)
 	{
-		if (found || epg_id.empty()) continue;
+		if (!found_id.empty() || epg_id.empty()) continue;
 
 		if (auto& it = m_epg_cache->at(m_epg_idx).find(epg_id); it != m_epg_cache->at(m_epg_idx).end())
 		{
@@ -159,41 +164,44 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 			{
 				if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
 				{
-					found = true;
+					found_id = epg_id;
 					break;
 				}
 			}
 		}
 	}
 
-	for (const auto& epg : m_epg_cache->at(m_epg_idx)[epg_id])
+	if (!found_id.empty())
 	{
-		time_t shifted_start = epg.first - time_shift;
-		time_t shifted_end = epg.second.time_end - time_shift;
-
-		if (shifted_start < start_time || shifted_start > end_time) continue;
-
-		bool isArchive = (_time32(nullptr) - epg.second.time_end) > 0 && epg.second.time_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
-		COleDateTime start(shifted_start);
-		COleDateTime end(shifted_end);
-		int idx = m_wndEpgList.InsertItem(i++, isArchive ? L"R" : L"");
-		m_wndEpgList.SetItemText(idx, 1, start.Format(_T("%d.%m.%Y %H:%M:%S")));
-		m_wndEpgList.SetItemText(idx, 2, end.Format(_T("%d.%m.%Y %H:%M:%S")));
-		m_wndEpgList.SetItemText(idx, 3, utils::utf8_to_utf16(epg.second.name).c_str());
-		m_idx_map.emplace(idx, std::pair<time_t, time_t>(epg.second.time_start, epg.second.time_end));
-
-		if (now >= epg.first && now <= epg.second.time_end)
+		for (const auto& epg : m_epg_cache->at(m_epg_idx)[found_id])
 		{
-			current_idx = idx;
-		}
-	}
+			time_t shifted_start = epg.first - time_shift;
+			time_t shifted_end = epg.second.time_end - time_shift;
 
-	if (current_idx != -1)
-	{
-		m_wndEpgList.SetItemState(-1, 0, LVIS_SELECTED);
-		m_wndEpgList.SetItemState(current_idx, LVIS_SELECTED, LVIS_SELECTED);
-		m_wndEpgList.EnsureVisible(m_wndEpgList.GetItemCount() - 1, FALSE); // Scroll down to the bottom
-		m_wndEpgList.EnsureVisible(current_idx, TRUE);
+			if (shifted_start < start_time || shifted_start > end_time) continue;
+
+			bool isArchive = (_time32(nullptr) - epg.second.time_end) > 0 && epg.second.time_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
+			COleDateTime start(shifted_start);
+			COleDateTime end(shifted_end);
+			int idx = m_wndEpgList.InsertItem(i++, isArchive ? L"R" : L"");
+			m_wndEpgList.SetItemText(idx, 1, start.Format(_T("%d.%m.%Y %H:%M:%S")));
+			m_wndEpgList.SetItemText(idx, 2, end.Format(_T("%d.%m.%Y %H:%M:%S")));
+			m_wndEpgList.SetItemText(idx, 3, utils::utf8_to_utf16(epg.second.name).c_str());
+			m_idx_map.emplace(idx, std::pair<time_t, time_t>(epg.second.time_start, epg.second.time_end));
+
+			if (now >= epg.first && now <= epg.second.time_end)
+			{
+				current_idx = idx;
+			}
+		}
+
+		if (current_idx != -1)
+		{
+			m_wndEpgList.SetItemState(-1, 0, LVIS_SELECTED);
+			m_wndEpgList.SetItemState(current_idx, LVIS_SELECTED, LVIS_SELECTED);
+			m_wndEpgList.EnsureVisible(m_wndEpgList.GetItemCount() - 1, FALSE); // Scroll down to the bottom
+			m_wndEpgList.EnsureVisible(current_idx, TRUE);
+		}
 	}
 
 	UpdateData(FALSE);

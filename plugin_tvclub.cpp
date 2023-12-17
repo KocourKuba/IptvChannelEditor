@@ -168,7 +168,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams* params /*= nullptr*/)
 					const auto& server = item.value();
 					DynamicParamsInfo info{ utils::get_json_string("id", server), utils::get_json_string("name", server) };
 					if (info.get_id() == current)
-						params->server_idx = servers.size();
+						params->server_idx = (int)servers.size();
 
 					servers.emplace_back(info);
 				}

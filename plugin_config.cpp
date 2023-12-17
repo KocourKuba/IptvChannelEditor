@@ -48,15 +48,19 @@ void plugin_config::configure_plugin()
 {
 	JSON_ALL_TRY;
 	{
-		const auto& sources = nlohmann::json::parse(GetConfig().get_string(false, REG_CUSTOM_XMLTV_SOURCE));
-		set_custom_epg_urls(sources.get<std::vector<DynamicParamsInfo>>());
+		const auto& custom_sources = GetConfig().get_string(false, REG_CUSTOM_XMLTV_SOURCE);
+		if (!custom_sources.empty())
+		{
+			const auto& sources = nlohmann::json::parse(custom_sources);
+			set_custom_epg_urls(sources.get<std::vector<DynamicParamsInfo>>());
+		}
 	}
 	JSON_ALL_CATCH;
 }
 
-const PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx) const
+const PlaylistTemplateInfo& plugin_config::get_playlist_info(size_t idx) const
 {
-	if (idx != -1 && idx >= (int)playlist_templates.size())
+	if (idx != -1 && idx >= playlist_templates.size())
 	{
 		idx = 0;
 	}
@@ -64,9 +68,9 @@ const PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx) const
 	return playlist_templates[idx];
 }
 
-PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx)
+PlaylistTemplateInfo& plugin_config::get_playlist_info(size_t idx)
 {
-	if (idx != -1 && idx >= (int)playlist_templates.size())
+	if (idx != -1 && idx >= playlist_templates.size())
 	{
 		idx = 0;
 	}
@@ -74,9 +78,9 @@ PlaylistTemplateInfo& plugin_config::get_playlist_info(int idx)
 	return playlist_templates[idx];
 }
 
-const PlaylistTemplateInfo& plugin_config::get_vod_info(int idx) const
+const PlaylistTemplateInfo& plugin_config::get_vod_info(size_t idx) const
 {
-	if (idx != -1 && idx >= (int)vod_templates.size())
+	if (idx != -1 && idx >= vod_templates.size())
 	{
 		idx = 0;
 	}
@@ -84,9 +88,9 @@ const PlaylistTemplateInfo& plugin_config::get_vod_info(int idx) const
 	return vod_templates[idx];
 }
 
-PlaylistTemplateInfo& plugin_config::get_vod_info(int idx)
+PlaylistTemplateInfo& plugin_config::get_vod_info(size_t idx)
 {
-	if (idx != -1 && idx >= (int)vod_templates.size())
+	if (idx != -1 && idx >= vod_templates.size())
 	{
 		idx = 0;
 	}

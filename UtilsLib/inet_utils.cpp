@@ -109,6 +109,8 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 								const char* post_data /*= nullptr*/)
 {
 	m_error_message.clear();
+	if (url.empty())
+		return false;
 
 	std::wstring hash_str = url;
 	if (post_data)
@@ -208,7 +210,7 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 		bool bSaveBadCache = false;
 		for (;;)
 		{
-			DWORD post_size = post_data ? strlen(post_data) : 0;
+			DWORD post_size = post_data ? (DWORD)strlen(post_data) : 0;
 			if (!WinHttpSendRequest(hRequest,
 								   WINHTTP_NO_ADDITIONAL_HEADERS,
 								   0,

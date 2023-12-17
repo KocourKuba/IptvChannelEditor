@@ -80,12 +80,12 @@ Global
 		{6CD735D7-4F0F-40DA-BDD6-05FD34B39083}.Release Unicode|x64.Build.0 = Release Unicode|x64
 		{6CD735D7-4F0F-40DA-BDD6-05FD34B39083}.Release Unicode|x86.ActiveCfg = Release Unicode|Win32
 		{6CD735D7-4F0F-40DA-BDD6-05FD34B39083}.Release Unicode|x86.Build.0 = Release Unicode|Win32
-		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Debug Unicode|x64.ActiveCfg = Debug|x64
-		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Debug Unicode|x64.Build.0 = Debug|x64
+		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Debug Unicode|x64.ActiveCfg = Unicode Debug|x64
+		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Debug Unicode|x64.Build.0 = Unicode Debug|x64
 		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Debug Unicode|x86.ActiveCfg = Unicode Debug|Win32
 		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Debug Unicode|x86.Build.0 = Unicode Debug|Win32
-		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Release Unicode|x64.ActiveCfg = Release|x64
-		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Release Unicode|x64.Build.0 = Release|x64
+		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Release Unicode|x64.ActiveCfg = Unicode Release|x64
+		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Release Unicode|x64.Build.0 = Unicode Release|x64
 		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Release Unicode|x86.ActiveCfg = Unicode Release|Win32
 		{E8CF1ADA-264A-4127-86C2-FD7057D3792C}.Release Unicode|x86.Build.0 = Unicode Release|Win32
 		{B5919129-6716-499D-9516-04EC34C86CDF}.Debug Unicode|x64.ActiveCfg = Debug|x64

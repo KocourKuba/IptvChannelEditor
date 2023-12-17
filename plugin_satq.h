@@ -25,44 +25,17 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+#include "base_plugin.h"
 
-enum class PluginType
+class plugin_satq: public base_plugin
 {
-	enCustom = -1000,
-	enBase = -1,
-	en101film,
-	enAntifriz,
-	enBcuMedia,
-	enCbilling,
-	enEdem,
-	enFilmax,
-	enFox,
-	enGlanz,
-	enIptvOnline,
-	enIpstream,
-	enItv,
-	enKineskop,
-	enLightIptv,
-	enMymagic,
-	enOneCent,
-	enOneOtt,
-	enOneUsd,
-	enOnlineOtt,
-	enOttclub,
-	enOttIptv,
-	enPing,
-	enRusskoeTV,
-	enSatq,
-	enSharaTV,
-	enSharaclub,
-	enSharavoz,
-	enShuraTV,
-	enSmile,
-	enTVClub,
-	enTvizi,
-	enTvTeam,
-	enVidok,
-	enVipLime,
-	enYossoTV,
-	enLast,
+public:
+
+	plugin_satq();
+
+	void fill_servers_list(TemplateParams* params = nullptr) override;
+	void fill_domains_list(TemplateParams* params = nullptr) override;
+
+protected:
+	void load_default() override;
 };

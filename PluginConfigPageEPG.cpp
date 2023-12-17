@@ -134,11 +134,11 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	m_Token = GetPropertySheet()->m_plugin->get_api_token(GetPropertySheet()->m_selected_cred).c_str();
 	m_wndEpgType.SetCurSel(0);
 
-	for(auto it = EpgPresets::enDRM; it != EpgPresets::enLast; ((size_t&)it)++)
+	for(auto it = (size_t)EpgPresets::enDRM; it != (size_t)EpgPresets::enLast; ((size_t&)it)++)
 	{
-		m_wndEpgPreset.AddString(enum_to_string<EpgPresets, std::wstring>(it).c_str());
+		m_wndEpgPreset.AddString(enum_to_string<EpgPresets, std::wstring>((EpgPresets)it).c_str());
 	}
-	m_wndEpgPreset.SetCurSel(GetPropertySheet()->m_plugin->get_epg_preset_idx(0));
+	m_wndEpgPreset.SetCurSel((int)GetPropertySheet()->m_plugin->get_epg_preset_idx(0));
 
 
 	FillControls();
@@ -214,13 +214,13 @@ void CPluginConfigPageEPG::FillControls()
 	m_EpgEnd = epg.get_epg_end().c_str();
 	m_EpgDateFormat = epg.get_epg_date_format().c_str();
 	m_EpgStartTimeFormat = epg.get_epg_time_format().c_str();
-	m_EpgTimezone = epg.epg_timezone;
+	m_EpgTimezone = (int)epg.epg_timezone;
 	m_wndChkUseDuration.SetCheck(epg.epg_use_duration != false);
 
 	int epg_type = m_wndEpgType.GetCurSel();
 	m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(epg_type).c_str();
 
-	m_wndEpgPreset.SetCurSel(GetPropertySheet()->m_plugin->get_epg_preset_idx(epg_type));
+	m_wndEpgPreset.SetCurSel((int)GetPropertySheet()->m_plugin->get_epg_preset_idx(epg_type));
 
 	UpdateData(FALSE);
 
@@ -368,7 +368,7 @@ void CPluginConfigPageEPG::OnCbnSelchangeComboEpgParserPreset()
 		m_EpgStart = epg.get_epg_start().c_str();
 		m_EpgEnd = epg.get_epg_end().c_str();
 		m_EpgStartTimeFormat = epg.get_epg_time_format().c_str();
-		m_EpgTimezone = epg.epg_timezone;
+		m_EpgTimezone = (int)epg.epg_timezone;
 		m_wndChkUseDuration.SetCheck(epg.epg_use_duration != false);
 
 		UpdateData(FALSE);
