@@ -306,14 +306,14 @@ class default_config extends dynamic_config
     public function get_domain_id()
     {
         $embedded_acc = $this->get_embedded_account();
-        $domain = $this->parent->get_parameter(Ext_Params::M_DOMAIN_ID);
-        if (!is_null($embedded_acc) && isset($embedded_acc->domain_id) && empty($domain)) {
+        $domain_id = $this->parent->get_parameter(Ext_Params::M_DOMAIN_ID);
+        if (!is_null($embedded_acc) && isset($embedded_acc->domain_id) && empty($domain_id)) {
             $this->parent->set_parameter(Ext_Params::M_DOMAIN_ID, $embedded_acc->domain_id);
-            $domain = $embedded_acc->domain_id;
+            $domain_id = $embedded_acc->domain_id;
         }
 
         $domains = $this->get_domains();
-        return !empty($domain) && isset($domains[$domain]) ? $domain : key($domains);
+        return !empty($domain_id) && isset($domains[$domain_id]) ? $domain_id : key($domains);
     }
 
     /**

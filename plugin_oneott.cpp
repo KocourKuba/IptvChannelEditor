@@ -52,6 +52,7 @@ void plugin_oneott::load_default()
 	access_type = AccountAccessType::enLoginPass;
 
 	provider_url = "http://1ott.net/";
+	provider_api_url = "http://list.1ott.net";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "{PL_DOMAIN}/api/{S_TOKEN}/high/unix.m3u8";
@@ -75,13 +76,13 @@ void plugin_oneott::load_default()
 
 std::map<std::wstring, std::wstring> plugin_oneott::parse_access_info(TemplateParams& params)
 {
-	static constexpr auto ACCOUNT_TEMPLATE = L"http://list.1ott.net/PinApi/{:s}/{:s}";
+	static constexpr auto ACCOUNT_TEMPLATE = L"{:s}/PinApi/{:s}/{:s}";
 
 	std::map<std::wstring, std::wstring> info;
 
 	CWaitCursor cur;
 	std::stringstream data;
-	const auto& url = fmt::format(ACCOUNT_TEMPLATE, params.login, params.password);
+	const auto& url = fmt::format(ACCOUNT_TEMPLATE, get_provider_api_url(), params.login, params.password);
 	if (download_url(url, data))
 	{
 		JSON_ALL_TRY
