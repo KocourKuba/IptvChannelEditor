@@ -82,7 +82,7 @@ void plugin_satq::fill_servers_list(TemplateParams* params /*= nullptr*/)
 		{ "serv5.iptv11.com", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SATQ_P4)) },
 		{ "serv7.iptv11.com", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SATQ_P5)) },
 		{ "serv3.iptv11.com", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SATQ_P6)) },
-		{ "serv5.iptv11.com", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SATQ_P7)) },
+		{ "serv4.iptv11.com", utils::utf16_to_utf8(load_string_resource(IDS_STRING_SATQ_P7)) },
 	};
 
 	set_servers_list(servers);
