@@ -357,6 +357,9 @@
     <ClInclude Include="plugin_satq.h">
       <Filter>Header Files\plugin\flussionic</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_rutv.h">
+      <Filter>Header Files\plugin\shift</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -616,6 +619,9 @@
     </ClCompile>
     <ClCompile Include="plugin_satq.cpp">
       <Filter>Source Files\plugin\flussonic</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_rutv.cpp">
+      <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

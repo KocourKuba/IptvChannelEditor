@@ -538,6 +538,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			case PluginType::enMymagic:
 			case PluginType::enOttIptv:
 			case PluginType::enPing:
+			case PluginType::enRuTV:
 			case PluginType::enSmile:
 			case PluginType::enSharaclub:
 			case PluginType::enYossoTV:

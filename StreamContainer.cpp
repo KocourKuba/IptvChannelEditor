@@ -60,6 +60,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_onlineott.h"
 #include "plugin_tvizi.h"
 #include "plugin_satq.h"
+#include "plugin_rutv.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -210,6 +211,10 @@ std::shared_ptr<base_plugin> StreamContainer::get_instance(PluginType type)
 
 		case PluginType::enSatq:
 			plugin = std::make_shared<plugin_satq>();
+			break;
+
+		case PluginType::enRuTV:
+			plugin = std::make_shared<plugin_rutv>();
 			break;
 
 		default:

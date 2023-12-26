@@ -157,6 +157,7 @@ static std::vector<PluginType> all_plugins = {
 	{ PluginType::enOnlineOtt,  },
 	{ PluginType::enTvizi,      },
 	{ PluginType::enSatq,       },
+	{ PluginType::enRuTV,       },
 	{ PluginType::enCustom,     },
 };
 
