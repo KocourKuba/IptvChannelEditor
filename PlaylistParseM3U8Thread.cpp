@@ -82,6 +82,9 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 						case PluginType::enKineskop:
 							entry->set_icon_uri(boost::regex_replace(entry->get_icon_uri().get_uri(), boost::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
 							break;
+						case PluginType::enGlanz:
+							entry->set_icon_uri(utils::string_replace<wchar_t>(entry->get_icon_uri().get_uri(), L"https://", L"http://"));
+							break;
 						default:
 							break;
 					}

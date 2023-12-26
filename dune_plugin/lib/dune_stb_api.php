@@ -1719,6 +1719,7 @@ function get_dune_model() {
         'tv174a' => 'Neo 4K T2',
         'tv174b' => 'Neo 4K T2 Plus (revision tv174b)',
         'tv174c' => 'Neo 4K T2 Plus (revsion tv174c)',
+        'tv175a' => 'Neo 4K (Kartina)',
         'tv175e' => 'Neo 4K (revision tv175e)',
         'tv175f' => 'Neo 4K Plus',
         'tv175h' => 'Pro 4K II',
