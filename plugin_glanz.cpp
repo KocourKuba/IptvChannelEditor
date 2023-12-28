@@ -112,5 +112,9 @@ void plugin_glanz::fill_domains_list(TemplateParams* params /*= nullptr*/)
 	info.set_name(L"ottg.eu");
 	domains.emplace_back(info);
 
+	info.set_id(L"5");
+	info.set_name(L"ottg.app");
+	domains.emplace_back(info);
+
 	set_domains_list(domains);
 }
