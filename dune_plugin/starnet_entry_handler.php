@@ -42,7 +42,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
             case 'power_off':
                 hd_debug_print("do power off");
-                if (is_apk()) {
+                if (!is_not_certified()) {
                     return Action_Factory::show_title_dialog(TR::t('entry_not_available'));
                 }
                 return array(send_ir_code(GUI_EVENT_DISCRETE_POWER_OFF));

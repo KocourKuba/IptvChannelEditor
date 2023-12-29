@@ -146,7 +146,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                             'action' => self::CONTROL_EPG_FOLDER,
                         ),
                         'allow_reset' => true,
-                        'allow_network' => !is_apk(),
+                        'allow_network' => is_not_certified(),
                         'windowCounter' => 1,
                     )
                 );

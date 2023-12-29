@@ -171,7 +171,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                             'action' => self::CONTROL_CHANNELS_FOLDER,
                         ),
                         'allow_reset' => true,
-                        'allow_network' => !is_apk(),
+                        'allow_network' => is_not_certified(),
                         'windowCounter' => 1,
                     )
                 );

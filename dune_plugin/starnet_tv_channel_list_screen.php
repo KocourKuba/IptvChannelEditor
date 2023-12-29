@@ -124,7 +124,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items = array();
 
-                if (is_android() && !is_apk()) {
+                if (is_not_certified()) {
                     $is_external = $this->plugin->is_channel_for_ext_player($channel_id);
                     $menu_items[] = $this->plugin->create_menu_item($this,
                         ACTION_EXTERNAL_PLAYER,
