@@ -360,6 +360,9 @@
     <ClInclude Include="plugin_rutv.h">
       <Filter>Header Files\plugin\shift</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_crdtv.h">
+      <Filter>Header Files\plugin\shift</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -621,6 +624,9 @@
       <Filter>Source Files\plugin\flussonic</Filter>
     </ClCompile>
     <ClCompile Include="plugin_rutv.cpp">
+      <Filter>Source Files\plugin\shift</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_crdtv.cpp">
       <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
   </ItemGroup>

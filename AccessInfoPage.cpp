@@ -564,6 +564,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			case PluginType::enAntifriz:
 			case PluginType::enBcuMedia:
 			case PluginType::enCbilling:
+			case PluginType::enCRDTV:
 			case PluginType::enIptvOnline:
 			case PluginType::enIpstream:
 			case PluginType::enItv:

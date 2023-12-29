@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include "plugin_rutv.h"
+#include "plugin_crdtv.h"
 #include "IPTVChannelEditor.h"
 
 #ifdef _DEBUG
@@ -34,56 +34,64 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-plugin_rutv::plugin_rutv()
+plugin_crdtv::plugin_crdtv()
 {
-	type_name = "rutv";
+	type_name = "crdtv";
 }
 
-void plugin_rutv::load_default()
+void plugin_crdtv::load_default()
 {
 	base_plugin::load_default();
 
-	title = "RU TV";
-	name = "rutv";
-	access_type = AccountAccessType::enLoginPass;
+	title = "CRD TV";
+	name = "crdtv";
+	access_type = AccountAccessType::enPin;
 
-	provider_url = "https://rutv.vip/";
-
-	vod_templates.clear();
-	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
-	vod_info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u";
-	vod_info.parse_regex = R"(^(?<title>[^\/]+)\s\((?:(?<country>.+)\s)?(?<year>\d+)\)$)";
-	vod_templates.emplace_back(vod_info);
-
-	vod_support = true;
-	vod_m3u = true;
+	provider_url = "https://crdtv.net/";
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u";
-	info.pl_parse_regex = R"(^https?:\/\/[^\/]+\/(?<login>.+)\/(?<password>.+)\/.*$)";
-	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>[^\/]+)\/(?<token>.+)$)";
-	info.tag_id_match = "CUID";
+	info.pl_template = "{PL_DOMAIN}/m/{PASSWORD}/crdtv.m3u";
+	info.pl_parse_regex = R"(^https?:\/\/.+\/m\/(?<password>.+)\/.*$)";
+	info.parse_regex = R"(^https?:\/\/[^\/]+\/(?<id>.+)\/(?<password>.+)\/.*$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
 
-	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{TOKEN}";
+	streams_config[0].uri_template = "{SCHEME}{SERVER_ID}.crd-s.net/{ID}/{PASSWORD}/live.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "";
 }
 
-void plugin_rutv::fill_domains_list(TemplateParams* params /*= nullptr*/)
+void plugin_crdtv::fill_domains_list(TemplateParams* params /*= nullptr*/)
 {
 	if (!get_domains_list().empty())
 		return;
 
 	DynamicParamsInfo info;
 	info.set_id(L"0");
-	info.set_name(L"http://pl.ru-tv.site");
+	info.set_name(L"http://crdtv.net");
 
 	std::vector<DynamicParamsInfo> domains;
 	domains.emplace_back(info);
 
 	set_domains_list(domains);
+}
+
+void plugin_crdtv::fill_servers_list(TemplateParams* params /*= nullptr*/)
+{
+	if (!get_servers_list().empty())
+		return;
+
+	std::vector<DynamicParamsInfo> servers;
+	for (int i = 0; i <= IDS_STRING_CRDTV_ID5 - IDS_STRING_CRDTV_ID0; i++)
+	{
+		DynamicParamsInfo info;
+		info.set_id(load_string_resource(1049, IDS_STRING_CRDTV_ID0 + i));
+		info.set_name(load_string_resource(1049, IDS_STRING_CRDTV_P0 + i));
+		if (info.get_name().empty()) continue;
+		servers.emplace_back(info);
+	}
+
+	set_servers_list(servers);
 }

@@ -247,6 +247,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="PluginConfigPropertySheet.h" />
     <ClInclude Include="plugin_101film.h" />
     <ClInclude Include="plugin_bcumedia.h" />
+    <ClInclude Include="plugin_crdtv.h" />
     <ClInclude Include="plugin_ipstream.h" />
     <ClInclude Include="plugin_onlineott.h" />
     <ClInclude Include="plugin_ottiptv.h" />
@@ -367,6 +368,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="PluginConfigPropertySheet.cpp" />
     <ClCompile Include="plugin_101film.cpp" />
     <ClCompile Include="plugin_bcumedia.cpp" />
+    <ClCompile Include="plugin_crdtv.cpp" />
     <ClCompile Include="plugin_ipstream.cpp" />
     <ClCompile Include="plugin_onlineott.cpp" />
     <ClCompile Include="plugin_ottiptv.cpp" />
