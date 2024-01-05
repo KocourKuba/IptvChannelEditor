@@ -737,13 +737,17 @@ class HD
      * @param string $url
      * @return string
      */
-    public static function make_ts($url)
+    /**
+     * @param string $url
+     * @return string
+     */
+    public static function make_ts($url, $force = false)
     {
         if (!preg_match("|^https?://ts://|", $url)) {
             if (preg_match("/\.mp4(?=\?|$)/i", $url)) {
-                $url = preg_replace(HTTP_PATTERN, "$1://mp4://", $url);
-            } else if (preg_match("/\.ts(?=\?|$)/i", $url)) {
-                $url = preg_replace(HTTP_PATTERN, "$1://ts://", $url);
+                $url = preg_replace(TS_REPL_PATTERN, "$1" . "mp4://$2", $url);
+            } else if ($force || preg_match("/\.ts|\.mpeg|mpegts(?=\?|$)/i", $url)) {
+                $url = preg_replace(TS_REPL_PATTERN, "$1ts://$2", $url);
             }
         }
 
@@ -1020,5 +1024,23 @@ class HD
                 return false;
         }
         return true;
+    }
+
+    public static function detect_encoding($string)
+    {
+        static $list = array("utf-8", "windows-1251", "windows-1252", "ASCII");
+
+        foreach ($list as $item) {
+            try {
+                $sample = @iconv($item, $item, $string);
+            } catch (Exception $e) {
+                continue;
+            }
+
+            if (md5($sample) === md5($string)) {
+                return $item;
+            }
+        }
+        return null;
     }
 }

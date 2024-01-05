@@ -2047,22 +2047,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_STRING_CRDTV_ID0       "ottrg"
-    IDS_STRING_CRDTV_ID1       "ott"
-    IDS_STRING_CRDTV_ID2       "ottgf"
-    IDS_STRING_CRDTV_ID3       "ottp"
-    IDS_STRING_CRDTV_ID4       "ottrk"
-    IDS_STRING_CRDTV_ID5       "otta"
-    IDS_STRING_CRDTV_P0       "Russia"
-    IDS_STRING_CRDTV_P1       "Germany (Saarbrücken)"
-    IDS_STRING_CRDTV_P2       "Germany (Frankfurt)"
-    IDS_STRING_CRDTV_P3       "Poland"
-    IDS_STRING_CRDTV_P4       "Kazakhstan"
-    IDS_STRING_CRDTV_P5       "Azerbaijan"
-END
-
-STRINGTABLE
-BEGIN
     ID_MAKE_ALL             "Make All"
     ID_MAKE_ALL_ACCOUNTS    "Make All Accounts"
 END

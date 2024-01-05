@@ -52,12 +52,12 @@ void plugin_crdtv::load_default()
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "{PL_DOMAIN}/m/{PASSWORD}/crdtv.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.+\/m\/(?<password>.+)\/.*$)";
-	info.parse_regex = R"(^https?:\/\/[^\/]+\/(?<id>.+)\/(?<password>.+)\/.*$)";
+	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<password>.+)\/.*$)";
 	playlist_templates.emplace_back(info);
 
 	square_icons = true;
 
-	streams_config[0].uri_template = "{SCHEME}{SERVER_ID}.crd-s.net/{ID}/{PASSWORD}/live.m3u8";
+	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{ID}/{PASSWORD}/live.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 
 	epg_params[0].epg_url = "";
@@ -76,22 +76,4 @@ void plugin_crdtv::fill_domains_list(TemplateParams* params /*= nullptr*/)
 	domains.emplace_back(info);
 
 	set_domains_list(domains);
-}
-
-void plugin_crdtv::fill_servers_list(TemplateParams* params /*= nullptr*/)
-{
-	if (!get_servers_list().empty())
-		return;
-
-	std::vector<DynamicParamsInfo> servers;
-	for (int i = 0; i <= IDS_STRING_CRDTV_ID5 - IDS_STRING_CRDTV_ID0; i++)
-	{
-		DynamicParamsInfo info;
-		info.set_id(load_string_resource(1049, IDS_STRING_CRDTV_ID0 + i));
-		info.set_name(load_string_resource(1049, IDS_STRING_CRDTV_P0 + i));
-		if (info.get_name().empty()) continue;
-		servers.emplace_back(info);
-	}
-
-	set_servers_list(servers);
 }
