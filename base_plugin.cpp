@@ -350,12 +350,41 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 	if (!download_url(internal_epg_url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
 		return false;
 
+	std::vector<char> buf(8);
+	data.seekg(0);
+	data.read(buf.data(), 8);
 	data.clear();
 
+	auto file_fmt = SevenZip::CompressionFormat::Unknown;
+
+	const char* str = buf.data();
+
+	if (memcmp(str, "\x1F\x8B\x08", 3) == 0)
+	{
+		file_fmt = SevenZip::CompressionFormat::GZip;
+	}
+	else if (memcmp(str, "\x50\x4B\x03\x04", 4) == 0)
+	{
+		file_fmt = SevenZip::CompressionFormat::Zip;
+	}
+	else
+	{
+		if (memcmp(str, "\xEF\xBB\xBF", 3) == 0)
+		{
+			str += 3;      // Skup utf-8 bom
+		}
+
+		if (memcmp(buf.data(), "<?xml", 5) == 0)
+		{
+			file_fmt = SevenZip::CompressionFormat::XZ;
+		}
+	}
+
+	if (file_fmt == SevenZip::CompressionFormat::Unknown)
+		return false;
+
 	auto cache_file = m_dl.GetCachePath(internal_epg_url);
-	boost::wregex re(LR"(^.*\.(gz|zip)$)");
-	boost::wsmatch m;
-	if (boost::regex_match(internal_epg_url, m, re))
+	if (file_fmt == SevenZip::CompressionFormat::GZip || file_fmt == SevenZip::CompressionFormat::Zip)
 	{
 		std::vector<char> buffer;
 		const auto& unpacked_path = m_dl.GetCachePath(internal_epg_url.substr(0, internal_epg_url.length() - 3));
@@ -371,10 +400,7 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 			SevenZip::SevenZipWrapper archiver(pack_dll);
 			auto& extractor = archiver.GetExtractor();
 			extractor.SetArchivePath(cache_file);
-			if (m[3].str() == L"zip")
-				extractor.SetCompressionFormat(SevenZip::CompressionFormat::Zip);
-			else
-				extractor.SetCompressionFormat(SevenZip::CompressionFormat::GZip);
+			extractor.SetCompressionFormat(file_fmt);
 
 			const auto& names = extractor.GetItemsNames();
 			if (names.empty())

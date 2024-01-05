@@ -61,13 +61,13 @@ BOOL CGetStreamInfoThread::InitInstance()
 
 		BS::thread_pool pool(m_config.m_max_threads);
 		std::atomic<int> count { 0 };
-		const auto& res = pool.parallelize_loop(0, (int)m_config.m_container->size(), [this, &count](const auto& a, const auto& b)
-												{
-													for (auto i = a; i < b; i++)
-													{
-														GetChannelStreamInfo(m_config, count, i);
-													}
-												});
+		const auto& res = pool.submit_blocks(0, (int)m_config.m_container->size(), [this, &count](const auto& a, const auto& b)
+											 {
+												 for (auto i = a; i < b; i++)
+												 {
+													 GetChannelStreamInfo(m_config, count, i);
+												 }
+											 });
 	}
 
 	m_config.NotifyParent(WM_END_GET_STREAM_INFO);
