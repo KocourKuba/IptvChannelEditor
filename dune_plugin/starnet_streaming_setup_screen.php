@@ -341,7 +341,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
                     $need_reload = true;
                 }
                 $this->plugin->set_parameter($control_id, $user_input->{$control_id});
-                hd_debug_print("$control_id: " . $plugin_cookies->{$control_id}, true);
+                hd_debug_print("$control_id: " . $user_input->{$control_id}, true);
                 break;
 
             case PARAM_PER_CHANNELS_ZOOM:
