@@ -175,16 +175,6 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	CWinAppEx::InitInstance();
 
-	HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
-	if (hAppRunningMutex)
-	{
-		AfxMessageBox(IDS_STRING_ALREADY_RUNNING, MB_OK | MB_ICONEXCLAMATION);
-		CloseHandle(hAppRunningMutex);
-		ExitProcess(0);
-	}
-
-	g_hAppRunningMutex = CreateMutex(nullptr, FALSE, g_sz_Run_GUID);
-
 	AfxEnableControlContainer();
 
 	// Create the shell manager, in case the dialog contains
@@ -213,6 +203,16 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 #endif // _DEBUG
 
 	GetConfig().LoadSettings();
+
+	HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
+	if (hAppRunningMutex && !GetConfig().IsPortable())
+	{
+		AfxMessageBox(IDS_STRING_ALREADY_RUNNING, MB_OK | MB_ICONEXCLAMATION);
+		CloseHandle(hAppRunningMutex);
+		ExitProcess(0);
+	}
+
+	g_hAppRunningMutex = CreateMutex(nullptr, FALSE, g_sz_Run_GUID);
 
 	if (GetConfig().get_string(true, REG_OUTPUT_PATH).empty())
 	{
