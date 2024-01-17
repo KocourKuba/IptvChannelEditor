@@ -33,7 +33,7 @@ public:
 
 	plugin_itv();
 
-	std::map<std::wstring, std::wstring> parse_access_info(TemplateParams& params) override;
+	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(TemplateParams& params) override;
 	void fill_domains_list(TemplateParams* params = nullptr) override;
 
 protected:

@@ -36,7 +36,7 @@ public:
 	plugin_vidok();
 
 	std::wstring get_api_token(const Credentials& creds) const override;
-	std::map<std::wstring, std::wstring> parse_access_info(TemplateParams& params) override;
+	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(TemplateParams& params) override;
 	void fill_servers_list(TemplateParams* params = nullptr) override;
 	bool set_server(TemplateParams& params) override;
 	void fill_domains_list(TemplateParams* params = nullptr) override;

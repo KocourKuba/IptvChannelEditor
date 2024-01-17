@@ -208,7 +208,7 @@ public:
 	/// <param name="params">parameters used to download access info</param>
 	/// <param name="info_list">parsed parameters list</param>
 	/// <returns>bool</returns>
-	virtual std::map<std::wstring, std::wstring> parse_access_info(TemplateParams& params) { return {}; }
+	virtual std::map<std::wstring, std::wstring, std::less<>> parse_access_info(TemplateParams& params) { return {}; }
 
 	/// <summary>
 	/// get url to obtain account playlist
@@ -227,7 +227,7 @@ public:
 
 protected:
 
-	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring>& info) const;
+	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const;
 
 protected:
 	utils::CUrlDownload m_dl;

@@ -128,9 +128,9 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		if (m_epg_idx != 2)
 		{
 			auto epg_id = epg_ids[m_epg_idx];
-			epg_ids[0] = L"";
-			epg_ids[1] = L"";
-			epg_ids[m_epg_idx] = epg_id;
+			epg_ids[0].clear();
+			epg_ids[1].clear();
+			std::swap(epg_ids[m_epg_idx], epg_id);
 			bool res = m_plugin->parse_json_epg(m_epg_idx, epg_ids, *m_epg_cache, now, m_info);
 			if (!res)
 			{

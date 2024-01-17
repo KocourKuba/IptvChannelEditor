@@ -35,7 +35,7 @@ public:
 
 	void configure_provider_plugin() override;
 	std::wstring get_playlist_url(TemplateParams& params, std::wstring url = L"") override;
-	std::map<std::wstring, std::wstring> parse_access_info(TemplateParams& params) override;
+	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(TemplateParams& params) override;
 	void fill_servers_list(TemplateParams* params = nullptr) override;
 	bool set_server(TemplateParams& params) override;
 	void fill_profiles_list(TemplateParams* params = nullptr) override;

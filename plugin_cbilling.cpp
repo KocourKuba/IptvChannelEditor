@@ -100,7 +100,7 @@ void plugin_cbilling::fill_devices_list(TemplateParams* params /*= nullptr*/)
 	set_devices_list(devices);
 }
 
-std::map<std::wstring, std::wstring> plugin_cbilling::parse_access_info(TemplateParams& params)
+std::map<std::wstring, std::wstring, std::less<>> plugin_cbilling::parse_access_info(TemplateParams& params)
 {
 	/*
 	{
@@ -120,7 +120,7 @@ std::map<std::wstring, std::wstring> plugin_cbilling::parse_access_info(Template
 	static constexpr auto ACCOUNT_HEADER_TEMPLATE = "x-public-key: {:s}";
 	static constexpr auto ACCOUNT_TEMPLATE = L"/auth/info";
 
-	std::map<std::wstring, std::wstring> info;
+	std::map<std::wstring, std::wstring, std::less<>> info;
 
 	CWaitCursor cur;
 	std::vector<std::string> headers;

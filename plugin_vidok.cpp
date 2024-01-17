@@ -83,9 +83,9 @@ std::wstring plugin_vidok::get_api_token(const Credentials& creds) const
 	return utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
 }
 
-std::map<std::wstring, std::wstring> plugin_vidok::parse_access_info(TemplateParams& params)
+std::map<std::wstring, std::wstring, std::less<>> plugin_vidok::parse_access_info(TemplateParams& params)
 {
-	std::map<std::wstring, std::wstring> info;
+	std::map<std::wstring, std::wstring, std::less<>> info;
 
 	Credentials creds;
 	creds.set_login(params.login);

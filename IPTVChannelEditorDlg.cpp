@@ -1976,9 +1976,9 @@ void CIPTVChannelEditorDlg::FillEPG()
 		if (epg_idx != 2)
 		{
 			auto epg_id = epg_ids[epg_idx];
-			epg_ids[0] = L"";
-			epg_ids[1] = L"";
-			epg_ids[epg_idx] = epg_id;
+			epg_ids[0].clear();
+			epg_ids[1].clear();
+			std::swap(epg_ids[epg_idx], epg_id);
 			bool res = m_plugin->parse_json_epg(epg_idx, epg_ids, m_epg_cache, now, info);
 			if (!res)
 			{

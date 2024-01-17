@@ -74,11 +74,11 @@ void plugin_oneott::load_default()
 	epg_params[1].epg_url = "{EPG_DOMAIN}/1ott%2Fepg%2F{EPG_ID}.json";
 }
 
-std::map<std::wstring, std::wstring> plugin_oneott::parse_access_info(TemplateParams& params)
+std::map<std::wstring, std::wstring, std::less<>> plugin_oneott::parse_access_info(TemplateParams& params)
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"{:s}/PinApi/{:s}/{:s}";
 
-	std::map<std::wstring, std::wstring> info;
+	std::map<std::wstring, std::wstring, std::less<>> info;
 
 	CWaitCursor cur;
 	std::stringstream data;

@@ -125,11 +125,11 @@ std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wst
 	return base_plugin::get_playlist_url(params, url);
 }
 
-std::map<std::wstring, std::wstring> plugin_sharaclub::parse_access_info(TemplateParams& params)
+std::map<std::wstring, std::wstring, std::less<>> plugin_sharaclub::parse_access_info(TemplateParams& params)
 {
 	const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"subscr_info", params.login, params.password);
 
-	std::map<std::wstring, std::wstring> info;
+	std::map<std::wstring, std::wstring, std::less<>> info;
 
 	CWaitCursor cur;
 	std::stringstream data;

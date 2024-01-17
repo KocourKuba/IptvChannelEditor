@@ -78,9 +78,9 @@ void plugin_itv::load_default()
 	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}";
 }
 
-std::map<std::wstring, std::wstring> plugin_itv::parse_access_info(TemplateParams& params)
+std::map<std::wstring, std::wstring, std::less<>> plugin_itv::parse_access_info(TemplateParams& params)
 {
-	std::map<std::wstring, std::wstring> info;
+	std::map<std::wstring, std::wstring, std::less<>> info;
 
 	CWaitCursor cur;
 	std::stringstream data;

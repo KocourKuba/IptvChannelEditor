@@ -700,8 +700,9 @@ bool PackPlugin(const PluginType plugin_type,
 	std::filesystem::directory_iterator dir_iter(playlistPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
-		const auto& channels = dir_entry.path().filename().string();
-		if (dir_entry.path().filename().extension() == L".xml"
+		const auto& fname = dir_entry.path().filename();
+		const auto& channels = fname.string();
+		if (fname.extension() == L".xml"
 			&& (noCustom || std::find(cred.ch_list.begin(), cred.ch_list.end(), channels) != cred.ch_list.end()))
 		{
 			std::string link;

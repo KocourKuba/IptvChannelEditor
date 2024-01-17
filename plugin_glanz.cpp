@@ -90,6 +90,7 @@ void plugin_glanz::fill_domains_list(TemplateParams* params /*= nullptr*/)
 		return;
 
 	std::vector<DynamicParamsInfo> domains;
+	domains.reserve(6);
 
 	DynamicParamsInfo info;
 	info.set_id(L"0");
