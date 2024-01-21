@@ -604,6 +604,7 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->id);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, epg_id);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, info->token);
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_S_TOKEN, info->token);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DATE, params.get_epg_date_format());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_YEAR, std::to_wstring(dt.GetYear()));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_MONTH, std::to_wstring(dt.GetMonth()));
