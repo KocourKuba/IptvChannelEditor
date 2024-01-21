@@ -129,6 +129,10 @@ class Epg_Manager_Json extends Epg_Manager
                 $epg_url = str_replace(Plugin_Macros::TOKEN, $this->plugin->get_credentials(Ext_Params::M_S_TOKEN), $epg_url);
             }
 
+            if (strpos($epg_url, Plugin_Macros::S_TOKEN) !== false) {
+                $epg_url = str_replace(Plugin_Macros::S_TOKEN, $this->plugin->get_credentials(Ext_Params::M_S_TOKEN), $epg_url);
+            }
+
             $epg_url = str_replace('#', '%23', $epg_url);
             $hash = hash('crc32', $epg_url);
 
