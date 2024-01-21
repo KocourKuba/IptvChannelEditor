@@ -681,7 +681,7 @@ class default_config extends dynamic_config
 
         $url = $this->UpdateDuneParams($play_template_url, $custom_stream_type);
 
-        return HD::make_ts($url);
+        return HD::make_ts($url, $stream_type === Plugin_Constants::MPEG);
     }
 
     /**
