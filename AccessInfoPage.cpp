@@ -763,7 +763,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	m_wndCustomBackground.EnableWindow(enable);
 	m_wndCustomCaption.EnableWindow(enable);
 	m_wndCustomPluginName.EnableWindow(enable);
-	m_wndDirectLink.EnableWindow(enable);
+	//m_wndDirectLink.EnableWindow(enable);
 	m_wndUpdatePackageUrl.EnableWindow(enable);
 	m_wndUpdateUrl.EnableWindow(enable);
 	m_wndChannelsWebPath.EnableWindow(enable);
