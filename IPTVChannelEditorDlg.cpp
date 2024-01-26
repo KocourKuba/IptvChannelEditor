@@ -555,7 +555,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndIconSource.AddString(_T("it999.ru"));
 	m_wndIconSource.AddString(_T("it999.ru (square)"));
 	m_wndIconSource.AddString(_T("iptvx.one"));
-	m_wndIconSource.AddString(_T("wink"));
+	m_wndIconSource.AddString(_T("fiptv"));
 
 	// load button images;
 	SetButtonImage(IDB_PNG_CHANGELOG, m_wndBtnChangelog);
@@ -3795,7 +3795,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			save = ChooseIconFromLib(idx, L"https://epg.drm-play.com/?prov=iptvx.one", info);
 			break;
 		case 5:
-			save = ChooseIconFromLib(idx, L"https://epg.drm-play.com/?prov=wink", info);
+			save = ChooseIconFromLib(idx, L"https://epg.drm-play.com/?prov=fiptv", info);
 			break;
 		default:
 			break;
