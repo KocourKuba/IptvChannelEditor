@@ -28,6 +28,11 @@ class Movie_Series
     public $playback_url = '';
 
     /**
+     * @var string
+     */
+    public $movie_image = '';
+
+    /**
      * @var array
      */
     public $variants;
@@ -44,7 +49,7 @@ class Movie_Series
     public function __construct($id)
     {
         if (is_null($id)) {
-            HD::print_backtrace();
+            print_backtrace();
             throw new Exception("Movie_Series::id is null");
         }
 

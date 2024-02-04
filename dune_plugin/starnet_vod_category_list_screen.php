@@ -50,7 +50,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, ACTION_RELOAD, TR::t('vod_screen_reload_playlist')),
         );
 
-        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_M3U)) {
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) === "M3U") {
             $all_vod_lists = $this->plugin->config->get_vod_list_names($current_idx);
             if (count($all_vod_lists) > 1) {
                 $change_playlist = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU);
@@ -147,58 +147,50 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
 
         // Favorites
         if (!isset($media_url->category_id)) {
-            $items[] = array
-            (
-                PluginRegularFolderItem::media_url => Starnet_Vod_Favorites_Screen::ID,
+            $items[] = array(
+                PluginRegularFolderItem::media_url => Starnet_Vod_Favorites_Screen::get_media_url_str(),
                 PluginRegularFolderItem::caption => TR::t(self::FAV_MOVIES_GROUP_CAPTION),
-                PluginRegularFolderItem::view_item_params => array
-                (
+                PluginRegularFolderItem::view_item_params => array(
                     ViewItemParams::icon_path => self::FAV_MOVIES_GROUP_ICON,
                     ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GOLD, // Light yellow
                     ViewItemParams::item_detailed_icon_path => self::FAV_MOVIES_GROUP_ICON,
                 )
             );
-        }
 
-        // History
-        $items[] = array
-        (
-            PluginRegularFolderItem::media_url => Starnet_Vod_History_Screen::ID,
-            PluginRegularFolderItem::caption => TR::t(self::HISTORY_MOVIES_GROUP_CAPTION),
-            PluginRegularFolderItem::view_item_params => array
-            (
-                ViewItemParams::icon_path => self::HISTORY_MOVIES_GROUP_ICON,
-                ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_TURQUOISE, // Cyan
-                ViewItemParams::item_detailed_icon_path => self::HISTORY_MOVIES_GROUP_ICON,
-            )
-        );
-
-        // Search
-        $items[] = array
-        (
-            PluginRegularFolderItem::media_url => Starnet_Vod_Search_Screen::ID,
-            PluginRegularFolderItem::caption => TR::t(self::SEARCH_MOVIES_GROUP_CAPTION),
-            PluginRegularFolderItem::view_item_params => array
-            (
-                ViewItemParams::icon_path => self::SEARCH_MOVIES_GROUP_ICON,
-                ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GREEN, // Green
-                ViewItemParams::item_detailed_icon_path => self::SEARCH_MOVIES_GROUP_ICON,
-            )
-        );
-
-        // Filter
-        if (!isset($media_url->category_id) && $this->plugin->config->get_feature(Plugin_Constants::VOD_FILTER_SUPPORTED)) {
-            $items[] = array
-            (
-                PluginRegularFolderItem::media_url => Starnet_Vod_Filter_Screen::ID,
-                PluginRegularFolderItem::caption => TR::t(self::FILTER_MOVIES_GROUP_CAPTION),
-                PluginRegularFolderItem::view_item_params => array
-                (
-                    ViewItemParams::icon_path => self::FILTER_MOVIES_GROUP_ICON,
-                    ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GREEN, // Green
-                    ViewItemParams::item_detailed_icon_path => self::FILTER_MOVIES_GROUP_ICON,
+            // History
+            $items[] = array(
+                PluginRegularFolderItem::media_url => Starnet_Vod_History_Screen::get_media_url_str(),
+                PluginRegularFolderItem::caption => TR::t(self::HISTORY_MOVIES_GROUP_CAPTION),
+                PluginRegularFolderItem::view_item_params => array(
+                    ViewItemParams::icon_path => self::HISTORY_MOVIES_GROUP_ICON,
+                    ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_TURQUOISE, // Cyan
+                    ViewItemParams::item_detailed_icon_path => self::HISTORY_MOVIES_GROUP_ICON,
                 )
             );
+
+            // Search
+            $items[] = array(
+                PluginRegularFolderItem::media_url => Starnet_Vod_Search_Screen::get_media_url_str(),
+                PluginRegularFolderItem::caption => TR::t(self::SEARCH_MOVIES_GROUP_CAPTION),
+                PluginRegularFolderItem::view_item_params => array(
+                    ViewItemParams::icon_path => self::SEARCH_MOVIES_GROUP_ICON,
+                    ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GREEN, // Green
+                    ViewItemParams::item_detailed_icon_path => self::SEARCH_MOVIES_GROUP_ICON,
+                )
+            );
+
+            // Filter
+            if ($this->plugin->config->get_feature(Plugin_Constants::VOD_FILTER_SUPPORTED)) {
+                $items[] = array(
+                    PluginRegularFolderItem::media_url => Starnet_Vod_Filter_Screen::get_media_url_str(),
+                    PluginRegularFolderItem::caption => TR::t(self::FILTER_MOVIES_GROUP_CAPTION),
+                    PluginRegularFolderItem::view_item_params => array(
+                        ViewItemParams::icon_path => self::FILTER_MOVIES_GROUP_ICON,
+                        ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_GREEN, // Green
+                        ViewItemParams::item_detailed_icon_path => self::FILTER_MOVIES_GROUP_ICON,
+                    )
+                );
+            }
         }
 
         if (!empty($category_list)) {
@@ -217,12 +209,10 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                     $media_url_str = Starnet_Vod_List_Screen::get_media_url_string($category_id, null);
                 }
 
-                $items[] = array
-                (
+                $items[] = array(
                     PluginRegularFolderItem::media_url => $media_url_str,
                     PluginRegularFolderItem::caption => $category->get_caption(),
-                    PluginRegularFolderItem::view_item_params => array
-                    (
+                    PluginRegularFolderItem::view_item_params => array(
                         ViewItemParams::icon_path => $category->get_icon_path(),
                         ViewItemParams::item_detailed_icon_path => $category->get_icon_path(),
                     )

@@ -54,8 +54,8 @@ void plugin_viplime::load_default()
 	vod_info.pl_template = "http://m.{PL_DOMAIN}/f/{PASSWORD}/playlist.m3u8";
 	vod_info.parse_regex = R"((?<title>[^\(]*)\s\((?<year>\d+)\)$)";
 	vod_templates.emplace_back(vod_info);
-	vod_support = true;
-	vod_m3u = true;
+
+	vod_engine = VodEngine::enM3U;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "http://{PL_DOMAIN}/high/{PASSWORD}/playlist.m3u8";

@@ -543,8 +543,10 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		if (!plugin) continue;
 
 		std::wstring title(plugin->get_title());
-		if (plugin->get_vod_support())
+		if (plugin->get_vod_engine() != VodEngine::enNone)
+		{
 			title += L" (VOD)";
+		}
 
 		int idx = m_wndPluginType.AddString(title.c_str());
 		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item);
@@ -712,7 +714,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	const auto& streams = m_plugin->get_supported_streams();
 
-	m_wndBtnVod.ShowWindow(m_plugin->get_vod_support() ? SW_SHOW : SW_HIDE);
+	m_wndBtnVod.ShowWindow(m_plugin->get_vod_engine() != VodEngine::enNone ? SW_SHOW : SW_HIDE);
 
 	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
 	m_wndStreamType.ResetContent();
@@ -1156,7 +1158,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			if (found != selected_tag.end())
 			{
 				const auto& epg_url = utils::utf8_to_utf16(tag.second);
-				const auto& urls = utils::string_split<wchar_t>(epg_url, L',');
+				const auto& urls = utils::string_split(epg_url, L',');
 				int i = 0;
 				for(const auto& url : urls)
 				{
@@ -1497,7 +1499,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		// higher value and will be added later and it will be first in the tree
 		tvCategory.hInsertAfter = pair.second.category->is_not_movable() ? TVI_FIRST : nullptr;
 
-		if (!m_plugin->get_vod_support() && pair.second.category->is_vod()) continue;
+		if (m_plugin->get_vod_engine() == VodEngine::enNone && pair.second.category->is_vod()) continue;
 
 		auto hParent = m_wndChannelsTree.InsertItem(&tvCategory);
 		m_wndChannelsTree.SetItemColor(hParent, pair.second.category->is_disabled() ? m_gray : m_normal);
@@ -2195,7 +2197,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	CategoryInfo hist_info = { nullptr, hist_category };
 	m_categoriesMap.emplace(ID_HISTORY, hist_info);
 
-	if (m_plugin->get_vod_support())
+	if (m_plugin->get_vod_engine() != VodEngine::enNone)
 	{
 		auto vod_category = std::make_shared<ChannelCategory>(root_path);
 		vod_category->set_icon_uri(L"plugin_file://icons/vod.png");

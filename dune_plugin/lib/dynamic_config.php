@@ -43,8 +43,7 @@ class dynamic_config
         $this->set_feature(Plugin_Constants::BALANCE_SUPPORTED, $settings[Plugin_Constants::BALANCE_SUPPORTED]);
         $this->set_feature(Plugin_Constants::PLAYLIST_TEMPLATES, $settings[Plugin_Constants::PLAYLIST_TEMPLATES]);
         $this->set_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX, $settings[Plugin_Constants::PLAYLIST_TEMPLATE_INDEX]);
-        $this->set_feature(Plugin_Constants::VOD_SUPPORTED, $settings[Plugin_Constants::VOD_SUPPORTED]);
-        $this->set_feature(Plugin_Constants::VOD_M3U, $settings[Plugin_Constants::VOD_M3U]);
+        $this->set_feature(Plugin_Constants::VOD_ENGINE, $settings[Plugin_Constants::VOD_ENGINE]);
         $this->set_feature(Plugin_Constants::VOD_TEMPLATES, $settings[Plugin_Constants::VOD_TEMPLATES]);
 
         HD::set_dune_user_agent($settings[Plugin_Constants::USER_AGENT]);

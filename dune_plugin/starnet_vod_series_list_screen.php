@@ -224,14 +224,15 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $color = 5;
             }
 
+            hd_debug_print("Movie media url: " . self::get_media_url_string($movie->id, $episode->season_id, $episode->id), true);
             $this->variants = $episode->variants;
             $items[] = array(
                 PluginRegularFolderItem::media_url => self::get_media_url_string($movie->id, $episode->season_id, $episode->id),
                 PluginRegularFolderItem::caption => $info,
-                PluginRegularFolderItem::view_item_params => array
-                (
+                PluginRegularFolderItem::view_item_params => array(
                     ViewItemParams::icon_path => 'gui_skin://small_icons/movie.aai',
-                    ViewItemParams::item_detailed_info => $episode->series_desc,
+                    ViewItemParams::item_detailed_info => empty($episode->series_desc) ? $episode->name : $episode->series_desc,
+                    ViewItemParams::item_detailed_icon_path => empty($episode->movie_image) ? 'gui_skin://large_icons/movie.aai' : $episode->movie_image,
                     ViewItemParams::item_caption_color => $color,
                 ),
             );

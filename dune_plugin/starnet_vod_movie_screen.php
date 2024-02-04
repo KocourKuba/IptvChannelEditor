@@ -62,7 +62,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
                 $movie = new Movie($media_url->movie_id, $this->plugin);
             }
             hd_debug_print("empty movie or no series data");
-            HD::print_backtrace();
+            print_backtrace();
             $movie->description = TR::t('warn_msg3');
             return array
             (

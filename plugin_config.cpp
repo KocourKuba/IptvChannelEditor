@@ -112,8 +112,7 @@ void plugin_config::load_default()
 	profiles_list.clear();
 	domains_list.clear();
 	square_icons = false;
-	vod_support = false;
-	vod_m3u = false;
+	vod_engine = VodEngine::enNone;
 	requested_token = false;
 	static_servers = false;
 	static_qualities = false;

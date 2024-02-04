@@ -55,7 +55,6 @@ void plugin_antifriz::load_default()
 	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_info.pl_template = "{API_URL}";
 	vod_templates.emplace_back(vod_info);
-	vod_support = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}.m3u8";

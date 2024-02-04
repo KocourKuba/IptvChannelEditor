@@ -11,7 +11,7 @@ class antifriz_config extends default_config
     public function TryLoadMovie($movie_id)
     {
         hd_debug_print($movie_id);
-        $movie = new Movie($movie_id, $this->parent);
+        $movie = new Movie($movie_id, $this->plugin);
         $json = HD::DownloadJson($this->GetVodListUrl() . "/video/$movie_id", false);
         if ($json === false) {
             return $movie;
@@ -162,10 +162,13 @@ class antifriz_config extends default_config
                 }
             }
             if (isset($entry->name)) {
-                $movie = new Short_Movie($entry->id, $entry->name, $entry->poster);
                 $genre_str = implode(", ", $genresArray);
-                $movie->info = TR::t('vod_screen_movie_info__5', $entry->name, $entry->year, $entry->country, $genre_str, $entry->rating);
-                $movies[] = $movie;
+                $movies[] = new Short_Movie(
+                    $entry->id,
+                    $entry->name,
+                    $entry->poster,
+                    TR::t('vod_screen_movie_info__5', $entry->name, $entry->year, $entry->country, $genre_str, $entry->rating)
+                );
             }
         }
 

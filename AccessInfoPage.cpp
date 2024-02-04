@@ -274,7 +274,7 @@ void CAccessInfoPage::CreateAccountsList()
 	{
 		case AccountAccessType::enPin:
 			vWidth /= 2;
-			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
+			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
 		case AccountAccessType::enLoginPass:
 			vWidth /= 3;

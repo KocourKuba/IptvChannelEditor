@@ -62,7 +62,7 @@ class Starnet_Vod extends Abstract_Vod
      */
     public function is_movie_page_supported()
     {
-        return $this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED);
+        return $this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) !== "None";
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -180,7 +180,7 @@ class Starnet_Vod extends Abstract_Vod
      */
     public function is_favorites_supported()
     {
-        return $this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED);
+        return $this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) !== "None";
     }
 
     ///////////////////////////////////////////////////////////////////////

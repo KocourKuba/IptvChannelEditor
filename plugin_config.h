@@ -116,7 +116,7 @@ ENUM_TO_STRING(EpgPresets,
 	{ EpgPresets::enIptvxOne,    L"IptvxOne"    },
 	{ EpgPresets::enCbilling,    L"Cbilling"    },
 	{ EpgPresets::enItvLive,     L"ItvLive"     },
-	{ EpgPresets::enPropgNet,    L"PropgNet"      },
+	{ EpgPresets::enPropgNet,    L"PropgNet"    },
 	{ EpgPresets::enTVClub,      L"TVClub"      },
 	{ EpgPresets::enVidok,       L"Vidok"       },
 	{ EpgPresets::enMyEPGServer, L"MyEPGServer" },
@@ -124,9 +124,42 @@ ENUM_TO_STRING(EpgPresets,
 	{ EpgPresets::enLast,        L"Last"        }
 })
 
-};
+}
 
 using namespace epg_enum;
+
+namespace vod_enum
+{
+
+enum class VodEngine
+{
+	enNone = 0,
+	enM3U,
+	enJson,
+	enXC,
+	enLast,
+};
+
+NLOHMANN_JSON_SERIALIZE_ENUM(VodEngine,
+{
+	{ VodEngine::enNone,   "None"        },
+	{ VodEngine::enM3U,    "M3U"         },
+	{ VodEngine::enJson,   "Json"        },
+	{ VodEngine::enXC,     "XtreamCodes" },
+})
+
+ENUM_TO_STRING(VodEngine,
+{
+	{ VodEngine::enNone,   L"None"        },
+	{ VodEngine::enM3U,    L"M3U"         },
+	{ VodEngine::enJson,   L"Json"        },
+	{ VodEngine::enXC,     L"XtreamCodes" },
+	{ VodEngine::enLast,   L"Last"        },
+})
+
+}
+
+using namespace vod_enum;
 
 struct TemplateParams
 {
@@ -570,18 +603,11 @@ public:
 	const PlaylistTemplateInfo& get_current_playlist_info() const { return get_playlist_info(get_playlist_idx()); };
 
 	/// <summary>
-	/// plugin supports vod
+	/// vod engine type
 	/// </summary>
 	/// <returns>bool</returns>
-	bool get_vod_support() const { return vod_support; }
-	void set_vod_support(bool val) { vod_support = val; }
-
-	/// <summary>
-	/// vod m3u based
-	/// </summary>
-	/// <returns>bool</returns>
-	bool get_vod_m3u() const { return vod_m3u; }
-	void set_vod_m3u(bool val) { vod_m3u = val; }
+	VodEngine get_vod_engine() const { return vod_engine; }
+	void set_vod_engine(VodEngine val) { vod_engine = val; }
 
 	/// <summary>
 	/// property vod filter
@@ -838,8 +864,7 @@ public:
 		SERIALIZE_STRUCT(j, c, provider_api_url);
 		SERIALIZE_STRUCT(j, c, playlist_templates);
 		SERIALIZE_STRUCT(j, c, playlist_template_index);
-		SERIALIZE_STRUCT(j, c, vod_support); //-V601
-		SERIALIZE_STRUCT(j, c, vod_m3u); //-V601
+		SERIALIZE_STRUCT(j, c, vod_engine); //-V601
 		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
 		SERIALIZE_STRUCT(j, c, vod_templates);
 		SERIALIZE_STRUCT(j, c, vod_template_index);
@@ -874,8 +899,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, provider_api_url);
 		DESERIALIZE_STRUCT(j, c, playlist_templates);
 		DESERIALIZE_STRUCT(j, c, playlist_template_index);
-		DESERIALIZE_STRUCT(j, c, vod_support);
-		DESERIALIZE_STRUCT(j, c, vod_m3u);
+		DESERIALIZE_STRUCT(j, c, vod_engine);
 		DESERIALIZE_STRUCT(j, c, vod_filter);
 		DESERIALIZE_STRUCT(j, c, vod_templates);
 		DESERIALIZE_STRUCT(j, c, vod_template_index);
@@ -929,10 +953,8 @@ protected:
 	// provider api url
 	std::string provider_api_url;
 
-	// enable vod
-	bool vod_support = false;
-	// vod based on m3u8 playlist
-	bool vod_m3u = false;
+	// vod engine
+	VodEngine vod_engine = VodEngine::enNone;
 
 	// use channels logo are squared, plugin UI settings
 	bool square_icons = false;

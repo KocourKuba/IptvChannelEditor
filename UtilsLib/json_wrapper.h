@@ -63,11 +63,15 @@ namespace utils
 		if (node.contains(key))
 		{
 			const auto& js = node[key];
-			if (js.is_number_integer())
+			if (js.is_number_unsigned())
 			{
-				ret_value = std::move(std::to_wstring(js.get<int>()));
+				ret_value = std::move(std::to_wstring(js.get<nlohmann::json::number_unsigned_t>()));
 			}
-			if (js.is_number_float())
+			else if (js.is_number_integer())
+			{
+				ret_value = std::move(std::to_wstring(js.get<nlohmann::json::number_integer_t>()));
+			}
+			else if (js.is_number_float())
 			{
 				ret_value = std::move(std::to_wstring(js.get<float>()));
 			}
@@ -86,11 +90,15 @@ namespace utils
 		if (node.contains(key))
 		{
 			const auto& js = node[key];
-			if (js.is_number_integer())
+			if (js.is_number_unsigned())
 			{
-				ret_value = std::move(std::to_string(js.get<int>()));
+				ret_value = std::move(std::to_string(js.get<nlohmann::json::number_unsigned_t>()));
 			}
-			if (js.is_number_float())
+			else if (js.is_number_integer())
+			{
+				ret_value = std::move(std::to_string(js.get<nlohmann::json::number_integer_t>()));
+			}
+			else if (js.is_number_float())
 			{
 				ret_value = std::move(std::to_string(js.get<float>()));
 			}
@@ -134,13 +142,13 @@ namespace utils
 		return val.contains(key) && val[key].is_string() ? val[key] : "";
 	}
 
-	inline time_t get_json_int_value(const std::string& key, const nlohmann::json& val)
+	inline nlohmann::json::number_unsigned_t get_json_number_value(const std::string& key, const nlohmann::json& val)
 	{
 		if (val.contains(key))
 		{
 			if (val[key].is_number())
 			{
-				return val.value(key, 0);
+				return val.value(key, 0ull);
 			}
 
 			if (val[key].is_string())

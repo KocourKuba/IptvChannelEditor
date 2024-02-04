@@ -136,7 +136,7 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 
 	for(auto it = (size_t)EpgPresets::enDRM; it != (size_t)EpgPresets::enLast; ((size_t&)it)++)
 	{
-		m_wndEpgPreset.AddString(enum_to_string<EpgPresets, std::wstring>((EpgPresets)it).c_str());
+		m_wndEpgPreset.AddString(epg_enum::enum_to_string<EpgPresets, std::wstring>((EpgPresets)it).c_str());
 	}
 	m_wndEpgPreset.SetCurSel((int)GetPropertySheet()->m_plugin->get_epg_preset_idx(0));
 

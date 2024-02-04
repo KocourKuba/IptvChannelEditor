@@ -37,6 +37,7 @@ static char THIS_FILE[] = __FILE__;
 plugin_sharavoz::plugin_sharavoz()
 {
 	type_name = "sharavoz";
+	class_name = "sharavoz_config";
 }
 
 void plugin_sharavoz::load_default()
@@ -48,6 +49,13 @@ void plugin_sharavoz::load_default()
 	access_type = AccountAccessType::enPin;
 
 	provider_url = "https://www.sharavoz.tv/";
+	provider_api_url = "http://app.media24.cc/json/c";
+
+	vod_templates.clear();
+	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
+	vod_info.pl_template = "{API_URL}";
+	vod_templates.emplace_back(vod_info);
+	vod_engine = VodEngine::enXC;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "{PL_DOMAIN}/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u";

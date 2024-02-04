@@ -85,7 +85,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
         Control_Factory::add_image_button($defs, $this, null,
             self::CONTROL_TV_HISTORY_CLEAR, TR::t('setup_tv_history_clear'), TR::t('clear'), $remove_icon, self::CONTROLS_WIDTH);
 
-        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) !== "None") {
             Control_Factory::add_image_button($defs, $this, null,
                 self::CONTROL_VOD_HISTORY_CLEAR, TR::t('setup_vod_history_clear'), TR::t('clear'), $remove_icon, self::CONTROLS_WIDTH);
         }

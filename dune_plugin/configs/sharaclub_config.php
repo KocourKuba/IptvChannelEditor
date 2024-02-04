@@ -42,7 +42,7 @@ class sharaclub_config extends default_config
                     foreach ($content['allow_nums'] as $server) {
                         $servers[$server['id']] = $server['name'];
                     }
-                    $this->parent->set_parameter(Ext_Params::M_SERVER_ID, $content['current']);
+                    $this->plugin->set_parameter(Ext_Params::M_SERVER_ID, $content['current']);
                     hd_debug_print("Current server: {$content['current']}");
                     $this->set_servers($servers);
                 } else {
@@ -95,7 +95,7 @@ class sharaclub_config extends default_config
                         $profiles[$profile['id']] = $profile['name'];
                     }
                     $profile = isset($content['current']) ? $content['current'] : "0";
-                    $this->parent->set_parameter(Ext_Params::M_PROFILE_ID, $profile);
+                    $this->plugin->set_parameter(Ext_Params::M_PROFILE_ID, $profile);
                     $this->set_profiles($profiles);
                 } else {
                     hd_debug_print("Unable to download profiles information");
@@ -221,7 +221,7 @@ class sharaclub_config extends default_config
     public function TryLoadMovie($movie_id)
     {
         hd_debug_print($movie_id);
-        $movie = new Movie($movie_id, $this->parent);
+        $movie = new Movie($movie_id, $this->plugin);
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
 
         if ($jsonItems === false) {
@@ -502,10 +502,12 @@ class sharaclub_config extends default_config
         $info = $movie_obj->info;
         $genres = HD::ArrayToStr($info->genre);
         $country = HD::ArrayToStr($info->country);
-        $movie = new Short_Movie($id, (string)$movie_obj->name, (string)$info->poster);
-        $movie->info = TR::t('vod_screen_movie_info__5', $movie_obj->name, $info->year, $country, $genres, $info->rating);
-
-        return $movie;
+        return new Short_Movie(
+            $id,
+            (string)$movie_obj->name,
+            (string)$info->poster,
+            TR::t('vod_screen_movie_info__5', $movie_obj->name, $info->year, $country, $genres, $info->rating)
+        );
     }
 
     /**

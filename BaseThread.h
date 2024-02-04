@@ -40,6 +40,7 @@ public:
 		void* m_parent = nullptr;
 		HANDLE m_hStop = nullptr;
 		HANDLE m_hExit = nullptr;
+		TemplateParams m_params;
 		std::wstring m_rootPath;
 		std::wstring m_url;
 		std::string nparam;

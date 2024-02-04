@@ -59,7 +59,7 @@ void plugin_cbilling::load_default()
 	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_info.pl_template = "{API_URL}";
 	vod_templates.emplace_back(vod_info);
-	vod_support = true;
+	vod_engine = VodEngine::enJson;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
 	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";

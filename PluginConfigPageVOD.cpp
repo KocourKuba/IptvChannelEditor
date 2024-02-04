@@ -37,6 +37,7 @@ DEALINGS IN THE SOFTWARE.
 IMPLEMENT_DYNAMIC(CPluginConfigPageVOD, CTooltipPropertyPage)
 
 BEGIN_MESSAGE_MAP(CPluginConfigPageVOD, CTooltipPropertyPage)
+	ON_CBN_SELCHANGE(IDC_COMBO_VOD_ENGINE, &CPluginConfigPageVOD::SaveParameters)
 	ON_CBN_SELCHANGE(IDC_COMBO_VOD_TEMPLATE, &CPluginConfigPageVOD::OnCbnSelchangeComboVodTemplate)
 	ON_BN_CLICKED(IDC_CHECK_PLAYLIST_SHOW_LINK, &CPluginConfigPageVOD::OnBnClickedCheckPlaylistShowLink)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_VOD_TEMPLATES, &CPluginConfigPageVOD::OnBnClickedButtonEditVodTemplates)
@@ -45,8 +46,6 @@ BEGIN_MESSAGE_MAP(CPluginConfigPageVOD, CTooltipPropertyPage)
 	ON_CBN_DROPDOWN(IDC_COMBO_VOD_TEMPLATE, &CPluginConfigPageVOD::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_PROVIDER_VOD_URL, &CPluginConfigPageVOD::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_VOD_REGEX, &CPluginConfigPageVOD::SaveParameters)
-	ON_BN_CLICKED(IDC_CHECK_VOD_SUPPORT, &CPluginConfigPageVOD::SaveParameters)
-	ON_BN_CLICKED(IDC_CHECK_VOD_M3U, &CPluginConfigPageVOD::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_VOD_FILTER, &CPluginConfigPageVOD::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_VOD_PREFIX, &CPluginConfigPageVOD::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_VOD_PARAMS, &CPluginConfigPageVOD::SaveParameters)
@@ -60,8 +59,7 @@ void CPluginConfigPageVOD::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
-	DDX_Control(pDX, IDC_CHECK_VOD_SUPPORT, m_wndChkEnableVOD);
-	DDX_Control(pDX, IDC_CHECK_VOD_M3U, m_wndChkVodM3U);
+	DDX_Control(pDX, IDC_COMBO_VOD_ENGINE, m_wndVodEngine);
 	DDX_Control(pDX, IDC_CHECK_VOD_FILTER, m_wndChkFilterSupport);
 	DDX_Control(pDX, IDC_COMBO_VOD_TEMPLATE, m_wndVodTemplates);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_VOD_TEMPLATES, m_wndBtnEditVodTemplates);
@@ -82,8 +80,6 @@ BOOL CPluginConfigPageVOD::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	AddTooltip(IDC_CHECK_VOD_SUPPORT, IDS_STRING_CHECK_VOD_SUPPORT);
-	AddTooltip(IDC_CHECK_VOD_M3U, IDS_STRING_CHECK_VOD_M3U);
 	AddTooltip(IDC_COMBO_VOD_TEMPLATE, IDS_STRING_COMBO_VOD_TEMPLATE);
 	AddTooltip(IDC_BUTTON_EDIT_VOD_TEMPLATES, IDS_STRING_BUTTON_EDIT_VOD_TEMPLATES);
 	AddTooltip(IDC_EDIT_VOD_REGEX, IDS_STRING_EDIT_VOD_REGEX);
@@ -151,12 +147,11 @@ void CPluginConfigPageVOD::UpdateControls()
 
 	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
 
-	bool enableVod = m_wndChkEnableVOD.GetCheck() != 0;
-	bool enableM3U = m_wndChkVodM3U.GetCheck() != 0;
+	bool enableVod = m_wndVodEngine.GetCurSel() != (int)VodEngine::enNone;
+	bool enableM3U = m_wndVodEngine.GetCurSel() == (int)VodEngine::enM3U;
 
-	m_wndChkEnableVOD.EnableWindow(!readOnly);
+	m_wndVodEngine.EnableWindow(!readOnly);
 	m_wndChkFilterSupport.EnableWindow(!readOnly && enableVod);
-	m_wndChkVodM3U.EnableWindow(!readOnly && enableVod);
 	m_wndVodTemplates.EnableWindow(enableVod);
 	m_wndBtnPlaylistShow.EnableWindow(readOnly);
 	m_wndBtnEditVodTemplates.EnableWindow(!readOnly && enableVod);
@@ -172,9 +167,14 @@ void CPluginConfigPageVOD::FillControls()
 {
 	auto& plugin = GetPropertySheet()->m_plugin;
 
+	m_wndVodEngine.ResetContent();
+	for (auto it = (size_t)VodEngine::enNone; it != (size_t)VodEngine::enLast; ((size_t&)it)++)
+	{
+		m_wndVodEngine.AddString(vod_enum::enum_to_string<VodEngine, std::wstring>((VodEngine)it).c_str());
+	}
+
 	m_wndChkFilterSupport.SetCheck(plugin->get_vod_filter() != false);
-	m_wndChkEnableVOD.SetCheck(plugin->get_vod_support() != false);
-	m_wndChkVodM3U.SetCheck(plugin->get_vod_m3u() != false);
+	m_wndVodEngine.SetCurSel((int)plugin->get_vod_engine());
 
 	int vod_idx = (int)plugin->get_vod_info_idx();
 	m_wndVodTemplates.ResetContent();
@@ -214,8 +214,7 @@ void CPluginConfigPageVOD::SaveParameters()
 	info.set_url_prefix(m_VodUrlPrefix.GetString());
 	info.set_url_params(m_VodUrlParams.GetString());
 
-	plugin->set_vod_support(m_wndChkEnableVOD.GetCheck() != 0);
-	plugin->set_vod_m3u(m_wndChkVodM3U.GetCheck() != 0);
+	plugin->set_vod_engine((VodEngine)m_wndVodEngine.GetCurSel());
 	plugin->set_vod_filter(m_wndChkFilterSupport.GetCheck() != 0);
 
 	m_wndBtnVodTemplateTest.EnableWindow(!m_VodPlaylistTemplate.IsEmpty());
@@ -272,6 +271,11 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodParse()
 {
 	const auto& url = fmt::format(L"https://regex101.com/?regex={:s}", utils::string_replace<wchar_t>(m_VodParseRegex.GetString(), L"+", L"%2B"));
 	ShellExecute(nullptr, _T("open"), url.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
+}
+
+void CPluginConfigPageVOD::OnCbnSelchangeComboVodEngine()
+{
+	// TODO: Add your control notification handler code here
 }
 
 void CPluginConfigPageVOD::OnCbnSelchangeComboVodTemplate()

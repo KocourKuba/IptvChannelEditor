@@ -273,8 +273,6 @@
 #define IDS_STRING_CHECK_USE_DURATION   344
 #define IDS_STRING_UNSET                345
 #define IDS_STRING_BUTTON_EDIT_TEMPLATES 346
-#define IDS_STRING_CHECK_VOD_SUPPORT    347
-#define IDS_STRING_CHECK_VOD_M3U        348
 #define IDS_STRING_COMBO_VOD_TEMPLATE   349
 #define IDS_STRING_BUTTON_EDIT_VOD_TEMPLATES 350
 #define IDS_STRING_EDIT_VOD_REGEX       351
@@ -665,9 +663,7 @@
 #define IDC_CHECK_STATIC_QUALITIES      1212
 #define IDC_CHECK_STATIC_PROFILES       1213
 #define IDC_COMBO_CONFIGS               1214
-#define IDC_CHECK_VOD_SUPPORT           1214
 #define IDC_MFCEDITBROWSE_PLUGINS_WEB_UPDATE_PATH 1215
-#define IDC_CHECK_VOD_M3U               1215
 #define IDC_MFCEDITBROWSE_PLUGINS_SETTINGS_PATH 1216
 #define IDC_BUTTON_VOD_PARSE            1216
 #define IDC_BUTTON_SAVE_AS_CONFIG       1217
@@ -705,6 +701,7 @@
 #define IDC_CHECK_STATIC_TV_DOMAINS     1242
 #define IDC_COMBO_DOMAIN                1243
 #define IDC_STATIC_DOMAIN               1244
+#define IDC_COMBO_VOD_ENGINE            1245
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -738,12 +735,12 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281
 #define _APS_NEXT_COMMAND_VALUE         32809
-#define _APS_NEXT_CONTROL_VALUE         1245
+#define _APS_NEXT_CONTROL_VALUE         1246
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

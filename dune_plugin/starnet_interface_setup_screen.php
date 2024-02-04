@@ -62,7 +62,7 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
             PARAM_SHOW_HISTORY, TR::t('setup_show_history'), SetupControlSwitchDefs::$on_off_translated[$show_history],
             get_image_path(SetupControlSwitchDefs::$on_off_img[$show_history]), self::CONTROLS_WIDTH);
 
-        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) !== "None") {
             //////////////////////////////////////
             // show history category
             $show_vod = $this->plugin->get_parameter(PARAM_SHOW_VOD, SetupControlSwitchDefs::switch_on);

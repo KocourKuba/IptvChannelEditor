@@ -87,6 +87,7 @@ private:
 	void FilterList();
 	void FetchMovieCbilling(vod_movie& movie) const;
 	void FetchMovieEdem(vod_movie& movie) const;
+	void FetchMovieSharavoz(vod_movie& movie) const;
 	void GetUrl(int idx);
 
 public:

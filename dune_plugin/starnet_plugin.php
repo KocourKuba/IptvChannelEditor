@@ -59,7 +59,7 @@ class Starnet_Plugin extends Default_Dune_Plugin
 
         $this->create_screen(new Starnet_Folder_Screen($this));
 
-        if ($this->config->get_feature(Plugin_Constants::VOD_SUPPORTED)) {
+        if ($this->config->get_feature(Plugin_Constants::VOD_ENGINE) !== "None") {
             $this->create_screen(new Starnet_Vod_Favorites_Screen($this));
             $this->create_screen(new Starnet_Vod_History_Screen($this));
             $this->create_screen(new Starnet_Vod_Category_List_Screen($this));

@@ -1944,6 +1944,14 @@ function safe_merge_array($ar1, $ar2)
     return $ar1;
 }
 
+function print_backtrace()
+{
+    hd_print("Back trace:");
+    foreach (debug_backtrace() as $f) {
+        hd_print("  - {$f['function']} at {$f['file']}:{$f['line']}");
+    }
+}
+
 /**
  * @param mixed $val
  * @param bool $is_debug

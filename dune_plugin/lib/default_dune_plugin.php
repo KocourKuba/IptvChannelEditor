@@ -141,7 +141,7 @@ class Default_Dune_Plugin implements DunePlugin
         hd_debug_print("Instantiate class: $plugin_config_class");
         $this->config = new $plugin_config_class;
         $this->config->plugin_info = $plugin_info;
-        $this->config->set_parent($this);
+        $this->config->set_plugin($this);
         $this->config->init_defaults();
         $this->config->load_config();
         $this->config->load_embedded_account();
@@ -157,7 +157,7 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("Plugin version:      " . $plugin_info['app_version']);
         hd_print("Plugin date:         " . $plugin_info['app_release_date']);
         hd_print("Account type:        " . $this->config->get_feature(Plugin_Constants::ACCESS_TYPE));
-        hd_print("VOD page:            " . ($this->config->get_feature(Plugin_Constants::VOD_SUPPORTED) ? "yes" : "no"));
+        hd_print("VOD page:            " . ($this->config->get_feature(Plugin_Constants::VOD_ENGINE) !== "None" ? "yes" : "no"));
         hd_print("LocalTime            " . format_datetime('Y-m-d H:i', time()));
         hd_print("TimeZone             " . getTimeZone());
         hd_print("Daylight             " . (date('I') ? 'yes' : 'no'));
@@ -394,7 +394,7 @@ class Default_Dune_Plugin implements DunePlugin
         }
 
         hd_debug_print("Error: no screen with id '$screen_id' found.");
-        HD::print_backtrace();
+        print_backtrace();
         throw new Exception('Screen not found');
     }
 
@@ -478,7 +478,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->tv)) {
             hd_debug_print("TV is not supported");
-            HD::print_backtrace();
+            print_backtrace();
             return array();
         }
 
@@ -498,7 +498,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->tv)) {
             hd_debug_print("TV is not supported");
-            HD::print_backtrace();
+            print_backtrace();
             return '';
         }
 
@@ -518,7 +518,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->tv)) {
             hd_debug_print("TV is not supported");
-            HD::print_backtrace();
+            print_backtrace();
             return '';
         }
 
@@ -541,7 +541,7 @@ class Default_Dune_Plugin implements DunePlugin
         try {
             if (is_null($this->tv)) {
                 hd_debug_print("TV is not supported");
-                HD::print_backtrace();
+                print_backtrace();
                 throw new Exception('TV is not supported');
             }
 
@@ -615,7 +615,7 @@ class Default_Dune_Plugin implements DunePlugin
 
         if (is_null($this->tv)) {
             hd_debug_print("TV is not supported");
-            HD::print_backtrace();
+            print_backtrace();
             return array();
         }
 
@@ -737,7 +737,7 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (is_null($this->vod)) {
             hd_debug_print("VOD is not supported");
-            HD::print_backtrace();
+            print_backtrace();
             return array();
         }
 

@@ -54,7 +54,7 @@ void plugin_edem::load_default()
 	vod_info.pl_template = "{SUBDOMAIN}";
 	vod_templates.emplace_back(vod_info);
 
-	vod_support = true;
+	vod_engine = VodEngine::enJson;
 	vod_filter = true;
 
 	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);

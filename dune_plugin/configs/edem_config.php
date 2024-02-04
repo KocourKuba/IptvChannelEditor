@@ -16,7 +16,7 @@ class edem_config extends default_config
      */
     public function get_ott_key()
     {
-        return isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $this->parent->get_credentials(Ext_Params::M_OTT_KEY);
+        return isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $this->plugin->get_credentials(Ext_Params::M_OTT_KEY);
     }
 
 
@@ -28,7 +28,7 @@ class edem_config extends default_config
     public function TryLoadMovie($movie_id)
     {
         hd_debug_print($movie_id);
-        $movie = new Movie($movie_id, $this->parent);
+        $movie = new Movie($movie_id, $this->plugin);
         $movieData = $this->make_json_request(array('cmd' => "flick", 'fid' => (int)$movie_id, 'offset'=> 0,'limit' => 0));
 
         if ($movieData === false) {
@@ -232,9 +232,12 @@ class edem_config extends default_config
             if ($entry->type === 'next') {
                 $this->get_next_page($query_id, $entry->request->offset - $current_offset);
             } else {
-                $movie = new Short_Movie($entry->request->fid, $entry->title, $entry->img);
-                $movie->info = TR::t('vod_screen_movie_info__3', $entry->title, $entry->year, $entry->agelimit);
-                $movies[] = $movie;
+                $movies[] = new Short_Movie(
+                    $entry->request->fid,
+                    $entry->title,
+                    $entry->img,
+                    TR::t('vod_screen_movie_info__3', $entry->title, $entry->year, $entry->agelimit)
+                );
             }
         }
         if ($current_offset === $this->get_next_page($query_id, 0)) {
@@ -322,7 +325,7 @@ class edem_config extends default_config
         if (isset($this->embedded_account->vportal)) {
             $vportal = $this->embedded_account->vportal;
         } else {
-            $vportal = $this->parent->get_credentials(Ext_Params::M_VPORTAL);
+            $vportal = $this->plugin->get_credentials(Ext_Params::M_VPORTAL);
         }
 
         if (empty($vportal)

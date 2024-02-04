@@ -51,6 +51,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
+	afx_msg void OnCbnSelchangeComboVodEngine();
 	afx_msg void OnCbnSelchangeComboVodTemplate();
 	afx_msg void OnBnClickedButtonEditVodTemplates();
 	afx_msg void OnBnClickedCheckPlaylistShowLink();
@@ -67,10 +68,9 @@ protected:
 	CMenuEdit m_wndVodUrlPrefix;
 	CMenuEdit m_wndVodUrlParams;
 
+	CComboBox m_wndVodEngine;
 	CComboBox m_wndVodTemplates;
 
-	CButton m_wndChkEnableVOD;
-	CButton m_wndChkVodM3U;
 	CButton m_wndChkFilterSupport;
 	CButton m_wndBtnVodParseTest;
 	CButton m_wndBtnPlaylistShow;

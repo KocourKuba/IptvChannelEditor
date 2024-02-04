@@ -29,7 +29,7 @@ class Movie_Season
     public function __construct($id)
     {
         if (is_null($id)) {
-            HD::print_backtrace();
+            print_backtrace();
             throw new Exception("Movie_Season::id is not set");
         }
         $this->id = (string)$id;

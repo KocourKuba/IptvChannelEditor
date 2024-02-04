@@ -60,7 +60,7 @@ class vidok_config extends default_config
             }
 
             if (empty($this->account_data)) {
-                $token = $this->parent->get_credentials(Ext_Params::M_S_TOKEN);
+                $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/settings?token=$token";
                 // provider returns token used to download playlist
                 $this->account_data = HD::DownloadJson($url);
@@ -86,7 +86,7 @@ class vidok_config extends default_config
             }
 
             if ($force !== false || empty($this->account_data)) {
-                $token = $this->parent->get_credentials(Ext_Params::M_S_TOKEN);
+                $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$token";
                 // provider returns token used to download playlist
                 $this->account_data = HD::DownloadJson($url);
@@ -140,8 +140,8 @@ class vidok_config extends default_config
                 throw new Exception("User token not loaded");
             }
 
-            $token = $this->parent->get_credentials(Ext_Params::M_S_TOKEN);
-            $param_set = $this->parent->get_parameter($param, '');
+            $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
+            $param_set = $this->plugin->get_parameter($param, '');
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/settings_set?token=$token&$param=$param_set";
             $json = HD::DownloadJson($url);
             if (isset($json['error'])) {
@@ -171,9 +171,9 @@ class vidok_config extends default_config
         }
 
         $token = md5(strtolower($login) . md5($password));
-        $old_token = $this->parent->get_credentials(Ext_Params::M_S_TOKEN);
+        $old_token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
         if (!empty($old_token) || $old_token !== $token) {
-            $this->parent->set_credentials(Ext_Params::M_S_TOKEN, $token);
+            $this->plugin->set_credentials(Ext_Params::M_S_TOKEN, $token);
         }
 
         return true;

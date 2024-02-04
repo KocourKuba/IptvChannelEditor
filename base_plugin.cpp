@@ -523,7 +523,7 @@ bool base_plugin::parse_json_epg(int epg_idx, const std::array<std::wstring, 2>&
 
 			if (time_format.empty())
 			{
-				epg_info.time_start = utils::get_json_int_value(params.epg_start, val);
+				epg_info.time_start = utils::get_json_number_value(params.epg_start, val);
 			}
 			else
 			{
@@ -552,7 +552,7 @@ bool base_plugin::parse_json_epg(int epg_idx, const std::array<std::wstring, 2>&
 			}
 			else
 			{
-				epg_info.time_end = utils::get_json_int_value(params.epg_end, val);
+				epg_info.time_end = utils::get_json_number_value(params.epg_end, val);
 			}
 
 			if (params.epg_use_duration)

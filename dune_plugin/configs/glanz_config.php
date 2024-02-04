@@ -18,7 +18,7 @@ class glanz_config extends default_config
     public function TryLoadMovie($movie_id)
     {
         hd_debug_print($movie_id);
-        $movie = new Movie($movie_id, $this->parent);
+        $movie = new Movie($movie_id, $this->plugin);
         $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
 
         if ($jsonItems === false) {
@@ -279,10 +279,12 @@ class glanz_config extends default_config
         }
         $genres_str = implode(", ", $genres);
 
-        $movie = new Short_Movie($id, (string)$movie_obj->name, (string)$movie_obj->cover);
-        $movie->info = TR::t('vod_screen_movie_info__4', $movie_obj->name, $movie_obj->year, $movie_obj->country, $genres_str);
-
-        return $movie;
+        return new Short_Movie(
+            $id,
+            (string)$movie_obj->name,
+            (string)$movie_obj->cover,
+            TR::t('vod_screen_movie_info__4', $movie_obj->name, $movie_obj->year, $movie_obj->country, $genres_str)
+        );
     }
 
     /**

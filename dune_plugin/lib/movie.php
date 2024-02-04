@@ -300,13 +300,14 @@ class Movie implements User_Input_Handler
      * @param bool $playback_url_is_stream_url
      * @throws Exception
      */
-    public function add_series_data($id, $name, $description, $playback_url, $season_id = '', $playback_url_is_stream_url = true)
+    public function add_series_data($id, $name, $description, $playback_url, $season_id = '', $series_image = '', $playback_url_is_stream_url = true)
     {
         $series = new Movie_Series($id);
         $series->name = $this->to_string($name);
         $series->series_desc = $this->to_string($description);
         $series->season_id = $this->to_string($season_id);
         $series->playback_url = $this->to_string($playback_url);
+        $series->movie_image = $this->to_string($series_image);
         $series->playback_url_is_stream_url = $playback_url_is_stream_url;
 
         $this->series_list[$id] = $series;
@@ -384,7 +385,7 @@ class Movie implements User_Input_Handler
 
         if (!isset($media_url->screen_id)) {
             hd_debug_print("get_movie_play_info: List screen in media url not set: " . $media_url->get_raw_string());
-            HD::print_backtrace();
+            print_backtrace();
             return array();
         }
 
@@ -392,7 +393,7 @@ class Movie implements User_Input_Handler
             case Starnet_Vod_Seasons_List_Screen::ID:
                 if (!is_array($this->season_list) || count($this->season_list) === 0) {
                     hd_debug_print("get_movie_play_info: Invalid movie: season list is empty");
-                    HD::print_backtrace();
+                    print_backtrace();
                     return array();
                 }
                 $list = $this->series_list;
@@ -401,14 +402,14 @@ class Movie implements User_Input_Handler
             case Starnet_Vod_Movie_Screen::ID:
                 if (!is_array($this->series_list) || count($this->series_list) === 0) {
                     hd_debug_print("get_movie_play_info: Invalid movie: series list is empty");
-                    HD::print_backtrace();
+                    print_backtrace();
                     return array();
                 }
                 $list = $this->series_list;
                 break;
             default:
                 hd_debug_print("get_movie_play_info: Unknown list screen: $media_url->screen_id");
-                HD::print_backtrace();
+                print_backtrace();
                 return array();
         }
 

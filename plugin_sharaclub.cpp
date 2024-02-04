@@ -88,8 +88,8 @@ void plugin_sharaclub::load_default()
 	vod_info.pl_template = "{API_URL}/kino-full/{LOGIN}-{PASSWORD}";
 	vod_templates.emplace_back(vod_info);
 
-	vod_support = true;
 	vod_filter = true;
+	vod_engine = VodEngine::enJson;
 	balance_support = true;
 
 	PlaylistTemplateInfo info;

@@ -232,10 +232,20 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 	m_wndQuality.EnableWindow(FALSE);
 	m_wndBtnReload.EnableWindow(FALSE);
 
-	if (m_plugin->get_vod_m3u())
-		LoadM3U8Playlist(use_cache);
-	else
-		LoadJsonPlaylist(use_cache);
+	switch (m_plugin->get_vod_engine())
+	{
+		case VodEngine::enNone:
+			break;
+
+		case VodEngine::enM3U:
+			LoadM3U8Playlist(use_cache);
+			break;
+
+		case VodEngine::enJson:
+		case VodEngine::enXC:
+			LoadJsonPlaylist(use_cache);
+			break;
+	}
 }
 
 void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
@@ -282,6 +292,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	cfg.m_hStop = m_evtStop;
 	cfg.m_url = std::move(url);
 	cfg.m_cache_ttl = use_cache ? GetConfig().get_int(true, REG_MAX_CACHE_TTL) : 0;
+	cfg.m_params = params;
 
 	pThread->SetData(cfg);
 	pThread->SetPlugin(m_plugin);
@@ -313,8 +324,8 @@ LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /
 				all_category->movies.set_back(pair.second->id, pair.second);
 			}
 
-			m_total += category.second->movies.size();
 		}
+		m_total += all_category->movies.size();
 	}
 	else
 	{
@@ -608,6 +619,7 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 			break;
 		}
 		case PluginType::enEdem:
+		case PluginType::enSharavoz:
 			if (!movie->quality.empty())
 			{
 				url = movie->quality[m_quality_idx].url;
@@ -819,6 +831,9 @@ void CVodViewer::LoadMovieInfo(int idx)
 			case PluginType::enEdem:
 				FetchMovieEdem(*movie);
 				break;
+			case PluginType::enSharavoz:
+				FetchMovieSharavoz(*movie);
+				break;
 			default:
 				break;
 		}
@@ -841,7 +856,6 @@ void CVodViewer::LoadMovieInfo(int idx)
 	}
 	else
 	{
-
 		m_season_idx = 0;
 
 		if (m_plugin->get_plugin_type() != PluginType::enEdem)
@@ -1316,6 +1330,89 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 	} while (false);
 }
 
+void CVodViewer::FetchMovieSharavoz(vod_movie& movie) const
+{
+	CWaitCursor cur;
+
+	const auto& api_url = m_plugin->get_vod_url(TemplateParams());
+	const auto& token = m_account.get_password();
+	const auto& base_url = fmt::format(L"{:s}/player_api.php?username={:s}&password={:s}", api_url, token, token);
+	std::wstring url;
+	if (movie.is_series)
+	{
+		url = fmt::format(L"&action=get_series_info&series_id={:s}", movie.id);
+	}
+	else
+	{
+		url = fmt::format(L"&action=get_vod_info&vod_id={:s}", movie.id);
+	}
+
+	url = base_url + url;
+
+	std::stringstream data;
+	if (m_plugin->download_url(url, data))
+	{
+		JSON_ALL_TRY;
+		const auto& parsed_json = nlohmann::json::parse(data.str());
+
+		if (parsed_json.contains("info"))
+		{
+			const auto& value = parsed_json["info"];
+			if (movie.is_series)
+			{
+				movie.poster_url.set_uri(utils::get_json_wstring("cover", value));
+				movie.casting = utils::get_json_wstring("cast", value);
+				movie.rating = utils::get_json_wstring("rating", value);
+				movie.movie_time = utils::get_json_int("episode_run_time", value);
+				movie.year = utils::get_json_wstring("releaseDate", value);
+				if (parsed_json.contains("episodes"))
+				{
+					for (const auto& season_it : parsed_json["episodes"].items())
+					{
+						vod_season season;
+						season.id = season.season_id = utils::utf8_to_utf16(season_it.key());
+						for (auto& episode_item : season_it.value())
+						{
+							vod_episode episode;
+							episode.id = utils::get_json_wstring("id", episode_item);
+							episode.title = utils::get_json_wstring("title", episode_item);
+							episode.episode_id = utils::get_json_wstring("episode_num", episode_item);
+							auto& ext = utils::get_json_wstring("container_extension", episode_item);
+							if (!ext.empty())
+							{
+								ext = L"." + ext;
+							}
+
+							episode.url = fmt::format(L"{:s}/movie/{:s}/{:s}/{:s}", api_url, token, token, episode.id + ext);
+
+							season.episodes.set_back(episode.id, episode);
+							movie.seasons.set_back(season.id, season);
+						}
+					}
+				}
+			}
+			else
+			{
+				movie.title_orig = utils::get_json_wstring("o_name", value);
+				movie.casting = utils::get_json_wstring("actors", value);
+				movie.age = utils::get_json_wstring("age", value);
+				movie.movie_time = utils::get_json_int("duration", value);
+				movie.year = utils::get_json_wstring("releasedate", value);
+				auto& ext = utils::get_json_wstring("container_extension", value);
+				if (!ext.empty())
+				{
+					ext = L"." + ext;
+				}
+				movie.url = fmt::format(L"{:s}/movie/{:s}/{:s}/{:s}", api_url, token, token, movie.id + ext);
+			}
+
+			movie.description = utils::get_json_wstring("plot", value);
+			movie.director = utils::get_json_wstring("director", value);
+		}
+		JSON_ALL_CATCH;
+	}
+}
+
 void CVodViewer::GetUrl(int idx)
 {
 	if (idx == CB_ERR || idx >= (int)m_filtered_movies.size()) return;
@@ -1337,6 +1434,7 @@ void CVodViewer::GetUrl(int idx)
 			break;
 		}
 		case PluginType::enEdem:
+		case PluginType::enSharavoz:
 			if (!movie->quality.empty())
 			{
 				url = movie->quality[m_quality_idx].url;

@@ -93,6 +93,7 @@ public:
 	std::wstring description;
 	std::wstring category;
 	std::wstring url;
+	bool is_series = false;
 	int movie_time = 0; // in minutes
 	vod_genre_storage genres;
 	uri_base poster_url;

@@ -29,7 +29,7 @@ class Movie_Variant
     public function __construct($id, $name, $playback_url, $playback_url_is_stream_url = true)
     {
         if (is_null($id)) {
-            HD::print_backtrace();
+            print_backtrace();
             throw new Exception("Movie_Variant::id is null");
         }
 

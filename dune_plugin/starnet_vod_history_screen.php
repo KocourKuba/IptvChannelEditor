@@ -75,30 +75,40 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
     {
         hd_debug_print(null, true);
 
-        $history_items = $this->plugin->vod->get_history_movies();
-
         $items = array();
-        foreach ($history_items as $movie_id => $movie_infos) {
+        foreach ($this->plugin->vod->get_history_movies() as $movie_id => $movie_infos) {
             if (empty($movie_infos)) continue;
 
+            hd_debug_print("history id: $movie_id, data" . json_encode($movie_infos));
             $this->plugin->vod->ensure_movie_loaded($movie_id);
             $short_movie = $this->plugin->vod->get_cached_short_movie($movie_id);
 
             if (is_null($short_movie)) {
-                $caption = TR::t('vod_screen_no_film_info');
+                $detailed_info = $caption = TR::t('vod_screen_no_film_info');
                 $poster_url = "missing://";
             } else {
+                $caption = $short_movie->name;
                 $last_viewed = 0;
-                foreach ($movie_infos as $info) {
-                    if (isset($info[Movie::WATCHED_DATE])) {
-                        $last_viewed = max($last_viewed, $info[Movie::WATCHED_DATE]);
+                foreach ($movie_infos as $movie_info) {
+                    if (isset($movie_info[Movie::WATCHED_DATE]) && $movie_info[Movie::WATCHED_DATE] > $last_viewed) {
+                        $last_viewed = $movie_info[Movie::WATCHED_DATE];
+                        $info = $movie_info;
                     }
                 }
 
-                if ($last_viewed !== 0)
-                    $caption = TR::t('vod_screen_last_viewed__2', $short_movie->name, format_datetime("d.m.Y H:i", $last_viewed));
-                else
-                    $caption = $short_movie->name;
+                if (isset($info) && $info[Movie::WATCHED_DATE] !== 0) {
+                    hd_debug_print("detailed info: " . json_encode($info));
+                    if ($info[Movie::WATCHED_FLAG]) {
+                        $detailed_info = TR::t('vod_screen_all_viewed__2', $short_movie->name, format_datetime("d.m.Y H:i", $info[Movie::WATCHED_DATE]));
+                    } else if ($info[Movie::WATCHED_DURATION] !== -1 && count($movie_infos) < 2) {
+                        $percent = (int)((float)$info[Movie::WATCHED_POSITION] / (float)$info[Movie::WATCHED_DURATION] * 100);
+                        $detailed_info = TR::t('vod_screen_last_viewed__3', $short_movie->name, format_datetime("d.m.Y H:i", $info[Movie::WATCHED_DATE]), $percent);
+                    } else {
+                        $detailed_info = TR::t('vod_screen_last_viewed__2', $short_movie->name, format_datetime("d.m.Y H:i", $info[Movie::WATCHED_DATE]));
+                    }
+                } else {
+                    $detailed_info = $short_movie->name;
+                }
 
                 $poster_url = $short_movie->poster_url;
             }
@@ -107,9 +117,9 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
             (
                 PluginRegularFolderItem::media_url => Starnet_Vod_Movie_Screen::get_media_url_string($movie_id),
                 PluginRegularFolderItem::caption => $caption,
-                PluginRegularFolderItem::view_item_params => array
-                (
+                PluginRegularFolderItem::view_item_params => array(
                     ViewItemParams::icon_path => $poster_url,
+                    ViewItemParams::item_detailed_info => $detailed_info,
                 )
             );
         }
