@@ -46,7 +46,7 @@ protected:
 	void ParseSharavoz();
 
 	std::wstring xtream_parse_category(const nlohmann::json& val, std::shared_ptr<vod_category>& category, std::unique_ptr<vod_category_storage>& categories);
-	nlohmann::json xtream_request(const std::wstring& action, std::wstring param = L"", std::wstring value = L"");
+	nlohmann::json xtream_request(const std::wstring& action, const std::wstring param = L"", std::wstring value = L"");
 
 	utils::CUrlDownload m_dl;
 };
