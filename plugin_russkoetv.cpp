@@ -74,7 +74,7 @@ void plugin_russkoetv::fill_domains_list(TemplateParams* params /*= nullptr*/)
 
 	DynamicParamsInfo info;
 	info.set_id(L"0");
-	info.set_name(L"http://russkoetv.tv");
+	info.set_name(L"https://russkoetv.tv");
 
 	std::vector<DynamicParamsInfo> domains;
 	domains.emplace_back(info);
