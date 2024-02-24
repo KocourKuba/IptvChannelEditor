@@ -320,7 +320,7 @@ LRESULT CIconsListDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
 			{
 				CIconSourceData entry;
 				if (m_force_square)
-					entry.logo_path = utils::string_replace<wchar_t>(pl_entry->get_icon_absolute_path(), L"//epg.it999.ru/img2/", L"//epg.it999.ru/img/");
+					entry.logo_path = utils::string_replace<wchar_t>(pl_entry->get_icon_absolute_path(), L"/img2/", L"/img/");
 				else
 					entry.logo_path = pl_entry->get_icon_absolute_path();
 

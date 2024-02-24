@@ -102,7 +102,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 			{
 				if (parent_plugin->get_plugin_type() == PluginType::enEdem)
 				{
-					logo = utils::string_replace<char>(logo, "//epg.it999.ru/img/", "//epg.it999.ru/img2/");
+					logo = utils::string_replace<char>(logo, "/img/", "/img2/");
 				}
 				else if (playlist && !playlist->logo_root.empty())
 				{
