@@ -219,6 +219,7 @@ tv_screen_channel_info__3 = %s|Архив: %s дней|EPG №: %s
 tv_screen_channel_info__4 = %s|Архив: %s дней|EPG №: %s|Масштаб: %s
 tv_screen_external_player = Воспроизводить внешним плеером
 tv_screen_internal_player = Воспроизводить внутренним плеером
+tv_screen_toggle_icons_aspect = Изменить пропорции иконок
 
 vod_screen_change_playlist = Сменить плейлист
 vod_screen_reload_playlist = Перечитать плейлист

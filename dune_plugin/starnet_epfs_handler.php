@@ -41,17 +41,17 @@ class Starnet_Epfs_Handler
     /**
      * @var string
      */
-    public static $epf_id;
-
-    /**
-     * @var string
-     */
     protected static $dir_path;
 
     /**
      * @var bool
      */
     protected static $enabled;
+
+    /**
+     * @var string
+     */
+    protected static $epf_id;
 
     /**
      * @var string
@@ -116,14 +116,6 @@ class Starnet_Epfs_Handler
     }
 
     /**
-     * @return object|null
-     */
-    public static function get_epf()
-    {
-        return self::$enabled ? self::read_epf_data(self::$epf_id) : null;
-    }
-
-    /**
      * @return void
      */
     public static function need_update_epf_mapping()
@@ -135,10 +127,9 @@ class Starnet_Epfs_Handler
     /**
      * @param array|null $media_urls
      * @param $post_action
-     * @param bool $all_except
      * @return array
      */
-    public static function invalidate_folders($media_urls = null, $post_action = null, $all_except = false)
+    public static function invalidate_folders($media_urls = null, $post_action = null)
     {
         if (self::$enabled) {
             $arr = array_merge(array(self::$epf_id), (is_array($media_urls) ? $media_urls : array()));
@@ -146,7 +137,24 @@ class Starnet_Epfs_Handler
             $arr = $media_urls;
         }
 
-        return Action_Factory::invalidate_folders($arr, $post_action, $all_except);
+        return Action_Factory::invalidate_folders($arr, $post_action);
+    }
+
+    /**
+     * @param array|null $media_urls
+     * @param $post_action
+     * @param array|null $except_media_urls
+     * @return array
+     */
+    public static function invalidate_all_folders($media_urls = null, $post_action = null, $except_media_urls = null)
+    {
+        if (self::$enabled) {
+            $arr = array_merge(array(self::$epf_id), (is_array($media_urls) ? $media_urls : array()));
+        } else {
+            $arr = $media_urls;
+        }
+
+        return Action_Factory::invalidate_folders($arr, Action_Factory::invalidate_folders($except_media_urls, $post_action, true));
     }
 
     /**
@@ -159,21 +167,14 @@ class Starnet_Epfs_Handler
         if (!self::$enabled)
             return null;
 
-        if ($first_run) {
+        if ($first_run)
             hd_debug_print("First run", true);
-        }
 
         self::ensure_no_internet_epfs_created($first_run, $plugin_cookies);
 
-        try {
-            $folder_view = self::$tv_rows_screen->get_folder_view_for_epf($plugin_cookies);
-        } catch (Exception $e) {
-            hd_debug_print("Exception while generating epf: " . $e->getMessage());
-            return null;
-        }
+        $folder_view = self::$tv_rows_screen->get_folder_view_for_epf($plugin_cookies);
 
-        $cold_run = !is_file(self::warmed_up_path());
-        if ($cold_run) {
+        if (!is_file(self::warmed_up_path())) {
             hd_debug_print("Cold run", true);
             file_put_contents(self::warmed_up_path(), '');
         }
@@ -193,7 +194,7 @@ class Starnet_Epfs_Handler
     private static function do_write_epf_data($path, $data)
     {
         hd_debug_print(null, true);
-
+        hd_debug_print("write epf path: $path");
         $tmp_path = "$path.tmp";
 
         if (false === file_put_contents($tmp_path, $data)) {

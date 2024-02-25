@@ -54,9 +54,8 @@ void plugin_tvteam::load_default()
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl\/11\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/.+\/.+\?token=(?<token>.+)$)";
 	info.tag_id_match = "tvg-name";
+	info.square_icons = true;
 	playlist_templates.emplace_back(info);
-
-	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";

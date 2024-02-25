@@ -62,13 +62,12 @@ void plugin_glanz::load_default()
 	info.pl_template = "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls";
 	info.pl_parse_regex = R"(^https?:\/\/.+\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<id>.+)\/.+\?token=(?<token>.+)$)";
+	info.square_icons = true;
 	playlist_templates.emplace_back(info);
 
 	info.set_name(IDS_STRING_NO_ADULT);
 	info.pl_template = "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0";
 	playlist_templates.emplace_back(info);
-
-	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";

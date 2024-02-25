@@ -53,7 +53,6 @@ BEGIN_MESSAGE_MAP(CPluginConfigPage, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_QUALITIES, &CPluginConfigPage::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_PROFILES, &CPluginConfigPage::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_STATIC_TV_DOMAINS, &CPluginConfigPage::SaveParameters)
-	ON_BN_CLICKED(IDC_CHECK_SQUARE_ICONS, &CPluginConfigPage::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_ENABLE_BALANCE, &CPluginConfigPage::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_NAME, &CPluginConfigPage::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_TITLE, &CPluginConfigPage::SaveParameters)
@@ -84,7 +83,6 @@ void CPluginConfigPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_API_URL, m_wndProviderApiUrl);
 	DDX_Text(pDX, IDC_EDIT_API_URL, m_ProviderApiUrl);
 	DDX_Control(pDX, IDC_COMBO_ACCESS_TYPE, m_wndAccessType);
-	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndChkSquareIcons);
 	DDX_Control(pDX, IDC_CHECK_ENABLE_BALANCE, m_wndChkEnableBalance);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_EXT_FILES, m_wndBtnExtFiles);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_MANIFEST, m_wndBtnManifest);
@@ -109,7 +107,6 @@ BOOL CPluginConfigPage::OnInitDialog()
 	AddTooltip(IDC_EDIT_API_URL, IDS_STRING_EDIT_API_URL);
 	AddTooltip(IDC_EDIT_PROVIDER_URL, IDS_STRING_EDIT_PROVIDER_URL);
 	AddTooltip(IDC_EDIT_PLUGIN_CLASS_NAME, IDS_STRING_EDIT_PLUGIN_CLASS_NAME);
-	AddTooltip(IDC_CHECK_SQUARE_ICONS, IDS_STRING_CHECK_SQUARE_ICONS);
 	AddTooltip(IDC_BUTTON_EDIT_EXT_FILES, IDS_STRING_BUTTON_EDIT_EXT_FILES);
 	AddTooltip(IDC_BUTTON_EDIT_MANIFEST, IDS_STRING_BUTTON_EDIT_MANIFEST);
 	AddTooltip(IDC_CHECK_STATIC_SERVERS, IDS_STRING_CHECK_STATIC_SERVERS);
@@ -162,7 +159,6 @@ void CPluginConfigPage::UpdateControls()
 	m_wndProviderUrl.SetReadOnly(readOnly);
 	m_wndProviderApiUrl.SetReadOnly(readOnly);
 	m_wndClassName.SetReadOnly(readOnly);
-	m_wndChkSquareIcons.EnableWindow(!readOnly);
 	m_wndChkEnableBalance.EnableWindow(!readOnly);
 	m_wndAccessType.EnableWindow(custom);
 
@@ -198,7 +194,6 @@ void CPluginConfigPage::FillControls()
 	if (!plugin) return;
 
 	m_wndAccessType.SetCurSel((int)plugin->get_access_type());
-	m_wndChkSquareIcons.SetCheck(plugin->get_square_icons() != false);
 	m_wndChkEnableBalance.SetCheck(plugin->get_balance_support() != false);
 
 	m_Name = plugin->get_name().c_str();
@@ -408,7 +403,6 @@ void CPluginConfigPage::SaveParameters()
 	plugin->set_static_devices(m_wndChkStaticDevices.GetCheck() != 0);
 	plugin->set_static_qualities(m_wndChkStaticQualities.GetCheck() != 0);
 	plugin->set_static_profiles(m_wndChkStaticProfiles.GetCheck() != 0);
-	plugin->set_square_icons(m_wndChkSquareIcons.GetCheck() != 0);
 
 	plugin->set_name(m_Name.GetString());
 	plugin->set_title(m_Title.GetString());

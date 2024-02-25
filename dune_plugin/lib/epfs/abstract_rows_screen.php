@@ -83,7 +83,7 @@ abstract class Abstract_Rows_Screen implements Rows_Screen
      */
     public static function get_handler_id()
     {
-    	return static::get_id() . '_handler';
+        return static::get_id() . '_handler';
     }
 
     /**
@@ -99,7 +99,7 @@ abstract class Abstract_Rows_Screen implements Rows_Screen
      */
     public function get_folder_type()
     {
-    	return null;
+        return null;
     }
 
     /**
@@ -138,10 +138,10 @@ abstract class Abstract_Rows_Screen implements Rows_Screen
 
         return array(
             PluginFolderView::folder_type => $this->get_folder_type(),
-	        PluginFolderView::view_kind => PLUGIN_FOLDER_VIEW_ROWS,
-	        PluginFolderView::multiple_views_supported => false,
-	        PluginFolderView::archive => null,
-	        PluginFolderView::data => array
+            PluginFolderView::view_kind => PLUGIN_FOLDER_VIEW_ROWS,
+            PluginFolderView::multiple_views_supported => false,
+            PluginFolderView::archive => null,
+            PluginFolderView::data => array
             (
                 PluginRowsFolderView::pane      => $this->get_rows_pane($media_url, $plugin_cookies),
                 PluginRowsFolderView::sel_state => $this->get_cur_sel_state_str(),
@@ -157,7 +157,8 @@ abstract class Abstract_Rows_Screen implements Rows_Screen
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
         hd_debug_print(null, true);
+        hd_debug_print($media_url, true);
 
-    	return $this->get_folder_view_v2($media_url, null, $plugin_cookies);
+        return $this->get_folder_view_v2($media_url, null, $plugin_cookies);
     }
 }

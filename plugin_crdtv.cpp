@@ -53,9 +53,8 @@ void plugin_crdtv::load_default()
 	info.pl_template = "{PL_DOMAIN}/m/{PASSWORD}/crdtv.m3u";
 	info.pl_parse_regex = R"(^https?:\/\/.+\/m\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^https?:\/\/(?<domain>.+)\/(?<id>.+)\/(?<password>.+)\/.*$)";
+	info.square_icons = true;
 	playlist_templates.emplace_back(info);
-
-	square_icons = true;
 
 	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{ID}/{PASSWORD}/live.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";

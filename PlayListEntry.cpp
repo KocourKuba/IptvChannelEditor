@@ -102,7 +102,11 @@ bool PlaylistEntry::Parse(const std::string& str)
 			{
 				if (parent_plugin->get_plugin_type() == PluginType::enEdem)
 				{
-					logo = utils::string_replace<char>(logo, "/img/", "/img2/");
+					const auto& pl_info = parent_plugin->get_current_playlist_info();
+					if (!pl_info.get_square_icons())
+					{
+						logo = utils::string_replace<char>(logo, "/img/", "/img2/");
+					}
 				}
 				else if (playlist && !playlist->logo_root.empty())
 				{

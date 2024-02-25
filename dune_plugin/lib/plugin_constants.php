@@ -26,7 +26,6 @@ class Plugin_Constants
     const /* (char *) */ CGI_BIN = 'cgi_bin';
     const /* (char *) */ CHANNEL_ID = 'id';
     const /* (char *) */ ACCESS_TYPE = 'access_type';
-    const /* (bool)   */ SQUARE_ICONS = 'square_icons';
     const /* (bool)   */ PROVIDER_API_URL = 'provider_api_url';
     const /* (char*)  */ USER_AGENT = 'user_agent';
     const /* (char*)  */ DEV_CODE = 'dev_code';

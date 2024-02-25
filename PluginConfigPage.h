@@ -90,7 +90,6 @@ protected:
 	CButton m_wndChkStaticProfiles;
 	CButton m_wndBtnDomains;
 	CButton m_wndChkStaticDomains;
-	CButton m_wndChkSquareIcons;
 	CButton m_wndChkEnableBalance;
 
 	CString m_Name;

@@ -54,9 +54,8 @@ void plugin_bcumedia::load_default()
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/hls\/(?<password>.+)\.m3u8?$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<token>.+)\/video\.m3u8\?token=(?<password>.+)$)";
 	info.tag_id_match = "tvg-id";
+	info.square_icons = true;
 	playlist_templates.emplace_back(info);
-
-	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}";

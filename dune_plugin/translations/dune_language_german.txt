@@ -220,6 +220,7 @@ tv_screen_channel_info__3 = %s|Archiv: %s Tage|EPG ID: %s
 tv_screen_channel_info__4 = %s|Archiv: %s Tage|EPG ID: %s|Seitenverhältnis: %s
 tv_screen_external_player = externer Spieler
 tv_screen_internal_player = internen Spieler
+tv_screen_toggle_icons_aspect = Schalten Sie die Proportionen der Symbole um
 
 vod_screen_change_playlist = Playlist ändern
 vod_screen_reload_playlist = Playlist neu laden

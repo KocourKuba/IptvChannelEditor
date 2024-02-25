@@ -53,9 +53,8 @@ void plugin_tvizi::load_default()
 	info.pl_template = "{PL_DOMAIN}/play/{PASSWORD}/m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.+\/play\/(?<password>.+)\/m3u8?$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/video\.m3u8$)";
+	info.square_icons = true;
 	playlist_templates.emplace_back(info);
-
-	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video.m3u8";

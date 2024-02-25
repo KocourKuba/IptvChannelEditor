@@ -111,7 +111,6 @@ void plugin_config::load_default()
 	devices_list.clear();
 	profiles_list.clear();
 	domains_list.clear();
-	square_icons = false;
 	vod_engine = VodEngine::enNone;
 	requested_token = false;
 	static_servers = false;

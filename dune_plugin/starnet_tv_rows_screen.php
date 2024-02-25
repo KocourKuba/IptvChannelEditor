@@ -305,7 +305,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
     }
 
     /**
-     * @throws Exception
+     * @param $plugin_cookies
+     * @return array|null
      */
     public function get_folder_view_for_epf(&$plugin_cookies)
     {
@@ -383,7 +384,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             PaneParams::vod_width, PaneParams::vod_height
         );
 
-        $square_icons =  $this->plugin->config->get_feature(Plugin_Constants::SQUARE_ICONS);
+        $square_icons = $this->plugin->get_bool_parameter(PARAM_SQUARE_ICONS);
         $icon_width = $square_icons ? RowsItemsParams::icon_width_sq : RowsItemsParams::icon_width;
         $icon_prop = $icon_width / RowsItemsParams::icon_height;
 
@@ -557,6 +558,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                     if ($cache_engine === ENGINE_XMLTV) {
                         $menu_items = $this->plugin->epg_source_menu($this);
                     }
+                    $menu_items[] = $this->plugin->create_menu_item($this, ACTION_TOGGLE_ICONS_TYPE, TR::t('tv_screen_toggle_icons_aspect'), "image.png");
 
                     $menu_items[] = $this->plugin->create_menu_item($this, GuiMenuItemDef::is_separator);
                     $menu_items[] = $this->plugin->create_menu_item($this, ACTION_REFRESH_SCREEN, TR::t('refresh'), "refresh.png");
@@ -644,9 +646,14 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 $this->plugin->set_channel_for_ext_player($media_url->channel_id, $user_input->control_id === ACTION_EXTERNAL_PLAYER);
                 break;
 
+            case ACTION_TOGGLE_ICONS_TYPE:
+                $new = $this->plugin->toggle_parameter(PARAM_SQUARE_ICONS, SetupControlSwitchDefs::switch_off);
+                hd_debug_print("new value $new");
+                return User_Input_Handler_Registry::create_action($this, ACTION_REFRESH_SCREEN);
+
             case ACTION_REFRESH_SCREEN:
                 $this->plugin->set_need_update_epfs();
-                return $this->plugin->invalidate_epfs_folders($plugin_cookies);
+                return Action_Factory::invalidate_all_folders($plugin_cookies);
         }
 
         return null;
@@ -900,7 +907,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         }
 
         $items = array();
-        $square_icons =  $this->plugin->config->get_feature(Plugin_Constants::SQUARE_ICONS);
+        $square_icons =  $this->plugin->get_parameter(PARAM_SQUARE_ICONS);
         $row_item_width = $square_icons ? RowsItemsParams::width_sq : RowsItemsParams::width;
 
         $fav_stickers[] = Rows_Factory::add_regular_sticker_rect(
@@ -965,7 +972,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             return null;
 
         $rows = array();
-        $square_icons =  $this->plugin->config->get_feature(Plugin_Constants::SQUARE_ICONS);
+        $square_icons =  $this->plugin->get_parameter(PARAM_SQUARE_ICONS);
         $row_item_width = $square_icons ? RowsItemsParams::width_sq : RowsItemsParams::width;
 
         $fav_stickers[] = Rows_Factory::add_regular_sticker_rect(

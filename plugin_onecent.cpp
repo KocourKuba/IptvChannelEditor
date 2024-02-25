@@ -53,9 +53,8 @@ void plugin_onecent::load_default()
 	info.pl_template = "{PL_DOMAIN}/pl/{PASSWORD}/102/only4tv.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl\/(?<password>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<id>.+)\/index\.m3u8\?token=(?<token>.+)$)";
+	info.square_icons = true;
 	playlist_templates.emplace_back(info);
-
-	square_icons = true;
 
 	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{ID}/index.m3u8?token={TOKEN}";
 	streams_config[0].uri_arc_template = "{LIVE_URL}&utc={START}&lutc={NOW}";

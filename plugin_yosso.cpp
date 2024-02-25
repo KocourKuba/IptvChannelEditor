@@ -56,9 +56,8 @@ void plugin_yosso::load_default()
 	info.pl_template = "{PL_DOMAIN}/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}playlist.m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<login>.+)\/(?<password>.+)\/(?<server>.+)\/.*$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+):(?<port>\d+)\/(?<var1>.+\/)?(?<id>.+)\/(?<var2>.+)\.m3u8\?token=(?<token>.+)$)";
+	info.square_icons = true;
 	playlist_templates.emplace_back(info);
-
-	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "{SCHEME}{DOMAIN}:{PORT}/{VAR1}{ID}/{VAR2}.m3u8?token={TOKEN}";

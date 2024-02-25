@@ -53,9 +53,8 @@ void plugin_oneusd::load_default()
 	info.pl_template = "{PL_DOMAIN}/pl-{PASSWORD}-hls";
 	info.pl_parse_regex = R"(^https?:\/\/.*\/pl-(?<password>.+)-hls$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/(?<id>.+)\/mono\.m3u8\?token=(?<token>.+)$)";
+	info.square_icons = true;
 	playlist_templates.emplace_back(info);
-
-	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;
 	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}";

@@ -61,9 +61,9 @@ void plugin_itv::load_default()
 	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)\/.+$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/.+\/video\.m3u8\?token=(?<token>.+)$)";
 	info.tag_id_match = "tvg-id";
+	info.square_icons = true;
 	playlist_templates.emplace_back(info);
 
-	square_icons = true;
 	balance_support = true;
 
 	streams_config[0].cu_type = CatchupType::cu_flussonic;

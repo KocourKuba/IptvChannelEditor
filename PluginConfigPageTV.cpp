@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPageTV, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_STREAM_PARSE, &CPluginConfigPageTV::OnBnClickedButtonStreamRegexTest)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST_TEMPLATE, &CPluginConfigPageTV::OnCbnSelchangeComboPlaylistTemplate)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT_TEMPLATES, &CPluginConfigPageTV::OnBnClickedButtonEditTemplates)
+	ON_BN_CLICKED(IDC_CHECK_SQUARE_ICONS, &CPluginConfigPageTV::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_EPG_ID_FROM_ID, &CPluginConfigPageTV::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_PARSE_PATTERN, &CPluginConfigPageTV::SaveParameters)
 	ON_BN_CLICKED(IDC_CHECK_MAP_TAG_TO_ID, &CPluginConfigPageTV::SaveParameters)
@@ -74,6 +75,7 @@ void CPluginConfigPageTV::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_STREAM_ARC_TEMPLATE, m_StreamArchiveTemplate);
 	DDX_Control(pDX, IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, m_wndCustomStreamArchiveTemplate);
 	DDX_Text(pDX, IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, m_CustomStreamArchiveTemplate);
+	DDX_Control(pDX, IDC_CHECK_SQUARE_ICONS, m_wndChkSquareIcons);
 	DDX_Control(pDX, IDC_COMBO_STREAM_TYPE, m_wndStreamType);
 	DDX_Control(pDX, IDC_COMBO_CATCHUP_TYPE, m_wndCatchupType);
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST_TEMPLATE, m_wndPlaylistTemplates);
@@ -103,6 +105,7 @@ BOOL CPluginConfigPageTV::OnInitDialog()
 	AddTooltip(IDC_EDIT_STREAM_TEMPLATE, IDS_STRING_EDIT_STREAM_TEMPLATE);
 	AddTooltip(IDC_EDIT_STREAM_ARC_TEMPLATE, IDS_STRING_EDIT_STREAM_ARC_TEMPLATE);
 	AddTooltip(IDC_EDIT_CUSTOM_STREAM_ARC_TEMPLATE, IDS_STRING_EDIT_STREAM_ARC_TEMPLATE);
+	AddTooltip(IDC_CHECK_SQUARE_ICONS, IDS_STRING_CHECK_SQUARE_ICONS);
 	AddTooltip(IDC_COMBO_STREAM_TYPE, IDS_STRING_COMBO_STREAM_TYPE);
 	AddTooltip(IDC_COMBO_CATCHUP_TYPE, IDS_STRING_COMBO_CATCHUP_TYPE);
 	AddTooltip(IDC_COMBO_PLAYLIST_TEMPLATE, IDS_STRING_COMBO_PLAYLIST_TEMPLATE);
@@ -254,6 +257,7 @@ void CPluginConfigPageTV::UpdateControls()
 	m_wndBtnPlaylistShow.EnableWindow(readOnly);
 	m_wndPlaylistTemplate.SetReadOnly(readOnly);
 	m_wndChkEpgIdFromID.EnableWindow(!readOnly);
+	m_wndChkSquareIcons.EnableWindow(!readOnly);
 	m_wndParseStream.SetReadOnly(readOnly);
 	m_wndCheckMapTags.EnableWindow(!readOnly);
 	m_wndTags.EnableWindow(m_wndCheckMapTags.GetCheck() != 0);
@@ -279,6 +283,7 @@ void CPluginConfigPageTV::FillPlaylistSettings(size_t index)
 	m_PlaylistTemplate = info.get_pl_template().c_str();
 	m_ParseStream = info.get_parse_regex().c_str();
 	m_wndChkEpgIdFromID.SetCheck(info.get_epg_id_from_id() != false);
+	m_wndChkSquareIcons.SetCheck(info.get_square_icons() != false);
 
 	if (info.get_tag_id_match().empty())
 	{
@@ -331,6 +336,7 @@ void CPluginConfigPageTV::SaveParameters()
 	info.set_parse_regex(m_ParseStream.GetString());
 	info.set_pl_template(m_PlaylistTemplate.GetString());
 	info.set_epg_id_from_id(m_wndChkEpgIdFromID.GetCheck() != 0);
+	info.set_square_icons(m_wndChkSquareIcons.GetCheck() != 0);
 
 	auto& stream = GetPropertySheet()->m_plugin->get_supported_stream(m_wndStreamType.GetCurSel());
 

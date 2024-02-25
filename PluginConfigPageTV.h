@@ -82,6 +82,7 @@ protected:
 	CComboBox m_wndCatchupType;
 	CComboBox m_wndTags;
 
+	CButton m_wndChkSquareIcons;
 	CButton m_wndBtnEditTemplates;
 	CButton m_wndChkEpgIdFromID;
 	CButton m_wndBtnPlaylistShow;

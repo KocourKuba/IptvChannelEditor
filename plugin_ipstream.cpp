@@ -56,9 +56,8 @@ void plugin_ipstream::load_default()
 	info.pl_template = "{PL_DOMAIN}/iptv/m3u_plus-{PASSWORD}-m3u8";
 	info.pl_parse_regex = R"(^https?:\/\/.+\/iptv\/m3u_plus-(?<password>.+)-m3u8$)";
 	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u\d?$)";
+	info.square_icons = true;
 	playlist_templates.emplace_back(info);
-
-	square_icons = true;
 
 	streams_config[0].cu_type = CatchupType::cu_append;
 	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";

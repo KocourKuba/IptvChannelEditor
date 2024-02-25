@@ -230,6 +230,9 @@ public:
 	bool get_epg_id_from_id() const { return epg_id_from_id; }
 	void set_epg_id_from_id(bool val) { epg_id_from_id = val; }
 
+	bool get_square_icons() const { return square_icons; }
+	void set_square_icons(bool val) { square_icons = val; }
+
 	friend void to_json(nlohmann::json& j, const PlaylistTemplateInfo& c)
 	{
 		SERIALIZE_STRUCT(j, c, name);
@@ -240,6 +243,7 @@ public:
 		SERIALIZE_STRUCT(j, c, url_params);
 		SERIALIZE_STRUCT(j, c, tag_id_match);
 		SERIALIZE_STRUCT(j, c, epg_id_from_id); //-V601
+		SERIALIZE_STRUCT(j, c, square_icons); //-V601
 	}
 
 	friend void from_json(const nlohmann::json& j, PlaylistTemplateInfo& c)
@@ -252,6 +256,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, url_params);
 		DESERIALIZE_STRUCT(j, c, tag_id_match);
 		DESERIALIZE_STRUCT(j, c, epg_id_from_id);
+		DESERIALIZE_STRUCT(j, c, square_icons);
 	}
 
 	std::string name;
@@ -262,6 +267,7 @@ public:
 	std::string url_params;
 	std::string tag_id_match;
 	bool epg_id_from_id = false;
+	bool square_icons = false;
 	bool is_custom = false;
 };
 
@@ -633,12 +639,6 @@ public:
 	const PlaylistTemplateInfo& get_current_vod_info() const { return get_vod_info(get_vod_info_idx()); };
 
 	/// <summary>
-	/// property square icons, php GUI setting
-	/// </summary>
-	bool get_square_icons() const { return square_icons; }
-	void set_square_icons(bool val) { square_icons = val; }
-
-	/// <summary>
 	/// property enable show balance info
 	/// </summary>
 	bool get_balance_support() const { return balance_support; }
@@ -868,7 +868,6 @@ public:
 		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
 		SERIALIZE_STRUCT(j, c, vod_templates);
 		SERIALIZE_STRUCT(j, c, vod_template_index);
-		SERIALIZE_STRUCT(j, c, square_icons); //-V601
 		SERIALIZE_STRUCT(j, c, balance_support); //-V601
 		SERIALIZE_STRUCT(j, c, requested_token); //-V601
 		SERIALIZE_STRUCT(j, c, static_servers); //-V601
@@ -903,7 +902,6 @@ public:
 		DESERIALIZE_STRUCT(j, c, vod_filter);
 		DESERIALIZE_STRUCT(j, c, vod_templates);
 		DESERIALIZE_STRUCT(j, c, vod_template_index);
-		DESERIALIZE_STRUCT(j, c, square_icons);
 		DESERIALIZE_STRUCT(j, c, balance_support);
 		DESERIALIZE_STRUCT(j, c, requested_token);
 		DESERIALIZE_STRUCT(j, c, static_servers);
@@ -956,8 +954,6 @@ protected:
 	// vod engine
 	VodEngine vod_engine = VodEngine::enNone;
 
-	// use channels logo are squared, plugin UI settings
-	bool square_icons = false;
 	// show balance info in plugin
 	bool balance_support = false;
 	// use channels logo are squared, plugin UI settings

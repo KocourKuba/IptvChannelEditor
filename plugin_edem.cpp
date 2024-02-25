@@ -67,6 +67,25 @@ void plugin_edem::load_default()
 	info.pl_template = "{PL_DOMAIN}/edem_epg_ico2.m3u8";
 	playlist_templates.emplace_back(info);
 
+	info.set_name(IDS_STRING_EDEM_THEMATIC_SORTED);
+	info.pl_template = "{PL_DOMAIN}/edem_epg_ico3.m3u8";
+	playlist_templates.emplace_back(info);
+
+	info.set_name(IDS_STRING_EDEM_STANDARD_SQ);
+	info.pl_template = "{PL_DOMAIN}/edem_epg_ico.m3u8";
+	info.square_icons = true;
+	playlist_templates.emplace_back(info);
+
+	info.set_name(IDS_STRING_EDEM_THEMATIC_SQ);
+	info.pl_template = "{PL_DOMAIN}/edem_epg_ico2.m3u8";
+	info.square_icons = true;
+	playlist_templates.emplace_back(info);
+
+	info.set_name(IDS_STRING_EDEM_THEMATIC_SORTED_SQ);
+	info.pl_template = "{PL_DOMAIN}/edem_epg_ico3.m3u8";
+	info.square_icons = true;
+	playlist_templates.emplace_back(info);
+
 	streams_config[0].uri_template = "{SCHEME}junior.edmonst.net/iptv/{OTT_KEY}/{ID}/index.m3u8";
 	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
 	streams_config[0].dune_params = "hls_forced_type:event";
