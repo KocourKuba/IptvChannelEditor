@@ -58,6 +58,7 @@ BEGIN_MESSAGE_MAP(CVodViewer, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_REFRESH, &CVodViewer::OnBnClickedButtonRefresh)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CVodViewer::OnBnClickedButtonSearch)
 	ON_BN_CLICKED(IDC_BUTTON_STOP, &CVodViewer::OnBnClickedButtonStop)
+	ON_CBN_SELCHANGE(IDC_COMBO_SEASON, &CVodViewer::OnCbnSelchangeComboSeason)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPISODE, &CVodViewer::OnCbnSelchangeComboEpisode)
 	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CVodViewer::OnCbnSelchangeComboQuality)
 	ON_CBN_SELCHANGE(IDC_COMBO_PLAYLIST, &CVodViewer::OnCbnSelchangeComboPlaylist)
@@ -570,6 +571,22 @@ void CVodViewer::OnCbnSelchangeComboYears()
 	FilterList();
 }
 
+void CVodViewer::OnCbnSelchangeComboSeason()
+{
+	UpdateData(TRUE);
+
+	auto pos = m_wndMoviesList.GetFirstSelectedItemPosition();
+	int idx = -1;
+	if (pos)
+	{
+		idx = m_wndMoviesList.GetNextSelectedItem(pos);
+	}
+
+	FillEpisodes(GetFilteredMovie(idx));
+
+	return GetUrl(idx);
+}
+
 void CVodViewer::OnCbnSelchangeComboEpisode()
 {
 	UpdateData(TRUE);
@@ -577,7 +594,9 @@ void CVodViewer::OnCbnSelchangeComboEpisode()
 	auto pos = m_wndMoviesList.GetFirstSelectedItemPosition();
 	int idx = -1;
 	if (pos)
+	{
 		idx = m_wndMoviesList.GetNextSelectedItem(pos);
+	}
 
 	return GetUrl(idx);
 }
@@ -589,7 +608,9 @@ void CVodViewer::OnCbnSelchangeComboQuality()
 	auto pos = m_wndMoviesList.GetFirstSelectedItemPosition();
 	int idx = -1;
 	if (pos)
+	{
 		idx = m_wndMoviesList.GetNextSelectedItem(pos);
+	}
 
 	return GetUrl(idx);
 }
@@ -801,25 +822,96 @@ void CVodViewer::FillYears()
 	UpdateData(FALSE);
 }
 
-void CVodViewer::LoadMovieInfo(int idx)
+void CVodViewer::FillSeasons(const std::shared_ptr<vod_movie>& movie)
 {
-	UpdateData(TRUE);
+	m_wndSeason.EnableWindow(FALSE);
+	m_season_idx = 0;
 
-	m_wndDescription.SetWindowText(L"");
-	m_wndSeason.ResetContent();
+	if (m_plugin->get_plugin_type() != PluginType::enEdem)
+	{
+		const auto& str = load_string_resource(IDS_STRING_SEASON);
+		m_wndSeason.EnableWindow(TRUE);
+
+		for (const auto& season_it : movie->seasons.vec())
+		{
+			const auto& season = season_it.second;
+			if (season.title.empty())
+			{
+				m_wndSeason.AddString(fmt::format(L"{:s} {:s}", str, season.season_id).c_str());
+			}
+			else
+			{
+				m_wndSeason.AddString(season.title.c_str());
+			}
+		}
+	}
+
+	FillEpisodes(movie);
+}
+
+void CVodViewer::FillEpisodes(const std::shared_ptr<vod_movie>& movie)
+{
+	if (movie == nullptr)
+		return;
+
 	m_wndEpisode.ResetContent();
-	m_wndQuality.ResetContent();
-	m_wndPoster.SetBitmap(nullptr);
+	m_wndEpisode.EnableWindow(FALSE);
 
-	if (idx >= (int)m_filtered_movies.size())
+	if (movie->seasons.empty() || m_season_idx < 0 || m_season_idx >= (int)movie->seasons.size())
+		return;
+
+		m_episode_idx = 0;
+
+	const auto& episodes = movie->seasons[m_season_idx].episodes;
+	if (!episodes.empty())
+	{
+		const auto& str = load_string_resource(IDS_STRING_EPISODE);
+
+		m_episode_idx = 0;
+		m_wndEpisode.EnableWindow(TRUE);
+
+		for (const auto& episode_it : episodes.vec())
+		{
+			const auto& episode = episode_it.second;
+			if (episode.title.empty())
+			{
+				m_wndEpisode.AddString(fmt::format(L"{:s} {:s}", str, episode.episode_id).c_str());
+			}
+			else
+			{
+				m_wndEpisode.AddString(episode.title.c_str());
+			}
+
+			if (!episode.quality.empty())
+			{
+				FillQuality(episode.quality);
+			}
+		}
+	}
+}
+
+void CVodViewer::FillQuality(const vod_quality_storage& qualities)
+{
+	m_wndQuality.ResetContent();
+	m_quality_idx = 0;
+	for (const auto& q_it : qualities.vec())
+	{
+		m_wndQuality.AddString(q_it.second.title.c_str());
+	}
+	m_wndQuality.EnableWindow(TRUE);
+}
+
+std::shared_ptr<vod_movie> CVodViewer::GetFilteredMovie(int idx)
+{
+	if (idx < 0 || idx >= (int)m_filtered_movies.size())
 	{
 		m_streamUrl.Empty();
 		m_iconUrl.Empty();
 		UpdateData(FALSE);
-		return;
+		return nullptr;
 	}
 
-	const auto& movie = m_filtered_movies[idx];
+	std::shared_ptr<vod_movie> movie = m_filtered_movies[idx];
 	if (movie->url.empty() && movie->seasons.empty())
 	{
 		switch (m_plugin->get_plugin_type())
@@ -839,81 +931,40 @@ void CVodViewer::LoadMovieInfo(int idx)
 		}
 	}
 
-	BOOL enableSeason = FALSE;
-	BOOL enableEpisode = FALSE;
-	BOOL enableQuality = FALSE;
+	return movie;
+}
+
+void CVodViewer::LoadMovieInfo(int idx)
+{
+	UpdateData(TRUE);
+
+	m_wndDescription.SetWindowText(L"");
+	m_wndSeason.ResetContent();
+	m_wndEpisode.ResetContent();
+	m_wndQuality.ResetContent();
+	m_wndPoster.SetBitmap(nullptr);
+
+	auto movie = GetFilteredMovie(idx);
+	if (movie == nullptr)
+	{
+		m_wndSeason.EnableWindow(FALSE);
+		m_wndEpisode.EnableWindow(FALSE);
+		m_wndQuality.EnableWindow(FALSE);
+		return;
+	}
+
 	if (movie->seasons.empty())
 	{
 		if (!movie->quality.empty())
 		{
-			enableQuality = TRUE;
-			m_quality_idx = 0;
-			for (const auto& q_it : movie->quality.vec())
-			{
-				m_wndQuality.AddString(q_it.second.title.c_str());
-			}
+			FillQuality(movie->quality);
 		}
 	}
 	else
 	{
-		m_season_idx = 0;
-
-		if (m_plugin->get_plugin_type() != PluginType::enEdem)
-		{
-			const auto& str = load_string_resource(IDS_STRING_SEASON);
-			enableSeason = TRUE;
-			for (const auto& season_it : movie->seasons.vec())
-			{
-				const auto& season = season_it.second;
-				if (season.title.empty())
-				{
-					m_wndSeason.AddString(fmt::format(L"{:s} {:s}", str, season.season_id).c_str());
-				}
-				else
-				{
-					m_wndSeason.AddString(season.title.c_str());
-				}
-			}
-		}
-
-		const auto& episodes = movie->seasons.front().episodes;
-		if (!episodes.empty())
-		{
-			const auto& str = load_string_resource(IDS_STRING_EPISODE);
-
-			enableEpisode = TRUE;
-			m_episode_idx = 0;
-
-			for (const auto& episode_it : episodes.vec())
-			{
-				const auto& episode = episode_it.second;
-				if (episode.title.empty())
-				{
-					m_wndEpisode.AddString(fmt::format(L"{:s} {:s}", str, episode.episode_id).c_str());
-				}
-				else
-				{
-					m_wndEpisode.AddString(episode.title.c_str());
-				}
-
-				if (enableQuality) continue;
-
-				if (!episode.quality.empty())
-				{
-					enableQuality = TRUE;
-					m_quality_idx = 0;
-					for (const auto& q_it : episode.quality.vec())
-					{
-						m_wndQuality.AddString(q_it.second.title.c_str());
-					}
-				}
-			}
-		}
+		FillSeasons(movie);
 	}
 
-	m_wndSeason.EnableWindow(enableSeason);
-	m_wndEpisode.EnableWindow(enableEpisode);
-	m_wndQuality.EnableWindow(enableQuality);
 
 	SetImageControl(GetIconCache().get_icon(movie->poster_url.get_uri()), m_wndPoster);
 
@@ -1143,7 +1194,7 @@ void CVodViewer::FilterList()
 									 }) != genres.end();
 			}
 
-			if (m_year_idx != 0)
+			if (m_year_idx > 0)
 			{
 				year = selectedYear.CompareNoCase(movie->year.c_str()) == 0;
 			}
@@ -1433,16 +1484,25 @@ void CVodViewer::GetUrl(int idx)
 			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_s_token());
 			break;
 		}
-		case PluginType::enEdem:
 		case PluginType::enSharavoz:
-			if (!movie->quality.empty())
+			if (!movie->seasons.empty() && m_season_idx != CB_ERR)
+			{
+				const auto& episodes = movie->seasons[m_season_idx].episodes;
+				if (!episodes.empty() && m_episode_idx != CB_ERR)
+				{
+					url = episodes[m_episode_idx].url;
+				}
+			}
+			break;
+		case PluginType::enEdem:
+			if (!movie->quality.empty() && m_quality_idx != CB_ERR)
 			{
 				url = movie->quality[m_quality_idx].url;
 			}
 			else if (!movie->seasons.empty())
 			{
 				const auto& episodes = movie->seasons.front().episodes;
-				if (!episodes.empty())
+				if (!episodes.empty() && m_episode_idx != CB_ERR)
 				{
 					const auto& quality = episodes[m_episode_idx].quality;
 					if (quality.empty())

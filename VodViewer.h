@@ -69,6 +69,7 @@ protected:
 	afx_msg void OnCbnSelchangeComboCategories();
 	afx_msg void OnCbnSelchangeComboGenres();
 	afx_msg void OnCbnSelchangeComboYears();
+	afx_msg void OnCbnSelchangeComboSeason();
 	afx_msg void OnCbnSelchangeComboEpisode();
 	afx_msg void OnCbnSelchangeComboQuality();
 	afx_msg void OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult);
@@ -77,10 +78,15 @@ protected:
 	afx_msg void OnBnClickedButtonStop();
 
 private:
+	std::shared_ptr<vod_movie> GetFilteredMovie(int idx);
+
 	void LoadPlaylist(bool use_cache = true);
 	void LoadM3U8Playlist(bool use_cache = true);
 	void LoadJsonPlaylist(bool use_cache = true);
 	void FillCategories();
+	void FillSeasons(const std::shared_ptr<vod_movie>& movie);
+	void FillEpisodes(const std::shared_ptr<vod_movie>& movie);
+	void FillQuality(const vod_quality_storage& qualities);
 	void FillGenres();
 	void FillYears();
 	void LoadMovieInfo(int idx);
