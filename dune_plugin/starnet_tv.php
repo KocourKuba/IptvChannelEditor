@@ -394,6 +394,9 @@ class Starnet_Tv implements User_Input_Handler
                 if (!empty($xml_tv_channel->tvg_id)) {
                     $epg_ids[] = (string)$xml_tv_channel->tvg_id;
                 }
+                $epg_ids[] = $channel_id;
+                $epg_ids[] = (string)$xml_tv_channel->caption;
+                $epg_ids = array_unique($epg_ids);
 
                 $protected = (int)$xml_tv_channel->protected && $enable_protected;
                 $channel = new Default_Channel(
@@ -407,7 +410,7 @@ class Starnet_Tv implements User_Input_Handler
                     $custom_arc_url_type,
                     (int)$xml_tv_channel->archive,
                     $number,
-                    array_unique($epg_ids),
+                    $epg_ids,
                     $protected,
                     (int)$xml_tv_channel->timeshift_hours,
                     $ext_params

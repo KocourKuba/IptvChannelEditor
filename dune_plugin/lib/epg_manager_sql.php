@@ -314,7 +314,7 @@ class Epg_Manager_Sql extends Epg_Manager
             }
 
             $channel_title = $channel->get_title();
-            $epg_ids = $channel->get_epg_ids();
+            $epg_ids = array_values($channel->get_epg_ids());
 
             if (empty($epg_ids) || ($this->flags & EPG_FUZZY_SEARCH)) {
                 $channels_db = $this->open_sqlite_db(false);
@@ -332,7 +332,8 @@ class Epg_Manager_Sql extends Epg_Manager
                 }
             }
 
-            $epg_ids = array_unique($epg_ids);
+            $epg_ids = array_values(array_unique($epg_ids));
+            hd_debug_print("Found epg_ids: " . json_encode($epg_ids), true);
             $channel_id = $channel->get_id();
             if (!empty($epg_ids)) {
                 hd_debug_print("Load position indexes for: $channel_id ($channel_title), search epg id's: " . json_encode($epg_ids));
