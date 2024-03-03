@@ -3791,7 +3791,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			save = ChooseIconFromLib(idx, L"https://epg.drm-play.com/?prov=edem", info);
 			break;
 		case 3:
-			save = ChooseIconFromLib(idx, L"http://epg.it999.ru/edem_epg_ico.m3u8", info, false, true);
+			save = ChooseIconFromLib(idx, L"http://epg.one/edem_epg_ico.m3u8", info, false, true);
 			break;
 		case 4:
 			save = ChooseIconFromLib(idx, L"https://epg.drm-play.com/?prov=iptvx.one", info);

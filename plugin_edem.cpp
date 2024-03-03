@@ -100,7 +100,7 @@ void plugin_edem::fill_domains_list(TemplateParams* params /*= nullptr*/)
 
 	DynamicParamsInfo info;
 	info.set_id(L"0");
-	info.set_name(L"http://epg.it999.ru");
+	info.set_name(L"http://epg.one");
 
 	std::vector<DynamicParamsInfo> domains;
 	domains.emplace_back(info);
