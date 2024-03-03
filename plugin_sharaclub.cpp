@@ -43,12 +43,6 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"{:s}/api/players.php?a={:s}&u={:s}-{:s}&source=dune_editor";
 static constexpr auto API_COMMAND_SET_URL = L"{:s}/api/players.php?a={:s}&{:s}={:s}&u={:s}-{:s}&source=dune_editor";
 
-plugin_sharaclub::plugin_sharaclub()
-{
-	type_name = "sharaclub";
-	class_name = "sharaclub_config";
-}
-
 void plugin_sharaclub::configure_provider_plugin()
 {
 	base_plugin::configure_provider_plugin();
@@ -71,45 +65,6 @@ void plugin_sharaclub::configure_provider_plugin()
 			AfxMessageBox(get_download_error().c_str(), MB_ICONERROR | MB_OK);
 		}
 	}
-}
-
-void plugin_sharaclub::load_default()
-{
-	base_plugin::load_default();
-
-	title = "Sharaclub TV";
-	name = "sharaclub.tv";
-	access_type = AccountAccessType::enLoginPass;
-
-	provider_url = "https://shara.club/";
-
-	vod_templates.clear();
-	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
-	vod_info.pl_template = "{API_URL}/kino-full/{LOGIN}-{PASSWORD}";
-	vod_templates.emplace_back(vod_info);
-
-	vod_filter = true;
-	vod_engine = VodEngine::enJson;
-	balance_support = true;
-
-	PlaylistTemplateInfo info;
-	info.set_name(load_string_resource(IDS_STRING_EDEM_STANDARD));
-	info.pl_template = "{API_URL}/tv_live-m3u8/{LOGIN}-{PASSWORD}";
-	info.pl_parse_regex = R"(https?:\/\/[^\/]+\/tv-m3u8\/(?<login>[^-]+)-(?<password>.+)$)";
-	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/live\/(?<token>.+)\/(?<id>.+)\/.+\.m3u8$)";
-	playlist_templates.emplace_back(info);
-
-	streams_config[0].cu_type = CatchupType::cu_append;
-	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8";
-	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}";
-
-	streams_config[1].cu_type = CatchupType::cu_append;
-	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}.ts";
-	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}";
-
-	set_epg_preset(0, EpgPresets::enCbilling);
-	epg_params[0].epg_domain.clear();
-	epg_params[0].epg_url = "{EPG_DOMAIN}/get/?type=epg&ch={EPG_ID}";
 }
 
 std::wstring plugin_sharaclub::get_playlist_url(TemplateParams& params, std::wstring /*url = L""*/)

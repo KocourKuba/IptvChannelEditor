@@ -30,12 +30,6 @@ DEALINGS IN THE SOFTWARE.
 class plugin_itv : public base_plugin
 {
 public:
-
-	plugin_itv();
-
+	plugin_itv(const std::string& type_name) : base_plugin(type_name) {}
 	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(TemplateParams& params) override;
-	void fill_domains_list(TemplateParams* params = nullptr) override;
-
-protected:
-	void load_default() override;
 };

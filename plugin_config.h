@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "PluginDefines.h"
 #include "IPTVChannelEditor.h"
 #include "UtilsLib\json_wrapper.h"
+#include "UtilsLib\inet_utils.h"
 
 #define ENUM_TO_STRING(ENUM_TYPE, ...)                                                                                 \
 template<typename ENUM_TYPE, typename StringType>                                                                      \
@@ -452,7 +453,7 @@ protected:
 	/// <summary>
 	/// load default settings
 	/// </summary>
-	virtual void load_default();
+	void load_default();
 
 	/// <summary>
 	/// fill EPG parsing preset
@@ -461,14 +462,36 @@ protected:
 
 public:
 	/// <summary>
+	/// copy info
+	/// </summary>
+	void set_config(const PluginType type, const plugin_config& src)
+	{
+		if (this != &src)
+		{
+			load_default();
+			*this = src;
+			set_plugin_type(type);
+		}
+	}
+
+	bool download_url(const std::wstring& url,
+					  std::stringstream& vData,
+					  int cache_ttl = 0,
+					  std::vector<std::string>* pHeaders = nullptr,
+					  bool verb_post = false,
+					  const char* post_data = nullptr);
+
+	const std::wstring& get_download_error() { return m_dl.GetLastErrorMessage(); }
+
+	/// <summary>
 	/// save plugin parameters to file
 	/// </summary>
-	virtual bool save_plugin_parameters(const std::wstring& filename, bool use_full_path = false);
+	bool save_plugin_parameters(const std::wstring& filename, bool use_full_path = false);
 
 	/// <summary>
 	/// load plugin parameters to file
 	/// </summary>
-	virtual void load_plugin_parameters(const std::wstring& filename);
+	void load_plugin_parameters(const std::wstring& filename = L"");
 
 	/// <summary>
 	/// set playlist epg url
@@ -523,11 +546,6 @@ public:
 	void set_dev_path(const std::string& path) { dev_code = path; }
 
 	/// <summary>
-	/// load default plugin parameters and set default values for templates
-	/// </summary>
-	void set_plugin_defaults(PluginType val);
-
-	/// <summary>
 	/// configure internal plugin settings
 	/// </summary>
 	virtual void configure_plugin();
@@ -541,6 +559,7 @@ public:
 	/// plugin type
 	/// </summary>
 	PluginType get_plugin_type() const { return plugin_type; }
+	void set_plugin_type(const PluginType type) { plugin_type = type; }
 
 	/// <summary>
 	/// plugin type name
@@ -852,78 +871,14 @@ public:
 	virtual const std::vector<DynamicParamsInfo>& get_domains_list() { return domains_list; }
 	virtual void set_domains_list(const std::vector<DynamicParamsInfo>& info) { domains_list = info; }
 
-	friend void to_json(nlohmann::json& j, const plugin_config& c)
-	{
-		SERIALIZE_STRUCT(j, c, access_type);
-		SERIALIZE_STRUCT(j, c, class_name);
-		SERIALIZE_STRUCT(j, c, name);
-		SERIALIZE_STRUCT(j, c, title);
-		SERIALIZE_STRUCT(j, c, dev_code);
-		SERIALIZE_STRUCT(j, c, user_agent);
-		SERIALIZE_STRUCT(j, c, provider_url);
-		SERIALIZE_STRUCT(j, c, provider_api_url);
-		SERIALIZE_STRUCT(j, c, playlist_templates);
-		SERIALIZE_STRUCT(j, c, playlist_template_index);
-		SERIALIZE_STRUCT(j, c, vod_engine); //-V601
-		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
-		SERIALIZE_STRUCT(j, c, vod_templates);
-		SERIALIZE_STRUCT(j, c, vod_template_index);
-		SERIALIZE_STRUCT(j, c, balance_support); //-V601
-		SERIALIZE_STRUCT(j, c, requested_token); //-V601
-		SERIALIZE_STRUCT(j, c, static_servers); //-V601
-		SERIALIZE_STRUCT(j, c, static_qualities); //-V601
-		SERIALIZE_STRUCT(j, c, static_devices); //-V601
-		SERIALIZE_STRUCT(j, c, static_profiles); //-V601
-		SERIALIZE_STRUCT(j, c, static_domains); //-V601
-		SERIALIZE_STRUCT(j, c, streams_config);
-		SERIALIZE_STRUCT(j, c, epg_params);
-		SERIALIZE_STRUCT(j, c, files_list);
-		SERIALIZE_STRUCT(j, c, manifest_list);
-		SERIALIZE_STRUCT(j, c, servers_list);
-		SERIALIZE_STRUCT(j, c, qualities_list);
-		SERIALIZE_STRUCT(j, c, devices_list);
-		SERIALIZE_STRUCT(j, c, profiles_list);
-		SERIALIZE_STRUCT(j, c, domains_list);
-		SERIALIZE_STRUCT(j, c, custom_epg_urls);
-	}
-
-	friend void from_json(const nlohmann::json& j, plugin_config& c)
-	{
-		DESERIALIZE_STRUCT(j, c, access_type);
-		DESERIALIZE_STRUCT(j, c, class_name);
-		DESERIALIZE_STRUCT(j, c, name);
-		DESERIALIZE_STRUCT(j, c, title);
-		DESERIALIZE_STRUCT(j, c, user_agent);
-		DESERIALIZE_STRUCT(j, c, provider_url);
-		DESERIALIZE_STRUCT(j, c, provider_api_url);
-		DESERIALIZE_STRUCT(j, c, playlist_templates);
-		DESERIALIZE_STRUCT(j, c, playlist_template_index);
-		DESERIALIZE_STRUCT(j, c, vod_engine);
-		DESERIALIZE_STRUCT(j, c, vod_filter);
-		DESERIALIZE_STRUCT(j, c, vod_templates);
-		DESERIALIZE_STRUCT(j, c, vod_template_index);
-		DESERIALIZE_STRUCT(j, c, balance_support);
-		DESERIALIZE_STRUCT(j, c, requested_token);
-		DESERIALIZE_STRUCT(j, c, static_servers);
-		DESERIALIZE_STRUCT(j, c, static_qualities);
-		DESERIALIZE_STRUCT(j, c, static_devices);
-		DESERIALIZE_STRUCT(j, c, static_profiles);
-		DESERIALIZE_STRUCT(j, c, static_domains);
-		DESERIALIZE_STRUCT(j, c, streams_config);
-		DESERIALIZE_STRUCT(j, c, epg_params);
-		DESERIALIZE_STRUCT(j, c, files_list);
-		DESERIALIZE_STRUCT(j, c, manifest_list);
-		DESERIALIZE_STRUCT(j, c, servers_list);
-		DESERIALIZE_STRUCT(j, c, qualities_list);
-		DESERIALIZE_STRUCT(j, c, devices_list);
-		DESERIALIZE_STRUCT(j, c, profiles_list);
-		DESERIALIZE_STRUCT(j, c, domains_list);
-		DESERIALIZE_STRUCT(j, c, custom_epg_urls);
-	}
+	static void to_json(nlohmann::json& j, const plugin_config& c);
+	static void from_json(const nlohmann::json& j, plugin_config& c);
 
 protected:
 
 	static std::array<EpgParameters, (size_t)EpgPresets::enCustom> known_presets;
+
+	utils::CUrlDownload m_dl;
 
 	// non configurable parameters
 	PluginType plugin_type = PluginType::enCustom;

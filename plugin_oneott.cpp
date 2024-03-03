@@ -37,43 +37,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-plugin_oneott::plugin_oneott()
-{
-	type_name = "oneott";
-	class_name = "oneott_config";
-}
-
-void plugin_oneott::load_default()
-{
-	base_plugin::load_default();
-
-	title = "1OTT TV";
-	name = "oneott.tv";
-	access_type = AccountAccessType::enLoginPass;
-
-	provider_url = "http://1ott.net/";
-	provider_api_url = "http://list.1ott.net";
-
-	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "{PL_DOMAIN}/api/{S_TOKEN}/high/unix.m3u8";
-	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/~(?<token>.+)\/(?<id>.+)\/hlsx?\/.+\.m3u8$)";
-	playlist_templates.emplace_back(info);
-
-	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8";
-	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
-
-	streams_config[1].cu_type = CatchupType::cu_shift;
-	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/~{TOKEN}/{ID}";
-	streams_config[1].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
-
-	set_epg_preset(0, EpgPresets::enPropgNet);
-	epg_params[0].epg_domain = "http://epg.propg.net";
-	epg_params[0].epg_url = "{EPG_DOMAIN}/{EPG_ID}/epg2/{DATE}";
-	epg_params[0].epg_date_format = "{YEAR}-{MONTH}-{DAY}";
-
-	epg_params[1].epg_url = "{EPG_DOMAIN}/1ott%2Fepg%2F{EPG_ID}.json";
-}
-
 std::map<std::wstring, std::wstring, std::less<>> plugin_oneott::parse_access_info(TemplateParams& params)
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"{:s}/PinApi/{:s}/{:s}";
@@ -104,19 +67,4 @@ std::map<std::wstring, std::wstring, std::less<>> plugin_oneott::parse_access_in
 
 
 	return info;
-}
-
-void plugin_oneott::fill_domains_list(TemplateParams* params /*= nullptr*/)
-{
-	if (!get_domains_list().empty())
-		return;
-
-	DynamicParamsInfo info;
-	info.set_id(L"0");
-	info.set_name(L"http://list.1ott.net");
-
-	std::vector<DynamicParamsInfo> domains;
-	domains.emplace_back(info);
-
-	set_domains_list(domains);
 }

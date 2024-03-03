@@ -1862,37 +1862,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_STRING_FILMAX_P1    "Germany"
-    IDS_STRING_FILMAX_P2    "Poland"
-    IDS_STRING_FILMAX_P3    "Russia, Moscow"
-    IDS_STRING_FILMAX_P5    "Russia, Saint Petersburg"
-    IDS_STRING_FILMAX_P9    "Moscow 2"
-    IDS_STRING_FILMAX_P10   "Saint Petersburg 2"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_SHURA_TV_P1  "Server 1"
-    IDS_STRING_SHURA_TV_P2  "Server 2"
-    IDS_STRING_CBILLING_TV_P1 "Device 1"
-    IDS_STRING_CBILLING_TV_P2 "Device 2"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_CBILLING_TV_P3 "Device 3"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_VIPLIME_P1   "High"
-    IDS_STRING_VIPLIME_P2   "Middle"
-    IDS_STRING_VIPLIME_P3   "Low"
-    IDS_STRING_VIPLIME_P4   "Adaptive"
-END
-
-STRINGTABLE
-BEGIN
     IDS_STRING_LOADING      "Loading..."
     IDS_STRING_QUALITY_ID   "Quality"
     IDS_STRING_FMT_CHANNELS_ALL "Channels: {:d}, {:s}"
@@ -1960,96 +1929,6 @@ BEGIN
     IDS_STRING_EDIT_TITLE   "Plugin title. Shows on the Dune Main Screen."
     IDS_STRING_EDIT_SHORT_NAME 
                             "Short plugin name. Used internally in Editor. Can be changed only for Custom plugin."
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_VIPLIME_P5   "Optimal"
-    IDS_STRING_KINESKOP_P1  "DE"
-    IDS_STRING_KINESKOP_P2  "PL"
-    IDS_STRING_KINESKOP_P3  "US"
-    IDS_STRING_KINESKOP_P4  "RU"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_MYMAGIC_Q1   "Medium"
-    IDS_STRING_MYMAGIC_Q2   "High"
-    IDS_STRING_MYMAGIC_P0   "Default"
-    IDS_STRING_MYMAGIC_P1   "Germany 1"
-    IDS_STRING_MYMAGIC_P2   "Czech"
-    IDS_STRING_MYMAGIC_P3   "Germany 2"
-    IDS_STRING_MYMAGIC_P4   "Spain"
-    IDS_STRING_MYMAGIC_P5   "Netherlands"
-    IDS_STRING_MYMAGIC_P6   "France"
-    IDS_STRING_SHARAVOZ_P1  "Russia (RU01)"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_SHARAVOZ_P2  "Moscow (RU02)"
-    IDS_STRING_SHARAVOZ_P3  "Amsterdam (NL01)"
-    IDS_STRING_SHARAVOZ_P4  "Amsterdam (AM01)"
-    IDS_STRING_SHARAVOZ_P5  "France (FR01)"
-    IDS_STRING_SHARAVOZ_P6  "Zurich (CH01)"
-    IDS_STRING_SHARAVOZ_P7  "Europe (EU01)"
-    IDS_STRING_SHARAVOZ_P8  "Poland (PL01)"
-    IDS_STRING_YOSSO_ID1    "/"
-    IDS_STRING_YOSSO_ID2    "kfc/"
-    IDS_STRING_YOSSO_ID3    "OSTHLS/"
-    IDS_STRING_YOSSO_ID4    "KRDHLS/"
-    IDS_STRING_YOSSO_ID5    "bn/"
-    IDS_STRING_YOSSO_ID6    "BYHLS/"
-    IDS_STRING_YOSSO_ID7    "de/"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_YOSSO_ID8    "kz/"
-    IDS_STRING_YOSSO_ID9    "gn/"
-    IDS_STRING_YOSSO_ID10   "RHLS/"
-    IDS_STRING_YOSSO_P1     "RU (Russia, Moscow)"
-    IDS_STRING_YOSSO_P2     "KFC (Russia, Moscow)"
-    IDS_STRING_YOSSO_P3     "OSTHLS (Russia, Moscow)"
-    IDS_STRING_YOSSO_P4     "KRDHLS (Russia, Krasnodar)"
-    IDS_STRING_YOSSO_P5     "BN (Russia, Saint-Petersburg)"
-    IDS_STRING_YOSSO_P6     "BYHLS (Belarus, Minsk)"
-    IDS_STRING_YOSSO_P7     "DE (Germany, Frankfurt/Netherlands, Amsterdam)"
-    IDS_STRING_YOSSO_P8     "KZ (Kazakhstan, Almaty/Russia, Samara)"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_YOSSO_P9     "GN (Ukraine, Kiev)"
-    IDS_STRING_YOSSO_P10    "RHLS (GlobalCache CDN)"
-    IDS_STRING_SMILE_P0     "Auto Select"
-    IDS_STRING_SMILE_P1     "Server CZ"
-    IDS_STRING_SMILE_P2     "Server DE"
-    IDS_STRING_SMILE_P3     "Server NL"
-    IDS_STRING_SMILE_P4     "Server RU"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_IPTVONLINE_P0 "Poland"
-    IDS_STRING_IPTVONLINE_P1 "Germany"
-    IDS_STRING_IPTVONLINE_P2 "Netherlands"
-    IDS_STRING_IPTVONLINE_P3 "Russia"
-    IDS_STRING_IPTVONLINE_P4 "Canada"
-    IDS_STRING_IPTVONLINE_P5 "Greece"
-    IDS_STRING_IPTVONLINE_P6 "Ukraine"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_SATQ_P0      "Germany"
-    IDS_STRING_SATQ_P1      "Poland 1"
-    IDS_STRING_SATQ_P2      "Poland 2"
-    IDS_STRING_SATQ_P3      "Moscow 1"
-    IDS_STRING_SATQ_P4      "Moscow 2"
-    IDS_STRING_SATQ_P5      "Netherlands 1"
-    IDS_STRING_SATQ_P6      "Netherlands 2"
-    IDS_STRING_SATQ_P7      "Netherlands 3"
 END
 
 STRINGTABLE
@@ -2214,6 +2093,11 @@ BEGIN
     IDS_STRING_CHECK_ENABLE_BALANCE 
                             "Enable show balance/account info in the plugin (if supported)"
     IDS_STRING_BUTTON_PLAYLIST_SHOW_LINK "Show playlist url"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_ERR_CANT_LOAD_CONFIG "Can't load plugin configurations!"
 END
 
 #endif    // English (United States) resources

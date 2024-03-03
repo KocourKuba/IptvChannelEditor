@@ -35,39 +35,14 @@ DEALINGS IN THE SOFTWARE.
 
 #include "7zip\SevenZipWrapper.h"
 
-base_plugin::base_plugin()
+base_plugin::base_plugin(const std::string& config_name)
 {
-	type_name = "custom";
-	class_name = "default_config";
+	type_name = config_name;
 }
 
 base_plugin::base_plugin(const base_plugin& src)
 {
 	*this = src;
-}
-
-void base_plugin::load_default()
-{
-	plugin_config::load_default();
-
-	title = "Custom";
-	name = "custom.iptv";
-	user_agent = "DuneHD/1.0";
-
-	regex_uri_template.empty();
-
-	provider_url = "http://dune-hd.com/";
-	access_type = AccountAccessType::enNone;
-}
-
-bool base_plugin::save_plugin_parameters(const std::wstring& filename, bool use_full_path /*= false*/)
-{
-	return plugin_config::save_plugin_parameters(filename, use_full_path);
-}
-
-void base_plugin::load_plugin_parameters(const std::wstring& filename)
-{
-	plugin_config::load_plugin_parameters(filename);
 }
 
 void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)

@@ -64,7 +64,13 @@ public:
 					  const char* post_data = nullptr);
 
 
+	/**
+	* Set user agent
+	*/
 	void SetUserAgent(const std::wstring& userAgent) { m_user_agent = userAgent; }
+	/**
+	* Set cache time in seconds
+	*/
 	void SetCacheTtl(int cache_ttl) { m_cache_ttl_sec = cache_ttl; }
 	const std::wstring& GetLastErrorMessage() { return m_error_message; };
 	std::filesystem::path GetCachePath(const std::wstring& url);

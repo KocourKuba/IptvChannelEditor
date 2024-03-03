@@ -137,6 +137,7 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 	CCommandLineInfo::ParseParam(szParam, bFlag, bLast);
 }
 
+
 // CEdemChannelEditorApp
 
 BEGIN_MESSAGE_MAP(CIPTVChannelEditorApp, CWinApp)
@@ -201,6 +202,12 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	SetupExceptionHandler();
 	BT_SetTerminate(); // set_terminate() must be called from every thread
 #endif // _DEBUG
+
+	if (!StreamContainer::Instance().load_configs())
+	{
+		AfxMessageBox(IDS_STRING_ERR_CANT_LOAD_CONFIG, MB_OK | MB_ICONEXCLAMATION);
+		ExitProcess(0);
+	}
 
 	GetConfig().LoadSettings();
 
@@ -291,7 +298,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		auto plugin_type = GetConfig().get_plugin_type();
 		if (!PackPlugin(plugin_type, true, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 		{
-			auto plugin = StreamContainer::get_instance(plugin_type);
+			auto plugin = StreamContainer::Instance().create_plugin(plugin_type);
 			if (plugin)
 			{
 				CString str;
@@ -317,7 +324,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 			if (!PackPlugin(item, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 			{
-				auto plugin = StreamContainer::get_instance(item);
+				auto plugin = StreamContainer::Instance().create_plugin(item);
 				if (plugin)
 				{
 					CString str;
@@ -503,7 +510,7 @@ void ConvertAccounts()
 
 		if (need_convert)
 		{
-			auto plugin = StreamContainer::get_instance(item);
+			auto plugin = StreamContainer::Instance().create_plugin(item);
 			if (plugin)
 			{
 				const auto& access_type = plugin->get_access_type();
@@ -655,7 +662,7 @@ bool PackPlugin(const PluginType plugin_type,
 		return false;
 	}
 
-	auto plugin = StreamContainer::get_instance(plugin_type);
+	auto plugin = StreamContainer::Instance().create_plugin(plugin_type);
 
 	const auto& all_credentials = GetConfig().LoadCredentials();
 
@@ -1566,7 +1573,7 @@ uintmax_t calc_folder_size(const std::wstring& path)
 std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel /*= false*/)
 {
 	std::wstring plugin_name;
-	auto plugin = StreamContainer::get_instance(plugin_type);
+	auto plugin = StreamContainer::Instance().create_plugin(plugin_type);
 	if (plugin != nullptr)
 	{
 		// convert to wstring or string
@@ -1583,7 +1590,7 @@ std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel /*= fa
 std::string GetPluginTypeNameA(const PluginType plugin_type, bool bCamel /*= false*/)
 {
 	std::string plugin_name;
-	auto plugin = StreamContainer::get_instance(plugin_type);
+	auto plugin = StreamContainer::Instance().create_plugin(plugin_type);
 	if (plugin != nullptr)
 	{
 		// convert to wstring or string

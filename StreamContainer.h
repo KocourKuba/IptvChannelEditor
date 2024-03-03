@@ -33,5 +33,24 @@ DEALINGS IN THE SOFTWARE.
 class StreamContainer
 {
 public:
-	static std::shared_ptr<base_plugin> get_instance(PluginType type);
+	static StreamContainer& Instance()
+	{
+		static StreamContainer _instance;
+		return _instance;
+	}
+
+	std::shared_ptr<base_plugin> create_plugin(PluginType type);
+	bool load_configs();
+
+protected:
+	StreamContainer() = default;
+	virtual ~StreamContainer() = default;
+
+
+private:
+	StreamContainer(const StreamContainer& source) = delete;
+
+private:
+	std::map<std::string, plugin_config> m_config_storage;
+	std::map<EpgPresets, EpgParameters> m_epg_preset;
 };

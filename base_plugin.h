@@ -59,43 +59,11 @@ using EpgStorage = std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>;
 class base_plugin : public plugin_config
 {
 public:
-	base_plugin();
-	base_plugin(const base_plugin& src);
+	explicit base_plugin(const std::string& config_name);
+	explicit base_plugin(const base_plugin& src);
 	virtual ~base_plugin() = default;
 
-
-protected:
-	/// <summary>
-	/// load default settings
-	/// </summary>
-	/// <param name="url"></param>
-	void load_default() override;
-
 public:
-
-	bool download_url(const std::wstring& url,
-					  std::stringstream& vData,
-					  int cache_ttl = 0,
-					  std::vector<std::string>* pHeaders = nullptr,
-					  bool verb_post = false,
-					  const char* post_data = nullptr)
-	{
-		m_dl.SetUserAgent(get_user_agent());
-		m_dl.SetCacheTtl(cache_ttl);
-		return m_dl.DownloadFile(url, vData, pHeaders, verb_post, post_data);
-	}
-
-	const std::wstring& get_download_error() { return m_dl.GetLastErrorMessage(); }
-
-	/// <summary>
-	/// save plugin parameters to file
-	/// </summary>
-	bool save_plugin_parameters(const std::wstring& filename, bool use_full_path = false) override;
-
-	/// <summary>
-	/// load plugin parameters to file
-	/// </summary>
-	void load_plugin_parameters(const std::wstring& filename) override;
 
 	/// <summary>
 	/// regex of uri parse template
@@ -230,8 +198,6 @@ protected:
 	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const;
 
 protected:
-	utils::CUrlDownload m_dl;
-
 	// compiled regex for uri parse template
 	boost::wregex regex_uri_template;
 

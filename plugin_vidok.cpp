@@ -41,41 +41,6 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"{:s}/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"{:s}/{:s}?token={:s}&{:s}={:s}";
 
-plugin_vidok::plugin_vidok()
-{
-	type_name = "vidok";
-	class_name = "vidok_config";
-}
-
-void plugin_vidok::load_default()
-{
-	base_plugin::load_default();
-
-	title = "Vidok TV";
-	name = "vidok.tv";
-	access_type = AccountAccessType::enLoginPass;
-
-	provider_url = "https://vidok.tv/";
-	provider_api_url = "http://sapi.ott.st/v2.4/json";
-
-	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "{PL_DOMAIN}/p/{S_TOKEN}";
-	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)$)";
-	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/p\/(?<token>.+)\/.+$)";
-	info.tag_id_match = "tvg-id";
-	playlist_templates.emplace_back(info);
-
-	requested_token = true;
-
-	streams_config[0].cu_type = CatchupType::cu_append;
-	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/p/{TOKEN}/{ID}";
-	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}";
-
-	set_epg_preset(0, EpgPresets::enVidok);
-	epg_params[0].epg_domain = "";
-	epg_params[0].epg_url = "{API_URL}/epg2?cid={EPG_ID}&token={TOKEN}";
-}
-
 std::wstring plugin_vidok::get_api_token(const Credentials& creds) const
 {
 	std::string login_a = utils::string_tolower(utils::utf16_to_utf8(creds.get_login()));
@@ -203,19 +168,4 @@ bool plugin_vidok::set_server(TemplateParams& params)
 	}
 
 	return false;
-}
-
-void plugin_vidok::fill_domains_list(TemplateParams* params /*= nullptr*/)
-{
-	if (!get_domains_list().empty())
-		return;
-
-	DynamicParamsInfo info;
-	info.set_id(L"0");
-	info.set_name(L"http://bddpv.plist.top");
-
-	std::vector<DynamicParamsInfo> domains;
-	domains.emplace_back(info);
-
-	set_domains_list(domains);
 }

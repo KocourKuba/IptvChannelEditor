@@ -37,69 +37,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-plugin_cbilling::plugin_cbilling()
-{
-	type_name = "cbilling";
-	class_name = "cbilling_config";
-}
-
-void plugin_cbilling::load_default()
-{
-	base_plugin::load_default();
-
-	title = "Cbilling TV";
-	name = "cbillingtv";
-	access_type = AccountAccessType::enPin;
-
-	provider_url = "https://cbilling.eu/";
-	provider_api_url = "http://protected-api.com";
-	balance_support = true;
-
-	vod_templates.clear();
-	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
-	vod_info.pl_template = "{API_URL}";
-	vod_templates.emplace_back(vod_info);
-	vod_engine = VodEngine::enJson;
-
-	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8";
-	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<token>.+)_otp_dev.*$)";
-	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/.+\.m3u8$)";
-	info.tag_id_match = "tvg-id";
-	playlist_templates.emplace_back(info);
-
-	streams_config[0].uri_template = "{SCHEME}{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8";
-	streams_config[0].uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
-
-	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
-
-	set_epg_preset(0, EpgPresets::enCbilling);
-	epg_params[0].epg_domain = "";
-	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";
-
-	epg_params[1].epg_url = "{EPG_DOMAIN}/cbilling%2Fepg%2F{EPG_ID}.json";
-
-	static_devices = true;
-}
-
-void plugin_cbilling::fill_devices_list(TemplateParams* params /*= nullptr*/)
-{
-	if (!get_devices_list().empty())
-		return;
-
-	std::vector<DynamicParamsInfo> devices;
-	for (int i = 0; i <= IDS_STRING_CBILLING_TV_P3 - IDS_STRING_CBILLING_TV_P1; i++)
-	{
-		DynamicParamsInfo info;
-		info.set_id(fmt::format(L"{:d}", i + 1));
-		info.set_name(load_string_resource(1049, IDS_STRING_CBILLING_TV_P1 + i));
-		devices.emplace_back(info);
-	}
-
-	set_devices_list(devices);
-}
-
 std::map<std::wstring, std::wstring, std::less<>> plugin_cbilling::parse_access_info(TemplateParams& params)
 {
 	/*
@@ -150,19 +87,4 @@ std::map<std::wstring, std::wstring, std::less<>> plugin_cbilling::parse_access_
 	}
 
 	return info;
-}
-
-void plugin_cbilling::fill_domains_list(TemplateParams* params /*= nullptr*/)
-{
-	if (!get_domains_list().empty())
-		return;
-
-	DynamicParamsInfo info;
-	info.set_id(L"0");
-	info.set_name(L"http://248on.com");
-
-	std::vector<DynamicParamsInfo> domains;
-	domains.emplace_back(info);
-
-	set_domains_list(domains);
 }

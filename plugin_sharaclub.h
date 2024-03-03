@@ -31,7 +31,7 @@ class plugin_sharaclub : public base_plugin
 {
 public:
 
-	plugin_sharaclub();
+	plugin_sharaclub(const std::string& type_name) : base_plugin(type_name) {}
 
 	void configure_provider_plugin() override;
 	std::wstring get_playlist_url(TemplateParams& params, std::wstring url = L"") override;
@@ -40,7 +40,4 @@ public:
 	bool set_server(TemplateParams& params) override;
 	void fill_profiles_list(TemplateParams* params = nullptr) override;
 	bool set_profile(TemplateParams& params) override;
-
-protected:
-	void load_default() override;
 };

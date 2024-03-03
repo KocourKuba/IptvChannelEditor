@@ -67,6 +67,9 @@
     <Filter Include="Resource Files\PNG">
       <UniqueIdentifier>{35e70383-4749-424d-af38-4efd108f437e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="defaults">
+      <UniqueIdentifier>{c0e8d41f-a62b-44d9-b3eb-f51398e7b22c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPTVChannelEditor.h">
@@ -204,61 +207,10 @@
     <ClInclude Include="plugin_cbilling.h">
       <Filter>Header Files\plugin\shift</Filter>
     </ClInclude>
-    <ClInclude Include="plugin_edem.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_filmax.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_fox.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_glanz.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_iptvonline.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
     <ClInclude Include="plugin_itv.h">
       <Filter>Header Files\plugin\flussionic</Filter>
     </ClInclude>
-    <ClInclude Include="plugin_kineskop.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_lightiptv.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_mymagic.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_onecent.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
     <ClInclude Include="plugin_oneott.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_oneusd.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_ottclub.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_russkoetv.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_sharavoz.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_shuratv.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_tvteam.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_viplime.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_sharatv.h">
       <Filter>Header Files\plugin\shift</Filter>
     </ClInclude>
     <ClInclude Include="ColorEdit.h">
@@ -279,14 +231,8 @@
     <ClInclude Include="plugin_config.h">
       <Filter>Header Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="plugin_smile.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
     <ClInclude Include="FillParamsInfoDlg.h">
       <Filter>Header Files\Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_ping.h">
-      <Filter>Header Files\plugin\shift</Filter>
     </ClInclude>
     <ClInclude Include="NewConfigDlg.h">
       <Filter>Header Files\Dialogs</Filter>
@@ -321,47 +267,17 @@
     <ClInclude Include="PluginConfigPropertySheet.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="plugin_yosso.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
     <ClInclude Include="IconsSourceParseThread.h">
       <Filter>Header Files\Threads</Filter>
     </ClInclude>
     <ClInclude Include="BaseThread.h">
       <Filter>Header Files\Threads</Filter>
     </ClInclude>
-    <ClInclude Include="plugin_ottiptv.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_bcumedia.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
     <ClInclude Include="ListCtrlEx.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="Singleton.h">
       <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_101film.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_ipstream.h">
-      <Filter>Header Files\plugin\append</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_onlineott.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_tvizi.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_satq.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_rutv.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_crdtv.h">
-      <Filter>Header Files\plugin\shift</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -470,9 +386,6 @@
     <ClCompile Include="plugin_itv.cpp">
       <Filter>Source Files\plugin\flussonic</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_edem.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
     <ClCompile Include="plugin_oneott.cpp">
       <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
@@ -491,62 +404,11 @@
     <ClCompile Include="plugin_config.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_filmax.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_kineskop.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_mymagic.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
     <ClCompile Include="plugin_antifriz.cpp">
       <Filter>Source Files\plugin\flussonic</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_glanz.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_iptvonline.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_lightiptv.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_oneusd.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_sharavoz.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_tvteam.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_fox.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_onecent.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_ottclub.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_russkoetv.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_sharatv.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_shuratv.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_viplime.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
     <ClCompile Include="FillParamsInfoDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_ping.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
     <ClCompile Include="plugin_tvclub.cpp">
       <Filter>Source Files\plugin\append</Filter>
@@ -569,9 +431,6 @@
     <ClCompile Include="BaseThread.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_smile.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
     <ClCompile Include="AccountSettings.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
@@ -593,41 +452,11 @@
     <ClCompile Include="PluginConfigPropertySheet.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_yosso.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
     <ClCompile Include="IconsSourceParseThread.cpp">
       <Filter>Source Files\Threads</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_ottiptv.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_bcumedia.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
     <ClCompile Include="ListCtrlEx.cpp">
       <Filter>Source Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_101film.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_ipstream.cpp">
-      <Filter>Source Files\plugin\append</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_onlineott.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_tvizi.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_satq.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_rutv.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_crdtv.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -641,6 +470,114 @@
     </None>
     <None Include="dune_plugin\changelog.md" />
     <None Include="Readme.md" />
+    <None Include="defaults\101film.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\antifriz.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\bcumedia.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\cbilling.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\crdtv.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\edem.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\filmax.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\fox.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\glanz.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\ipstream.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\iptvonline.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\itv.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\kineskop.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\lightiptv.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\mymagic.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\oncent.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\oneott.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\oneusd.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\onlineott.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\ottclub.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\ottiptv.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\ping.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\russkoetv.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\rutv.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\satq.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\sharaclub.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\sharatv.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\sharavoz.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\shuratv.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\smile.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\tvclub.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\tvizi.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\tvteam.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\vidok.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\viplime.json">
+      <Filter>defaults</Filter>
+    </None>
+    <None Include="defaults\yosso.json">
+      <Filter>defaults</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\IPTVChannelEditor.ico">

@@ -34,51 +34,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-plugin_antifriz::plugin_antifriz()
-{
-	type_name = "antifriz";
-	class_name = "antifriz_config";
-}
-
-void plugin_antifriz::load_default()
-{
-	base_plugin::load_default();
-
-	title = "Antifriz TV";
-	name = "antifriz.tv";
-	access_type = AccountAccessType::enPin;
-
-	provider_url = "https://antifriztv.com/";
-	provider_api_url = "http://protected-api.com";
-
-	vod_templates.clear();
-	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
-	vod_info.pl_template = "{API_URL}";
-	vod_templates.emplace_back(vod_info);
-
-	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "{PL_DOMAIN}/playlist/{PASSWORD}.m3u8";
-	info.pl_parse_regex = R"(^https?:\/\/.*\/playlist\/(?<password>.+)\.m3u8?$)";
-	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+):(?<port>.+)\/s\/(?<token>.+)\/.+\/.+\.m3u8$)";
-	info.tag_id_match = "tvg-id";
-	playlist_templates.emplace_back(info);
-
-	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "{SCHEME}{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8";
-	streams_config[0].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}";
-
-	streams_config[1].cu_type = CatchupType::cu_flussonic;
-	streams_config[1].uri_template = "{SCHEME}{DOMAIN}:80/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
-
-	set_epg_preset(0, EpgPresets::enCbilling);
-	epg_params[0].epg_domain = "";
-	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}/?date=";
-
-	epg_params[1].epg_url = "{EPG_DOMAIN}/antifriz%2Fepg%2F{EPG_ID}.json";
-}
-
-
 std::map<std::wstring, std::wstring, std::less<>> plugin_antifriz::parse_access_info(TemplateParams& params)
 {
 	/*
@@ -129,19 +84,4 @@ std::map<std::wstring, std::wstring, std::less<>> plugin_antifriz::parse_access_
 	}
 
 	return info;
-}
-
-void plugin_antifriz::fill_domains_list(TemplateParams* params /*= nullptr*/)
-{
-	if (!get_domains_list().empty())
-		return;
-
-	DynamicParamsInfo info;
-	info.set_id(L"0");
-	info.set_name(L"https://af-play.com");
-
-	std::vector<DynamicParamsInfo> domains;
-	domains.emplace_back(info);
-
-	set_domains_list(domains);
 }

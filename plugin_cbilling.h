@@ -27,19 +27,9 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "base_plugin.h"
 
-// API documentation http://protected-api.com/api/documentation
-
 class plugin_cbilling : public base_plugin
 {
 public:
-
-	plugin_cbilling();
-
-public:
-	void fill_devices_list(TemplateParams* params = nullptr) override;
+	plugin_cbilling(const std::string& type_name) : base_plugin(type_name) {}
 	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(TemplateParams& params) override;
-	void fill_domains_list(TemplateParams* params = nullptr) override;
-
-protected:
-	void load_default() override;
 };

@@ -39,45 +39,6 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
 
-plugin_itv::plugin_itv()
-{
-	type_name = "itv";
-	class_name = "itv_config";
-}
-
-void plugin_itv::load_default()
-{
-	base_plugin::load_default();
-
-	title = "ITV Live TV";
-	name = "itv-live.tv";
-	access_type = AccountAccessType::enPin;
-
-	provider_url = "https://itv.live/";
-	provider_api_url = "http://api.itv.live";
-
-	PlaylistTemplateInfo info(IDS_STRING_EDEM_STANDARD);
-	info.pl_template = "{PL_DOMAIN}/p/{PASSWORD}/hls.m3u8";
-	info.pl_parse_regex = R"(^https?:\/\/.*\/p\/(?<password>.+)\/.+$)";
-	info.parse_regex = R"(^(?<scheme>https?:\/\/)(?<domain>.+)\/.+\/video\.m3u8\?token=(?<token>.+)$)";
-	info.tag_id_match = "tvg-id";
-	info.square_icons = true;
-	playlist_templates.emplace_back(info);
-
-	balance_support = true;
-
-	streams_config[0].cu_type = CatchupType::cu_flussonic;
-	streams_config[0].uri_template = "{SCHEME}{DOMAIN}/{ID}/video.m3u8?token={TOKEN}";
-	streams_config[0].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}";
-
-	streams_config[1].uri_template = "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}";
-	streams_config[1].uri_arc_template = "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}";
-
-	set_epg_preset(0, EpgPresets::enItvLive);
-	epg_params[0].epg_domain = "";
-	epg_params[0].epg_url = "{API_URL}/epg/{EPG_ID}";
-}
-
 std::map<std::wstring, std::wstring, std::less<>> plugin_itv::parse_access_info(TemplateParams& params)
 {
 	std::map<std::wstring, std::wstring, std::less<>> info;
@@ -122,19 +83,4 @@ std::map<std::wstring, std::wstring, std::less<>> plugin_itv::parse_access_info(
 
 
 	return info;
-}
-
-void plugin_itv::fill_domains_list(TemplateParams* params /*= nullptr*/)
-{
-	if (!get_domains_list().empty())
-		return;
-
-	DynamicParamsInfo info;
-	info.set_id(L"0");
-	info.set_name(L"https://itv.ooo");
-
-	std::vector<DynamicParamsInfo> domains;
-	domains.emplace_back(info);
-
-	set_domains_list(domains);
 }

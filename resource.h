@@ -324,6 +324,7 @@
 #define IDS_STRING_CHECK_PORTABLE       398
 #define IDS_STRING_BUTTON_COLORS        399
 #define IDS_STRING_FILMAX_P1            400
+#define IDS_STRING_ERR_CANT_LOAD_CONFIG 400
 #define IDS_STRING_FILMAX_P2            401
 #define IDS_STRING_FILMAX_P3            402
 #define IDS_STRING_FILMAX_P4            403
@@ -738,7 +739,7 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281

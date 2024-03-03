@@ -30,18 +30,12 @@ DEALINGS IN THE SOFTWARE.
 #include "Constants.h"
 #include "IPTVChannelEditor.h"
 
-
 std::array<EpgParameters, (size_t)EpgPresets::enCustom> plugin_config::known_presets;
 
 plugin_config::plugin_config()
 {
-	FillEpgPresets();
-}
-
-void plugin_config::set_plugin_defaults(PluginType val)
-{
-	plugin_type = val;
-	load_default();
+	type_name = "custom";
+	class_name = "default_config";
 }
 
 void plugin_config::configure_plugin()
@@ -100,8 +94,14 @@ PlaylistTemplateInfo& plugin_config::get_vod_info(size_t idx)
 
 void plugin_config::load_default()
 {
+	FillEpgPresets();
+
 	title = "Custom";
-	name = "custom";
+	name = "custom.iptv";
+	user_agent = "DuneHD/1.0";
+
+	provider_url = "http://dune-hd.com/";
+	access_type = AccountAccessType::enNone;
 	playlist_template_index = 0;
 	provider_url.clear();
 	playlist_templates.clear();
@@ -149,12 +149,18 @@ void plugin_config::load_default()
 	set_epg_preset(1, EpgPresets::enDRM);
 	epg_params[1].epg_param = "second";
 	epg_params[1].epg_domain = "http://epg.drm-play.com";
+}
 
-	fill_servers_list();
-	fill_devices_list();
-	fill_qualities_list();
-	fill_profiles_list();
-	fill_domains_list();
+bool plugin_config::download_url(const std::wstring& url,
+								 std::stringstream& vData,
+								 int cache_ttl /*= 0*/,
+								 std::vector<std::string>* pHeaders /*= nullptr*/,
+								 bool verb_post /*= false*/,
+								 const char* post_data /*= nullptr*/)
+{
+	m_dl.SetUserAgent(get_user_agent());
+	m_dl.SetCacheTtl(cache_ttl);
+	return m_dl.DownloadFile(url, vData, pHeaders, verb_post, post_data);
 }
 
 bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
@@ -174,7 +180,8 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool us
 	bool res = false;
 	try
 	{
-		nlohmann::json node = *this;
+		nlohmann::json node;
+		to_json(node, *this);
 
 		const auto& str = node.dump(2);
 		std::ofstream out_stream(full_path, std::ofstream::binary);
@@ -199,34 +206,22 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool us
 	return res;
 }
 
-void plugin_config::load_plugin_parameters(const std::wstring& filename)
+void plugin_config::load_plugin_parameters(const std::wstring& filename /*= L""*/)
 {
 	load_default();
-	if (filename.empty())
-	{
-		return;
-	}
 
-	std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_type_name());
-	const auto& full_path = config_dir.append(filename);
-
-	bool res = false;
-	JSON_ALL_TRY
+	std::filesystem::path config_dir = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_type_name();
+	config_dir.append(filename);
+	std::ifstream in_stream(config_dir.c_str());
+	if (in_stream.good())
 	{
-		nlohmann::json node;
-		std::ifstream in_stream(full_path);
-		if (in_stream.good())
+		JSON_ALL_TRY
 		{
+			nlohmann::json node;
 			in_stream >> node;
 			from_json(node, *this);
-			res = true;
 		}
-	}
-	JSON_ALL_CATCH;
-
-	if (!res)
-	{
-		load_default();
+		JSON_ALL_CATCH;
 	}
 }
 
@@ -240,6 +235,9 @@ EpgParameters plugin_config::get_epg_preset(EpgPresets idx) const
 
 void plugin_config::FillEpgPresets() const
 {
+	if (!known_presets.empty())
+		return;
+
 	{ // 0
 		EpgParameters params;
 		params.epg_root = "epg_data";
@@ -395,4 +393,73 @@ nlohmann::json plugin_config::get_epg_root(int epg_idx, const nlohmann::json& ep
 	JSON_ALL_CATCH;
 
 	return {};
+}
+
+void plugin_config::to_json(nlohmann::json& j, const plugin_config& c)
+{
+	SERIALIZE_STRUCT(j, c, access_type);
+	SERIALIZE_STRUCT(j, c, class_name);
+	SERIALIZE_STRUCT(j, c, name);
+	SERIALIZE_STRUCT(j, c, title);
+	SERIALIZE_STRUCT(j, c, dev_code);
+	SERIALIZE_STRUCT(j, c, user_agent);
+	SERIALIZE_STRUCT(j, c, provider_url);
+	SERIALIZE_STRUCT(j, c, provider_api_url);
+	SERIALIZE_STRUCT(j, c, playlist_templates);
+	SERIALIZE_STRUCT(j, c, playlist_template_index);
+	SERIALIZE_STRUCT(j, c, vod_engine); //-V601
+	SERIALIZE_STRUCT(j, c, vod_filter); //-V601
+	SERIALIZE_STRUCT(j, c, vod_templates);
+	SERIALIZE_STRUCT(j, c, vod_template_index);
+	SERIALIZE_STRUCT(j, c, balance_support); //-V601
+	SERIALIZE_STRUCT(j, c, requested_token); //-V601
+	SERIALIZE_STRUCT(j, c, static_servers); //-V601
+	SERIALIZE_STRUCT(j, c, static_qualities); //-V601
+	SERIALIZE_STRUCT(j, c, static_devices); //-V601
+	SERIALIZE_STRUCT(j, c, static_profiles); //-V601
+	SERIALIZE_STRUCT(j, c, static_domains); //-V601
+	SERIALIZE_STRUCT(j, c, streams_config);
+	SERIALIZE_STRUCT(j, c, epg_params);
+	SERIALIZE_STRUCT(j, c, files_list);
+	SERIALIZE_STRUCT(j, c, manifest_list);
+	SERIALIZE_STRUCT(j, c, servers_list);
+	SERIALIZE_STRUCT(j, c, qualities_list);
+	SERIALIZE_STRUCT(j, c, devices_list);
+	SERIALIZE_STRUCT(j, c, profiles_list);
+	SERIALIZE_STRUCT(j, c, domains_list);
+	SERIALIZE_STRUCT(j, c, custom_epg_urls);
+}
+
+void plugin_config::from_json(const nlohmann::json& j, plugin_config& c)
+{
+	DESERIALIZE_STRUCT(j, c, access_type);
+	DESERIALIZE_STRUCT(j, c, class_name);
+	DESERIALIZE_STRUCT(j, c, name);
+	DESERIALIZE_STRUCT(j, c, title);
+	DESERIALIZE_STRUCT(j, c, user_agent);
+	DESERIALIZE_STRUCT(j, c, provider_url);
+	DESERIALIZE_STRUCT(j, c, provider_api_url);
+	DESERIALIZE_STRUCT(j, c, playlist_templates);
+	DESERIALIZE_STRUCT(j, c, playlist_template_index);
+	DESERIALIZE_STRUCT(j, c, vod_engine);
+	DESERIALIZE_STRUCT(j, c, vod_filter);
+	DESERIALIZE_STRUCT(j, c, vod_templates);
+	DESERIALIZE_STRUCT(j, c, vod_template_index);
+	DESERIALIZE_STRUCT(j, c, balance_support);
+	DESERIALIZE_STRUCT(j, c, requested_token);
+	DESERIALIZE_STRUCT(j, c, static_servers);
+	DESERIALIZE_STRUCT(j, c, static_qualities);
+	DESERIALIZE_STRUCT(j, c, static_devices);
+	DESERIALIZE_STRUCT(j, c, static_profiles);
+	DESERIALIZE_STRUCT(j, c, static_domains);
+	DESERIALIZE_STRUCT(j, c, streams_config);
+	DESERIALIZE_STRUCT(j, c, epg_params);
+	DESERIALIZE_STRUCT(j, c, files_list);
+	DESERIALIZE_STRUCT(j, c, manifest_list);
+	DESERIALIZE_STRUCT(j, c, servers_list);
+	DESERIALIZE_STRUCT(j, c, qualities_list);
+	DESERIALIZE_STRUCT(j, c, devices_list);
+	DESERIALIZE_STRUCT(j, c, profiles_list);
+	DESERIALIZE_STRUCT(j, c, domains_list);
+	DESERIALIZE_STRUCT(j, c, custom_epg_urls);
 }
