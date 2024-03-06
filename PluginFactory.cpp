@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include "StreamContainer.h"
+#include "PluginFactory.h"
 #include "plugin_antifriz.h"
 #include "plugin_itv.h"
 #include "plugin_oneott.h"
@@ -40,7 +40,7 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static std::vector <std::pair<PluginType, std::string>> type_to_name = {
+static std::vector <std::pair<PluginType, std::string>> s_plugin_types = {
 	{ PluginType::enCustom,     "custom"     },
 	{ PluginType::en101film,    "101film"    },
 	{ PluginType::enAntifriz,   "antifriz"   },
@@ -80,13 +80,31 @@ static std::vector <std::pair<PluginType, std::string>> type_to_name = {
 	{ PluginType::enYossoTV,    "yosso"      },
 };
 
-std::shared_ptr<base_plugin> StreamContainer::create_plugin(PluginType type)
+static std::vector <std::pair<EpgPresets, std::string>> s_presets = {
+	{ EpgPresets::enDRM,         "drm"           },
+	{ EpgPresets::enIptvxOne,    "iptvx.one"     },
+	{ EpgPresets::enCbilling,    "cbilling"      },
+	{ EpgPresets::enItvLive,     "itvlive"       },
+	{ EpgPresets::enPropgNet,    "propg.net"     },
+	{ EpgPresets::enTVClub,      "tvclub"        },
+	{ EpgPresets::enVidok,       "vidok"         },
+	{ EpgPresets::enMyEPGServer, "my.epg.server" },
+	{ EpgPresets::enOttClub,     "ottclub"       },
+	{ EpgPresets::enTVTeam,      "tvteam"        },
+	{ EpgPresets::enSharaClub,   "sharaclub"     },
+	{ EpgPresets::enSharavoz,    "sharavoz"      },
+	{ EpgPresets::enCustom,      "Custom"        },
+	{ EpgPresets::enLast,        "Last"          },
+};
+
+
+std::shared_ptr<base_plugin> PluginFactory::create_plugin(PluginType type)
 {
 	std::shared_ptr<base_plugin> plugin;
 
-	const auto& it = std::find_if(type_to_name.begin(), type_to_name.end(), [&type](const auto& pair) { return pair.first == type; });
+	const auto& it = std::find_if(s_plugin_types.begin(), s_plugin_types.end(), [&type](const auto& pair) { return pair.first == type; });
 
-	if (it != type_to_name.end())
+	if (it != s_plugin_types.end())
 	{
 		const auto& name = it->second;
 		switch (type)
@@ -133,7 +151,15 @@ std::shared_ptr<base_plugin> StreamContainer::create_plugin(PluginType type)
 	return plugin;
 }
 
-bool StreamContainer::load_configs()
+EpgParameters PluginFactory::get_epg_preset(EpgPresets idx) const
+{
+	if (idx < EpgPresets::enCustom)
+		return known_presets[(size_t)idx];
+
+	return {};
+}
+
+bool PluginFactory::load_configs()
 {
 	bool res = false;
 	std::stringstream data;
@@ -155,10 +181,21 @@ bool StreamContainer::load_configs()
 	JSON_ALL_TRY
 	{
 		nlohmann::json config = nlohmann::json::parse(data.str());
+		for (const auto& item : config["epg_presets"].items())
+		{
+			const auto& it = std::find_if(s_presets.begin(), s_presets.end(), [&item](const auto& pair) { return pair.second == item.key(); });
+			if (it != s_presets.end())
+			{
+				EpgParameters preset;
+				EpgParameters::from_json_wrapper(item.value(), preset);
+				known_presets[(size_t)it->first] = preset;
+			}
+		}
+
 		for (const auto& item : config["plugins"].items())
 		{
 			plugin_config cfg;
-			plugin_config::from_json(item, cfg);
+			plugin_config::from_json_wrapper(item, cfg);
 			m_config_storage.emplace(item.key(), cfg);
 		}
 		res = true;

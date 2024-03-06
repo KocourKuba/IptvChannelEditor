@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include <iosfwd>
 #include "IPTVChannelEditor.h"
 #include "PluginConfigPage.h"
-#include "StreamContainer.h"
+#include "PluginFactory.h"
 #include "FillParamsInfoDlg.h"
 #include "AccountSettings.h"
 #include "Constants.h"

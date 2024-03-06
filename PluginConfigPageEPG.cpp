@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE.
 #include "PluginConfigPageEPG.h"
 #include "AccountSettings.h"
 #include "Constants.h"
+#include "PluginFactory.h"
 
 #include "UtilsLib/inet_utils.h"
 
@@ -134,9 +135,10 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	m_Token = GetPropertySheet()->m_plugin->get_api_token(GetPropertySheet()->m_selected_cred).c_str();
 	m_wndEpgType.SetCurSel(0);
 
-	for(auto it = (size_t)EpgPresets::enDRM; it != (size_t)EpgPresets::enLast; ((size_t&)it)++)
+	for(size_t it = (size_t)EpgPresets::enDRM; it != (size_t)EpgPresets::enLast; ((size_t&)it)++)
 	{
-		m_wndEpgPreset.AddString(epg_enum::enum_to_string<EpgPresets, std::wstring>((EpgPresets)it).c_str());
+		const auto& name = utils::utf8_to_utf16(PluginFactory::Instance().get_epg_preset((EpgPresets)it).epg_name);
+		m_wndEpgPreset.AddString(name.c_str());
 	}
 	m_wndEpgPreset.SetCurSel((int)GetPropertySheet()->m_plugin->get_epg_preset_idx(0));
 
@@ -361,7 +363,7 @@ void CPluginConfigPageEPG::OnCbnSelchangeComboEpgParserPreset()
 	int idx = m_wndEpgPreset.GetCurSel();
 	if (idx != CB_ERR)
 	{
-		EpgParameters epg = (idx == (int)EpgPresets::enCustom) ? GetEpgParameters() : GetPropertySheet()->m_plugin->get_epg_preset((EpgPresets)idx);
+		EpgParameters epg = (idx == (int)EpgPresets::enCustom) ? GetEpgParameters() : PluginFactory::Instance().get_epg_preset((EpgPresets)idx);
 		m_EpgRoot = epg.get_epg_root().c_str();
 		m_EpgName = epg.get_epg_name().c_str();
 		m_EpgDesc = epg.get_epg_desc().c_str();

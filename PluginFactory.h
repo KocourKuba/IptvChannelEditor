@@ -30,27 +30,33 @@ DEALINGS IN THE SOFTWARE.
 /// <summary>
 /// Container for stream interface
 /// </summary>
-class StreamContainer
+class PluginFactory
 {
 public:
-	static StreamContainer& Instance()
+	static PluginFactory& Instance()
 	{
-		static StreamContainer _instance;
+		static PluginFactory _instance;
 		return _instance;
 	}
 
 	std::shared_ptr<base_plugin> create_plugin(PluginType type);
+	EpgParameters get_epg_preset(EpgPresets idx) const;
+	const std::array<EpgParameters, (size_t)EpgPresets::enCustom>& get_epg_presets() const
+	{
+		return known_presets;
+	}
+
 	bool load_configs();
 
 protected:
-	StreamContainer() = default;
-	virtual ~StreamContainer() = default;
-
+	PluginFactory() = default;
+	virtual ~PluginFactory() = default;
 
 private:
-	StreamContainer(const StreamContainer& source) = delete;
+
+	PluginFactory(const PluginFactory& source) = delete;
 
 private:
 	std::map<std::string, plugin_config> m_config_storage;
-	std::map<EpgPresets, EpgParameters> m_epg_preset;
+	std::array<EpgParameters, (size_t)EpgPresets::enCustom> known_presets{};
 };

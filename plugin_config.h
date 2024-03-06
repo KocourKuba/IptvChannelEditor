@@ -107,23 +107,13 @@ enum class EpgPresets
 	enTVClub,
 	enVidok,
 	enMyEPGServer,
+	enOttClub,
+	enTVTeam,
+	enSharaClub,
+	enSharavoz,
 	enCustom,
 	enLast,
 };
-
-ENUM_TO_STRING(EpgPresets,
-{
-	{ EpgPresets::enDRM,         L"DRM"         },
-	{ EpgPresets::enIptvxOne,    L"IptvxOne"    },
-	{ EpgPresets::enCbilling,    L"Cbilling"    },
-	{ EpgPresets::enItvLive,     L"ItvLive"     },
-	{ EpgPresets::enPropgNet,    L"PropgNet"    },
-	{ EpgPresets::enTVClub,      L"TVClub"      },
-	{ EpgPresets::enVidok,       L"Vidok"       },
-	{ EpgPresets::enMyEPGServer, L"MyEPGServer" },
-	{ EpgPresets::enCustom,      L"Custom"      },
-	{ EpgPresets::enLast,        L"Last"        }
-})
 
 }
 
@@ -330,6 +320,11 @@ struct EpgParameters
 	std::wstring get_epg_time_format() const { return utils::utf8_to_utf16(epg_time_format); }
 	void set_epg_time_format(const std::wstring& val) { epg_time_format = utils::utf16_to_utf8(val); }
 
+	static void to_json_wrapper(nlohmann::json& j, const EpgParameters& c)
+	{
+		to_json(j, c);
+	}
+
 	friend void to_json(nlohmann::json& j, const EpgParameters& c)
 	{
 		SERIALIZE_STRUCT(j, c, epg_param);
@@ -344,6 +339,11 @@ struct EpgParameters
 		SERIALIZE_STRUCT(j, c, epg_time_format);
 		SERIALIZE_STRUCT(j, c, epg_timezone);
 		SERIALIZE_STRUCT(j, c, epg_use_duration); //-V601
+	}
+
+	static void from_json_wrapper(const nlohmann::json& j, EpgParameters& c)
+	{
+		from_json(j, c);
 	}
 
 	friend void from_json(const nlohmann::json& j, EpgParameters& c)
@@ -455,11 +455,6 @@ protected:
 	/// </summary>
 	void load_default();
 
-	/// <summary>
-	/// fill EPG parsing preset
-	/// </summary>
-	void FillEpgPresets() const;
-
 public:
 	/// <summary>
 	/// copy info
@@ -524,11 +519,6 @@ public:
 									  });
 		return it != internal_epg_urls.end() ? it->get_name() : L"";
 	}
-
-	/// <summary>
-	/// get prefilled EPG parsing preset
-	/// </summary>
-	EpgParameters get_epg_preset(EpgPresets idx) const;
 
 	/// <summary>
 	/// set prefilled EPG parsing preset for selected epg type
@@ -871,12 +861,86 @@ public:
 	virtual const std::vector<DynamicParamsInfo>& get_domains_list() { return domains_list; }
 	virtual void set_domains_list(const std::vector<DynamicParamsInfo>& info) { domains_list = info; }
 
-	static void to_json(nlohmann::json& j, const plugin_config& c);
-	static void from_json(const nlohmann::json& j, plugin_config& c);
+	static void to_json_wrapper(nlohmann::json& j, const plugin_config& c)
+	{
+		to_json(j, c);
+	}
+
+	friend void to_json(nlohmann::json& j, const plugin_config& c)
+	{
+		SERIALIZE_STRUCT(j, c, access_type);
+		SERIALIZE_STRUCT(j, c, class_name);
+		SERIALIZE_STRUCT(j, c, name);
+		SERIALIZE_STRUCT(j, c, title);
+		SERIALIZE_STRUCT(j, c, dev_code);
+		SERIALIZE_STRUCT(j, c, user_agent);
+		SERIALIZE_STRUCT(j, c, provider_url);
+		SERIALIZE_STRUCT(j, c, provider_api_url);
+		SERIALIZE_STRUCT(j, c, playlist_templates);
+		SERIALIZE_STRUCT(j, c, playlist_template_index);
+		SERIALIZE_STRUCT(j, c, vod_engine); //-V601
+		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
+		SERIALIZE_STRUCT(j, c, vod_templates);
+		SERIALIZE_STRUCT(j, c, vod_template_index);
+		SERIALIZE_STRUCT(j, c, balance_support); //-V601
+		SERIALIZE_STRUCT(j, c, requested_token); //-V601
+		SERIALIZE_STRUCT(j, c, static_servers); //-V601
+		SERIALIZE_STRUCT(j, c, static_qualities); //-V601
+		SERIALIZE_STRUCT(j, c, static_devices); //-V601
+		SERIALIZE_STRUCT(j, c, static_profiles); //-V601
+		SERIALIZE_STRUCT(j, c, static_domains); //-V601
+		SERIALIZE_STRUCT(j, c, streams_config);
+		SERIALIZE_STRUCT(j, c, epg_params);
+		SERIALIZE_STRUCT(j, c, files_list);
+		SERIALIZE_STRUCT(j, c, manifest_list);
+		SERIALIZE_STRUCT(j, c, servers_list);
+		SERIALIZE_STRUCT(j, c, qualities_list);
+		SERIALIZE_STRUCT(j, c, devices_list);
+		SERIALIZE_STRUCT(j, c, profiles_list);
+		SERIALIZE_STRUCT(j, c, domains_list);
+		SERIALIZE_STRUCT(j, c, custom_epg_urls);
+	}
+
+	static void from_json_wrapper(const nlohmann::json& j, plugin_config& c)
+	{
+		from_json(j, c);
+	}
+
+	friend void from_json(const nlohmann::json& j, plugin_config& c)
+	{
+		DESERIALIZE_STRUCT(j, c, access_type);
+		DESERIALIZE_STRUCT(j, c, class_name);
+		DESERIALIZE_STRUCT(j, c, name);
+		DESERIALIZE_STRUCT(j, c, title);
+		DESERIALIZE_STRUCT(j, c, user_agent);
+		DESERIALIZE_STRUCT(j, c, provider_url);
+		DESERIALIZE_STRUCT(j, c, provider_api_url);
+		DESERIALIZE_STRUCT(j, c, playlist_templates);
+		DESERIALIZE_STRUCT(j, c, playlist_template_index);
+		DESERIALIZE_STRUCT(j, c, vod_engine);
+		DESERIALIZE_STRUCT(j, c, vod_filter);
+		DESERIALIZE_STRUCT(j, c, vod_templates);
+		DESERIALIZE_STRUCT(j, c, vod_template_index);
+		DESERIALIZE_STRUCT(j, c, balance_support);
+		DESERIALIZE_STRUCT(j, c, requested_token);
+		DESERIALIZE_STRUCT(j, c, static_servers);
+		DESERIALIZE_STRUCT(j, c, static_qualities);
+		DESERIALIZE_STRUCT(j, c, static_devices);
+		DESERIALIZE_STRUCT(j, c, static_profiles);
+		DESERIALIZE_STRUCT(j, c, static_domains);
+		DESERIALIZE_STRUCT(j, c, streams_config);
+		DESERIALIZE_STRUCT(j, c, epg_params);
+		DESERIALIZE_STRUCT(j, c, files_list);
+		DESERIALIZE_STRUCT(j, c, manifest_list);
+		DESERIALIZE_STRUCT(j, c, servers_list);
+		DESERIALIZE_STRUCT(j, c, qualities_list);
+		DESERIALIZE_STRUCT(j, c, devices_list);
+		DESERIALIZE_STRUCT(j, c, profiles_list);
+		DESERIALIZE_STRUCT(j, c, domains_list);
+		DESERIALIZE_STRUCT(j, c, custom_epg_urls);
+	}
 
 protected:
-
-	static std::array<EpgParameters, (size_t)EpgPresets::enCustom> known_presets;
 
 	utils::CUrlDownload m_dl;
 

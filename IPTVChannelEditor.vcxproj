@@ -284,7 +284,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="IconContainer.h" />
     <ClInclude Include="PlayListEntry.h" />
     <ClInclude Include="MainSettingsPage.h" />
-    <ClInclude Include="StreamContainer.h" />
+    <ClInclude Include="PluginFactory.h" />
     <ClInclude Include="UpdateSettingsPage.h" />
     <ClInclude Include="plugin_antifriz.h" />
     <ClInclude Include="plugin_cbilling.h" />
@@ -339,7 +339,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="PluginConfigPropertySheet.cpp" />
     <ClCompile Include="TooltipPropertyPage.cpp" />
     <ClCompile Include="ResizedPropertySheet.cpp" />
-    <ClCompile Include="StreamContainer.cpp" />
+    <ClCompile Include="PluginFactory.cpp" />
     <ClCompile Include="BaseThread.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
@@ -410,6 +410,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <None Include="defaults\vidok.json" />
     <None Include="defaults\viplime.json" />
     <None Include="defaults\yosso.json" />
+    <None Include="defaults_8.0.json" />
     <None Include="dune_plugin\changelog.md" />
     <None Include="Readme.md" />
     <None Include="res\IPTVChannelEditor.rc2" />

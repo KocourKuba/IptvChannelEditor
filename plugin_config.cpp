@@ -29,8 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "AccountSettings.h"
 #include "Constants.h"
 #include "IPTVChannelEditor.h"
-
-std::array<EpgParameters, (size_t)EpgPresets::enCustom> plugin_config::known_presets;
+#include "PluginFactory.h"
 
 plugin_config::plugin_config()
 {
@@ -94,8 +93,6 @@ PlaylistTemplateInfo& plugin_config::get_vod_info(size_t idx)
 
 void plugin_config::load_default()
 {
-	FillEpgPresets();
-
 	title = "Custom";
 	name = "custom.iptv";
 	user_agent = "DuneHD/1.0";
@@ -180,8 +177,7 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool us
 	bool res = false;
 	try
 	{
-		nlohmann::json node;
-		to_json(node, *this);
+		nlohmann::json node = *this;
 
 		const auto& str = node.dump(2);
 		std::ofstream out_stream(full_path, std::ofstream::binary);
@@ -225,106 +221,10 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename /*= L""*
 	}
 }
 
-EpgParameters plugin_config::get_epg_preset(EpgPresets idx) const
-{
-	if (idx < EpgPresets::enCustom)
-		return known_presets[(size_t)idx];
-
-	return {};
-}
-
-void plugin_config::FillEpgPresets() const
-{
-	if (!known_presets.empty())
-		return;
-
-	{ // 0
-		EpgParameters params;
-		params.epg_root = "epg_data";
-		params.epg_name = "name";
-		params.epg_desc = "descr";
-		params.epg_start = "time";
-		params.epg_end = "time_to";
-		known_presets[(size_t)EpgPresets::enDRM] = std::move(params);
-	}
-
-	{ // 1
-		EpgParameters params;
-		params.epg_root = "ch_programme";
-		params.epg_name = "title";
-		params.epg_desc = "description";
-		params.epg_start = "start";
-		params.epg_end = "";
-		params.epg_time_format = "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}"; // "%d-%m-%Y %H:%M";
-		params.epg_timezone = 3; // iptvx.one uses moscow time (UTC+3)
-		known_presets[(size_t)EpgPresets::enIptvxOne] = std::move(params);
-	}
-
-	{ // 2
-		EpgParameters params;
-		params.epg_root = "";
-		params.epg_name = "name";
-		params.epg_desc = "descr";
-		params.epg_start = "time";
-		params.epg_end = "time_to";
-		known_presets[(size_t)EpgPresets::enCbilling] = std::move(params);
-	}
-
-	{ // 3
-		EpgParameters params;
-		params.epg_root = "res";
-		params.epg_name = "title";
-		params.epg_desc = "desc";
-		params.epg_start = "startTime";
-		params.epg_end = "stopTime";
-		known_presets[(size_t)EpgPresets::enItvLive] = std::move(params);
-	}
-
-	{ // 4
-		EpgParameters params;
-		params.epg_root = "";
-		params.epg_name = "epg";
-		params.epg_desc = "desc";
-		params.epg_start = "start";
-		params.epg_end = "stop";
-		known_presets[(size_t)EpgPresets::enPropgNet] = std::move(params);
-	}
-
-	{ // 5
-		EpgParameters params;
-		params.epg_root = "epg|channels|[0]|epg";
-		params.epg_name = "text";
-		params.epg_desc = "description";
-		params.epg_start = "start";
-		params.epg_end = "end";
-		known_presets[(size_t)EpgPresets::enTVClub] = std::move(params);
-	}
-
-	{ // 6
-		EpgParameters params;
-		params.epg_root = "epg";
-		params.epg_name = "title";
-		params.epg_desc = "description";
-		params.epg_start = "start";
-		params.epg_end = "end";
-		known_presets[(size_t)EpgPresets::enVidok] = std::move(params);
-	}
-
-	{ // 7
-		EpgParameters params;
-		params.epg_root = "";
-		params.epg_name = "title";
-		params.epg_desc = "desc";
-		params.epg_start = "start";
-		params.epg_end = "stop";
-		known_presets[(size_t)EpgPresets::enMyEPGServer] = std::move(params);
-	}
-}
-
 void plugin_config::set_epg_preset(size_t epg_idx, EpgPresets idx)
 {
 	auto& epg_param = epg_params[epg_idx];
-	const auto& preset = known_presets[(size_t)idx];
+	const auto& preset = PluginFactory::Instance().get_epg_preset(idx);
 
 	epg_param.epg_root = preset.epg_root;
 	epg_param.epg_name = preset.epg_name;
@@ -340,7 +240,7 @@ size_t plugin_config::get_epg_preset_idx(size_t epg_idx) const
 {
 	size_t preset_idx = (size_t)EpgPresets::enDRM;
 	const auto& epg_param = epg_params[epg_idx];
-	for (const auto& preset : known_presets)
+	for (const auto& preset : PluginFactory::Instance().get_epg_presets())
 	{
 		if (epg_param.compare_preset(preset))
 			return preset_idx;
@@ -393,73 +293,4 @@ nlohmann::json plugin_config::get_epg_root(int epg_idx, const nlohmann::json& ep
 	JSON_ALL_CATCH;
 
 	return {};
-}
-
-void plugin_config::to_json(nlohmann::json& j, const plugin_config& c)
-{
-	SERIALIZE_STRUCT(j, c, access_type);
-	SERIALIZE_STRUCT(j, c, class_name);
-	SERIALIZE_STRUCT(j, c, name);
-	SERIALIZE_STRUCT(j, c, title);
-	SERIALIZE_STRUCT(j, c, dev_code);
-	SERIALIZE_STRUCT(j, c, user_agent);
-	SERIALIZE_STRUCT(j, c, provider_url);
-	SERIALIZE_STRUCT(j, c, provider_api_url);
-	SERIALIZE_STRUCT(j, c, playlist_templates);
-	SERIALIZE_STRUCT(j, c, playlist_template_index);
-	SERIALIZE_STRUCT(j, c, vod_engine); //-V601
-	SERIALIZE_STRUCT(j, c, vod_filter); //-V601
-	SERIALIZE_STRUCT(j, c, vod_templates);
-	SERIALIZE_STRUCT(j, c, vod_template_index);
-	SERIALIZE_STRUCT(j, c, balance_support); //-V601
-	SERIALIZE_STRUCT(j, c, requested_token); //-V601
-	SERIALIZE_STRUCT(j, c, static_servers); //-V601
-	SERIALIZE_STRUCT(j, c, static_qualities); //-V601
-	SERIALIZE_STRUCT(j, c, static_devices); //-V601
-	SERIALIZE_STRUCT(j, c, static_profiles); //-V601
-	SERIALIZE_STRUCT(j, c, static_domains); //-V601
-	SERIALIZE_STRUCT(j, c, streams_config);
-	SERIALIZE_STRUCT(j, c, epg_params);
-	SERIALIZE_STRUCT(j, c, files_list);
-	SERIALIZE_STRUCT(j, c, manifest_list);
-	SERIALIZE_STRUCT(j, c, servers_list);
-	SERIALIZE_STRUCT(j, c, qualities_list);
-	SERIALIZE_STRUCT(j, c, devices_list);
-	SERIALIZE_STRUCT(j, c, profiles_list);
-	SERIALIZE_STRUCT(j, c, domains_list);
-	SERIALIZE_STRUCT(j, c, custom_epg_urls);
-}
-
-void plugin_config::from_json(const nlohmann::json& j, plugin_config& c)
-{
-	DESERIALIZE_STRUCT(j, c, access_type);
-	DESERIALIZE_STRUCT(j, c, class_name);
-	DESERIALIZE_STRUCT(j, c, name);
-	DESERIALIZE_STRUCT(j, c, title);
-	DESERIALIZE_STRUCT(j, c, user_agent);
-	DESERIALIZE_STRUCT(j, c, provider_url);
-	DESERIALIZE_STRUCT(j, c, provider_api_url);
-	DESERIALIZE_STRUCT(j, c, playlist_templates);
-	DESERIALIZE_STRUCT(j, c, playlist_template_index);
-	DESERIALIZE_STRUCT(j, c, vod_engine);
-	DESERIALIZE_STRUCT(j, c, vod_filter);
-	DESERIALIZE_STRUCT(j, c, vod_templates);
-	DESERIALIZE_STRUCT(j, c, vod_template_index);
-	DESERIALIZE_STRUCT(j, c, balance_support);
-	DESERIALIZE_STRUCT(j, c, requested_token);
-	DESERIALIZE_STRUCT(j, c, static_servers);
-	DESERIALIZE_STRUCT(j, c, static_qualities);
-	DESERIALIZE_STRUCT(j, c, static_devices);
-	DESERIALIZE_STRUCT(j, c, static_profiles);
-	DESERIALIZE_STRUCT(j, c, static_domains);
-	DESERIALIZE_STRUCT(j, c, streams_config);
-	DESERIALIZE_STRUCT(j, c, epg_params);
-	DESERIALIZE_STRUCT(j, c, files_list);
-	DESERIALIZE_STRUCT(j, c, manifest_list);
-	DESERIALIZE_STRUCT(j, c, servers_list);
-	DESERIALIZE_STRUCT(j, c, qualities_list);
-	DESERIALIZE_STRUCT(j, c, devices_list);
-	DESERIALIZE_STRUCT(j, c, profiles_list);
-	DESERIALIZE_STRUCT(j, c, domains_list);
-	DESERIALIZE_STRUCT(j, c, custom_epg_urls);
 }

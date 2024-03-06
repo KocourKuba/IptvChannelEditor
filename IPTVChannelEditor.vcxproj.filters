@@ -99,7 +99,7 @@
     <ClInclude Include="Version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StreamContainer.h">
+    <ClInclude Include="PluginFactory.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
     <ClInclude Include="AboutDlg.h">
@@ -314,7 +314,7 @@
     <ClCompile Include="m3u_entry.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="StreamContainer.cpp">
+    <ClCompile Include="PluginFactory.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
     <ClCompile Include="IconsListDlg.cpp">
@@ -578,6 +578,7 @@
     <None Include="defaults\yosso.json">
       <Filter>defaults</Filter>
     </None>
+    <None Include="defaults_7.1.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\IPTVChannelEditor.ico">

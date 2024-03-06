@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "resource.h"
 #include "VodViewer.h"
 #include "IPTVChannelEditor.h"
-#include "StreamContainer.h"
+#include "PluginFactory.h"
 #include "PlayListEntry.h"
 #include "PlaylistParseM3U8Thread.h"
 #include "PlaylistParseJsonThread.h"

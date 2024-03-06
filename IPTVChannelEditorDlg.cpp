@@ -51,7 +51,7 @@ DEALINGS IN THE SOFTWARE.
 #include "IconLinkDlg.h"
 #include "EpgListDlg.h"
 #include "VodViewer.h"
-#include "StreamContainer.h"
+#include "PluginFactory.h"
 #include "AccountSettings.h"
 #include "Constants.h"
 #include "FillParamsInfoDlg.h"
@@ -539,7 +539,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	// Fill available plugins
 	for (const auto& item : GetConfig().get_all_plugins())
 	{
-		auto plugin = StreamContainer::Instance().create_plugin(item);
+		auto plugin = PluginFactory::Instance().create_plugin(item);
 		if (!plugin) continue;
 
 		std::wstring title(plugin->get_title());
@@ -696,7 +696,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	}
 
 	m_plugin_type = GetConfig().get_plugin_type();
-	m_plugin = StreamContainer::Instance().create_plugin(m_plugin_type);
+	m_plugin = PluginFactory::Instance().create_plugin(m_plugin_type);
 
 	ReloadConfigs();
 	m_plugin->load_plugin_parameters(m_cur_account.get_config());
@@ -3401,7 +3401,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 
 	CAccessInfoPage dlgInfo;
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
-	dlgInfo.m_plugin = StreamContainer::Instance().create_plugin(m_plugin_type);
+	dlgInfo.m_plugin = PluginFactory::Instance().create_plugin(m_plugin_type);
 	dlgInfo.m_plugin->copy(m_plugin.get());
 	dlgInfo.m_selected_cred = m_cur_account;
 	dlgInfo.m_configs = m_all_configs_lists;
@@ -3962,7 +3962,7 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 
 	for (const auto& item : GetConfig().get_all_plugins())
 	{
-		auto plugin = StreamContainer::Instance().create_plugin(item);
+		auto plugin = PluginFactory::Instance().create_plugin(item);
 		if (!plugin) continue;
 
 		m_wndProgressInfo.SetWindowText(plugin->get_title().c_str());
@@ -5633,7 +5633,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(m_all_configs_lists, load_string_resource(IDS_STRING_PLUGIN_CONFIG).c_str(), REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
-	pSheet->m_plugin = StreamContainer::Instance().create_plugin(m_plugin_type);
+	pSheet->m_plugin = PluginFactory::Instance().create_plugin(m_plugin_type);
 	pSheet->m_plugin->copy(m_plugin.get());
 	pSheet->m_selected_cred = m_cur_account;
 	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
