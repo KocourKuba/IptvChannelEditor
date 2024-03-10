@@ -442,11 +442,13 @@ class HD
         $plugin_name = get_plugin_name();
 
         if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name.log")) {
-            $plugin_logs = "$apk_subst/D/dune_plugin_logs/$plugin_name.*";
-        } else if (file_exists("$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.log")) {
-            $plugin_logs = "$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.*";
-        } else {
-            $plugin_logs = "$apk_subst/tmp/run/$plugin_name.*";
+            $paths[] = "$apk_subst/D/dune_plugin_logs/$plugin_name.*";
+        }
+        if (file_exists("$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.log")) {
+            $paths[] = "$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.*";
+        }
+        if (file_exists("$apk_subst/tmp/run/$plugin_name.log")) {
+            $paths[] = "$apk_subst/tmp/run/$plugin_name.*";
         }
 
         $paths = array(
