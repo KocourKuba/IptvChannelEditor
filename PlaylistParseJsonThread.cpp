@@ -713,7 +713,7 @@ std::wstring CPlaylistParseJsonThread::xtream_parse_category(const nlohmann::jso
 	return category_id;
 }
 
-nlohmann::json CPlaylistParseJsonThread::xtream_request(const std::wstring& action, const std::wstring param /*= L""*/, std::wstring value /*= L""*/)
+nlohmann::json CPlaylistParseJsonThread::xtream_request(const std::wstring& action, const std::wstring& param /*= L""*/, const std::wstring& value /*= L""*/)
 {
 	auto& cat_url = fmt::format(L"{:s}/player_api.php?username={:s}&password={:s}&action={:s}", m_config.m_url, m_config.m_params.password, m_config.m_params.password, action);
 

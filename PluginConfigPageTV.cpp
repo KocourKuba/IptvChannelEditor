@@ -178,7 +178,7 @@ void CPluginConfigPageTV::AssignMacros()
 	m_wndPlaylistTemplate.SetTemplateParams(pl_params);
 
 	std::vector<std::wstring> strm_params(std::move(pl_params));
-	strm_params.insert(strm_params.end(),
+	strm_params.insert(strm_params.end(), //-V823
 					   {
 						   REPL_CGI_BIN,
 						   REPL_SCHEME,
@@ -195,7 +195,7 @@ void CPluginConfigPageTV::AssignMacros()
 	m_wndStreamTemplate.SetTemplateParams(strm_params);
 
 	std::vector<std::wstring> arc_params(std::move(strm_params));
-	arc_params.insert(arc_params.end(),
+	arc_params.insert(arc_params.end(), //-V823
 					  {
 						  REPL_LIVE_URL,
 						  REPL_START,

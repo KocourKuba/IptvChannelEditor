@@ -580,7 +580,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SetButtonImage(IDB_PNG_ADD_EPG, m_wndBtnAddEPG);
 
 	std::vector<std::wstring> strm_params;
-	strm_params.insert(strm_params.end(),
+	strm_params.insert(strm_params.end(), //-V823
 					   {
 						  REPL_SUBDOMAIN,
 						  REPL_LOGIN,
@@ -601,7 +601,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndStreamUrl.SetTemplateParams(strm_params);
 
 	std::vector<std::wstring> arc_params(std::move(strm_params));
-	arc_params.insert(arc_params.end(),
+	arc_params.insert(arc_params.end(), //-V823
 					  {
 						  REPL_LIVE_URL,
 						  REPL_HOST,
