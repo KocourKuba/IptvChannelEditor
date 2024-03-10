@@ -453,19 +453,18 @@ protected:
 	/// <summary>
 	/// load default settings
 	/// </summary>
-	void load_default();
+	void clear();
 
 public:
 	/// <summary>
 	/// copy info
 	/// </summary>
-	void set_config(const PluginType type, const plugin_config& src)
+	void copy_config(const plugin_config& src)
 	{
 		if (this != &src)
 		{
-			load_default();
+			clear();
 			*this = src;
-			set_plugin_type(type);
 		}
 	}
 
@@ -481,12 +480,12 @@ public:
 	/// <summary>
 	/// save plugin parameters to file
 	/// </summary>
-	bool save_plugin_parameters(const std::wstring& filename, bool use_full_path = false);
+	bool save_plugin_parameters(const std::wstring& filename, const std::wstring& parent_name, bool use_full_path = false);
 
 	/// <summary>
 	/// load plugin parameters to file
 	/// </summary>
-	void load_plugin_parameters(const std::wstring& filename = L"");
+	void load_plugin_parameters(const std::wstring& filename, const std::wstring& parent_name);
 
 	/// <summary>
 	/// set playlist epg url
@@ -544,18 +543,6 @@ public:
 	/// configure provider plugin settings
 	/// </summary>
 	virtual void configure_provider_plugin() {}
-
-	/// <summary>
-	/// plugin type
-	/// </summary>
-	PluginType get_plugin_type() const { return plugin_type; }
-	void set_plugin_type(const PluginType type) { plugin_type = type; }
-
-	/// <summary>
-	/// plugin type name
-	/// </summary>
-	std::wstring get_type_name() const { return utils::utf8_to_utf16(type_name); }
-	const std::string& get_type_name_a() const { return type_name; }
 
 	/// <summary>
 	/// plugin class name
@@ -945,8 +932,6 @@ protected:
 	utils::CUrlDownload m_dl;
 
 	// non configurable parameters
-	PluginType plugin_type = PluginType::enCustom;
-	std::string type_name;
 	std::vector<DynamicParamsInfo> internal_epg_urls;
 
 	// configurable parameters
@@ -1004,6 +989,5 @@ protected:
 	std::vector<DynamicParamsInfo> devices_list;
 	std::vector<DynamicParamsInfo> profiles_list;
 	std::vector<DynamicParamsInfo> domains_list;
-	std::array<EpgParameters, 4> epg_presets;
 	std::vector<DynamicParamsInfo> custom_epg_urls;
 };

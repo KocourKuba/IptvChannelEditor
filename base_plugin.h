@@ -59,8 +59,8 @@ using EpgStorage = std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>;
 class base_plugin : public plugin_config
 {
 public:
-	explicit base_plugin(const std::string& config_name);
-	explicit base_plugin(const base_plugin& src);
+	base_plugin() = default;
+	explicit base_plugin(const base_plugin& src) = delete;
 	virtual ~base_plugin() = default;
 
 public:
@@ -74,12 +74,17 @@ public:
 	void set_regex_parse_stream(const std::wstring& val);
 
 	/// <summary>
-	/// copy info
+	/// plugin type
 	/// </summary>
-	void copy(const base_plugin* src)
-	{
-		*this = *src;
-	}
+	PluginType get_plugin_type() const { return plugin_type; }
+	void set_plugin_type(const PluginType type) { plugin_type = type; }
+
+	/// <summary>
+	/// plugin internal name
+	/// </summary>
+	void set_internal_name(const std::string& val) { internal_name = val; }
+	std::wstring get_internal_name() const { return utils::utf8_to_utf16(internal_name); }
+	const std::string& get_internal_name_a() const { return internal_name; }
 
 	/// <summary>
 	/// returns array of playlists
@@ -198,6 +203,9 @@ protected:
 	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const;
 
 protected:
+	PluginType plugin_type = PluginType::enCustom;
+	std::string internal_name;
+
 	// compiled regex for uri parse template
 	boost::wregex regex_uri_template;
 

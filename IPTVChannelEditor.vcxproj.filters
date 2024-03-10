@@ -578,7 +578,7 @@
     <None Include="defaults\yosso.json">
       <Filter>defaults</Filter>
     </None>
-    <None Include="defaults_7.1.json" />
+    <None Include="defaults_8.0.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\IPTVChannelEditor.ico">

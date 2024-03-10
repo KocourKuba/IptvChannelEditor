@@ -40,7 +40,47 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static std::vector <std::pair<PluginType, std::string>> s_plugin_types = {
+static std::vector<PluginType> s_all_plugins = {
+	{ PluginType::enAntifriz,   },
+	{ PluginType::enBcuMedia,   },
+	{ PluginType::enCbilling,   },
+	{ PluginType::enEdem,       },
+	{ PluginType::enFilmax,     },
+	{ PluginType::enFox,        },
+	{ PluginType::enGlanz,      },
+	{ PluginType::enIptvOnline, },
+	{ PluginType::enItv,        },
+	{ PluginType::enKineskop,   },
+	{ PluginType::enLightIptv,  },
+	{ PluginType::enMymagic,    },
+	{ PluginType::enOneCent,    },
+	{ PluginType::enOneOtt,     },
+	{ PluginType::enOneUsd,     },
+	{ PluginType::enOttclub,    },
+	{ PluginType::enPing,       },
+	{ PluginType::enRusskoeTV,  },
+	{ PluginType::enSharaTV,    },
+	{ PluginType::enSharaclub,  },
+	{ PluginType::enSharavoz,   },
+	{ PluginType::enShuraTV,    },
+	{ PluginType::enSmile,      },
+	{ PluginType::enTVClub,     },
+	{ PluginType::enTvTeam,     },
+	{ PluginType::enVidok,      },
+	{ PluginType::enVipLime,    },
+	{ PluginType::enYossoTV,    },
+	{ PluginType::enOttIptv,    },
+	{ PluginType::en101film,    },
+	{ PluginType::enIpstream,   },
+	{ PluginType::enOnlineOtt,  },
+	{ PluginType::enTvizi,      },
+	{ PluginType::enSatq,       },
+	{ PluginType::enRuTV,       },
+	{ PluginType::enCRDTV,      },
+	{ PluginType::enCustom,     },
+};
+
+static std::map <PluginType, std::string> s_plugin_types = {
 	{ PluginType::enCustom,     "custom"     },
 	{ PluginType::en101film,    "101film"    },
 	{ PluginType::enAntifriz,   "antifriz"   },
@@ -102,49 +142,52 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(PluginType type)
 {
 	std::shared_ptr<base_plugin> plugin;
 
-	const auto& it = std::find_if(s_plugin_types.begin(), s_plugin_types.end(), [&type](const auto& pair) { return pair.first == type; });
-
-	if (it != s_plugin_types.end())
+	if (const auto& it = s_plugin_types.find(type); it != s_plugin_types.end())
 	{
-		const auto& name = it->second;
 		switch (type)
 		{
 			case PluginType::enAntifriz:
-				plugin = std::make_shared<plugin_antifriz>(name);
+				plugin = std::make_shared<plugin_antifriz>();
 				break;
 
 			case PluginType::enCbilling:
-				plugin = std::make_shared<plugin_cbilling>(name);
+				plugin = std::make_shared<plugin_cbilling>();
 				break;
 
 			case PluginType::enItv:
-				plugin = std::make_shared<plugin_itv>(name);
+				plugin = std::make_shared<plugin_itv>();
 				break;
 
 			case PluginType::enOneOtt:
-				plugin = std::make_shared<plugin_oneott>(name);
+				plugin = std::make_shared<plugin_oneott>();
 				break;
 
 			case PluginType::enSharaclub:
-				plugin = std::make_shared<plugin_sharaclub>(name);
+				plugin = std::make_shared<plugin_sharaclub>();
 				break;
 
 			case PluginType::enTVClub:
-				plugin = std::make_shared<plugin_tvclub>(name);
+				plugin = std::make_shared<plugin_tvclub>();
 				break;
 
 			case PluginType::enVidok:
-				plugin = std::make_shared<plugin_vidok>(name);
+				plugin = std::make_shared<plugin_vidok>();
 				break;
 
 			default:
-				plugin = std::make_shared<base_plugin>(name);
+				plugin = std::make_shared<base_plugin>();
 				break;
 		}
 
 		if (plugin)
 		{
-			plugin->set_config(type, m_config_storage[name]);
+			plugin->set_plugin_type(type);
+			plugin->set_internal_name(it->second);
+			const auto& it_s = m_config_storage.find(it->second);
+			if (it_s != m_config_storage.end())
+			{
+				plugin->copy_config(it_s->second);
+			}
 		}
 	}
 
@@ -163,6 +206,8 @@ bool PluginFactory::load_configs()
 {
 	bool res = false;
 	std::stringstream data;
+
+#ifndef _DEBUG
 	const auto& url = fmt::format(L"http://iptv.esalecrm.net/editor/configs?ver={:d}.{:d}.{:d}", MAJOR, MINOR, BUILD);
 	utils::CUrlDownload dl;
 	dl.SetUserAgent(fmt::format(L"IPTV Channel Editor/{:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
@@ -170,13 +215,16 @@ bool PluginFactory::load_configs()
 
 	if (!dl.DownloadFile(url, data))
 	{
-		std::ifstream in_file(GetAppPath() + L"defaults.json");
+#endif // _DEBUG
+		std::ifstream in_file(GetAppPath() + L"defaults_8.0.json");
 		if (in_file.good())
 		{
 			data << in_file.rdbuf();
 			in_file.close();
 		}
+#ifndef _DEBUG
 	}
+#endif // _DEBUG
 
 	JSON_ALL_TRY
 	{
@@ -195,7 +243,7 @@ bool PluginFactory::load_configs()
 		for (const auto& item : config["plugins"].items())
 		{
 			plugin_config cfg;
-			plugin_config::from_json_wrapper(item, cfg);
+			plugin_config::from_json_wrapper(item.value(), cfg);
 			m_config_storage.emplace(item.key(), cfg);
 		}
 		res = true;
@@ -203,4 +251,14 @@ bool PluginFactory::load_configs()
 	JSON_ALL_CATCH;
 
 	return res;
+}
+
+const std::vector<PluginType>& PluginFactory::get_all_plugins() const
+{
+	return s_all_plugins;
+}
+
+PluginType PluginFactory::get_plugin_type(size_t idx)
+{
+	return idx < s_all_plugins.size() ? s_all_plugins[idx] : PluginType::enEdem;
 }

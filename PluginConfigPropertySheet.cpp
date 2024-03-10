@@ -296,7 +296,7 @@ void CPluginConfigPropertySheet::AllowSave(bool val /*= true*/)
 void CPluginConfigPropertySheet::OnCbnSelchangeComboPluginConfig()
 {
 	AllowSave(false);
-	m_plugin->load_plugin_parameters(GetSelectedConfig());
+	m_plugin->load_plugin_parameters(GetSelectedConfig(), m_plugin->get_internal_name());
 	auto activePage = DYNAMIC_DOWNCAST(CTooltipPropertyPage, GetActivePage());
 	if (activePage)
 		activePage->FillControls();
@@ -307,7 +307,7 @@ void CPluginConfigPropertySheet::OnBnClickedButtonSaveConfig()
 	auto name = GetSelectedConfig();
 	if (name.empty()) return;
 
-	if (m_plugin->save_plugin_parameters(name))
+	if (m_plugin->save_plugin_parameters(name, m_plugin->get_internal_name()))
 	{
 		AllowSave(false);
 	}
@@ -327,7 +327,7 @@ void CPluginConfigPropertySheet::OnBnClickedButtonSaveAsConfig()
 	if (new_conf.extension() != L".json")
 		new_conf += (L".json");
 
-	if (!m_plugin->save_plugin_parameters(new_conf))
+	if (!m_plugin->save_plugin_parameters(new_conf, m_plugin->get_internal_name()))
 	{
 		AfxMessageBox(IDS_STRING_ERR_SAVE_CONFIG, MB_ICONERROR | MB_OK);
 	}

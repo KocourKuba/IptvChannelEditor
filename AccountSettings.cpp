@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "Constants.h"
 #include "IPTVChannelEditor.h"
 #include "Credentials.h"
+#include "PluginFactory.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -122,46 +123,6 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_CUSTOM_XMLTV_SOURCE,
 };
 
-static std::vector<PluginType> all_plugins = {
-	{ PluginType::enAntifriz,   },
-	{ PluginType::enBcuMedia,   },
-	{ PluginType::enCbilling,   },
-	{ PluginType::enEdem,       },
-	{ PluginType::enFilmax,     },
-	{ PluginType::enFox,        },
-	{ PluginType::enGlanz,      },
-	{ PluginType::enIptvOnline, },
-	{ PluginType::enItv,        },
-	{ PluginType::enKineskop,   },
-	{ PluginType::enLightIptv,  },
-	{ PluginType::enMymagic,    },
-	{ PluginType::enOneCent,    },
-	{ PluginType::enOneOtt,     },
-	{ PluginType::enOneUsd,     },
-	{ PluginType::enOttclub,    },
-	{ PluginType::enPing,       },
-	{ PluginType::enRusskoeTV,  },
-	{ PluginType::enSharaTV,    },
-	{ PluginType::enSharaclub,  },
-	{ PluginType::enSharavoz,   },
-	{ PluginType::enShuraTV,    },
-	{ PluginType::enSmile,      },
-	{ PluginType::enTVClub,     },
-	{ PluginType::enTvTeam,     },
-	{ PluginType::enVidok,      },
-	{ PluginType::enVipLime,    },
-	{ PluginType::enYossoTV,    },
-	{ PluginType::enOttIptv,    },
-	{ PluginType::en101film,    },
-	{ PluginType::enIpstream,   },
-	{ PluginType::enOnlineOtt,  },
-	{ PluginType::enTvizi,      },
-	{ PluginType::enSatq,       },
-	{ PluginType::enRuTV,       },
-	{ PluginType::enCRDTV,      },
-	{ PluginType::enCustom,     },
-};
-
 void AccountSettings::SaveSettings()
 {
 	if (m_bPortable)
@@ -199,7 +160,7 @@ void AccountSettings::LoadSettings()
 		if (!m_config.empty())
 		{
 			ReadSettingsJson(PluginType::enBase);
-			for (const auto& plugin : all_plugins)
+			for (const auto& plugin : GetPluginFactory().get_all_plugins())
 			{
 				ReadSettingsJson(plugin);
 			}
@@ -213,22 +174,21 @@ void AccountSettings::LoadSettings()
 	{
 		m_settings.clear();
 		ReadSettingsRegistry(PluginType::enBase);
-		for (const auto& plugin : all_plugins)
+		for (const auto& plugin : GetPluginFactory().get_all_plugins())
 		{
 			m_pluginType = plugin;
 			ReadSettingsRegistry(m_pluginType);
 		}
 	}
 
-	int idx = get_plugin_idx();
-	m_pluginType = (idx >= 0 && idx < (int)all_plugins.size()) ? all_plugins[idx] : PluginType::enEdem;
+	m_pluginType = GetPluginFactory().get_plugin_type(get_plugin_idx());
 }
 
 void AccountSettings::SaveSettingsToJson()
 {
 	UpdateSettingsJson(PluginType::enBase);
 
-	for (const auto& plugin : all_plugins)
+	for (const auto& plugin : GetPluginFactory().get_all_plugins())
 	{
 		UpdateSettingsJson(plugin);
 	}
@@ -241,7 +201,7 @@ void AccountSettings::SaveSettingsToRegistry()
 {
 	SaveSectionRegistry(PluginType::enBase);
 
-	for (const auto& plugin : all_plugins)
+	for (const auto& plugin : GetPluginFactory().get_all_plugins())
 	{
 		SaveSectionRegistry(plugin);
 	}
@@ -261,11 +221,6 @@ void AccountSettings::RemovePortableSettings()
 	std::filesystem::remove(GetAppPath() + CONFIG_FILE, ec);
 }
 
-const std::vector<PluginType>& AccountSettings::get_all_plugins() const
-{
-	return all_plugins;
-}
-
 int AccountSettings::get_plugin_idx() const
 {
 	return get_int(true, REG_PLUGIN);
@@ -274,7 +229,7 @@ int AccountSettings::get_plugin_idx() const
 void AccountSettings::set_plugin_idx(int val)
 {
 	set_int(true, REG_PLUGIN, val);
-	m_pluginType = val < (int)all_plugins.size() ? all_plugins[val] : PluginType::enEdem;
+	m_pluginType = GetPluginFactory().get_plugin_type(get_plugin_idx());
 }
 
 PluginType AccountSettings::get_plugin_type() const

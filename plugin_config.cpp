@@ -33,7 +33,6 @@ DEALINGS IN THE SOFTWARE.
 
 plugin_config::plugin_config()
 {
-	type_name = "custom";
 	class_name = "default_config";
 }
 
@@ -91,29 +90,31 @@ PlaylistTemplateInfo& plugin_config::get_vod_info(size_t idx)
 	return vod_templates[idx];
 }
 
-void plugin_config::load_default()
+void plugin_config::clear()
 {
-	title = "Custom";
-	name = "custom.iptv";
-	user_agent = "DuneHD/1.0";
-
-	provider_url = "http://dune-hd.com/";
+	title.clear();
+	name.clear();
+	user_agent.clear();
 	access_type = AccountAccessType::enNone;
-	playlist_template_index = 0;
 	provider_url.clear();
+
+	requested_token = false;
+	balance_support = false;
+
+	playlist_template_index = 0;
 	playlist_templates.clear();
-	vod_templates.clear();
+
 	servers_list.clear();
 	qualities_list.clear();
 	devices_list.clear();
 	profiles_list.clear();
 	domains_list.clear();
-	vod_engine = VodEngine::enNone;
-	requested_token = false;
+
 	static_servers = false;
 	static_qualities = false;
 	static_devices = false;
 	static_profiles = false;
+
 	files_list.clear();
 
 	manifest_list = {
@@ -125,27 +126,20 @@ void plugin_config::load_default()
 		{"update", "#update" },
 	};
 
+	vod_template_index = 0;
+	vod_templates.clear();
+	vod_engine = VodEngine::enNone;
 	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_templates.emplace_back(vod_info);
 
-	StreamParameters hls;
-	hls.uri_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
-	hls.uri_custom_arc_template = "{LIVE_URL}?utc={START}&lutc={NOW}";
+	streams_config.fill(StreamParameters());
 
-	StreamParameters mpeg;
-	mpeg.stream_type = StreamType::enMPEGTS;
-	mpeg.cu_type = CatchupType::cu_flussonic;
-	mpeg.dune_params = "buffering_ms:{BUFFERING}";
-
-	streams_config = { hls, mpeg };
-
-	set_epg_preset(0, EpgPresets::enDRM);
+	internal_epg_urls.clear();
+	set_epg_preset(0, EpgPresets::enCustom);
 	epg_params[0].epg_param = "first";
-	epg_params[0].epg_domain = "http://epg.drm-play.com";
 
-	set_epg_preset(1, EpgPresets::enDRM);
+	set_epg_preset(1, EpgPresets::enCustom);
 	epg_params[1].epg_param = "second";
-	epg_params[1].epg_domain = "http://epg.drm-play.com";
 }
 
 bool plugin_config::download_url(const std::wstring& url,
@@ -160,7 +154,7 @@ bool plugin_config::download_url(const std::wstring& url,
 	return m_dl.DownloadFile(url, vData, pHeaders, verb_post, post_data);
 }
 
-bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool use_full_path/* = false*/)
+bool plugin_config::save_plugin_parameters(const std::wstring& filename, const std::wstring& parent_name, bool use_full_path/* = false*/)
 {
 	std::filesystem::path full_path;
 	if (use_full_path)
@@ -169,7 +163,7 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool us
 	}
 	else
 	{
-		std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_type_name());
+		std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + parent_name);
 		std::filesystem::create_directories(config_dir);
 		full_path = config_dir.append(filename);
 	}
@@ -202,15 +196,14 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, bool us
 	return res;
 }
 
-void plugin_config::load_plugin_parameters(const std::wstring& filename /*= L""*/)
+void plugin_config::load_plugin_parameters(const std::wstring& filename, const std::wstring& parent_name)
 {
-	load_default();
-
-	std::filesystem::path config_dir = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + get_type_name();
+	std::filesystem::path config_dir = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + parent_name;
 	config_dir.append(filename);
 	std::ifstream in_stream(config_dir.c_str());
 	if (in_stream.good())
 	{
+		clear();
 		JSON_ALL_TRY
 		{
 			nlohmann::json node;
@@ -224,7 +217,7 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename /*= L""*
 void plugin_config::set_epg_preset(size_t epg_idx, EpgPresets idx)
 {
 	auto& epg_param = epg_params[epg_idx];
-	const auto& preset = PluginFactory::Instance().get_epg_preset(idx);
+	const auto& preset = GetPluginFactory().get_epg_preset(idx);
 
 	epg_param.epg_root = preset.epg_root;
 	epg_param.epg_name = preset.epg_name;
@@ -240,7 +233,7 @@ size_t plugin_config::get_epg_preset_idx(size_t epg_idx) const
 {
 	size_t preset_idx = (size_t)EpgPresets::enDRM;
 	const auto& epg_param = epg_params[epg_idx];
-	for (const auto& preset : PluginFactory::Instance().get_epg_presets())
+	for (const auto& preset : GetPluginFactory().get_epg_presets())
 	{
 		if (epg_param.compare_preset(preset))
 			return preset_idx;

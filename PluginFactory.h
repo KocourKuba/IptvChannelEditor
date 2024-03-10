@@ -47,6 +47,8 @@ public:
 	}
 
 	bool load_configs();
+	const std::vector<PluginType>& get_all_plugins() const;
+	PluginType get_plugin_type(size_t idx);
 
 protected:
 	PluginFactory() = default;
@@ -60,3 +62,5 @@ private:
 	std::map<std::string, plugin_config> m_config_storage;
 	std::array<EpgParameters, (size_t)EpgPresets::enCustom> known_presets{};
 };
+
+inline PluginFactory& GetPluginFactory() { return PluginFactory::Instance(); }

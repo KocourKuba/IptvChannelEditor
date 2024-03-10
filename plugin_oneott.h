@@ -30,6 +30,5 @@ DEALINGS IN THE SOFTWARE.
 class plugin_oneott : public base_plugin
 {
 public:
-	plugin_oneott(const std::string& type_name) : base_plugin(type_name) {}
 	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(TemplateParams& params) override;
 };

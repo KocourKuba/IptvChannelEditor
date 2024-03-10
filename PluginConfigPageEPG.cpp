@@ -137,7 +137,7 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 
 	for(size_t it = (size_t)EpgPresets::enDRM; it != (size_t)EpgPresets::enLast; ((size_t&)it)++)
 	{
-		const auto& name = utils::utf8_to_utf16(PluginFactory::Instance().get_epg_preset((EpgPresets)it).epg_name);
+		const auto& name = utils::utf8_to_utf16(GetPluginFactory().get_epg_preset((EpgPresets)it).epg_name);
 		m_wndEpgPreset.AddString(name.c_str());
 	}
 	m_wndEpgPreset.SetCurSel((int)GetPropertySheet()->m_plugin->get_epg_preset_idx(0));
@@ -363,7 +363,7 @@ void CPluginConfigPageEPG::OnCbnSelchangeComboEpgParserPreset()
 	int idx = m_wndEpgPreset.GetCurSel();
 	if (idx != CB_ERR)
 	{
-		EpgParameters epg = (idx == (int)EpgPresets::enCustom) ? GetEpgParameters() : PluginFactory::Instance().get_epg_preset((EpgPresets)idx);
+		EpgParameters epg = (idx == (int)EpgPresets::enCustom) ? GetEpgParameters() : GetPluginFactory().get_epg_preset((EpgPresets)idx);
 		m_EpgRoot = epg.get_epg_root().c_str();
 		m_EpgName = epg.get_epg_name().c_str();
 		m_EpgDesc = epg.get_epg_desc().c_str();

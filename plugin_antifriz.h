@@ -32,7 +32,5 @@ DEALINGS IN THE SOFTWARE.
 class plugin_antifriz : public base_plugin
 {
 public:
-
-	plugin_antifriz(const std::string& type_name) : base_plugin(type_name) {}
 	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(TemplateParams& params) override;
 };

@@ -35,16 +35,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "7zip\SevenZipWrapper.h"
 
-base_plugin::base_plugin(const std::string& config_name)
-{
-	type_name = config_name;
-}
-
-base_plugin::base_plugin(const base_plugin& src)
-{
-	*this = src;
-}
-
 void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
 {
 	info->set_uri(url);
@@ -636,7 +626,7 @@ std::wstring base_plugin::compile_name_template(std::wstring packed_name, const 
 	CTime st(cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour(), cur_dt.GetMinute(), cur_dt.GetSecond());
 	std::tm lt = fmt::localtime(st.GetTime());
 
-	utils::string_replace_inplace<wchar_t>(packed_name, REPL_TYPE, get_type_name());
+	utils::string_replace_inplace<wchar_t>(packed_name, REPL_TYPE, get_internal_name());
 	utils::string_replace_inplace<wchar_t>(packed_name, REPL_NAME, utils::utf8_to_utf16(name));
 	utils::string_replace_inplace<wchar_t>(packed_name, REPL_YEAR, std::to_wstring(cur_dt.GetYear()));
 	utils::string_replace_inplace<wchar_t>(packed_name, REPL_MONTH, std::to_wstring(cur_dt.GetMonth()));

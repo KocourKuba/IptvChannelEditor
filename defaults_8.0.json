@@ -2,7 +2,6 @@
   "epg_presets": {
     "cbilling": {
       "epg_url": "{API}/epg/{EPG_ID}/?date=",
-      "epg_root": "",
       "epg_name": "name",
       "epg_desc": "descr",
       "epg_start": "time",
@@ -22,7 +21,6 @@
       "epg_name": "title",
       "epg_desc": "description",
       "epg_start": "start",
-      "epg_end": "",
       "epg_time_format": "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}",
       "epg_timezone": 3
     },
@@ -44,7 +42,6 @@
     },
     "propg.net": {
       "epg_url": "http://epg.propg.net/{EPG_ID}/epg2/{YEAR}-{MONTH}-{DAY}",
-      "epg_root": "",
       "epg_name": "epg",
       "epg_desc": "desc",
       "epg_start": "start",
@@ -52,7 +49,6 @@
     },
     "sharaclub": {
       "epg_url": "http://api.playtv.pro/get/?type=epg&ch={EPG_ID}",
-      "epg_root": "",
       "epg_name": "name",
       "epg_desc": "descr",
       "epg_start": "time",
@@ -92,7 +88,6 @@
     },
     "my.epg.server": {
       "epg_url": "{API}/api/channel/{ID}",
-      "epg_root": "",
       "epg_name": "title",
       "epg_desc": "desc",
       "epg_start": "start",
@@ -100,13 +95,23 @@
     }
   },
   "plugins": {
+    "custom": {
+      "title": "Custom",
+      "streams_config": [
+        {
+          "cu_duration": 10800,
+          "cu_type": "shift",
+          "stream_type": "hls",
+          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
+          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
+          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+        },
+        {}
+      ]
+    },
     "101film": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -115,60 +120,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/smile%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/smile%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "101film",
       "playlist_template_index": 0,
@@ -180,15 +140,10 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u?srv={SERVER_ID}",
           "square_icons": true,
-          "tag_id_match": "CUID",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "CUID"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "http://101film.org/",
-      "qualities_list": [],
       "requested_token": false,
       "servers_list": [
         {
@@ -221,21 +176,12 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "101film",
       "user_agent": "DuneHD/1.0",
@@ -247,23 +193,15 @@
           "epg_id_from_id": false,
           "name": "Standard",
           "parse_regex": "(?<title>[^\\(]*)\\((?<country>[^\\d]+)\\s(?<year>\\d+)\\)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u?srv={SERVER_ID}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         },
         {
           "epg_id_from_id": false,
           "name": "No Adults",
           "parse_regex": "(?<title>[^\\(]*)\\((?<country>[^\\d]+)\\s(?<year>\\d+)\\)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u?srv={SERVER_ID}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
@@ -271,9 +209,6 @@
       "access_type": "pin",
       "balance_support": false,
       "class_name": "antifriz_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -282,59 +217,21 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
-          "epg_root": "",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{API_URL}/epg/{EPG_ID}/?date=",
-          "epg_use_duration": false
+          "epg_url": "{API_URL}/epg/{EPG_ID}/?date="
         },
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/antifriz%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
+          "epg_url": "http://epg.drm-play.com/antifriz%2Fepg%2F{EPG_ID}.json"
         }
       ],
       "name": "antifriz.tv",
@@ -347,17 +244,12 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "{PL_DOMAIN}/playlist/{PASSWORD}.m3u8",
           "square_icons": false,
-          "tag_id_match": "tvg-id",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-id"
         }
       ],
-      "profiles_list": [],
       "provider_api_url": "http://protected-api.com",
       "provider_url": "https://antifriztv.com/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -367,7 +259,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -379,7 +270,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}:80/{ID}/mpegts?token={TOKEN}"
         }
       ],
@@ -387,28 +277,11 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "{API_URL}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "bcumedia": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -417,60 +290,14 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
-          "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/bcu%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/bcu%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "bcumedia",
       "playlist_template_index": 0,
@@ -482,17 +309,11 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/hls\\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "{PL_DOMAIN}/playlist/hls/{PASSWORD}.m3u",
           "square_icons": true,
-          "tag_id_match": "tvg-id",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-id"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://bcumedia.pro/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -502,7 +323,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -514,7 +334,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{TOKEN}/archive-{START}-{DURATION}.ts?token={PASSWORD}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}"
         }
       ],
@@ -522,27 +341,12 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "cbilling": {
       "access_type": "pin",
       "balance_support": true,
       "class_name": "cbilling_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
       "devices_list": [
         {
           "id": "1",
@@ -565,59 +369,21 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
-          "epg_root": "",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{API_URL}/epg/{EPG_ID}/?date=",
-          "epg_use_duration": false
+          "epg_url": "{API_URL}/epg/{EPG_ID}/?date="
         },
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/cbilling%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
+          "epg_url": "http://epg.drm-play.com/cbilling%2Fepg%2F{EPG_ID}.json"
         }
       ],
       "name": "cbillingtv",
@@ -630,17 +396,12 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/(?<token>.+)_otp_dev.*$",
           "pl_template": "{PL_DOMAIN}/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8",
           "square_icons": false,
-          "tag_id_match": "tvg-id",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-id"
         }
       ],
-      "profiles_list": [],
       "provider_api_url": "http://protected-api.com",
       "provider_url": "https://cbilling.eu/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": true,
       "static_domains": true,
       "static_profiles": false,
@@ -650,7 +411,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -662,7 +422,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
@@ -675,84 +434,18 @@
         {
           "epg_id_from_id": false,
           "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
           "pl_template": "{API_URL}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
     "crdtv": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
           "name": "http://crdtv.net"
-        }
-      ],
-      "epg_params": [
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "first",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
         }
       ],
       "name": "crdtv",
@@ -764,18 +457,11 @@
           "parse_regex": "^https?:\\\/\\\/(?<domain>.+)\\\/(?<id>.+)\\\/(?<password>.+)\\\/.*$",
           "pl_parse_regex": "^https?:\\\/\\\/.+\\\/m\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/m/{PASSWORD}/crdtv.m3u",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://crdtv.net/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -785,48 +471,23 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{ID}/{PASSWORD}/live.m3u8"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "CRD TV",
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "edem": {
       "access_type": "ottkey",
       "balance_support": false,
       "class_name": "edem_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -835,60 +496,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/edem%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/edem%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "iedem.tv",
       "playlist_template_index": 1,
@@ -899,10 +515,7 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
           "pl_template": "{PL_DOMAIN}/edem_epg_ico.m3u8",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         },
         {
           "epg_id_from_id": false,
@@ -910,10 +523,7 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
           "pl_template": "{PL_DOMAIN}/edem_epg_ico2.m3u8",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         },
         {
           "epg_id_from_id": false,
@@ -921,10 +531,7 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
           "pl_template": "{PL_DOMAIN}/edem_epg_ico3.m3u8",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         },
         {
           "epg_id_from_id": false,
@@ -932,10 +539,7 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
           "pl_template": "{PL_DOMAIN}/edem_epg_ico.m3u8",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         },
         {
           "epg_id_from_id": false,
@@ -943,10 +547,7 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
           "pl_template": "{PL_DOMAIN}/edem_epg_ico2.m3u8",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         },
         {
           "epg_id_from_id": false,
@@ -954,18 +555,11 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
           "pl_template": "{PL_DOMAIN}/edem_epg_ico3.m3u8",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://ilook.tv/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -981,15 +575,7 @@
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}junior.edmonst.net/iptv/{OTT_KEY}/{ID}/index.m3u8"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "iEdem/iLook TV",
       "user_agent": "DuneHD/1.0",
@@ -1000,23 +586,14 @@
         {
           "epg_id_from_id": false,
           "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
           "pl_template": "{SUBDOMAIN}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
     "filmax": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -1025,60 +602,14 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/filmax%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/filmax%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "filmax",
       "playlist_template_index": 0,
@@ -1090,15 +621,10 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<login>.+)\\\/(?<password>.+)\\\/(?:hls|ts)\\\/(?<server>.+)\\\/playlist\\.m3u8$",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8",
           "square_icons": false,
-          "tag_id_match": "tvg-name",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-name"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://filmax-tv.ru/",
-      "qualities_list": [],
       "requested_token": false,
       "servers_list": [
         {
@@ -1135,7 +661,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -1147,7 +672,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/{INT_ID}/mpegts?token={TOKEN}"
         }
       ],
@@ -1155,28 +679,11 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "fox": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -1185,60 +692,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/fox-tv%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/fox-tv%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "fox-fun.tv",
       "playlist_template_index": 0,
@@ -1250,17 +712,11 @@
           "pl_parse_regex": "^https?:\\\/\\\/[^\\\/]+\\\/(?<login>.+)\\\/(?<password>.+)\\\/(?<server>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u",
           "square_icons": true,
-          "tag_id_match": "CUID",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "CUID"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "http://info.fox-tv.fun/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -1270,21 +726,12 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "Fox TV",
       "user_agent": "DuneHD/1.0",
@@ -1296,23 +743,15 @@
           "epg_id_from_id": false,
           "name": "Standard",
           "parse_regex": "(?<title>[^\\\/]+)\\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         },
         {
           "epg_id_from_id": false,
           "name": "No Adults",
           "parse_regex": "(?<title>[^\\\/]+)\\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
@@ -1320,9 +759,6 @@
       "access_type": "login",
       "balance_support": false,
       "class_name": "glanz_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -1351,59 +787,23 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/ottg%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/ottg%2Fepg%2F{EPG_ID}.json"
         },
         {
-          "epg_date_format": "",
           "epg_desc": "description",
-          "epg_domain": "http://epg.iptvx.one",
-          "epg_end": "",
           "epg_name": "title",
           "epg_param": "second",
           "epg_root": "ch_programme",
           "epg_start": "start",
           "epg_time_format": "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}",
           "epg_timezone": 3,
-          "epg_url": "{EPG_DOMAIN}/api/id/{EPG_ID}.json",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
+          "epg_url": "http://epg.iptvx.one/api/id/{EPG_ID}.json"
         }
       ],
       "name": "glanz.tv",
@@ -1415,10 +815,7 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/.+\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\\/\\\/.+\\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$",
           "pl_template": "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         },
         {
           "epg_id_from_id": false,
@@ -1426,18 +823,11 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/.+\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\\/\\\/.+\\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$",
           "pl_template": "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "http://ottg.cc/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -1447,7 +837,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "http://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -1459,7 +848,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "http://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_custom_arc_template": "",
           "uri_template": "http://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
@@ -1472,28 +860,20 @@
         {
           "epg_id_from_id": false,
           "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
           "pl_template": "http://api.{PL_DOMAIN}/playlist/vod?login={LOGIN}&password={PASSWORD}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
     "ipstream": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
       "custom_epg_urls": [
         {
           "id": "light",
           "name": "http://static.ipstr.im/epg/epg_lite.xml.gz"
         }
       ],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -1502,60 +882,14 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://api.playtv.pro",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
-          "epg_root": "",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/get/?type=epg&ch={EPG_ID}",
-          "epg_use_duration": false
+          "epg_url": "http://api.playtv.pro/get/?type=epg&ch={EPG_ID}"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "ipstream",
       "playlist_template_index": 0,
@@ -1566,18 +900,11 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/live\\\/(?<token>.+)\\\/(?<id>.+)\\\/.+\\.m3u\\d?$",
           "pl_parse_regex": "^https?:\\\/\\\/.+\\\/iptv\\\/m3u_plus-(?<password>.+)-m3u8$",
           "pl_template": "{PL_DOMAIN}/iptv/m3u_plus-{PASSWORD}-m3u8",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://www.ipstream.one/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -1587,7 +914,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "append",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -1599,7 +925,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}.ts"
         }
       ],
@@ -1607,28 +932,11 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "iptvonline": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -1637,59 +945,22 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/iptvx.one%2Fepg%2F{EPG_ID}.json"
         },
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/ottiptv%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
+          "epg_url": "http://epg.drm-play.com/ottiptv%2Fepg%2F{EPG_ID}.json"
         }
       ],
       "name": "iptvonline",
@@ -1701,16 +972,10 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/play\\\/(?<id>.+)\\\/(?<token>.+)\\\/video\\.m3u8$",
           "pl_parse_regex": "^https?:\\\/\\\/.+\\\/play\\\/(?<password>.+)\\\/m3u8?$",
           "pl_template": "{PL_DOMAIN}/play/{PASSWORD}/m3u8",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://iptv.online/",
-      "qualities_list": [],
       "requested_token": false,
       "servers_list": [
         {
@@ -1751,7 +1016,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -1763,7 +1027,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/mpegts"
         }
       ],
@@ -1771,28 +1034,12 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "itv": {
       "access_type": "pin",
       "balance_support": true,
       "class_name": "itv_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -1801,60 +1048,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "desc",
-          "epg_domain": "",
           "epg_end": "stopTime",
           "epg_name": "title",
           "epg_param": "first",
           "epg_root": "res",
           "epg_start": "startTime",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{API_URL}/epg/{EPG_ID}",
-          "epg_use_duration": false
+          "epg_url": "{API_URL}/epg/{EPG_ID}"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "itv-live.tv",
       "playlist_template_index": 0,
@@ -1866,17 +1068,12 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/p\\\/(?<password>.+)\\\/.+$",
           "pl_template": "{PL_DOMAIN}/p/{PASSWORD}/hls.m3u8",
           "square_icons": true,
-          "tag_id_match": "tvg-id",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-id"
         }
       ],
-      "profiles_list": [],
       "provider_api_url": "http://api.itv.live",
       "provider_url": "https://itv.live/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -1886,7 +1083,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -1898,7 +1094,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
@@ -1906,28 +1101,11 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "kineskop": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -1936,60 +1114,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/kineskop%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/kineskop%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "kineskop",
       "playlist_template_index": 0,
@@ -1998,18 +1131,11 @@
           "epg_id_from_id": false,
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<host>.+)\\\/(?<id>.+)\\\/(?<token>.+)\\.m3u8$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/{SERVER}/1",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "http://kineskop.club/",
-      "qualities_list": [],
       "requested_token": false,
       "servers_list": [
         {
@@ -2038,48 +1164,22 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "Kineskop.Club",
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "lightiptv": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -2088,60 +1188,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/lightiptv%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/lightiptv%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "lightiptv",
       "playlist_template_index": 0,
@@ -2153,17 +1208,11 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/hls\\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "{PL_DOMAIN}/playlist/hls/{PASSWORD}.m3u",
           "square_icons": true,
-          "tag_id_match": "tvg-id",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-id"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://ottbill.cc/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -2173,7 +1222,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -2185,7 +1233,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{TOKEN}/timeshift_abs-{START}-{DURATION}.ts?token={PASSWORD}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}"
         }
       ],
@@ -2193,28 +1240,11 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "mymagic": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -2223,60 +1253,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/magic%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/magic%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "mymagic",
       "playlist_template_index": 0,
@@ -2288,13 +1273,9 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/srv\\\/(?<server>.+)\\\/(?<quality>.+)\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u",
           "square_icons": true,
-          "tag_id_match": "CUID",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "CUID"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "http://mymagic.tv/",
       "qualities_list": [
         {
@@ -2346,48 +1327,22 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "MyMagic TV",
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
-    "oncent": {
+    "onecent": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -2396,59 +1351,23 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "description",
-          "epg_domain": "http://epg.iptvx.one",
-          "epg_end": "",
           "epg_name": "title",
           "epg_param": "first",
           "epg_root": "ch_programme",
           "epg_start": "start",
           "epg_time_format": "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}",
           "epg_timezone": 3,
-          "epg_url": "{EPG_DOMAIN}/api/id/{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.iptvx.one/api/id/{EPG_ID}.json"
         },
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/only4%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
+          "epg_url": "http://epg.drm-play.com/only4%2Fepg%2F{EPG_ID}.json"
         }
       ],
       "name": "onecent.tv",
@@ -2460,18 +1379,11 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/index\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/pl\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/pl/{PASSWORD}/102/only4tv.m3u8",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://1cent.tv/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -2481,48 +1393,22 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}&utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "1CENT TV",
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "oneott": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "oneott_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -2533,57 +1419,20 @@
         {
           "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
           "epg_desc": "desc",
-          "epg_domain": "http://epg.propg.net",
           "epg_end": "stop",
           "epg_name": "epg",
           "epg_param": "first",
-          "epg_root": "",
           "epg_start": "start",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/{EPG_ID}/epg2/{DATE}",
-          "epg_use_duration": false
+          "epg_url": "http://epg.propg.net/{EPG_ID}/epg2/{DATE}"
         },
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/1ott%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
+          "epg_url": "http://epg.drm-play.com/1ott%2Fepg%2F{EPG_ID}.json"
         }
       ],
       "name": "oneott.tv",
@@ -2593,20 +1442,13 @@
           "epg_id_from_id": false,
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/~(?<token>.+)\\\/(?<id>.+)\\\/hlsx?\\\/.+\\.m3u8$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/api/{S_TOKEN}/high/unix.m3u8",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ],
-      "profiles_list": [],
       "provider_api_url": "http://list.1ott.net",
       "provider_url": "http://1ott.net/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -2616,7 +1458,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -2628,7 +1469,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/~{TOKEN}/{ID}"
         }
       ],
@@ -2636,28 +1476,11 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "oneusd": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -2666,59 +1489,22 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://tv.team",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://tv.team/{EPG_ID}.json"
         },
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/tvteam%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
+          "epg_url": "http://epg.drm-play.com/tvteam%2Fepg%2F{EPG_ID}.json"
         }
       ],
       "name": "oneusd.tv",
@@ -2730,18 +1516,11 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/mono\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/pl-(?<password>.+)-hls$",
           "pl_template": "{PL_DOMAIN}/pl-{PASSWORD}-hls",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "http://1usd.tv/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -2751,7 +1530,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -2763,7 +1541,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
@@ -2771,89 +1548,15 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "onlineott": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
           "name": "http://pl.onlineott-tv.site"
-        }
-      ],
-      "epg_params": [
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "first",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
         }
       ],
       "name": "onlineott",
@@ -2866,17 +1569,11 @@
           "pl_parse_regex": "^https?:\\\/\\\/[^\\\/]+\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u",
           "square_icons": true,
-          "tag_id_match": "CUID",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "CUID"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://www.onlineott-tv.site/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -2886,21 +1583,12 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "OnlineOTT TV",
       "user_agent": "DuneHD/1.0",
@@ -2912,33 +1600,21 @@
           "epg_id_from_id": false,
           "name": "Standard",
           "parse_regex": "(?<title>[^\\\/]+)\\s+\\((?<country>.+)\\s(?<year>\\d+)\\)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         },
         {
           "epg_id_from_id": false,
           "name": "No Adults",
           "parse_regex": "(?<title>[^\\\/]+)\\s+\\((?<country>.+)\\s(?<year>\\d+)\\)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
     "ottclub": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -2951,60 +1627,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://myott.top",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/api/channel/{EPG_ID}",
-          "epg_use_duration": false
+          "epg_url": "http://myott.top/api/channel/{EPG_ID}"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "ottclub",
       "playlist_template_index": 0,
@@ -3015,18 +1646,11 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/stream\\\/(?<token>.+)\\\/(?<id>.+)\\.m3u8$",
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/playlist/{PASSWORD}/m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://www.ottclub.cc/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -3036,48 +1660,22 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/stream/{TOKEN}/{ID}.m3u8"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "OttClub",
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "ottiptv": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -3086,60 +1684,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/ottiptv%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/ottiptv%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "ottiptv",
       "playlist_template_index": 0,
@@ -3150,18 +1703,11 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<var1>.+)\\\/(?<id>.+)\\\/video\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "https?://.+\/(?<login>.+)\/(?<password>.+)\/.+$",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/playlist.m3u8",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://ottiptv.ru/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -3171,7 +1717,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{VAR1}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -3183,7 +1728,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{VAR1}/{ID}/index-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/{VAR1}/{ID}/mpegts?token={TOKEN}"
         }
       ],
@@ -3191,28 +1735,11 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "ping": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -3221,60 +1748,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/fox-tv%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/fox-tv%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "ping.tv",
       "playlist_template_index": 0,
@@ -3286,17 +1768,11 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u",
           "square_icons": true,
-          "tag_id_match": "CUID",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "CUID"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "http://ping-tv.com/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -3306,21 +1782,12 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "Ping TV",
       "user_agent": "DuneHD/1.0",
@@ -3332,33 +1799,21 @@
           "epg_id_from_id": false,
           "name": "Standard",
           "parse_regex": "(?<title>[^\\\/]+)\\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         },
         {
           "epg_id_from_id": false,
           "name": "No Adults",
           "parse_regex": "(?<title>[^\\\/]+)\\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
     "russkoetv": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -3367,82 +1822,31 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
-          "epg_root": "",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{API_URL}/epg/{EPG_ID}/?date=",
-          "epg_use_duration": false
+          "epg_url": "{API_URL}/epg/{EPG_ID}/?date="
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "russkoetv",
       "playlist_template_index": 0,
       "playlist_templates": [
         {
           "epg_id_from_id": false,
-          "name": "\u0421\u0442\u0430\u043d\u0434\u0430\u0440\u0442\u043d\u044b\u0439",
+          "name": "Standard",
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/s\\\/(?<token>.+)\\\/.+\\.m3u8$",
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "{PL_DOMAIN}/play/{PASSWORD}.m3u8",
           "square_icons": false,
-          "tag_id_match": "tvg-id",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-id"
         }
       ],
-      "profiles_list": [],
       "provider_api_url": "http://protected-api.com",
       "provider_url": "https://russkoetv.tv/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -3452,109 +1856,26 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/s/{TOKEN}/{ID}.m3u8"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "Russkoe TV",
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "\u0421\u0442\u0430\u043d\u0434\u0430\u0440\u0442\u043d\u044b\u0439",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "rutv": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
           "name": "http://pl.ru-tv.site"
-        }
-      ],
-      "epg_params": [
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "first",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
         }
       ],
       "name": "rutv",
@@ -3567,17 +1888,11 @@
           "pl_parse_regex": "^https?:\\\/\\\/[^\\\/]+\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u",
           "square_icons": true,
-          "tag_id_match": "CUID",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "CUID"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://rutv.vip/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -3587,21 +1902,12 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "RU TV",
       "user_agent": "DuneHD/1.0",
@@ -3613,83 +1919,18 @@
           "epg_id_from_id": false,
           "name": "Standard",
           "parse_regex": "^(?<title>[^\\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
     "satq": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
           "name": "http://iptv11.com"
-        }
-      ],
-      "epg_params": [
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "first",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
         }
       ],
       "name": "satq",
@@ -3701,16 +1942,10 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/(?<token>.+)\\\/(video\\.m3u8|mpegts)$",
           "pl_parse_regex": "^https?:\\\/\\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "{PL_DOMAIN}/1/{PASSWORD}.m3u8",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://satq.tv/",
-      "qualities_list": [],
       "requested_token": false,
       "servers_list": [
         {
@@ -3755,7 +1990,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{SERVER_ID}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -3767,7 +2001,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{SERVER_ID}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{SERVER_ID}/{ID}/{TOKEN}/mpegts"
         }
       ],
@@ -3775,85 +2008,22 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "sharaclub": {
       "access_type": "login",
       "balance_support": true,
       "class_name": "sharaclub_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
-      "domains_list": [],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
-          "epg_root": "",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/get/?type=epg&ch={EPG_ID}",
-          "epg_use_duration": false
+          "epg_url": "http://api.playtv.pro/get/?type=epg&ch={EPG_ID}"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "sharaclub.tv",
       "playlist_template_index": 0,
@@ -3864,18 +2034,11 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/live\\\/(?<token>.+)\\\/(?<id>.+)\\\/.+\\.m3u8$",
           "pl_parse_regex": "https?:\\\/\\\/[^\\\/]+\\\/tv-m3u8\\\/(?<login>[^-]+)-(?<password>.+)$",
           "pl_template": "{API_URL}/tv_live-m3u8/{LOGIN}-{PASSWORD}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://shara.club/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -3885,7 +2048,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "append",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -3897,7 +2059,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}.ts"
         }
       ],
@@ -3910,23 +2071,14 @@
         {
           "epg_id_from_id": false,
           "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
           "pl_template": "{API_URL}/kino-full/{LOGIN}-{PASSWORD}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
     "sharatv": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -3935,60 +2087,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/shara-tv%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/shara-tv%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "shara.tv",
       "playlist_template_index": 0,
@@ -3999,18 +2106,11 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<login>.+):(?<password>.+)\\\/.+\\\/.*$",
           "pl_template": "{PL_DOMAIN}/g/{LOGIN}:{PASSWORD}/1/playlist.m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://shara-tv.org/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -4020,48 +2120,23 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{ID}/{TOKEN}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "Shara TV",
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "sharavoz": {
       "access_type": "pin",
       "balance_support": false,
       "class_name": "sharavoz_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -4072,57 +2147,22 @@
         {
           "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
           "epg_desc": "descr",
-          "epg_domain": "http://api.program.spr24.net",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/api/program?epg={EPG_ID}&date={DATE}",
-          "epg_use_duration": false
+          "epg_url": "http://api.program.spr24.net/api/program?epg={EPG_ID}&date={DATE}"
         },
         {
           "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.arlekino.tv",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/api/program?epg={EPG_ID}&date={DATE}",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
+          "epg_url": "http://epg.arlekino.tv/api/program?epg={EPG_ID}&date={DATE}"
         }
       ],
       "name": "sharavoz.tv",
@@ -4134,10 +2174,7 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/iptv\\\/p\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         },
         {
           "epg_id_from_id": true,
@@ -4145,16 +2182,11 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/iptv\\\/p\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/iptv/p/{PASSWORD}/Playlist.navigator-ott.m3u",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ],
-      "profiles_list": [],
       "provider_api_url": "http://app.media24.cc/json/c",
       "provider_url": "https://www.sharavoz.tv/",
-      "qualities_list": [],
       "requested_token": false,
       "servers_list": [
         {
@@ -4199,7 +2231,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{SERVER_ID}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -4211,7 +2242,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{SERVER_ID}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{SERVER_ID}/{ID}/mpegts?token={TOKEN}"
         }
       ],
@@ -4224,23 +2254,14 @@
         {
           "epg_id_from_id": false,
           "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
           "pl_template": "{API_URL}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
     "shuratv": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -4251,58 +2272,13 @@
         {
           "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
           "epg_desc": "desc",
-          "epg_domain": "http://epg.propg.net",
           "epg_end": "stop",
           "epg_name": "epg",
           "epg_param": "first",
-          "epg_root": "",
           "epg_start": "start",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/{ID}/epg2/{DATE}",
-          "epg_use_duration": false
+          "epg_url": "http://epg.propg.net/{ID}/epg2/{DATE}"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "shura.tv",
       "playlist_template_index": 0,
@@ -4311,18 +2287,11 @@
           "epg_id_from_id": false,
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/~(?<token>.+)\\\/(?<id>.+)\\\/hls\\\/.+\\.m3u8$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/?uid={PASSWORD}&srv={SERVER_ID}&type=halva",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "http://shura.tv/b/",
-      "qualities_list": [],
       "requested_token": false,
       "servers_list": [
         {
@@ -4343,48 +2312,22 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?archive={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "Shura TV",
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "smile": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -4393,60 +2336,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/smile%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/smile%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "smiletv",
       "playlist_template_index": 0,
@@ -4458,15 +2356,10 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/tv.m3u?srv={SERVER_ID}",
           "square_icons": true,
-          "tag_id_match": "CUID",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "CUID"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "http://smile-tv.live/",
-      "qualities_list": [],
       "requested_token": false,
       "servers_list": [
         {
@@ -4499,21 +2392,12 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "Smile TV",
       "user_agent": "DuneHD/1.0",
@@ -4525,23 +2409,15 @@
           "epg_id_from_id": false,
           "name": "Standard",
           "parse_regex": "(?<title>[^\\(]*)\\((?<country>[^\\d]+)\\s(?<year>\\d+)\\)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vodall.m3u?srv={SERVER_ID}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         },
         {
           "epg_id_from_id": false,
           "name": "No Adults",
           "parse_regex": "(?<title>[^\\(]*)\\((?<country>[^\\d]+)\\s(?<year>\\d+)\\)$",
-          "pl_parse_regex": "",
           "pl_template": "{PL_DOMAIN}/{LOGIN}/{PASSWORD}/vod.m3u?srv={SERVER_ID}",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
@@ -4549,9 +2425,6 @@
       "access_type": "login",
       "balance_support": true,
       "class_name": "tvclub_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -4560,60 +2433,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "description",
-          "epg_domain": "",
           "epg_end": "end",
           "epg_name": "text",
           "epg_param": "first",
           "epg_root": "epg|channels|[0]|epg",
           "epg_start": "start",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{API_URL}/epg?token={S_TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24",
-          "epg_use_duration": false
+          "epg_url": "{API_URL}/epg?token={S_TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "tv_club",
       "playlist_template_index": 0,
@@ -4625,17 +2453,12 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/p\\\/(?<password>.+)$",
           "pl_template": "{PL_DOMAIN}/p/{S_TOKEN}",
           "square_icons": false,
-          "tag_id_match": "tvg-id",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-id"
         }
       ],
-      "profiles_list": [],
       "provider_api_url": "http://api.iptv.so/0.9/json",
       "provider_url": "https://tvclub.cc/",
-      "qualities_list": [],
       "requested_token": true,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -4645,11 +2468,9 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": ""
+          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}"
         },
         {
           "cu_duration": 10800,
@@ -4657,7 +2478,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/p/{TOKEN}/{ID}"
         }
       ],
@@ -4665,28 +2485,11 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "tvizi": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -4699,59 +2502,22 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/iptvx.one%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/iptvx.one%2Fepg%2F{EPG_ID}.json"
         },
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/ottiptv%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
+          "epg_url": "http://epg.drm-play.com/ottiptv%2Fepg%2F{EPG_ID}.json"
         }
       ],
       "name": "tvizi",
@@ -4763,16 +2529,10 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/play\\\/(?<id>.+)\\\/(?<token>.+)\\\/video\\.m3u8$",
           "pl_parse_regex": "^https?:\\\/\\\/.+\\\/play\\\/(?<password>.+)\\\/m3u8?$",
           "pl_template": "{PL_DOMAIN}/play/{PASSWORD}/m3u8",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://tvizi.net/",
-      "qualities_list": [],
       "requested_token": false,
       "servers_list": [
         {
@@ -4813,7 +2573,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -4825,7 +2584,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/mpegts"
         }
       ],
@@ -4833,28 +2591,11 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "tvteam": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -4863,59 +2604,22 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://tv.team",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://tv.team/{EPG_ID}.json"
         },
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/tvteam%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
+          "epg_url": "http://epg.drm-play.com/tvteam%2Fepg%2F{EPG_ID}.json"
         }
       ],
       "name": "tv.team",
@@ -4928,17 +2632,11 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/pl\\\/11\\\/(?<password>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/pl/11/{PASSWORD}/playlist.m3u8",
           "square_icons": true,
-          "tag_id_match": "tvg-name",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-name"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://tv.team/",
-      "qualities_list": [],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -4948,7 +2646,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -4960,7 +2657,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
@@ -4968,28 +2664,12 @@
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "vidok": {
       "access_type": "login",
       "balance_support": false,
       "class_name": "vidok_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -4998,60 +2678,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "description",
-          "epg_domain": "",
           "epg_end": "end",
           "epg_name": "title",
           "epg_param": "first",
           "epg_root": "epg",
           "epg_start": "start",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{API_URL}/epg2?cid={EPG_ID}&token={TOKEN}",
-          "epg_use_duration": false
+          "epg_url": "{API_URL}/epg2?cid={EPG_ID}&token={TOKEN}"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "vidok.tv",
       "playlist_template_index": 0,
@@ -5063,17 +2698,12 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/p\\\/(?<password>.+)$",
           "pl_template": "{PL_DOMAIN}/p/{S_TOKEN}",
           "square_icons": false,
-          "tag_id_match": "tvg-id",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-id"
         }
       ],
-      "profiles_list": [],
       "provider_api_url": "http://sapi.ott.st/v2.4/json",
       "provider_url": "https://vidok.tv/",
-      "qualities_list": [],
       "requested_token": true,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -5083,48 +2713,22 @@
         {
           "cu_duration": 10800,
           "cu_type": "append",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}/p/{TOKEN}/{ID}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "Vidok TV",
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     },
     "viplime": {
       "access_type": "pin",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -5133,60 +2737,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/viplime%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/viplime%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "viplime.fun.tv",
       "playlist_template_index": 0,
@@ -5198,13 +2757,9 @@
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/.*\\\/(?<password>.+)\\\/.*$",
           "pl_template": "http://{PL_DOMAIN}/high/{PASSWORD}/playlist.m3u8",
           "square_icons": false,
-          "tag_id_match": "tvg-id",
-          "url_params": "",
-          "url_prefix": ""
+          "tag_id_match": "tvg-id"
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "http://viplime.fun/",
       "qualities_list": [
         {
@@ -5229,7 +2784,6 @@
         }
       ],
       "requested_token": false,
-      "servers_list": [],
       "static_devices": false,
       "static_domains": true,
       "static_profiles": false,
@@ -5239,7 +2793,6 @@
         {
           "cu_duration": 10800,
           "cu_type": "shift",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
@@ -5251,7 +2804,6 @@
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "",
           "uri_template": "{SCHEME}{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg"
         }
       ],
@@ -5265,22 +2817,14 @@
           "epg_id_from_id": false,
           "name": "Standard",
           "parse_regex": "(?<title>[^\\(]*)\\s\\((?<year>\\d+)\\)$",
-          "pl_parse_regex": "",
           "pl_template": "http://m.{PL_DOMAIN}/f/{PASSWORD}/playlist.m3u8",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": false
         }
       ]
     },
     "yosso": {
       "access_type": "login",
       "balance_support": false,
-      "class_name": "default_config",
-      "custom_epg_urls": [],
-      "dev_code": "aHR0cDovL2lwdHYuZXNhbGVjcm0ubmV0L3VwbG9hZC8",
-      "devices_list": [],
       "domains_list": [
         {
           "id": "0",
@@ -5289,60 +2833,15 @@
       ],
       "epg_params": [
         {
-          "epg_date_format": "",
           "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "{EPG_DOMAIN}/yosso%2Fepg%2F{EPG_ID}.json",
-          "epg_use_duration": false
+          "epg_url": "http://epg.drm-play.com/yosso%2Fepg%2F{EPG_ID}.json"
         },
-        {
-          "epg_date_format": "",
-          "epg_desc": "descr",
-          "epg_domain": "http://epg.drm-play.com",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_param": "second",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_time_format": "",
-          "epg_timezone": 0,
-          "epg_url": "",
-          "epg_use_duration": false
-        }
-      ],
-      "files_list": [],
-      "manifest_list": [
-        {
-          "id": "boot",
-          "name": ""
-        },
-        {
-          "id": "boot_end",
-          "name": "bin/update_suppliers.sh"
-        },
-        {
-          "id": "gui_start",
-          "name": ""
-        },
-        {
-          "id": "install",
-          "name": "#install"
-        },
-        {
-          "id": "uninstall",
-          "name": "#uninstall"
-        },
-        {
-          "id": "update",
-          "name": "#update"
-        }
+        {}
       ],
       "name": "yossotv",
       "playlist_template_index": 0,
@@ -5353,16 +2852,10 @@
           "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+):(?<port>\\d+)\\\/(?<var1>.+\\\/)?(?<id>.+)\\\/(?<var2>.+)\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/(?<login>.+)\\\/(?<password>.+)\\\/(?<server>.+)\\\/.*$",
           "pl_template": "{PL_DOMAIN}/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}playlist.m3u8",
-          "square_icons": true,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
+          "square_icons": true
         }
       ],
-      "profiles_list": [],
-      "provider_api_url": "",
       "provider_url": "https://streaming-elbrus.su/",
-      "qualities_list": [],
       "requested_token": false,
       "servers_list": [
         {
@@ -5415,40 +2908,18 @@
         {
           "cu_duration": 10800,
           "cu_type": "flussonic",
-          "dune_params": "",
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{DOMAIN}:{PORT}/{VAR1}{ID}/{VAR2}-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_template": "{SCHEME}{DOMAIN}:{PORT}/{VAR1}{ID}/{VAR2}.m3u8?token={TOKEN}"
         },
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "buffering_ms:{BUFFERING}",
-          "stream_type": "mpeg",
-          "uri_arc_template": "",
-          "uri_custom_arc_template": "",
-          "uri_template": ""
-        }
+        {}
       ],
       "title": "Yosso TV",
       "user_agent": "DuneHD/1.0",
       "vod_engine": "None",
       "vod_filter": false,
-      "vod_template_index": 0,
-      "vod_templates": [
-        {
-          "epg_id_from_id": false,
-          "name": "Standard",
-          "parse_regex": "",
-          "pl_parse_regex": "",
-          "pl_template": "",
-          "square_icons": false,
-          "tag_id_match": "",
-          "url_params": "",
-          "url_prefix": ""
-        }
-      ]
+      "vod_template_index": 0
     }
   }
 }

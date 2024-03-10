@@ -537,12 +537,13 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndToolTipCtrl.Activate(TRUE);
 
 	// Fill available plugins
-	for (const auto& item : GetConfig().get_all_plugins())
+	for (const auto& item : GetPluginFactory().get_all_plugins())
 	{
-		auto plugin = PluginFactory::Instance().create_plugin(item);
+		auto plugin = GetPluginFactory().create_plugin(item);
 		if (!plugin) continue;
 
 		std::wstring title(plugin->get_title());
+		ASSERT(!title.empty());
 		if (plugin->get_vod_engine() != VodEngine::enNone)
 		{
 			title += L" (VOD)";
@@ -554,8 +555,8 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	m_wndIconSource.AddString(load_string_resource(IDS_STRING_FILE).c_str());
 	m_wndIconSource.AddString(load_string_resource(IDS_STRING_URL).c_str());
-	m_wndIconSource.AddString(_T("it999.ru"));
-	m_wndIconSource.AddString(_T("it999.ru (square)"));
+	m_wndIconSource.AddString(_T("epg.one"));
+	m_wndIconSource.AddString(_T("epg.one (square)"));
 	m_wndIconSource.AddString(_T("iptvx.one"));
 	m_wndIconSource.AddString(_T("fiptv"));
 
@@ -696,10 +697,10 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	}
 
 	m_plugin_type = GetConfig().get_plugin_type();
-	m_plugin = PluginFactory::Instance().create_plugin(m_plugin_type);
+	m_plugin = GetPluginFactory().create_plugin(m_plugin_type);
 
 	ReloadConfigs();
-	m_plugin->load_plugin_parameters(m_cur_account.get_config());
+	m_plugin->load_plugin_parameters(m_cur_account.get_config(), m_plugin->get_internal_name());
 
 	m_wndBtnExportM3u.EnableWindow(FALSE);
 	BOOL showWebUpdate = (!m_cur_account.update_url.empty() && !m_cur_account.update_package_url.empty() || m_cur_account.use_dropbox);
@@ -891,7 +892,7 @@ void CIPTVChannelEditorDlg::ReloadConfigs()
 	m_all_configs_lists.clear();
 	m_all_configs_lists.emplace_back(load_string_resource(IDS_STRING_STR_DEFAULT));
 
-	std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + m_plugin->get_type_name());
+	std::filesystem::path config_dir(GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH) + m_plugin->get_internal_name());
 	std::error_code err;
 	std::filesystem::directory_iterator conf_dir_iter(config_dir, err);
 	for (auto const& dir_entry : conf_dir_iter)
@@ -3401,8 +3402,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 
 	CAccessInfoPage dlgInfo;
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
-	dlgInfo.m_plugin = PluginFactory::Instance().create_plugin(m_plugin_type);
-	dlgInfo.m_plugin->copy(m_plugin.get());
+	dlgInfo.m_plugin = GetPluginFactory().create_plugin(m_plugin_type);
+	dlgInfo.m_plugin->copy_config(*m_plugin);
 	dlgInfo.m_selected_cred = m_cur_account;
 	dlgInfo.m_configs = m_all_configs_lists;
 	dlgInfo.m_all_channels_lists = m_all_channels_lists;
@@ -3414,7 +3415,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	if (res)
 	{
 		m_cur_account = dlgInfo.m_selected_cred;
-		m_plugin->copy(dlgInfo.m_plugin.get());
+		m_plugin->copy_config(*dlgInfo.m_plugin);
 		GetConfig().UpdatePluginSettings();
 		PostMessage(WM_SWITCH_PLUGIN);
 	}
@@ -3957,12 +3958,12 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 	int i = 0;
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
-	m_wndProgress.SetRange32(0, (int)GetConfig().get_all_plugins().size());
+	m_wndProgress.SetRange32(0, (int)GetPluginFactory().get_all_plugins().size());
 	m_wndProgress.SetPos(i);
 
-	for (const auto& item : GetConfig().get_all_plugins())
+	for (const auto& item : GetPluginFactory().get_all_plugins())
 	{
-		auto plugin = PluginFactory::Instance().create_plugin(item);
+		auto plugin = GetPluginFactory().create_plugin(item);
 		if (!plugin) continue;
 
 		m_wndProgressInfo.SetWindowText(plugin->get_title().c_str());
@@ -5633,8 +5634,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(m_all_configs_lists, load_string_resource(IDS_STRING_PLUGIN_CONFIG).c_str(), REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
-	pSheet->m_plugin = PluginFactory::Instance().create_plugin(m_plugin_type);
-	pSheet->m_plugin->copy(m_plugin.get());
+	pSheet->m_plugin = GetPluginFactory().create_plugin(m_plugin_type);
+	pSheet->m_plugin->copy_config(*m_plugin);
 	pSheet->m_selected_cred = m_cur_account;
 	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 	pSheet->m_configPages = true;
@@ -5658,7 +5659,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 
 	if (IDOK == pSheet->DoModal())
 	{
-		m_plugin->copy(pSheet->m_plugin.get());
+		m_plugin->copy_config(*pSheet->m_plugin);
 		GetConfig().UpdatePluginSettings();
 		PostMessage(WM_SWITCH_PLUGIN);
 	}

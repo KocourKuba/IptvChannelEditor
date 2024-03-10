@@ -787,7 +787,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	if (it != m_configs.end())
 	{
 		sel_idx = (int)std::distance(m_configs.begin(), it);
-		m_plugin->load_plugin_parameters(selected.get_config());
+		m_plugin->load_plugin_parameters(selected.get_config(), m_plugin->get_internal_name());
 	}
 	m_wndConfigs.SetCurSel(sel_idx);
 
@@ -1145,7 +1145,7 @@ void CAccessInfoPage::OnCbnSelchangeComboConfigs()
 		CString value;
 		m_wndConfigs.GetLBText(idx, value);
 		selected.set_config(value.GetString());
-		m_plugin->load_plugin_parameters(selected.get_config());
+		m_plugin->load_plugin_parameters(selected.get_config(), m_plugin->get_internal_name());
 		CreateAccountsList();
 		m_wndAccounts.SetCheck(account_idx);
 	}
@@ -1346,11 +1346,11 @@ void CAccessInfoPage::OnBnClickedButtonEditConfig()
 	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(m_configs, load_string_resource(IDS_STRING_PLUGIN_CONFIG).c_str(), REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
-	pSheet->m_plugin = PluginFactory::Instance().create_plugin(m_plugin->get_plugin_type());
+	pSheet->m_plugin = GetPluginFactory().create_plugin(m_plugin->get_plugin_type());
 	if (m_wndConfigs.GetCurSel() != m_initial_config)
-		pSheet->m_plugin->load_plugin_parameters(selected.get_config());
+		pSheet->m_plugin->load_plugin_parameters(selected.get_config(), m_plugin->get_internal_name());
 	else
-		pSheet->m_plugin->copy(m_plugin.get());
+		pSheet->m_plugin->copy_config(*m_plugin);
 	pSheet->m_CurrentStream = m_CurrentStream;
 	pSheet->m_selected_cred = selected;
 
@@ -1373,7 +1373,7 @@ void CAccessInfoPage::OnBnClickedButtonEditConfig()
 
 	if (pSheet->DoModal() == IDOK)
 	{
-		m_plugin->copy(pSheet->m_plugin.get());
+		m_plugin->copy_config(*pSheet->m_plugin);
 		CreateAccountsList();
 		m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
 	}

@@ -203,7 +203,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	BT_SetTerminate(); // set_terminate() must be called from every thread
 #endif // _DEBUG
 
-	if (!PluginFactory::Instance().load_configs())
+	if (!GetPluginFactory().load_configs())
 	{
 		AfxMessageBox(IDS_STRING_ERR_CANT_LOAD_CONFIG, MB_OK | MB_ICONEXCLAMATION);
 		ExitProcess(0);
@@ -298,7 +298,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		auto plugin_type = GetConfig().get_plugin_type();
 		if (!PackPlugin(plugin_type, true, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 		{
-			auto plugin = PluginFactory::Instance().create_plugin(plugin_type);
+			auto plugin = GetPluginFactory().create_plugin(plugin_type);
 			if (plugin)
 			{
 				CString str;
@@ -318,13 +318,13 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		else
 			output_path = cmdInfo.m_strFileName.GetString();
 
-		for (const auto& item : GetConfig().get_all_plugins())
+		for (const auto& item : GetPluginFactory().get_all_plugins())
 		{
 			if (item == PluginType::enCustom) continue;
 
 			if (!PackPlugin(item, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 			{
-				auto plugin = PluginFactory::Instance().create_plugin(item);
+				auto plugin = GetPluginFactory().create_plugin(item);
 				if (plugin)
 				{
 					CString str;
@@ -496,7 +496,7 @@ std::string get_array_value(std::vector<std::wstring>& creds, size_t& last)
 void ConvertAccounts()
 {
 	const auto& old_plugin_type = GetConfig().get_plugin_type();
-	for (const auto& item : GetConfig().get_all_plugins())
+	for (const auto& item : GetPluginFactory().get_all_plugins())
 	{
 		GetConfig().set_plugin_type(item);
 
@@ -510,7 +510,7 @@ void ConvertAccounts()
 
 		if (need_convert)
 		{
-			auto plugin = PluginFactory::Instance().create_plugin(item);
+			auto plugin = GetPluginFactory().create_plugin(item);
 			if (plugin)
 			{
 				const auto& access_type = plugin->get_access_type();
@@ -662,7 +662,7 @@ bool PackPlugin(const PluginType plugin_type,
 		return false;
 	}
 
-	auto plugin = PluginFactory::Instance().create_plugin(plugin_type);
+	auto plugin = GetPluginFactory().create_plugin(plugin_type);
 
 	const auto& all_credentials = GetConfig().LoadCredentials();
 
@@ -674,10 +674,10 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	const auto& cred = all_credentials[selected];
-	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, plugin->get_type_name());
+	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, plugin->get_internal_name());
 
 	// load plugin settings
-	plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config));
+	plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config), plugin->get_internal_name());
 	plugin->configure_plugin();
 
 	COleDateTime cur_dt = COleDateTime::GetCurrentTime();
@@ -703,7 +703,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 	// collect plugin channels list;
 	std::map<std::string, std::string> channels_list;
-	const auto& playlistPath = lists_path + plugin->get_type_name() + L"\\";
+	const auto& playlistPath = lists_path + plugin->get_internal_name() + L"\\";
 	std::filesystem::directory_iterator dir_iter(playlistPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
@@ -818,12 +818,12 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	if (plugin_logo.empty())
-		plugin_logo = fmt::format(LR"({:s}plugins_image\logo_{:s}.png)", plugin_root, plugin->get_type_name());
+		plugin_logo = fmt::format(LR"({:s}plugins_image\logo_{:s}.png)", plugin_root, plugin->get_internal_name());
 	else if (!plugin_logo.has_parent_path())
 		plugin_logo = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_logo.wstring());
 
 	if (plugin_bgnd.empty())
-		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.png)", plugin_root, plugin->get_type_name());
+		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.png)", plugin_root, plugin->get_internal_name());
 	else if (!plugin_bgnd.has_parent_path())
 		plugin_bgnd = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_bgnd.wstring());
 
@@ -851,7 +851,7 @@ bool PackPlugin(const PluginType plugin_type,
 	int idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	plugin->set_playlist_idx(idx);
 	plugin->set_dev_path(enc.GetResultString());
-	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder), true);
+	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder), plugin->get_internal_name(), true);
 
 	// create plugin manifest
 	std::string config_data;
@@ -917,7 +917,7 @@ bool PackPlugin(const PluginType plugin_type,
 		const auto& channels_list_version = std::to_string(CHANNELS_LIST_VERSION);
 		auto d_node = doc->first_node("dune_plugin");
 
-		d_node->first_node("type_name")->value(plugin->get_type_name_a().c_str());
+		d_node->first_node("type_name")->value(plugin->get_internal_name_a().c_str());
 		d_node->first_node("class_name")->value(plugin->get_class_name().c_str());
 		d_node->first_node("version_index")->value(version_index.c_str());
 		d_node->first_node("version")->value(version_string.c_str());
@@ -1573,11 +1573,11 @@ uintmax_t calc_folder_size(const std::wstring& path)
 std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel /*= false*/)
 {
 	std::wstring plugin_name;
-	auto plugin = PluginFactory::Instance().create_plugin(plugin_type);
+	auto plugin = GetPluginFactory().create_plugin(plugin_type);
 	if (plugin != nullptr)
 	{
 		// convert to wstring or string
-		plugin_name = plugin->get_type_name();
+		plugin_name = plugin->get_internal_name();
 		if (bCamel)
 		{
 			plugin_name[0] = std::toupper(plugin_name[0]);
@@ -1590,11 +1590,11 @@ std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel /*= fa
 std::string GetPluginTypeNameA(const PluginType plugin_type, bool bCamel /*= false*/)
 {
 	std::string plugin_name;
-	auto plugin = PluginFactory::Instance().create_plugin(plugin_type);
+	auto plugin = GetPluginFactory().create_plugin(plugin_type);
 	if (plugin != nullptr)
 	{
 		// convert to wstring or string
-		plugin_name = utils::utf16_to_utf8(plugin->get_type_name());
+		plugin_name = utils::utf16_to_utf8(plugin->get_internal_name());
 		if (bCamel)
 		{
 			plugin_name[0] = std::toupper(plugin_name[0]);

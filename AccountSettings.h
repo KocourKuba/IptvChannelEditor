@@ -60,8 +60,6 @@ public:
 
 	void RemovePortableSettings();
 
-	const std::vector<PluginType>& get_all_plugins() const;
-
 	int get_plugin_idx() const;
 	void set_plugin_idx(int val);
 
