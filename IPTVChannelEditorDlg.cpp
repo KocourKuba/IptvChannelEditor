@@ -537,9 +537,9 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndToolTipCtrl.Activate(TRUE);
 
 	// Fill available plugins
-	for (const auto& item : GetPluginFactory().get_all_plugins())
+	for (const auto& pair : GetPluginFactory().get_all_plugins())
 	{
-		auto plugin = GetPluginFactory().create_plugin(item);
+		auto plugin = GetPluginFactory().create_plugin(pair.first);
 		if (!plugin) continue;
 
 		std::wstring title(plugin->get_title());
@@ -550,7 +550,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		}
 
 		int idx = m_wndPluginType.AddString(title.c_str());
-		m_wndPluginType.SetItemData(idx, (DWORD_PTR)item);
+		m_wndPluginType.SetItemData(idx, (DWORD_PTR)pair.first);
 	}
 
 	m_wndIconSource.AddString(load_string_resource(IDS_STRING_FILE).c_str());
@@ -3961,15 +3961,15 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 	m_wndProgress.SetRange32(0, (int)GetPluginFactory().get_all_plugins().size());
 	m_wndProgress.SetPos(i);
 
-	for (const auto& item : GetPluginFactory().get_all_plugins())
+	for (const auto& pair : GetPluginFactory().get_all_plugins())
 	{
-		auto plugin = GetPluginFactory().create_plugin(item);
+		auto plugin = GetPluginFactory().create_plugin(pair.first);
 		if (!plugin) continue;
 
 		m_wndProgressInfo.SetWindowText(plugin->get_title().c_str());
 		m_wndProgress.SetPos(++i);
 
-		if (!PackPlugin(item, false, m_wndMakeWebUpdate.GetCheck()))
+		if (!PackPlugin(pair.first, false, m_wndMakeWebUpdate.GetCheck()))
 		{
 			success = false;
 			CString str;

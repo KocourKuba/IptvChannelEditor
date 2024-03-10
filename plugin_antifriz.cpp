@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_antifriz.h"
-#include "IPTVChannelEditor.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

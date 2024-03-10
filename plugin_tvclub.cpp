@@ -26,11 +26,9 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_tvclub.h"
-#include "IPTVChannelEditor.h"
 
 #include "UtilsLib\md5.h"
 #include "UtilsLib\utils.h"
-#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

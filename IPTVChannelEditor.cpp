@@ -318,13 +318,13 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		else
 			output_path = cmdInfo.m_strFileName.GetString();
 
-		for (const auto& item : GetPluginFactory().get_all_plugins())
+		for (const auto& pair : GetPluginFactory().get_all_plugins())
 		{
-			if (item == PluginType::enCustom) continue;
+			if (pair.first == PluginType::enCustom) continue;
 
-			if (!PackPlugin(item, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
+			if (!PackPlugin(pair.first, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 			{
-				auto plugin = GetPluginFactory().create_plugin(item);
+				auto plugin = GetPluginFactory().create_plugin(pair.first);
 				if (plugin)
 				{
 					CString str;
@@ -496,9 +496,9 @@ std::string get_array_value(std::vector<std::wstring>& creds, size_t& last)
 void ConvertAccounts()
 {
 	const auto& old_plugin_type = GetConfig().get_plugin_type();
-	for (const auto& item : GetPluginFactory().get_all_plugins())
+	for (const auto& pair : GetPluginFactory().get_all_plugins())
 	{
-		GetConfig().set_plugin_type(item);
+		GetConfig().set_plugin_type(pair.first);
 
 		bool need_convert = false;
 		auto acc_data = GetConfig().get_string(false, REG_ACCOUNT_DATA);
@@ -510,7 +510,7 @@ void ConvertAccounts()
 
 		if (need_convert)
 		{
-			auto plugin = GetPluginFactory().create_plugin(item);
+			auto plugin = GetPluginFactory().create_plugin(pair.first);
 			if (plugin)
 			{
 				const auto& access_type = plugin->get_access_type();

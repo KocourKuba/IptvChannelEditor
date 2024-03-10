@@ -27,8 +27,6 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "base_plugin.h"
 
-// API documentation http://wiki.vidok.tv/index.php?title=SAPI
-
 class plugin_vidok : public base_plugin
 {
 public:

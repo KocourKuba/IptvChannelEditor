@@ -40,59 +40,15 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static std::vector<PluginType> s_all_plugins = {
-	{ PluginType::enAntifriz,   },
-	{ PluginType::enBcuMedia,   },
-	{ PluginType::enCbilling,   },
-	{ PluginType::enEdem,       },
-	{ PluginType::enFilmax,     },
-	{ PluginType::enFox,        },
-	{ PluginType::enGlanz,      },
-	{ PluginType::enIptvOnline, },
-	{ PluginType::enItv,        },
-	{ PluginType::enKineskop,   },
-	{ PluginType::enLightIptv,  },
-	{ PluginType::enMymagic,    },
-	{ PluginType::enOneCent,    },
-	{ PluginType::enOneOtt,     },
-	{ PluginType::enOneUsd,     },
-	{ PluginType::enOttclub,    },
-	{ PluginType::enPing,       },
-	{ PluginType::enRusskoeTV,  },
-	{ PluginType::enSharaTV,    },
-	{ PluginType::enSharaclub,  },
-	{ PluginType::enSharavoz,   },
-	{ PluginType::enShuraTV,    },
-	{ PluginType::enSmile,      },
-	{ PluginType::enTVClub,     },
-	{ PluginType::enTvTeam,     },
-	{ PluginType::enVidok,      },
-	{ PluginType::enVipLime,    },
-	{ PluginType::enYossoTV,    },
-	{ PluginType::enOttIptv,    },
-	{ PluginType::en101film,    },
-	{ PluginType::enIpstream,   },
-	{ PluginType::enOnlineOtt,  },
-	{ PluginType::enTvizi,      },
-	{ PluginType::enSatq,       },
-	{ PluginType::enRuTV,       },
-	{ PluginType::enCRDTV,      },
-	{ PluginType::enCustom,     },
-};
-
-static std::map <PluginType, std::string> s_plugin_types = {
-	{ PluginType::enCustom,     "custom"     },
-	{ PluginType::en101film,    "101film"    },
+static std::vector<std::pair<PluginType, std::string>> s_all_plugins = {
 	{ PluginType::enAntifriz,   "antifriz"   },
 	{ PluginType::enBcuMedia,   "bcumedia"   },
 	{ PluginType::enCbilling,   "cbilling"   },
-	{ PluginType::enCRDTV,      "crdtv"      },
 	{ PluginType::enEdem,       "edem"       },
 	{ PluginType::enFilmax,     "filmax"     },
 	{ PluginType::enFox,        "fox"        },
 	{ PluginType::enGlanz,      "glanz"      },
 	{ PluginType::enIptvOnline, "iptvonline" },
-	{ PluginType::enIpstream,   "ipstream"   },
 	{ PluginType::enItv,        "itv"        },
 	{ PluginType::enKineskop,   "kineskop"   },
 	{ PluginType::enLightIptv,  "lightiptv"  },
@@ -100,24 +56,28 @@ static std::map <PluginType, std::string> s_plugin_types = {
 	{ PluginType::enOneCent,    "onecent"    },
 	{ PluginType::enOneOtt,     "oneott"     },
 	{ PluginType::enOneUsd,     "oneusd"     },
-	{ PluginType::enOnlineOtt,  "onlineott"  },
 	{ PluginType::enOttclub,    "ottclub"    },
-	{ PluginType::enOttIptv,    "ottiptv"    },
 	{ PluginType::enPing,       "ping"       },
 	{ PluginType::enRusskoeTV,  "russkoetv"  },
-	{ PluginType::enRuTV,       "rutv"       },
-	{ PluginType::enSatq,       "satq"       },
 	{ PluginType::enSharaTV,    "sharatv"    },
 	{ PluginType::enSharaclub,  "sharaclub"  },
 	{ PluginType::enSharavoz,   "sharavoz"   },
 	{ PluginType::enShuraTV,    "shuratv"    },
 	{ PluginType::enSmile,      "smile"      },
 	{ PluginType::enTVClub,     "tvclub"     },
-	{ PluginType::enTvizi,      "tvizi"      },
 	{ PluginType::enTvTeam,     "tvteam"     },
 	{ PluginType::enVidok,      "vidok"      },
 	{ PluginType::enVipLime,    "viplime"    },
 	{ PluginType::enYossoTV,    "yosso"      },
+	{ PluginType::enOttIptv,    "ottiptv"    },
+	{ PluginType::en101film,    "101film"    },
+	{ PluginType::enIpstream,   "ipstream"   },
+	{ PluginType::enOnlineOtt,  "onlineott"  },
+	{ PluginType::enTvizi,      "tvizi"      },
+	{ PluginType::enSatq,       "satq"       },
+	{ PluginType::enRuTV,       "rutv"       },
+	{ PluginType::enCRDTV,      "crdtv"      },
+	{ PluginType::enCustom,     "custom"     },
 };
 
 static std::vector <std::pair<EpgPresets, std::string>> s_presets = {
@@ -142,7 +102,12 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(PluginType type)
 {
 	std::shared_ptr<base_plugin> plugin;
 
-	if (const auto& it = s_plugin_types.find(type); it != s_plugin_types.end())
+	const auto& it = std::find_if(s_all_plugins.begin(), s_all_plugins.end(), [&type](const std::pair<PluginType, std::string>& val)
+								  {
+									  return val.first == type;
+								  });
+
+	if (it != s_all_plugins.end())
 	{
 		switch (type)
 		{
@@ -253,12 +218,12 @@ bool PluginFactory::load_configs()
 	return res;
 }
 
-const std::vector<PluginType>& PluginFactory::get_all_plugins() const
+const std::vector<std::pair<PluginType, std::string>>& PluginFactory::get_all_plugins() const
 {
 	return s_all_plugins;
 }
 
 PluginType PluginFactory::get_plugin_type(size_t idx)
 {
-	return idx < s_all_plugins.size() ? s_all_plugins[idx] : PluginType::enEdem;
+	return idx < s_all_plugins.size() ? s_all_plugins[idx].first : PluginType::enEdem;
 }

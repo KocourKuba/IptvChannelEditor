@@ -160,9 +160,9 @@ void AccountSettings::LoadSettings()
 		if (!m_config.empty())
 		{
 			ReadSettingsJson(PluginType::enBase);
-			for (const auto& plugin : GetPluginFactory().get_all_plugins())
+			for (const auto& pair : GetPluginFactory().get_all_plugins())
 			{
-				ReadSettingsJson(plugin);
+				ReadSettingsJson(pair.first);
 			}
 
 			m_bPortable = TRUE;
@@ -174,9 +174,9 @@ void AccountSettings::LoadSettings()
 	{
 		m_settings.clear();
 		ReadSettingsRegistry(PluginType::enBase);
-		for (const auto& plugin : GetPluginFactory().get_all_plugins())
+		for (const auto& pair : GetPluginFactory().get_all_plugins())
 		{
-			m_pluginType = plugin;
+			m_pluginType = pair.first;
 			ReadSettingsRegistry(m_pluginType);
 		}
 	}
@@ -188,9 +188,9 @@ void AccountSettings::SaveSettingsToJson()
 {
 	UpdateSettingsJson(PluginType::enBase);
 
-	for (const auto& plugin : GetPluginFactory().get_all_plugins())
+	for (const auto& pair : GetPluginFactory().get_all_plugins())
 	{
-		UpdateSettingsJson(plugin);
+		UpdateSettingsJson(pair.first);
 	}
 
 	std::ofstream out_file(GetAppPath() + CONFIG_FILE, std::ofstream::binary);
@@ -201,9 +201,9 @@ void AccountSettings::SaveSettingsToRegistry()
 {
 	SaveSectionRegistry(PluginType::enBase);
 
-	for (const auto& plugin : GetPluginFactory().get_all_plugins())
+	for (const auto& pair : GetPluginFactory().get_all_plugins())
 	{
-		SaveSectionRegistry(plugin);
+		SaveSectionRegistry(pair.first);
 	}
 }
 

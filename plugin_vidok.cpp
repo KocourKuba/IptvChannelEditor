@@ -26,17 +26,17 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_vidok.h"
-#include "IPTVChannelEditor.h"
 
 #include "UtilsLib\md5.h"
 #include "UtilsLib\utils.h"
-#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+// API documentation http://wiki.vidok.tv/index.php?title=SAPI
 
 static constexpr auto API_COMMAND_GET_URL = L"{:s}/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"{:s}/{:s}?token={:s}&{:s}={:s}";

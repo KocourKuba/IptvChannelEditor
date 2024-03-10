@@ -26,10 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_cbilling.h"
-#include "PlayListEntry.h"
-#include "IPTVChannelEditor.h"
-
-#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

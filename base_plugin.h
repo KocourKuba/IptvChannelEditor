@@ -28,16 +28,8 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_config.h"
 #include "uri_stream.h"
 #include "Credentials.h"
-#include "Constants.h"
-#include "UtilsLib\inet_utils.h"
 
 class uri_stream;
-
-typedef struct
-{
-	std::wstring name;
-	std::wstring value;
-} AccountInfo;
 
 struct EpgInfo
 {

@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "IPTVChannelEditor.h"
 #include "PluginConfigPageTV.h"
 #include "FillParamsInfoDlg.h"
+#include "Constants.h"
 
 #include "UtilsLib/inet_utils.h"
 

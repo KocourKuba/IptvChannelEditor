@@ -336,7 +336,7 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 	{
 		if (memcmp(str, "\xEF\xBB\xBF", 3) == 0)
 		{
-			str += 3;      // Skup utf-8 bom
+			str += 3; // Skip utf-8 bom
 		}
 
 		if (memcmp(buf.data(), "<?xml", 5) == 0)
