@@ -43,26 +43,8 @@
     <Filter Include="Header Files\plugin">
       <UniqueIdentifier>{03d4e956-7422-4117-bfd8-1a29f833727a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\plugin\flussionic">
-      <UniqueIdentifier>{88dd3ef1-3863-49cc-8ca9-82cca5c1e3ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\plugin\shift">
-      <UniqueIdentifier>{75e47631-0131-4961-a097-51e60dda0fe6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\plugin\append">
-      <UniqueIdentifier>{8cab0207-cf68-4225-ade1-bad908ac5bef}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\plugin">
       <UniqueIdentifier>{528ca71c-ee35-46f6-956e-054a25b21675}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\plugin\flussonic">
-      <UniqueIdentifier>{469ad61d-d9e3-4be2-9734-ee3410e5797d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\plugin\shift">
-      <UniqueIdentifier>{42e4379f-0045-4f1e-8a9a-1b2ca0cb592c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\plugin\append">
-      <UniqueIdentifier>{9ce6849e-987a-4495-b303-9423b8a6628b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files\PNG">
       <UniqueIdentifier>{35e70383-4749-424d-af38-4efd108f437e}</UniqueIdentifier>
@@ -119,9 +101,6 @@
     </ClInclude>
     <ClInclude Include="uri_stream.h">
       <Filter>Header Files\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="uri_base.h">
-      <Filter>Header Files\plugin</Filter>
     </ClInclude>
     <ClInclude Include="base_plugin.h">
       <Filter>Header Files\plugin</Filter>
@@ -201,32 +180,11 @@
     <ClInclude Include="MySplitButton.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="plugin_antifriz.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_cbilling.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_itv.h">
-      <Filter>Header Files\plugin\flussionic</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_oneott.h">
-      <Filter>Header Files\plugin\shift</Filter>
-    </ClInclude>
     <ClInclude Include="ColorEdit.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="PluginConfigPage.h">
       <Filter>Header Files\Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_sharaclub.h">
-      <Filter>Header Files\plugin\append</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_vidok.h">
-      <Filter>Header Files\plugin\append</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_tvclub.h">
-      <Filter>Header Files\plugin\append</Filter>
     </ClInclude>
     <ClInclude Include="plugin_config.h">
       <Filter>Header Files\plugin</Filter>
@@ -279,6 +237,30 @@
     <ClInclude Include="Singleton.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_sharaclub.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_tvclub.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_vidok.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_antifriz.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_itv.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_cbilling.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_oneott.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="uri_base.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -307,9 +289,6 @@
     </ClCompile>
     <ClCompile Include="TreeCtrlEx.cpp">
       <Filter>Source Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="uri_base.cpp">
-      <Filter>Source Files\plugin</Filter>
     </ClCompile>
     <ClCompile Include="m3u_entry.cpp">
       <Filter>Source Files\Containers</Filter>
@@ -380,15 +359,6 @@
     <ClCompile Include="ResizedPropertySheet.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_cbilling.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_itv.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_oneott.cpp">
-      <Filter>Source Files\plugin\shift</Filter>
-    </ClCompile>
     <ClCompile Include="MySplitButton.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
@@ -404,20 +374,8 @@
     <ClCompile Include="plugin_config.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_antifriz.cpp">
-      <Filter>Source Files\plugin\flussonic</Filter>
-    </ClCompile>
     <ClCompile Include="FillParamsInfoDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_tvclub.cpp">
-      <Filter>Source Files\plugin\append</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_vidok.cpp">
-      <Filter>Source Files\plugin\append</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin_sharaclub.cpp">
-      <Filter>Source Files\plugin\append</Filter>
     </ClCompile>
     <ClCompile Include="NewConfigDlg.cpp">
       <Filter>Source Files\Dialogs</Filter>
@@ -457,6 +415,30 @@
     </ClCompile>
     <ClCompile Include="ListCtrlEx.cpp">
       <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_sharaclub.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_tvclub.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_vidok.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_antifriz.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_cbilling.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_itv.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_oneott.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="uri_base.cpp">
+      <Filter>Source Files\Containers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
