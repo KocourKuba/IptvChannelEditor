@@ -19,7 +19,7 @@ call UpdateVer.cmd
 set BUILD_NAME=IPTVChannelEditor
 set BUILD_PATH=%ROOT%%BUILD_TYPE%
 
-echo @%DEV_ENV% %BUILD_NAME%.sln /Rebuild "%BUILD_TYPE%|%BUILD_PLATFORM%" /Project %BUILD_NAME%.vcxproj /OUT build.log >build.bat
+echo @%DEV_ENV% %BUILD_NAME%.sln /build "%BUILD_TYPE%|%BUILD_PLATFORM%" /Project %BUILD_NAME%.vcxproj /OUT build.log >build.bat
 echo @if NOT exist "%BUILD_PATH%\%BUILD_NAME%.exe" pause >>build.bat
 echo @exit >>build.bat
 start /wait build.bat
@@ -37,6 +37,8 @@ rem Get app version
 dll\GetVersion.exe "%BUILD_PATH%\%BUILD_NAME%.exe" \\StringFileInfo\\040904b0\\ProductVersion >AppVer.tmp
 set /P BUILD=<AppVer.tmp
 del AppVer.tmp >nul 2>&1
+FOR /f "tokens=1,2 delims=." %%a IN ("%BUILD%") do set MAJOR=%%a&set MINOR=%%b
+
 set outfile=%ROOT%package\update.xml
 echo %BUILD%
 
@@ -52,6 +54,8 @@ copy "%ROOT%Updater\%BUILD_TYPE%\Updater.exe"			"%pkg%" >nul
 copy "%ROOT%dll\7z.dll"									"%pkg%" >nul
 copy "%ROOT%BugTrap\bin\BugTrapU.dll"					"%pkg%" >nul
 copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul
+copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%pkg%" >nul
+copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%ROOT%package\defaults_%MAJOR%.%MINOR%.json" >nul
 copy "%ROOT%dune_plugin\changelog.md"					"%pkg%" >nul
 copy "%ROOT%dune_plugin\changelog.md" "%ROOT%package\changelog.md" >nul
 copy "%ROOT%dune_plugin\changelog.md" "%ROOT%package\changelog.md.%BUILD%" >nul
@@ -83,16 +87,17 @@ copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 echo build standard archive...
 IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom .
 
-echo %BUILD_NAME%.exe			>packing.lst
-echo %BUILD_NAME%RUS.dll		>>packing.lst
-echo Updater.exe				>>packing.lst
-echo 7z.dll 					>>packing.lst
-echo BugTrapU.dll				>>packing.lst
-echo dbghelp.dll				>>packing.lst
-echo changelog.md				>>packing.lst
-echo %ROOT%dune_plugin			>>packing.lst
-echo %ROOT%ChannelsLists		>>packing.lst
-echo dune_plugin_*.zip			>>packing.lst
+echo %BUILD_NAME%.exe				>packing.lst
+echo %BUILD_NAME%RUS.dll			>>packing.lst
+echo Updater.exe					>>packing.lst
+echo 7z.dll 						>>packing.lst
+echo defaults_%MAJOR%.%MINOR%.json	>>packing.lst
+echo BugTrapU.dll					>>packing.lst
+echo dbghelp.dll					>>packing.lst
+echo changelog.md					>>packing.lst
+echo %ROOT%dune_plugin				>>packing.lst
+echo %ROOT%ChannelsLists			>>packing.lst
+echo dune_plugin_*.zip				>>packing.lst
 
 del "%ROOT%package\dune_channel_editor_universal.7z" >nul
 
