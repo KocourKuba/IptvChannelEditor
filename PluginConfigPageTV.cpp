@@ -385,6 +385,8 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 	params.quality_idx = cred.quality_id;
 	params.playlist_idx = m_wndPlaylistTemplates.GetCurSel();
 
+	GetPropertySheet()->m_plugin->update_provider_params(params);
+
 	CWaitCursor cur;
 	const auto& url = GetPropertySheet()->m_plugin->get_playlist_url(params);
 	std::stringstream data;
@@ -469,6 +471,7 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShowLink()
 		params.quality_idx = cred.quality_id;
 		params.playlist_idx = m_wndPlaylistTemplates.GetCurSel();
 
+		GetPropertySheet()->m_plugin->update_provider_params(params);
 		m_PlaylistTemplate = GetPropertySheet()->m_plugin->get_playlist_url(params).c_str();
 	}
 	else

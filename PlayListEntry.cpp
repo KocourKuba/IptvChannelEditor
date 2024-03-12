@@ -64,7 +64,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 		}
 		case m3u_entry::directives::ext_pathname:
 		{
-			parent_plugin->parse_stream_uri(utils::utf8_to_utf16(str), this);
+			parent_plugin->parse_stream_uri(utils::utf8_to_utf16(str), *this);
 			result = is_valid();
 			if (result && category.empty())
 			{

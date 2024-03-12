@@ -287,3 +287,12 @@ nlohmann::json plugin_config::get_epg_root(int epg_idx, const nlohmann::json& ep
 
 	return {};
 }
+
+void plugin_config::update_provider_params(TemplateParams& params)
+{
+	fill_servers_list(params);
+	fill_domains_list(params);
+	fill_devices_list(params);
+	fill_profiles_list(params);
+	fill_qualities_list(params);
+}

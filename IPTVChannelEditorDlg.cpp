@@ -967,6 +967,8 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 		params.s_token = m_plugin->get_api_token(m_cur_account);
 	}
 
+	m_plugin->update_provider_params(params);
+
 	const auto& info = m_playlist_info[idx];
 
 	BOOL is_file = FALSE;

@@ -35,7 +35,7 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-std::map<std::wstring, std::wstring, std::less<>> plugin_oneott::parse_access_info(TemplateParams& params)
+std::map<std::wstring, std::wstring, std::less<>> plugin_oneott::parse_access_info(const TemplateParams& params)
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"{:s}/PinApi/{:s}/{:s}";
 
@@ -56,6 +56,8 @@ std::map<std::wstring, std::wstring, std::less<>> plugin_oneott::parse_access_in
 
 				TemplateParams param;
 				param.s_token = token;
+
+				update_provider_params(param);
 
 				info.emplace(L"url", get_playlist_url(param));
 			}

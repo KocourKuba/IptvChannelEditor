@@ -46,7 +46,7 @@ std::wstring plugin_tvclub::get_api_token(const Credentials& creds) const
 	return utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
 }
 
-std::map<std::wstring, std::wstring, std::less<>> plugin_tvclub::parse_access_info(TemplateParams& params)
+std::map<std::wstring, std::wstring, std::less<>> plugin_tvclub::parse_access_info(const TemplateParams& params)
 {
 	std::map<std::wstring, std::wstring, std::less<>> info;
 
@@ -100,16 +100,16 @@ std::map<std::wstring, std::wstring, std::less<>> plugin_tvclub::parse_access_in
 	return info;
 }
 
-void plugin_tvclub::fill_servers_list(TemplateParams* params /*= nullptr*/)
+void plugin_tvclub::fill_servers_list(TemplateParams& params)
 {
-	if (!params || params->login.empty() || params->password.empty() || !get_servers_list().empty())
+	if (params.login.empty() || params.password.empty() || !get_servers_list().empty())
 		return;
 
 	std::vector<DynamicParamsInfo> servers;
 
 	Credentials creds;
-	creds.set_login(params->login);
-	creds.set_password(params->password);
+	creds.set_login(params.login);
+	creds.set_password(params.password);
 
 	const auto& url = fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"settings", get_api_token(creds));
 
@@ -130,7 +130,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams* params /*= nullptr*/)
 					const auto& server = item.value();
 					DynamicParamsInfo info{ utils::get_json_string("id", server), utils::get_json_string("name", server) };
 					if (info.get_id() == current)
-						params->server_idx = (int)servers.size();
+						params.server_idx = (int)servers.size();
 
 					servers.emplace_back(info);
 				}
@@ -146,7 +146,7 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 {
 	if (servers_list.empty())
 	{
-		fill_servers_list(&params);
+		fill_servers_list(params);
 	}
 
 	if (!servers_list.empty())

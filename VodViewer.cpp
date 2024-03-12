@@ -278,6 +278,8 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	params.login = m_account.get_login();
 	params.password = m_account.get_password();
 
+	m_plugin->update_provider_params(params);
+
 	auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
 
 	auto pThread = (CPlaylistParseJsonThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseJsonThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
@@ -371,6 +373,8 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	params.device_idx = m_account.device_id;
 	params.profile_idx = m_account.profile_id;
 	params.quality_idx = m_account.quality_id;
+
+	m_plugin->update_provider_params(params);
 
 	const auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
 
@@ -1222,9 +1226,12 @@ void CVodViewer::FilterList()
 
 void CVodViewer::FetchMovieCbilling(vod_movie& movie) const
 {
+	TemplateParams params;
+	m_plugin->update_provider_params(params);
+
 	CWaitCursor cur;
 
-	const auto& url = m_plugin->get_vod_url(TemplateParams()) + L"/video/" + movie.id;
+	const auto& url = m_plugin->get_vod_url(params) + L"/video/" + movie.id;
 	std::stringstream data;
 	if (url.empty() || !m_plugin->download_url(url, data))
 	{
@@ -1383,9 +1390,12 @@ void CVodViewer::FetchMovieEdem(vod_movie& movie) const
 
 void CVodViewer::FetchMovieSharavoz(vod_movie& movie) const
 {
+	TemplateParams params;
+	m_plugin->update_provider_params(params);
+
 	CWaitCursor cur;
 
-	const auto& api_url = m_plugin->get_vod_url(TemplateParams());
+	const auto& api_url = m_plugin->get_vod_url(params);
 	const auto& token = m_account.get_password();
 	const auto& base_url = fmt::format(L"{:s}/player_api.php?username={:s}&password={:s}", api_url, token, token);
 	std::wstring url;

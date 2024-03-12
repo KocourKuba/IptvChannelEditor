@@ -61,7 +61,6 @@ public:
 	/// regex of uri parse template
 	/// regex string can contain named groups that will be extracted
 	/// </summary>
-
 	const boost::wregex& get_regex_parse_stream() const { return regex_uri_template; }
 	void set_regex_parse_stream(const std::wstring& val);
 
@@ -79,18 +78,12 @@ public:
 	const std::string& get_internal_name_a() const { return internal_name; }
 
 	/// <summary>
-	/// returns array of playlists
-	/// </summary>
-	/// <returns>vector<PlaylistInfo>&</returns>
-	//const std::vector<PlaylistInfo>& get_playlists() const { return playlists; };
-
-	/// <summary>
 	/// returns link to vod download
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>wstring</returns>
-	std::wstring get_vod_url(TemplateParams& params);
-	std::wstring get_vod_url(size_t idx, TemplateParams& params);
+	std::wstring get_vod_url(const TemplateParams& params) const;
+	std::wstring get_vod_url(const size_t idx, const TemplateParams& params) const;
 
 	/// <summary>
 	/// parse entire epg
@@ -146,7 +139,7 @@ public:
 	/// is custom archive template url
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>
-	/// <returns>string url</returns>
+	/// <returns>bool url</returns>
 	bool is_custom_archive_template(bool is_template, size_t stream_idx, const std::wstring& url) const;
 
 	/// <summary>
@@ -165,22 +158,22 @@ public:
 	/// parse uri to get id
 	/// </summary>
 	/// <param name="url"></param>
-	void parse_stream_uri(const std::wstring& url, uri_stream* info);
+	void parse_stream_uri(const std::wstring& url, uri_stream& info);
 
 	/// <summary>
 	/// parse access info
 	/// </summary>
 	/// <param name="params">parameters used to download access info</param>
 	/// <param name="info_list">parsed parameters list</param>
-	/// <returns>bool</returns>
-	virtual std::map<std::wstring, std::wstring, std::less<>> parse_access_info(TemplateParams& params) { return {}; }
+	/// <returns>std::map<std::wstring, std::wstring, std::less<>></returns>
+	virtual std::map<std::wstring, std::wstring, std::less<>> parse_access_info(const TemplateParams& params) { return {}; }
 
 	/// <summary>
 	/// get url to obtain account playlist
 	/// </summary>
 	/// <param name="params">parameters used to download access info</param>
 	/// <returns>wstring</returns>
-	virtual std::wstring get_playlist_url(TemplateParams& params, std::wstring url = L"");
+	virtual std::wstring get_playlist_url(const TemplateParams& params, std::wstring url = L"");
 
 	/// <summary>
 	/// returns token from account if exist

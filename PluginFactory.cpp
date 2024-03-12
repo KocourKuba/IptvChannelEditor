@@ -176,12 +176,12 @@ bool PluginFactory::load_configs()
 	const auto& url = fmt::format(L"http://iptv.esalecrm.net/editor/configs?ver={:d}.{:d}.{:d}", MAJOR, MINOR, BUILD);
 	utils::CUrlDownload dl;
 	dl.SetUserAgent(fmt::format(L"IPTV Channel Editor/{:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
-	dl.SetCacheTtl(3600);
+	dl.SetCacheTtl(3600 * 3);
 
 	if (!dl.DownloadFile(url, data))
 	{
 #endif // _DEBUG
-		std::ifstream in_file(GetAppPath() + L"defaults_8.0.json");
+		std::ifstream in_file(fmt::format(L"{:s}defaults_{:d}.{:d}.json", GetAppPath(), MAJOR, MINOR));
 		if (in_file.good())
 		{
 			data << in_file.rdbuf();

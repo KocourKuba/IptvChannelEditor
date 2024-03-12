@@ -37,7 +37,7 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
 
-std::map<std::wstring, std::wstring, std::less<>> plugin_itv::parse_access_info(TemplateParams& params)
+std::map<std::wstring, std::wstring, std::less<>> plugin_itv::parse_access_info(const TemplateParams& params)
 {
 	std::map<std::wstring, std::wstring, std::less<>> info;
 

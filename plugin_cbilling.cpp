@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-std::map<std::wstring, std::wstring, std::less<>> plugin_cbilling::parse_access_info(TemplateParams& params)
+std::map<std::wstring, std::wstring, std::less<>> plugin_cbilling::parse_access_info(const TemplateParams& params)
 {
 	/*
 	{

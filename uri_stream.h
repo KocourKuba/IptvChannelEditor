@@ -45,7 +45,7 @@ public:
 	uri_stream() = default;
 	uri_stream(const uri_stream& src)
 	{
-		*this = src;
+		copy_data(src);
 	}
 
 	uri_stream(InfoType type, std::shared_ptr<base_plugin> plugin/*, std::wstring root_path*/)
@@ -183,7 +183,10 @@ public:
 
 	void copy_data(const uri_stream& src)
 	{
-		*this = src;
+		if (this != &src)
+		{
+			*this = src;
+		}
 	}
 
 	uri_stream& operator=(const uri_stream& src);

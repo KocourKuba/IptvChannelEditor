@@ -242,7 +242,9 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	params.quality_idx = cred.quality_id;
 	params.playlist_idx = m_wndVodTemplates.GetCurSel();
 
+	GetPropertySheet()->m_plugin->update_provider_params(params);
 	CWaitCursor cur;
+
 	const auto& url = GetPropertySheet()->m_plugin->get_vod_url(params);
 	std::stringstream data;
 	if (GetPropertySheet()->m_plugin->download_url(url, data))
@@ -339,6 +341,8 @@ void CPluginConfigPageVOD::OnBnClickedCheckPlaylistShowLink()
 		params.profile_idx = cred.profile_id;
 		params.quality_idx = cred.quality_id;
 		params.playlist_idx = m_wndVodTemplates.GetCurSel();
+
+		GetPropertySheet()->m_plugin->update_provider_params(params);
 
 		m_VodPlaylistTemplate = GetPropertySheet()->m_plugin->get_vod_url(params).c_str();
 	}

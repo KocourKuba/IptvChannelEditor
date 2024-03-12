@@ -30,5 +30,5 @@ DEALINGS IN THE SOFTWARE.
 class plugin_cbilling : public base_plugin
 {
 public:
-	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(TemplateParams& params) override;
+	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(const TemplateParams& params) override;
 };

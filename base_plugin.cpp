@@ -35,29 +35,29 @@ DEALINGS IN THE SOFTWARE.
 
 #include "7zip\SevenZipWrapper.h"
 
-void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream* info)
+void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream& info)
 {
-	info->set_uri(url);
+	info.set_uri(url);
 
 	boost::wsmatch m;
 	if (regex_uri_template.empty() || !boost::regex_match(url, m, regex_uri_template))
 	{
-		info->set_is_template(false);
+		info.set_is_template(false);
 		return;
 	}
 
-	info->set_is_template(true);
+	info.set_is_template(true);
 
 	// map groups to parser members
 	size_t pos = 1;
 	for (const auto& group : regex_named_groups)
 	{
-		auto setter = info->parser_mapper[group];
-		(info->*setter)(m[pos++].str());
+		auto setter = info.parser_mapper[group];
+		(info.*setter)(m[pos++].str());
 	}
 }
 
-std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring url /*= L""*/)
+std::wstring base_plugin::get_playlist_url(const TemplateParams& params, std::wstring url /*= L""*/)
 {
 	const auto& info = get_playlist_info(params.playlist_idx);
 	set_regex_parse_stream(info.get_parse_regex());
@@ -85,14 +85,12 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 	if (!params.ott_key.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.ott_key);
 
-	fill_domains_list(&params);
 	if (!domains_list.empty())
 	{
 		size_t domain = ((params.domain_idx >= (int)domains_list.size()) ? domains_list.size() - 1 : params.domain_idx);
 		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
 	}
 
-	fill_servers_list(&params);
 	if (!servers_list.empty())
 	{
 		size_t server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
@@ -100,21 +98,18 @@ std::wstring base_plugin::get_playlist_url(TemplateParams& params, std::wstring 
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
 	}
 
-	fill_devices_list(&params);
 	if (!devices_list.empty())
 	{
 		size_t device = (params.device_idx >= (int)devices_list.size()) ? devices_list.size() - 1 : params.device_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[device].get_id());
 	}
 
-	fill_qualities_list(&params);
 	if (!qualities_list.empty())
 	{
 		size_t quality = (params.quality_idx >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.quality_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[quality].get_id());
 	}
 
-	fill_profiles_list(&params);
 	if (!profiles_list.empty())
 	{
 		size_t profile = (params.profile_idx >= (int)profiles_list.size()) ? profiles_list.size() - 1 : params.profile_idx;
@@ -258,24 +253,22 @@ void base_plugin::set_regex_parse_stream(const std::wstring& val)
 	}
 }
 
-std::wstring base_plugin::get_vod_url(TemplateParams& params)
+std::wstring base_plugin::get_vod_url(const TemplateParams& params) const
 {
 	return get_vod_url(get_vod_info_idx(), params);
 }
 
-std::wstring base_plugin::get_vod_url(size_t idx, TemplateParams& params)
+std::wstring base_plugin::get_vod_url(size_t idx, const TemplateParams& params) const
 {
 	const auto& info = get_vod_info(idx);
 	std::wstring url = info.get_pl_template();
 
-	fill_domains_list(&params);
 	if (!domains_list.empty())
 	{
 		size_t domain = (params.domain_idx >= (int)domains_list.size()) ? domains_list.size() - 1 : params.domain_idx;
 		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
 	}
 
-	fill_servers_list(&params);
 	if (!servers_list.empty())
 	{
 		size_t server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;

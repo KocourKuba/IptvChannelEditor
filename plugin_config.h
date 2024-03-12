@@ -731,6 +731,12 @@ public:
 	virtual void set_manifest_list(const std::vector<DynamicParamsInfo>& info) { manifest_list = info; }
 
 	/// <summary>
+	/// update servers/domains/profiles/devices/qualities
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	void update_provider_params(TemplateParams& params);
+
+	/// <summary>
 	/// clear servers list
 	/// </summary>
 	void clear_servers_list() { servers_list.clear(); }
@@ -738,7 +744,7 @@ public:
 	/// returns list of servers
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	virtual void fill_servers_list(TemplateParams* params = nullptr) {}
+	virtual void fill_servers_list(TemplateParams& params) {}
 
 	/// <summary>
 	/// set server
@@ -762,8 +768,7 @@ public:
 	/// returns list of device variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<QualityInfo></returns>
-	virtual void fill_devices_list(TemplateParams* params = nullptr) {}
+	virtual void fill_devices_list(TemplateParams& params) {}
 
 	/// <summary>
 	/// set device
@@ -787,8 +792,7 @@ public:
 	/// fill list of quality variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<QualityInfo></returns>
-	virtual void fill_qualities_list(TemplateParams* params = nullptr) {}
+	virtual void fill_qualities_list(TemplateParams& params) {}
 
 	/// <summary>
 	/// set quality
@@ -811,9 +815,7 @@ public:
 	/// <summary>
 	/// fill list of profiles variants
 	/// </summary>
-	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<QualityInfo></returns>
-	virtual void fill_profiles_list(TemplateParams* params = nullptr) {}
+	virtual void fill_profiles_list(TemplateParams& params) {}
 
 	/// <summary>
 	/// set profile
@@ -838,8 +840,7 @@ public:
 	/// fill list of domains variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	/// <returns>vector<QualityInfo></returns>
-	virtual void fill_domains_list(TemplateParams* params = nullptr) {}
+	virtual void fill_domains_list(TemplateParams& params) {}
 
 	/// <summary>
 	/// property list of domains
