@@ -55,6 +55,7 @@ constexpr auto PACK_PATH = L"{:s}_plugin\\";
 
 static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
 static HANDLE g_hAppRunningMutex = nullptr;
+std::string g_szServerPath = "http://iptv.esalecrm.net";
 
 static void SetupExceptionHandler()
 {
@@ -846,7 +847,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 	// save config
 	utils::CBase64Coder enc;
-	enc.Encode("http://iptv.esalecrm.net/upload/", 0, ATL_BASE64_FLAG_NOCRLF | ATL_BASE64_FLAG_NOPAD);
+	enc.Encode(g_szServerPath.c_str(), 0, ATL_BASE64_FLAG_NOCRLF | ATL_BASE64_FLAG_NOPAD);
 
 	int idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	plugin->set_playlist_idx(idx);
@@ -975,7 +976,7 @@ bool PackPlugin(const PluginType plugin_type,
 
 		// <check_update>
 		//	 <schema>2</schema>
-		//	 <url>http://iptv.esalecrm.net/update/update_edem_mod.xml</url>
+		//	 <url>http://mysite.net/update/update_edem_mod.xml</url>
 		//	 <timeout>0</timeout>
 		// </check_update>
 

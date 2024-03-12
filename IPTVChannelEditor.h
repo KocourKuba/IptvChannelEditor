@@ -109,3 +109,4 @@ std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel = fals
 std::string  GetPluginTypeNameA(const PluginType plugin_type, bool bCamel = false);
 
 extern CIPTVChannelEditorApp theApp;
+extern std::string g_szServerPath;

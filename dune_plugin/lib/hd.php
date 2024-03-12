@@ -441,16 +441,6 @@ class HD
         $apk_subst = getenv('FS_PREFIX');
         $plugin_name = get_plugin_name();
 
-        if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name.log")) {
-            $paths[] = "$apk_subst/D/dune_plugin_logs/$plugin_name.*";
-        }
-        if (file_exists("$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.log")) {
-            $paths[] = "$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.*";
-        }
-        if (file_exists("$apk_subst/tmp/run/$plugin_name.log")) {
-            $paths[] = "$apk_subst/tmp/run/$plugin_name.*";
-        }
-
         $paths = array(
             get_install_path("config.json"),
             get_install_path("dune_plugin.xml"),
@@ -460,8 +450,17 @@ class HD
             get_temp_path("*.m3u8"),
             "$apk_subst/$plugin_name-updater.log",
             "$apk_subst/tmp/run/shell.*",
-            $plugin_logs,
         );
+
+        if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name.log")) {
+            $paths[] = "$apk_subst/D/dune_plugin_logs/$plugin_name.*";
+        }
+        if (file_exists("$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.log")) {
+            $paths[] = "$apk_subst/tmp/mnt/D/dune_plugin_logs/$plugin_name.*";
+        }
+        if (file_exists("$apk_subst/tmp/run/$plugin_name.log")) {
+            $paths[] = "$apk_subst/tmp/run/$plugin_name.*";
+        }
 
         $files = array();
         foreach ($paths as $path) {
@@ -484,7 +483,7 @@ class HD
 
             $handle = fopen($zip_file, 'rb');
             if (is_resource($handle)) {
-                self::http_put_document(base64_decode(self::$dev_code, true) . $zip_file_name, $handle, filesize($zip_file));
+                self::http_put_document(base64_decode(self::$dev_code, true) . "/upload/". $zip_file_name, $handle, filesize($zip_file));
                 hd_debug_print("Log file sent");
                 $ret = true;
             }

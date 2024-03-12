@@ -173,7 +173,7 @@ bool PluginFactory::load_configs()
 	std::stringstream data;
 
 #ifndef _DEBUG
-	const auto& url = fmt::format(L"http://iptv.esalecrm.net/editor/configs?ver={:d}.{:d}.{:d}", MAJOR, MINOR, BUILD);
+	const auto& url = fmt::format(L"{:s}/editor/configs?ver={:d}.{:d}.{:d}", utils::utf8_to_utf16(g_szServerPath), MAJOR, MINOR, BUILD);
 	utils::CUrlDownload dl;
 	dl.SetUserAgent(fmt::format(L"IPTV Channel Editor/{:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
 	dl.SetCacheTtl(3600 * 3);
