@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20240225164420" scan="300" scanned="20240225164346">
+<document created="20211012165442" version="4.0.374" date="20240312215606" scan="302" scanned="20240312215533">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240225154056" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240312205528" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -1269,9 +1269,9 @@
             <row id="Y">64</row>
           </component>
           <component class="TVisComboBox" name="1084" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
-            <row id="CX" changed="20221018224522">98</row>
+            <row id="CX" changed="20240312215344">132</row>
             <row id="CY">30</row>
-            <row id="X" changed="20221114231550">206</row>
+            <row id="X" changed="20240312215344">177</row>
             <row id="Y" changed="20230322213649">7</row>
           </component>
           <component class="TVisComboBox" name="1034" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
@@ -1404,7 +1404,7 @@
             <row id="CX" changed="20221018224522">22</row>
             <row id="CY" changed="20221018224522">19</row>
             <row id="Text" locked="1">...</row>
-            <row id="X" changed="20221114231550">309</row>
+            <row id="X" changed="20240312215344">314</row>
             <row id="Y" changed="20230322213649">4</row>
           </component>
           <component class="TVisButton" name="1143" created="20220512175419" type="button" picture="1">
@@ -1414,7 +1414,7 @@
               <native>View Video on Demand</native>
               <lang id="ru">Обзор Медиатеки</lang>
             </row>
-            <row id="X" changed="20221114231550">357</row>
+            <row id="X" changed="20240312215344">364</row>
             <row id="Y" changed="20230322213649">4</row>
           </component>
           <component class="TVisButton" name="1145" created="20230402185811" type="button" picture="1">
@@ -1444,7 +1444,7 @@
               <native>Edit Plugin Config</native>
               <lang id="ru" date="20221001005354">Редактирование плагина</lang>
             </row>
-            <row id="X" changed="20221114231550">333</row>
+            <row id="X" changed="20240312215344">339</row>
             <row id="Y" changed="20230322213649">4</row>
           </component>
           <component class="TVisButton" name="1001" type="button">
@@ -2471,10 +2471,7 @@
               <native>Enable Balance info</native>
               <lang id="ru" date="20230531235233">Показывать баланс</lang>
             </row>
-            <row id="X" state="3" changed="20240225163450">
-              <prev>199</prev>
-              <native>109</native>
-            </row>
+            <row id="X" changed="20240225163450">109</row>
             <row id="Y">71</row>
           </component>
           <component class="TVisLabel" name="STATIC_Provider_API" created="20230531235148" type="static" unnamed="1" autosize="0" wordwrap="1">
@@ -2864,15 +2861,15 @@
             <row id="X">7</row>
             <row id="Y" changed="20231203211951">189</row>
           </component>
-          <component class="TVisCheckBox" name="1201" state="0" created="20240225163450" type="button">
-            <row id="CX" state="0">89</row>
-            <row id="CY" state="0">10</row>
-            <row id="Text" state="0">
+          <component class="TVisCheckBox" name="1201" created="20240225163450" type="button">
+            <row id="CX">89</row>
+            <row id="CY">10</row>
+            <row id="Text">
               <native>Square Icons</native>
               <lang id="ru">Квадратные иконки</lang>
             </row>
-            <row id="X" state="0">129</row>
-            <row id="Y" state="0">59</row>
+            <row id="X">129</row>
+            <row id="Y">59</row>
           </component>
           <component class="TVisComboBox" name="1220" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
             <row id="CX" changed="20230519222351">97</row>
@@ -3942,7 +3939,7 @@
           <native>Stream type used to play stream</native>
           <lang id="ru" date="20221018224606">Тип потока для проигрывания канала</lang>
         </row>
-        <row id="IDS_STRING_EDEM_THEMATIC_SORTED" state="0" created="20240225164346">
+        <row id="IDS_STRING_EDEM_THEMATIC_SORTED" created="20240225164346">
           <native>Thematic Sorted</native>
           <lang id="ru">Тематический упорядоченный</lang>
         </row>
@@ -4173,10 +4170,7 @@
           <native>None</native>
           <lang id="ru" date="20220512175532" savedtotm="1">Нет</lang>
         </row>
-        <row id="IDS_STRING_PAYPAL" locked="1" state="3" created="20220331213759" changed="20240225163450">
-          <prev>aHR0cHM6Ly93d3cucGF5cGFsLmNvbS9jZ2ktYmluL3dlYnNjcj9jbWQ9X2RvbmF0aW9ucyZidXNpbmVzcz01RFk3UEVTWkw0RDhMJmN1cnJlbmN5X2NvZGU9VVNEJmFtb3VudD01</prev>
-          <native>aHR0cHM6Ly93d3cucGF5cGFsLmNvbS9kb25hdGUvP2J1c2luZXNzPTVEWTdQRVNaTDREOEwmYW1vdW50PTUmbm9fcmVjdXJyaW5nPTAmY3VycmVuY3lfY29kZT1VU0Q=</native>
-        </row>
+        <row id="IDS_STRING_PAYPAL" locked="1" created="20220331213759" changed="20240225163450">aHR0cHM6Ly93d3cucGF5cGFsLmNvbS9kb25hdGUvP2J1c2luZXNzPTVEWTdQRVNaTDREOEwmYW1vdW50PTUmbm9fcmVjdXJyaW5nPTAmY3VycmVuY3lfY29kZT1VU0Q=</row>
         <row id="IDS_STRING_SEASON" created="20220512175419">
           <native>Season</native>
           <lang id="ru" date="20220512175440">Сезон</lang>
@@ -4761,171 +4755,9 @@
         </row>
       </node>
       <node class="TWindowsStringNode" name="26" created="20220730092432" resid="26" langid="1033">
-        <row id="IDS_STRING_FILMAX_P1" locked="1">Germany</row>
-        <row id="IDS_STRING_FILMAX_P10" locked="1">Saint Petersburg 2</row>
-        <row id="IDS_STRING_FILMAX_P2" locked="1">Poland</row>
-        <row id="IDS_STRING_FILMAX_P3" locked="1">Russia, Moscow</row>
-        <row id="IDS_STRING_FILMAX_P5" locked="1">Russia, Saint Petersburg</row>
-        <row id="IDS_STRING_FILMAX_P9" locked="1" changed="20231203211951">Moscow 2</row>
-      </node>
-      <node class="TWindowsStringNode" name="27" created="20220730092432" resid="27" langid="1033">
-        <row id="IDS_STRING_CBILLING_TV_P1">
-          <native>Device 1</native>
-          <lang id="ru">Устройство 1</lang>
-        </row>
-        <row id="IDS_STRING_CBILLING_TV_P2">
-          <native>Device 2</native>
-          <lang id="ru">Устройство 2</lang>
-        </row>
-        <row id="IDS_STRING_SHURA_TV_P1" locked="1">Server 1</row>
-        <row id="IDS_STRING_SHURA_TV_P2" locked="1">Server 2</row>
-      </node>
-      <node class="TWindowsStringNode" name="28" created="20220730092432" resid="28" langid="1033">
-        <row id="IDS_STRING_CBILLING_TV_P3">
-          <native>Device 3</native>
-          <lang id="ru">Устройство 3</lang>
-        </row>
-      </node>
-      <node class="TWindowsStringNode" name="29" created="20220730092432" resid="29" langid="1033">
-        <row id="IDS_STRING_VIPLIME_P1">
-          <native>High</native>
-          <lang id="ru">Высокое</lang>
-        </row>
-        <row id="IDS_STRING_VIPLIME_P2">
-          <native>Middle</native>
-          <lang id="ru">Среднее</lang>
-        </row>
-        <row id="IDS_STRING_VIPLIME_P3">
-          <native>Low</native>
-          <lang id="ru">Низкое</lang>
-        </row>
-        <row id="IDS_STRING_VIPLIME_P4">
-          <native>Adaptive</native>
-          <lang id="ru">Адаптивное</lang>
-        </row>
-      </node>
-      <node class="TWindowsStringNode" name="30" created="20220730092432" resid="30" langid="1033">
-        <row id="IDS_STRING_KINESKOP_P1" locked="1">DE</row>
-        <row id="IDS_STRING_KINESKOP_P2" locked="1">PL</row>
-        <row id="IDS_STRING_KINESKOP_P3" locked="1">US</row>
-        <row id="IDS_STRING_KINESKOP_P4" locked="1">RU</row>
-        <row id="IDS_STRING_VIPLIME_P5">
-          <native>Optimal</native>
-          <lang id="ru" date="20220730092551">Оптимальное</lang>
-        </row>
-      </node>
-      <node class="TWindowsStringNode" name="31" created="20220916215311" resid="31" langid="1033">
-        <row id="IDS_STRING_MYMAGIC_P0" locked="1">Default</row>
-        <row id="IDS_STRING_MYMAGIC_P1" locked="1">Germany 1</row>
-        <row id="IDS_STRING_MYMAGIC_P2" locked="1">Czech</row>
-        <row id="IDS_STRING_MYMAGIC_P3" locked="1">Germany 2</row>
-        <row id="IDS_STRING_MYMAGIC_P4" locked="1">Spain</row>
-        <row id="IDS_STRING_MYMAGIC_P5" locked="1">Netherlands</row>
-        <row id="IDS_STRING_MYMAGIC_P6" locked="1">France</row>
-        <row id="IDS_STRING_MYMAGIC_Q1" locked="1">Medium</row>
-        <row id="IDS_STRING_MYMAGIC_Q2" locked="1">High</row>
-        <row id="IDS_STRING_SHARAVOZ_P1" locked="1" created="20230116163311">Russia (RU01)</row>
-      </node>
-      <node class="TWindowsStringNode" name="32" created="20230116163311" resid="32" langid="1033">
-        <row id="IDS_STRING_SHARAVOZ_P2" locked="1">Moscow (RU02)</row>
-        <row id="IDS_STRING_SHARAVOZ_P3" locked="1">Amsterdam (NL01)</row>
-        <row id="IDS_STRING_SHARAVOZ_P4" locked="1">Amsterdam (AM01)</row>
-        <row id="IDS_STRING_SHARAVOZ_P5" locked="1">France (FR01)</row>
-        <row id="IDS_STRING_SHARAVOZ_P6" locked="1">Zurich (CH01)</row>
-        <row id="IDS_STRING_SHARAVOZ_P7" locked="1" created="20230415234401">Europe (EU01)</row>
-        <row id="IDS_STRING_SHARAVOZ_P8" locked="1" created="20230415234401">Poland (PL01)</row>
-        <row id="IDS_STRING_YOSSO_ID1" locked="1" created="20230214231128" changed="20231106150713">/</row>
-        <row id="IDS_STRING_YOSSO_ID2" locked="1" created="20230214231128" changed="20231106150713">kfc/</row>
-        <row id="IDS_STRING_YOSSO_ID3" locked="1" created="20230214231128" changed="20231106150713">OSTHLS/</row>
-        <row id="IDS_STRING_YOSSO_ID4" locked="1" created="20230214231128" changed="20231106150713">KRDHLS/</row>
-        <row id="IDS_STRING_YOSSO_ID5" locked="1" created="20230214231128" changed="20231106150713">bn/</row>
-        <row id="IDS_STRING_YOSSO_ID6" locked="1" created="20230214231128" changed="20231106150713">BYHLS/</row>
-        <row id="IDS_STRING_YOSSO_ID7" locked="1" created="20230214231128" changed="20231106150713">de/</row>
-      </node>
-      <node class="TWindowsStringNode" name="33" created="20230214231128" resid="33" langid="1033">
-        <row id="IDS_STRING_YOSSO_ID10" locked="1" changed="20231106150713">RHLS/</row>
-        <row id="IDS_STRING_YOSSO_ID8" locked="1" changed="20231106150713">kz/</row>
-        <row id="IDS_STRING_YOSSO_ID9" locked="1" changed="20231106150713">gn/</row>
-        <row id="IDS_STRING_YOSSO_P1" locked="1">RU (Russia, Moscow)</row>
-        <row id="IDS_STRING_YOSSO_P2" locked="1">KFC (Russia, Moscow)</row>
-        <row id="IDS_STRING_YOSSO_P3" locked="1">OSTHLS (Russia, Moscow)</row>
-        <row id="IDS_STRING_YOSSO_P4" locked="1">KRDHLS (Russia, Krasnodar)</row>
-        <row id="IDS_STRING_YOSSO_P5" locked="1">BN (Russia, Saint-Petersburg)</row>
-        <row id="IDS_STRING_YOSSO_P6" locked="1">BYHLS (Belarus, Minsk)</row>
-        <row id="IDS_STRING_YOSSO_P7" locked="1">DE (Germany, Frankfurt/Netherlands, Amsterdam)</row>
-        <row id="IDS_STRING_YOSSO_P8" locked="1">KZ (Kazakhstan, Almaty/Russia, Samara)</row>
-      </node>
-      <node class="TWindowsStringNode" name="34" created="20230214231128" resid="34" langid="1033">
-        <row id="IDS_STRING_SMILE_P0" locked="1" created="20230610233400">Auto Select</row>
-        <row id="IDS_STRING_SMILE_P1" locked="1" created="20230610233400">Server CZ</row>
-        <row id="IDS_STRING_SMILE_P2" locked="1" created="20230610233400">Server DE</row>
-        <row id="IDS_STRING_SMILE_P3" locked="1" created="20230610233400">Server NL</row>
-        <row id="IDS_STRING_SMILE_P4" locked="1" created="20230610233400">Server RU</row>
-        <row id="IDS_STRING_YOSSO_P10" locked="1">RHLS (GlobalCache CDN)</row>
-        <row id="IDS_STRING_YOSSO_P9" locked="1">GN (Ukraine, Kiev)</row>
-      </node>
-      <node class="TWindowsStringNode" name="35" created="20231210154303" resid="35" langid="1033">
-        <row id="IDS_STRING_IPTVONLINE_P0">
-          <native>Poland</native>
-          <lang id="ru" date="20231210154310">Польша</lang>
-        </row>
-        <row id="IDS_STRING_IPTVONLINE_P1">
-          <native>Germany</native>
-          <lang id="ru" date="20231210154315">Германия</lang>
-        </row>
-        <row id="IDS_STRING_IPTVONLINE_P2">
-          <native>Netherlands</native>
-          <lang id="ru" date="20231210154329">Нидерланды</lang>
-        </row>
-        <row id="IDS_STRING_IPTVONLINE_P3">
-          <native>Russia</native>
-          <lang id="ru" date="20231210154333">Россия</lang>
-        </row>
-        <row id="IDS_STRING_IPTVONLINE_P4">
-          <native>Canada</native>
-          <lang id="ru" date="20231210154338">Канада</lang>
-        </row>
-        <row id="IDS_STRING_IPTVONLINE_P5">
-          <native>Greece</native>
-          <lang id="ru" date="20231210154343">Греция</lang>
-        </row>
-        <row id="IDS_STRING_IPTVONLINE_P6">
-          <native>Ukraine</native>
-          <lang id="ru" date="20231210154348">Украина</lang>
-        </row>
-      </node>
-      <node class="TWindowsStringNode" name="36" created="20231217155324" resid="36" langid="1033">
-        <row id="IDS_STRING_SATQ_P0">
-          <native>Germany</native>
-          <lang id="ru">Германия</lang>
-        </row>
-        <row id="IDS_STRING_SATQ_P1">
-          <native>Poland 1</native>
-          <lang id="ru" date="20231217155333">Польша 1</lang>
-        </row>
-        <row id="IDS_STRING_SATQ_P2">
-          <native>Poland 2</native>
-          <lang id="ru" date="20231217155339">Польша 2</lang>
-        </row>
-        <row id="IDS_STRING_SATQ_P3">
-          <native>Moscow 1</native>
-          <lang id="ru" date="20231217155343">Москва 1</lang>
-        </row>
-        <row id="IDS_STRING_SATQ_P4">
-          <native>Moscow 2</native>
-          <lang id="ru" date="20231217155347">Москва 2</lang>
-        </row>
-        <row id="IDS_STRING_SATQ_P5">
-          <native>Netherlands 1</native>
-          <lang id="ru" date="20231217155355">Нидерланды 1</lang>
-        </row>
-        <row id="IDS_STRING_SATQ_P6">
-          <native>Netherlands 2</native>
-          <lang id="ru" date="20231217155358">Нидерланды 2</lang>
-        </row>
-        <row id="IDS_STRING_SATQ_P7">
-          <native>Netherlands 3</native>
-          <lang id="ru" date="20231217155401">Нидерланды 3</lang>
+        <row id="IDS_STRING_ERR_CANT_LOAD_CONFIG" created="20240312215344" changed="20240312215533">
+          <native>Can't load plugins configurations!</native>
+          <lang id="ru" date="20240312215421">Не могу загрузить конфигурации плагинов!</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="38" created="20230501182521" resid="38" langid="1033">
@@ -4981,16 +4813,16 @@
           <lang id="ru" date="20230601163639">Доменная ссылка VOD плейлиста. Это значение используется для макроса {VOD_DOMAIN}</lang>
         </row>
       </node>
-      <node class="TWindowsStringNode" name="40" state="0" created="20240225163450" resid="40" langid="1033">
-        <row id="IDS_STRING_EDEM_STANDARD_SQ" state="0">
+      <node class="TWindowsStringNode" name="40" created="20240225163450" resid="40" langid="1033">
+        <row id="IDS_STRING_EDEM_STANDARD_SQ">
           <native>Standard (Square icons)</native>
           <lang id="ru" date="20240225163624">Стандартный (Квадратные иконки)</lang>
         </row>
-        <row id="IDS_STRING_EDEM_THEMATIC_SORTED_SQ" state="0">
+        <row id="IDS_STRING_EDEM_THEMATIC_SORTED_SQ">
           <native>Thematic Sorted (Square icons)</native>
           <lang id="ru" date="20240225163749">Тематический упорядоченный (Квадратные иконки)</lang>
         </row>
-        <row id="IDS_STRING_EDEM_THEMATIC_SQ" state="0">
+        <row id="IDS_STRING_EDEM_THEMATIC_SQ">
           <native>Thematic (Square icons)</native>
           <lang id="ru" date="20240225163704">Тематический (Квадратные иконки)</lang>
         </row>
@@ -5060,29 +4892,17 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20240225163450">
-          <prev>7.1.1912, 31 Jan 2024</prev>
-          <native>7.1.1920, 24 Feb 2024</native>
-        </row>
-        <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20231106150713">7</row>
-        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20231106150713">1</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240225163450">
-          <prev>1912</prev>
-          <native>1920</native>
-        </row>
+        <row id="FileVersion" locked="1" changed="20240312215344">8.0.1935, 10 Mar 2024</row>
+        <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
+        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20240312215344">0</row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" changed="20240312215344">1935</row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20240225163450">
-          <prev>7.1.1912</prev>
-          <native>7.1.1920</native>
-        </row>
-        <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20231106150713">7</row>
-        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20231106150713">1</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240225163450">
-          <prev>1912</prev>
-          <native>1920</native>
-        </row>
+        <row id="ProductVersion" hidden="1" changed="20240312215344">8.0.1935</row>
+        <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
+        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20240312215344">0</row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" changed="20240312215344">1935</row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
     </node>
