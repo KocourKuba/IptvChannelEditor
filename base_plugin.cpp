@@ -279,7 +279,7 @@ std::wstring base_plugin::get_vod_url(size_t idx, const TemplateParams& params) 
 	if (!get_provider_api_url().empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
 
-	if (!params.login.empty())
+	if (!params.s_token.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.s_token);
 
 

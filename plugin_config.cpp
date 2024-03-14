@@ -94,7 +94,7 @@ void plugin_config::clear()
 {
 	title.clear();
 	name.clear();
-	user_agent.clear();
+	user_agent = "DuneHD/1.0";
 	access_type = AccountAccessType::enNone;
 	provider_url.clear();
 
@@ -111,6 +111,7 @@ void plugin_config::clear()
 	domains_list.clear();
 
 	static_servers = false;
+	static_domains = false;
 	static_qualities = false;
 	static_devices = false;
 	static_profiles = false;
@@ -129,6 +130,7 @@ void plugin_config::clear()
 	vod_template_index = 0;
 	vod_templates.clear();
 	vod_engine = VodEngine::enNone;
+	vod_filter = false;
 	PlaylistTemplateInfo vod_info(IDS_STRING_EDEM_STANDARD);
 	vod_templates.emplace_back(vod_info);
 

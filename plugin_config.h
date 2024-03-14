@@ -26,8 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include <variant>
-#include "PluginDefines.h"
 #include "IPTVChannelEditor.h"
+
 #include "UtilsLib\json_wrapper.h"
 #include "UtilsLib\inet_utils.h"
 
@@ -970,7 +970,7 @@ protected:
 	bool static_qualities = false;
 	bool static_devices = false;
 	bool static_profiles = false;
-	bool static_domains = true;
+	bool static_domains = false;
 	// selected playlist template
 	size_t playlist_template_index = 0;
 	// available playlist templates

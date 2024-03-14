@@ -230,8 +230,9 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 {
 	auto& cred = GetPropertySheet()->m_selected_cred;
 
+	const auto& plugin = GetPropertySheet()->m_plugin;
 	TemplateParams params;
-	params.s_token = GetPropertySheet()->m_plugin->get_api_token(cred);
+	params.s_token = plugin->get_api_token(cred);
 	params.login = cred.get_login();
 	params.password = cred.get_password();
 	params.ott_key = cred.get_ott_key();
@@ -242,12 +243,12 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	params.quality_idx = cred.quality_id;
 	params.playlist_idx = m_wndVodTemplates.GetCurSel();
 
-	GetPropertySheet()->m_plugin->update_provider_params(params);
+	plugin->update_provider_params(params);
 	CWaitCursor cur;
 
-	const auto& url = GetPropertySheet()->m_plugin->get_vod_url(params);
+	const auto& url = plugin->get_vod_url(params);
 	std::stringstream data;
-	if (GetPropertySheet()->m_plugin->download_url(url, data))
+	if (plugin->download_url(url, data))
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"vod.m3u8";
 
@@ -266,7 +267,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	}
 	else
 	{
-		AfxMessageBox(GetPropertySheet()->m_plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
+		AfxMessageBox(plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
 	}
 }
 

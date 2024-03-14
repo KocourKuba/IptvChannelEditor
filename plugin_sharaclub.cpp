@@ -66,7 +66,7 @@ void plugin_sharaclub::configure_provider_plugin()
 
 std::wstring plugin_sharaclub::get_playlist_url(const TemplateParams& params, std::wstring url /* = L"" */)
 {
-	url = get_playlist_info(params.playlist_idx).get_pl_template();
+	url = get_playlist_info(params.playlist_idx).get_pl_template(); //-V763
 	if (params.profile_idx != 0)
 	{
 		const auto& profiles = get_profiles_list();
