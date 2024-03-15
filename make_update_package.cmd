@@ -50,7 +50,7 @@ set pkg=package\%BUILD%
 md "%ROOT%%pkg%" >nul 2>&1
 copy "%BUILD_PATH%\%BUILD_NAME%.exe"					"%pkg%" >nul
 copy "%BUILD_PATH%\%BUILD_NAME%RUS.dll"					"%pkg%" >nul
-copy "%ROOT%Updater\%BUILD_TYPE%\Updater.exe"			"%pkg%" >nul
+copy "%BUILD_PATH%\Updater.exe"							"%pkg%" >nul
 copy "%ROOT%dll\7z.dll"									"%pkg%" >nul
 copy "%ROOT%BugTrap\bin\BugTrapU.dll"					"%pkg%" >nul
 copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul

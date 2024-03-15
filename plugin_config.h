@@ -50,13 +50,15 @@ enum class StreamType
 {
 	enHLS = 0,
 	enMPEGTS,
+	enLast,
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(StreamType,
 {
 	{ StreamType::enHLS,    "hls"  },
-	{ StreamType::enMPEGTS, "mpeg" }
-})
+	{ StreamType::enMPEGTS, "mpeg" },
+	{ StreamType::enLast,   "" }
+							 })
 
 enum class CatchupType {
 	cu_shift,
@@ -368,7 +370,7 @@ struct EpgParameters
 /// </summary>
 struct StreamParameters
 {
-	StreamType stream_type = StreamType::enHLS;
+	StreamType stream_type = StreamType::enLast;
 	CatchupType cu_type = CatchupType::cu_shift;
 	int cu_duration = 10800;
 
@@ -449,13 +451,12 @@ class plugin_config
 public:
 	plugin_config();
 
-protected:
+public:
 	/// <summary>
 	/// load default settings
 	/// </summary>
 	void clear();
 
-public:
 	/// <summary>
 	/// copy info
 	/// </summary>

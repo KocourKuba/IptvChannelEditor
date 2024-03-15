@@ -208,6 +208,7 @@ bool PluginFactory::load_configs()
 		for (const auto& item : config["plugins"].items())
 		{
 			plugin_config cfg;
+			cfg.clear();
 			plugin_config::from_json_wrapper(item.value(), cfg);
 			m_config_storage.emplace(item.key(), cfg);
 		}
