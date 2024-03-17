@@ -809,12 +809,12 @@ bool PackPlugin(const PluginType plugin_type,
 	{
 		if (cred.custom_logo && !cred.logo.empty())
 		{
-			plugin_logo = cred.logo;
+			plugin_logo = utils::utf8_to_utf16(cred.logo);
 		}
 
 		if (cred.custom_background && !cred.background.empty())
 		{
-			plugin_bgnd = cred.background;
+			plugin_bgnd = utils::utf8_to_utf16(cred.background);
 		}
 	}
 
