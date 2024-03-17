@@ -172,7 +172,7 @@ class Starnet_Vod extends Abstract_Vod
                 return null;
         }
 
-        return Action_Factory::invalidate_folders(array(Starnet_Vod_Favorites_Screen::ID));
+        return Action_Factory::invalidate_folders(array(Starnet_Vod_Favorites_Screen::get_media_url_str()));
     }
 
     /**
