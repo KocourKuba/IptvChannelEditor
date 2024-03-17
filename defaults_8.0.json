@@ -438,7 +438,7 @@
       "streams_config": [
         {
           "cu_type": "shift",
-          "dune_params": "hls_forced_type:event",
+          "dune_params": "hls_forced_type:event,psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
