@@ -592,10 +592,11 @@ class default_config extends dynamic_config
      * Make url ts wrapped
      * @param Channel $channel
      * @param int $archive_ts
+     * @param bool $clean
      * @return string
      * @throws Exception
      */
-    public function GenerateStreamUrl(Channel $channel, $archive_ts)
+    public function GenerateStreamUrl(Channel $channel, $archive_ts, $clean = false)
     {
         $now = time();
         $is_archive = (int)$archive_ts > 0;
@@ -679,8 +680,11 @@ class default_config extends dynamic_config
             }
         }
 
-        $url = $this->UpdateDuneParams($play_template_url, $custom_stream_type);
+        if ($clean) {
+            return $play_template_url;
+        }
 
+        $url = $this->UpdateDuneParams($play_template_url, $custom_stream_type);
         return HD::make_ts($url, $stream_type === Plugin_Constants::MPEG);
     }
 
@@ -1053,7 +1057,7 @@ class default_config extends dynamic_config
             $buf_time = $this->plugin->get_parameter(PARAM_BUFFERING_TIME, 1000);
             $dune_params = trim($dune_params, '|');
             $dune_params = str_replace(Plugin_Macros::BUFFERING, $buf_time, $dune_params);
-            $url .= "|||dune_params|||$dune_params";
+            $url .= HD::DUNE_PARAMS_MAGIC . $dune_params;
         }
 
         return $url;

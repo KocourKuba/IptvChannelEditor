@@ -178,7 +178,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
                             'action' => self::CONTROL_HISTORY_FOLDER,
                         ),
                         'allow_reset' => true,
-                        'allow_network' => is_not_certified(),
+                        'allow_network' => !is_limited_apk(),
                         'windowCounter' => 1,
                     )
                 );

@@ -124,7 +124,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items = array();
 
-                if (is_not_certified()) {
+                if (!is_limited_apk()) {
                     $is_external = $this->plugin->is_channel_for_ext_player($channel_id);
                     $menu_items[] = $this->plugin->create_menu_item($this,
                         ACTION_EXTERNAL_PLAYER,
@@ -176,62 +176,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 break;
 
             case GUI_EVENT_KEY_INFO:
-                $channel = $this->plugin->tv->get_channel($channel_id);
-                if (is_null($channel)) {
-                    return null;
-                }
-
-                $info  = "ID: {$channel->get_id()}\n";
-                $info .= "Name: {$channel->get_title()}\n";
-                $info .= "Archive: " . var_export($channel->get_archive(), true) . " day's\n";
-                $info .= "Protected: " . var_export($channel->is_protected(), true) . "\n";
-                $info .= "EPG IDs: " . implode(', ', $channel->get_epg_ids()) . "\n";
-                $info .= "Timeshift hours: {$channel->get_timeshift_hours()}\n";
-                $groups = array();
-                foreach ($channel->get_groups() as $group) {
-                    $groups[] = $group->get_title();
-                }
-                $info .= "Categories: " . implode(', ', $groups) . "\n\n";
-
-                $lines = wrap_string_to_lines($channel->get_icon_url(), 70);
-                $info .= "Icon URL: " . implode("\n", $lines) . "\n";
-                $info .= (count($lines) > 1 ? "\n" : "");
-
-                try {
-                    $url = $this->plugin->config->GenerateStreamUrl($channel, -1);
-                    $lines = wrap_string_to_lines($url, 70);
-                    $info .= "Live URL: " . implode("\n", $lines) . "\n";
-                    $info .= (count($lines) > 1 ? "\n" : "");
-
-                    $url = $this->plugin->config->GenerateStreamUrl($channel, time() - 3600);
-                    $lines = wrap_string_to_lines($url, 70);
-                    $info .= "Archive URL: " . implode("\n", $lines) . "\n";
-                    $info .= (count($lines) > 1 ? "\n" : "");
-                } catch (Exception $ex) {
-
-                }
-
-                if (!empty($ext_params[PARAM_DUNE_PARAMS])) {
-                    $info .= "Params: " . implode(",", $ext_params[PARAM_DUNE_PARAMS]) . "\n";
-                }
-
-                Control_Factory::add_multiline_label($defs, null, $info, 12);
-                Control_Factory::add_vgap($defs, 20);
-
-                $text = sprintf("<gap width=%s/><icon>%s</icon><gap width=10/><icon>%s</icon><text color=%s size=small>  %s</text>",
-                    1160,
-                    get_image_path('page_plus_btn.png'),
-                    get_image_path('page_minus_btn.png'),
-                    DEF_LABEL_TEXT_COLOR_SILVER,
-                    TR::load_string('scroll_page')
-                );
-                Control_Factory::add_smart_label($defs, null, $text);
-                Control_Factory::add_vgap($defs, -80);
-
-                Control_Factory::add_close_dialog_button($defs, TR::t('ok'), 250, true);
-                Control_Factory::add_vgap($defs, 10);
-
-                return Action_Factory::show_dialog(TR::t('channel_info_dlg'), $defs, true, 1700);
+                return $this->plugin->do_show_channel_info($channel_id);
         }
 
         return null;

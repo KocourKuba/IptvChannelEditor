@@ -693,7 +693,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
             $menu_items[] = $this->plugin->create_menu_item($this, GuiMenuItemDef::is_separator);
 
-            if (is_not_certified()) {
+            if (!is_limited_apk()) {
                 $is_external = $this->plugin->is_channel_for_ext_player($channel_id);
                 $menu_items[] = $this->plugin->create_menu_item($this,
                     ACTION_EXTERNAL_PLAYER,
@@ -714,7 +714,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ZOOM_POPUP_MENU, TR::t('video_aspect_ratio'), "aspect.png");
             }
 
-            if (!is_not_certified()) {
+            if (is_limited_apk()) {
                 $is_in_favorites = $this->plugin->get_favorites()->in_order($channel_id);
 
                 $menu_items[] = $this->plugin->create_menu_item($this, GuiMenuItemDef::is_separator);

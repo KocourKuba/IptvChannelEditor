@@ -351,9 +351,9 @@ function is_fw_apk()
  * return is shell is FW APK.
  * @return bool
  */
-function is_not_certified()
+function is_limited_apk()
 {
-    return !is_apk() || is_fw_apk();
+    return is_apk() && !is_fw_apk();
 }
 
 /**
@@ -2001,15 +2001,17 @@ function raw_json_encode($arr)
     return str_replace('\\/', '/', preg_replace_callback($pattern, $callback, json_encode($arr)));
 }
 
-function wrap_string_to_lines($str, $max_chars)
+function wrap_string_to_lines($long_string, $max_chars)
 {
-    return array_slice(
-        explode("\n",
+    $lines = array_slice(
+        explode(PHP_EOL,
             iconv('Windows-1251', 'UTF-8',
                 wordwrap(iconv('UTF-8', 'Windows-1251',
-                    trim(preg_replace('/([!?])\.+\s*$/Uu', '$1', $str))),
-                    $max_chars, "\n", true))
+                    trim(preg_replace('/([!?])\.+\s*$/Uu', '$1', $long_string))),
+                    $max_chars, PHP_EOL, true))
         ),
         0, 2
     );
+
+    return implode(PHP_EOL, $lines);
 }

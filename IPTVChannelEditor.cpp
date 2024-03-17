@@ -766,6 +766,7 @@ bool PackPlugin(const PluginType plugin_type,
 		L"index_epg.php",
 		L"php-cgi",
 		L"php.ini",
+		L"media_check.sh",
 		L"update_suppliers.sh"
 	};
 

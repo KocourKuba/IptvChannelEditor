@@ -59,6 +59,8 @@ class HD
      */
     private static $token = '05ba6358d39c4f298f43024b654b7387';
 
+    const DUNE_PARAMS_MAGIC = "|||dune_params|||";
+
     ///////////////////////////////////////////////////////////////////////
 
     /**

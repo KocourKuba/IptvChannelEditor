@@ -515,7 +515,7 @@ class Starnet_Tv implements User_Input_Handler
                     }
 
                     if ($zoom_preset !== DuneVideoZoomPresets::not_set) {
-                        $url .= (strpos($url, "|||dune_params|||") === false ? "|||dune_params|||" : ",");
+                        $url .= (strpos($url, HD::DUNE_PARAMS_MAGIC) === false ? HD::DUNE_PARAMS_MAGIC : ",");
                         $url .= "zoom:$zoom_preset";
                     }
                 }
