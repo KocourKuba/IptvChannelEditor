@@ -487,17 +487,18 @@ class Starnet_Tv implements User_Input_Handler
                 throw new Exception("Channels not loaded!");
             }
 
-            $pass_sex = $this->plugin->get_parameter(PARAM_ADULT_PASSWORD, '0000');
+            $pass_sex = ($this->plugin->get_parameter(PARAM_ADULT_PASSWORD, '0000'));
             // get channel by hash
             $channel = $this->get_channel($channel_id);
             if ($channel === null) {
                 throw new Exception("Undefined channel!");
             }
-            if ($protect_code !== $pass_sex && $channel->is_protected()) {
-                throw new Exception("Wrong adult password");
-            }
 
-            if (!$channel->is_protected()) {
+            if ($channel->is_protected()) {
+                if ($protect_code !== $pass_sex) {
+                    throw new Exception("Wrong adult password");
+                }
+            } else {
                 $now = $channel->get_archive() > 0 ? time() : 0;
                 $this->plugin->get_playback_points()->push_point($channel_id, ($archive_ts !== -1 ? $archive_ts : $now));
             }
