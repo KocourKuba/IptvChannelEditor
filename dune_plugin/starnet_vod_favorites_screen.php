@@ -80,7 +80,7 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen imp
 
             case GUI_EVENT_KEY_RETURN:
                 $this->plugin->vod->save_movie_favorites();
-                return Action_Factory::invalidate_all_folders(Action_Factory::close_and_run());
+                return Action_Factory::invalidate_folders(array(), Action_Factory::close_and_run());
         }
 
         return null;
