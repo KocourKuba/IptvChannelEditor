@@ -768,7 +768,7 @@ class default_config extends dynamic_config
 
         if (empty($pl_entries) && $this->plugin_info['app_type_name'] !== 'custom') {
             $this->set_last_error("Пустой плейлист провайдера!");
-            hd_debug_print((string)$this->last_error);
+            hd_debug_print($this->last_error);
             $this->ClearPlaylistCache(true);
         } else {
             hd_debug_print("Total entries:" . count($pl_entries) . ", mapped to ID $mapped: ");

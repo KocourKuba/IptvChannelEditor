@@ -119,7 +119,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 $this->plugin->tv->reload_channels();
 
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                return Action_Factory::invalidate_all_folders();
+                return Action_Factory::invalidate_all_folders($plugin_cookies);
 
             case ACTION_RELOAD:
                 if ($user_input->reload_action === 'epg') {
@@ -129,7 +129,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 }
 
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                return Action_Factory::invalidate_all_folders();
+                return Action_Factory::invalidate_all_folders($plugin_cookies);
         }
 
         return null;

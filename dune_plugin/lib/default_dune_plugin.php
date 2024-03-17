@@ -694,7 +694,7 @@ class Default_Dune_Plugin implements DunePlugin
             $this->need_update_epfs = false;
             Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
         }
-        return Starnet_Epfs_Handler::invalidate_folders($media_urls, $post_action, $all_except);
+        return Action_Factory::invalidate_folders($media_urls, $post_action, $all_except);
     }
 
     /**

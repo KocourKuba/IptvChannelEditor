@@ -601,8 +601,6 @@ class Epg_Manager
                     continue;
                 }
 
-                // end position include closing tag!
-                $tag_end_pos = ftell($file);
                 // append position of open tag to file position of chunk
                 $tag_start_pos += $offset;
                 // calculate channel id
