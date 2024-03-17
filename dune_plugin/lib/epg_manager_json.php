@@ -78,7 +78,7 @@ class Epg_Manager_Json extends Epg_Manager
         $first = reset($epg_ids);
         foreach (array(Plugin_Constants::EPG_FIRST, Plugin_Constants::EPG_SECOND) as $key => $epg_source) {
             $params = $this->plugin->config->get_epg_params($epg_source);
-            if (empty($params[Epg_Params::EPG_URL])) continue;
+            if (is_null($params) || empty($params[Epg_Params::EPG_URL])) continue;
 
             $epg_id = isset($epg_ids[$key]) ? $epg_ids[$key] : $first;
 

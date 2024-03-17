@@ -136,7 +136,7 @@ class dynamic_config
      */
     public function get_stream_param($type, $param)
     {
-        return $this->stream_params[$type][$param];
+        return isset($this->stream_params[$type][$param]) ? $this->stream_params[$type][$param] : "";
     }
 
     /**
@@ -151,11 +151,11 @@ class dynamic_config
 
     /**
      * @param string $type
-     * @return mixed
+     * @return array|null
      */
     public function get_epg_params($type)
     {
-        return $this->epg_parser_params[$type];
+        return isset($this->epg_parser_params[$type]) ? $this->epg_parser_params[$type] : null;
     }
 
     /**
