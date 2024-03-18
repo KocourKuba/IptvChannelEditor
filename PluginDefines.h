@@ -43,6 +43,7 @@ enum class PluginType
 	enIpstream,
 	enItv,
 	enKineskop,
+	enKliMedia,
 	enLightIptv,
 	enMymagic,
 	enOneCent,

@@ -386,6 +386,22 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 		rapidxml::file<> xmlFile(utils::utf16_to_utf8(cache_file).c_str());
 		doc->parse<rapidxml::parse_default>(xmlFile.data());
 
+		std::multimap<std::wstring, std::wstring> channels_map;
+		auto channel_node = doc->first_node("tv")->first_node("channel");
+		while (channel_node)
+		{
+			const auto& id = rapidxml::get_value_wstring(channel_node->first_attribute("id"));
+			auto display_name_node = channel_node->first_node("display-name");
+			while (display_name_node)
+			{
+				const auto& name = rapidxml::get_value_wstring(display_name_node);
+				channels_map.emplace(id, name);
+				display_name_node = display_name_node->next_sibling();
+			}
+
+			channel_node = channel_node->next_sibling();
+		}
+
 		auto prog_node = doc->first_node("tv")->first_node("programme");
 		int cnt = 0;
 		while (prog_node)
@@ -406,16 +422,20 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 		prog_node = doc->first_node("tv")->first_node("programme");
 		while (prog_node)
 		{
-			EpgInfo epg_info;
+			auto epg_info = std::make_shared<EpgInfo>();
 			const auto& channel = rapidxml::get_value_wstring(prog_node->first_attribute("channel"));
 			const auto& attr_start = prog_node->first_attribute("start");
-			epg_info.time_start = utils::parse_xmltv_date(attr_start->value(), attr_start->value_size());
+			epg_info->time_start = utils::parse_xmltv_date(attr_start->value(), attr_start->value_size());
 			const auto& attr_stop = prog_node->first_attribute("stop");
-			epg_info.time_end = utils::parse_xmltv_date(attr_stop->value(), attr_stop->value_size());
-			epg_info.name = rapidxml::get_value_string(prog_node->first_node("title"));
-			epg_info.desc = rapidxml::get_value_string(prog_node->first_node("desc"));
+			epg_info->time_end = utils::parse_xmltv_date(attr_stop->value(), attr_stop->value_size());
+			epg_info->name = rapidxml::get_value_string(prog_node->first_node("title"));
+			epg_info->desc = rapidxml::get_value_string(prog_node->first_node("desc"));
 
-			epg_map[channel].emplace(epg_info.time_start, epg_info);
+			epg_map[channel].emplace(epg_info->time_start, epg_info);
+			const auto& range = channels_map.equal_range(channel);
+			for(auto it = range.first; it != range.second; ++it) {
+				epg_map[it->second].emplace(epg_info->time_start, epg_info);
+			}
 
 			prog_node = prog_node->next_sibling();
 			added = true;
@@ -477,64 +497,64 @@ bool base_plugin::parse_json_epg(int epg_idx, const std::array<std::wstring, 2>&
 		{
 			const auto& val = item.value();
 
-			EpgInfo epg_info;
+			auto epg_info = std::make_shared<EpgInfo>();
 
 			if (time_format.empty())
 			{
-				epg_info.time_start = utils::get_json_number_value(params.epg_start, val);
+				epg_info->time_start = utils::get_json_number_value(params.epg_start, val);
 			}
 			else
 			{
 				std::tm tm = {};
 				std::stringstream ss(utils::get_json_string_value(params.epg_start, val));
 				ss >> std::get_time(&tm, utils::utf16_to_utf8(time_format).c_str());
-				epg_info.time_start = _mkgmtime(&tm); // parsed time assumed as UTC+00
+				epg_info->time_start = _mkgmtime(&tm); // parsed time assumed as UTC+00
 			}
 
-			epg_info.time_start -= 3600 * params.epg_timezone; // subtract real EPG timezone offset
+			epg_info->time_start -= 3600 * params.epg_timezone; // subtract real EPG timezone offset
 
 			// Not valid time start or already added. Skip processing
-			if (epg_info.time_start == 0 || epg_map.find(epg_info.time_start) != epg_map.end()) continue;
+			if (epg_info->time_start == 0 || epg_map.find(epg_info->time_start) != epg_map.end()) continue;
 
 			if (params.epg_end.empty())
 			{
 				if (prev_start != 0)
 				{
-					epg_map[prev_start].time_end = epg_info.time_start;
+					epg_map[prev_start]->time_end = epg_info->time_start;
 #ifdef _DEBUG
-					COleDateTime te(epg_info.time_start);
-					epg_map[prev_start].end = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
+					COleDateTime te(epg_info->time_start);
+					epg_map[prev_start]->end = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
 #endif // _DEBUG
 				}
-				prev_start = epg_info.time_start;
+				prev_start = epg_info->time_start;
 			}
 			else
 			{
-				epg_info.time_end = utils::get_json_number_value(params.epg_end, val);
+				epg_info->time_end = utils::get_json_number_value(params.epg_end, val);
 			}
 
 			if (params.epg_use_duration)
 			{
-				epg_info.time_end += epg_info.time_start;
+				epg_info->time_end += epg_info->time_start;
 			}
 
 #ifdef _DEBUG
-			COleDateTime ts(epg_info.time_start);
-			COleDateTime te(epg_info.time_end);
-			epg_info.start = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", ts.GetYear(), ts.GetMonth(), ts.GetDay(), ts.GetHour(), ts.GetMinute());
-			epg_info.end = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
+			COleDateTime ts(epg_info->time_start);
+			COleDateTime te(epg_info->time_end);
+			epg_info->start = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", ts.GetYear(), ts.GetMonth(), ts.GetDay(), ts.GetHour(), ts.GetMinute());
+			epg_info->end = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
 #endif // _DEBUG
 
-			epg_info.name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(utils::get_json_string_value(params.epg_name, val))));
-			epg_info.desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(utils::get_json_string_value(params.epg_desc, val))));
+			epg_info->name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(utils::get_json_string_value(params.epg_name, val))));
+			epg_info->desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(utils::get_json_string_value(params.epg_desc, val))));
 
-			epg_map.emplace(epg_info.time_start, epg_info);
+			epg_map.emplace(epg_info->time_start, epg_info);
 			added = true;
 		}
 
 		if (params.epg_end.empty() && prev_start != 0)
 		{
-			epg_map[prev_start].time_end = epg_map[prev_start].time_start + 3600; // fake end
+			epg_map[prev_start]->time_end = epg_map[prev_start]->time_start + 3600; // fake end
 		}
 
 		return added;

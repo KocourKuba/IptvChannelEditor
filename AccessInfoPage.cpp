@@ -535,6 +535,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			case PluginType::enFilmax:
 			case PluginType::enFox:
 			case PluginType::enKineskop:
+			case PluginType::enKliMedia:
 			case PluginType::enMymagic:
 			case PluginType::enOttIptv:
 			case PluginType::enPing:

@@ -204,7 +204,10 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	BT_SetTerminate(); // set_terminate() must be called from every thread
 #endif // _DEBUG
 
-	if (!GetPluginFactory().load_configs())
+	CCommandLineInfoEx cmdInfo;
+	ParseCommandLine(cmdInfo);
+
+	if (!GetPluginFactory().load_configs(cmdInfo.m_bDev))
 	{
 		AfxMessageBox(IDS_STRING_ERR_CANT_LOAD_CONFIG, MB_OK | MB_ICONEXCLAMATION);
 		ExitProcess(0);
@@ -254,9 +257,6 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	}
 
 	ConvertAccounts();
-
-	CCommandLineInfoEx cmdInfo;
-	ParseCommandLine(cmdInfo);
 
 	if (cmdInfo.m_bCleanupReg)
 	{

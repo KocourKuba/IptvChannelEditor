@@ -145,7 +145,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 				bool res = m_plugin->parse_xml_epg(m_xmltv_source, epg_cache);
 				if (res)
 				{
-					epg_cache[L"file already parsed"] = std::map<time_t, EpgInfo>();
+					epg_cache[L"file already parsed"] = std::map<time_t, std::shared_ptr<EpgInfo>>();
 				}
 			}
 			need_load = false;
@@ -162,7 +162,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 			m_pEpgChannelMap = &(m_epg_cache->at(m_epg_idx)[epg_id]);
 			for (auto& epg_pair : it->second)
 			{
-				if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
+				if (epg_pair.second->time_start <= now && now <= epg_pair.second->time_end)
 				{
 					found_id = epg_id;
 					break;
@@ -176,20 +176,20 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		for (const auto& epg : m_epg_cache->at(m_epg_idx)[found_id])
 		{
 			time_t shifted_start = epg.first - time_shift;
-			time_t shifted_end = epg.second.time_end - time_shift;
+			time_t shifted_end = epg.second->time_end - time_shift;
 
 			if (shifted_start < start_time || shifted_start > end_time) continue;
 
-			bool isArchive = (_time32(nullptr) - epg.second.time_end) > 0 && epg.second.time_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
+			bool isArchive = (_time32(nullptr) - epg.second->time_end) > 0 && epg.second->time_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
 			COleDateTime start(shifted_start);
 			COleDateTime end(shifted_end);
 			int idx = m_wndEpgList.InsertItem(i++, isArchive ? L"R" : L"");
 			m_wndEpgList.SetItemText(idx, 1, start.Format(_T("%d.%m.%Y %H:%M:%S")));
 			m_wndEpgList.SetItemText(idx, 2, end.Format(_T("%d.%m.%Y %H:%M:%S")));
-			m_wndEpgList.SetItemText(idx, 3, utils::utf8_to_utf16(epg.second.name).c_str());
-			m_idx_map.emplace(idx, std::pair<time_t, time_t>(epg.second.time_start, epg.second.time_end));
+			m_wndEpgList.SetItemText(idx, 3, utils::utf8_to_utf16(epg.second->name).c_str());
+			m_idx_map.emplace(idx, std::pair<time_t, time_t>(epg.second->time_start, epg.second->time_end));
 
-			if (now >= epg.first && now <= epg.second.time_end)
+			if (now >= epg.first && now <= epg.second->time_end)
 			{
 				current_idx = idx;
 			}
@@ -242,7 +242,7 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 		auto& epg_pair = m_pEpgChannelMap->find(start_pair->second.first);
 		if (epg_pair == m_pEpgChannelMap->end()) break;
 
-		const auto& text = fmt::format(R"({{\rtf1 {:s}}})", epg_pair->second.desc);
+		const auto& text = fmt::format(R"({{\rtf1 {:s}}})", epg_pair->second->desc);
 
 		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
 		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());

@@ -1980,7 +1980,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 	{
 		if (epg_idx != 2)
 		{
-			auto epg_id = epg_ids[epg_idx];
+			std::wstring epg_id = epg_ids[epg_idx];
 			epg_ids[0].clear();
 			epg_ids[1].clear();
 			std::swap(epg_ids[epg_idx], epg_id);
@@ -2000,7 +2000,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 					bool res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, &m_wndProgress);
 					if (res)
 					{
-						epg_cache[L"file already parsed"] = std::map<time_t, EpgInfo>();
+						epg_cache[L"file already parsed"] = std::map<time_t, std::shared_ptr<EpgInfo>>();
 					}
 				}
 			}
@@ -2017,9 +2017,9 @@ void CIPTVChannelEditorDlg::FillEPG()
 		{
 			for (auto& epg_pair : it->second)
 			{
-				if (epg_pair.second.time_start <= now && now <= epg_pair.second.time_end)
+				if (epg_pair.second->time_start <= now && now <= epg_pair.second->time_end)
 				{
-					epg_info = epg_pair.second;
+					epg_info = *epg_pair.second;
 					found = true;
 					break;
 				}

@@ -46,7 +46,7 @@ public:
 		return known_presets;
 	}
 
-	bool load_configs();
+	bool load_configs(bool dev = false);
 	const std::vector<std::pair<PluginType, std::string>>& get_all_plugins() const;
 	PluginType get_plugin_type(size_t idx);
 

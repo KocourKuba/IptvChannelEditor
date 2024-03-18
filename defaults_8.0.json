@@ -126,8 +126,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>[^\\\/]+)\\\/(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.101film.org/{LOGIN}/{PASSWORD}/tv.m3u?srv={SERVER_ID}",
           "tag_id_match": "CUID"
         }
@@ -208,8 +208,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+):(?<port>.+)\\\/s\\\/(?<token>.+)\\\/.+\\\/.+\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/(?<password>.+)\\.m3u8?$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>.+)\\/s\\/(?<token>.+)\\/.+\\/.+\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "https://af-play.com/playlist/{PASSWORD}.m3u8",
           "tag_id_match": "tvg-id"
         }
@@ -252,8 +252,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<token>.+)\\\/video\\.m3u8\\?token=(?<password>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/hls\\\/(?<password>.+)\\.m3u8?$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<token>.+)\\/video\\.m3u8\\?token=(?<password>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/hls\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "https://bcumedia.pro/playlist/hls/{PASSWORD}.m3u",
           "tag_id_match": "tvg-id"
         }
@@ -319,8 +319,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+):(?<port>.+)\\\/s\\\/(?<token>.+)\\\/.+\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/(?<token>.+)_otp_dev.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>.+)\\/s\\/(?<token>.+)\\/.+\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/(?<token>.+)_otp_dev.*$",
           "pl_template": "http://248on.com/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8",
           "tag_id_match": "tvg-id"
         }
@@ -360,8 +360,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^https?:\\\/\\\/(?<domain>.+)\\\/(?<id>.+)\\\/(?<password>.+)\\\/.*$",
-          "pl_parse_regex": "^https?:\\\/\\\/.+\\\/m\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^https?:\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?<password>.+)\\/.*$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/m\\/(?<password>.+)\\/.*$",
           "pl_template": "http://crdtv.net/m/{PASSWORD}/crdtv.m3u"
         }
       ],
@@ -398,43 +398,43 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico.m3u8",
           "square_icons": false
         },
         {
           "name": "Thematic",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico2.m3u8",
           "square_icons": false
         },
         {
           "name": "Thematic Sorted",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico3.m3u8",
           "square_icons": false
         },
         {
           "name": "Standard (Square icons)",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico.m3u8",
           "square_icons": true
         },
         {
           "name": "Thematic (Square icons)",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico2.m3u8",
           "square_icons": true
         },
         {
           "name": "Thematic Sorted (Square icons)",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/).+\\\/iptv\\\/(?<ott_key>.+)\\\/(?<id>.+)\\\/.*\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/.*\\\/playlists\\\/uplist\\\/.*\\\/playlist\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico3.m3u8",
           "square_icons": true
         }
@@ -478,8 +478,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<int_id>.+)\\\/index\\.m3u8\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<login>.+)\\\/(?<password>.+)\\\/(?:hls|ts)\\\/(?<server>.+)\\\/playlist\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<int_id>.+)\\/index\\.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+)\\/(?<password>.+)\\/(?:hls|ts)\\/(?<server>.+)\\/playlist\\.m3u8$",
           "pl_template": "http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8",
           "tag_id_match": "tvg-name"
         }
@@ -549,8 +549,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>[^\\\/]+)\\\/(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/[^\\\/]+\\\/(?<login>.+)\\\/(?<password>.+)\\\/(?<server>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/(?<server>.+)\\/.*$",
           "pl_template": "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
         }
@@ -572,12 +572,12 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex": "(?<title>[^\\\/]+)\\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
+          "parse_regex": "(?<title>[^\\/]+)\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
           "pl_template": "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u"
         },
         {
           "name": "No Adults",
-          "parse_regex": "(?<title>[^\\\/]+)\\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
+          "parse_regex": "(?<title>[^\\/]+)\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
           "pl_template": "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vod.m3u"
         }
       ]
@@ -636,14 +636,14 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/.+\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.+\\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$",
           "pl_template": "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls"
         },
         {
           "name": "No Adults",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/.+\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.+\\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$",
           "pl_template": "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0"
         }
       ],
@@ -699,8 +699,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/live\\\/(?<token>.+)\\\/(?<id>.+)\\\/.+\\.m3u\\d?$",
-          "pl_parse_regex": "^https?:\\\/\\\/.+\\\/iptv\\\/m3u_plus-(?<password>.+)-m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)\\/.+\\.m3u\\d?$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/iptv\\/m3u_plus-(?<password>.+)-m3u8$",
           "pl_template": "http://file.ipstr.im/iptv/m3u_plus-{PASSWORD}-m3u8"
         }
       ],
@@ -750,8 +750,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/play\\\/(?<id>.+)\\\/(?<token>.+)\\\/video\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/\\\/.+\\\/play\\\/(?<password>.+)\\\/m3u8?$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/play\\/(?<password>.+)\\/m3u8?$",
           "pl_template": "http://iptv.online/play/{PASSWORD}/m3u8"
         }
       ],
@@ -826,8 +826,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/.+\\\/video\\.m3u8\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/p\\\/(?<password>.+)\\\/.+$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/.+\\/video\\.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/p\\/(?<password>.+)\\/.+$",
           "pl_template": "https://itv.ooo/p/{PASSWORD}/hls.m3u8",
           "tag_id_match": "tvg-id"
         }
@@ -871,7 +871,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<host>.+)\\\/(?<id>.+)\\\/(?<token>.+)\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<host>.+)\\/(?<id>.+)\\/(?<token>.+)\\.m3u8$",
           "pl_template": "http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER}/1"
         }
       ],
@@ -908,6 +908,36 @@
       ],
       "title": "Kineskop.Club"
     },
+    "klimedia": {
+      "access_type": "login",
+      "name": "klimedia",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/lb\\/(?<id>.+)\\/index.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/.+\\/(?<login>.+)\\/(?<password>.+)\\/.+$",
+          "pl_template": "https://klimedia.space/hls/{LOGIN}/{PASSWORD}/playlist.m3u8"
+        }
+      ],
+      "provider_url": "https://klimedia.space/",
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}{DOMAIN}/lb/{ID}/index.m3u8?token={TOKEN}"
+        },
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}{DOMAIN}/lb/{ID}/mpegts?token={TOKEN}"
+        }
+      ],
+      "title": "KLI Media"
+    },
     "lightiptv": {
       "access_type": "pin",
       "epg_params": [
@@ -926,8 +956,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<token>.+)\\\/video\\.m3u8\\?token=(?<password>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/hls\\\/(?<password>.+)\\.m3u8?$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<token>.+)\\/video\\.m3u8\\?token=(?<password>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/hls\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u",
           "tag_id_match": "tvg-id"
         }
@@ -970,8 +1000,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>[^\\\/]+)\\\/(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/srv\\\/(?<server>.+)\\\/(?<quality>.+)\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/srv\\/(?<server>.+)\\/(?<quality>.+)\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
         }
@@ -1059,8 +1089,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/index\\.m3u8\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/pl\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/index\\.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/pl\\/(?<password>.+)\\/.*$",
           "pl_template": "http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8"
         }
       ],
@@ -1104,7 +1134,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/~(?<token>.+)\\\/(?<id>.+)\\\/hlsx?\\\/.+\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/~(?<token>.+)\\/(?<id>.+)\\/hlsx?\\/.+\\.m3u8$",
           "pl_template": "http://list.1ott.net/api/{S_TOKEN}/high/unix.m3u8"
         }
       ],
@@ -1155,8 +1185,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/mono\\.m3u8\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/pl-(?<password>.+)-hls$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/mono\\.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/pl-(?<password>.+)-hls$",
           "pl_template": "http://1usd.tv/pl-{PASSWORD}-hls"
         }
       ],
@@ -1186,8 +1216,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>[^\\\/]+)\\\/(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/[^\\\/]+\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.onlineott-tv.site/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
         }
@@ -1209,12 +1239,12 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex": "(?<title>[^\\\/]+)\\s+\\((?<country>.+)\\s(?<year>\\d+)\\)$",
+          "parse_regex": "(?<title>[^\\/]+)\\s+\\((?<country>.+)\\s(?<year>\\d+)\\)$",
           "pl_template": "http://pl.onlineott-tv.site/{LOGIN}/{PASSWORD}/vodall.m3u"
         },
         {
           "name": "No Adults",
-          "parse_regex": "(?<title>[^\\\/]+)\\s+\\((?<country>.+)\\s(?<year>\\d+)\\)$",
+          "parse_regex": "(?<title>[^\\/]+)\\s+\\((?<country>.+)\\s(?<year>\\d+)\\)$",
           "pl_template": "http://pl.onlineott-tv.site/{LOGIN}/{PASSWORD}/vod.m3u"
         }
       ]
@@ -1248,8 +1278,8 @@
         {
           "epg_id_from_id": true,
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/stream\\\/(?<token>.+)\\\/(?<id>.+)\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/stream\\/(?<token>.+)\\/(?<id>.+)\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/(?<password>.+)\\/.*$",
           "pl_template": "{PL_DOMAIN}/playlist/{PASSWORD}/m3u"
         }
       ],
@@ -1286,7 +1316,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<var1>.+)\\\/(?<id>.+)\\\/video\\.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<var1>.+)\\/(?<id>.+)\\/video\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "https?://.+\/(?<login>.+)\/(?<password>.+)\/.+$",
           "pl_template": "https://ottiptv.ru/{LOGIN}/{PASSWORD}/playlist.m3u8"
         }
@@ -1329,8 +1359,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>[^\\\/]+)\\\/(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
         }
@@ -1352,12 +1382,12 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex": "(?<title>[^\\\/]+)\\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
+          "parse_regex": "(?<title>[^\\/]+)\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
           "pl_template": "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/vodall.m3u"
         },
         {
           "name": "No Adults",
-          "parse_regex": "(?<title>[^\\\/]+)\\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
+          "parse_regex": "(?<title>[^\\/]+)\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
           "pl_template": "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/vod.m3u"
         }
       ]
@@ -1379,8 +1409,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/s\\\/(?<token>.+)\\\/.+\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<password>.+)\\.m3u8?$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/s\\/(?<token>.+)\\/.+\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "https://russkoetv.shop/play/{PASSWORD}.m3u8",
           "tag_id_match": "tvg-id"
         }
@@ -1406,8 +1436,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>[^\\\/]+)\\\/(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/[^\\\/]+\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.ru-tv.site/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
         }
@@ -1429,7 +1459,7 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<title>[^\\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
+          "parse_regex": "^(?<title>[^\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
           "pl_template": "http://pl.ru-tv.site/{LOGIN}/{PASSWORD}/vod.m3u"
         }
       ]
@@ -1440,8 +1470,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/(?<token>.+)\\\/(video\\.m3u8|mpegts)$",
-          "pl_parse_regex": "^https?:\\\/\\\/(?<password>.+)\\.m3u8?$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?<token>.+)\\/(video\\.m3u8|mpegts)$",
+          "pl_parse_regex": "^https?:\\/\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "http://iptv11.com/1/{PASSWORD}.m3u8"
         }
       ],
@@ -1519,8 +1549,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/live\\\/(?<token>.+)\\\/(?<id>.+)\\\/.+\\.m3u8$",
-          "pl_parse_regex": "https?:\\\/\\\/[^\\\/]+\\\/tv-m3u8\\\/(?<login>[^-]+)-(?<password>.+)$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)\\/.+\\.m3u8$",
+          "pl_parse_regex": "https?:\\/\\/[^\\/]+\\/tv-m3u8\\/(?<login>[^-]+)-(?<password>.+)$",
           "pl_template": "{API_URL}/tv_live-m3u8/{LOGIN}-{PASSWORD}"
         }
       ],
@@ -1570,8 +1600,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<login>.+):(?<password>.+)\\\/.+\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+):(?<password>.+)\\/.+\\/.*$",
           "pl_template": "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u"
         }
       ],
@@ -1619,15 +1649,15 @@
         {
           "epg_id_from_id": true,
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/iptv\\\/p\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/iptv\\/p\\/(?<password>.+)\\/.*$",
           "pl_template": "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u"
         },
         {
           "epg_id_from_id": true,
           "name": "Secondary",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<id>.+)\\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/iptv\\\/p\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/iptv\\/p\\/(?<password>.+)\\/.*$",
           "pl_template": "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Playlist.navigator-ott.m3u"
         }
       ],
@@ -1712,7 +1742,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/~(?<token>.+)\\\/(?<id>.+)\\\/hls\\\/.+\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/~(?<token>.+)\\/(?<id>.+)\\/hls\\/.+\\.m3u8$",
           "pl_template": "http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva"
         }
       ],
@@ -1759,8 +1789,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>[^\\\/]+)\\\/(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/(?<login>.+)\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/tv.m3u?srv={SERVER_ID}",
           "tag_id_match": "CUID"
         }
@@ -1835,8 +1865,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/p\\\/(?<token>.+)\\\/.+$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/p\\\/(?<password>.+)$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/p\\/(?<token>.+)\\/.+$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/p\\/(?<password>.+)$",
           "pl_template": "http://celn.shott.top/p/{S_TOKEN}",
           "tag_id_match": "tvg-id"
         }
@@ -1898,8 +1928,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/play\\\/(?<id>.+)\\\/(?<token>.+)\\\/video\\.m3u8$",
-          "pl_parse_regex": "^https?:\\\/\\\/.+\\\/play\\\/(?<password>.+)\\\/m3u8?$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/play\\/(?<password>.+)\\/m3u8?$",
           "pl_template": "{PL_DOMAIN}/play/{PASSWORD}/m3u8"
         }
       ],
@@ -1981,8 +2011,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/.+\\\/.+\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/pl\\\/11\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/.+\\/.+\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/pl\\/11\\/(?<password>.+)\\/.*$",
           "pl_template": "http://tv.team/pl/11/{PASSWORD}/playlist.m3u8",
           "tag_id_match": "tvg-name"
         }
@@ -2026,8 +2056,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/p\\\/(?<token>.+)\\\/.+$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/p\\\/(?<password>.+)$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/p\\/(?<token>.+)\\/.+$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/p\\/(?<password>.+)$",
           "pl_template": "http://bddpv.plist.top/p/{S_TOKEN}",
           "tag_id_match": "tvg-id"
         }
@@ -2066,8 +2096,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+)\\\/(?<quality>.+)\\\/(?<token>.+)\\\/.+$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/.*\\\/(?<password>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<quality>.+)\\/(?<token>.+)\\/.+$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/.*\\/(?<password>.+)\\/.*$",
           "pl_template": "http://cdntv.online/high/{PASSWORD}/playlist.m3u8",
           "tag_id_match": "tvg-id"
         }
@@ -2141,8 +2171,8 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\\/\\\/)(?<domain>.+):(?<port>\\d+)\\\/(?<var1>.+\\\/)?(?<id>.+)\\\/(?<var2>.+)\\.m3u8\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\\/\\\/.*\\\/playlist\\\/(?<login>.+)\\\/(?<password>.+)\\\/(?<server>.+)\\\/.*$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>\\d+)\\/(?<var1>.+\\/)?(?<id>.+)\\/(?<var2>.+)\\.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/(?<login>.+)\\/(?<password>.+)\\/(?<server>.+)\\/.*$",
           "pl_template": "https://streaming-elbrus.su/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}playlist.m3u8"
         }
       ],

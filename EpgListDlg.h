@@ -75,6 +75,6 @@ protected:
 	CString m_csEpgUrl;
 	CString m_csArchiveUrl;
 
-	std::map<time_t, EpgInfo>* m_pEpgChannelMap = nullptr;
+	std::map<time_t, std::shared_ptr<EpgInfo>>* m_pEpgChannelMap = nullptr;
 	std::map<int, std::pair<time_t, time_t>> m_idx_map;
 };

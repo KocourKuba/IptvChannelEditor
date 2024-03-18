@@ -77,6 +77,7 @@ static std::vector<std::pair<PluginType, std::string>> s_all_plugins = {
 	{ PluginType::enSatq,       "satq"       },
 	{ PluginType::enRuTV,       "rutv"       },
 	{ PluginType::enCRDTV,      "crdtv"      },
+	{ PluginType::enKliMedia,   "klimedia"   },
 	{ PluginType::enCustom,     "custom"     },
 };
 
@@ -167,29 +168,33 @@ EpgParameters PluginFactory::get_epg_preset(EpgPresets idx) const
 	return {};
 }
 
-bool PluginFactory::load_configs()
+bool PluginFactory::load_configs(bool dev /*= false*/)
 {
 	bool res = false;
 	std::stringstream data;
 
-#ifndef _DEBUG
-	const auto& url = fmt::format(L"{:s}/editor/configs?ver={:d}.{:d}.{:d}", utils::utf8_to_utf16(g_szServerPath), MAJOR, MINOR, BUILD);
-	utils::CUrlDownload dl;
-	dl.SetUserAgent(fmt::format(L"IPTV Channel Editor/{:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
-	dl.SetCacheTtl(3600 * 3);
-
-	if (!dl.DownloadFile(url, data))
+	if (!dev)
 	{
-#endif // _DEBUG
+		const auto& url = fmt::format(L"{:s}/editor/configs?ver={:d}.{:d}.{:d}", utils::utf8_to_utf16(g_szServerPath), MAJOR, MINOR, BUILD);
+		utils::CUrlDownload dl;
+		dl.SetUserAgent(fmt::format(L"IPTV Channel Editor/{:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
+		dl.SetCacheTtl(3600 * 3);
+
+		if (!dl.DownloadFile(url, data))
+		{
+			data.clear();
+		}
+	}
+
+	if (data.tellp() == std::streampos(0))
+	{
 		std::ifstream in_file(fmt::format(L"{:s}defaults_{:d}.{:d}.json", GetAppPath(), MAJOR, MINOR));
 		if (in_file.good())
 		{
 			data << in_file.rdbuf();
 			in_file.close();
 		}
-#ifndef _DEBUG
 	}
-#endif // _DEBUG
 
 	JSON_ALL_TRY
 	{

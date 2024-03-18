@@ -43,7 +43,7 @@ struct EpgInfo
 #endif // _DEBUG
 };
 
-using EpgStorage = std::unordered_map<std::wstring, std::map<time_t, EpgInfo>>;
+using EpgStorage = std::unordered_map<std::wstring, std::map<time_t, std::shared_ptr<EpgInfo>>>;
 
 /// <summary>
 /// Interface for stream
