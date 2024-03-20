@@ -2187,11 +2187,11 @@
           "name": "KFC (Russia, Moscow)"
         },
         {
-          "id": "OSTHLs/",
+          "id": "OSTHLS/",
           "name": "OSTHLS (Russia, Moscow)"
         },
         {
-          "id": "KRDHLs/",
+          "id": "KRDHLS/",
           "name": "KRDHLS (Russia, Krasnodar)"
         },
         {
@@ -2199,7 +2199,7 @@
           "name": "BN (Russia, Saint-Petersburg)"
         },
         {
-          "id": "BYHLs/",
+          "id": "BYHLS/",
           "name": "BYHLS (Belarus, Minsk)"
         },
         {
@@ -2215,7 +2215,7 @@
           "name": "GN (Ukraine, Kiev)"
         },
         {
-          "id": "RHLs/",
+          "id": "RHLS/",
           "name": "RHLS (GlobalCache CDN)"
         }
       ],
