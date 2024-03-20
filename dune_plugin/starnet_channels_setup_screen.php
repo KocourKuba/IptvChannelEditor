@@ -47,14 +47,14 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
             case 1: // channels path
                 $channels_list = smb_tree::get_folder_info($this->plugin->get_parameter(PARAM_CHANNELS_LIST_PATH, get_install_path()));
 
-                $max_size = is_apk() ? 45 : 36;
+                $max_size = is_limited_apk() ? 45 : 36;
                 if (strlen($channels_list) > $max_size) {
                     $display_path = "..." . substr($channels_list, strlen($channels_list) - $max_size);
                 } else {
                     $display_path = $channels_list;
                 }
 
-                if (is_apk()) {
+                if (is_limited_apk()) {
                     Control_Factory::add_label($defs, TR::t('setup_channels_src_label'), $display_path);
                 } else {
                     Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_CH_LIST_PATH,
