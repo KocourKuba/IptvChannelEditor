@@ -188,7 +188,16 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 
 	if (data.tellp() == std::streampos(0))
 	{
-		std::ifstream in_file(fmt::format(L"{:s}defaults_{:d}.{:d}.json", GetAppPath(), MAJOR, MINOR));
+		std::wstring path;
+		if (dev)
+		{
+#ifdef _WIN64
+			path = fmt::format(L"{:s}..\\defaults_{:d}.{:d}.json", GetAppPath(), MAJOR, MINOR);
+#else
+			path = fmt::format(L"{:s}defaults_{:d}.{:d}.json", GetAppPath(), MAJOR, MINOR);
+#endif // _WIN64
+		}
+		std::ifstream in_file(path);
 		if (in_file.good())
 		{
 			data << in_file.rdbuf();

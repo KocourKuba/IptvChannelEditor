@@ -67,7 +67,11 @@ public:
 	void ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast) override;
 
 public:
+#ifdef _DEBUG
+	bool m_bDev = true;
+#else
 	bool m_bDev = false;
+#endif // _DEBUG
 	bool m_bMake = false;
 	bool m_bMakeAll = false;
 	bool m_bPortable = false;

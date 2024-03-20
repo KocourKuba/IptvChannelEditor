@@ -38,8 +38,8 @@ private:
 
 	void write(std::stringstream& ss, const std::string& str) const
 	{
-		size_t size = str.size();
-		ss.write((const char*)&size, sizeof(size_t));
+		uint32_t size = (uint32_t)str.size();
+		ss.write((const char*)&size, sizeof(uint32_t));
 		ss.write(str.c_str(), size);
 	}
 
@@ -57,8 +57,8 @@ private:
 
 	void read(std::vector<char>& buffer, std::string& str)
 	{
-		size_t size = *((size_t*)(buffer.data() + offset));
-		offset += sizeof(size_t);
+		uint32_t size = *((uint32_t*)(buffer.data() + offset));
+		offset += sizeof(uint32_t);
 		std::string data(buffer.data() + offset, buffer.data() + offset + size);
 		str.swap(data);
 		offset += size;

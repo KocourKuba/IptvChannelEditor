@@ -49,7 +49,7 @@ void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream& info)
 	info.set_is_template(true);
 
 	// map groups to parser members
-	size_t pos = 1;
+	int pos = 1;
 	for (const auto& group : regex_named_groups)
 	{
 		auto setter = info.parser_mapper[group];
