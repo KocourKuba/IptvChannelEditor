@@ -29,16 +29,6 @@ require_once 'epg_params.php';
 class Epg_Manager_Json extends Epg_Manager
 {
     /**
-     * @var string
-     */
-    protected $index_ext = '.cache';
-
-    /**
-     * @var Default_Dune_Plugin
-     */
-    protected $plugin;
-
-    /**
      * contains current dune IP
      * @var string
      */
@@ -51,20 +41,15 @@ class Epg_Manager_Json extends Epg_Manager
     protected $epg_cache = array();
 
     /**
-     * @param Default_Dune_Plugin $plugin
+     * @inheritDoc
      */
-    public function __construct($plugin)
+    public function get_picons()
     {
-        parent::__construct($plugin->config->plugin_info['app_version'], $plugin->get_cache_dir(), '');
-        $this->plugin = $plugin;
+        return null;
     }
 
     /**
-     * try to load epg from cache otherwise request it from server
-     * store parsed response to the cache
-     * @param Channel $channel
-     * @param int $day_start_ts
-     * @return array|false
+     * @inheritDoc
      */
     public function get_day_epg_items(Channel $channel, $day_start_ts)
     {
@@ -77,8 +62,8 @@ class Epg_Manager_Json extends Epg_Manager
         $day_epg = array();
         $first = reset($epg_ids);
         foreach (array(Plugin_Constants::EPG_FIRST, Plugin_Constants::EPG_SECOND) as $key => $epg_source) {
-            $params = $this->plugin->config->get_epg_params($epg_source);
-            if (is_null($params) || empty($params[Epg_Params::EPG_URL])) continue;
+            $epg_url = $this->plugin->config->get_epg_param($epg_source, Epg_Params::EPG_URL);
+            if (empty($epg_url)) continue;
 
             $epg_id = isset($epg_ids[$key]) ? $epg_ids[$key] : $first;
 
@@ -91,8 +76,7 @@ class Epg_Manager_Json extends Epg_Manager
             $channel_title = $channel->get_title();
             hd_debug_print("Try to load EPG ID: '$epg_id' for channel '$channel_id' ($channel_title)");
 
-            $this->epg_url = $params[Epg_Params::EPG_URL];
-            $this->url_hash = (empty($this->epg_url) ? '' : Hashed_Array::hash($this->epg_url));
+            $this->url_hash = (empty($this->epg_url) ? '' : Hashed_Array::hash($epg_url));
 
             $epg_url = str_replace(
                 array(Plugin_Macros::API_URL,
@@ -102,18 +86,18 @@ class Epg_Manager_Json extends Epg_Manager
                     Plugin_Macros::DUNE_IP
                 ),
                 array($this->plugin->config->get_feature(Plugin_Constants::PROVIDER_API_URL),
-                    $params[Epg_Params::EPG_DOMAIN],
+                    $this->plugin->config->get_epg_param($epg_source, Epg_Params::EPG_DOMAIN),
                     str_replace(' ', '%20', $epg_id),
                     $channel_id,
                     $this->dune_ip
                 ),
-                $this->epg_url);
+                $epg_url);
 
             if (strpos($epg_url, Plugin_Macros::DATE) !== false) {
                 $date_format = str_replace(
                     array(Plugin_Macros::YEAR, Plugin_Macros::MONTH, Plugin_Macros::DAY),
                     array('Y', 'm', 'd'),
-                    $params[Epg_Params::EPG_DATE_FORMAT]);
+                    $this->plugin->config->get_epg_param($epg_source, Epg_Params::EPG_DATE_FORMAT));
 
                 $epg_date = gmdate($date_format, $day_start_ts + get_local_time_zone_offset());
                 $epg_url = str_replace(Plugin_Macros::DATE, $epg_date, $epg_url);
@@ -134,14 +118,12 @@ class Epg_Manager_Json extends Epg_Manager
             }
 
             $epg_url = str_replace('#', '%23', $epg_url);
-            $hash = hash('crc32', $epg_url);
-
-            $epg_cache_file = $this->get_cache_stem("_$hash$this->index_ext");
+            $epg_cache_file = get_temp_path(Hashed_Array::hash($epg_url) . ".cache");
             $from_cache = false;
             $all_epg = array();
             if (file_exists($epg_cache_file)) {
                 $now = time();
-                $max_check_time = 3600 * 24 * $this->plugin->get_parameter(PARAM_EPG_CACHE_TTL, 3);
+                $max_check_time = 3600 * 3;
                 $cache_expired = filemtime($epg_cache_file) + $max_check_time;
                 if ($cache_expired > time()) {
                     $all_epg = unserialize(file_get_contents($epg_cache_file));
@@ -155,7 +137,7 @@ class Epg_Manager_Json extends Epg_Manager
 
             if ($from_cache === false) {
                 hd_debug_print("Fetching EPG ID: '$epg_id' from server");
-                $all_epg = self::get_epg_json($epg_url, $params);
+                $all_epg = self::get_epg_json($epg_url, $this->plugin->config->get_epg_params($epg_source));
                 if (!empty($all_epg)) {
                     hd_debug_print("Save EPG ID: '$epg_id' to file cache $epg_cache_file");
                     file_put_contents($epg_cache_file, serialize($all_epg));
@@ -220,6 +202,11 @@ class Epg_Manager_Json extends Epg_Manager
     {
         $channel_epg = array();
 
+        if (empty($parser_params))
+            return $channel_epg;
+
+        hd_debug_print("parser params: " . json_encode($parser_params), true);
+
         try {
             $ch_data = HD::DownloadJson($url);
             if (empty($ch_data)) {
@@ -238,6 +225,10 @@ class Epg_Manager_Json extends Epg_Manager
             }
         }
 
+        // Possible need to add this to setup
+        // disabling end can help problem with overlapping end/start EPG
+        $parser_params[Epg_Params::EPG_END] = '';
+
         hd_debug_print("json epg root: " . $parser_params[Epg_Params::EPG_ROOT], true);
         hd_debug_print("json start: " . $parser_params[Epg_Params::EPG_START], true);
         hd_debug_print("json end: " . $parser_params[Epg_Params::EPG_END], true);
@@ -247,30 +238,10 @@ class Epg_Manager_Json extends Epg_Manager
         // collect all program that starts after day start and before day end
         $prev_start = 0;
         $no_end = empty($parser_params[Epg_Params::EPG_END]);
-        $no_timestamp = !empty($parser_params[Epg_Params::EPG_TIME_FORMAT]);
-        $use_duration = $parser_params[Epg_Params::EPG_USE_DURATION];
         foreach ($ch_data as $entry) {
             $program_start = $entry[$parser_params[Epg_Params::EPG_START]];
-            if ($no_timestamp) {
-                // start time not the timestamp
-                // parsed time assumed as UTC+00
-                // 'd-m-Y H:i'
-                $time_format = str_replace(
-                    array(Plugin_Macros::YEAR, Plugin_Macros::MONTH, Plugin_Macros::DAY, Plugin_Macros::HOUR, Plugin_Macros::MIN),
-                    array('Y', 'm', 'd', 'H', 'i'),
-                    $parser_params[Epg_Params::EPG_TIME_FORMAT]);
-                $dt = DateTime::createFromFormat($time_format, $program_start, new DateTimeZone('UTC'));
-                $program_start = $dt->getTimestamp() - $parser_params[Epg_Params::EPG_TIMEZONE] * 3600; // subtract real EPG timezone
-            }
 
-            // prefill data to avoid undefined index notice
-            $channel_epg[$program_start][Epg_Params::EPG_END] = 0;
-            $channel_epg[$program_start][Epg_Params::EPG_NAME] = '';
-            $channel_epg[$program_start][Epg_Params::EPG_DESC] = '';
-
-            if ($use_duration) {
-                $channel_epg[$program_start][Epg_Params::EPG_END] = $program_start + (int)$entry[$parser_params[Epg_Params::EPG_END]];
-            } else if ($no_end) {
+            if ($no_end) {
                 if ($prev_start !== 0) {
                     $channel_epg[$prev_start][Epg_Params::EPG_END] = $program_start;
                 }
@@ -281,11 +252,16 @@ class Epg_Manager_Json extends Epg_Manager
 
             if (isset($entry[$parser_params[Epg_Params::EPG_NAME]])) {
                 $channel_epg[$program_start][Epg_Params::EPG_NAME] = HD::unescape_entity_string($entry[$parser_params[Epg_Params::EPG_NAME]]);
+            } else {
+                $channel_epg[$program_start][Epg_Params::EPG_NAME] = '';
             }
+
             if (isset($entry[$parser_params[Epg_Params::EPG_DESC]])) {
                 $desc = HD::unescape_entity_string($entry[$parser_params[Epg_Params::EPG_DESC]]);
                 $desc = str_replace('<br>', PHP_EOL, $desc);
                 $channel_epg[$program_start][Epg_Params::EPG_DESC] = $desc;
+            } else {
+                $channel_epg[$program_start][Epg_Params::EPG_DESC] = '';
             }
         }
 
@@ -295,5 +271,17 @@ class Epg_Manager_Json extends Epg_Manager
 
         ksort($channel_epg, SORT_NUMERIC);
         return $channel_epg;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function clear_epg_cache($url = null)
+    {
+        $this->epg_cache = array();
+        $files = get_temp_path('*.cache');
+        hd_debug_print("clear cache files: $files");
+        shell_exec('rm -f '. $files);
+        flush();
     }
 }

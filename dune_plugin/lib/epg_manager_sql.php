@@ -27,9 +27,6 @@ require_once 'epg_manager.php';
 
 class Epg_Manager_Sql extends Epg_Manager
 {
-    /**
-     * @var string
-     */
     protected $index_ext = '.db';
 
     /**
@@ -95,37 +92,21 @@ class Epg_Manager_Sql extends Epg_Manager
             $stm->bindParam(":picon", $picon);
 
             $file = $this->open_xmltv_file();
-            $xml_str = '';
             while (!feof($file)) {
-                $data = fread($file, 8192);
-                if ($data === false) break;
+                $line = stream_get_line($file, self::STREAM_CHUNK, "<channel ");
+                if (empty($line)) continue;
 
-                // stop parse channels mapping
-                $xml_str .= $data;
-                if (strrpos($xml_str, "<programme") !== false) {
-                    break;
-                }
-            }
-            fclose($file);
+                fseek($file, -9, SEEK_CUR);
+                $str = fread($file, 9);
+                if ($str !== "<channel ") continue;
 
-            $start = 0;
-            while ($start !== false) {
-                $start = strpos($xml_str, "<channel", $start);
-                if ($start === false) {
-                    // no channel nodes
-                    break;
-                }
+                $line = stream_get_line($file, self::STREAM_CHUNK, "</channel>");
+                if (empty($line)) continue;
 
-                $end = strpos($xml_str, "</channel>", $start + 8);
-                if ($end === false) {
-                    // node without closing tag?
-                    break;
-                }
-                $end += 10;
+                $line = "<channel $line</channel>";
+
                 $xml_node = new DOMDocument();
-                $str = substr($xml_str, $start, $end - $start);
-                $start = $end;
-                $xml_node->loadXML($str);
+                $xml_node->loadXML($line);
                 foreach($xml_node->getElementsByTagName('channel') as $tag) {
                     $channel_id = $tag->getAttribute('id');
                 }
@@ -139,11 +120,13 @@ class Epg_Manager_Sql extends Epg_Manager
                     }
                 }
 
+                $this->xmltv_channels[$channel_id] = $channel_id;
                 foreach ($xml_node->getElementsByTagName('display-name') as $tag) {
                     $alias = $tag->nodeValue;
                     $stm->execute();
                 }
             }
+            fclose($file);
             $filedb->exec('COMMIT;');
 
             $result = $filedb->querySingle('SELECT count(*) FROM channels;');
@@ -156,9 +139,9 @@ class Epg_Manager_Sql extends Epg_Manager
 
             hd_debug_print("Total channels id's: $channels");
             hd_debug_print("Total picons: $picons");
-            hd_debug_print("------------------------------------------------------------");
             hd_debug_print("Reindexing EPG channels done: " . (microtime(true) - $t) . " secs");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
+            hd_debug_print_separator();
 
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG channels failed: " . $ex->getMessage());
@@ -278,9 +261,9 @@ class Epg_Manager_Sql extends Epg_Manager
             $total_epg = empty($result) ? 0 : (int)$result;
 
             hd_debug_print("Total unique epg id's indexed: $total_epg");
-            hd_debug_print("------------------------------------------------------------");
             hd_debug_print("Reindexing EPG positions done: " . (microtime(true) - $t) . " secs");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
+            hd_debug_print_separator();
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG positions failed: " . $ex->getMessage());
         }
@@ -316,18 +299,22 @@ class Epg_Manager_Sql extends Epg_Manager
             $channel_title = $channel->get_title();
             $epg_ids = array_values($channel->get_epg_ids());
 
-            if (empty($epg_ids) || ($this->flags & EPG_FUZZY_SEARCH)) {
-                $channels_db = $this->open_sqlite_db(false);
-                if (!is_null($channels_db)) {
-                    $stm = $channels_db->prepare('SELECT DISTINCT channel_id FROM channels WHERE alias=:alias;');
-                    $stm->bindValue(":alias", $channel_title);
-                    hd_debug_print("Search channel_id by: $channel_title");
+            $channels_db = $this->open_sqlite_db(false);
+            if (!is_null($channels_db)) {
+                $placeHolders = implode(',', array_fill(0, count($epg_ids), '?'));
+                $stm = $channels_db->prepare("SELECT DISTINCT channel_id FROM channels WHERE alias IN ($placeHolders);");
+                if ($stm !== false) {
+                    foreach ($epg_ids as $index => $val) {
+                        $stm->bindValue($index + 1, $val);
+                    }
 
                     $res = $stm->execute();
-                    if ($res) {
-                        while ($row = $res->fetchArray(SQLITE3_NUM)) {
-                            $epg_ids[] = (string)$row[0];
-                        }
+                    if (!$res) {
+                        throw new Exception("Query failed for epg's: " . raw_json_encode($epg_ids) . " ($channel_title)");
+                    }
+
+                    while ($row = $res->fetchArray(SQLITE3_NUM)) {
+                        $epg_ids[] = (string)$row[0];
                     }
                 }
             }
@@ -336,7 +323,7 @@ class Epg_Manager_Sql extends Epg_Manager
             hd_debug_print("Found epg_ids: " . json_encode($epg_ids), true);
             $channel_id = $channel->get_id();
             if (!empty($epg_ids)) {
-                hd_debug_print("Load position indexes for: $channel_id ($channel_title), search epg id's: " . json_encode($epg_ids));
+                hd_debug_print("Load position indexes for: $channel_id ($channel_title), search epg id's: " . raw_json_encode($epg_ids), true);
                 $placeHolders = implode(',', array_fill(0, count($epg_ids), '?'));
                 $stmt = $pos_db->prepare("SELECT start, end FROM positions WHERE channel_id IN ($placeHolders);");
                 if ($stmt !== false) {
@@ -346,7 +333,7 @@ class Epg_Manager_Sql extends Epg_Manager
 
                     $res = $stmt->execute();
                     if (!$res) {
-                        throw new Exception("Query failed for epg $channel_id ($channel_title)");
+                        throw new Exception("Query failed for epg's: " . raw_json_encode($epg_ids) . " ($channel_title)");
                     }
 
                     while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
@@ -360,13 +347,13 @@ class Epg_Manager_Sql extends Epg_Manager
             }
 
             if (empty($channel_position)) {
-                throw new Exception("No positions for epg $channel_id ($channel_title)");
+                throw new Exception("No positions for channel $channel_id ($channel_title) and epg id's: ". raw_json_encode($epg_ids));
             }
-
         } catch (Exception $ex) {
             hd_debug_print($ex->getMessage());
         }
 
+        hd_debug_print("Channel positions: " . raw_json_encode($channel_position), true);
         return $channel_position;
     }
 
@@ -378,7 +365,7 @@ class Epg_Manager_Sql extends Epg_Manager
     protected function open_sqlite_db($db_type, $mode = SQLITE3_OPEN_READONLY)
     {
         try {
-            $index_name = $this->get_index_name($db_type);
+            $index_name = $db_type ? $this->get_positions_index_name() : $this->get_channels_index_name();
             if (file_exists($index_name)) {
                 hd_debug_print("Open db: $index_name", true);
                 return new SQLite3($index_name, $mode, '');

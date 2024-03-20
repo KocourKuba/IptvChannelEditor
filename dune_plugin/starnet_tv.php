@@ -452,7 +452,7 @@ class Starnet_Tv implements User_Input_Handler
         HD::ShowMemoryUsage();
 
         if ($this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE) === ENGINE_XMLTV) {
-            $this->plugin->get_epg_manager()->start_bg_indexing();
+            $this->plugin->start_bg_indexing();
             sleep(1);
         }
 

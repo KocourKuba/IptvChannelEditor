@@ -58,8 +58,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
 
         //////////////////////////////////////
         // EPG settings
-        Control_Factory::add_image_button($defs, $this, null, self::CONTROL_EPG_SCREEN,
-            TR::t('setup_epg_settings'), TR::t('setup_change_settings'), $setting_icon, self::CONTROLS_WIDTH);
+        if ($this->plugin->is_json_capable() || $this->plugin->get_all_xmltv_sources()->size() !== 0) {
+            Control_Factory::add_image_button($defs, $this, null, self::CONTROL_EPG_SCREEN,
+                TR::t('setup_epg_settings'), TR::t('setup_change_settings'), $setting_icon, self::CONTROLS_WIDTH);
+        }
 
         //////////////////////////////////////
         // Extended settings

@@ -310,6 +310,33 @@ class HD
     }
 
     /**
+     * download and return contents of log file
+     * Used to download large files
+     *
+     * @param string $url
+     * @param string|null $save_file
+     * @return bool
+     */
+    public static function http_save_https_proxy($url, $save_file)
+    {
+        $logfile = get_temp_path("http_proxy.log");
+        if (file_exists($logfile)) {
+            unlink($logfile);
+        }
+        $user_agent = self::get_dune_user_agent();
+        $cmd = get_install_path('bin/https_proxy.sh') . " '$url' '$save_file' '$user_agent' '$logfile'";
+        hd_debug_print("Exec: $cmd", true);
+        shell_exec($cmd);
+        $log_content = @file_get_contents($logfile);
+        if ($log_content !== false) {
+            hd_debug_print("Read http_proxy log...");
+            foreach (explode("\n", $log_content) as $l) hd_debug_print(rtrim($l));
+            hd_debug_print("Read finished");
+        }
+        return file_exists($save_file);
+    }
+
+    /**
      * @param int $code
      * @return string
      */
@@ -879,25 +906,27 @@ class HD
     }
 
     /**
+     * @param string $source
      * @return string
      */
-    public static function get_last_error()
+    public static function get_last_error($source = "pl_last_error")
     {
-        $error_file = get_temp_path("last_error");
+        $error_file = get_temp_path($source);
         $msg = '';
         if (file_exists($error_file)) {
             $msg = file_get_contents($error_file);
-            self::set_last_error(null);
+            self::set_last_error($source, null);
         }
         return $msg;
     }
 
     /**
+     * @param $source
      * @param string|null $error
      */
-    public static function set_last_error($error)
+    public static function set_last_error($source, $error)
     {
-        $error_file = get_temp_path("last_error");
+        $error_file = get_temp_path($source);
 
         if (!empty($error)) {
             file_put_contents($error_file, $error);

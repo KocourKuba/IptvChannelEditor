@@ -170,21 +170,21 @@ class dynamic_config
     /**
      * @param string $type
      * @param string $param
-     * @param mixed $val
+     * @return mixed
      */
-    public function set_epg_param($type, $param, $val)
+    public function get_epg_param($type, $param)
     {
-        $this->epg_parser_params[$type][$param] = $val;
+        return isset($this->epg_parser_params[$type][$param]) ? $this->epg_parser_params[$type][$param] : null;
     }
 
     /**
      * @param string $type
      * @param string $param
-     * @return mixed
+     * @param mixed $val
      */
-    public function get_epg_param($type, $param)
+    public function set_epg_param($type, $param, $val)
     {
-        return $this->epg_parser_params[$type][$param];
+        $this->epg_parser_params[$type][$param] = $val;
     }
 
     /**

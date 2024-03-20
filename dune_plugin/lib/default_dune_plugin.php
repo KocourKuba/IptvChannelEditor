@@ -151,7 +151,7 @@ class Default_Dune_Plugin implements DunePlugin
 
         print_sysinfo();
 
-        hd_print("----------------------------------------------------");
+        hd_debug_print_separator();
         hd_print("Plugin ID:           " . $plugin_info['app_type_name']);
         hd_print("Plugin name:         " . $plugin_info['app_caption']);
         hd_print("Plugin version:      " . $plugin_info['app_version']);
@@ -179,7 +179,7 @@ class Default_Dune_Plugin implements DunePlugin
                 hd_print("Channels direct link " . $item);
             }
         }
-        hd_print("----------------------------------------------------");
+        hd_debug_print_separator();
     }
 
     public function create_setup_header(&$defs)
@@ -194,7 +194,7 @@ class Default_Dune_Plugin implements DunePlugin
 
     public function init_plugin()
     {
-        hd_print("----------------------------------------------------");
+        hd_debug_print_separator();
         $this->load(true);
         $this->update_log_level();
         if (LogSeverity::$is_debug) {
@@ -208,7 +208,7 @@ class Default_Dune_Plugin implements DunePlugin
         $this->create_screen_views();
 
         hd_debug_print("Init plugin done!");
-        hd_print("----------------------------------------------------");
+        hd_debug_print_separator();
     }
 
     /**
@@ -249,35 +249,62 @@ class Default_Dune_Plugin implements DunePlugin
         }
     }
 
+    public function is_json_capable()
+    {
+        $epg_url1 = $this->config->get_epg_param(Plugin_Constants::EPG_FIRST, Epg_Params::EPG_URL);
+        $epg_url2 = $this->config->get_epg_param(Plugin_Constants::EPG_SECOND, Epg_Params::EPG_URL);
+        return !empty($epg_url1) || !empty($epg_url2);
+    }
+
     public function init_epg_manager()
     {
+        $this->epg_manager = null;
         $engine = $this->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
         if ($engine === ENGINE_JSON) {
-            $this->epg_manager = new Epg_Manager_Json($this);
-        } else {
-            $cache_dir = $this->get_cache_dir();
-            $xmltv_source = $this->get_active_xmltv_source();
-            $all_source = $this->get_all_xmltv_sources();
-            if (empty($xmltv_source) && $all_source->size()) {
-                $all_source->rewind();
-                $key = $all_source->key();
-                $this->set_active_xmltv_source_key($key);
-                $xmltv_source = $all_source->get($key);
-            }
-
-            if (class_exists('SQLite3')) {
-                hd_print("Using sqlite cache engine");
-                $this->epg_manager = new Epg_Manager_Sql($this->config->plugin_info['app_version'], $cache_dir, $xmltv_source);
+            if ($this->is_json_capable()) {
+                $engine_class = 'Epg_Manager_Json';
             } else {
-                hd_print("Using legacy cache engine");
-                $this->epg_manager = new Epg_Manager($this->config->plugin_info['app_version'], $cache_dir, $xmltv_source);
+                $this->set_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_XMLTV);
+                $engine = ENGINE_XMLTV;
             }
         }
+        if ($engine === ENGINE_XMLTV && class_exists('SQLite3')) {
+            $engine_class = 'Epg_Manager_Sql';
+        }
 
-        $flags = $this->get_bool_parameter(PARAM_FUZZY_SEARCH_EPG, false) ? EPG_FUZZY_SEARCH : 0;
-        $flags |= $this->get_bool_parameter(PARAM_FAKE_EPG, false) ? EPG_FAKE_EPG : 0;
+        if (empty($engine_class)) {
+            $engine_class = 'Epg_Manager';
+        }
+
+        hd_debug_print("Using $engine_class cache engine");
+        $this->epg_manager = new $engine_class($this->config->plugin_info['app_version'], $this->get_cache_dir(), $this->get_active_xmltv_source(), $this);
+
+        $flags = $this->get_bool_parameter(PARAM_FAKE_EPG, false) ? EPG_FAKE_EPG : 0;
         $this->epg_manager->set_flags($flags);
         $this->epg_manager->set_cache_ttl($this->get_parameter(PARAM_EPG_CACHE_TTL, 3));
+    }
+
+    /**
+     * Start indexing in background and return immediately
+     * @return void
+     */
+    public function start_bg_indexing()
+    {
+        $config = array(
+            'debug' => LogSeverity::$is_debug,
+            'log_file' => $this->get_epg_manager()->get_cache_stem('.log'),
+            'version' => $this->config->plugin_info['app_version'],
+            'cache_dir' => $this->get_cache_dir(),
+            'cache_engine' => $this->get_parameter(PARAM_EPG_CACHE_ENGINE),
+            'cache_ttl' => $this->get_parameter(PARAM_EPG_CACHE_TTL, 3),
+            'xmltv_url' => $this->get_active_xmltv_source(),
+        );
+
+        file_put_contents(get_temp_path('parse_config.json'), json_encode($config));
+
+        $cmd = get_install_path('bin/cgi_wrapper.sh') . " 'index_epg.php' &";
+        hd_debug_print("exec: $cmd", true);
+        exec($cmd);
     }
 
     /**
@@ -285,7 +312,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_cache_dir()
     {
-        $cache_dir = smb_tree::get_folder_info($this->get_parameter(PARAM_CACHE_PATH, get_data_path(EPG_CACHE_SUBDIR)));
+        $cache_dir = smb_tree::get_folder_info($this->get_parameter(PARAM_CACHE_PATH));
         if (!is_null($cache_dir) && rtrim($cache_dir, DIRECTORY_SEPARATOR) === get_data_path(EPG_CACHE_SUBDIR)) {
             $this->remove_parameter(PARAM_CACHE_PATH);
             $cache_dir = null;
@@ -358,7 +385,21 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_active_xmltv_source()
     {
-        return $this->get_parameter(PARAM_CUR_XMLTV_SOURCE, '');
+        $source = $this->get_parameter(PARAM_CUR_XMLTV_SOURCE, '');
+        if (empty($source)) {
+            $xmltv_sources = $this->get_all_xmltv_sources();
+            if ($xmltv_sources->size() !== 0) {
+                $xmltv_sources->rewind();
+                $source = $xmltv_sources->current();
+                $this->postpone_save = true;
+                $this->set_parameter(PARAM_CUR_XMLTV_SOURCE, $source);
+                $this->set_active_xmltv_source_key($xmltv_sources->key());
+                $this->postpone_save = false;
+                $this->save();
+            }
+        }
+
+        return $source;
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -792,6 +833,8 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function save()
     {
+        hd_debug_print(null, true);
+
         if (is_null($this->parameters)) {
             hd_debug_print("this->parameters is not set!", true);
         } else if (!$this->postpone_save) {

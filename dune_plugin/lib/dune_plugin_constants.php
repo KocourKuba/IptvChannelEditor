@@ -107,7 +107,6 @@ const PARAM_GROUPS_ICONS = 'groups_icons';
 const PARAM_PLUGIN_BACKGROUND = 'plugin_background';
 const PARAM_ENABLE_DEBUG = 'enable_debug';
 const PARAM_PER_CHANNELS_ZOOM = 'per_channels_zoom';
-const PARAM_FUZZY_SEARCH_EPG = 'fuzzy_search_epg';
 const PARAM_FAKE_EPG = 'fake_epg';
 const PARAM_USE_HTTPS_PROXY = 'use_proxy';
 const PARAM_STREAM_FORMAT = 'stream_format';
@@ -121,7 +120,6 @@ const ENGINE_JSON = 'json';
 const ENGINE_XMLTV = 'xmltv';
 const EPG_CACHE_SUBDIR = 'epg_cache';
 const HISTORY_SUBDIR = 'history';
-const EPG_FUZZY_SEARCH = 1;
 const EPG_FAKE_EPG = 2;
 
 # HTTP params
