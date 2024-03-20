@@ -75,7 +75,11 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         // channels lists
         $all_channels = $this->plugin->config->get_channel_list($channels_list);
         if (empty($all_channels)) {
-            Control_Factory::add_label($defs, TR::t('setup_channels_src_used_label'), TR::t('setup_channels_src_no_channels'));
+            Control_Factory::add_button($defs, $this,null, "dummy",
+                TR::t('setup_channels_src_used_label'), TR::t('setup_channels_src_no_channels'), self::CONTROLS_WIDTH);
+        } else if (count($all_channels) === 1) {
+            Control_Factory::add_button($defs, $this,null, "dummy",
+                TR::t('setup_channels_src_used_label'), reset($all_channels), self::CONTROLS_WIDTH);
         } else {
             Control_Factory::add_combobox($defs, $this, null, PARAM_CHANNELS_LIST_NAME,
                 TR::t('setup_channels_src_used_label'), $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
@@ -236,8 +240,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                     return Action_Factory::show_title_dialog(TR::t('err_load_channels_list'));
                 }
 
-                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                return Action_Factory::invalidate_all_folders(Action_Factory::reset_controls($this->do_get_control_defs()));
+                return Action_Factory::invalidate_all_folders($plugin_cookies, Action_Factory::reset_controls($this->do_get_control_defs()));
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs());

@@ -416,8 +416,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
 
         if ($need_reload) {
             $this->plugin->tv->reload_channels();
-            Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-            return Action_Factory::invalidate_all_folders(Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)));
+            return Action_Factory::invalidate_all_folders($plugin_cookies, Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)));
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies));
