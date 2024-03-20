@@ -57,8 +57,8 @@ copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul
 copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%pkg%" >nul
 copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%ROOT%package\defaults_%MAJOR%.%MINOR%.json" >nul
 copy "%ROOT%dune_plugin\changelog.md"					"%pkg%" >nul
-copy "%ROOT%dune_plugin\changelog.md" "%ROOT%package\changelog.md" >nul
-copy "%ROOT%dune_plugin\changelog.md" "%ROOT%package\changelog.md.%BUILD%" >nul
+copy "%ROOT%dune_plugin\changelog.md" 					"%ROOT%package\changelog.md" >nul
+copy "%ROOT%dune_plugin\changelog.md" 					"%ROOT%package\changelog.md.%BUILD%" >nul
 
 pushd "package\%BUILD%"
 mklink /D dune_plugin "%ROOT%dune_plugin" >nul 2>&1
@@ -72,15 +72,16 @@ echo build update package...
 call :header > %outfile%
 
 echo ^<package^> >>%outfile%
-call :add_node %BUILD_NAME%.exe				>>%outfile%
-call :add_node %BUILD_NAME%RUS.dll			>>%outfile%
-call :add_node Updater.exe					>>%outfile%
-call :add_node 7z.dll						>>%outfile%
-call :add_node BugTrapU.dll					>>%outfile%
-call :add_node dbghelp.dll					>>%outfile%
-call :add_node changelog.md					>>%outfile%
-call :add_node dune_plugin.7z				>>%outfile%
-call :add_node ChannelsLists.7z	true		>>%outfile%
+call :add_node %BUILD_NAME%.exe					>>%outfile%
+call :add_node %BUILD_NAME%RUS.dll				>>%outfile%
+call :add_node Updater.exe						>>%outfile%
+call :add_node 7z.dll							>>%outfile%
+call :add_node BugTrapU.dll						>>%outfile%
+call :add_node dbghelp.dll						>>%outfile%
+call :add_node changelog.md						>>%outfile%
+call :add_node defaults_%MAJOR%.%MINOR%.json	>>%outfile%
+call :add_node dune_plugin.7z					>>%outfile%
+call :add_node ChannelsLists.7z	true			>>%outfile%
 echo ^</package^> >>%outfile%
 copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 
@@ -91,10 +92,10 @@ echo %BUILD_NAME%.exe				>packing.lst
 echo %BUILD_NAME%RUS.dll			>>packing.lst
 echo Updater.exe					>>packing.lst
 echo 7z.dll 						>>packing.lst
-echo defaults_%MAJOR%.%MINOR%.json	>>packing.lst
 echo BugTrapU.dll					>>packing.lst
 echo dbghelp.dll					>>packing.lst
 echo changelog.md					>>packing.lst
+echo defaults_%MAJOR%.%MINOR%.json	>>packing.lst
 echo %ROOT%dune_plugin				>>packing.lst
 echo %ROOT%ChannelsLists			>>packing.lst
 echo dune_plugin_*.zip				>>packing.lst
