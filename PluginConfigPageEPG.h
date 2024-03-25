@@ -104,5 +104,4 @@ protected:
 
 	time_t m_UTC = 0;
 	int m_EpgTimezone = 0;
-	std::array<EpgParameters, 4> epg_presets;
 };

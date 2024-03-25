@@ -135,10 +135,11 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	m_Token = GetPropertySheet()->m_plugin->get_api_token(GetPropertySheet()->m_selected_cred).c_str();
 	m_wndEpgType.SetCurSel(0);
 
-	for(size_t it = (size_t)EpgPresets::enDRM; it != (size_t)EpgPresets::enLast; ((size_t&)it)++)
+	const auto& presets = GetPluginFactory().get_epg_presets();
+	for(const auto& preset : presets)
 	{
-		const auto& name = utils::utf8_to_utf16(GetPluginFactory().get_epg_preset((EpgPresets)it).epg_name);
-		m_wndEpgPreset.AddString(name.c_str());
+		int idx = m_wndEpgPreset.AddString(utils::utf8_to_utf16(preset.first).c_str());
+		m_wndEpgPreset.SetItemData(idx, (DWORD_PTR)preset.first.c_str());
 	}
 	m_wndEpgPreset.SetCurSel((int)GetPropertySheet()->m_plugin->get_epg_preset_idx(0));
 
@@ -232,8 +233,8 @@ void CPluginConfigPageEPG::FillControls()
 void CPluginConfigPageEPG::UpdateControls()
 {
 	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
-	auto preset = (EpgPresets)m_wndEpgPreset.GetCurSel();
-	bool not_custom_preset = preset != EpgPresets::enCustom;
+	auto preset = (size_t)m_wndEpgPreset.GetCurSel();
+	bool not_custom_preset = preset != GetPluginFactory().get_epg_presets().size() - 1;
 
 	// epg
 	m_wndEpgDomain.SetReadOnly(readOnly);
@@ -363,7 +364,7 @@ void CPluginConfigPageEPG::OnCbnSelchangeComboEpgParserPreset()
 	int idx = m_wndEpgPreset.GetCurSel();
 	if (idx != CB_ERR)
 	{
-		EpgParameters epg = (idx == (int)EpgPresets::enCustom) ? GetEpgParameters() : GetPluginFactory().get_epg_preset((EpgPresets)idx);
+		EpgParameters epg = GetPluginFactory().get_epg_preset((const char*)m_wndEpgPreset.GetItemData(idx));
 		m_EpgRoot = epg.get_epg_root().c_str();
 		m_EpgName = epg.get_epg_name().c_str();
 		m_EpgDesc = epg.get_epg_desc().c_str();

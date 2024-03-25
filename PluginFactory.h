@@ -40,11 +40,8 @@ public:
 	}
 
 	std::shared_ptr<base_plugin> create_plugin(PluginType type);
-	EpgParameters get_epg_preset(EpgPresets idx) const;
-	const std::array<EpgParameters, (size_t)EpgPresets::enCustom>& get_epg_presets() const
-	{
-		return known_presets;
-	}
+	EpgParameters get_epg_preset(const std::string& name) const;
+	const std::map<std::string, EpgParameters>& get_epg_presets() const;
 
 	bool load_configs(bool dev = false);
 	const std::vector<std::pair<PluginType, std::string>>& get_all_plugins() const;
@@ -60,7 +57,7 @@ private:
 
 private:
 	std::map<std::string, plugin_config> m_config_storage;
-	std::array<EpgParameters, (size_t)EpgPresets::enCustom> known_presets{};
+	std::map<std::string, EpgParameters> m_known_presets;
 };
 
 inline PluginFactory& GetPluginFactory() { return PluginFactory::Instance(); }

@@ -137,10 +137,10 @@ void plugin_config::clear()
 	streams_config.fill(StreamParameters());
 
 	internal_epg_urls.clear();
-	set_epg_preset(0, EpgPresets::enCustom);
+	set_epg_preset(0, "drm");
 	epg_params[0].epg_param = "first";
 
-	set_epg_preset(1, EpgPresets::enCustom);
+	set_epg_preset(1, "drm");
 	epg_params[1].epg_param = "second";
 }
 
@@ -216,10 +216,10 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename, const s
 	}
 }
 
-void plugin_config::set_epg_preset(size_t epg_idx, EpgPresets idx)
+void plugin_config::set_epg_preset(size_t epg_idx, const std::string& preset_name)
 {
 	auto& epg_param = epg_params[epg_idx];
-	const auto& preset = GetPluginFactory().get_epg_preset(idx);
+	const auto& preset = GetPluginFactory().get_epg_preset(preset_name);
 
 	epg_param.epg_root = preset.epg_root;
 	epg_param.epg_name = preset.epg_name;
@@ -233,17 +233,17 @@ void plugin_config::set_epg_preset(size_t epg_idx, EpgPresets idx)
 
 size_t plugin_config::get_epg_preset_idx(size_t epg_idx) const
 {
-	size_t preset_idx = (size_t)EpgPresets::enDRM;
+	size_t preset_idx = 0;
 	const auto& epg_param = epg_params[epg_idx];
 	for (const auto& preset : GetPluginFactory().get_epg_presets())
 	{
-		if (epg_param.compare_preset(preset))
+		if (epg_param.compare_preset(preset.second))
 			return preset_idx;
 
 		preset_idx++;
 	}
 
-	return (size_t)EpgPresets::enCustom;
+	return preset_idx;
 }
 
 nlohmann::json plugin_config::get_epg_root(int epg_idx, const nlohmann::json& epg_data) const

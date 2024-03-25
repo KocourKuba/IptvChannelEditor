@@ -81,24 +81,6 @@ static std::vector<std::pair<PluginType, std::string>> s_all_plugins = {
 	{ PluginType::enCustom,     "custom"     },
 };
 
-static std::vector <std::pair<EpgPresets, std::string>> s_presets = {
-	{ EpgPresets::enDRM,         "drm"           },
-	{ EpgPresets::enIptvxOne,    "iptvx.one"     },
-	{ EpgPresets::enCbilling,    "cbilling"      },
-	{ EpgPresets::enItvLive,     "itvlive"       },
-	{ EpgPresets::enPropgNet,    "propg.net"     },
-	{ EpgPresets::enTVClub,      "tvclub"        },
-	{ EpgPresets::enVidok,       "vidok"         },
-	{ EpgPresets::enMyEPGServer, "my.epg.server" },
-	{ EpgPresets::enOttClub,     "ottclub"       },
-	{ EpgPresets::enTVTeam,      "tvteam"        },
-	{ EpgPresets::enSharaClub,   "sharaclub"     },
-	{ EpgPresets::enSharavoz,    "sharavoz"      },
-	{ EpgPresets::enCustom,      "Custom"        },
-	{ EpgPresets::enLast,        "Last"          },
-};
-
-
 std::shared_ptr<base_plugin> PluginFactory::create_plugin(PluginType type)
 {
 	std::shared_ptr<base_plugin> plugin;
@@ -160,18 +142,26 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(PluginType type)
 	return plugin;
 }
 
-EpgParameters PluginFactory::get_epg_preset(EpgPresets idx) const
+EpgParameters PluginFactory::get_epg_preset(const std::string& name) const
 {
-	if (idx < EpgPresets::enCustom)
-		return known_presets[(size_t)idx];
+	if (const auto& pair = m_known_presets.find(name); pair != m_known_presets.end())
+	{
+		return pair->second;
+	}
 
 	return {};
+}
+
+const std::map<std::string, EpgParameters>& PluginFactory::get_epg_presets() const
+{
+	return m_known_presets;
 }
 
 bool PluginFactory::load_configs(bool dev /*= false*/)
 {
 	bool res = false;
 	std::stringstream data;
+	m_known_presets.clear();
 
 	if (!dev)
 	{
@@ -210,13 +200,9 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 		nlohmann::json config = nlohmann::json::parse(data.str());
 		for (const auto& item : config["epg_presets"].items())
 		{
-			const auto& it = std::find_if(s_presets.begin(), s_presets.end(), [&item](const auto& pair) { return pair.second == item.key(); });
-			if (it != s_presets.end())
-			{
-				EpgParameters preset;
-				EpgParameters::from_json_wrapper(item.value(), preset);
-				known_presets[(size_t)it->first] = preset;
-			}
+			EpgParameters preset;
+			EpgParameters::from_json_wrapper(item.value(), preset);
+			m_known_presets.emplace(item.key(), preset);
 		}
 
 		for (const auto& item : config["plugins"].items())

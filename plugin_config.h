@@ -96,31 +96,6 @@ NLOHMANN_JSON_SERIALIZE_ENUM(AccountAccessType,
 }
 using namespace s_enum;
 
-namespace epg_enum
-{
-
-enum class EpgPresets
-{
-	enDRM = 0,
-	enIptvxOne,
-	enCbilling,
-	enItvLive,
-	enPropgNet,
-	enTVClub,
-	enVidok,
-	enMyEPGServer,
-	enOttClub,
-	enTVTeam,
-	enSharaClub,
-	enSharavoz,
-	enCustom,
-	enLast,
-};
-
-}
-
-using namespace epg_enum;
-
 namespace vod_enum
 {
 
@@ -523,7 +498,7 @@ public:
 	/// <summary>
 	/// set prefilled EPG parsing preset for selected epg type
 	/// </summary>
-	void set_epg_preset(size_t epg_idx, EpgPresets idx);
+	void set_epg_preset(size_t epg_idx, const std::string& preset_name);
 
 	/// <summary>
 	/// get EPG parsing preset index for selected epg type
