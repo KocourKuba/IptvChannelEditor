@@ -233,7 +233,14 @@
           "uri_template": "{SCHEME}{DOMAIN}:80/{ID}/mpegts?token={TOKEN}"
         }
       ],
-      "title": "Antifriz TV"
+      "title": "Antifriz TV",
+      "vod_engine": "Json",
+      "vod_templates": [
+        {
+          "name": "Standard",
+          "pl_template": "{API_URL}"
+        }
+      ]
     },
     "bcumedia": {
       "access_type": "pin",
@@ -1604,8 +1611,7 @@
           "cu_type": "shift",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
+          "uri_arc_template": "{LIVE_URL}?utc={START}",
           "uri_template": "{SCHEME}{DOMAIN}/{ID}/{TOKEN}"
         },
         {}
