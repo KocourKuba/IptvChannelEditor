@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "boost-regex",
+    "fmt",
+    "nlohmann-json",
+    "rapidxml",
+    "bshoshany-thread-pool"
+  ]
+}

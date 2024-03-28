@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\rapidxml">
-      <UniqueIdentifier>{c7df5961-1a23-45e8-bda5-8fc9cb3e03b2}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -26,24 +23,6 @@
     </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml.hpp">
-      <Filter>Header Files\rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml_iterators.hpp">
-      <Filter>Header Files\rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml_print.hpp">
-      <Filter>Header Files\rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml_utils.hpp">
-      <Filter>Header Files\rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml_value.hpp">
-      <Filter>Header Files\rapidxml</Filter>
     </ClInclude>
     <ClInclude Include="inet_utils.h">
       <Filter>Header Files</Filter>
@@ -68,9 +47,6 @@
     </ClInclude>
     <ClInclude Include="SmartHandle.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml_ext.hpp">
-      <Filter>Header Files\rapidxml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

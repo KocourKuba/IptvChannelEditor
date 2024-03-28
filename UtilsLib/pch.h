@@ -36,6 +36,6 @@ DEALINGS IN THE SOFTWARE.
 #include <optional>
 
 #include <fmt/xchar.h>
-#include "rapidxml.hpp"
+#include <rapidxml/rapidxml.hpp>
 
 #endif //PCH_H

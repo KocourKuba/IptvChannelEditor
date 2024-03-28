@@ -41,7 +41,7 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\inet_utils.h"
 #include "UtilsLib\md5.h"
 
-#include "7zip\SevenZipWrapper.h"
+#include "7zpp\SevenZipWrapper.h"
 
 #include "BugTrap\Source\Client\BugTrap.h"
 

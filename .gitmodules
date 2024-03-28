@@ -1,18 +1,9 @@
 [submodule "SevenZip"]
 	path = SevenZip
 	url = https://github.com/KocourKuba/7zip-cpp.git
-[submodule "fmt"]
-	path = fmt
-	url = https://github.com/fmtlib/fmt.git
-[submodule "thread-pool"]
-	path = thread-pool
-	url = https://github.com/bshoshany/thread-pool.git
 [submodule "BugTrap"]
 	path = BugTrap
 	url = https://github.com/KocourKuba/BugTrap.git
-[submodule "json"]
-	path = json
-	url = https://github.com/nlohmann/json.git
 [submodule "ChannelsLists"]
 	path = ChannelsLists
 	url = https://github.com/KocourKuba/ChannelsLists.git

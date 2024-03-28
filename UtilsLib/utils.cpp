@@ -30,8 +30,8 @@ DEALINGS IN THE SOFTWARE.
 
 #include "utils.h"
 
-#include "boost\regex.hpp"
-#include "fmt\chrono.h"
+#include <boost/regex.hpp>
+#include <fmt/chrono.h>
 
 namespace utils
 {

@@ -34,7 +34,7 @@ goto :EOF
 
 :getversion
 rem Get app version
-dll\GetVersion.exe "%BUILD_PATH%\%BUILD_NAME%.exe" \\StringFileInfo\\040904b0\\ProductVersion >AppVer.tmp
+bin\GetVersion.exe "%BUILD_PATH%\%BUILD_NAME%.exe" \\StringFileInfo\\040904b0\\ProductVersion >AppVer.tmp
 set /P BUILD=<AppVer.tmp
 del AppVer.tmp >nul 2>&1
 FOR /f "tokens=1,2 delims=." %%a IN ("%BUILD%") do set MAJOR=%%a&set MINOR=%%b
@@ -153,7 +153,7 @@ echo ^<update_info version="%BUILD%" /^>
 goto :EOF
 
 :add_node 
-%ROOT%dll\FileCrc.exe -d %1 > crc.tmp
+%ROOT%bin\FileCrc.exe -d %1 > crc.tmp
 Set /P CRC32=<crc.tmp
 del crc.tmp >nul 2>&1
 if [%2]==[] (

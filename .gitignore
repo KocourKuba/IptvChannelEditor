@@ -17,6 +17,7 @@
 *.zip
 /.idea
 /.vs
+/_vcpkg
 /ArchivePDB
 /CommonDll
 /ipch

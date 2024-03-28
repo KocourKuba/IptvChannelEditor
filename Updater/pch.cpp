@@ -26,6 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "Version.h"
-#include "SevenZip\7zip\7zpp_autolink.h"
+#include "SevenZip\7zpp\7zpp_autolink.h"
 
 #pragma message ("Version: " STRPRODUCTVER)

@@ -23,7 +23,6 @@
     <ProjectGuid>{7B5FAA84-D3E2-4928-973B-080A26E3B95F}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
     <RootNamespace>IPTVChannelEditor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>IPTVChannelEditor</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -88,6 +87,29 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">
+    <VcpkgInstalledDir>$(SolutionDir)\_vcpkg\x32</VcpkgInstalledDir>
+    <VcpkgUseMD>true</VcpkgUseMD>
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">
+    <VcpkgInstalledDir>$(SolutionDir)\_vcpkg\x32</VcpkgInstalledDir>
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgUseMD>true</VcpkgUseMD>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|x64'">
+    <VcpkgInstalledDir>$(SolutionDir)\_vcpkg\x64</VcpkgInstalledDir>
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgUseMD>true</VcpkgUseMD>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">
+    <VcpkgInstalledDir>$(SolutionDir)\_vcpkg\x64</VcpkgInstalledDir>
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgUseMD>true</VcpkgUseMD>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -95,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>fmt\include;SevenZip;json\single_include;$(SolutionDir)..\boost;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);SevenZip;</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
@@ -128,7 +150,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>fmt\include;SevenZip;json\single_include;$(SolutionDir)..\boost;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);SevenZip;</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
@@ -162,7 +184,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>fmt\include;SevenZip;json\single_include;$(SolutionDir)..\boost;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);SevenZip;</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -206,7 +228,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>fmt\include;SevenZip;json\single_include;$(SolutionDir)..\boost;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);SevenZip;</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>

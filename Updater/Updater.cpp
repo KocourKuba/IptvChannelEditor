@@ -40,7 +40,7 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\Crc32.h"
 #include "UtilsLib\FileVersionInfo.h"
 
-#include "SevenZip\7zip\SevenZipWrapper.h"
+#include "SevenZip\7zpp\SevenZipWrapper.h"
 
 #include "BugTrap\Source\Client\BugTrap.h"
 

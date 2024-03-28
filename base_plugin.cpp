@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 
-#include "7zip\SevenZipWrapper.h"
+#include "7zpp\SevenZipWrapper.h"
 
 void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream& info)
 {

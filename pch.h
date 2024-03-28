@@ -46,13 +46,15 @@ DEALINGS IN THE SOFTWARE.
 #include <fmt/xchar.h>
 #include <fmt/chrono.h>
 
-#include "boost\regex.hpp"
+#include <boost/regex.hpp>
+
+#include "framework.h"
+#include <rapidxml/rapidxml_utils.hpp>
+#include <rapidxml/rapidxml_print.hpp>
+
+#include "UtilsLib\rapidxml_value.hpp"
 
 #include "Version.h"
-#include "framework.h"
-#include "UtilsLib\rapidxml_utils.hpp"
-#include "UtilsLib\rapidxml_print.hpp"
-#include "UtilsLib\rapidxml_value.hpp"
 
 #define WM_INIT_PROGRESS (WM_USER + 301)
 #define WM_UPDATE_PROGRESS (WM_USER + 302)
