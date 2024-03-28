@@ -5595,6 +5595,8 @@ void CIPTVChannelEditorDlg::UpdateVars(uri_stream* uri) const
 	{
 		uri->set_var1(pair->second->get_var1());
 		uri->set_var2(pair->second->get_var2());
+		uri->set_catchup(pair->second->get_catchup());
+		uri->set_catchup_source(pair->second->get_catchup_source());
 	}
 }
 

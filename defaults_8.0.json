@@ -1844,6 +1844,31 @@
         }
       ]
     },
+    "topiptv": {
+      "access_type": "login",
+      "name": "topiptv",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>.+)\\/live\\/(?<id>.+)\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/list\\.php\\?login=(?<login>.+)&password=(?<password>.+)&.+$",
+          "pl_template": "https://s.topiptv.link/list.php?login={LOGIN}&password={PASSWORD}&type=m3u"
+        }
+      ],
+      "provider_url": "https://topiptv.info/",
+      "streams_config": [
+        {
+          "cu_type": "default",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{CH_CATCHUP}",
+          "uri_template": "{SCHEME}{DOMAIN}:{PORT}/live/{ID}?token={TOKEN}"
+        },
+        {
+        }
+      ],
+      "title": "Top IPTV"
+    },
     "tvclub": {
       "access_type": "login",
       "balance_support": true,

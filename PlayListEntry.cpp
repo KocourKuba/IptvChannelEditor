@@ -120,6 +120,9 @@ bool PlaylistEntry::Parse(const std::string& str)
 			{
 				set_catchup(value);
 				playlist->per_channel_catchup = true;
+				if (const auto& pair = tags.find(m3u_entry::info_tags::tag_catchup_source); pair != tags.end()) {
+					set_catchup_source(pair->second);
+				}
 			}
 			break;
 		}

@@ -4,6 +4,7 @@ class Plugin_Macros
 {
     const API_URL        = "{API_URL}";       // special url used to get information from provider
     const LIVE_URL       = "{LIVE_URL}";      // live url, used in archive template substitution
+    const CH_CATCHUP     = "{CH_CATCHUP}";    // catchup url, used in archive template substitution
     const CGI_BIN        = "{CGI_BIN}";       // Url points to plugin cgi_bin folder
     const SCHEME         = "{SCHEME}";        // stream url scheme (set from playlist)
     const DOMAIN         = "{DOMAIN}";        // stream url domain (set from playlist)
@@ -38,6 +39,7 @@ class Plugin_Macros
     const DUNE_IP        = "{DUNE_IP}";       // dune IP address. Useful for using My EPG Server plugin
 
     const DURATION       = "{DURATION}";      // archive duration (in second) in flussonic archive
+    const DURMIN         = "{DURMIN}";        // archive duration (in second) in flussonic archive
     const STOP           = "{STOP}";          // archive end time (unix timestamp)
 
     const YEAR           = "{YEAR}";          // Year subst template, used in epg_date_format, epg_time_format

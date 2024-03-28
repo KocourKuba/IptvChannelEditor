@@ -121,13 +121,41 @@ std::wstring base_plugin::get_playlist_url(const TemplateParams& params, std::ws
 
 std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stream* info) const
 {
+	static const std::map<std::wstring, std::wstring> template_mapper = {
+		{ CU_START, REPL_START },
+		{ CU_UTC, REPL_START },
+		{ CU_CURRENT_UTC, REPL_NOW },
+		{ CU_TIMESTAMP, REPL_NOW },
+		{ CU_END, REPL_NOW },
+		{ CU_UTCEND, REPL_NOW },
+		{ CU_OFFSET, REPL_OFFSET },
+		{ CU_DURATION, REPL_DURATION },
+//		{ CU_DURMIN, REPL_DURATION },
+// 		{ CU_YEAR, REPL_YEAR},
+// 		{ CU_MONTH, REPL_MONTH},
+// 		{ CU_DAY, REPL_DAY },
+// 		{ CU_HOUR, REPL_HOUR },
+// 		{ CU_MIN, REPL_MIN },
+// 		{ CU_SEC, REPL_SEC },
+	};
+
 	size_t subtype = (size_t)params.streamSubtype;
 
 	const auto& live_url = get_live_template(subtype, info);
 	std::wstring url = params.shift_back ? get_archive_template(subtype, info) : live_url;
 
 	if (params.shift_back)
+	{
 		utils::string_replace_inplace<wchar_t>(url, REPL_LIVE_URL, live_url);
+		utils::string_replace_inplace<wchar_t>(url, REPL_CH_CATCHUP, utils::utf8_to_utf16(info->get_catchup_source()));
+		if (url.find(L"${"))
+		{
+			for (const auto& pair : template_mapper)
+			{
+				utils::string_replace_inplace<wchar_t>(url, pair.first, pair.second);
+			}
+		}
+	}
 
 	utils::string_replace_inplace<wchar_t>(url, REPL_CGI_BIN, fmt::format(L"http://127.0.0.1/cgi-bin/plugins/{:s}/", utils::utf8_to_utf16(get_name())));
 	utils::string_replace_inplace<wchar_t>(url, REPL_SCHEME, info->scheme);

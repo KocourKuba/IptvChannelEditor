@@ -545,6 +545,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			case PluginType::enYossoTV:
 			case PluginType::en101film:
 			case PluginType::enOnlineOtt:
+			case PluginType::enTopIPTV:
 			{
 				if (boost::regex_match(url, m, re))
 				{

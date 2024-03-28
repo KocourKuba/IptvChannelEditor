@@ -5,6 +5,7 @@ require_once 'dynamic_config.php';
 require_once 'epg_manager_json.php';
 require_once 'epg_manager_sql.php';
 require_once 'channel.php';
+require_once 'catchup_params.php';
 require_once 'm3u/M3uParser.php';
 
 class default_config extends dynamic_config
@@ -610,24 +611,37 @@ class default_config extends dynamic_config
         $ext_params[Stream_Params::CU_OFFSET] = $now - $archive_ts;
         $ext_params[Stream_Params::CU_STOP] = $archive_ts + $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
         $ext_params[Stream_Params::CU_DURATION] = $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
+        $ext_params[Stream_Params::CU_DURMIN] = $this->get_stream_param($stream_type, Stream_Params::CU_DURATION) / 60;
 
         $replaces = array(
-            Plugin_Constants::CGI_BIN    => Plugin_Macros::CGI_BIN,
-            Plugin_Constants::CHANNEL_ID => Plugin_Macros::ID,
-            Stream_Params::CU_START      => Plugin_Macros::START,
-            Stream_Params::CU_NOW        => Plugin_Macros::NOW,
-            Stream_Params::CU_DURATION   => Plugin_Macros::DURATION,
-            Stream_Params::CU_STOP       => Plugin_Macros::STOP,
-            Stream_Params::CU_OFFSET     => Plugin_Macros::OFFSET,
-            Ext_Params::M_SCHEME         => Plugin_Macros::SCHEME,
-            Ext_Params::M_DOMAIN         => Plugin_Macros::DOMAIN,
-            Ext_Params::M_PORT           => Plugin_Macros::PORT,
-            Ext_Params::M_TOKEN          => Plugin_Macros::TOKEN,
-            Ext_Params::M_INT_ID         => Plugin_Macros::INT_ID,
-            Ext_Params::M_HOST           => Plugin_Macros::HOST,
-            Ext_Params::M_VAR1           => Plugin_Macros::VAR1,
-            Ext_Params::M_VAR2           => Plugin_Macros::VAR2,
-            Ext_Params::M_VAR3           => Plugin_Macros::VAR3,
+            Plugin_Constants::CGI_BIN      => Plugin_Macros::CGI_BIN,
+            Plugin_Constants::CHANNEL_ID   => Plugin_Macros::ID,
+            Stream_Params::CU_START        => Plugin_Macros::START,
+            Stream_Params::CU_NOW          => Plugin_Macros::NOW,
+            Stream_Params::CU_DURATION     => Plugin_Macros::DURATION,
+            Stream_Params::CU_DURMIN       => Plugin_Macros::DURMIN,
+            Stream_Params::CU_STOP         => Plugin_Macros::STOP,
+            Stream_Params::CU_OFFSET       => Plugin_Macros::OFFSET,
+            Ext_Params::M_SCHEME           => Plugin_Macros::SCHEME,
+            Ext_Params::M_DOMAIN           => Plugin_Macros::DOMAIN,
+            Ext_Params::M_PORT             => Plugin_Macros::PORT,
+            Ext_Params::M_TOKEN            => Plugin_Macros::TOKEN,
+            Ext_Params::M_INT_ID           => Plugin_Macros::INT_ID,
+            Ext_Params::M_HOST             => Plugin_Macros::HOST,
+            Ext_Params::M_VAR1             => Plugin_Macros::VAR1,
+            Ext_Params::M_VAR2             => Plugin_Macros::VAR2,
+            Ext_Params::M_VAR3             => Plugin_Macros::VAR3,
+        );
+        $m3u_replaces = array(
+            catchup_params::CU_START       => Plugin_Macros::START,
+            catchup_params::CU_UTC         => Plugin_Macros::START,
+            catchup_params::CU_CURRENT_UTC => Plugin_Macros::NOW,
+            catchup_params::CU_TIMESTAMP   => Plugin_Macros::NOW,
+            catchup_params::CU_END         => Plugin_Macros::NOW,
+            catchup_params::CU_UTCEND      => Plugin_Macros::NOW,
+            catchup_params::CU_OFFSET      => Plugin_Macros::OFFSET,
+            catchup_params::CU_DURATION    => Plugin_Macros::DURATION,
+            catchup_params::CU_DURMIN      => Plugin_Macros::DURMIN,
         );
 
         $channel_custom_url = $channel->get_custom_url();
@@ -658,8 +672,14 @@ class default_config extends dynamic_config
 
         if ($is_archive) {
             // replace macros to live url
-            $play_template_url = str_replace(Plugin_Macros::LIVE_URL, $live_url, $archive_url);
+            $play_template_url = str_replace(
+                array(Plugin_Macros::LIVE_URL, Plugin_Macros::CH_CATCHUP),
+                array($live_url, $ext_params[Stream_Params::CU_SOURCE]),
+                $archive_url);
             $custom_stream_type = $channel->get_custom_archive_url_type();
+            foreach ($m3u_replaces as $key => $value) {
+                $play_template_url = str_replace($key, $value, $play_template_url);
+            }
         } else {
             $play_template_url = $live_url;
             $custom_stream_type = $channel->get_custom_url_type();
@@ -762,7 +782,13 @@ class default_config extends dynamic_config
                 $mapped++;
             } else {
                 // threat as custom url
-                $pl_entries[hash('crc32', $entry->getPath())] = array();
+                $id = hash('crc32', $entry->getPath());
+                $pl_entries[$id] = array();
+            }
+
+            $catchup = $entry->getCatchupSource();
+            if (!empty($catchup)) {
+                $pl_entries[$id][Stream_Params::CU_SOURCE] = $catchup;
             }
         }
 

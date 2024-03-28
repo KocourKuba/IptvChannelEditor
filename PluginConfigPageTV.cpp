@@ -199,6 +199,7 @@ void CPluginConfigPageTV::AssignMacros()
 	arc_params.insert(arc_params.end(), //-V823
 					  {
 						  REPL_LIVE_URL,
+						  REPL_CH_CATCHUP,
 						  REPL_START,
 						  REPL_STOP,
 						  REPL_NOW,
