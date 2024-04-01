@@ -39,6 +39,7 @@ enum class PluginType
 	enFilmax,
 	enFox,
 	enGlanz,
+	enIptvBest,
 	enIptvOnline,
 	enIpstream,
 	enItv,

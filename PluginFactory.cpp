@@ -79,6 +79,7 @@ static std::vector<std::pair<PluginType, std::string>> s_all_plugins = {
 	{ PluginType::enCRDTV,      "crdtv"      },
 	{ PluginType::enKliMedia,   "klimedia"   },
 	{ PluginType::enTopIPTV,    "topiptv"    },
+	{ PluginType::enIptvBest,   "iptvbest"   },
 	{ PluginType::enCustom,     "custom"     },
 };
 

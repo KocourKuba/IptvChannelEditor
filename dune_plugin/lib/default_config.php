@@ -614,23 +614,23 @@ class default_config extends dynamic_config
         $ext_params[Stream_Params::CU_DURMIN] = $this->get_stream_param($stream_type, Stream_Params::CU_DURATION) / 60;
 
         $replaces = array(
-            Plugin_Constants::CGI_BIN      => Plugin_Macros::CGI_BIN,
-            Plugin_Constants::CHANNEL_ID   => Plugin_Macros::ID,
-            Stream_Params::CU_START        => Plugin_Macros::START,
-            Stream_Params::CU_NOW          => Plugin_Macros::NOW,
-            Stream_Params::CU_DURATION     => Plugin_Macros::DURATION,
+            Plugin_Constants::CGI_BIN    => Plugin_Macros::CGI_BIN,
+            Plugin_Constants::CHANNEL_ID => Plugin_Macros::ID,
+            Stream_Params::CU_START      => Plugin_Macros::START,
+            Stream_Params::CU_NOW        => Plugin_Macros::NOW,
+            Stream_Params::CU_DURATION   => Plugin_Macros::DURATION,
             Stream_Params::CU_DURMIN       => Plugin_Macros::DURMIN,
-            Stream_Params::CU_STOP         => Plugin_Macros::STOP,
-            Stream_Params::CU_OFFSET       => Plugin_Macros::OFFSET,
-            Ext_Params::M_SCHEME           => Plugin_Macros::SCHEME,
-            Ext_Params::M_DOMAIN           => Plugin_Macros::DOMAIN,
-            Ext_Params::M_PORT             => Plugin_Macros::PORT,
-            Ext_Params::M_TOKEN            => Plugin_Macros::TOKEN,
-            Ext_Params::M_INT_ID           => Plugin_Macros::INT_ID,
-            Ext_Params::M_HOST             => Plugin_Macros::HOST,
-            Ext_Params::M_VAR1             => Plugin_Macros::VAR1,
-            Ext_Params::M_VAR2             => Plugin_Macros::VAR2,
-            Ext_Params::M_VAR3             => Plugin_Macros::VAR3,
+            Stream_Params::CU_STOP       => Plugin_Macros::STOP,
+            Stream_Params::CU_OFFSET     => Plugin_Macros::OFFSET,
+            Ext_Params::M_SCHEME         => Plugin_Macros::SCHEME,
+            Ext_Params::M_DOMAIN         => Plugin_Macros::DOMAIN,
+            Ext_Params::M_PORT           => Plugin_Macros::PORT,
+            Ext_Params::M_TOKEN          => Plugin_Macros::TOKEN,
+            Ext_Params::M_INT_ID         => Plugin_Macros::INT_ID,
+            Ext_Params::M_HOST           => Plugin_Macros::HOST,
+            Ext_Params::M_VAR1           => Plugin_Macros::VAR1,
+            Ext_Params::M_VAR2           => Plugin_Macros::VAR2,
+            Ext_Params::M_VAR3           => Plugin_Macros::VAR3,
         );
         $m3u_replaces = array(
             catchup_params::CU_START       => Plugin_Macros::START,
@@ -789,7 +789,7 @@ class default_config extends dynamic_config
             $catchup = $entry->getCatchupSource();
             if (!empty($catchup)) {
                 $pl_entries[$id][Stream_Params::CU_SOURCE] = $catchup;
-            }
+        }
         }
 
         if (empty($pl_entries) && $this->plugin_info['app_type_name'] !== 'custom') {

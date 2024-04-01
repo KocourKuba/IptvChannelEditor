@@ -731,6 +731,95 @@
       ],
       "title": "IpStream/Ishara"
     },
+    "iptvbest": {
+      "access_type": "pin",
+      "domains_list": [
+        {
+          "id": "0",
+          "name": "https://smotrim.uno"
+        }
+      ],
+      "epg_params": [
+        {
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_param": "first",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_url": "http://epg.drm-play.com/iptvx.one%2Fepg%2F{EPG_ID}.json"
+        },
+        {
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_param": "second",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_url": "http://epg.drm-play.com/ottiptv%2Fepg%2F{EPG_ID}.json"
+        }
+      ],
+      "name": "iptvbest",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/play\\/(?<password>.+)\\/m3u8?$",
+          "pl_template": "{PL_DOMAIN}/pl/{PASSWORD}/playlist.m3u8"
+        }
+      ],
+      "provider_url": "https://ip-tv.best/",
+      "servers_list": [
+        {
+          "id": "pl.seetv.cc",
+          "name": "Poland"
+        },
+        {
+          "id": "de.seetv.cc",
+          "name": "Germany"
+        },
+        {
+          "id": "nl.seetv.cc",
+          "name": "Netherlands"
+        },
+        {
+          "id": "ru.seetv.cc",
+          "name": "Russia"
+        },
+        {
+          "id": "ca.seetv.cc",
+          "name": "Canada"
+        },
+        {
+          "id": "gr.seetv.cc",
+          "name": "Poland"
+        },
+        {
+          "id": "ukr.seetv.cc",
+          "name": "Ukraine"
+        }
+      ],
+      "static_domains": true,
+      "static_servers": true,
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
+          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
+          "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video.m3u8"
+        },
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
+          "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/mpegts"
+        }
+      ],
+      "title": "IPTV Best"
+    },
     "iptvonline": {
       "access_type": "pin",
       "epg_params": [

@@ -99,7 +99,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					{
 						entry->set_epg_id(1, entry->get_epg_id(0));
 						const auto& type = m_parent_plugin->get_plugin_type();
-						if ((type == PluginType::enIptvOnline || type == PluginType::enTvizi) && entry->get_epg_id(0).front() == 'X')
+						if ((type == PluginType::enIptvOnline || type == PluginType::enTvizi || type == PluginType::enIptvBest) && entry->get_epg_id(0).front() == 'X')
 						{
 							entry->set_epg_id(0, entry->get_epg_id(0).substr(1));
 						}
