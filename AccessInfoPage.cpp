@@ -1046,7 +1046,7 @@ void CAccessInfoPage::GetAccountInfo()
 	if (plugin_type == PluginType::enSmile || plugin_type == PluginType::en101film)
 	{
 		static std::vector<std::string> skipped_tag = {
-			//"bitrates", "url-tvg", "x-tvg-url", "servers"
+			"bitrates", "url-tvg", "x-tvg-url", "servers"
 		};
 
 		const auto& tags = playlist->m3u_header.get_ext_tags();
