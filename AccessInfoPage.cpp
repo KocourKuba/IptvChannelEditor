@@ -489,9 +489,9 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 		std::wstring url = dlg.m_url.GetString();
 		boost::wsmatch m;
 
-		switch (m_plugin->get_plugin_type())
+		switch (m_plugin->get_access_type())
 		{
-			case PluginType::enEdem:
+			case AccountAccessType::enOtt:
 			{
 				std::stringstream data;
 				std::wstring url = dlg.m_url.GetString();
@@ -527,25 +527,27 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 						break;
 					}
 				}
+				break;
 			}
-			break;
+
+			// Pin
+			case AccountAccessType::enPin:
+			{
+				if (boost::regex_match(url, m, re))
+				{
+					int cnt = m_wndAccounts.GetItemCount();
+					m_wndAccounts.InsertItem(cnt, L"", 0);
+					m_wndAccounts.SetItemText(cnt, 1, m[1].str().c_str());
+
+					Credentials cred;
+					cred.set_password(m[1].str());
+					m_all_credentials.emplace_back(cred);
+				}
+				break;
+			}
 
 			// Login/Password
-			case PluginType::enGlanz:
-			case PluginType::enFilmax:
-			case PluginType::enFox:
-			case PluginType::enKineskop:
-			case PluginType::enKliMedia:
-			case PluginType::enMymagic:
-			case PluginType::enOttIptv:
-			case PluginType::enPing:
-			case PluginType::enRuTV:
-			case PluginType::enSmile:
-			case PluginType::enSharaclub:
-			case PluginType::enYossoTV:
-			case PluginType::en101film:
-			case PluginType::enOnlineOtt:
-			case PluginType::enTopIPTV:
+			case AccountAccessType::enLoginPass:
 			{
 				if (boost::regex_match(url, m, re))
 				{
@@ -559,41 +561,9 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 					cred.set_password(m[2].str());
 					m_all_credentials.emplace_back(cred);
 				}
+				break;
 			}
-			break;
 
-			// Pin
-			case PluginType::enAntifriz:
-			case PluginType::enBcuMedia:
-			case PluginType::enCbilling:
-			case PluginType::enCRDTV:
-			case PluginType::enIptvOnline:
-			case PluginType::enIpstream:
-			case PluginType::enItv:
-			case PluginType::enOneCent:
-			case PluginType::enTVClub:
-			case PluginType::enTvizi:
-			case PluginType::enLightIptv:
-			case PluginType::enOneUsd:
-			case PluginType::enOttclub:
-			case PluginType::enRusskoeTV:
-			case PluginType::enSatq:
-			case PluginType::enSharavoz:
-			case PluginType::enVidok:
-			case PluginType::enVipLime:
-			{
-				if (boost::regex_match(url, m, re))
-				{
-					int cnt = m_wndAccounts.GetItemCount();
-					m_wndAccounts.InsertItem(cnt, L"", 0);
-					m_wndAccounts.SetItemText(cnt, 1, m[1].str().c_str());
-
-					Credentials cred;
-					cred.set_password(m[1].str());
-					m_all_credentials.emplace_back(cred);
-				}
-			}
-			break;
 			default:
 				break;
 		}
@@ -729,10 +699,6 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 
 	if (selected)
 	{
-		m_plugin->clear_servers_list();
-		m_plugin->clear_device_list();
-		m_plugin->clear_profiles_list();
-		m_plugin->clear_qualities_list();
 		FillChannelsList();
 
 		m_wndInfo.DeleteAllItems();
@@ -1080,7 +1046,7 @@ void CAccessInfoPage::GetAccountInfo()
 	if (plugin_type == PluginType::enSmile || plugin_type == PluginType::en101film)
 	{
 		static std::vector<std::string> skipped_tag = {
-			"bitrates", "url-tvg", "x-tvg-url", "servers"
+			//"bitrates", "url-tvg", "x-tvg-url", "servers"
 		};
 
 		const auto& tags = playlist->m3u_header.get_ext_tags();
