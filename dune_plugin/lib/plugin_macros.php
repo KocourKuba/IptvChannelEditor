@@ -28,7 +28,6 @@ class Plugin_Macros
     const VAR1           = "{VAR1}";          // Custom capture group variable
     const VAR2           = "{VAR2}";          // Custom capture group variable
     const VAR3           = "{VAR3}";          // Custom capture group variable
-    const CH_CATCHUP     = "{CH_CATCHUP}";    // catchup url, used in archive template substitution
 
     const EPG_DOMAIN     = "{EPG_DOMAIN}";    // epg domain. can be obtain from provider
     const EPG_ID         = "{EPG_ID}";        // epg id (set from playlist)
