@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20240312215606" scan="302" scanned="20240312215533">
+<document created="20211012165442" version="4.0.374" date="20240403000616" scan="303" scanned="20240403000456">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240312205528" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240402220434" usesmfc="1">
     <headerfiles>
       <header name="..\resource.h"/>
       <resource name="..\IPTVChannelEditor.rc"/>
@@ -3897,10 +3897,6 @@
           <native>Channel archive is supported</native>
           <lang id="ru" date="20211012224226" savedtotm="1">Канал поддерживает архив</lang>
         </row>
-        <row id="IDS_STRING_CHECK_CUSTOMIZE">
-          <native>Use custom stream URL for the channel</native>
-          <lang id="ru" date="20211013140939" savedtotm="1">Произвольная ссылка для канала</lang>
-        </row>
         <row id="IDS_STRING_CUSTOM_URL" created="20221025190229" changed="20221026004612">
           <native>Custom live template url</native>
           <lang id="ru" date="20221026004959">Произв. шаблон ссылки на живой поток</lang>
@@ -4755,6 +4751,22 @@
         </row>
       </node>
       <node class="TWindowsStringNode" name="26" created="20220730092432" resid="26" langid="1033">
+        <row id="IDS_STRING_BUTTON_ADD_EPG" created="20240403000456">
+          <native>Add XMLTV source</native>
+          <lang id="ru" date="20240403000510">Добавить XMLTV источник</lang>
+        </row>
+        <row id="IDS_STRING_COMBO_CUSTOM_ARC_STREAM_TYPE" created="20240403000456">
+          <native>Stream type for archive URL</native>
+          <lang id="ru" date="20240403000551">Тип потока для архивной ссылки</lang>
+        </row>
+        <row id="IDS_STRING_COMBO_CUSTOM_STREAM_TYPE" created="20240403000456">
+          <native>Stream type for live URL</native>
+          <lang id="ru" date="20240403000541">Тип потока для "живой" ссылки</lang>
+        </row>
+        <row id="IDS_STRING_COMBO_CUSTOM_XMLTV_EPG" created="20240403000456">
+          <native>XMLTV source</native>
+          <lang id="ru" date="20240403000518">XMLTV источник</lang>
+        </row>
         <row id="IDS_STRING_ERR_CANT_LOAD_CONFIG" created="20240312215344" changed="20240312215533">
           <native>Can't load plugins configurations!</native>
           <lang id="ru" date="20240312215421">Не могу загрузить конфигурации плагинов!</lang>
@@ -4892,17 +4904,17 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" changed="20240312215344">8.0.1935, 10 Mar 2024</row>
+        <row id="FileVersion" locked="1" changed="20240403000456">8.0.1981, 2 Apr 2024</row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20240312215344">0</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" changed="20240312215344">1935</row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" changed="20240403000456">1981</row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" changed="20240312215344">8.0.1935</row>
+        <row id="ProductVersion" hidden="1" changed="20240403000456">8.0.1981</row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20240312215344">0</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" changed="20240312215344">1935</row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" changed="20240403000456">1981</row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
     </node>

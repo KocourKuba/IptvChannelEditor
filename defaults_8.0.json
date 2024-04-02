@@ -112,10 +112,10 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/101film%2Fepg%2F{EPG_ID}.json"
@@ -187,18 +187,18 @@
       "class_name": "antifriz_config",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_start": "time",
           "epg_url": "{API_URL}/epg/{EPG_ID}/?date="
         },
         {
+          "epg_param": "second",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/antifriz%2Fepg%2F{EPG_ID}.json"
@@ -246,9 +246,9 @@
       "access_type": "pin",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/bcu%2Fepg%2F{EPG_ID}.json"
@@ -285,6 +285,44 @@
       ],
       "title": "BCU Media"
     },
+    "bittv": {
+      "access_type": "login",
+      "epg_params": [
+        {
+          "epg_param": "first",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_url": "http://epg.drm-play.com/iptvx.one%2Fepg%2F{EPG_ID}.json"
+        },
+        {}
+      ],
+      "name": "bittv",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/.*\\.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+):(?<password>.+)\\/playlist\\.m3u8?$",
+          "pl_template": "https://bittv.ltd/playlists/{LOGIN}:{PASSWORD}/playlist.m3u"
+        }
+      ],
+      "provider_url": "https://bittv.ltd/",
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "cu_duration": 14400,
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
+        },
+        {
+        }
+      ],
+      "title": "BitTV"
+    },
     "cbilling": {
       "access_type": "pin",
       "balance_support": true,
@@ -305,18 +343,18 @@
       ],
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_start": "time",
           "epg_url": "{API_URL}/epg/{EPG_ID}/?date="
         },
         {
+          "epg_param": "second",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/cbilling%2Fepg%2F{EPG_ID}.json"
@@ -391,10 +429,10 @@
       "class_name": "edem_config",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/edem%2Fepg%2F{EPG_ID}.json"
@@ -472,10 +510,10 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_url": "http://epg.drm-play.com/filmax%2Fepg%2F{EPG_ID}.json"
         },
@@ -542,10 +580,10 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/fox-tv%2Fepg%2F{EPG_ID}.json"
@@ -620,18 +658,18 @@
       ],
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/ottg%2Fepg%2F{EPG_ID}.json"
         },
         {
+          "epg_param": "second",
           "epg_desc": "description",
           "epg_name": "title",
-          "epg_param": "second",
           "epg_root": "ch_programme",
           "epg_start": "start",
           "epg_time_format": "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}",
@@ -693,10 +731,10 @@
       ],
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_start": "time",
           "epg_url": "http://api.playtv.pro/get/?type=epg&ch={EPG_ID}"
         },
@@ -741,10 +779,10 @@
       ],
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/iptv.online%2Fepg%2F{EPG_ID}.json"
@@ -817,10 +855,10 @@
       "access_type": "pin",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/iptv.online%2Fepg%2F{EPG_ID}.json"
@@ -894,10 +932,10 @@
       "class_name": "itv_config",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "desc",
           "epg_end": "stopTime",
           "epg_name": "title",
-          "epg_param": "first",
           "epg_root": "res",
           "epg_start": "startTime",
           "epg_url": "{API_URL}/epg/{EPG_ID}"
@@ -939,10 +977,10 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/kineskop%2Fepg%2F{EPG_ID}.json"
@@ -1024,10 +1062,10 @@
       "access_type": "pin",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/lightiptv%2Fepg%2F{EPG_ID}.json"
@@ -1068,10 +1106,10 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/magic%2Fepg%2F{EPG_ID}.json"
@@ -1148,9 +1186,9 @@
       "access_type": "pin",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "description",
           "epg_name": "title",
-          "epg_param": "first",
           "epg_root": "ch_programme",
           "epg_start": "start",
           "epg_time_format": "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}",
@@ -1158,10 +1196,10 @@
           "epg_url": "http://epg.iptvx.one/api/id/{EPG_ID}.json"
         },
         {
+          "epg_param": "second",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/only4%2Fepg%2F{EPG_ID}.json"
@@ -1194,19 +1232,19 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
           "epg_desc": "desc",
           "epg_end": "stop",
           "epg_name": "epg",
-          "epg_param": "first",
           "epg_start": "start",
           "epg_url": "http://epg.propg.net/{EPG_ID}/epg2/{DATE}"
         },
         {
+          "epg_param": "second",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/1ott%2Fepg%2F{EPG_ID}.json"
@@ -1245,19 +1283,19 @@
       "access_type": "pin",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://tv.team/{EPG_ID}.json"
         },
         {
+          "epg_param": "second",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/tvteam%2Fepg%2F{EPG_ID}.json"
@@ -1345,10 +1383,10 @@
       ],
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://myott.top/api/channel/{EPG_ID}"
@@ -1384,10 +1422,10 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/ottiptv%2Fepg%2F{EPG_ID}.json"
@@ -1427,10 +1465,10 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/fox-tv%2Fepg%2F{EPG_ID}.json"
@@ -1478,10 +1516,10 @@
       "access_type": "pin",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_start": "time",
           "epg_url": "{API_URL}/epg/{EPG_ID}/?date="
         },
@@ -1618,10 +1656,10 @@
       "class_name": "sharaclub_config",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_start": "time",
           "epg_url": "http://api.playtv.pro/get/?type=epg&ch={EPG_ID}"
         },
@@ -1668,10 +1706,10 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/shara-tv%2Fepg%2F{EPG_ID}.json"
@@ -1705,21 +1743,21 @@
       "class_name": "sharavoz_config",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://api.program.spr24.net/api/program?epg={EPG_ID}&date={DATE}"
         },
         {
+          "epg_param": "second",
           "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.arlekino.tv/api/program?epg={EPG_ID}&date={DATE}"
@@ -1809,11 +1847,11 @@
       "access_type": "pin",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
           "epg_desc": "desc",
           "epg_end": "stop",
           "epg_name": "epg",
-          "epg_param": "first",
           "epg_start": "start",
           "epg_url": "http://epg.propg.net/{ID}/epg2/{DATE}"
         },
@@ -1856,10 +1894,10 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/smile%2Fepg%2F{EPG_ID}.json"
@@ -1957,10 +1995,10 @@
       "class_name": "tvclub_config",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "description",
           "epg_end": "end",
           "epg_name": "text",
-          "epg_param": "first",
           "epg_root": "epg|channels|[0]|epg",
           "epg_start": "start",
           "epg_url": "{API_URL}/epg?token={S_TOKEN}&channels={EPG_ID}&time={TIMESTAMP}&period=24"
@@ -2012,10 +2050,10 @@
       ],
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/iptv.online%2Fepg%2F{EPG_ID}.json"
@@ -2088,19 +2126,19 @@
       "access_type": "pin",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://tv.team/{EPG_ID}.json"
         },
         {
+          "epg_param": "second",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "second",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/tvteam%2Fepg%2F{EPG_ID}.json"
@@ -2141,10 +2179,10 @@
       "class_name": "vidok_config",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "description",
           "epg_end": "end",
           "epg_name": "title",
-          "epg_param": "first",
           "epg_root": "epg",
           "epg_start": "start",
           "epg_url": "{API_URL}/epg2?cid={EPG_ID}&token={TOKEN}"
@@ -2181,10 +2219,10 @@
       "access_type": "pin",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/viplime%2Fepg%2F{EPG_ID}.json"
@@ -2256,10 +2294,10 @@
       "access_type": "login",
       "epg_params": [
         {
+          "epg_param": "first",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
-          "epg_param": "first",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_url": "http://epg.drm-play.com/yosso%2Fepg%2F{EPG_ID}.json"

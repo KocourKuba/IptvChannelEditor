@@ -33,6 +33,7 @@ enum class PluginType
 	en101film,
 	enAntifriz,
 	enBcuMedia,
+	enBitTV,
 	enCbilling,
 	enCRDTV,
 	enEdem,

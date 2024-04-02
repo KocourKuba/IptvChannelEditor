@@ -104,7 +104,6 @@
 #define IDS_STRING_BUTTON_TEST_EPG      173
 #define IDS_STRING_EDIT_EPG1_ID         174
 #define IDS_STRING_EDIT_EPG2_ID         175
-#define IDS_STRING_CHECK_CUSTOMIZE      176
 #define IDS_STRING_CHECK_ARCHIVE        177
 #define IDS_STRING_EDIT_ARCHIVE_DAYS    178
 #define IDS_STRING_CHECK_ADULT          179
@@ -326,9 +325,13 @@
 #define IDS_STRING_FILMAX_P1            400
 #define IDS_STRING_ERR_CANT_LOAD_CONFIG 400
 #define IDS_STRING_FILMAX_P2            401
+#define IDS_STRING_BUTTON_ADD_EPG       401
 #define IDS_STRING_FILMAX_P3            402
+#define IDS_STRING_COMBO_CUSTOM_XMLTV_EPG 402
 #define IDS_STRING_FILMAX_P4            403
+#define IDS_STRING_COMBO_CUSTOM_STREAM_TYPE 403
 #define IDS_STRING_FILMAX_P5            404
+#define IDS_STRING_COMBO_CUSTOM_ARC_STREAM_TYPE 404
 #define IDS_STRING_FILMAX_P6            405
 #define IDS_STRING_FILMAX_P7            406
 #define IDS_STRING_FILMAX_P8            407
@@ -739,7 +742,7 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281
