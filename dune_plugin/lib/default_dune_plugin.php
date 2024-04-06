@@ -1271,11 +1271,11 @@ class Default_Dune_Plugin implements DunePlugin
                 continue;
             }
 
-            /** @var Hashed_Array $xmltv_sources */
-            $xmltv_sources = $this->get_parameter(PARAM_XMLTV_SOURCE_NAMES, new Hashed_Array());
-            $name = $xmltv_sources->get(Hashed_Array::hash($item));
-            if (is_null($name)) {
-                $name = HD::string_ellipsis($item);
+            $name = $item;
+            $cached_xmltv_file = $this->get_cache_dir() . DIRECTORY_SEPARATOR . "$key.xmltv";
+            if (file_exists($cached_xmltv_file)) {
+                $check_time_file = filemtime($cached_xmltv_file);
+                $name .= " (" . date("d.m H:i", $check_time_file) . ")";
             }
 
             $menu_items[] = $this->create_menu_item($handler,

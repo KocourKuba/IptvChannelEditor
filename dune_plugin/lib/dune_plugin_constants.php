@@ -80,7 +80,6 @@ const PARAM_EPG_FONT_SIZE = 'epg_font_size';
 const PARAM_CACHE_PATH = 'xmltv_cache_path';
 const PARAM_XMLTV_SOURCE_KEY = 'cur_xmltv_key';
 const PARAM_CUR_XMLTV_SOURCE = 'cur_xmltv_source';
-const PARAM_XMLTV_SOURCE_NAMES = 'xmltv_source_names';
 const PARAM_DUNE_PARAMS = 'dune_params';
 const PARAM_CHANNELS_ZOOM = 'channels_zoom';
 const PARAM_CHANNEL_PLAYER = 'channel_player';
