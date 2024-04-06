@@ -57,6 +57,8 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 public:
+	static std::wstring DEV_PATH;
+	static std::wstring PACK_DLL_PATH;
 	std::map<WORD, LangStruct> m_LangMap;
 };
 

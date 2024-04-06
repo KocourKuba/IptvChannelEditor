@@ -121,39 +121,29 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		m_csEpgUrl = m_plugin->compile_epg_url(m_epg_idx, m_info->get_epg_id(m_epg_idx), start_time, m_info).c_str();
 	}
 
-	auto epg_ids = m_info->get_epg_ids();
-	bool need_load = true;
-	while (need_load)
+	bool found = false;
+	std::set<std::wstring> ids;
+	if (m_epg_idx != 2)
 	{
-		if (m_epg_idx != 2)
+		ids.emplace(m_info->get_epg_id(m_epg_idx));
+	}
+	else
+	{
+		const auto& epg_ids = m_info->get_epg_ids();
+		for (const auto& val : epg_ids)
 		{
-			auto epg_id = epg_ids[m_epg_idx];
-			epg_ids[0].clear();
-			epg_ids[1].clear();
-			std::swap(epg_ids[m_epg_idx], epg_id);
-			bool res = m_plugin->parse_json_epg(m_epg_idx, epg_ids, *m_epg_cache, now, m_info);
-			if (!res)
+			if (!val.empty())
 			{
-				need_load = false;
+				ids.emplace(val);
 			}
 		}
-		else
-		{
-			auto& epg_cache = m_epg_cache->at(m_epg_idx);
-			if (epg_cache.find(L"file already parsed") == epg_cache.end())
-			{
-				bool res = m_plugin->parse_xml_epg(m_xmltv_source, epg_cache);
-				if (res)
-				{
-					epg_cache[L"file already parsed"] = std::map<time_t, std::shared_ptr<EpgInfo>>();
-				}
-			}
-			need_load = false;
-		}
+		ids.emplace(m_info->get_id());
+		ids.emplace(m_info->get_title());
 	}
 
+
 	std::wstring found_id;
-	for (const auto& epg_id : epg_ids)
+	for (const auto& epg_id : ids)
 	{
 		if (!found_id.empty() || epg_id.empty()) continue;
 

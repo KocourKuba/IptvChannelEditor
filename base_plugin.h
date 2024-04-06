@@ -103,7 +103,7 @@ public:
 	/// <param name="epg_map">map of downloaded epg entries, used for cache</param>
 	/// <param name="for_time">date to request</param>
 	/// <returns>bool</returns>
-	bool parse_json_epg(int epg_idx, const std::array<std::wstring, 2>& epg_ids, std::array<EpgStorage, 3>& epg_map, time_t for_time, const uri_stream* info);
+	bool parse_json_epg(int epg_idx, const std::wstring& epg_id, std::array<EpgStorage, 3>& epg_map, time_t for_time, const uri_stream* info);
 
 	/// <summary>
 	/// returns compiled epg url for channel

@@ -376,7 +376,7 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 		const auto& unpacked_path = m_dl.GetCachePath(internal_epg_url.substr(0, internal_epg_url.length() - 3));
 		if (m_dl.CheckIsCacheExpired(unpacked_path))
 		{
-			const auto& pack_dll = GetAppPath((AccountSettings::PACK_DLL_PATH).c_str()) + PACK_DLL;
+			const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
 			if (!std::filesystem::exists(pack_dll))
 			{
 				AfxMessageBox(IDS_STRING_ERR_DLL_MISSING, MB_OK | MB_ICONSTOP);
@@ -486,9 +486,8 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 	return added;
 }
 
-bool base_plugin::parse_json_epg(int epg_idx, const std::array<std::wstring, 2>& epg_ids, std::array<EpgStorage, 3>& all_epg_map, time_t for_time, const uri_stream* info)
+bool base_plugin::parse_json_epg(int epg_idx, const std::wstring& epg_id, std::array<EpgStorage, 3>& all_epg_map, time_t for_time, const uri_stream* info)
 {
-	const auto& epg_id = epg_ids[epg_idx];
 	if (epg_id.empty())
 		return false;
 

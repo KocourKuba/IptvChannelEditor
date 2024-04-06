@@ -55,7 +55,7 @@ class CUrlDownload
 {
 
 public:
-	CUrlDownload::CUrlDownload() = default;
+	CUrlDownload() = default;
 
 	bool DownloadFile(const std::wstring& url,
 					  std::stringstream& vData,

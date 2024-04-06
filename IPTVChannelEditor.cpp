@@ -53,6 +53,18 @@ using namespace SevenZip;
 
 constexpr auto PACK_PATH = L"{:s}_plugin\\";
 
+#ifdef _DEBUG
+std::wstring CIPTVChannelEditorApp::DEV_PATH = LR"(..\..\)";
+#ifdef _WIN64
+std::wstring CIPTVChannelEditorApp::PACK_DLL_PATH = LR"(dll64\)";
+#else
+std::wstring CIPTVChannelEditorApp::PACK_DLL_PATH = LR"(dll\)";
+#endif //  _WIN64
+#else
+std::wstring CIPTVChannelEditorApp::DEV_PATH = L"";
+std::wstring CIPTVChannelEditorApp::PACK_DLL_PATH = L"";
+#endif // _DEBUG
+
 static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
 static HANDLE g_hAppRunningMutex = nullptr;
 std::string g_szServerPath = "http://iptv.esalecrm.net";
@@ -91,8 +103,6 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 	{
 		if (_tcsicmp(szParam, _T("Dev")) == 0)
 		{
-			AccountSettings::DEV_PATH = LR"(..\)";
-			AccountSettings::PACK_DLL_PATH = LR"(dll\)";
 			m_bDev = true;
 		}
 		else if (_tcsicmp(szParam, _T("Make")) == 0)
@@ -131,8 +141,12 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 
 	if (m_bDev) //-V547
 	{
-		AccountSettings::DEV_PATH = LR"(..\)";
-		AccountSettings::PACK_DLL_PATH = LR"(dll\)";
+		CIPTVChannelEditorApp::DEV_PATH = LR"(..\..\)";
+#ifdef _WIN64
+		CIPTVChannelEditorApp::PACK_DLL_PATH = LR"(dll64\)";
+#else
+		CIPTVChannelEditorApp::PACK_DLL_PATH = LR"(dll\)";
+#endif //  _WIN64
 	}
 
 	CCommandLineInfo::ParseParam(szParam, bFlag, bLast);
@@ -479,7 +493,7 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
 			fileName.Truncate(pos + 1);
 	}
 
-	fileName += AccountSettings::DEV_PATH.c_str();
+	fileName += CIPTVChannelEditorApp::DEV_PATH.c_str();
 
 	if (szSubFolder)
 		fileName += szSubFolder;
@@ -628,7 +642,7 @@ bool PackPlugin(const PluginType plugin_type,
 				bool noEmbed /*= false*/,
 				bool noCustom /*= false*/)
 {
-	const auto& pack_dll = GetAppPath((AccountSettings::PACK_DLL_PATH).c_str()) + PACK_DLL;
+	const std::wstring& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
 	if (!std::filesystem::exists(pack_dll))
 	{
 		if (showMessage)

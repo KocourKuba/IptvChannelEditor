@@ -56,17 +56,17 @@ public:
 	{}
 
 	bool Parse(const std::string& str);
-
 	int get_channel_length() const { return channel_len; }
-
 	void set_category(const std::wstring& val) { category = utils::utf16_to_utf8(val); }
 	const auto& get_category() const { return category; }
 	auto get_category_w() const { return utils::utf8_to_utf16(category); }
-
 	void search_id(const std::wstring& search_tag);
 
 	m3u_entry& get_m3u_entry() { return m3uEntry; }
 	const m3u_entry& get_m3u_entry() const { return m3uEntry; }
+
+	PlaylistEntry& operator=(PlaylistEntry& src) = delete;
+	PlaylistEntry& operator=(PlaylistEntry&& src) = delete;
 
 protected:
 	void search_group(const m3u_tags& tags);

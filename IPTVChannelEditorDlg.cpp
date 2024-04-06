@@ -1976,18 +1976,13 @@ void CIPTVChannelEditorDlg::FillEPG()
 	DWORD dwStart = GetTickCount();
 
 	// check end time
-	auto epg_ids = info->get_epg_ids();
 	EpgInfo epg_info{};
 	bool need_load = true;
 	while(need_load)
 	{
 		if (epg_idx != 2)
 		{
-			std::wstring epg_id = epg_ids[epg_idx];
-			epg_ids[0].clear();
-			epg_ids[1].clear();
-			std::swap(epg_ids[epg_idx], epg_id);
-			bool res = m_plugin->parse_json_epg(epg_idx, epg_ids, m_epg_cache, now, info);
+			bool res = m_plugin->parse_json_epg(epg_idx, info->get_epg_id(epg_idx), m_epg_cache, now, info);
 			if (!res)
 			{
 				need_load = false;
@@ -2012,7 +2007,26 @@ void CIPTVChannelEditorDlg::FillEPG()
 	}
 
 	bool found = false;
-	for(const auto& epg_id : epg_ids)
+	std::set<std::wstring> ids;
+	if (epg_idx != 2)
+	{
+		ids.emplace(info->get_epg_id(epg_idx));
+	}
+	else
+	{
+		const auto& epg_ids = info->get_epg_ids();
+		for (const auto& val : epg_ids)
+		{
+			if (!val.empty())
+			{
+				ids.emplace(val);
+			}
+		}
+		ids.emplace(info->get_id());
+		ids.emplace(info->get_title());
+	}
+
+	for(const auto& epg_id : ids)
 	{
 		if (found || epg_id.empty()) continue;
 

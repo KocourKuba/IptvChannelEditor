@@ -89,10 +89,6 @@ public:
 
 	void delete_setting(bool isApp, const std::wstring& key);
 
-public:
-	static std::wstring DEV_PATH;
-	static std::wstring PACK_DLL_PATH;
-
 protected:
 	void ReadSettingsRegistry(PluginType plugin_type);
 	void SaveSectionRegistry(PluginType plugin_type);

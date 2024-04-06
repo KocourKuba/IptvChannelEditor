@@ -37,19 +37,6 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-#ifdef _DEBUG
-// special case for run under debugger from VS
-std::wstring AccountSettings::DEV_PATH = L"..\\";
-#ifdef _WIN64
-std::wstring AccountSettings::PACK_DLL_PATH = L"dll64\\";
-#else
-std::wstring AccountSettings::PACK_DLL_PATH = L"dll\\";
-#endif //  _WIN64
-#else
-std::wstring AccountSettings::DEV_PATH;
-std::wstring AccountSettings::PACK_DLL_PATH;
-#endif // _DEBUG
-
 #define MAKEQWORD(a, b) ((QWORD)(((DWORD)(((QWORD)(a)) & 0xffffffff)) | ((QWORD)((DWORD)(((QWORD)(b)) & 0xffffffff))) << 32))
 
 constexpr auto MAX_REGNAME_SIZE = 1024; // real max size - 32767 bytes;

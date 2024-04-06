@@ -425,6 +425,7 @@ class plugin_config
 {
 public:
 	plugin_config();
+	virtual ~plugin_config() {}
 
 public:
 	/// <summary>
@@ -651,8 +652,8 @@ public:
 	/// <summary>
 	/// property epg domain
 	/// </summary>
-	std::wstring get_epg_domain(int idx) { return epg_params[idx].get_epg_domain(); };
-	void set_epg_domain(int idx, const std::wstring& val) { epg_params[idx].set_epg_domain(val); };
+	std::wstring get_epg_domain(size_t idx) { return epg_params[idx].get_epg_domain(); };
+	void set_epg_domain(size_t idx, const std::wstring& val) { epg_params[idx].set_epg_domain(val); };
 
 	/// <summary>
 	/// returns json root for epg iteration
@@ -816,7 +817,7 @@ public:
 	/// fill list of domains variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
-	virtual void fill_domains_list(TemplateParams& params) {}
+	virtual void fill_domains_list(TemplateParams& /*params*/) {}
 
 	/// <summary>
 	/// property list of domains

@@ -10,14 +10,23 @@ rem ********************************************************
 
 set ROOT=%~dp0
 set BUILD_TYPE=Release Unicode
-set BUILD_PLATFORM=x86
+set BUILD_PLATFORM=x64
+if "%BUILD_PLATFORM%" == "x64" (
+	set BUGTRAP=BugTrapU-x64
+	set DLL_PATH=dll64
+) else (
+	set BUGTRAP=BugTrapU
+	set DLL_PATH=dll
+)
 
 del build.log >nul 2>&1
 
 call UpdateVer.cmd
 
 set BUILD_NAME=IPTVChannelEditor
-set BUILD_PATH=%ROOT%%BUILD_TYPE%
+set BUILD_PATH=%ROOT%%BUILD_PLATFORM%\%BUILD_TYPE%
+
+echo "%BUILD_PATH%\%BUILD_NAME%.exe"
 
 echo @%DEV_ENV% %BUILD_NAME%.sln /Rebuild "%BUILD_TYPE%|%BUILD_PLATFORM%" /Project %BUILD_NAME%.vcxproj /OUT build.log >build.bat
 echo @if NOT exist "%BUILD_PATH%\%BUILD_NAME%.exe" pause >>build.bat
@@ -51,8 +60,8 @@ md "%ROOT%%pkg%" >nul 2>&1
 copy "%BUILD_PATH%\%BUILD_NAME%.exe"					"%pkg%" >nul
 copy "%BUILD_PATH%\%BUILD_NAME%RUS.dll"					"%pkg%" >nul
 copy "%BUILD_PATH%\Updater.exe"							"%pkg%" >nul
-copy "%ROOT%dll\7z.dll"									"%pkg%" >nul
-copy "%ROOT%BugTrap\bin\BugTrapU.dll"					"%pkg%" >nul
+copy "%ROOT%%DLL_PATH%\7z.dll"							"%pkg%" >nul
+copy "%ROOT%BugTrap\bin\%BUGTRAP%.dll"					"%pkg%" >nul
 copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul
 copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%pkg%" >nul
 copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%ROOT%package\defaults_%MAJOR%.%MINOR%.json" >nul
@@ -76,7 +85,7 @@ call :add_node %BUILD_NAME%.exe					>>%outfile%
 call :add_node %BUILD_NAME%RUS.dll				>>%outfile%
 call :add_node Updater.exe						>>%outfile%
 call :add_node 7z.dll							>>%outfile%
-call :add_node BugTrapU.dll						>>%outfile%
+call :add_node %BUGTRAP%.dll					>>%outfile%
 call :add_node dbghelp.dll						>>%outfile%
 call :add_node changelog.md						>>%outfile%
 call :add_node defaults_%MAJOR%.%MINOR%.json	>>%outfile%
@@ -92,7 +101,7 @@ echo %BUILD_NAME%.exe				>packing.lst
 echo %BUILD_NAME%RUS.dll			>>packing.lst
 echo Updater.exe					>>packing.lst
 echo 7z.dll 						>>packing.lst
-echo BugTrapU.dll					>>packing.lst
+echo %BUGTRAP%.dll					>>packing.lst
 echo dbghelp.dll					>>packing.lst
 echo changelog.md					>>packing.lst
 echo defaults_%MAJOR%.%MINOR%.json	>>packing.lst
@@ -117,7 +126,7 @@ goto :EOF
 :update_source
 
 call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT% "%BUILD_PATH%"
-call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT%Updater "%ROOT%Updater\%BUILD_TYPE%"
+rem call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT%Updater "%ROOT%Updater\%BUILD_TYPE%"
 call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT%BugTrap "%ROOT%BugTrap\bin"
 goto :EOF
 
@@ -134,13 +143,13 @@ copy "%BUILD_PATH%\%BUILD_NAME%.exe" "%dest%" >nul
 copy "%BUILD_PATH%\%BUILD_NAME%.pdb" "%dest%" >nul
 
 echo Updater
-copy "%ROOT%Updater\%BUILD_TYPE%\Updater.exe" "%dest%" >nul
-copy "%ROOT%Updater\%BUILD_TYPE%\Updater.pdb" "%dest%" >nul
+copy "%BUILD_PATH%\Updater.exe" "%dest%" >nul
+copy "%BUILD_PATH%\Updater.pdb" "%dest%" >nul
 
 pushd "%dest%"
 dir /b /O:N *.exe *.dll *.pdb > upload.lst
 
-%SYMSRV_APP% add /o /t "%BUILD_NAME%" /v "%BUILD% (x32)" /d Transaction.log /3 /f "@upload.lst" /s %SYMSTORE% /compress
+%SYMSRV_APP% add /o /t "%BUILD_NAME%" /v "%BUILD% (%BUILD_PLATFORM%)" /d Transaction.log /3 /f "@upload.lst" /s %SYMSTORE% /compress
 del /q *.exe *.dll *.pdb *.lst >nul 2>&1
 popd
 

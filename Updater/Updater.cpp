@@ -53,11 +53,11 @@ static LPCWSTR g_szServerPath = L"http://igores.ru/sharky72";
 #endif // _DEBUG
 
 #ifdef _DEBUG
-std::wstring DEV_PATH = L"..\\";
+std::wstring DEV_PATH = LR"(..\..\)";
 #ifdef _WIN64
-std::wstring PACK_DLL_PATH = L"dll64\\";
+std::wstring PACK_DLL_PATH = LR"(dll64\)";
 #else
-std::wstring PACK_DLL_PATH = L"dll\\";
+std::wstring PACK_DLL_PATH = LR"(dll\)";
 #endif // _WIN64
 #else
 std::wstring DEV_PATH;

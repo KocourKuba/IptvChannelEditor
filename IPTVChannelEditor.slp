@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20240403000616" scan="303" scanned="20240403000456">
+<document created="20211012165442" version="4.0.374" date="20240406174031" scan="306" scanned="20240406173811">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240402220434" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240402220434" usesmfc="1">
     <headerfiles>
-      <header name="..\resource.h"/>
-      <resource name="..\IPTVChannelEditor.rc"/>
+      <header name="..\..\resource.h"/>
+      <resource name="..\..\IPTVChannelEditor.rc"/>
     </headerfiles>
     <resources>
       <disabled name="AFX_DIALOG_LAYOUT"/>
