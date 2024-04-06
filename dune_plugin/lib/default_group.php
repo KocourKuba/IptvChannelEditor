@@ -150,7 +150,7 @@ class Default_Group extends Json_Serializer implements Group
      */
     public function is_special_group()
     {
-        return in_array($this->_id, array(ALL_CHANNEL_GROUP_ID, FAVORITES_GROUP_ID, HISTORY_GROUP_ID, VOD_GROUP_ID, CHANGED_CHANNELS_GROUP_ID));
+        return in_array($this->_id, array(ALL_CHANNEL_GROUP_ID, FAVORITES_GROUP_ID, HISTORY_GROUP_ID, VOD_GROUP_ID));
     }
 
     /**
@@ -184,10 +184,6 @@ class Default_Group extends Json_Serializer implements Group
 
         if ($this->_id === HISTORY_GROUP_ID) {
             return !$this->plugin->get_bool_parameter(PARAM_SHOW_HISTORY);
-        }
-
-        if ($this->_id === CHANGED_CHANNELS_GROUP_ID) {
-            return $this->_disabled || !$this->plugin->get_bool_parameter(PARAM_SHOW_CHANGED_CHANNELS);
         }
 
         if ($this->_id === VOD_GROUP_ID) {

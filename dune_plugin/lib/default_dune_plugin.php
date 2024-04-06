@@ -341,14 +341,15 @@ class Default_Dune_Plugin implements DunePlugin
         }
 
         $ext_sources = $this->config->get_feature(Plugin_Constants::EPG_CUSTOM_SOURCE);
+        hd_debug_print("ext xmltv sources: " . json_encode($ext_sources), true);
 
         if (!empty($ext_sources)) {
             if ($xmltv_sources->size() !== 0) {
                 $xmltv_sources->add(EPG_SOURCES_SEPARATOR_TAG);
             }
 
-            foreach ($ext_sources as $key => $source) {
-                $xmltv_sources->set($key, $source);
+            foreach ($ext_sources as $source) {
+                $xmltv_sources->set(Hashed_Array::hash($source['name']), $source['name']);
             }
         }
 
