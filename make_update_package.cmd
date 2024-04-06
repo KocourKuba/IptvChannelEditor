@@ -64,7 +64,6 @@ copy "%ROOT%%DLL_PATH%\7z.dll"							"%pkg%" >nul
 copy "%ROOT%BugTrap\bin\%BUGTRAP%.dll"					"%pkg%" >nul
 copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul
 copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%pkg%" >nul
-copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%ROOT%package\defaults_%MAJOR%.%MINOR%.json" >nul
 copy "%ROOT%dune_plugin\changelog.md"					"%pkg%" >nul
 copy "%ROOT%dune_plugin\changelog.md" 					"%ROOT%package\changelog.md" >nul
 copy "%ROOT%dune_plugin\changelog.md" 					"%ROOT%package\changelog.md.%BUILD%" >nul
