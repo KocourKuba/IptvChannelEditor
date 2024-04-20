@@ -137,7 +137,7 @@ class Entry extends Json_Serializer
         $attributes = array();
         if (!is_null($this->tags) && is_null($tag)) {
             foreach ($this->tags as $item) {
-                safe_merge_array($attributes, $item->getAttributes());
+                $attributes = safe_merge_array($attributes, $item->getAttributes());
             }
         } else if ($this->hasTag($tag)) {
             $attributes = $this->getEntryTag($tag);
@@ -195,13 +195,18 @@ class Entry extends Json_Serializer
     }
 
     /**
-     * @param array $attrs
+     * @param string|array $attrs
      * @param null $tag
      * @param null $found_attr
      * @return string
      */
     public function getAnyEntryAttribute($attrs, $tag = null, &$found_attr = null)
     {
+        if (!is_array($attrs)) {
+            return $this->getEntryAttribute($attrs, $tag);
+        }
+
+        $val = '';
         foreach ($attrs as $attr) {
             $val = $this->getEntryAttribute($attr, $tag);
             if (empty($val)) continue;
@@ -209,10 +214,9 @@ class Entry extends Json_Serializer
             if ($found_attr !== null) {
                 $found_attr = $attr;
             }
-            return $val;
+            break;
         }
-
-        return '';
+        return $val;
     }
 
     /**
@@ -280,14 +284,12 @@ class Entry extends Json_Serializer
     public function getEntryId()
     {
         /*
-         * Tags used to get entry ID
-		 * "CUID", "channel-id", "tvg-chno", "tvg-name", "name",
+         * Attributes used to get entry ID
+		 * "CUID", "channel-id", "ch-id", "tvg-chno", "ch-number",
          */
-        static $tags = array("CUID", "channel-id", "ch-id", "tvg-chno", "ch-number");
+        static $attrs = array("CUID", "channel-id", "ch-id", "tvg-chno", "ch-number");
 
-        $ch_id = $this->getAnyEntryAttribute($tags);
-
-        return empty($ch_id) ? Hashed_Array::hash($this->getPath()) : $ch_id;
+        return $this->getAnyEntryAttribute($attrs);
     }
 
     /**
@@ -298,12 +300,12 @@ class Entry extends Json_Serializer
     public function getEntryIcon()
     {
         /*
-         * attributes contains picon information
+         * Attributes contains picon information
 		 * "tvg-logo", "url-logo"
          */
-        static $tags = array("tvg-logo", "url-logo");
+        static $attrs = array("tvg-logo", "url-logo");
 
-        return $this->getAnyEntryAttribute($tags);
+        return $this->getAnyEntryAttribute($attrs);
     }
 
     /**
@@ -314,7 +316,7 @@ class Entry extends Json_Serializer
     public function getCatchup()
     {
         /*
-         * attributes contains catchup information
+         * Attributes contains catchup information
 		 * "catchup", "catchup-type"
          */
         static $attrs = array("catchup", "catchup-type");
@@ -346,7 +348,7 @@ class Entry extends Json_Serializer
     public function getEpgSources()
     {
         /*
-         * attributes contains xmltv epg sources
+         * Attributes contains xmltv epg sources
 		 * "catchup", "catchup-type"
          */
         static $attrs = array("url-tvg", "x-tvg-url");

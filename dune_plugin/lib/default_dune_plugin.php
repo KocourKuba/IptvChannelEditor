@@ -399,7 +399,7 @@ class Default_Dune_Plugin implements DunePlugin
                 $this->save();
             }
         }
-
+        hd_debug_print("Active XMLTV source: " . json_encode($source), true);
         return $source;
     }
 
