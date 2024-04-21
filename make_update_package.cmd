@@ -115,6 +115,7 @@ echo dune_plugin.pkg				>>packing.lst
 echo ChannelsLists.pkg				>>packing.lst
 echo dune_plugin_*.zip				>>packing.lst
 
+echo "remove %ROOT%package\dune_channel_editor_universal.7z" >nul
 del "%ROOT%package\dune_channel_editor_universal.7z" >nul
 
 7z a -xr!*.bin -xr!custom "%ROOT%package\dune_channel_editor_universal.7z" @packing.lst >nul
