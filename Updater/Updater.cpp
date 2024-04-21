@@ -374,7 +374,7 @@ int update_app(UpdateInfo& info)
 		bool success = true;
 		bool folder = false;
 		std::filesystem::path src(source_file);
-		if (src.extension() == ".7z")
+		if (src.extension() == ".7z" || src.extension() == ".pkg")
 		{
 			SevenZip::SevenZipWrapper archiver(pack_dll);
 			if (!archiver.OpenArchive(source_file))
@@ -391,7 +391,6 @@ int update_app(UpdateInfo& info)
 				return err_open_pkg;
 			}
 
-			source_file = info.update_path + src.stem().wstring();
 			target_file = target_path + src.stem().wstring();
 			bak_file = target_file + L".bak";
 		}
@@ -439,7 +438,8 @@ int update_app(UpdateInfo& info)
 
 		std::filesystem::copy_options opt = std::filesystem::copy_options::none;
 		std::wstring type = L"copy file ";
-		if (std::filesystem::is_directory(source_file))
+		const auto& source_dir = info.update_path + src.stem().wstring();
+		if (std::filesystem::is_directory(source_dir))
 		{
 			opt = std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing;
 			type = L"copy unpacked archive ";

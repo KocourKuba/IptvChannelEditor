@@ -92,7 +92,10 @@ BOOL CPathsSettingsPage::OnApply()
 	UpdateData(TRUE);
 
 	if (m_lists_path.IsEmpty())
-		m_lists_path = _T(".\\ChannelsLists\\");
+	{
+		m_lists_path = _T(".\\");
+		m_lists_path += utils::CHANNELS_LIST_PATH;
+	}
 
 	if (m_lists_path.Right(1) != '\\')
 		m_lists_path += '\\';

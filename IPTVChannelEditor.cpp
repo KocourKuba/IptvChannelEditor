@@ -40,6 +40,7 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\FileVersionInfo.h"
 #include "UtilsLib\inet_utils.h"
 #include "UtilsLib\md5.h"
+#include "UtilsLib\crc32.h"
 
 #include "7zpp\SevenZipWrapper.h"
 
@@ -246,9 +247,19 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	if (GetConfig().get_string(true, REG_LISTS_PATH).empty())
 	{
-		const auto& playlist_dir = GetAppPath(L"ChannelsLists\\");
-		GetConfig().set_string(true, REG_LISTS_PATH, playlist_dir);
-		std::filesystem::create_directories(playlist_dir);
+		const auto& channels_dir = GetAppPath(utils::CHANNELS_LIST_PATH);
+		GetConfig().set_string(true, REG_LISTS_PATH, channels_dir);
+		if (!std::filesystem::exists(channels_dir) && std::filesystem::exists(GetAppPath(utils::CHANNELS_LIST_SOURCE)))
+		{
+			const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
+			SevenZip::SevenZipWrapper archiver(pack_dll);
+			auto& extractor = archiver.GetExtractor();
+			extractor.SetArchivePath(GetAppPath(utils::CHANNELS_LIST_SOURCE));
+			if (!extractor.ExtractArchive(GetAppPath()))
+			{
+				std::filesystem::create_directories(channels_dir);
+			}
+		}
 	}
 
 	if (GetConfig().get_string(true, REG_WEB_UPDATE_PATH).empty())
@@ -271,6 +282,65 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	}
 
 	ConvertAccounts();
+
+	const auto& plugin_source = GetAppPath(utils::PLUGIN_SOURCE);
+	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
+	const auto& hash_file = plugin_root + L"hash.md";
+	if (!std::filesystem::exists(hash_file))
+	{
+		if (std::filesystem::exists(plugin_source))
+		{
+			const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
+			SevenZip::SevenZipWrapper archiver(pack_dll);
+			auto& extractor = archiver.GetExtractor();
+			extractor.SetArchivePath(plugin_source);
+			if (!extractor.ExtractArchive(GetAppPath()))
+			{
+				AfxMessageBox(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE, MB_OK | MB_ICONSTOP);
+				return false;
+			}
+		}
+		else
+		{
+			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FILE_MISSING), utils::PLUGIN_SOURCE).c_str(), MB_OK | MB_ICONSTOP);
+			return false;
+		}
+	}
+
+	// check plugin source consistency
+	if (!cmdInfo.m_bDev || !std::filesystem::is_symlink(plugin_root))
+	{
+		std::map<std::wstring, uint32_t> hash_map;
+		std::ifstream stream(hash_file);
+		std::string line;
+		while (std::getline(stream, line))
+		{
+			utils::string_rtrim(line, "\r");
+			if (line.empty()) continue;
+
+			const auto& groups = utils::regex_split(line);
+			if (groups.size() != 3) break;
+
+			hash_map.emplace(utils::utf8_to_utf16(groups[2]), std::stoul(groups[0], nullptr, 16));
+		}
+
+		std::wstring log;
+		for (const auto& pair : hash_map)
+		{
+			const auto& cur_file = GetAppPath(pair.first.c_str());
+			if (file_crc32(cur_file) != pair.second)
+			{
+				log += cur_file + L"\r\n";
+			}
+		}
+
+		if (!log.empty())
+		{
+			std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
+			msg += L"\r\n\r\n" + log;
+			AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+		}
+	}
 
 	if (cmdInfo.m_bCleanupReg)
 	{
@@ -746,13 +816,37 @@ bool PackPlugin(const PluginType plugin_type,
 	// remove previous packed folder if exist
 	std::filesystem::remove_all(packFolder, err);
 
-	constexpr auto www_path = LR"(www\cgi-bin)";
-	constexpr auto bin_path = L"bin";
+	constexpr auto www_path = LR"(www\cgi-bin\)";
+	constexpr auto bin_path = LR"(bin\)";
 	constexpr auto default_copy = std::filesystem::copy_options::none;
 	constexpr auto recursive_copy = std::filesystem::copy_options::recursive;
 
 	// copy entire plugin folder
 	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
+
+	const auto& bin_dir = plugin_root + bin_path;
+	if (!std::filesystem::exists(bin_dir))
+	{
+		if (showMessage)
+			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), bin_dir).c_str(), MB_OK | MB_ICONSTOP);
+		return false;
+	}
+
+	const auto& www_dir = plugin_root + www_path;
+	if (!std::filesystem::exists(www_dir))
+	{
+		if (showMessage)
+			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), www_dir).c_str(), MB_OK | MB_ICONSTOP);
+		return false;
+	}
+
+	const auto& icons_dir = plugin_root + L"icons\\";
+	if (!std::filesystem::exists(icons_dir))
+	{
+		if (showMessage)
+			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), icons_dir).c_str(), MB_OK | MB_ICONSTOP);
+		return false;
+	}
 
 	std::filesystem::copy(plugin_root, packFolder, default_copy, err);
 	std::filesystem::copy(plugin_root + L"lib", packFolder + L"lib", recursive_copy, err);
@@ -785,11 +879,11 @@ bool PackPlugin(const PluginType plugin_type,
 	};
 
 	// copy bin scripts
-	for (const auto& dir_entry : std::filesystem::directory_iterator{ plugin_root + LR"(bin\\)" })
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ bin_dir })
 	{
 		if (std::find(mandatory_bin.begin(), mandatory_bin.end(), dir_entry.path().filename().wstring()) != mandatory_bin.end())
 		{
-			const auto& curl_file = fmt::format(LR"({:s}\{:s})", bin_path, dir_entry.path().filename().wstring());
+			const auto& curl_file = bin_path + dir_entry.path().filename().wstring();
 			std::filesystem::copy_file(plugin_root + curl_file, packFolder + curl_file, default_copy, err);
 		}
 	}
@@ -799,18 +893,18 @@ bool PackPlugin(const PluginType plugin_type,
 	};
 
 	// copy cgi-bin scripts
-	for (const auto& dir_entry : std::filesystem::directory_iterator{ plugin_root + LR"(www\\cgi-bin)" })
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ www_dir })
 	{
 		if (std::find(mandatory_www.begin(), mandatory_www.end(), dir_entry.path().filename().wstring()) != mandatory_www.end())
 		{
-			const auto& curl_file = fmt::format(LR"({:s}\{:s})", www_path, dir_entry.path().filename().wstring());
+			const auto& curl_file = www_path + dir_entry.path().filename().wstring();
 			std::filesystem::copy_file(plugin_root + curl_file, packFolder + curl_file, default_copy, err);
 		}
 	}
 
 	// remove if old logo and backgrounds still exists in icons folder
 	boost::wregex regExpName { LR"(^(?:bg|logo)_.*\.(?:jpg|png)$)" };
-	for (const auto& dir_entry : std::filesystem::directory_iterator{ packFolder + LR"(icons\)" })
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ icons_dir })
 	{
 		if (!dir_entry.is_directory() && boost::regex_match(dir_entry.path().filename().wstring(), regExpName))
 		{

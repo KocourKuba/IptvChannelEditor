@@ -32,3 +32,4 @@ DEALINGS IN THE SOFTWARE.
 
 /// compute CRC32 (bitwise algorithm)
 uint32_t crc32_bitwise (const void* data, size_t length, uint32_t previousCrc32 = 0);
+uint32_t file_crc32(const std::wstring& filename);

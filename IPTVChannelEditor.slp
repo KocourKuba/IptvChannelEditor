@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20240406174031" scan="306" scanned="20240406173811">
+<document created="20211012165442" version="4.0.374" date="20240421143250" scan="308" scanned="20240421143238">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240402220434" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240421123202" usesmfc="1">
     <headerfiles>
       <header name="..\..\resource.h"/>
       <resource name="..\..\IPTVChannelEditor.rc"/>
@@ -4284,9 +4284,9 @@
           <native>7za.dll is missing! Please check the installation.</native>
           <lang id="ru" date="20220705232644" savedtotm="1">7za.dll отсутствует! Проверьте правильность установки.</lang>
         </row>
-        <row id="IDS_STRING_ERR_FILE_MISSING" created="20220724173729">
-          <native>File %s is missing!</native>
-          <lang id="ru" date="20220724173753">Файл %s не найден!</lang>
+        <row id="IDS_STRING_ERR_FILE_MISSING" created="20220724173729" changed="20240421143238">
+          <native>File {:s} is missing!</native>
+          <lang id="ru" date="20240421143250" status="3">Файл {:s} не найден!</lang>
         </row>
         <row id="IDS_STRING_ERR_SETTINGS_MISSING" created="20220730092432">
           <native>Settings missed!</native>
@@ -4421,6 +4421,10 @@
           <native>Template to assemble stream url. All macroses available in the context menu called by right mouse button.</native>
           <lang id="ru" date="20221018230600">Шаблон для сборки ссылки потока. Все макросы доступны в контекстном меню вызываемом по правой кнопке мышки.</lang>
         </row>
+        <row id="IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE" state="0" created="20240421141529">
+          <native>Failed to unpack plugin source!</native>
+          <lang id="ru" date="20240421141632">Ошибка распаковки файлов плагина!</lang>
+        </row>
       </node>
       <node class="TWindowsStringNode" name="2051" created="20220717003929" resid="2051" langid="1033">
         <row id="ID_MAKE_ALL">
@@ -4542,6 +4546,10 @@
         <row id="IDS_STRING_EDIT_VOD_REGEX" created="20221104145733">
           <native>Edit regular expression to parse movie title if it contains additional information like country or year.</native>
           <lang id="ru" date="20221104150624">Редактировать регулярное выражение для парсинга заголовка фильма если он содержит дополнительную информацию типа страны или года.</lang>
+        </row>
+        <row id="IDS_STRING_ERR_FILES_WRONG" state="0" created="20240421141529">
+          <native>Inconsistent files found. Installation is corrupt!</native>
+          <lang id="ru" date="20240421141757">Найдены несоответствия файлов плагина. Возможно установочные файлы испорчены!</lang>
         </row>
         <row id="IDS_STRING_NAME">
           <native>Name</native>
@@ -4904,17 +4912,35 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" changed="20240403000456">8.0.1981, 2 Apr 2024</row>
+        <row id="FileVersion" locked="1" state="3" changed="20240421143238">
+          <prev>8.1.1990, 20 Apr 2024</prev>
+          <native>8.1.1991, 21 Apr 2024</native>
+        </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
-        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" changed="20240312215344">0</row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" changed="20240403000456">1981</row>
+        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20240421141529">
+          <prev>0</prev>
+          <native>1</native>
+        </row>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240421143238">
+          <prev>1990</prev>
+          <native>1991</native>
+        </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" changed="20240403000456">8.0.1981</row>
+        <row id="ProductVersion" hidden="1" state="3" changed="20240421143238">
+          <prev>8.1.1990</prev>
+          <native>8.1.1991</native>
+        </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
-        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" changed="20240312215344">0</row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" changed="20240403000456">1981</row>
+        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20240421141529">
+          <prev>0</prev>
+          <native>1</native>
+        </row>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240421143238">
+          <prev>1990</prev>
+          <native>1991</native>
+        </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
     </node>

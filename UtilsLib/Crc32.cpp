@@ -25,6 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
+#include <array>
 #include "Crc32.h"
 
 #ifdef _DEBUG
@@ -35,6 +36,7 @@ static char THIS_FILE[] = __FILE__;
 
 /// zlib's CRC32 polynomial
 constexpr uint32_t Polynomial = 0xEDB88320;
+constexpr uint32_t nChunkSize = 1024 * 64;
 
 /// compute CRC32 (bitwise algorithm)
 uint32_t crc32_bitwise(const void* data, size_t length, uint32_t previousCrc32 /*= 0*/)
@@ -54,4 +56,21 @@ uint32_t crc32_bitwise(const void* data, size_t length, uint32_t previousCrc32 /
 	}
 
 	return ~crc; // same as crc ^ 0xFFFFFFFF
+}
+
+uint32_t file_crc32(const std::wstring& filename)
+{
+	static constexpr auto BUFFSIZE = 16384;
+	std::array<char, BUFFSIZE> buffer{};
+
+	uint32_t nCrc32 = 0;
+	std::ifstream ifs(filename, std::ifstream::binary);
+	while (ifs.good())
+	{
+		ifs.read(buffer.data(), BUFFSIZE);
+		nCrc32 = crc32_bitwise(buffer.data(), (uint32_t)ifs.gcount(), nCrc32);
+	}
+	ifs.close();
+
+	return nCrc32;
 }

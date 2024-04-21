@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="306" scanned="20240406173811" built="20240403000625" lang="ru" pane="TLogPane" col="3">
+<desktop scan="308" scanned="20240421143238" built="20240421143256" lang="ru" pane="TLogPane" col="4" row="Strings.18.IDS_STRING_ERR_FILE_MISSING">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>

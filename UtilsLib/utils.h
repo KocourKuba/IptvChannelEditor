@@ -78,10 +78,13 @@ static constexpr auto HISTORY_GROUP = "##playback_history_tv_group##";
 static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
 static constexpr auto CATEGORIES_LOGO_URL = L"icons/";
 
+static constexpr auto PLUGIN_SOURCE = L"dune_plugin.pkg";
 static constexpr auto PLUGIN_ROOT = L"dune_plugin\\";
 static constexpr auto PLUGIN_SETTINGS = L"dune_plugin\\settings";
 static constexpr auto CHANNELS_LOGO_PATH = L"dune_plugin\\icons\\channels\\";
 static constexpr auto CATEGORIES_LOGO_PATH = L"dune_plugin\\icons\\";
+static constexpr auto CHANNELS_LIST_SOURCE = L"ChannelsLists.pkg";
+static constexpr auto CHANNELS_LIST_PATH = L"ChannelsLists\\";
 
 
 uint64_t ChronoGetTickCount();

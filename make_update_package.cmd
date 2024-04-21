@@ -68,14 +68,17 @@ copy "%ROOT%dune_plugin\changelog.md"					"%pkg%" >nul
 copy "%ROOT%dune_plugin\changelog.md" 					"%ROOT%package\changelog.md" >nul
 copy "%ROOT%dune_plugin\changelog.md" 					"%ROOT%package\changelog.md.%BUILD%" >nul
 
+echo calculate crc32 for dune_plugin files...
+7z h -r -scrc crc32  dune_plugin\*.php |find "dune_plugin" >dune_plugin\hash.md
+7z h -r -scrc crc32  dune_plugin\*.sh|find "dune_plugin" >>dune_plugin\hash.md
+
+echo build channels list package...
+7z a -xr!*.bin -xr!custom package\%BUILD%\ChannelsLists.pkg ChannelsLists\ >nul
+
+echo build dune_plugin package...
+7z a -xr!*.bin package\%BUILD%\dune_plugin.pkg dune_plugin\ >nul
+
 pushd "package\%BUILD%"
-mklink /D dune_plugin "%ROOT%dune_plugin" >nul 2>&1
-mklink /D ChannelsLists "%ROOT%ChannelsLists" >nul 2>&1
-
-echo build update package...
-
-7z a -xr!*.bin dune_plugin.7z dune_plugin >nul
-7z a -xr!*.bin -xr!custom ChannelsLists.7z ChannelsLists >nul
 
 call :header > %outfile%
 
@@ -88,13 +91,17 @@ call :add_node %BUGTRAP%.dll					>>%outfile%
 call :add_node dbghelp.dll						>>%outfile%
 call :add_node changelog.md						>>%outfile%
 call :add_node defaults_%MAJOR%.%MINOR%.json	>>%outfile%
-call :add_node dune_plugin.7z					>>%outfile%
-call :add_node ChannelsLists.7z	true			>>%outfile%
+call :add_node dune_plugin.pkg					>>%outfile%
+call :add_node ChannelsLists.pkg true			>>%outfile%
 echo ^</package^> >>%outfile%
 copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 
 echo build standard archive...
+mklink /D ChannelsLists "%ROOT%dune_plugin" >nul 2>&1
+mklink /D ChannelsLists "%ROOT%ChannelsLists" >nul 2>&1
 IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom .
+rd dune_plugin /s /q
+rd ChannelsLists /q
 
 echo %BUILD_NAME%.exe				>packing.lst
 echo %BUILD_NAME%RUS.dll			>>packing.lst
@@ -104,8 +111,8 @@ echo %BUGTRAP%.dll					>>packing.lst
 echo dbghelp.dll					>>packing.lst
 echo changelog.md					>>packing.lst
 echo defaults_%MAJOR%.%MINOR%.json	>>packing.lst
-echo %ROOT%dune_plugin				>>packing.lst
-echo %ROOT%ChannelsLists			>>packing.lst
+echo dune_plugin.pkg				>>packing.lst
+echo ChannelsLists.pkg				>>packing.lst
 echo dune_plugin_*.zip				>>packing.lst
 
 del "%ROOT%package\dune_channel_editor_universal.7z" >nul
@@ -114,8 +121,6 @@ del "%ROOT%package\dune_channel_editor_universal.7z" >nul
 copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%ROOT%package\dune_channel_editor_universal.7z.%BUILD%" >nul
 del packing.lst >nul 2>&1
 del dune_plugin_*.zip >nul 2>&1
-rd dune_plugin /q
-rd ChannelsLists /q
 popd
 
 echo done!

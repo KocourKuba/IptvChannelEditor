@@ -26,5 +26,7 @@
 /package
 /Updates
 /VerGIT.h
+/dune_plugin.pkg
+/dune_plugin/hash.md
 stream_info.bin
 SrcSrvOut.txt
