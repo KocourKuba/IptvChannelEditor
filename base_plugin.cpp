@@ -148,7 +148,7 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 	{
 		utils::string_replace_inplace<wchar_t>(url, REPL_LIVE_URL, live_url);
 		utils::string_replace_inplace<wchar_t>(url, REPL_CH_CATCHUP, utils::utf8_to_utf16(info->get_catchup_source()));
-		if (url.find(L"${"))
+		if (url.find(L"${") != std::string::npos)
 		{
 			for (const auto& pair : template_mapper)
 			{
@@ -422,8 +422,8 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 			auto display_name_node = channel_node->first_node("display-name");
 			while (display_name_node)
 			{
-				const auto& name = rapidxml::get_value_wstring(display_name_node);
-				channels_map.emplace(id, name);
+				const auto& ch_name = rapidxml::get_value_wstring(display_name_node);
+				channels_map.emplace(id, ch_name);
 				display_name_node = display_name_node->next_sibling();
 			}
 
