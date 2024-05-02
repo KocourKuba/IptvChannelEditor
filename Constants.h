@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 
 constexpr auto APP_SETTINGS = L"Application";
-constexpr auto CHANNELS_LIST_VERSION = 7;
+constexpr auto CHANNELS_LIST_VERSION = 8;
 constexpr auto PACK_DLL = L"7z.dll";
 
 constexpr auto CMP_FLAG_TITLE          = 0x01;
@@ -60,6 +60,7 @@ constexpr auto REG_LISTS_PATH          = _T("ListsPath");
 constexpr auto REG_OUTPUT_PATH         = _T("PluginsPath");
 constexpr auto REG_WEB_UPDATE_PATH     = _T("PluginsWebUpdatePath");
 constexpr auto REG_SAVE_SETTINGS_PATH  = _T("PluginsSettingsPath");
+constexpr auto REG_SAVE_IMAGE_PATH     = _T("PluginsImagePath");
 constexpr auto REG_AUTO_SYNC           = _T("AutoSyncChannel");
 constexpr auto REG_AUTO_HIDE           = _T("AutoHideToTray");
 constexpr auto REG_CONVERT_DUPES       = _T("ConvertDupes");

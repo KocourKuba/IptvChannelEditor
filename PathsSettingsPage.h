@@ -58,6 +58,7 @@ protected:
 	CMFCEditBrowseCtrlEx m_wndPluginsPath;
 	CMFCEditBrowseCtrlEx m_wndPluginsWebUpdatePath;
 	CMFCEditBrowseCtrlEx m_wndPluginSettingsPath;
+	CMFCEditBrowseCtrlEx m_wndPluginImagePath;
 
 private:
 	CString m_player;
@@ -66,4 +67,5 @@ private:
 	CString m_plugins_path;
 	CString m_plugins_web_update_path;
 	CString m_plugins_settings_path;
+	CString m_plugins_image_path;
 };

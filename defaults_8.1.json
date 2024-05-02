@@ -94,6 +94,23 @@
       "epg_end": "stop"
     }
   },
+  "image_libs": {
+    "xemu": {
+      "name": "Xemu",
+      "package": "icon_pack_xemu.zip",
+      "url": "https://www.dropbox.com/scl/fo/hh6qm90sk8ezvirpx9179/ANu0vST1sQUI-xz6E58vwe0?rlkey=qupvstvhlb6mjlgia1ci28208&dl=1"
+    },
+    "viktor": {
+      "name": "Viktor",
+      "package": "icon_pack_viktor.zip",
+      "url": "https://dl.dropboxusercontent.com/scl/fi/kh6nvfodicsx62s5f4vjy/icon_pack_viktor.zip?rlkey=oj3eec3i9oew813cay5cqj718"
+    },
+    "zedoar": {
+      "name": "zedoar",
+      "package": "icon_pack_zedoar.zip",
+      "url": "https://dl.dropboxusercontent.com/scl/fi/g4z1tbnr915eukb4bwj7u/icon_pack_zedoar.zip?rlkey=agq5ql9tlwwuym7ysj8n20mji"
+    }
+  },
   "plugins": {
     "custom": {
       "title": "Custom",
@@ -2318,15 +2335,15 @@
       "servers_list": [
         {
           "id": "/",
-          "name": "RU (Russia, Moscow)"
+          "name": "RU (Russia, Moscow, DC1)"
         },
         {
           "id": "kfc/",
-          "name": "KFC (Russia, Moscow)"
+          "name": "KFC (Russia, Moscow, DC2)"
         },
         {
           "id": "OSTHLS/",
-          "name": "OSTHLS (Russia, Moscow)"
+          "name": "OSTHLS (Russia, Moscow, DC3)"
         },
         {
           "id": "KRDHLS/",
@@ -2337,7 +2354,7 @@
           "name": "BN (Russia, Saint-Petersburg)"
         },
         {
-          "id": "BYHLS/",
+          "id": "BY/",
           "name": "BYHLS (Belarus, Minsk)"
         },
         {
@@ -2346,15 +2363,15 @@
         },
         {
           "id": "kz/",
-          "name": "KZ (Kazakhstan, Almaty/Russia, Samara)"
+          "name": "KZ (Russia, Samara)"
         },
         {
           "id": "gn/",
-          "name": "GN (Ukraine, Kiev)"
+          "name": "GN (Poland, Warsaw)"
         },
         {
           "id": "RHLS/",
-          "name": "RHLS (GlobalCache CDN)"
+          "name": "RHLS (Europe LUX/FRA)"
         }
       ],
       "static_servers": true,

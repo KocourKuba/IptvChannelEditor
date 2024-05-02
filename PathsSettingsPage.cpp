@@ -59,6 +59,8 @@ void CPathsSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGINS_WEB_UPDATE_PATH, m_plugins_web_update_path);
 	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGINS_SETTINGS_PATH, m_wndPluginSettingsPath);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGINS_SETTINGS_PATH, m_plugins_settings_path);
+	DDX_Control(pDX, IDC_MFCEDITBROWSE_PLUGINS_IMAGE_PATH, m_wndPluginImagePath);
+	DDX_Text(pDX, IDC_MFCEDITBROWSE_PLUGINS_IMAGE_PATH, m_plugins_image_path);
 }
 
 BOOL CPathsSettingsPage::OnInitDialog()
@@ -71,11 +73,13 @@ BOOL CPathsSettingsPage::OnInitDialog()
 	m_plugins_path = GetConfig().get_string(true, REG_OUTPUT_PATH).c_str();
 	m_plugins_web_update_path = GetConfig().get_string(true, REG_WEB_UPDATE_PATH).c_str();
 	m_plugins_settings_path = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH).c_str();
+	m_plugins_image_path = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH).c_str();
 
 	m_wndListsPath.EnableFolderBrowseButton(m_lists_path.GetString(), BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE);
 	m_wndPluginsPath.EnableFolderBrowseButton(m_plugins_path.GetString(), BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE);
 	m_wndPluginsWebUpdatePath.EnableFolderBrowseButton(m_plugins_web_update_path.GetString(), BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE);
 	m_wndPluginSettingsPath.EnableFolderBrowseButton(m_plugins_settings_path.GetString(), BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE);
+	m_wndPluginImagePath.EnableFolderBrowseButton(m_plugins_image_path.GetString(), BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE);
 
 	CString filter(_T("EXE file(*.exe)|*.exe|All Files (*.*)|*.*||"));
 	m_wndPlayer.EnableFileBrowseButton(nullptr, filter.GetString(), OFN_EXPLORER | OFN_ENABLESIZING | OFN_LONGNAMES | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST);

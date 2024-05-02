@@ -276,6 +276,13 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		std::filesystem::create_directories(settings_dir);
 	}
 
+	if (GetConfig().get_string(true, REG_SAVE_IMAGE_PATH).empty())
+	{
+		const auto& image_dir = GetAppPath(L"ImageCache\\");
+		GetConfig().set_string(true, REG_SAVE_IMAGE_PATH, image_dir);
+		std::filesystem::create_directories(image_dir);
+	}
+
 	if (GetConfig().get_int(true, REG_MAX_CACHE_TTL) < 1)
 	{
 		GetConfig().set_int(true, REG_MAX_CACHE_TTL, 24);

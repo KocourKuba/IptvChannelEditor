@@ -2194,9 +2194,15 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		return false;
 	}
 
+	auto list_version = 0;
 	auto i_node = doc->first_node(utils::TV_INFO);
 	auto info_node = i_node->first_node(utils::VERSION_INFO);
-	if (!info_node || rapidxml::get_value_int(info_node->first_node(utils::LIST_VERSION)) != CHANNELS_LIST_VERSION)
+	if (info_node)
+	{
+		list_version = rapidxml::get_value_int(info_node->first_node(utils::LIST_VERSION));
+	}
+
+	if (list_version != CHANNELS_LIST_VERSION)
 	{
 		set_allow_save(true);
 	}
@@ -2241,10 +2247,23 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	{
 		auto category = std::make_shared<ChannelCategory>(root_path);
 		category->ParseNode(cat_node);
+		if (list_version < CHANNELS_LIST_VERSION)
+		{
+			auto& url = category->get_icon_uri();
+			if (url.is_local())
+			{
+				std::filesystem::path fname(url.get_path());
+				auto newPath = utils::CATEGORIES_LOGO_URL + fname.filename().wstring();
+				url.set_path(newPath);
+			}
+		}
+
 		CategoryInfo info = { nullptr, category };
 		auto& res = m_categoriesMap.emplace(category->get_key(), info);
 		if (!res.second && category->is_not_movable())
+		{
 			res.first->second.category->set_icon_uri(category->get_icon_uri());
+		}
 
 		cat_node = cat_node->next_sibling();
 	}
@@ -4452,13 +4471,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		auto pos = fname.rfind('/');
 		if (pos == std::string::npos) continue;
 
-		fname = fname.substr(pos + 1);
-		std::wstring path = utils::CHANNELS_LOGO_URL;
-		path += fname;
-
 		uri_base icon_uri;
 		icon_uri.set_uri(utils::ICON_TEMPLATE);
-		icon_uri.set_path(path);
+		icon_uri.set_path(utils::CHANNELS_LOGO_URL + fname.substr(pos + 1));
 
 		CWaitCursor cur;
 		std::stringstream image;
