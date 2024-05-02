@@ -72,8 +72,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
 
                 array_unshift($search_items, $search_string);
                 HD::put_data_items(Starnet_Vod_Search_Screen::VOD_SEARCH_LIST, $search_items);
-                return Action_Factory::invalidate_folders(
-                    array(Starnet_Vod_Search_Screen::ID),
+                return Action_Factory::invalidate_folders(array(Starnet_Vod_Search_Screen::get_media_url_str()),
                     Action_Factory::open_folder(
                         static::get_media_url_string(Vod_Category::FLAG_SEARCH, $search_string),
                         TR::t('search') . ": $search_string"));
@@ -83,7 +82,10 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $this->plugin->vod->change_vod_favorites($opt_type, $movie_id);
                 $this->plugin->vod->save_movie_favorites();
-                return Action_Factory::invalidate_folders(array($user_input->parent_media_url, Starnet_Vod_Favorites_Screen::ID));
+                $urls[] = $user_input->parent_media_url;
+                $urls[] = Starnet_Vod_Favorites_Screen::get_media_url_str();
+
+                return Action_Factory::invalidate_folders($urls);
         }
 
         return null;

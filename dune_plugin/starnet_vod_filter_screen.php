@@ -82,7 +82,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                 $filter_items->insert_item($filter_string, false);
                 HD::put_data_items(self::VOD_FILTER_LIST, $filter_items->get_order());
 
-                return Action_Factory::invalidate_folders(array(self::ID),
+                return Action_Factory::invalidate_folders(array(self::get_media_url_str()),
                     Action_Factory::open_folder(
                         Starnet_Vod_List_Screen::get_media_url_string(Vod_Category::FLAG_FILTER, $filter_string),
                         TR::t('filter__1', $filter_string)));
@@ -112,7 +112,7 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
                 }
 
                 HD::put_data_items(self::VOD_FILTER_LIST, $filter_items->get_order());
-                return Action_Factory::invalidate_folders(array(self::ID));
+                return Action_Factory::invalidate_folders(array(self::get_media_url_str()));
         }
 
         return null;

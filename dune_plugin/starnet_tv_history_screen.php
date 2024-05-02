@@ -94,7 +94,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
                 return $this->plugin->invalidate_epfs_folders($plugin_cookies, null, Action_Factory::close_and_run(), true);
         }
 
-        return Action_Factory::invalidate_folders($user_input->parent_media_url);
+        return Action_Factory::invalidate_folders(array($user_input->parent_media_url));
     }
 
     /**

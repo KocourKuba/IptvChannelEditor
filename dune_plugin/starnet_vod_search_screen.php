@@ -13,7 +13,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
      * @param string $category
      * @return false|string
      */
-    public static function get_media_url_str($category = '')
+    public static function get_media_url_string($category = '')
     {
         return MediaURL::encode(array('screen_id' => self::ID, 'category' => $category));
     }
@@ -85,7 +85,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
                     Starnet_Vod_List_Screen::get_media_url_string(Vod_Category::FLAG_SEARCH, $search_string),
                     TR::t('search__1', ": $search_string"));
 
-                return Action_Factory::invalidate_folders(array(self::ID), $action);
+                return Action_Factory::invalidate_folders(array(self::get_media_url_str()), $action);
 
             case ACTION_ITEM_UP:
             case ACTION_ITEM_DOWN:
@@ -112,7 +112,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implem
                 }
 
                 HD::put_data_items(self::VOD_SEARCH_LIST, $filter_items->get_order());
-                return Action_Factory::invalidate_folders(array(self::ID));
+                return Action_Factory::invalidate_folders(array(self::get_media_url_str()));
         }
 
         return null;

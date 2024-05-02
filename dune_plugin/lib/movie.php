@@ -195,12 +195,13 @@ class Movie implements User_Input_Handler
                 self::WATCHED_DATE => $user_input->plugin_vod_stop_tm
             ));
 
+        $urls[] = Starnet_Vod_History_Screen::get_media_url_str();
         if (empty($episode->season_id)) {
-            $series_media_url_str = Starnet_Vod_Series_List_Screen::get_media_url_string($user_input->plugin_vod_id);
+            $urls[] = Starnet_Vod_Series_List_Screen::get_media_url_string($user_input->plugin_vod_id);
         } else {
-            $series_media_url_str = Starnet_Vod_Series_List_Screen::get_media_url_string($user_input->plugin_vod_id, $episode->season_id);
+            $urls[] = Starnet_Vod_Series_List_Screen::get_media_url_string($user_input->plugin_vod_id, $episode->season_id);
         }
-        return Action_Factory::invalidate_folders(array($series_media_url_str, Starnet_Vod_History_Screen::get_media_url_str()));
+        return Action_Factory::invalidate_folders($urls);
     }
 
     /**
