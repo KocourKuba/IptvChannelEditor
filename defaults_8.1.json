@@ -1230,6 +1230,7 @@
     },
     "oneott": {
       "access_type": "login",
+      "class_name": "oneott_config",
       "epg_params": [
         {
           "epg_param": "first",
