@@ -247,7 +247,7 @@ class Starnet_Tv implements User_Input_Handler
 
         $max_support_ch_list_ver = $this->plugin->config->plugin_info['app_ch_list_version'];
         if ($max_support_ch_list_ver < (int)$xml->vesion_info->list_version) {
-            $message = TR::t('warn_msg1');
+            $message = TR::load_string('warn_msg1');
             hd_debug_print($message);
             $this->plugin->config->set_last_error($message);
         }
@@ -447,6 +447,15 @@ class Starnet_Tv implements User_Input_Handler
         $this->special_groups->set($history_channels->get_id(), $history_channels);
         $this->special_groups->set($all_channels->get_id(), $all_channels);
         $this->special_groups->set($vod_group->get_id(), $vod_group);
+
+        if (empty($pl_entries)
+            && $this->plugin->config->plugin_info['app_type_name'] !== 'custom'
+            && $this->channels->size()) {
+            $message = TR::load_string('warn_msg6');
+            $this->plugin->config->set_last_error($message);
+            hd_debug_print($message);
+            $this->plugin->config->ClearPlaylistCache(true);
+        }
 
         hd_debug_print("Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
         HD::ShowMemoryUsage();

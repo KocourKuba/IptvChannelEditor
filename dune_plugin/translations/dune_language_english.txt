@@ -244,6 +244,7 @@ warn_msg2__1 = Missed or not full data for URL generation.\nPossible not entered
 warn_msg3 = The movie technical information contains incorrect or missing data.\nThe movie cannot be played.
 warn_msg4 = Unable to display subscription details.
 warn_msg5 = Incorrect username or password.
+warn_msg6 = Empty provider playlist!
 epg_not_ready = EPG not ready
 epg_not_ready_desc = EPG is still indexing, please wait
 fake_epg_program = Program

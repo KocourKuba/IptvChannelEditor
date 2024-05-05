@@ -557,7 +557,12 @@ class default_config extends dynamic_config
      */
     public function set_last_error($error)
     {
-        $this->last_error = $error;
+        $this->last_error .= $error . PHP_EOL;
+    }
+
+    public function clear_last_error()
+    {
+        $this->last_error = '';
     }
 
     /**
@@ -789,16 +794,10 @@ class default_config extends dynamic_config
             $catchup = $entry->getCatchupSource();
             if (!empty($catchup)) {
                 $pl_entries[$id][Stream_Params::CU_SOURCE] = $catchup;
-        }
+            }
         }
 
-        if (empty($pl_entries) && $this->plugin_info['app_type_name'] !== 'custom') {
-            $this->set_last_error("Пустой плейлист провайдера!");
-            hd_debug_print($this->last_error);
-            $this->ClearPlaylistCache(true);
-        } else {
-            hd_debug_print("Total entries:" . count($pl_entries) . ", mapped to ID $mapped: ");
-        }
+        hd_debug_print("Total entries:" . count($pl_entries) . ", mapped to ID $mapped: ");
 
         return $pl_entries;
     }

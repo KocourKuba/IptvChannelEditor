@@ -240,15 +240,15 @@ vod_screen_movie_info__3 = %s|Jahr: %s|Bewertung: %s
 vod_screen_movie_info__4 = %s|Jahr: %s|Land: %s|Genre: %s
 vod_screen_movie_info__5 = %s|Jahr: %s|Land: %s|Genre: %s|Bewertung: %s
 
-epg_not_ready = EPG nicht bereit
-epg_not_ready_desc = EPG wird noch indexiert, bitte warten
-fake_epg_program = Programm
 warn_msg1 = Warning: Die Version der Kanalliste ist neuer als die, die vom aktuellen Plugin unterstützt wird.\nMögliche Wiedergabefehler.\nBitte aktualisieren Sie das Plugin auf eine neuere Version.
 warn_msg2__1 = Fehlende oder nicht vollständige Daten für die URL-Generierung.\nMöglicherweise wurden keine Kontodaten eingegeben oder der Kanal ist im aktuellen Abonnement nicht vorhanden.\n %s
 warn_msg3 = Die technischen Informationen zum Film enthalten falsche oder fehlende Daten.\nDer Film kann nicht abgespielt werden.
 warn_msg4 = Abonnementdetails können nicht angezeigt werden.
 warn_msg5 = Falscher Benutzername oder Passwort.
-fake_epg_program = Program
+warn_msg6 = Leere Anbieter-Playlist!
+epg_not_ready = EPG nicht bereit
+epg_not_ready_desc = EPG wird noch indexiert, bitte warten
+fake_epg_program = Programm
 
 err_too_old_player = Dieser DUNE HD-Player ist zu alt und wird nicht unterstützt
 err_load_playlist = Fehler beim Laden der Playlist!
