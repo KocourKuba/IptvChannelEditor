@@ -93,7 +93,26 @@ NLOHMANN_JSON_SERIALIZE_ENUM(AccountAccessType,
 	{ AccountAccessType::enNone,      "none"    }
 })
 
+enum class ImageLibType
+{
+	enNone = 0,
+	enFile,
+	enLink,
+	enM3U,
+	enHTML,
+};
+
+NLOHMANN_JSON_SERIALIZE_ENUM(ImageLibType,
+{
+	{ ImageLibType::enNone, "none" },
+	{ ImageLibType::enFile, "file" },
+	{ ImageLibType::enLink, "link" },
+	{ ImageLibType::enM3U,  "m3u"  },
+	{ ImageLibType::enHTML, "html" },
+})
+
 }
+
 using namespace s_enum;
 
 namespace vod_enum
@@ -384,6 +403,61 @@ struct StreamParameters
 		DESERIALIZE_STRUCT(j, c, cu_type);
 		DESERIALIZE_STRUCT(j, c, cu_duration);
 		DESERIALIZE_STRUCT(j, c, dune_params);
+	}
+};
+
+/// <summary>
+/// Parameters to parse ImageLibs
+/// </summary>
+struct IconPackInfo
+{
+	ImageLibType type;
+	std::string name;
+	std::string package_name;
+	std::string url;
+	bool square;
+
+	ImageLibType get_type() const { return type; }
+	void set_type(const ImageLibType val) { type = val; }
+
+	std::wstring get_name() const { return utils::utf8_to_utf16(name); }
+	void set_name(const std::wstring& val) { name = utils::utf16_to_utf8(val); }
+
+	std::wstring get_package_name() const { return utils::utf8_to_utf16(package_name); }
+	void set_package_name(const std::wstring& val) { package_name = utils::utf16_to_utf8(val); }
+
+	std::wstring get_url() const { return utils::utf8_to_utf16(url); }
+	void set_url(const std::wstring& val) { url = utils::utf16_to_utf8(val); }
+
+	bool get_square() const { return square; }
+	void set_square(const bool val) { square = val; }
+
+	static void to_json_wrapper(nlohmann::json& j, const IconPackInfo& c)
+	{
+		to_json(j, c);
+	}
+
+	static void from_json_wrapper(const nlohmann::json& j, IconPackInfo& c)
+	{
+		from_json(j, c);
+	}
+
+	friend void to_json(nlohmann::json& j, const IconPackInfo& c)
+	{
+		SERIALIZE_STRUCT(j, c, type);
+		SERIALIZE_STRUCT(j, c, name);
+		SERIALIZE_STRUCT(j, c, package_name);
+		SERIALIZE_STRUCT(j, c, url);
+		SERIALIZE_STRUCT(j, c, square);
+	}
+
+	friend void from_json(const nlohmann::json& j, IconPackInfo& c)
+	{
+		DESERIALIZE_STRUCT(j, c, type);
+		DESERIALIZE_STRUCT(j, c, name);
+		DESERIALIZE_STRUCT(j, c, package_name);
+		DESERIALIZE_STRUCT(j, c, url);
+		DESERIALIZE_STRUCT(j, c, square);
 	}
 };
 

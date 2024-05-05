@@ -94,23 +94,85 @@
       "epg_end": "stop"
     }
   },
-  "image_libs": {
-    "xemu": {
+  "image_libs": [
+    {
+      "type": "file",
+      "name": "File",
+      "package_name": "",
+      "url": "",
+      "square": false
+    },
+    {
+      "type": "link",
+      "name": "Link",
+      "package_name": "",
+      "url": "",
+      "square": false
+    },
+    {
+      "type": "file",
+      "name": "epg.one (files)",
+      "package_name": "epgone_transparent_logo.zip",
+      "url": "https://epg.one/epgone_transparent_logo.zip",
+      "square": false
+    },
+    {
+      "type": "file",
+      "name": "epg.one square (files)",
+      "package_name": "epgone_dark_logo.zip",
+      "url": "https://epg.one/epgone_dark_logo.zip",
+      "square": true
+    },
+    {
+      "type": "html",
+      "name": "epg.one (links)",
+      "package_name": "",
+      "url": "https://epg.drm-play.com/?prov=edem",
+      "square": false
+    },
+    {
+      "type": "m3u",
+      "name": "epg.one square (links)",
+      "package_name": "",
+      "url": "http://epg.one/edem_epg_ico.m3u8",
+      "square": true
+    },
+    {
+      "type": "html",
+      "name": "iptvx.one",
+      "package_name": "",
+      "url": "https://epg.drm-play.com/?prov=iptvx.one",
+      "square": false
+    },
+    {
+      "type": "html",
+      "name": "fiptv",
+      "package_name": "",
+      "url": "https://epg.drm-play.com/?prov=fiptv",
+      "square": false
+    },
+    {
+      "type": "file",
       "name": "Xemu",
-      "package": "icon_pack_xemu.zip",
-      "url": "https://www.dropbox.com/scl/fo/hh6qm90sk8ezvirpx9179/ANu0vST1sQUI-xz6E58vwe0?rlkey=qupvstvhlb6mjlgia1ci28208&dl=1"
+      "package_name": "icon_pack_xemu.zip",
+      "url": "https://www.dropbox.com/scl/fo/hh6qm90sk8ezvirpx9179/ANu0vST1sQUI-xz6E58vwe0?rlkey=qupvstvhlb6mjlgia1ci28208&dl=1",
+      "square": false
     },
-    "viktor": {
+    {
+      "type": "file",
       "name": "Viktor",
-      "package": "icon_pack_viktor.zip",
-      "url": "https://dl.dropboxusercontent.com/scl/fi/kh6nvfodicsx62s5f4vjy/icon_pack_viktor.zip?rlkey=oj3eec3i9oew813cay5cqj718"
+      "package_name": "icon_pack_viktor.zip",
+      "url": "https://dl.dropboxusercontent.com/scl/fi/kh6nvfodicsx62s5f4vjy/icon_pack_viktor.zip?rlkey=oj3eec3i9oew813cay5cqj718",
+      "square": false
     },
-    "zedoar": {
+    {
+      "type": "file",
       "name": "zedoar",
-      "package": "icon_pack_zedoar.zip",
-      "url": "https://dl.dropboxusercontent.com/scl/fi/g4z1tbnr915eukb4bwj7u/icon_pack_zedoar.zip?rlkey=agq5ql9tlwwuym7ysj8n20mji"
+      "package_name": "icon_pack_zedoar.zip",
+      "url": "https://dl.dropboxusercontent.com/scl/fi/g4z1tbnr915eukb4bwj7u/icon_pack_zedoar.zip?rlkey=agq5ql9tlwwuym7ysj8n20mji",
+      "square": false
     }
-  },
+  ],
   "plugins": {
     "custom": {
       "title": "Custom",

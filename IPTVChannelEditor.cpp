@@ -315,7 +315,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	}
 
 	// check plugin source consistency
-	if (!cmdInfo.m_bDev || !std::filesystem::is_symlink(plugin_root))
+	if (!cmdInfo.m_bDev && !std::filesystem::is_symlink(plugin_root))
 	{
 		std::map<std::wstring, uint32_t> hash_map;
 		std::ifstream stream(hash_file);

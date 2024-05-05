@@ -59,6 +59,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_OUTPUT_PATH,
 	REG_WEB_UPDATE_PATH,
 	REG_SAVE_SETTINGS_PATH,
+	REG_SAVE_IMAGE_PATH,
 	REG_AUTO_SYNC,
 	REG_AUTO_HIDE,
 	REG_CONVERT_DUPES,

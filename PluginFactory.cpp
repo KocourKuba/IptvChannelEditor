@@ -160,6 +160,21 @@ const std::map<std::string, EpgParameters>& PluginFactory::get_epg_presets() con
 	return m_known_presets;
 }
 
+IconPackInfo PluginFactory::get_icon_pack_info(const size_t idx) const
+{
+	if (idx < m_image_libs.size())
+	{
+		return m_image_libs[idx];
+	}
+
+	return {};
+}
+
+const std::vector<IconPackInfo>& PluginFactory::get_icon_packs() const
+{
+	return m_image_libs;
+}
+
 bool PluginFactory::load_configs(bool dev /*= false*/)
 {
 	bool res = false;
@@ -211,6 +226,14 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 			plugin_config::from_json_wrapper(item.value(), cfg);
 			m_config_storage.emplace(item.key(), cfg);
 		}
+
+		for (const auto& item : config["image_libs"].items())
+		{
+			IconPackInfo preset;
+			IconPackInfo::from_json_wrapper(item.value(), preset);
+			m_image_libs.emplace_back(preset);
+		}
+
 		res = true;
 	}
 	JSON_ALL_CATCH;

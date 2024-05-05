@@ -24,6 +24,7 @@
 /lib
 /lib64
 /package
+/ImageCache
 /Updates
 /VerGIT.h
 /dune_plugin.pkg

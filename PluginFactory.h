@@ -40,10 +40,15 @@ public:
 	}
 
 	std::shared_ptr<base_plugin> create_plugin(PluginType type);
+
+	bool load_configs(bool dev = false);
+
 	EpgParameters get_epg_preset(const std::string& name) const;
 	const std::map<std::string, EpgParameters>& get_epg_presets() const;
 
-	bool load_configs(bool dev = false);
+	IconPackInfo get_icon_pack_info(const size_t idx) const;
+	const std::vector<IconPackInfo>& get_icon_packs() const;
+
 	const std::vector<std::pair<PluginType, std::string>>& get_all_plugins() const;
 	PluginType get_plugin_type(size_t idx);
 
@@ -56,8 +61,9 @@ private:
 	PluginFactory(const PluginFactory& source) = delete;
 
 private:
-	std::map<std::string, plugin_config> m_config_storage;
-	std::map<std::string, EpgParameters> m_known_presets;
+	std::map<std::string, plugin_config> m_config_storage{};
+	std::map<std::string, EpgParameters> m_known_presets{};
+	std::vector<IconPackInfo> m_image_libs{};
 };
 
 inline PluginFactory& GetPluginFactory() { return PluginFactory::Instance(); }

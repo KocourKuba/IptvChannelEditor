@@ -244,9 +244,9 @@ private:
 	void RemoveOrphanChannels();
 	void UpdateChannelsTreeColors(HTREEITEM root = nullptr);
 	void UpdatePlaylistTreeColors();
-	bool ChooseIconFromFile(bool isChannel, uri_stream* info);
+	bool ChooseIconFromFile(const CString& path, uri_stream* info, bool isChannel);
 	bool ChooseIconFromLink(uri_stream* info);
-	bool ChooseIconFromLib(int idx, LPCWSTR source, uri_stream* info, bool isHtml = true, bool isSquare = false);
+	bool ChooseIconFromLib(int idx, const std::wstring& source, uri_stream* info, bool isHtml = true, bool isSquare = false);
 
 	std::shared_ptr<ChannelCategory> GetItemCategory(HTREEITEM hItem) const;
 	std::shared_ptr<ChannelCategory> GetCategory(HTREEITEM hItem) const;

@@ -533,4 +533,15 @@ time_t parse_xmltv_date(const char* sz_date, size_t full_len)
 	return result;
 }
 
+std::wstring& ensure_backslash(std::wstring& src)
+{
+	if (!src.empty() && src.back() == '\\')
+	{
+		return src;
+	}
+	src += L"\\";
+
+	return src;
+}
+
 }
