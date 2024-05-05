@@ -788,12 +788,15 @@ class HD
             $doc = self::http_get_document($url, $opts);
             $contents = json_decode($doc, $to_array);
             if ($contents === null || $contents === false) {
-                hd_debug_print("failed to decode json");
-                hd_debug_print("doc: $doc", true);
+                $msg = "failed to decode json: $doc";
+                self::set_last_error("pl_last_error", $msg);
+                hd_debug_print($msg);
                 return false;
             }
         } catch (Exception $ex) {
-            hd_debug_print("Unable to load url: " . $ex->getMessage());
+            $msg = "Unable to load url: " . $ex->getMessage();
+            self::set_last_error("pl_last_error", $msg);
+            hd_debug_print($msg);
             return false;
         }
 

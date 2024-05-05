@@ -128,7 +128,10 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         hd_debug_print(null, true);
 
         if (is_null($this->category_index) || is_null($this->category_list)) {
-            $this->plugin->config->fetchVodCategories($this->category_list, $this->category_index);
+            $res = $this->plugin->config->fetchVodCategories($this->category_list, $this->category_index);
+            if (!$res) {
+                throw new Exception(HD::get_last_error());
+            }
         }
 
         $category_list = $this->category_list;
@@ -136,7 +139,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         if (isset($media_url->category_id)) {
             if (!isset($this->category_index[$media_url->category_id])) {
                 hd_debug_print("Error: parent category (id: $media_url->category_id) not found.");
-                throw new Exception('No parent category found');
+                throw new Exception("No parent category found");
             }
 
             $parent_category = $this->category_index[$media_url->category_id];

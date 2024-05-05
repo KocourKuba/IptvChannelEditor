@@ -171,7 +171,7 @@ class sharaclub_config extends default_config
                     $url = $this->replace_api_command('subscr_info');
                     $json = HD::DownloadJson($url);
                     if ($json === false || !isset($json['status']) || $json['status'] !== '1') {
-                        throw new Exception("Account status unknown");
+                        throw new Exception("Account status unknown. " . HD::get_last_error());
                     }
                     $this->account_data = $json;
                 }
@@ -290,17 +290,18 @@ class sharaclub_config extends default_config
     }
 
     /**
-     * @param array &$category_list
-     * @param array &$category_index
+     * @inheritDoc
      */
     public function fetchVodCategories(&$category_list, &$category_index)
     {
         $jsonItems = HD::DownloadJson($this->GetVodListUrl(), false);
         if ($jsonItems === false) {
-            return;
+            return false;
         }
 
         HD::StoreContentToFile(self::get_vod_cache_file(), $jsonItems);
+
+        $t = microtime(1);
 
         $category_list = array();
         $category_index = array();
@@ -352,6 +353,10 @@ class sharaclub_config extends default_config
         $this->set_filters($filters);
 
         hd_debug_print("Categories read: " . count($category_list));
+        hd_debug_print("Fetched categories at " . (microtime(1) - $t) . " secs");
+        HD::ShowMemoryUsage();
+
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -577,10 +582,4 @@ class sharaclub_config extends default_config
 
         return $compiled_string;
     }
-
-    protected static function get_vod_cache_file()
-    {
-        return get_temp_path("playlist_vod.json");
-    }
-
 }

@@ -72,17 +72,19 @@ class glanz_config extends default_config
     }
 
     /**
-     * @param array &$category_list
-     * @param array &$category_index
+     * @inheritDoc
      */
     public function fetchVodCategories(&$category_list, &$category_index)
     {
+        hd_debug_print(null, true);
         $jsonItems = HD::DownloadJson($this->GetVodListUrl(), false);
         if ($jsonItems === false) {
-            return;
+            return false;
         }
 
         HD::StoreContentToFile(self::get_vod_cache_file(), $jsonItems);
+
+        $t = microtime(1);
 
         $category_list = array();
         $category_index = array();
@@ -134,6 +136,10 @@ class glanz_config extends default_config
         $this->set_filters($filters);
 
         hd_debug_print("Categories read: " . count($category_list));
+        hd_debug_print("Fetched categories at " . (microtime(1) - $t) . " secs");
+        HD::ShowMemoryUsage();
+
+        return true;
     }
 
     /**
@@ -353,10 +359,5 @@ class glanz_config extends default_config
         }
 
         return $compiled_string;
-    }
-
-    protected static function get_vod_cache_file()
-    {
-        return get_temp_path("playlist_vod.json");
     }
 }

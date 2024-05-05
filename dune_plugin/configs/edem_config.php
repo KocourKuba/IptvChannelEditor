@@ -112,15 +112,16 @@ class edem_config extends default_config
     }
 
     /**
-     * @param array &$category_list
-     * @param array &$category_index
+     * @inheritDoc
      */
     public function fetchVodCategories(&$category_list, &$category_index)
     {
         $doc = $this->make_json_request();
         if ($doc === false) {
-            return;
+            return false;
         }
+
+        $t = microtime(1);
 
         $category_list = array();
         $category_index = array();
@@ -148,6 +149,10 @@ class edem_config extends default_config
 
         hd_debug_print("Categories read: " . count($category_list));
         hd_debug_print("Filters count: " . count($exist_filters));
+        hd_debug_print("Fetched categories at " . (microtime(1) - $t) . " secs");
+        HD::ShowMemoryUsage();
+
+        return true;
     }
 
     /**

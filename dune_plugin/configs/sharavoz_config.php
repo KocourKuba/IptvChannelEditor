@@ -194,12 +194,13 @@ class sharavoz_config extends default_config
     }
 
     /**
-     * @param array &$category_list
-     * @param array &$category_index
+     * @inheritDoc
      */
     public function fetchVodCategories(&$category_list, &$category_index)
     {
         hd_debug_print(null, true);
+
+        $t = microtime(1);
 
         $category_tree = array();
         $this->parse_categories(xtream_codes_api::VOD, $category_tree);
@@ -221,7 +222,12 @@ class sharavoz_config extends default_config
             $category_list[] = $category;
             $category_index[$category->get_id()] = $category;
         }
-        hd_debug_print("Categories read: $category_count");
+
+        hd_debug_print("Categories read: " . count($category_list));
+        hd_debug_print("Fetched categories at " . (microtime(1) - $t) . " secs");
+        HD::ShowMemoryUsage();
+
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////

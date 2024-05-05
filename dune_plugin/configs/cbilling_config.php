@@ -36,7 +36,7 @@ class cbilling_config extends default_config
                 $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
                 $json = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . '/auth/info', true, $headers);
                 if ($json === false || !isset($json['data'])) {
-                    throw new Exception("Account info not loaded");
+                    throw new Exception("Account info not loaded. " . HD::get_last_error());
                 }
                 $this->account_data = $json['data'];
                 $this->plugin->set_credentials(Ext_Params::M_TOKEN, $this->account_data['private_token']);
@@ -130,16 +130,17 @@ class cbilling_config extends default_config
     }
 
     /**
-     * @param array &$category_list
-     * @param array &$category_index
+     * @inheritDoc
      */
     public function fetchVodCategories(&$category_list, &$category_index)
     {
         hd_debug_print(null, true);
         $jsonItems = HD::DownloadJson($this->GetVodListUrl(), false);
         if ($jsonItems === false) {
-            return;
+            return false;
         }
+
+        $t = microtime(1);
 
         $category_list = array();
         $category_index = array();
@@ -173,6 +174,10 @@ class cbilling_config extends default_config
         $category_index[Vod_Category::FLAG_ALL] = $category;
 
         hd_debug_print("Categories read: " . count($category_list));
+        hd_debug_print("Fetched categories at " . (microtime(1) - $t) . " secs");
+        HD::ShowMemoryUsage();
+
+        return true;
     }
 
     /**

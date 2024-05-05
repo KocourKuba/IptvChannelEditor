@@ -855,9 +855,15 @@ class default_config extends dynamic_config
         }
     }
 
+    protected static function get_vod_cache_file()
+    {
+        return get_temp_path("playlist_vod.json");
+    }
+
     /**
      * @param array &$category_list
      * @param array &$category_index
+     * @return bool
      */
     public function fetchVodCategories(&$category_list, &$category_index)
     {
@@ -892,9 +898,12 @@ class default_config extends dynamic_config
             $category_list[] = $cat;
             $category_index[$group] = $cat;
         }
+
         hd_debug_print("Categories read: " . count($category_list));
         hd_debug_print("Fetched categories at " . (microtime(1) - $t) . " secs");
         HD::ShowMemoryUsage();
+
+        return true;
     }
 
     /**
