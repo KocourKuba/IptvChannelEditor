@@ -4,6 +4,52 @@ require_once 'lib/default_config.php';
 class antifriz_config extends default_config
 {
     /**
+     * @inheritDoc
+     */
+    public function GetAccountInfo($force = false)
+    {
+        hd_debug_print("Collect information from account: $force");
+        // this account has special API to get account info
+        // {
+        //    "data": {
+        //        "public_token": "2f5b87bd565ca1234e2sba3fd3919bac",
+        //        "private_token": "5acf87d3206a905b83419224703bf666",
+        //        "end_time": 1705697968,
+        //        "end_date": "2024-01-19 23:59",
+        //        "devices_num": 1,
+        //        "package": "IPTV HD+SD (позапросный тариф)",
+        //        "server": "s01.wsbof.com",
+        //        "server_country": "Германия",
+        //        "vod": 1,
+        //        "ssl": 0,
+        //        "disable_adult": 0
+        //    }
+        // }
+
+        $password = $this->get_password();
+        try {
+            if (empty($password)) {
+                throw new Exception("Password not set");
+            }
+
+            if ($force !== false || empty($this->account_data)) {
+                $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
+                $json = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . '/auth/info', true, $headers);
+                if ($json === false || !isset($json['data'])) {
+                    throw new Exception("Account info not loaded");
+                }
+                $this->account_data = $json['data'];
+                $this->plugin->set_credentials(Ext_Params::M_TOKEN, $this->account_data['private_token']);
+            }
+        } catch (Exception $ex) {
+            hd_debug_print($ex->getMessage());
+            return false;
+        }
+
+        return $this->account_data;
+    }
+
+    /**
      * @param string $movie_id
      * @return Movie
      * @throws Exception
@@ -42,8 +88,8 @@ class antifriz_config extends default_config
             ''// budget
         );
 
-        $domain = $this->account_data['domain'];
-        $token = $this->account_data['token'];
+        $domain = $this->account_data['server'];
+        $token = $this->plugin->get_credentials(Ext_Params::M_TOKEN);
         $vod_url = 'http://%s%s?token=%s';
         if (isset($movieData->seasons)) {
             foreach ($movieData->seasons as $season) {

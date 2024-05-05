@@ -39,6 +39,7 @@ class cbilling_config extends default_config
                     throw new Exception("Account info not loaded");
                 }
                 $this->account_data = $json['data'];
+                $this->plugin->set_credentials(Ext_Params::M_TOKEN, $this->account_data['private_token']);
             }
         } catch (Exception $ex) {
             hd_debug_print($ex->getMessage());
@@ -109,7 +110,7 @@ class cbilling_config extends default_config
         );
 
         $domain = $this->account_data['server'];
-        $token = $this->account_data['private_token'];
+        $token = $this->plugin->get_credentials(Ext_Params::M_TOKEN);
         $vod_url = 'http://%s%s?token=%s';
         if (isset($movieData->seasons)) {
             foreach ($movieData->seasons as $season) {
