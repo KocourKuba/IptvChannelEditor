@@ -54,32 +54,39 @@ echo %BUILD%
 call :update_source
 call :upload_pdb
 
-echo prepare package folder...
-set pkg=package\%BUILD%
-md "%ROOT%%pkg%" >nul 2>&1
-copy "%BUILD_PATH%\%BUILD_NAME%.exe"					"%pkg%" >nul
-copy "%BUILD_PATH%\%BUILD_NAME%RUS.dll"					"%pkg%" >nul
-copy "%BUILD_PATH%\Updater.exe"							"%pkg%" >nul
-copy "%ROOT%%DLL_PATH%\7z.dll"							"%pkg%" >nul
-copy "%ROOT%BugTrap\bin\%BUGTRAP%.dll"					"%pkg%" >nul
-copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%pkg%" >nul
-copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%pkg%" >nul
-copy "%ROOT%dune_plugin\changelog.md"					"%pkg%" >nul
-copy "%ROOT%dune_plugin\changelog.md" 					"%ROOT%package\changelog.md" >nul
-copy "%ROOT%dune_plugin\changelog.md" 					"%ROOT%package\changelog.md.%BUILD%" >nul
+set pkg=%ROOT%package
+set build_pkg=%pkg%\%BUILD%
 
-echo calculate crc32 for dune_plugin files...
-echo version %BUILD% > dune_plugin\hash.md
-7z h -r -scrc crc32  dune_plugin\*.php |find "dune_plugin" >>dune_plugin\hash.md
-7z h -r -scrc crc32  dune_plugin\*.sh|find "dune_plugin" >>dune_plugin\hash.md
+echo prepare package folder...
+md "%pkg%" >nul 2>&1
+md "%build_pkg%" >nul 2>&1
+
+copy "%BUILD_PATH%\%BUILD_NAME%.exe"					"%build_pkg%" >nul
+copy "%BUILD_PATH%\%BUILD_NAME%RUS.dll"					"%build_pkg%" >nul
+copy "%BUILD_PATH%\Updater.exe"							"%build_pkg%" >nul
+copy "%ROOT%%DLL_PATH%\7z.dll"							"%build_pkg%" >nul
+copy "%ROOT%BugTrap\bin\%BUGTRAP%.dll"					"%build_pkg%" >nul
+copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%build_pkg%" >nul
+copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%build_pkg%" >nul
+copy "%ROOT%dune_plugin\changelog.md"					"%build_pkg%" >nul
+
+copy "%ROOT%dune_plugin\changelog.md" 					"%pkg%\changelog.md" >nul
+copy "%ROOT%dune_plugin\changelog.md" 					"%pkg%\changelog.md.%BUILD%" >nul
 
 echo build dune_plugin package...
-7z a -xr!*.bin %pkg%\dune_plugin.pkg dune_plugin\ >nul
+pushd dune_plugin
+7z a %build_pkg%\dune_plugin.pkg >nul
+popd
+
+echo build picons package...
+pushd picons
+7z a %build_pkg%\picons.pkg >nul
+popd
 
 echo build channels list package...
-7z a -xr!*.bin -xr!custom %pkg%\ChannelsLists.pkg ChannelsLists\ >nul
+7z a -xr!*.bin -xr!custom %build_pkg%\ChannelsLists.pkg ChannelsLists\ >nul
 
-pushd "package\%BUILD%"
+pushd "%build_pkg%"
 
 call :header > %outfile%
 
@@ -93,15 +100,15 @@ call :add_node dbghelp.dll						>>%outfile%
 call :add_node changelog.md						>>%outfile%
 call :add_node defaults_%MAJOR%.%MINOR%.json	>>%outfile%
 call :add_node dune_plugin.pkg					>>%outfile%
+call :add_node picons.pkg						>>%outfile%
 call :add_node ChannelsLists.pkg true			>>%outfile%
 echo ^</package^> >>%outfile%
 copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 
+goto :EOF
 echo build standard archive...
-mklink /D ChannelsLists "%ROOT%dune_plugin" >nul 2>&1
 mklink /D ChannelsLists "%ROOT%ChannelsLists" >nul 2>&1
 IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom .
-rd dune_plugin /s /q
 rd ChannelsLists /q
 
 echo %BUILD_NAME%.exe				>packing.lst
@@ -113,6 +120,7 @@ echo dbghelp.dll					>>packing.lst
 echo changelog.md					>>packing.lst
 echo defaults_%MAJOR%.%MINOR%.json	>>packing.lst
 echo dune_plugin.pkg				>>packing.lst
+echo picons.pkg						>>packing.lst
 echo ChannelsLists.pkg				>>packing.lst
 echo dune_plugin_*.zip				>>packing.lst
 
