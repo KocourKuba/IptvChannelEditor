@@ -85,6 +85,7 @@ static constexpr auto CHANNELS_LOGO_PATH = L"dune_plugin\\icons\\channels\\";
 static constexpr auto CATEGORIES_LOGO_PATH = L"dune_plugin\\icons\\categories\\";
 static constexpr auto CHANNELS_LIST_SOURCE = L"ChannelsLists.pkg";
 static constexpr auto CHANNELS_LIST_PATH = L"ChannelsLists\\";
+static constexpr auto UPDATES_FOLDER = L"Updates\\";
 
 
 uint64_t ChronoGetTickCount();

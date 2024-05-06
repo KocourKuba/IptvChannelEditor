@@ -2019,7 +2019,7 @@ BEGIN
     IDS_STRING_BUTTON_EDIT_TEMPLATES 
                             "Edit playlist templates. You can add additional playlist urls or template to use in the config"
     IDS_STRING_ERR_FILES_WRONG 
-                            "Inconsistent files found. Installation is corrupt!"
+                            "Inconsistent files found. Installation is corrupt! Trying to recover!"
     IDS_STRING_ERR_DIR_MISSING 
                             "Directory {:s} is missing. Installation is corrupt!"
     IDS_STRING_COMBO_VOD_TEMPLATE "Select VOD template to use in this config."

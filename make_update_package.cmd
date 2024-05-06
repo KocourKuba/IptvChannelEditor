@@ -69,14 +69,15 @@ copy "%ROOT%dune_plugin\changelog.md" 					"%ROOT%package\changelog.md" >nul
 copy "%ROOT%dune_plugin\changelog.md" 					"%ROOT%package\changelog.md.%BUILD%" >nul
 
 echo calculate crc32 for dune_plugin files...
-7z h -r -scrc crc32  dune_plugin\*.php |find "dune_plugin" >dune_plugin\hash.md
+echo version %BUILD% > dune_plugin\hash.md
+7z h -r -scrc crc32  dune_plugin\*.php |find "dune_plugin" >>dune_plugin\hash.md
 7z h -r -scrc crc32  dune_plugin\*.sh|find "dune_plugin" >>dune_plugin\hash.md
 
-echo build channels list package...
-7z a -xr!*.bin -xr!custom package\%BUILD%\ChannelsLists.pkg ChannelsLists\ >nul
-
 echo build dune_plugin package...
-7z a -xr!*.bin package\%BUILD%\dune_plugin.pkg dune_plugin\ >nul
+7z a -xr!*.bin %pkg%\dune_plugin.pkg dune_plugin\ >nul
+
+echo build channels list package...
+7z a -xr!*.bin -xr!custom %pkg%\ChannelsLists.pkg ChannelsLists\ >nul
 
 pushd "package\%BUILD%"
 

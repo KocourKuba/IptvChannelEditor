@@ -4039,7 +4039,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 {
 	if (CheckForSave())
 	{
-		PackPlugin(m_plugin_type, true, m_wndMakeWebUpdate.GetCheck());
+		theApp.PackPlugin(m_plugin_type, true, m_wndMakeWebUpdate.GetCheck());
 	}
 }
 
@@ -4064,7 +4064,7 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 		m_wndProgressInfo.SetWindowText(plugin->get_title().c_str());
 		m_wndProgress.SetPos(++i);
 
-		if (!PackPlugin(pair.first, false, m_wndMakeWebUpdate.GetCheck()))
+		if (!theApp.PackPlugin(pair.first, false, m_wndMakeWebUpdate.GetCheck()))
 		{
 			success = false;
 			CString str;
@@ -4114,7 +4114,7 @@ void CIPTVChannelEditorDlg::OnMakeAllAccounts()
 		const auto& title = fmt::format(L"#{:d}", i);
 		m_wndProgressInfo.SetWindowText(title.c_str());
 
-		if (!PackPlugin(m_plugin_type, false, m_wndMakeWebUpdate.GetCheck()))
+		if (!theApp.PackPlugin(m_plugin_type, false, m_wndMakeWebUpdate.GetCheck()))
 		{
 			success = false;
 			CString str;
@@ -4138,7 +4138,7 @@ void CIPTVChannelEditorDlg::OnMakeAccount(UINT id)
 		const auto& old_selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
 
 		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, id - ID_ACCOUNT_TO_START);
-		PackPlugin(m_plugin_type, true, m_wndMakeWebUpdate.GetCheck());
+		theApp.PackPlugin(m_plugin_type, true, m_wndMakeWebUpdate.GetCheck());
 		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, old_selected);
 	}
 }

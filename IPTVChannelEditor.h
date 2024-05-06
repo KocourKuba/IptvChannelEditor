@@ -52,11 +52,22 @@ public:
 public:
 	BOOL InitInstance() override;
 
+	bool CheckPluginConsistency(bool isDev);
+
 	void FillLangMap();
+
+	bool PackPlugin(const PluginType plugin_type,
+					bool showMessage,
+					bool make_web_update = false,
+					std::wstring output_path = L"",
+					bool noEmbed = false,
+					bool noCustom = false);
+
 
 	DECLARE_MESSAGE_MAP()
 
 public:
+	bool m_bDev = false;
 	static std::wstring DEV_PATH;
 	static std::wstring PACK_DLL_PATH;
 	std::map<WORD, LangStruct> m_LangMap;
@@ -90,13 +101,6 @@ std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr);
 
 void ConvertAccounts();
 
-bool PackPlugin(const PluginType plugin_type,
-				bool showMessage,
-				bool make_web_update = false,
-				std::wstring output_path = L"",
-				bool noEmbed = false,
-				bool noCustom = false);
-
 void SaveWindowPos(HWND hWnd, LPCTSTR name);
 bool LoadPngImage(UINT id, CImage& img);
 void SetButtonImage(UINT imgId, CButton& btn);
@@ -113,6 +117,9 @@ uintmax_t calc_folder_size(const std::wstring& path);
 
 std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel = false);
 std::string  GetPluginTypeNameA(const PluginType plugin_type, bool bCamel = false);
+
+void LogProtocol(const std::string& str);
+void LogProtocol(const std::wstring& str);
 
 extern CIPTVChannelEditorApp theApp;
 extern std::string g_szServerPath;

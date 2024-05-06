@@ -170,7 +170,7 @@ inline void LogProtocol(const std::string& str)
 	file << out.str() << std::endl;
 }
 
-inline void LogProtocol(std::wstring& str)
+inline void LogProtocol(const std::wstring& str)
 {
 	SYSTEMTIME sTime;
 	GetLocalTime(&sTime);
@@ -384,8 +384,8 @@ int update_app(UpdateInfo& info)
 			}
 
 			folder = true;
-			LogProtocol(fmt::format(L"unpacking: {:s} to {:s}", src.wstring(), info.update_path));
-			if (!archiver.GetExtractor().ExtractArchive(info.update_path))
+			LogProtocol(fmt::format(L"unpacking: {:s} to {:s}", src.wstring(), target_path));
+			if (!archiver.GetExtractor().ExtractArchive(target_path))
 			{
 				LogProtocol("Error unpacking archive. Aborting.");
 				return err_open_pkg;
@@ -504,7 +504,7 @@ int main(int argc, char* argv[])
 
 	UpdateInfo info;
 	info.info_file = L"update.xml";
-	info.update_path = GetAppPath(L"Updates\\");
+	info.update_path = GetAppPath(utils::UPDATES_FOLDER);
 
 	if (!std::filesystem::create_directories(info.update_path, err) && err.value())
 	{

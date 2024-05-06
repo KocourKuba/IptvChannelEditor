@@ -221,8 +221,9 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	CCommandLineInfoEx cmdInfo;
 	ParseCommandLine(cmdInfo);
+	m_bDev = cmdInfo.m_bDev;
 
-	if (!GetPluginFactory().load_configs(cmdInfo.m_bDev))
+	if (!GetPluginFactory().load_configs(m_bDev))
 	{
 		AfxMessageBox(IDS_STRING_ERR_CANT_LOAD_CONFIG, MB_OK | MB_ICONEXCLAMATION);
 		ExitProcess(0);
@@ -290,63 +291,9 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	ConvertAccounts();
 
-	const auto& plugin_source = GetAppPath(utils::PLUGIN_SOURCE);
-	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
-	const auto& hash_file = plugin_root + L"hash.md";
-	if (!std::filesystem::exists(hash_file))
+	if (!CheckPluginConsistency(m_bDev))
 	{
-		if (std::filesystem::exists(plugin_source))
-		{
-			const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
-			SevenZip::SevenZipWrapper archiver(pack_dll);
-			auto& extractor = archiver.GetExtractor();
-			extractor.SetArchivePath(plugin_source);
-			if (!extractor.ExtractArchive(GetAppPath()))
-			{
-				AfxMessageBox(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE, MB_OK | MB_ICONSTOP);
-				return false;
-			}
-		}
-		else
-		{
-			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FILE_MISSING), utils::PLUGIN_SOURCE).c_str(), MB_OK | MB_ICONSTOP);
-			return false;
-		}
-	}
-
-	// check plugin source consistency
-	if (!cmdInfo.m_bDev && !std::filesystem::is_symlink(plugin_root))
-	{
-		std::map<std::wstring, uint32_t> hash_map;
-		std::ifstream stream(hash_file);
-		std::string line;
-		while (std::getline(stream, line))
-		{
-			utils::string_rtrim(line, "\r");
-			if (line.empty()) continue;
-
-			const auto& groups = utils::regex_split(line);
-			if (groups.size() != 3) break;
-
-			hash_map.emplace(utils::utf8_to_utf16(groups[2]), std::stoul(groups[0], nullptr, 16));
-		}
-
-		std::wstring log;
-		for (const auto& pair : hash_map)
-		{
-			const auto& cur_file = GetAppPath(pair.first.c_str());
-			if (file_crc32(cur_file) != pair.second)
-			{
-				log += cur_file + L"\r\n";
-			}
-		}
-
-		if (!log.empty())
-		{
-			std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
-			msg += L"\r\n\r\n" + log;
-			AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
-		}
+		return FALSE;
 	}
 
 	if (cmdInfo.m_bCleanupReg)
@@ -512,6 +459,108 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	return FALSE;
 }
 
+bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
+{
+	const auto& plugin_source = GetAppPath(utils::PLUGIN_SOURCE);
+	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
+	const auto& hash_file = plugin_root + L"hash.md";
+	const auto& update_pkg = GetAppPath(utils::UPDATES_FOLDER) + utils::PLUGIN_SOURCE;
+	if (std::filesystem::exists(update_pkg) && file_crc32(plugin_source) != file_crc32(update_pkg))
+	{
+		std::error_code err;
+		std::filesystem::copy_file(update_pkg, plugin_source, std::filesystem::copy_options::overwrite_existing, err);
+	}
+
+	// check plugin source consistency
+	if (!isDev && !std::filesystem::is_symlink(plugin_root))
+	{
+		if (!std::filesystem::exists(hash_file))
+		{
+			if (std::filesystem::exists(plugin_source))
+			{
+				const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
+				SevenZip::SevenZipWrapper archiver(pack_dll);
+				auto& extractor = archiver.GetExtractor();
+				extractor.SetArchivePath(plugin_source);
+				if (!extractor.ExtractArchive(GetAppPath()))
+				{
+					AfxMessageBox(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE, MB_OK | MB_ICONSTOP);
+					return false;
+				}
+			}
+			else
+			{
+				AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FILE_MISSING), utils::PLUGIN_SOURCE).c_str(), MB_OK | MB_ICONSTOP);
+				return false;
+			}
+		}
+
+		std::wstring log;
+		std::wstring msg;
+
+		std::map<std::wstring, uint32_t> hash_map;
+		std::ifstream stream(hash_file);
+		std::string line;
+		std::getline(stream, line);
+		const auto& groups = utils::regex_split(line);
+		if (groups.size() == 2)
+		{
+			if (groups[0] == "version" && groups[1] == STRPRODUCTVER)
+			{
+				while (std::getline(stream, line))
+				{
+					utils::string_rtrim(line, "\r");
+					if (line.empty()) continue;
+
+					if (groups.size() != 3) break;
+
+					hash_map.emplace(utils::utf8_to_utf16(groups[2]), std::stoul(groups[0], nullptr, 16));
+				}
+
+				for (const auto& pair : hash_map)
+				{
+					const auto& cur_file = GetAppPath(pair.first.c_str());
+					if (file_crc32(cur_file) != pair.second)
+					{
+						log += cur_file + L"\r\n";
+					}
+				}
+
+				if (!log.empty())
+				{
+					msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG) + L"\r\n\r\n" + log;
+				}
+			}
+			else
+			{
+				msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
+				msg += utils::utf8_to_utf16(fmt::format("\ncurrent version {:s}\n expected {:s}", groups[1], STRPRODUCTVER));
+			}
+		}
+		else
+		{
+			msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
+			msg += utils::utf8_to_utf16(fmt::format("\nIncorrect hash file"));
+		}
+
+		stream.close();
+
+		if (!msg.empty())
+		{
+			AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+
+			std::wstring plugin_root = GetAppPath(utils::PLUGIN_ROOT);
+			utils::string_rtrim(plugin_root, L"\\");
+			std::error_code err;
+			std::filesystem::rename(plugin_root, plugin_root + L".old", err);
+
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void CIPTVChannelEditorApp::FillLangMap()
 {
 	m_LangMap.clear();
@@ -556,169 +605,18 @@ void CIPTVChannelEditorApp::FillLangMap()
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
-
-std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
-{
-	CStringW fileName;
-
-	if (GetModuleFileNameW(AfxGetInstanceHandle(), fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
-	{
-		fileName.ReleaseBuffer();
-		int pos = fileName.ReverseFind('\\');
-		if (pos != -1)
-			fileName.Truncate(pos + 1);
-	}
-
-	fileName += CIPTVChannelEditorApp::DEV_PATH.c_str();
-
-	if (szSubFolder)
-		fileName += szSubFolder;
-
-	return std::filesystem::absolute(fileName.GetString());
-}
-
-std::string get_array_value(std::vector<std::wstring>& creds, size_t& last)
-{
-	std::wstring str = creds.size() > last ? creds[last] : L"";
-	last++;
-	return utils::utf16_to_utf8(utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote));
-}
-
-void ConvertAccounts()
-{
-	const auto& old_plugin_type = GetConfig().get_plugin_type();
-	for (const auto& pair : GetPluginFactory().get_all_plugins())
-	{
-		GetConfig().set_plugin_type(pair.first);
-
-		bool need_convert = false;
-		auto acc_data = GetConfig().get_string(false, REG_ACCOUNT_DATA);
-		if (acc_data.empty())
-		{
-			need_convert = true;
-			acc_data = GetConfig().get_string(false, REG_CREDENTIALS);
-		}
-
-		if (need_convert)
-		{
-			auto plugin = GetPluginFactory().create_plugin(pair.first);
-			if (plugin)
-			{
-				const auto& access_type = plugin->get_access_type();
-				const auto& login = utils::utf16_to_utf8(GetConfig().get_string(false, REG_LOGIN));
-				const auto& password = utils::utf16_to_utf8(GetConfig().get_string(false, REG_PASSWORD));
-				const auto& token = utils::utf16_to_utf8(GetConfig().get_string(false, REG_TOKEN));
-				const auto& domain = utils::utf16_to_utf8(GetConfig().get_string(false, REG_DOMAIN));
-				const auto& portal = utils::utf16_to_utf8(GetConfig().get_string(false, REG_VPORTAL));
-				const auto& device_id = GetConfig().get_int(false, REG_DEVICE_ID);
-				const auto& profile_id = GetConfig().get_int(false, REG_PROFILE_ID);
-				const auto& quality_id = GetConfig().get_int(false, REG_QUALITY_ID);
-				const auto& embed = GetConfig().get_int(false, REG_EMBED_INFO);
-
-				std::vector<Credentials> all_credentials;
-				int idx = 0;
-				int selected = 0;
-				auto& all_accounts = utils::string_split(acc_data, L';');
-				for (const auto& account : all_accounts)
-				{
-					auto& creds = utils::string_split(account, L',');
-					if (creds.empty() || creds.front().empty()) continue;
-
-					size_t last = 0;
-					Credentials cred;
-					switch (access_type)
-					{
-						case AccountAccessType::enPin:
-							cred.password = get_array_value(creds, last);
-							if (cred.password == password)
-							{
-								selected = idx;
-							}
-							break;
-
-						case AccountAccessType::enLoginPass:
-							cred.login = get_array_value(creds, last);
-							cred.password = get_array_value(creds, last);
-							if (cred.login == login)
-							{
-								selected = idx;
-							}
-							break;
-
-						case AccountAccessType::enOtt:
-							cred.token = get_array_value(creds, last);
-							cred.portal = get_array_value(creds, last);
-							if (cred.token == token)
-							{
-								selected = idx;
-							}
-							break;
-
-						default:break;
-					}
-
-					cred.comment = get_array_value(creds, last);
-					cred.server_id = device_id;
-					cred.profile_id = profile_id;
-					cred.quality_id = quality_id;
-					cred.embed = embed;
-
-					all_credentials.emplace_back(cred);
-				}
-
-				if (all_credentials.empty())
-				{
-					Credentials cred;
-					switch (access_type)
-					{
-						case AccountAccessType::enPin:
-							cred.password = password;
-							break;
-
-						case AccountAccessType::enLoginPass:
-							cred.login = login;
-							cred.password = password;
-							break;
-
-						case AccountAccessType::enOtt:
-							cred.token = token;
-							cred.portal = portal;
-							break;
-
-						default: break;
-					}
-
-					all_credentials.emplace_back(cred);
-				}
-
-				nlohmann::json j_serialize = all_credentials;
-				GetConfig().set_string(false, REG_ACCOUNT_DATA, utils::utf8_to_utf16(nlohmann::to_string(j_serialize)));
-				GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, selected);
-			}
-		}
-
-		GetConfig().delete_setting(false, REG_LOGIN);
-		GetConfig().delete_setting(false, REG_PASSWORD);
-		GetConfig().delete_setting(false, REG_TOKEN);
-		GetConfig().delete_setting(false, REG_DOMAIN);
-		GetConfig().delete_setting(false, REG_VPORTAL);
-		GetConfig().delete_setting(false, REG_DEVICE_ID);
-		GetConfig().delete_setting(false, REG_PROFILE_ID);
-		GetConfig().delete_setting(false, REG_EMBED_INFO);
-		GetConfig().delete_setting(false, REG_CREDENTIALS);
-	}
-
-	GetConfig().set_plugin_type(old_plugin_type);
-}
-
-bool PackPlugin(const PluginType plugin_type,
+bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 				bool showMessage,
 				bool make_web_update /*= false*/,
 				std::wstring output_path /*= L""*/,
 				bool noEmbed /*= false*/,
 				bool noCustom /*= false*/)
 {
+	if (!CheckPluginConsistency(m_bDev))
+	{
+		return false;
+	}
+
 	const std::wstring& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
 	if (!std::filesystem::exists(pack_dll))
 	{
@@ -910,7 +808,7 @@ bool PackPlugin(const PluginType plugin_type,
 	}
 
 	// remove if old logo and backgrounds still exists in icons folder
-	boost::wregex regExpName { LR"(^(?:bg|logo)_.*\.(?:jpg|png)$)" };
+	boost::wregex regExpName{ LR"(^(?:bg|logo)_.*\.(?:jpg|png)$)" };
 	for (const auto& dir_entry : std::filesystem::directory_iterator{ icons_dir })
 	{
 		if (!dir_entry.is_directory() && boost::regex_match(dir_entry.path().filename().wstring(), regExpName))
@@ -1138,7 +1036,7 @@ bool PackPlugin(const PluginType plugin_type,
 	os_supplier.close();
 
 	// copy channel lists
-	for(const auto& item : channels_list)
+	for (const auto& item : channels_list)
 	{
 		const auto& channels = utils::utf8_to_utf16(item.first);
 		std::filesystem::copy_file(playlistPath + channels, packFolder + channels, std::filesystem::copy_options::overwrite_existing, err);
@@ -1364,7 +1262,7 @@ bool PackPlugin(const PluginType plugin_type,
 	if (showMessage)
 	{
 		CString msg;
-		msg.Format(make_web_update ?IDS_STRING_INFO_W_CREATE_SUCCESS : IDS_STRING_INFO_CREATE_SUCCESS, packed_file.c_str());
+		msg.Format(make_web_update ? IDS_STRING_INFO_W_CREATE_SUCCESS : IDS_STRING_INFO_CREATE_SUCCESS, packed_file.c_str());
 		AfxMessageBox(msg, MB_OK);
 	}
 
@@ -1394,6 +1292,162 @@ void SetButtonImage(UINT imgId, CButton* pBtn)
 		if (hOld != nullptr)
 			::DeleteObject(hOld);
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
+{
+	CStringW fileName;
+
+	if (GetModuleFileNameW(AfxGetInstanceHandle(), fileName.GetBuffer(_MAX_PATH), _MAX_PATH) != 0)
+	{
+		fileName.ReleaseBuffer();
+		int pos = fileName.ReverseFind('\\');
+		if (pos != -1)
+			fileName.Truncate(pos + 1);
+	}
+
+	fileName += CIPTVChannelEditorApp::DEV_PATH.c_str();
+
+	if (szSubFolder)
+		fileName += szSubFolder;
+
+	return std::filesystem::absolute(fileName.GetString());
+}
+
+std::string get_array_value(std::vector<std::wstring>& creds, size_t& last)
+{
+	std::wstring str = creds.size() > last ? creds[last] : L"";
+	last++;
+	return utils::utf16_to_utf8(utils::string_trim(str, utils::EMSLiterals<wchar_t>::quote));
+}
+
+void ConvertAccounts()
+{
+	const auto& old_plugin_type = GetConfig().get_plugin_type();
+	for (const auto& pair : GetPluginFactory().get_all_plugins())
+	{
+		GetConfig().set_plugin_type(pair.first);
+
+		bool need_convert = false;
+		auto acc_data = GetConfig().get_string(false, REG_ACCOUNT_DATA);
+		if (acc_data.empty())
+		{
+			need_convert = true;
+			acc_data = GetConfig().get_string(false, REG_CREDENTIALS);
+		}
+
+		if (need_convert)
+		{
+			auto plugin = GetPluginFactory().create_plugin(pair.first);
+			if (plugin)
+			{
+				const auto& access_type = plugin->get_access_type();
+				const auto& login = utils::utf16_to_utf8(GetConfig().get_string(false, REG_LOGIN));
+				const auto& password = utils::utf16_to_utf8(GetConfig().get_string(false, REG_PASSWORD));
+				const auto& token = utils::utf16_to_utf8(GetConfig().get_string(false, REG_TOKEN));
+				const auto& domain = utils::utf16_to_utf8(GetConfig().get_string(false, REG_DOMAIN));
+				const auto& portal = utils::utf16_to_utf8(GetConfig().get_string(false, REG_VPORTAL));
+				const auto& device_id = GetConfig().get_int(false, REG_DEVICE_ID);
+				const auto& profile_id = GetConfig().get_int(false, REG_PROFILE_ID);
+				const auto& quality_id = GetConfig().get_int(false, REG_QUALITY_ID);
+				const auto& embed = GetConfig().get_int(false, REG_EMBED_INFO);
+
+				std::vector<Credentials> all_credentials;
+				int idx = 0;
+				int selected = 0;
+				auto& all_accounts = utils::string_split(acc_data, L';');
+				for (const auto& account : all_accounts)
+				{
+					auto& creds = utils::string_split(account, L',');
+					if (creds.empty() || creds.front().empty()) continue;
+
+					size_t last = 0;
+					Credentials cred;
+					switch (access_type)
+					{
+						case AccountAccessType::enPin:
+							cred.password = get_array_value(creds, last);
+							if (cred.password == password)
+							{
+								selected = idx;
+							}
+							break;
+
+						case AccountAccessType::enLoginPass:
+							cred.login = get_array_value(creds, last);
+							cred.password = get_array_value(creds, last);
+							if (cred.login == login)
+							{
+								selected = idx;
+							}
+							break;
+
+						case AccountAccessType::enOtt:
+							cred.token = get_array_value(creds, last);
+							cred.portal = get_array_value(creds, last);
+							if (cred.token == token)
+							{
+								selected = idx;
+							}
+							break;
+
+						default:break;
+					}
+
+					cred.comment = get_array_value(creds, last);
+					cred.server_id = device_id;
+					cred.profile_id = profile_id;
+					cred.quality_id = quality_id;
+					cred.embed = embed;
+
+					all_credentials.emplace_back(cred);
+				}
+
+				if (all_credentials.empty())
+				{
+					Credentials cred;
+					switch (access_type)
+					{
+						case AccountAccessType::enPin:
+							cred.password = password;
+							break;
+
+						case AccountAccessType::enLoginPass:
+							cred.login = login;
+							cred.password = password;
+							break;
+
+						case AccountAccessType::enOtt:
+							cred.token = token;
+							cred.portal = portal;
+							break;
+
+						default: break;
+					}
+
+					all_credentials.emplace_back(cred);
+				}
+
+				nlohmann::json j_serialize = all_credentials;
+				GetConfig().set_string(false, REG_ACCOUNT_DATA, utils::utf8_to_utf16(nlohmann::to_string(j_serialize)));
+				GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, selected);
+			}
+		}
+
+		GetConfig().delete_setting(false, REG_LOGIN);
+		GetConfig().delete_setting(false, REG_PASSWORD);
+		GetConfig().delete_setting(false, REG_TOKEN);
+		GetConfig().delete_setting(false, REG_DOMAIN);
+		GetConfig().delete_setting(false, REG_VPORTAL);
+		GetConfig().delete_setting(false, REG_DEVICE_ID);
+		GetConfig().delete_setting(false, REG_PROFILE_ID);
+		GetConfig().delete_setting(false, REG_EMBED_INFO);
+		GetConfig().delete_setting(false, REG_CREDENTIALS);
+	}
+
+	GetConfig().set_plugin_type(old_plugin_type);
 }
 
 void RestoreWindowPos(HWND hWnd, LPCTSTR name)
@@ -1719,4 +1773,54 @@ std::string GetPluginTypeNameA(const PluginType plugin_type, bool bCamel /*= fal
 	}
 
 	return plugin_name;
+}
+
+void LogProtocol(const std::string& str)
+{
+	SYSTEMTIME sTime;
+	GetLocalTime(&sTime);
+
+	const auto& csTimeStamp = fmt::format("[{:04d}:{:02d}:{:02d}][{:02d}:{:02d}:{:02d}.{:03d}]",
+										  sTime.wYear, sTime.wMonth, sTime.wDay,
+										  sTime.wHour, sTime.wMinute, sTime.wSecond, sTime.wMilliseconds);
+
+	std::stringstream out;
+	std::stringstream ss(str);
+	std::string line;
+
+	while (std::getline(ss, line))
+	{
+		while (line.back() == '\r')
+			line.pop_back();
+
+		out << csTimeStamp << ' ' << line;
+	}
+
+	std::ofstream file(GetAppPath() + L"IPTVChannelEditor.log", std::ofstream::binary | std::ofstream::app);
+	file << out.str() << std::endl;
+}
+
+void LogProtocol(const std::wstring& str)
+{
+	SYSTEMTIME sTime;
+	GetLocalTime(&sTime);
+
+	const auto& csTimeStamp = fmt::format("[{:04d}:{:02d}:{:02d}][{:02d}:{:02d}:{:02d}.{:03d}]",
+										  sTime.wYear, sTime.wMonth, sTime.wDay,
+										  sTime.wHour, sTime.wMinute, sTime.wSecond, sTime.wMilliseconds);
+
+	std::stringstream out;
+	std::stringstream ss(utils::utf16_to_utf8(str));
+	std::string line;
+
+	while (std::getline(ss, line))
+	{
+		while (line.back() == '\r')
+			line.pop_back();
+
+		out << csTimeStamp << ' ' << line;
+	}
+
+	std::ofstream file(GetAppPath() + L"IPTVChannelEditor.log", std::ofstream::binary | std::ofstream::app);
+	file << out.str() << std::endl;
 }
