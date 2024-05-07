@@ -461,99 +461,113 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 {
-	const auto& plugin_source = GetAppPath(utils::PLUGIN_SOURCE);
-	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
-	const auto& hash_file = plugin_root + L"hash.md";
-	const auto& update_pkg = GetAppPath(utils::UPDATES_FOLDER) + utils::PLUGIN_SOURCE;
-	if (std::filesystem::exists(update_pkg) && file_crc32(plugin_source) != file_crc32(update_pkg))
+	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT, true);
+	if (isDev || std::filesystem::is_symlink(plugin_root))
 	{
-		std::error_code err;
-		std::filesystem::copy_file(update_pkg, plugin_source, std::filesystem::copy_options::overwrite_existing, err);
+		return true;
 	}
 
-	// check plugin source consistency
-	if (!isDev && !std::filesystem::is_symlink(plugin_root))
+	if (std::filesystem::exists(plugin_root))
 	{
-		if (!std::filesystem::exists(hash_file))
+		std::filesystem::rename(plugin_root, plugin_root + L".del");
+	}
+
+	const auto& update_pkg = GetAppPath(utils::UPDATES_FOLDER) + utils::UPDATE_NAME;
+	if (!std::filesystem::exists(update_pkg))
+	{
+		std::wstring cmd = L"download --force";
+		if (RequestToUpdateServer(cmd, false) != 0)
 		{
-			if (std::filesystem::exists(plugin_source))
+			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FILE_MISSING), update_pkg).c_str(), MB_OK | MB_ICONSTOP);
+			return false;
+		}
+	}
+
+	// Parse the buffer using the xml file parsing library into doc
+
+	std::ifstream file(update_pkg);
+	std::stringstream buffer;
+	buffer << file.rdbuf();
+	file.close();
+	std::string xml_data = buffer.str();
+
+	auto doc = std::make_unique<rapidxml::xml_document<>>();
+	try
+	{
+		doc->parse<rapidxml::parse_default>(xml_data.data());
+	}
+	catch (rapidxml::parse_error& ex)
+	{
+		std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
+		msg += utils::utf8_to_utf16(fmt::format("\nIncorrect update info: parse error: {:s}", ex.what()));
+		return false;
+	}
+
+	auto info_node = doc->first_node("update_info");
+	if (!info_node)
+	{
+		std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
+		msg += L"\nIncorrect update info: update_info node missing";
+		AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+		return false;
+	}
+
+	const auto& version = rapidxml::get_value_string(info_node->first_attribute("version"));
+	if (version != STRPRODUCTVER)
+	{
+		std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
+		msg += utils::utf8_to_utf16(fmt::format("\ncurrent version {:s}\nexpected {:s}", version, STRPRODUCTVER));
+		AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+		return false;
+	}
+
+	auto pkg_node = doc->first_node("package");
+	if (!pkg_node)
+	{
+		std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
+		msg += L"\nIncorrect update info: package node missing";
+		AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+		return false;
+	}
+
+	// Iterate <tv_category> nodes
+	for (auto file_node = pkg_node->first_node("file"); file_node != nullptr; file_node = file_node->next_sibling())
+	{
+		const auto& name = rapidxml::get_value_wstring(file_node->first_attribute("name"));
+		if (name != utils::PLUGIN_SOURCE && name != utils::PICONS_SOURCE) continue;
+
+		int crc = rapidxml::get_value_int(file_node->first_attribute("hash"));
+		const auto& target = GetAppPath(name.c_str());
+		if (!std::filesystem::exists(target) || file_crc32(target) != crc)
+		{
+			std::error_code err;
+			std::filesystem::copy(GetAppPath(utils::UPDATES_FOLDER) + name, target, std::filesystem::copy_options::overwrite_existing, err);
+			if (err.value() != 0)
 			{
-				const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
-				SevenZip::SevenZipWrapper archiver(pack_dll);
-				auto& extractor = archiver.GetExtractor();
-				extractor.SetArchivePath(plugin_source);
-				if (!extractor.ExtractArchive(GetAppPath()))
-				{
-					AfxMessageBox(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE, MB_OK | MB_ICONSTOP);
-					return false;
-				}
-			}
-			else
-			{
-				AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FILE_MISSING), utils::PLUGIN_SOURCE).c_str(), MB_OK | MB_ICONSTOP);
+				std::wstring msg = load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE);
+				msg += fmt::format(L"\nfile: {:s} error code: {:d} ", name, err.value());
+				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
 				return false;
 			}
 		}
+	}
 
-		std::wstring log;
-		std::wstring msg;
+	const std::filesystem::path image_cache = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
+	const std::filesystem::path ch_picons = image_cache / utils::CHANNELS_LOGO_PATH;
+	const std::filesystem::path cat_picons = image_cache / utils::CATEGORIES_LOGO_PATH;
+	if (!std::filesystem::exists(ch_picons) || !std::filesystem::exists(cat_picons))
+	{
+		const auto& target = GetAppPath(utils::PICONS_SOURCE);
 
-		std::map<std::wstring, uint32_t> hash_map;
-		std::ifstream stream(hash_file);
-		std::string line;
-		std::getline(stream, line);
-		const auto& groups = utils::regex_split(line);
-		if (groups.size() == 2)
+		const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
+		SevenZip::SevenZipWrapper archiver(pack_dll);
+		auto& extractor = archiver.GetExtractor();
+		extractor.SetArchivePath(target);
+		if (!extractor.ExtractArchive(image_cache))
 		{
-			if (groups[0] == "version" && groups[1] == STRPRODUCTVER)
-			{
-				while (std::getline(stream, line))
-				{
-					utils::string_rtrim(line, "\r");
-					if (line.empty()) continue;
-
-					if (groups.size() != 3) break;
-
-					hash_map.emplace(utils::utf8_to_utf16(groups[2]), std::stoul(groups[0], nullptr, 16));
-				}
-
-				for (const auto& pair : hash_map)
-				{
-					const auto& cur_file = GetAppPath(pair.first.c_str());
-					if (file_crc32(cur_file) != pair.second)
-					{
-						log += cur_file + L"\r\n";
-					}
-				}
-
-				if (!log.empty())
-				{
-					msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG) + L"\r\n\r\n" + log;
-				}
-			}
-			else
-			{
-				msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
-				msg += utils::utf8_to_utf16(fmt::format("\ncurrent version {:s}\n expected {:s}", groups[1], STRPRODUCTVER));
-			}
-		}
-		else
-		{
-			msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
-			msg += utils::utf8_to_utf16(fmt::format("\nIncorrect hash file"));
-		}
-
-		stream.close();
-
-		if (!msg.empty())
-		{
+			std::wstring msg = load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE);
+			msg += fmt::format(L"\nunpack: {:s} to: {:s} ", target, image_cache.wstring());
 			AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
-
-			std::wstring plugin_root = GetAppPath(utils::PLUGIN_ROOT);
-			utils::string_rtrim(plugin_root, L"\\");
-			std::error_code err;
-			std::filesystem::rename(plugin_root, plugin_root + L".old", err);
-
 			return false;
 		}
 	}
@@ -612,28 +626,31 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 				bool noEmbed /*= false*/,
 				bool noCustom /*= false*/)
 {
-	if (!CheckPluginConsistency(m_bDev))
-	{
-		return false;
-	}
-
 	const std::wstring& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
 	if (!std::filesystem::exists(pack_dll))
 	{
 		if (showMessage)
+		{
 			AfxMessageBox(IDS_STRING_ERR_DLL_MISSING, MB_OK | MB_ICONSTOP);
+		}
+		else
+		{
+			LogProtocol(load_string_resource(IDS_STRING_ERR_DLL_MISSING));
+		}
 
 		return false;
 	}
 
-	const auto& lists_path = GetConfig().get_string(true, REG_LISTS_PATH);
-
 	if (output_path.empty())
+	{
 		output_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
+	}
 
 	output_path = std::filesystem::absolute(output_path);
 	if (output_path.back() != '\\')
+	{
 		output_path += '\\';
+	}
 
 	std::error_code err;
 	std::filesystem::create_directory(output_path, err);
@@ -649,6 +666,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	{
 		// revert back to previous state
 		GetConfig().set_plugin_type(old_plugin_type);
+		LogProtocol("No active account selected");
 		return false;
 	}
 
@@ -660,11 +678,11 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	{
 		// revert back to previous state
 		GetConfig().set_plugin_type(old_plugin_type);
+		LogProtocol("Incorrect credentials selected");
 		return false;
 	}
 
 	const auto& cred = all_credentials[selected];
-	const auto& packFolder = std::filesystem::temp_directory_path().wstring() + fmt::format(PACK_PATH, plugin->get_internal_name());
 
 	// load plugin settings
 	plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config), plugin->get_internal_name());
@@ -687,14 +705,21 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 		// revert back to previous state
 		GetConfig().set_plugin_type(old_plugin_type);
 		if (showMessage)
+		{
 			AfxMessageBox(IDS_STRING_ERR_SETTINGS_MISSING, MB_OK | MB_ICONSTOP);
+		}
+		else
+		{
+			LogProtocol(load_string_resource(IDS_STRING_ERR_SETTINGS_MISSING));
+		}
 		return false;
 	}
 
 	// collect plugin channels list;
+	const std::filesystem::path lists_path = GetConfig().get_string(true, REG_LISTS_PATH);
 	std::map<std::string, std::string> channels_list;
-	const auto& playlistPath = lists_path + plugin->get_internal_name() + L"\\";
-	std::filesystem::directory_iterator dir_iter(playlistPath, err);
+	const auto& channelsListPath = lists_path / plugin->get_internal_name();
+	std::filesystem::directory_iterator dir_iter(channelsListPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
 		const auto& fname = dir_entry.path().filename();
@@ -714,58 +739,112 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	if (channels_list.empty())
 	{
 		if (showMessage)
+		{
 			AfxMessageBox(IDS_STRING_ERR_NO_CHANNELS_SEL, MB_OK | MB_ICONSTOP);
+		}
+		else
+		{
+			LogProtocol(load_string_resource(IDS_STRING_ERR_NO_CHANNELS_SEL));
+		}
 		return false;
 	}
 
-	// remove previous packed folder if exist
-	std::filesystem::remove_all(packFolder, err);
-
-	constexpr auto www_path = LR"(www\cgi-bin\)";
-	constexpr auto bin_path = LR"(bin\)";
 	constexpr auto default_copy = std::filesystem::copy_options::none;
 	constexpr auto recursive_copy = std::filesystem::copy_options::recursive;
 
-	// copy entire plugin folder
-	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT);
+	const std::filesystem::path www_path = LR"(www\cgi-bin\)";
+	const std::filesystem::path bin_path = LR"(bin\)";
 
-	const auto& bin_dir = plugin_root + bin_path;
+	// extract plugin package
+	const auto& plugin_source = GetAppPath(utils::PLUGIN_SOURCE);
+	const auto& plugin_root = std::filesystem::temp_directory_path() / utils::PLUGIN_ROOT;
+	if (std::filesystem::is_symlink(GetAppPath(utils::PLUGIN_ROOT)))
+	{
+		std::filesystem::copy(GetAppPath(utils::PLUGIN_ROOT), plugin_root, recursive_copy, err);
+		if (err.value() != 0)
+		{
+			const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), GetAppPath(utils::PLUGIN_ROOT));
+			if (showMessage)
+			{
+				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+			}
+			else
+			{
+				LogProtocol(msg);
+			}
+			return false;
+		}
+	}
+	else
+	{
+		SevenZip::SevenZipWrapper archiver(pack_dll);
+		auto& extractor = archiver.GetExtractor();
+		extractor.SetArchivePath(plugin_source);
+		if (!extractor.ExtractArchive(plugin_root))
+		{
+			std::wstring msg = load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE);
+			msg += fmt::format(L"\nunpack: {:s} to: {:s} ", plugin_source, plugin_root.wstring());
+			if (showMessage)
+			{
+				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+			}
+			else
+			{
+				LogProtocol(msg);
+			}
+			return false;
+		}
+	}
+
+	const std::filesystem::path image_cache_path = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
+	const auto& bin_dir = plugin_root / bin_path;
+
+	const auto& packFolder = std::filesystem::temp_directory_path() / fmt::format(PACK_PATH, plugin->get_internal_name());
+	std::filesystem::remove_all(packFolder, err);
 	if (!std::filesystem::exists(bin_dir))
 	{
+		const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), bin_dir.wstring());
 		if (showMessage)
-			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), bin_dir).c_str(), MB_OK | MB_ICONSTOP);
+		{
+			AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+		}
+		else
+		{
+			LogProtocol(msg);
+		}
 		return false;
 	}
 
-	const auto& www_dir = plugin_root + www_path;
+	const auto& www_dir = plugin_root / www_path;
 	if (!std::filesystem::exists(www_dir))
 	{
+		const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), www_dir.wstring());
 		if (showMessage)
-			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), www_dir).c_str(), MB_OK | MB_ICONSTOP);
-		return false;
-	}
-
-	const auto& icons_dir = plugin_root + L"icons\\";
-	if (!std::filesystem::exists(icons_dir))
-	{
-		if (showMessage)
-			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), icons_dir).c_str(), MB_OK | MB_ICONSTOP);
+		{
+			AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+		}
+		else
+		{
+			LogProtocol(msg);
+		}
 		return false;
 	}
 
 	std::filesystem::copy(plugin_root, packFolder, default_copy, err);
-	std::filesystem::copy(plugin_root + L"lib", packFolder + L"lib", recursive_copy, err);
-	std::filesystem::copy(plugin_root + L"img", packFolder + L"img", recursive_copy, err);
-	std::filesystem::copy(plugin_root + L"icons", packFolder + L"icons", recursive_copy, err);
-	std::filesystem::copy(plugin_root + L"translations", packFolder + L"translations", recursive_copy, err);
+	std::filesystem::copy(plugin_root / L"lib", packFolder / L"lib", recursive_copy, err);
+	std::filesystem::copy(plugin_root / L"img", packFolder / L"img", recursive_copy, err);
+	std::filesystem::copy(plugin_root / L"translations", packFolder / L"translations", recursive_copy, err);
 
-	std::filesystem::create_directory(packFolder + bin_path, err);
-	std::filesystem::create_directories(packFolder + www_path, err);
+	// TODO selective copy for each channels list
+	std::filesystem::copy(image_cache_path / L"icons", packFolder / L"icons", recursive_copy, err);
+
+	std::filesystem::create_directory(packFolder / bin_path, err);
+	std::filesystem::create_directories(packFolder / www_path, err);
 
 	for (const auto& item : plugin->get_files_list())
 	{
 		const auto& filename = item.get_name();
-		std::filesystem::copy_file(plugin_root + filename, packFolder + filename, default_copy, err);
+		std::filesystem::copy_file(plugin_root / filename, packFolder / filename, default_copy, err);
 	}
 
 	static std::vector<std::wstring> mandatory_bin = {
@@ -788,8 +867,8 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	{
 		if (std::find(mandatory_bin.begin(), mandatory_bin.end(), dir_entry.path().filename().wstring()) != mandatory_bin.end())
 		{
-			const auto& curl_file = bin_path + dir_entry.path().filename().wstring();
-			std::filesystem::copy_file(plugin_root + curl_file, packFolder + curl_file, default_copy, err);
+			const auto& curl_file = bin_path / dir_entry.path().filename();
+			std::filesystem::copy_file(plugin_root / curl_file, packFolder / curl_file, default_copy, err);
 		}
 	}
 
@@ -802,18 +881,8 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	{
 		if (std::find(mandatory_www.begin(), mandatory_www.end(), dir_entry.path().filename().wstring()) != mandatory_www.end())
 		{
-			const auto& curl_file = www_path + dir_entry.path().filename().wstring();
-			std::filesystem::copy_file(plugin_root + curl_file, packFolder + curl_file, default_copy, err);
-		}
-	}
-
-	// remove if old logo and backgrounds still exists in icons folder
-	boost::wregex regExpName{ LR"(^(?:bg|logo)_.*\.(?:jpg|png)$)" };
-	for (const auto& dir_entry : std::filesystem::directory_iterator{ icons_dir })
-	{
-		if (!dir_entry.is_directory() && boost::regex_match(dir_entry.path().filename().wstring(), regExpName))
-		{
-			std::filesystem::remove(dir_entry.path(), err);
+			const auto& curl_file = www_path / dir_entry.path().filename();
+			std::filesystem::copy_file(plugin_root / curl_file, packFolder / curl_file, default_copy, err);
 		}
 	}
 
@@ -833,31 +902,31 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	}
 
 	if (plugin_logo.empty())
-		plugin_logo = fmt::format(LR"({:s}plugins_image\logo_{:s}.png)", plugin_root, plugin->get_internal_name());
+		plugin_logo = fmt::format(LR"({:s}plugins_image\logo_{:s}.png)", plugin_root.wstring(), plugin->get_internal_name());
 	else if (!plugin_logo.has_parent_path())
-		plugin_logo = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_logo.wstring());
+		plugin_logo = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root.wstring(), plugin_logo.wstring());
 
 	if (plugin_bgnd.empty())
-		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.png)", plugin_root, plugin->get_internal_name());
+		plugin_bgnd = fmt::format(LR"({:s}plugins_image\bg_{:s}.png)", plugin_root.wstring(), plugin->get_internal_name());
 	else if (!plugin_bgnd.has_parent_path())
-		plugin_bgnd = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root, plugin_bgnd.wstring());
+		plugin_bgnd = fmt::format(LR"({:s}plugins_image\{:s})", plugin_root.wstring(), plugin_bgnd.wstring());
 
-	const auto& packFolderIcons = packFolder + LR"(icons\)";
+	const auto& packFolderIcons = packFolder / LR"(img\)";
 	std::filesystem::copy(plugin_logo, packFolderIcons, err);
 	std::filesystem::copy(plugin_bgnd, packFolderIcons, err);
 
-	if (!std::filesystem::exists(packFolderIcons + plugin_logo.filename().wstring()))
+	if (!std::filesystem::exists(packFolderIcons / plugin_logo.filename()))
 	{
 		plugin_logo = "default_logo.png";
 	}
 
-	if (!std::filesystem::exists(packFolderIcons + plugin_bgnd.filename().wstring()))
+	if (!std::filesystem::exists(packFolderIcons / plugin_bgnd.filename()))
 	{
 		plugin_bgnd = "default_bg.png";
 	}
 
-	const auto& logo_subst = fmt::format("plugin_file://icons/{:s}", plugin_logo.filename().string());
-	const auto& bg_subst = fmt::format("plugin_file://icons/{:s}", plugin_bgnd.filename().string());
+	const auto& logo_subst = utils::utf16_to_utf8(fmt::format(L"{:s}img/{:s}", utils::PLUGIN_SCHEME, plugin_logo.filename().wstring()));
+	const auto& bg_subst = utils::utf16_to_utf8(fmt::format(L"{:s}img/{:s}", utils::PLUGIN_SCHEME, plugin_bgnd.filename().wstring()));
 
 	// save config
 	utils::CBase64Coder enc;
@@ -866,11 +935,11 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	int idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	plugin->set_playlist_idx(idx);
 	plugin->set_dev_path(enc.GetResultString());
-	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder), plugin->get_internal_name(), true);
+	plugin->save_plugin_parameters(fmt::format(L"{:s}config.json", packFolder.wstring()), plugin->get_internal_name(), true);
 
 	// create plugin manifest
 	std::string config_data;
-	std::ifstream istream(plugin_root + L"dune_plugin.xml");
+	std::ifstream istream(plugin_root / utils::PLUGIN_MANIFEST);
 	config_data.assign(std::istreambuf_iterator<char>(istream), std::istreambuf_iterator<char>());
 
 	std::string plugin_caption;
@@ -887,10 +956,10 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 
 	// copy plugin config class if they exist
 	const auto& src_config_file = utils::utf8_to_utf16(plugin->get_class_name() + ".php");
-	const auto& src_path = fmt::format(LR"({:s}configs\{:s})", plugin_root, src_config_file);
+	const auto& src_path = fmt::format(LR"({:s}configs\{:s})", plugin_root.wstring(), src_config_file);
 	if (std::filesystem::exists(src_path))
 	{
-		std::filesystem::copy_file(src_path, packFolder + src_config_file, std::filesystem::copy_options::overwrite_existing, err);
+		std::filesystem::copy_file(src_path, packFolder / src_config_file, std::filesystem::copy_options::overwrite_existing, err);
 	}
 
 	const auto& package_info_name = plugin->compile_name_template((cred.custom_update_name && !cred.get_update_name().empty()
@@ -909,7 +978,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	// rewrite xml nodes
 	try
 	{
-		std::ofstream ostream(packFolder + L"dune_plugin.xml", std::ofstream::binary);
+		std::ofstream ostream(packFolder / utils::PLUGIN_MANIFEST, std::ofstream::binary);
 
 		auto doc = std::make_unique<rapidxml::xml_document<>>();
 		doc->parse<rapidxml::parse_no_data_nodes>(config_data.data());
@@ -1010,6 +1079,10 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 			CString error(ex.what());
 			AfxMessageBox(error, MB_OK | MB_ICONERROR);
 		}
+		else
+		{
+			LogProtocol(ex.what());
+		}
 		return false;
 	}
 	catch (const std::exception& ex)
@@ -1019,10 +1092,14 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 			CString error(ex.what());
 			AfxMessageBox(error, MB_OK | MB_ICONERROR);
 		}
+		else
+		{
+			LogProtocol(ex.what());
+		}
 		return false;
 	}
 
-	std::ofstream os_supplier(packFolder + LR"(bin\update_suppliers.sh)", std::ofstream::binary | std::ofstream::app);
+	std::ofstream os_supplier(packFolder / bin_path / L"update_suppliers.sh", std::ofstream::binary | std::ofstream::app);
 	os_supplier << R"(cat << EOF > "$filepath")" << std::endl << "{" << std::endl;
 	os_supplier << R"(  "plugin" : "$plugin_name",)" << std::endl;
 	os_supplier << R"(  "caption" : ")" << plugin_caption.c_str() << R"(",)" << std::endl;
@@ -1039,7 +1116,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	for (const auto& item : channels_list)
 	{
 		const auto& channels = utils::utf8_to_utf16(item.first);
-		std::filesystem::copy_file(playlistPath + channels, packFolder + channels, std::filesystem::copy_options::overwrite_existing, err);
+		std::filesystem::copy_file(channelsListPath / channels, packFolder / channels, std::filesystem::copy_options::overwrite_existing, err);
 	}
 
 	// copy embedded info
@@ -1083,7 +1160,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 				utils::CBase64Coder enc;
 				enc.Encode(js.c_str(), (int)js.size(), ATL_BASE64_FLAG_NOCRLF | ATL_BASE64_FLAG_NOPAD);
 
-				std::ofstream out_file(packFolder + L"account.dat", std::ofstream::binary);
+				std::ofstream out_file(packFolder / L"account.dat", std::ofstream::binary);
 				const auto& str = utils::generateRandomId(5) + enc.GetResultString();
 				out_file.write(str.c_str(), str.size());
 				out_file.close();
@@ -1093,15 +1170,18 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 		{
 			// out of range errors may happen if provided sizes are excessive
 			TRACE("out of range error: %s\n", ex.what());
+			LogProtocol(ex.what());
 		}
 		catch (const nlohmann::detail::type_error& ex)
 		{
 			// type error
 			TRACE("type error: %s\n", ex.what());
+			LogProtocol(ex.what());
 		}
 		catch (...)
 		{
 			TRACE("unknown exception\n");
+			LogProtocol("unknown exception");
 		}
 	}
 
@@ -1117,7 +1197,13 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	if (!res)
 	{
 		if (showMessage)
+		{
 			AfxMessageBox(IDS_STRING_ERR_FILES_MISSING, MB_OK | MB_ICONSTOP);
+		}
+		else
+		{
+			LogProtocol(load_string_resource(IDS_STRING_ERR_FILES_MISSING));
+		}
 
 		return false;
 	}
@@ -1164,12 +1250,16 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	std::filesystem::remove_all(packFolder, err);
 	if (!res)
 	{
+		std::filesystem::remove(packed_file, err);
+		CString msg;
+		msg.Format(IDS_STRING_ERR_FAILED_PACK, packed_file.c_str());
 		if (showMessage)
 		{
-			std::filesystem::remove(packed_file, err);
-			CString msg;
-			msg.Format(IDS_STRING_ERR_FAILED_PACK, packed_file.c_str());
 			AfxMessageBox(msg, MB_OK | MB_ICONSTOP);
+		}
+		else
+		{
+			LogProtocol(msg.GetString());
 		}
 
 		return false;
@@ -1254,16 +1344,24 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 				CString error(ex.what());
 				AfxMessageBox(error, MB_OK | MB_ICONERROR);
 			}
+			else
+			{
+				LogProtocol(ex.what());
+			}
 			return false;
 		}
 	}
 
 	// Show success message
+	CString msg;
+	msg.Format(make_web_update ? IDS_STRING_INFO_W_CREATE_SUCCESS : IDS_STRING_INFO_CREATE_SUCCESS, packed_file.c_str());
 	if (showMessage)
 	{
-		CString msg;
-		msg.Format(make_web_update ? IDS_STRING_INFO_W_CREATE_SUCCESS : IDS_STRING_INFO_CREATE_SUCCESS, packed_file.c_str());
 		AfxMessageBox(msg, MB_OK);
+	}
+	else
+	{
+		LogProtocol(msg.GetString());
 	}
 
 	return true;
@@ -1296,7 +1394,7 @@ void SetButtonImage(UINT imgId, CButton* pBtn)
 
 //////////////////////////////////////////////////////////////////////////
 
-std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
+std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/, bool no_end_slash /*= false*/)
 {
 	CStringW fileName;
 
@@ -1312,6 +1410,11 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/)
 
 	if (szSubFolder)
 		fileName += szSubFolder;
+
+	if (no_end_slash)
+	{
+		fileName.TrimRight('\\');
+	}
 
 	return std::filesystem::absolute(fileName.GetString());
 }

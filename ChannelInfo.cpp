@@ -188,5 +188,5 @@ rapidxml::xml_node<>* ChannelInfo::GetNode(rapidxml::memory_pool<>& alloc) const
 
 bool ChannelInfo::is_icon_local() const
 {
-	return (get_icon_uri().get_scheme() == uri_base::PLUGIN_SCHEME);
+	return (get_icon_uri().get_scheme() == utils::PLUGIN_SCHEME);
 }

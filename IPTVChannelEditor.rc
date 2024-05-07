@@ -1950,7 +1950,7 @@ BEGIN
                             "Regular expression for parsing channel url from the playlist. Capture groups mapped to the templates replaceble values. If url does not match the pattern it will be threat as Custom Url. User defined regex capture groups not supported!"
     IDS_STRING_COL_WEB_PATH "Web Path"
     IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE 
-                            "Failed to unpack plugin source!"
+                            "Failed to unpack plugin package!"
     IDS_STRING_EDIT_DURATION 
                             "{DURATION} value used in the flussonic archive template and set length of the requested archive frame in seconds. {STOP} value used in the archive template Rostelecom to calculate end timestamp of archive frame in seconds. Typically 3-4 hours."
     IDS_STRING_EDIT_STREAM_TEMPLATE 

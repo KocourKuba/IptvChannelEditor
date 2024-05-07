@@ -34,7 +34,10 @@ namespace utils
 static constexpr auto DUNE_PLUGIN_FILE_NAME = L"{TYPE}_mod";
 static constexpr auto DUNE_UPDATE_INFO_NAME = L"update_{TYPE}_mod";
 static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/channels/channel_unset.png";
-static constexpr auto PLUGIN_PATH = R"(plugin_file://)";
+static constexpr auto PLUGIN_SCHEME = L"plugin_file://";
+static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
+static constexpr auto CATEGORIES_LOGO_URL = L"icons/categories/";
+
 
 static constexpr auto VERSION_INFO = "version_info";
 static constexpr auto LIST_VERSION = "list_version";
@@ -75,17 +78,20 @@ static constexpr auto VOD_GROUP = "##mediateka##";
 static constexpr auto ALL_GROUP = "##all_channels##";
 static constexpr auto HISTORY_GROUP = "##playback_history_tv_group##";
 
-static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
-static constexpr auto CATEGORIES_LOGO_URL = L"icons/categories/";
-
+static constexpr auto PLUGIN_MANIFEST = L"dune_plugin.xml";
 static constexpr auto PLUGIN_SOURCE = L"dune_plugin.pkg";
+static constexpr auto PICONS_SOURCE = L"picons.pkg";
 static constexpr auto PLUGIN_ROOT = L"dune_plugin\\";
 static constexpr auto PLUGIN_SETTINGS = L"dune_plugin\\settings";
-static constexpr auto CHANNELS_LOGO_PATH = L"dune_plugin\\icons\\channels\\";
-static constexpr auto CATEGORIES_LOGO_PATH = L"dune_plugin\\icons\\categories\\";
+static constexpr auto CHANNELS_LOGO_PATH = L"icons\\channels\\";
+static constexpr auto CATEGORIES_LOGO_PATH = L"icons\\categories\\";
 static constexpr auto CHANNELS_LIST_SOURCE = L"ChannelsLists.pkg";
 static constexpr auto CHANNELS_LIST_PATH = L"ChannelsLists\\";
+
 static constexpr auto UPDATES_FOLDER = L"Updates\\";
+static constexpr auto UPDATE_NAME = L"update.xml";
+static constexpr auto UPDATE_SERVER1 = L"http://igores.ru/sharky72";
+static constexpr auto UPDATE_SERVER2 = L"http://iptv.esalecrm.net/update_editor";
 
 
 uint64_t ChronoGetTickCount();

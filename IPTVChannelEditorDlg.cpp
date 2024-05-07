@@ -1184,10 +1184,15 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			auto res = m_playlistMap.emplace(entry->get_id(), entry);
 			if (!res.second)
 			{
-				TRACE(L"Duplicate channel: %s with %s (%s)\n",
-					  entry->get_title().c_str(),
-					  res.first->second->get_title().c_str(),
-					  res.first->second->get_id().c_str());
+				const auto& msg = fmt::format(L"Duplicate channel ID ({:s}): new - {:s} in category {:s} with old - {:s} in category {:s}\n",
+											  res.first->second->get_id(),
+											  entry->get_title(),
+											  entry->get_category_w(),
+											  res.first->second->get_title(),
+											  res.first->second->get_category_w()
+				);
+				TRACE(msg.c_str());
+				LogProtocol(msg);
 
 				if (!bConvertDupes) continue;
 
@@ -2208,17 +2213,18 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		set_allow_save(true);
 	}
 
-	const auto& root_path = GetAppPath(utils::PLUGIN_ROOT);
-
-	auto all_category = std::make_shared<ChannelCategory>(root_path);
-	all_category->set_icon_uri(L"plugin_file://icons/all.png");
+	const auto& image_path = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
+	std::wstring category_root = utils::PLUGIN_SCHEME;
+	category_root += utils::CATEGORIES_LOGO_URL;
+	auto all_category = std::make_shared<ChannelCategory>(image_path);
+	all_category->set_icon_uri(category_root + L"all.png");
 	all_category->set_title(load_string_resource(IDS_STRING_ALL_CHANNELS));
 	all_category->set_key(ID_ALL_CHANNELS);
 	CategoryInfo all_info = { nullptr, all_category };
 	m_categoriesMap.emplace(ID_ALL_CHANNELS, all_info);
 
-	auto hist_category = std::make_shared<ChannelCategory>(root_path);
-	hist_category->set_icon_uri(L"plugin_file://icons/history.png");
+	auto hist_category = std::make_shared<ChannelCategory>(image_path);
+	hist_category->set_icon_uri(category_root + L"history.png");
 	hist_category->set_title(load_string_resource(IDS_STRING_HISTORY));
 	hist_category->set_key(ID_HISTORY);
 	CategoryInfo hist_info = { nullptr, hist_category };
@@ -2226,16 +2232,16 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 
 	if (m_plugin->get_vod_engine() != VodEngine::enNone)
 	{
-		auto vod_category = std::make_shared<ChannelCategory>(root_path);
-		vod_category->set_icon_uri(L"plugin_file://icons/vod.png");
+		auto vod_category = std::make_shared<ChannelCategory>(image_path);
+		vod_category->set_icon_uri(category_root + L"vod.png");
 		vod_category->set_title(load_string_resource(IDS_STRING_MEDIATEKA));
 		vod_category->set_key(ID_VOD);
 		CategoryInfo vod_info = { nullptr, vod_category };
 		m_categoriesMap.emplace(ID_VOD, vod_info);
 	}
 
-	auto fav_category = std::make_shared<ChannelCategory>(root_path);
-	fav_category->set_icon_uri(L"plugin_file://icons/fav.png");
+	auto fav_category = std::make_shared<ChannelCategory>(image_path);
+	fav_category->set_icon_uri(category_root + L"fav.png");
 	fav_category->set_title(load_string_resource(IDS_STRING_FAVORITES));
 	fav_category->set_key(ID_FAVORITE);
 
@@ -2246,7 +2252,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	// Iterate <tv_category> nodes
 	while (cat_node)
 	{
-		auto category = std::make_shared<ChannelCategory>(root_path);
+		auto category = std::make_shared<ChannelCategory>(image_path);
 		category->ParseNode(cat_node);
 		if (list_version < CHANNELS_LIST_VERSION)
 		{
@@ -2273,7 +2279,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	// Iterate <tv_channel> nodes
 	while (ch_node)
 	{
-		auto channel = std::make_shared<ChannelInfo>(m_plugin, root_path);
+		auto channel = std::make_shared<ChannelInfo>(m_plugin, image_path);
 		channel->ParseNode(ch_node);
 		const auto& id = channel->get_id();
 		ASSERT(!id.empty());
@@ -3834,8 +3840,8 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	case ImageLibType::enFile:
 		if (image_lib.get_package_name().empty())
 		{
-			const CString& curPath = GetAppPath(isChannel ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
-			save = ChooseIconFromFile(curPath, info, isChannel);
+			const auto& logos = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH) + (isChannel ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH);
+			save = ChooseIconFromFile(logos.c_str(), info, isChannel);
 		}
 		else if (!image_lib.get_url().empty())
 		{
@@ -4000,7 +4006,7 @@ bool CIPTVChannelEditorDlg::ChooseIconFromFile(const CString& path, uri_stream* 
 		}
 
 		std::filesystem::path newPath(file.GetString());
-		std::filesystem::path trgtPath = GetAppPath(isChannel ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH).c_str();
+		std::filesystem::path trgtPath = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH) + (isChannel ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH);
 		if (trgtPath != newPath.parent_path())
 		{
 			trgtPath += oFN.lpstrFileTitle;
@@ -4009,8 +4015,8 @@ bool CIPTVChannelEditorDlg::ChooseIconFromFile(const CString& path, uri_stream* 
 			SetImageControl(GetIconCache().get_icon(trgtPath), m_wndChannelIcon);
 		}
 
-		m_iconUrl = uri_base::PLUGIN_SCHEME;
-		m_iconUrl += isChannel ? utils::CHANNELS_LOGO_URL : utils::CATEGORIES_LOGO_URL;
+		m_iconUrl = utils::PLUGIN_SCHEME;
+		m_iconUrl += (isChannel ? utils::CHANNELS_LOGO_URL : utils::CATEGORIES_LOGO_URL);
 		m_iconUrl += oFN.lpstrFileTitle;
 
 		if (m_iconUrl != icon->get_icon_uri().get_uri().c_str())

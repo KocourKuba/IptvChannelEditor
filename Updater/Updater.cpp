@@ -40,17 +40,9 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\Crc32.h"
 #include "UtilsLib\FileVersionInfo.h"
 
-#include "SevenZip\7zpp\SevenZipWrapper.h"
-
 #include "BugTrap\Source\Client\BugTrap.h"
 
 static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
-
-#ifdef _DEBUG
-static LPCWSTR g_szServerPath = L"http://iptv.esalecrm.net/update";
-#else
-static LPCWSTR g_szServerPath = L"http://igores.ru/sharky72";
-#endif // _DEBUG
 
 #ifdef _DEBUG
 std::wstring DEV_PATH = LR"(..\..\)";
@@ -93,6 +85,7 @@ struct UpdateInfo
 	std::stringstream update_info; // content of update_file
 	std::wstring update_path; // folder where is downloaded files stored
 	std::wstring version; // version of the update
+	std::wstring server; // update server
 	std::vector<update_node> update_files; // all files to be replaced
 	int parent_handle = 0;
 	bool install_option_files = false;
@@ -198,7 +191,7 @@ inline void LogProtocol(const std::wstring& str)
 }
 
 
-int parse_info(UpdateInfo& info)
+static int parse_info(UpdateInfo& info)
 {
 	// Parse the buffer using the xml file parsing library into doc
 	auto doc = std::make_unique<rapidxml::xml_document<>>();
@@ -254,11 +247,11 @@ int parse_info(UpdateInfo& info)
 	return no_error;
 }
 
-int check_for_update(UpdateInfo& info)
+static int check_for_update(UpdateInfo& info)
 {
 	LogProtocol("Try to download update info...");
 	utils::CUrlDownload dl;
-	if (!dl.DownloadFile(fmt::format(L"{:s}/update.xml", g_szServerPath), info.update_info))
+	if (!dl.DownloadFile(fmt::format(L"{:s}/{:s}", info.server, utils::UPDATE_NAME), info.update_info))
 	{
 		LogProtocol(fmt::format(L"{:s}", dl.GetLastErrorMessage()));
 		return err_download_info; // Unable to download update info!
@@ -267,33 +260,44 @@ int check_for_update(UpdateInfo& info)
 	return parse_info(info);
 }
 
-int download_update(UpdateInfo& info)
+static int download_update(UpdateInfo& info)
 {
-	int ret = 0;
+	int ret = no_error;
 	do
 	{
 		ret = check_for_update(info);
-		if (ret != 0) break;
+		if (ret != err_no_updates && ret != no_error) break;
+
+		const auto& update_file = fmt::format(L"{:s}{:s}", info.update_path, info.info_file);
+		std::ofstream os(update_file, std::ofstream::binary);
+		os << info.update_info.rdbuf();
+		if (os.bad())
+		{
+			ret = err_save_pkg; // Unable to save update package!
+			break;
+		}
+		LogProtocol(fmt::format(L"saved to: {:s}", update_file));
+		os.close();
 
 		utils::CUrlDownload dl;
 		for (const auto& item : info.update_files)
 		{
-			const auto& loaded_file = fmt::format(L"{:s}{:s}", info.update_path, item.name);
-			if (std::filesystem::exists(loaded_file))
+			if (item.opt && !info.install_option_files)
 			{
-				std::ifstream stream(loaded_file, std::istream::binary);
-				std::vector<unsigned char> file_data;
-				file_data.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
-				uint32_t crc = crc32_bitwise(file_data.data(), file_data.size());
-				if (item.crc == crc)
-				{
-					LogProtocol(fmt::format(L"file: {:s} already downloaded, skip download", item.name));
-					continue;
-				}
+				LogProtocol(fmt::format(L"skipping optional package: {:s}", item.name));
+				continue;
+			}
+
+			const auto& loaded_file = fmt::format(L"{:s}{:s}", info.update_path, item.name);
+			LogProtocol(fmt::format(L"Check: {:s}", loaded_file));
+			if (std::filesystem::exists(loaded_file) && item.crc == file_crc32(loaded_file))
+			{
+				LogProtocol(fmt::format(L"file: {:s} already downloaded, skip download", item.name));
+				continue;
 			}
 
 			std::stringstream file_data;
-			const auto& url = fmt::format(L"{:s}/{:s}/{:s}", g_szServerPath, info.version, item.name);
+			const auto& url = fmt::format(L"{:s}/{:s}/{:s}", info.server, info.version, item.name);
 			LogProtocol(fmt::format(L"download: {:s}", url));
 			if (!dl.DownloadFile(url, file_data))
 			{
@@ -302,9 +306,9 @@ int download_update(UpdateInfo& info)
 				break;
 			}
 
-			std::ofstream os(loaded_file, std::ofstream::binary);
-			os << file_data.rdbuf();
-			if (os.bad())
+			std::ofstream os_file(loaded_file, std::ofstream::binary);
+			os_file << file_data.rdbuf();
+			if (os_file.bad())
 			{
 				ret = err_save_pkg; // Unable to save update package!
 				break;
@@ -316,7 +320,7 @@ int download_update(UpdateInfo& info)
 	return ret;
 }
 
-int update_app(UpdateInfo& info)
+static int update_app(UpdateInfo& info, bool force)
 {
 	LogProtocol("Checking for an application present in memory.");
 	int i = 0;
@@ -345,14 +349,17 @@ int update_app(UpdateInfo& info)
 
 	int ret = download_update(info);
 
-	if (ret != 0)
+	if (ret != no_error)
 	{
-		if (ret != -1)
+		if (ret != err_no_updates)
 		{
 			LogProtocol("Unable to download update!");
+			return ret;
 		}
-
-		return ret;
+		if (!force)
+		{
+			return ret;
+		}
 	}
 
 	LogProtocol("Unpack and replace files...");
@@ -373,40 +380,13 @@ int update_app(UpdateInfo& info)
 
 		bool success = true;
 		bool folder = false;
-		std::filesystem::path src(source_file);
-		if (src.extension() == ".7z" || src.extension() == ".pkg")
-		{
-			SevenZip::SevenZipWrapper archiver(pack_dll);
-			if (!archiver.OpenArchive(source_file))
-			{
-				LogProtocol("Error open archive. Aborting.");
-				return err_open_pkg;
-			}
-
-			folder = true;
-			LogProtocol(fmt::format(L"unpacking: {:s} to {:s}", src.wstring(), target_path));
-			if (!archiver.GetExtractor().ExtractArchive(target_path))
-			{
-				LogProtocol("Error unpacking archive. Aborting.");
-				return err_open_pkg;
-			}
-
-			target_file = target_path + src.stem().wstring();
-			bak_file = target_file + L".bak";
-		}
-
 		std::error_code err;
 		if (std::filesystem::exists(target_file))
 		{
 			// we can check hash only for file
 			if (std::filesystem::is_regular_file(target_file))
 			{
-				std::ifstream stream(target_file, std::istream::binary);
-				std::vector<unsigned char> file_data;
-				file_data.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
-				uint32_t crc = crc32_bitwise(file_data.data(), file_data.size());
-				stream.close();
-
+				uint32_t crc = file_crc32(target_file);
 				// if file already the same skip it
 				if (crc == item.crc)
 				{
@@ -436,17 +416,8 @@ int update_app(UpdateInfo& info)
 			}
 		}
 
-		std::filesystem::copy_options opt = std::filesystem::copy_options::none;
-		std::wstring type = L"copy file ";
-		const auto& source_dir = info.update_path + src.stem().wstring();
-		if (std::filesystem::is_directory(source_dir))
-		{
-			opt = std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing;
-			type = L"copy unpacked archive ";
-		}
-
-		LogProtocol(fmt::format(L"{:s}{:s} to {:s}", type, item.name, target_file));
-		std::filesystem::copy(source_file, target_file, opt, err);
+		LogProtocol(fmt::format(L"copy file: {:s} to {:s}", item.name, target_file));
+		std::filesystem::copy(source_file, target_file, std::filesystem::copy_options::overwrite_existing, err);
 		if (err.value() == 0)
 		{
 			// try to remove backup file (it can't be removed in some case)
@@ -471,14 +442,18 @@ int main(int argc, char* argv[])
 	bool update = false;
 	bool playlists = false;
 	bool printHelp = false;
+	bool debug = false;
+	bool force = false;
 
 	// First configure all possible command line options.
-	CommandLine args("IPTV Channel Editor Updater 1.3\n(c) Pavel Abakanov (aka sharky72 at forum.hdtv.ru)\n");
+	CommandLine args("IPTV Channel Editor Updater 1.4\n(c) Pavel Abakanov (aka sharky72 at forum.hdtv.ru)\n");
 
 	args.addArgument({ "check" }, &check, "Check for update");
 	args.addArgument({ "download" }, &download, "Download update");
 	args.addArgument({ "update" }, &update, "Perform update");
 	args.addArgument({ "-o", "--optional" }, &playlists, "Download or Update optional packages (Channels Lists)");
+	args.addArgument({ "-f", "--force" }, &force, "Force update");
+	args.addArgument({ "-d", "--debug" }, &debug, "");
 	args.addArgument({ "-h", "--help" }, &printHelp, "Show parameters info");
 
 	CFileVersionInfo cVer;
@@ -503,12 +478,20 @@ int main(int argc, char* argv[])
 	}
 
 	UpdateInfo info;
-	info.info_file = L"update.xml";
 	info.update_path = GetAppPath(utils::UPDATES_FOLDER);
+	info.info_file = utils::UPDATE_NAME;
+	info.server = utils::UPDATE_SERVER1;
+
+	LogProtocol(fmt::format(L"Updates folder: {:s}", info.update_path));
 
 	if (!std::filesystem::create_directories(info.update_path, err) && err.value())
 	{
 		return err_create_dir; // Unable to create update directory!
+	}
+
+	if (debug) //-V547
+	{
+		info.server = utils::UPDATE_SERVER2;
 	}
 
 	if (check) //-V547
@@ -526,7 +509,7 @@ int main(int argc, char* argv[])
 	if (update) //-V547
 	{
 		LogProtocol("Performing update application.");
-		return update_app(info);
+		return update_app(info, force);
 	}
 
 	args.printHelp();

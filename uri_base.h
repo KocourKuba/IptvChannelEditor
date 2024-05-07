@@ -32,9 +32,6 @@ DEALINGS IN THE SOFTWARE.
 class uri_base
 {
 public:
-	static constexpr auto PLUGIN_SCHEME = L"plugin_file://";
-
-public:
 	uri_base() = default;
 	virtual ~uri_base() = default;
 
@@ -84,7 +81,7 @@ public:
 	/// is uri local (plugin_file), internal schema for plugin
 	/// </summary>
 	/// <returns>string</returns>
-	bool is_local() const { return scheme == PLUGIN_SCHEME; }
+	bool is_local() const { return scheme == utils::PLUGIN_SCHEME; }
 
 	/// <summary>
 	/// is uri valid
