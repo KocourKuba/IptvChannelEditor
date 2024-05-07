@@ -71,7 +71,7 @@
       "epg_end": "end"
     },
     "tvteam": {
-      "epg_url": "http://tv.team/{EPG_ID}.json",
+      "epg_url": "http://troya.one/{EPG_ID}.json",
       "epg_root": "epg_data",
       "epg_name": "name",
       "epg_desc": "descr",
@@ -1369,7 +1369,7 @@
           "epg_name": "name",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_url": "http://tv.team/{EPG_ID}.json"
+          "epg_url": "http://troya.one/{EPG_ID}.json"
         },
         {
           "epg_param": "second",
@@ -2212,7 +2212,7 @@
           "epg_name": "name",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_url": "http://tv.team/{EPG_ID}.json"
+          "epg_url": "http://troya.one/{EPG_ID}.json"
         },
         {
           "epg_param": "second",
@@ -2230,7 +2230,7 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/.+\\/.+\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/pl\\/11\\/(?<password>.+)\\/.*$",
-          "pl_template": "http://tv.team/pl/11/{PASSWORD}/playlist.m3u8",
+          "pl_template": "http://troya.one/pl/11/{PASSWORD}/playlist.m3u8",
           "tag_id_match": "tvg-name"
         }
       ],
@@ -2388,7 +2388,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>\\d+)\\/(?<var1>.+\\/)?(?<id>.+)\\/(?<var2>.+)\\.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>\\d+)\\/(?<id>.+)\\/(?<var1>.+)\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/(?<login>.+)\\/(?<password>.+)\\/(?<server>.+)\\/.*$",
           "pl_template": "https://streaming-elbrus.su/playlist/{LOGIN}/{PASSWORD}/{SERVER_ID}playlist.m3u8"
         }
@@ -2442,9 +2442,9 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}:{PORT}/{VAR1}{ID}/{VAR2}-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_arc_template": "{SCHEME}{DOMAIN}:{PORT}/{ID}/{VAR1}-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}:{PORT}/{VAR1}{ID}/{VAR2}.m3u8?token={TOKEN}"
+          "uri_template": "{SCHEME}{DOMAIN}:{PORT}/{ID}/{VAR1}.m3u8?token={TOKEN}"
         },
         {}
       ],
