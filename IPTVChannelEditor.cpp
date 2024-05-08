@@ -716,9 +716,8 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	}
 
 	// collect plugin channels list;
-	const std::filesystem::path lists_path = GetConfig().get_string(true, REG_LISTS_PATH);
+	const std::filesystem::path channelsListPath = GetConfig().get_string(true, REG_LISTS_PATH) + plugin->get_internal_name();
 	std::map<std::string, std::string> channels_list;
-	const auto& channelsListPath = lists_path / plugin->get_internal_name();
 	std::filesystem::directory_iterator dir_iter(channelsListPath, err);
 	for (auto const& dir_entry : dir_iter)
 	{
@@ -752,6 +751,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	constexpr auto default_copy = std::filesystem::copy_options::none;
 	constexpr auto recursive_copy = std::filesystem::copy_options::recursive;
 	constexpr auto overwrite = std::filesystem::copy_options::overwrite_existing;
+	constexpr auto skip = std::filesystem::copy_options::skip_existing;
 
 	const std::filesystem::path www_path = LR"(www\cgi-bin\)";
 	const std::filesystem::path bin_path = LR"(bin\)";
@@ -838,8 +838,32 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	std::filesystem::copy(plugin_root / L"img", packFolder / L"img", recursive_copy, err);
 	std::filesystem::copy(plugin_root / L"translations", packFolder / L"translations", recursive_copy, err);
 
-	// TODO selective copy for each channels list
-	std::filesystem::copy(image_cache_path / L"icons", packFolder / L"icons", recursive_copy, err);
+	for (const auto& ch_list : channels_list)
+	{
+		const auto& channel_path = channelsListPath / ch_list.first;
+		std::ifstream stream(channel_path.wstring());
+		if (!stream.good()) continue;
+
+		std::string line;
+		while (std::getline(stream, line))
+		{
+			const auto& posStart = line.find("<icon_url>");
+			if (posStart == std::string::npos) continue;
+			const auto& posEnd = line.find("</icon_url>", posStart + 10);
+			if (posEnd == std::string::npos) continue;
+
+			if (line.substr(posStart + 10, 14) != utils::PLUGIN_SCHEME_A) continue;
+
+			const auto& url = line.substr(posStart + 24, posEnd - posStart - 24);
+
+			std::filesystem::create_directories((packFolder / url).parent_path().native(), err);
+			std::filesystem::copy(image_cache_path / url, packFolder / url, skip, err);
+			if (err.value() != 0)
+			{
+				LogProtocol(fmt::format(L"error copy {:s}", (image_cache_path / url).native()));
+			}
+		}
+	}
 
 	std::filesystem::create_directory(packFolder / bin_path, err);
 	std::filesystem::create_directories(packFolder / www_path, err);

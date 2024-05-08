@@ -34,7 +34,9 @@ namespace utils
 static constexpr auto DUNE_PLUGIN_FILE_NAME = L"{TYPE}_mod";
 static constexpr auto DUNE_UPDATE_INFO_NAME = L"update_{TYPE}_mod";
 static constexpr auto ICON_TEMPLATE = L"plugin_file://icons/channels/channel_unset.png";
+static constexpr auto ICON_OLD_TEMPLATE = L"plugin_file://icons/channel_unset.png";
 static constexpr auto PLUGIN_SCHEME = L"plugin_file://";
+static constexpr auto PLUGIN_SCHEME_A = "plugin_file://";
 static constexpr auto CHANNELS_LOGO_URL = L"icons/channels/";
 static constexpr auto CATEGORIES_LOGO_URL = L"icons/categories/";
 

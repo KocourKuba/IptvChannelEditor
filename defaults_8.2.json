@@ -2050,7 +2050,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>.+)\\/live\\/(?<id>.+)\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>.+)\\/live\\/(?<id>.+)\\?token=(?<token>.*)$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/list\\.php\\?login=(?<login>.+)&password=(?<password>.+)&.+$",
           "pl_template": "https://s.topiptv.link/list.php?login={LOGIN}&password={PASSWORD}&type=m3u"
         }

@@ -27,6 +27,8 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "IconCache.h"
 #include "IPTVChannelEditor.h"
+#include "AccountSettings.h"
+#include "Constants.h"
 
 #include "UtilsLib\xxhash.hpp"
 #include "UtilsLib\utils.h"
@@ -48,11 +50,12 @@ const CImage& CIconCache::get_icon(const std::wstring& path, bool force /*= fals
 	}
 
 	// not found in cache, try to load
+	const auto& unset_url = fmt::format(L"{:s}{:s}{:s}", GetConfig().get_string(true, REG_SAVE_IMAGE_PATH), utils::CHANNELS_LOGO_PATH, L"channel_unset.png");
 	auto container = std::make_unique<ImageContainer>();
 	if (!LoadImageFromUrl(path, container->get_image()))
 	{
 		CImage nullImage;
-		LoadImageFromUrl(GetAppPath(utils::CATEGORIES_LOGO_PATH) + L"channel_unset.png", nullImage);
+		LoadImageFromUrl(unset_url, nullImage);
 		container->set_image(nullImage);
 	}
 

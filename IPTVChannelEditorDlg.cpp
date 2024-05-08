@@ -2281,6 +2281,12 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	{
 		auto channel = std::make_shared<ChannelInfo>(m_plugin, image_path);
 		channel->ParseNode(ch_node);
+		if (channel->get_icon_uri().get_uri() == utils::ICON_OLD_TEMPLATE)
+		{
+			channel->set_icon_uri(utils::ICON_TEMPLATE);
+			set_allow_save(true);
+		}
+
 		const auto& id = channel->get_id();
 		ASSERT(!id.empty());
 
