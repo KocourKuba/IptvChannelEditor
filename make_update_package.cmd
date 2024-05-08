@@ -28,7 +28,7 @@ set BUILD_PATH=%ROOT%%BUILD_PLATFORM%\%BUILD_TYPE%
 
 echo "%BUILD_PATH%\%BUILD_NAME%.exe"
 
-echo @%DEV_ENV% %BUILD_NAME%.sln /build "%BUILD_TYPE%|%BUILD_PLATFORM%" /Project %BUILD_NAME%.vcxproj /OUT build.log >build.bat
+echo @%DEV_ENV% %BUILD_NAME%.sln /Rebuild "%BUILD_TYPE%|%BUILD_PLATFORM%" /Project %BUILD_NAME%.vcxproj /OUT build.log >build.bat
 echo @if NOT exist "%BUILD_PATH%\%BUILD_NAME%.exe" pause >>build.bat
 echo @exit >>build.bat
 start /wait build.bat
