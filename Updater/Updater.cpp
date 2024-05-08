@@ -442,6 +442,7 @@ int main(int argc, char* argv[])
 	bool update = false;
 	bool playlists = false;
 	bool printHelp = false;
+	std::string server;
 	bool debug = false;
 	bool force = false;
 
@@ -451,6 +452,7 @@ int main(int argc, char* argv[])
 	args.addArgument({ "check" }, &check, "Check for update");
 	args.addArgument({ "download" }, &download, "Download update");
 	args.addArgument({ "update" }, &update, "Perform update");
+	args.addArgument({ "-s", "--server" }, &server, "-s url or --server=url Select server url that contains update");
 	args.addArgument({ "-o", "--optional" }, &playlists, "Download or Update optional packages (Channels Lists)");
 	args.addArgument({ "-f", "--force" }, &force, "Force update");
 	args.addArgument({ "-d", "--debug" }, &debug, "");
@@ -489,10 +491,18 @@ int main(int argc, char* argv[])
 		return err_create_dir; // Unable to create update directory!
 	}
 
+	LogProtocol(fmt::format("server param: {:s}", server));
+	if (!server.empty())
+	{
+		info.server = utils::utf8_to_utf16(server);
+	}
+
 	if (debug) //-V547
 	{
 		info.server = utils::UPDATE_SERVER2;
 	}
+
+	LogProtocol(fmt::format(L"Update server url: {:s}", info.server));
 
 	if (check) //-V547
 	{

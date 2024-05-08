@@ -69,6 +69,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_CMP_FLAGS,
 	REG_UPDATE_FREQ,
 	REG_UPDATE_PL,
+	REG_UPDATE_SERVER,
 	REG_COLOR_ADDED,
 	REG_COLOR_NOT_ADDED,
 	REG_COLOR_CHANGED,

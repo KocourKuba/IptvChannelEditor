@@ -103,11 +103,13 @@ call :add_node ChannelsLists.pkg true			>>%outfile%
 echo ^</package^> >>%outfile%
 copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 
-goto :EOF
 echo build standard archive...
-mklink /D ChannelsLists "%ROOT%ChannelsLists" >nul 2>&1
+mklink /J dune_plugin "%ROOT%dune_plugin" >nul 2>&1
+mklink /J ChannelsLists "%ROOT%ChannelsLists" >nul 2>&1
 IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom .
+rd dune_plugin /q
 rd ChannelsLists /q
+del *.log  >nul 2>&1
 
 echo %BUILD_NAME%.exe				>packing.lst
 echo %BUILD_NAME%RUS.dll			>>packing.lst

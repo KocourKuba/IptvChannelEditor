@@ -57,14 +57,20 @@ void CUpdateSettingsPage::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Text(pDX, IDC_EDIT_UPDATE_FREQ, m_UpdateFreq);
 	DDX_Check(pDX, IDC_CHECK_CHANNELS, m_bUpdateChannels);
+	DDX_Control(pDX, IDC_COMBO_SERVER, m_wndUpdateServer);
+	DDX_CBIndex(pDX, IDC_COMBO_SERVER, m_UpdateServer);
 }
 
 BOOL CUpdateSettingsPage::OnInitDialog()
 {
 	__super::OnInitDialog();
 
+	m_wndUpdateServer.AddString(utils::UPDATE_SERVER1);
+	m_wndUpdateServer.AddString(utils::UPDATE_SERVER2);
+
 	m_UpdateFreq = GetConfig().get_int(true, REG_UPDATE_FREQ, 3);
 	m_bUpdateChannels = GetConfig().get_int(true, REG_UPDATE_PL);
+	m_UpdateServer = GetConfig().get_int(true, REG_UPDATE_SERVER, 0);
 
 	UpdateData(FALSE);
 
@@ -78,6 +84,7 @@ BOOL CUpdateSettingsPage::OnApply()
 
 	GetConfig().set_int(true, REG_UPDATE_FREQ, m_UpdateFreq);
 	GetConfig().set_int(true, REG_UPDATE_PL, m_bUpdateChannels);
+	GetConfig().set_int(true, REG_UPDATE_SERVER, m_UpdateServer);
 
 	return __super::OnApply();
 }

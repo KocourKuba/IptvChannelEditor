@@ -462,7 +462,8 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 {
 	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT, true);
-	if (isDev || std::filesystem::is_symlink(plugin_root))
+	auto dir_status = std::filesystem::symlink_status(plugin_root).type();
+	if (isDev || dir_status == std::filesystem::file_type::junction || dir_status == std::filesystem::file_type::symlink)
 	{
 		return true;
 	}
@@ -598,7 +599,6 @@ void CIPTVChannelEditorApp::FillLangMap()
 	std::filesystem::path cFile(fileName.GetString());
 	cFile.replace_filename(cFile.stem().native() + _T("???.dll"));
 
-	//Берем первый файлик и хреначим его данные, если удастся...
 	CFileFind cFind;
 	BOOL bFound = cFind.FindFile(cFile.c_str());
 	while (bFound)
@@ -751,19 +751,21 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 
 	constexpr auto default_copy = std::filesystem::copy_options::none;
 	constexpr auto recursive_copy = std::filesystem::copy_options::recursive;
+	constexpr auto overwrite = std::filesystem::copy_options::overwrite_existing;
 
 	const std::filesystem::path www_path = LR"(www\cgi-bin\)";
 	const std::filesystem::path bin_path = LR"(bin\)";
 
 	// extract plugin package
-	const auto& plugin_source = GetAppPath(utils::PLUGIN_SOURCE);
+	const auto& plugin_dir = GetAppPath(utils::PLUGIN_ROOT);
 	const auto& plugin_root = std::filesystem::temp_directory_path() / utils::PLUGIN_ROOT;
-	if (std::filesystem::is_symlink(GetAppPath(utils::PLUGIN_ROOT)))
+	auto dir_status = std::filesystem::symlink_status(plugin_dir).type();
+	if (dir_status == std::filesystem::file_type::junction || dir_status == std::filesystem::file_type::symlink)
 	{
-		std::filesystem::copy(GetAppPath(utils::PLUGIN_ROOT), plugin_root, recursive_copy, err);
+		std::filesystem::copy(plugin_dir, plugin_root, recursive_copy | overwrite, err);
 		if (err.value() != 0)
 		{
-			const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), GetAppPath(utils::PLUGIN_ROOT));
+			const auto& msg = fmt::format(L"Error copy ({:d} from {:s} to {:s})", err.value(), plugin_dir, plugin_dir);
 			if (showMessage)
 			{
 				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
@@ -779,6 +781,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	{
 		SevenZip::SevenZipWrapper archiver(pack_dll);
 		auto& extractor = archiver.GetExtractor();
+		const auto& plugin_source = GetAppPath(utils::PLUGIN_SOURCE);
 		extractor.SetArchivePath(plugin_source);
 		if (!extractor.ExtractArchive(plugin_root))
 		{
@@ -1725,9 +1728,13 @@ int RequestToUpdateServer(const std::wstring& command, bool isThread /*= true*/)
 		const auto& app = fmt::format(L"{:s}Updater.exe", GetAppPath());
 #endif // _DEBUG
 
+		std::wstring newCmd(command);
+		const auto& url = GetConfig().get_int(true, REG_UPDATE_SERVER, 0) == 0 ? utils::UPDATE_SERVER1 : utils::UPDATE_SERVER2;
+		newCmd += fmt::format(L" --server={:s}", url);
+
 		if (!isThread)
 		{
-			::ShellExecute(nullptr, _T("open"), app.c_str(), command.c_str(), nullptr, SW_SHOWMINIMIZED);
+			::ShellExecute(nullptr, _T("open"), app.c_str(), newCmd.c_str(), nullptr, SW_SHOWMINIMIZED);
 			return 0;
 		}
 
@@ -1741,7 +1748,7 @@ int RequestToUpdateServer(const std::wstring& command, bool isThread /*= true*/)
 
 		PROCESS_INFORMATION pi = { nullptr };
 
-		std::wstring cmd = fmt::format(L"\"{:s}\" {:s}", app, command);	// argv[0] имя исполняемого файла
+		std::wstring cmd = fmt::format(L"\"{:s}\" {:s}", app, newCmd);	// argv[0] имя исполняемого файла
 		BOOL bRunProcess = CreateProcessW(app.c_str(),		// 	__in_opt     LPCTSTR lpApplicationName
 										  cmd.data(),	    // 	__inout_opt  LPTSTR lpCommandLine
 										  nullptr,			// 	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes

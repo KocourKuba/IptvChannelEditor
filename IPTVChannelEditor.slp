@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20240421143250" scan="308" scanned="20240421143238">
+<document created="20211012165442" version="4.0.374" date="20240508210331" scan="309" scanned="20240508210156">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240421123202" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240508185656" usesmfc="1">
     <headerfiles>
       <header name="..\..\resource.h"/>
       <resource name="..\..\IPTVChannelEditor.rc"/>
@@ -585,7 +585,10 @@
       <node class="TWindowsDialogNode" name="109" resid="109" langid="1033">
         <form class="TWindowsForm" name="109" bordericons="[biSystemMenu]" borderstyle="bsDialog" style="2160591048">
           <row id="CX" changed="20230519222351">344</row>
-          <row id="CY" changed="20230519222351">193</row>
+          <row id="CY" state="3" changed="20240508210156">
+            <prev>193</prev>
+            <native>200</native>
+          </row>
           <row id="Font">MS Shell Dlg,8</row>
           <row id="Text" changed="20211129231254">
             <native>Main</native>
@@ -1607,7 +1610,10 @@
       <node class="TWindowsDialogNode" name="111" created="20211218214512" resid="111" langid="1033">
         <form class="TWindowsForm" name="111" bordericons="[biSystemMenu]" borderstyle="bsDialog" style="2160591048">
           <row id="CX" changed="20230519222351">344</row>
-          <row id="CY" changed="20230519222351">181</row>
+          <row id="CY" state="3" changed="20240508210156">
+            <prev>181</prev>
+            <native>200</native>
+          </row>
           <row id="Font">MS Shell Dlg,8</row>
           <row id="Text">
             <native>Update</native>
@@ -1616,7 +1622,10 @@
           <row id="X">0</row>
           <row id="Y">0</row>
           <component class="TVisLabel" name="STATIC_Check_for_updates" type="static" unnamed="1" autosize="0" wordwrap="1">
-            <row id="CX">166</row>
+            <row id="CX" state="3" changed="20240508210156">
+              <prev>166</prev>
+              <native>126</native>
+            </row>
             <row id="CY">8</row>
             <row id="Text">
               <native>Check for updates every</native>
@@ -1624,16 +1633,6 @@
             </row>
             <row id="X">7</row>
             <row id="Y">7</row>
-          </component>
-          <component class="TVisCheckBox" name="1125" created="20220320143227" type="button">
-            <row id="CX">166</row>
-            <row id="CY">10</row>
-            <row id="Text">
-              <native>Update Channel Lists</native>
-              <lang id="ru">Обновлять списки каналов</lang>
-            </row>
-            <row id="X">7</row>
-            <row id="Y">36</row>
           </component>
           <component class="TVisLabel" name="STATIC_days" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX">25</row>
@@ -1645,11 +1644,37 @@
             <row id="X">39</row>
             <row id="Y">20</row>
           </component>
+          <component class="TVisCheckBox" name="1125" created="20220320143227" type="button">
+            <row id="CX">166</row>
+            <row id="CY">10</row>
+            <row id="Text">
+              <native>Update Channel Lists</native>
+              <lang id="ru">Обновлять списки каналов</lang>
+            </row>
+            <row id="X">7</row>
+            <row id="Y">36</row>
+          </component>
+          <component class="TVisLabel" name="STATIC_Update_Server" state="0" created="20240508210156" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">125</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Update Server</native>
+              <lang id="ru" date="20240508210204">Сервер обновлений</lang>
+            </row>
+            <row id="X" state="0">148</row>
+            <row id="Y" state="0">7</row>
+          </component>
           <component class="TVisEdit" name="1124" created="20220320143227" type="edit">
             <row id="CX">19</row>
             <row id="CY">12</row>
             <row id="X">7</row>
             <row id="Y">19</row>
+          </component>
+          <component class="TVisComboBox" name="1246" state="0" created="20240508210156" type="combobox" autosize="1" integralheight="1" style="csDropDownList">
+            <row id="CX" state="0">189</row>
+            <row id="CY" state="0">30</row>
+            <row id="X" state="0">148</row>
+            <row id="Y" state="0">19</row>
           </component>
           <component class="TVisUpDown" name="1121" created="20220320143227" type="msctls_updown32">
             <row id="CX">11</row>
@@ -2290,7 +2315,10 @@
       <node class="TWindowsDialogNode" name="133" created="20211129231254" resid="133" langid="1033">
         <form class="TWindowsForm" name="133" bordericons="[biSystemMenu]" borderstyle="bsDialog" style="2160591048">
           <row id="CX" created="20211209210449" changed="20230519222351">344</row>
-          <row id="CY" created="20211209210449" changed="20230519222351">181</row>
+          <row id="CY" state="3" created="20211209210449" changed="20240508210156">
+            <prev>181</prev>
+            <native>200</native>
+          </row>
           <row id="Font" created="20211209210449">MS Shell Dlg,8</row>
           <row id="Text">
             <native>Paths</native>
@@ -2306,7 +2334,10 @@
               <lang id="ru">Проигрыватель m3u8 файлов (например Media Player Classic)</lang>
             </row>
             <row id="X" created="20211209210449">7</row>
-            <row id="Y" created="20211209210449">7</row>
+            <row id="Y" state="3" created="20211209210449" changed="20240508210156">
+              <prev>7</prev>
+              <native>8</native>
+            </row>
           </component>
           <component class="TVisBasicControl" name="1057" created="20211209210449" type="MfcEditBrowse">
             <row id="CX" changed="20230519222351">330</row>
@@ -2322,19 +2353,28 @@
               <lang id="ru" date="20211129231937">FFProbe для проверки потоков (https://ffmpeg.org)</lang>
             </row>
             <row id="X" created="20211209210449">7</row>
-            <row id="Y" created="20211209210449">35</row>
+            <row id="Y" state="3" created="20211209210449" changed="20240508210156">
+              <prev>35</prev>
+              <native>34</native>
+            </row>
           </component>
           <component class="TVisBasicControl" name="1058" created="20211209210449" type="MfcEditBrowse">
             <row id="CX" changed="20230519222351">330</row>
             <row id="CY">14</row>
             <row id="X">7</row>
-            <row id="Y">46</row>
+            <row id="Y" state="3" changed="20240508210156">
+              <prev>46</prev>
+              <native>44</native>
+            </row>
           </component>
           <component class="TVisBasicControl" name="1107" created="20220320143227" type="MfcEditBrowse">
             <row id="CX" changed="20230519222351">330</row>
             <row id="CY">14</row>
             <row id="X">7</row>
-            <row id="Y">73</row>
+            <row id="Y" state="3" changed="20240508210156">
+              <prev>73</prev>
+              <native>70</native>
+            </row>
           </component>
           <component class="TVisLabel" name="STATIC_Root_path_contains" created="20230425213113" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX">287</row>
@@ -2344,13 +2384,19 @@
               <lang id="ru" date="20230425212906">Корневая папка для хранения Списков каналов всех плагинов</lang>
             </row>
             <row id="X">7</row>
-            <row id="Y">63</row>
+            <row id="Y" state="3" changed="20240508210156">
+              <prev>63</prev>
+              <native>60</native>
+            </row>
           </component>
           <component class="TVisBasicControl" name="1108" created="20220320143227" type="MfcEditBrowse">
             <row id="CX" changed="20230519222351">330</row>
             <row id="CY">14</row>
             <row id="X">7</row>
-            <row id="Y">100</row>
+            <row id="Y" state="3" changed="20240508210156">
+              <prev>100</prev>
+              <native>96</native>
+            </row>
           </component>
           <component class="TVisLabel" name="STATIC_Path_to_save" created="20230425201748" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX">287</row>
@@ -2360,13 +2406,19 @@
               <lang id="ru" date="20230425201911">Папка для сохранения плагинов</lang>
             </row>
             <row id="X">7</row>
-            <row id="Y">89</row>
+            <row id="Y" state="3" changed="20240508210156">
+              <prev>89</prev>
+              <native>86</native>
+            </row>
           </component>
           <component class="TVisBasicControl" name="1215" created="20221018224522" type="MfcEditBrowse">
             <row id="CX" changed="20230519222351">330</row>
             <row id="CY">14</row>
             <row id="X">7</row>
-            <row id="Y">128</row>
+            <row id="Y" state="3" changed="20240508210156">
+              <prev>128</prev>
+              <native>122</native>
+            </row>
           </component>
           <component class="TVisLabel" name="STATIC_Path_to_save_#1" created="20230425201748" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX">287</row>
@@ -2376,13 +2428,19 @@
               <lang id="ru" date="20230425201907">Папка для сохранения Веб Обновлений плагинов</lang>
             </row>
             <row id="X">7</row>
-            <row id="Y">117</row>
+            <row id="Y" state="3" changed="20240508210156">
+              <prev>117</prev>
+              <native>112</native>
+            </row>
           </component>
           <component class="TVisBasicControl" name="1216" created="20221006234211" type="MfcEditBrowse">
             <row id="CX" changed="20230519222351">330</row>
             <row id="CY">14</row>
             <row id="X">7</row>
-            <row id="Y" changed="20221018224522">156</row>
+            <row id="Y" state="3" changed="20240508210156">
+              <prev>156</prev>
+              <native>148</native>
+            </row>
           </component>
           <component class="TVisLabel" name="STATIC_Root_path_contains_#1" created="20230425213113" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX">287</row>
@@ -2392,7 +2450,26 @@
               <lang id="ru" date="20230425213136">Корневая папка для хранения Конфигураций всех плагинов</lang>
             </row>
             <row id="X">7</row>
-            <row id="Y">145</row>
+            <row id="Y" state="3" changed="20240508210156">
+              <prev>145</prev>
+              <native>138</native>
+            </row>
+          </component>
+          <component class="TVisBasicControl" name="1217" state="0" created="20240508210156" type="MfcEditBrowse">
+            <row id="CX" state="0">330</row>
+            <row id="CY" state="0">14</row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">174</row>
+          </component>
+          <component class="TVisLabel" name="STATIC_Path_for_Image" state="0" created="20240508210156" type="static" unnamed="1" autosize="0" wordwrap="1">
+            <row id="CX" state="0">287</row>
+            <row id="CY" state="0">8</row>
+            <row id="Text" state="0">
+              <native>Path for Image Cache</native>
+              <lang id="ru" date="20240508210229">Путь к папке кэша иконок</lang>
+            </row>
+            <row id="X" state="0">7</row>
+            <row id="Y" state="0">164</row>
           </component>
         </form>
       </node>
@@ -4286,7 +4363,7 @@
         </row>
         <row id="IDS_STRING_ERR_FILE_MISSING" created="20220724173729" changed="20240421143238">
           <native>File {:s} is missing!</native>
-          <lang id="ru" date="20240421143250" status="3">Файл {:s} не найден!</lang>
+          <lang id="ru" date="20240421143250">Файл {:s} не найден!</lang>
         </row>
         <row id="IDS_STRING_ERR_SETTINGS_MISSING" created="20220730092432">
           <native>Settings missed!</native>
@@ -4421,8 +4498,8 @@
           <native>Template to assemble stream url. All macroses available in the context menu called by right mouse button.</native>
           <lang id="ru" date="20221018230600">Шаблон для сборки ссылки потока. Все макросы доступны в контекстном меню вызываемом по правой кнопке мышки.</lang>
         </row>
-        <row id="IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE" state="0" created="20240421141529">
-          <native>Failed to unpack plugin source!</native>
+        <row id="IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE" created="20240421141529" changed="20240508210156">
+          <native>Failed to unpack plugin package!</native>
           <lang id="ru" date="20240421141632">Ошибка распаковки файлов плагина!</lang>
         </row>
       </node>
@@ -4547,9 +4624,13 @@
           <native>Edit regular expression to parse movie title if it contains additional information like country or year.</native>
           <lang id="ru" date="20221104150624">Редактировать регулярное выражение для парсинга заголовка фильма если он содержит дополнительную информацию типа страны или года.</lang>
         </row>
-        <row id="IDS_STRING_ERR_FILES_WRONG" state="0" created="20240421141529">
-          <native>Inconsistent files found. Installation is corrupt!</native>
-          <lang id="ru" date="20240421141757">Найдены несоответствия файлов плагина. Возможно установочные файлы испорчены!</lang>
+        <row id="IDS_STRING_ERR_DIR_MISSING" state="0" created="20240508210156">
+          <native>Directory {:s} is missing. Installation is corrupt!</native>
+          <lang id="ru" date="20240508210323">Папка {:s} не найдена! Возможно установочные файлы испорчены!</lang>
+        </row>
+        <row id="IDS_STRING_ERR_FILES_WRONG" created="20240421141529" changed="20240508210156">
+          <native>Inconsistent files found. Installation is corrupt! Trying to recover!</native>
+          <lang id="ru" date="20240508210255">Найдены несоответствие файлов плагина. Возможно установочные файлы испорчены!</lang>
         </row>
         <row id="IDS_STRING_NAME">
           <native>Name</native>
@@ -4912,34 +4993,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20240421143238">
-          <prev>8.1.1990, 20 Apr 2024</prev>
-          <native>8.1.1991, 21 Apr 2024</native>
+        <row id="FileVersion" locked="1" state="3" changed="20240508210156">
+          <prev>8.1.1991, 21 Apr 2024</prev>
+          <native>8.1.2008, 8 May 2024</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20240421141529">
           <prev>0</prev>
           <native>1</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240421143238">
-          <prev>1990</prev>
-          <native>1991</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240508210156">
+          <prev>1991</prev>
+          <native>2008</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20240421143238">
-          <prev>8.1.1990</prev>
-          <native>8.1.1991</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20240508210156">
+          <prev>8.1.1991</prev>
+          <native>8.1.2008</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20240421141529">
           <prev>0</prev>
           <native>1</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240421143238">
-          <prev>1990</prev>
-          <native>1991</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240508210156">
+          <prev>1991</prev>
+          <native>2008</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

@@ -70,6 +70,7 @@ constexpr auto REG_LANGUAGE            = _T("Language");
 constexpr auto REG_CMP_FLAGS           = _T("CompareFlags");
 constexpr auto REG_UPDATE_FREQ         = _T("UpdateFrequencies");
 constexpr auto REG_UPDATE_PL           = _T("UpdatePlaylists");
+constexpr auto REG_UPDATE_SERVER       = _T("UpdateServer");
 constexpr auto REG_COLOR_ADDED         = _T("ColorAdded");
 constexpr auto REG_COLOR_NOT_ADDED     = _T("ColorNotAdded");
 constexpr auto REG_COLOR_CHANGED       = _T("ColorChanged");

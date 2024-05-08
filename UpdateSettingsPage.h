@@ -53,6 +53,9 @@ protected:
 	afx_msg void OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
+	CComboBox m_wndUpdateServer;
 	BOOL m_bUpdateChannels = FALSE;
 	int m_UpdateFreq = 3;
+	int m_UpdateServer = 0;
+
 };
