@@ -3851,12 +3851,13 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 		}
 		else if (!image_lib.get_url().empty())
 		{
-			std::wstring dir_path = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH) + std::filesystem::path(image_lib.get_package_name()).stem().wstring();
+			const std::filesystem::path image_cache = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
+			const auto& dir_path = image_cache / std::filesystem::path(image_lib.get_package_name()).stem() / L"";
 			CWaitCursor cur;
 			std::stringstream file_data;
 			utils::CUrlDownload dl;
-			const auto& file_path = dl.GetCachePath(GetConfig().get_string(true, REG_SAVE_IMAGE_PATH) + image_lib.get_package_name());
-			if (!std::filesystem::exists(file_path))
+			const auto& file_path = dl.GetCachePath(image_cache / image_lib.get_package_name());
+			if (!std::filesystem::exists(file_path) || std::filesystem::file_size(file_path) == 0)
 			{
 				std::error_code err;
 				std::filesystem::remove_all(dir_path, err);
@@ -3886,8 +3887,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 					break;
 				}
 
-				utils::ensure_backslash(dir_path);
-				if (!archiver.GetExtractor().ExtractArchive(dir_path))
+				if (!archiver.GetExtractor().ExtractArchive(dir_path.c_str()))
 				{
 					AfxMessageBox(L"Error unpacking archive. Aborting.", MB_ICONERROR | MB_OK);
 					break;
@@ -3905,6 +3905,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 		break;
 	case ImageLibType::enM3U:
 		save = ChooseIconFromLib(idx, image_lib.get_url(), info, false, image_lib.get_square());
+		break;
 	default:
 		break;
 	}

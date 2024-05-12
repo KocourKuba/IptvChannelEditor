@@ -74,15 +74,20 @@ copy "%ROOT%dune_plugin\changelog.md" 					"%pkg%\changelog.md" >nul
 copy "%ROOT%dune_plugin\changelog.md" 					"%pkg%\changelog.md.%BUILD%" >nul
 
 echo build dune_plugin package...
+del %build_pkg%\dune_plugin.pkg >nul 2>&1
 pushd dune_plugin
 7z a %build_pkg%\dune_plugin.pkg >nul
 popd
 
 echo build picons package...
+del %build_pkg%\picons.pkg >nul 2>&1
 7z a %build_pkg%\picons.pkg icons\>nul
 
 echo build channels list package...
-7z a -xr!*.bin -xr!custom %build_pkg%\ChannelsLists.pkg ChannelsLists\ >nul
+del %build_pkg%\ChannelsLists.pkg >nul 2>&1
+pushd ChannelsLists
+7z a -xr!*.bin -xr!.gitignore -xr!custom %build_pkg%\ChannelsLists.pkg >nul
+popd
 
 pushd "%build_pkg%"
 
@@ -99,16 +104,16 @@ call :add_node changelog.md						>>%outfile%
 call :add_node defaults_%MAJOR%.%MINOR%.json	>>%outfile%
 call :add_node dune_plugin.pkg					>>%outfile%
 call :add_node picons.pkg						>>%outfile%
-call :add_node ChannelsLists.pkg true			>>%outfile%
+call :add_node ChannelsLists.pkg				>>%outfile%
 echo ^</package^> >>%outfile%
 copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 
 echo build standard archive...
 mklink /J dune_plugin "%ROOT%dune_plugin" >nul 2>&1
-mklink /J ChannelsLists "%ROOT%ChannelsLists" >nul 2>&1
-IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom .
+rem mklink /J ChannelsLists "%ROOT%ChannelsLists" >nul 2>&1
+IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom /Dev .
 rd dune_plugin /q
-rd ChannelsLists /q
+rem rd ChannelsLists /q
 del *.log  >nul 2>&1
 
 echo %BUILD_NAME%.exe				>packing.lst

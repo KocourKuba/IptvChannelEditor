@@ -81,13 +81,13 @@ static constexpr auto ALL_GROUP = "##all_channels##";
 static constexpr auto HISTORY_GROUP = "##playback_history_tv_group##";
 
 static constexpr auto PLUGIN_MANIFEST = L"dune_plugin.xml";
-static constexpr auto PLUGIN_SOURCE = L"dune_plugin.pkg";
-static constexpr auto PICONS_SOURCE = L"picons.pkg";
+static constexpr auto PLUGIN_PACKAGE = L"dune_plugin.pkg";
+static constexpr auto PICONS_PACKAGE = L"picons.pkg";
 static constexpr auto PLUGIN_ROOT = L"dune_plugin\\";
 static constexpr auto PLUGIN_SETTINGS = L"dune_plugin\\settings";
 static constexpr auto CHANNELS_LOGO_PATH = L"icons\\channels\\";
 static constexpr auto CATEGORIES_LOGO_PATH = L"icons\\categories\\";
-static constexpr auto CHANNELS_LIST_SOURCE = L"ChannelsLists.pkg";
+static constexpr auto CHANNELS_LIST_PACKAGE = L"ChannelsLists.pkg";
 static constexpr auto CHANNELS_LIST_PATH = L"ChannelsLists\\";
 
 static constexpr auto UPDATES_FOLDER = L"Updates\\";

@@ -282,12 +282,6 @@ static int download_update(UpdateInfo& info)
 		utils::CUrlDownload dl;
 		for (const auto& item : info.update_files)
 		{
-			if (item.opt && !info.install_option_files)
-			{
-				LogProtocol(fmt::format(L"skipping optional package: {:s}", item.name));
-				continue;
-			}
-
 			const auto& loaded_file = fmt::format(L"{:s}{:s}", info.update_path, item.name);
 			LogProtocol(fmt::format(L"Check: {:s}", loaded_file));
 			if (std::filesystem::exists(loaded_file) && item.crc == file_crc32(loaded_file))
