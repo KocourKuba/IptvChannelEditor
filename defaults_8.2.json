@@ -110,20 +110,6 @@
       "square": false
     },
     {
-      "type": "file",
-      "name": "epg.one (files)",
-      "package_name": "epgone_transparent_logo.zip",
-      "url": "https://epg.one/epgone_transparent_logo.zip",
-      "square": false
-    },
-    {
-      "type": "file",
-      "name": "epg.one square (files)",
-      "package_name": "epgone_dark_logo.zip",
-      "url": "https://epg.one/epgone_dark_logo.zip",
-      "square": true
-    },
-    {
       "type": "html",
       "name": "epg.one (links)",
       "package_name": "",
@@ -150,6 +136,20 @@
       "package_name": "",
       "url": "https://epg.drm-play.com/?prov=fiptv",
       "square": false
+    },
+    {
+      "type": "file",
+      "name": "epg.one (files)",
+      "package_name": "epgone_transparent_logo.zip",
+      "url": "https://epg.one/epgone_transparent_logo.zip",
+      "square": false
+    },
+    {
+      "type": "file",
+      "name": "epg.one square (files)",
+      "package_name": "epgone_dark_logo.zip",
+      "url": "https://epg.one/epgone_dark_logo.zip",
+      "square": true
     },
     {
       "type": "file",
