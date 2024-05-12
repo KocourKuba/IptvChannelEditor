@@ -42,8 +42,6 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\md5.h"
 #include "UtilsLib\crc32.h"
 
-#include "7zpp\SevenZipWrapper.h"
-
 #include "BugTrap\Source\Client\BugTrap.h"
 
 #ifdef _DEBUG
@@ -62,8 +60,8 @@ std::wstring CIPTVChannelEditorApp::PACK_DLL_PATH = LR"(dll64\)";
 std::wstring CIPTVChannelEditorApp::PACK_DLL_PATH = LR"(dll\)";
 #endif //  _WIN64
 #else
-std::wstring CIPTVChannelEditorApp::DEV_PATH = L"";
-std::wstring CIPTVChannelEditorApp::PACK_DLL_PATH = L"";
+std::wstring CIPTVChannelEditorApp::DEV_PATH;
+std::wstring CIPTVChannelEditorApp::PACK_DLL_PATH;
 #endif // _DEBUG
 
 static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA-A016-512BA5995352}");
@@ -243,15 +241,26 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		}
 	}
 
-	HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
-	if (hAppRunningMutex && !GetConfig().IsPortable())
+	if (!GetConfig().IsPortable())
 	{
-		AfxMessageBox(IDS_STRING_ALREADY_RUNNING, MB_OK | MB_ICONEXCLAMATION);
-		CloseHandle(hAppRunningMutex);
-		ExitProcess(0);
+		HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
+		if (hAppRunningMutex && !GetConfig().IsPortable())
+		{
+			AfxMessageBox(IDS_STRING_ALREADY_RUNNING, MB_OK | MB_ICONEXCLAMATION);
+			CloseHandle(hAppRunningMutex);
+			ExitProcess(0);
+		}
+		g_hAppRunningMutex = CreateMutex(nullptr, FALSE, g_sz_Run_GUID);
 	}
 
-	g_hAppRunningMutex = CreateMutex(nullptr, FALSE, g_sz_Run_GUID);
+	const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
+	if (!std::filesystem::exists(pack_dll))
+	{
+		AfxMessageBox(IDS_STRING_ERR_DLL_MISSING, MB_OK | MB_ICONSTOP);
+		return false;
+	}
+
+	m_archiver.SetLibPath(pack_dll);
 
 	// set default value
 	if (GetConfig().get_int(true, REG_MAX_CACHE_TTL) < 1)
@@ -264,9 +273,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	CheckAndCreateDirs(REG_WEB_UPDATE_PATH, GetAppPath(L"WebUpdate\\"));
 	CheckAndCreateDirs(REG_SAVE_SETTINGS_PATH, GetAppPath(L"Settings\\"));
 
-	const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
-	SevenZip::SevenZipWrapper archiver(pack_dll);
-	auto& extractor = archiver.GetExtractor();
+	auto& extractor = m_archiver.GetExtractor();
 
 	// prepare and unpack default picons
 	const std::filesystem::path image_cache = CheckAndCreateDirs(REG_SAVE_IMAGE_PATH, GetAppPath(L"ImageCache\\"));
@@ -277,9 +284,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		extractor.SetArchivePath(package);
 		if (!extractor.ExtractArchive(image_cache.wstring()))
 		{
-			std::wstring msg = load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE);
-			msg += fmt::format(L"\nunpack: {:s}\nto: {:s} ", package, image_cache.wstring());
-			AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PACKAGE), package, image_cache.wstring()).c_str(), MB_OK | MB_ICONSTOP);
 			return false;
 		}
 	}
@@ -294,9 +299,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 			extractor.SetArchivePath(channels_pkg);
 			if (!extractor.ExtractArchive(channels_dir))
 			{
-				std::wstring msg = load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE);
-				msg += fmt::format(L"\nunpack: {:s}\nto: {:s} ", channels_pkg, channels_dir.wstring());
-				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+				AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PACKAGE), channels_pkg, channels_dir.wstring()).c_str(), MB_OK | MB_ICONSTOP);
 			}
 		}
 	}
@@ -352,9 +355,8 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 			auto plugin = GetPluginFactory().create_plugin(plugin_type);
 			if (plugin)
 			{
-				CString str;
-				str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, plugin->get_title().c_str());
-				AfxMessageBox(str, MB_YESNO);
+				const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_PACK_PLUGIN), plugin->get_title());
+				AfxMessageBox(msg.c_str(), MB_YESNO);
 			}
 		}
 
@@ -365,9 +367,13 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	{
 		std::wstring output_path;
 		if (cmdInfo.m_strFileName.IsEmpty())
+		{
 			output_path = GetConfig().get_string(true, REG_OUTPUT_PATH);
+		}
 		else
+		{
 			output_path = cmdInfo.m_strFileName.GetString();
+		}
 
 		for (const auto& pair : GetPluginFactory().get_all_plugins())
 		{
@@ -378,9 +384,8 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 				auto plugin = GetPluginFactory().create_plugin(pair.first);
 				if (plugin)
 				{
-					CString str;
-					str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, plugin->get_title().c_str());
-					if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
+					const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_PACK_PLUGIN), plugin->get_title());
+					if (IDNO == AfxMessageBox(msg.c_str(), MB_YESNO)) break;
 				}
 			}
 		}
@@ -496,12 +501,19 @@ bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 		std::wstring cmd = L"download --force";
 		if (RequestToUpdateServer(cmd, false) != 0)
 		{
-			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FILE_MISSING), update_pkg).c_str(), MB_OK | MB_ICONSTOP);
+			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_DOWNLOAD_PACKAGE), update_pkg).c_str(), MB_OK | MB_ICONSTOP);
 			return false;
 		}
+		Sleep(500);
 	}
 
 	// Parse the buffer using the xml file parsing library into doc
+
+	if (!std::filesystem::exists(update_pkg))
+	{
+		AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FILE_MISSING), update_pkg).c_str(), MB_OK | MB_ICONSTOP);
+		return false;
+	}
 
 	std::ifstream file(update_pkg);
 	std::stringstream buffer;
@@ -562,8 +574,7 @@ bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 			std::filesystem::copy(GetAppPath(utils::UPDATES_FOLDER) + name, target, std::filesystem::copy_options::overwrite_existing, err);
 			if (err.value() != 0)
 			{
-				std::wstring msg = load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE);
-				msg += fmt::format(L"\nfile: {:s} error code: {:d} ", name, err.value());
+				const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value(), name, target);
 				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
 				return false;
 			}
@@ -762,7 +773,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 		std::filesystem::copy(plugin_dir, plugin_root, recursive_copy | overwrite, err);
 		if (err.value() != 0)
 		{
-			const auto& msg = fmt::format(L"Error copy ({:d} from {:s} to {:s})", err.value(), plugin_dir, plugin_dir);
+			const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value(), plugin_dir, plugin_root.wstring());
 			if (showMessage)
 			{
 				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
@@ -776,14 +787,13 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	}
 	else
 	{
-		SevenZip::SevenZipWrapper archiver(pack_dll);
-		auto& extractor = archiver.GetExtractor();
+		auto& extractor = m_archiver.GetExtractor();
 		const auto& plugin_package = GetAppPath(utils::PLUGIN_PACKAGE);
 		extractor.SetArchivePath(plugin_package);
+		extractor.DetectCompressionFormat();
 		if (!extractor.ExtractArchive(plugin_root))
 		{
-			std::wstring msg = load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE);
-			msg += fmt::format(L"\nunpack: {:s} to: {:s} ", plugin_package, plugin_root.wstring());
+			const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PACKAGE), plugin_package, plugin_root.wstring());
 			if (showMessage)
 			{
 				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
@@ -1275,15 +1285,14 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	if (!res)
 	{
 		std::filesystem::remove(packed_file, err);
-		CString msg;
-		msg.Format(IDS_STRING_ERR_FAILED_PACK, packed_file.c_str());
+		const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_PACK), packed_file);
 		if (showMessage)
 		{
-			AfxMessageBox(msg, MB_OK | MB_ICONSTOP);
+			AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
 		}
 		else
 		{
-			LogProtocol(msg.GetString());
+			LogProtocol(msg);
 		}
 
 		return false;

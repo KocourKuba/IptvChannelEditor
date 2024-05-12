@@ -118,7 +118,7 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 
 	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
 
-	const auto& cache_file = GetCachePath(hash_str);
+	const auto& cache_file = GetCachedPath(hash_str);
 	if (!CheckIsCacheExpired(cache_file))
 	{
 		std::ifstream in_file(cache_file.c_str());
@@ -371,12 +371,34 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 	return false;
 }
 
-std::filesystem::path CUrlDownload::GetCachePath(const std::wstring& hash_str)
+std::filesystem::path CUrlDownload::GetCachedPath(const std::wstring& url)
 {
 	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
-	std::filesystem::create_directory(cache_file);
-	cache_file.append(fmt::format(L"{:08x}", xxh::xxhash<32>(hash_str)));
-	return cache_file;
+	return GetCacheDir() / fmt::format(L"{:08x}", xxh::xxhash<32>(url));
+}
+
+std::filesystem::path CUrlDownload::GetCacheDir()
+{
+	std::filesystem::path dir = std::filesystem::temp_directory_path().append(L"iptv_cache");
+	std::error_code err;
+	std::filesystem::create_directories(dir, err);
+	return dir;
+}
+
+void CUrlDownload::ClearCache()
+{
+	std::error_code err;
+	std::filesystem::remove_all(GetCacheDir(), err);
+}
+
+void CUrlDownload::ClearCachedUrl(const std::wstring& url)
+{
+	const auto& cache_file = GetCachedPath(url);
+	if (std::filesystem::exists(cache_file))
+	{
+		std::error_code err;
+		std::filesystem::remove(cache_file, err);
+	}
 }
 
 bool CUrlDownload::CheckIsCacheExpired(const std::wstring& cache_file)

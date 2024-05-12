@@ -104,17 +104,19 @@ BOOL CPathsSettingsPage::OnApply()
 	if (m_lists_path.Right(1) != '\\')
 		m_lists_path += '\\';
 
-	if (m_lists_path != GetConfig().get_string(true, REG_LISTS_PATH).c_str())
+	const auto& list_path = GetConfig().get_string(true, REG_LISTS_PATH);
+	if (m_lists_path != list_path.c_str())
 	{
 		auto res = AfxMessageBox(IDS_STRING_COPY_LISTS, MB_ICONEXCLAMATION | MB_YESNO);
 		if (res == IDYES)
 		{
 			std::error_code err;
-			std::filesystem::copy(GetConfig().get_string(true, REG_LISTS_PATH), m_lists_path.GetString(),
+			std::filesystem::copy(list_path, m_lists_path.GetString(),
 								  std::filesystem::copy_options::overwrite_existing| std::filesystem::copy_options::recursive, err);
 			if (err.value() != 0)
 			{
-				AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value()).c_str(), MB_ICONERROR | MB_OK);
+				const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value(), list_path, m_lists_path.GetString());
+				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
 			}
 		}
 	}
@@ -137,17 +139,19 @@ BOOL CPathsSettingsPage::OnApply()
 	if (m_plugins_settings_path.Right(1) != '\\')
 		m_plugins_settings_path += '\\';
 
-	if (m_plugins_settings_path != GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH).c_str())
+	const auto& settings_path = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH);
+	if (m_plugins_settings_path != settings_path.c_str())
 	{
 		auto res = AfxMessageBox(IDS_STRING_COPY_CONFIGS, MB_ICONEXCLAMATION | MB_YESNO);
 		if (res == IDYES)
 		{
 			std::error_code err;
-			std::filesystem::copy(GetConfig().get_string(true, REG_LISTS_PATH), m_lists_path.GetString(),
+			std::filesystem::copy(settings_path, m_plugins_settings_path.GetString(),
 								  std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive, err);
 			if (err.value() != 0)
 			{
-				AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value()).c_str(), MB_ICONERROR | MB_OK);
+				const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value(), settings_path, m_plugins_settings_path.GetString());
+				AfxMessageBox(msg.c_str(), MB_ICONERROR | MB_OK);
 			}
 		}
 	}

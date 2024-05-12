@@ -33,6 +33,8 @@ DEALINGS IN THE SOFTWARE.
 #include "resource.h"		// main symbols
 #include "PluginDefines.h"
 
+#include "7zpp\SevenZipWrapper.h"
+
 // CEdemChannelEditorApp:
 // See EdemChannelEditor.cpp for the implementation of this class
 //
@@ -73,6 +75,7 @@ public:
 	static std::wstring DEV_PATH;
 	static std::wstring PACK_DLL_PATH;
 	std::map<WORD, LangStruct> m_LangMap;
+	SevenZip::SevenZipWrapper m_archiver;
 };
 
 class CCommandLineInfoEx : public CCommandLineInfo

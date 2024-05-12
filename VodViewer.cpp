@@ -211,8 +211,12 @@ BOOL CVodViewer::PreTranslateMessage(MSG* pMsg)
 
 void CVodViewer::OnCancel()
 {
-	m_evtStop.SetEvent();
-	Sleep(1000);
+	if (!m_evtFinished.Lock(0))
+	{
+		m_evtStop.SetEvent();
+		Sleep(1000);
+	}
+
 	EndDialog(IDCANCEL);
 }
 

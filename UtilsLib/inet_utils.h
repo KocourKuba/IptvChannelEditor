@@ -73,8 +73,12 @@ public:
 	*/
 	void SetCacheTtl(int cache_ttl) { m_cache_ttl_sec = cache_ttl; }
 	const std::wstring& GetLastErrorMessage() { return m_error_message; };
-	std::filesystem::path GetCachePath(const std::wstring& url);
 	bool CheckIsCacheExpired(const std::wstring& cache_file);
+
+	static void ClearCache();
+	static void ClearCachedUrl(const std::wstring& url);
+	static std::filesystem::path GetCacheDir();
+	static std::filesystem::path GetCachedPath(const std::wstring& url);
 
 private:
 	int m_cache_ttl_sec = 0;

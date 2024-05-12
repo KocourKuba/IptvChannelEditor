@@ -33,8 +33,6 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 
-#include "7zpp\SevenZipWrapper.h"
-
 void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream& info)
 {
 	info.set_uri(url);
@@ -369,22 +367,14 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 	if (file_fmt == SevenZip::CompressionFormat::Unknown)
 		return false;
 
-	auto cache_file = m_dl.GetCachePath(internal_epg_url);
+	auto cache_file = utils::CUrlDownload::GetCachedPath(internal_epg_url);
 	if (file_fmt == SevenZip::CompressionFormat::GZip || file_fmt == SevenZip::CompressionFormat::Zip)
 	{
 		std::vector<char> buffer;
-		const auto& unpacked_path = m_dl.GetCachePath(internal_epg_url.substr(0, internal_epg_url.length() - 3));
+		const auto& unpacked_path = utils::CUrlDownload::GetCachedPath(internal_epg_url.substr(0, internal_epg_url.length() - 3));
 		if (m_dl.CheckIsCacheExpired(unpacked_path))
 		{
-			const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
-			if (!std::filesystem::exists(pack_dll))
-			{
-				AfxMessageBox(IDS_STRING_ERR_DLL_MISSING, MB_OK | MB_ICONSTOP);
-				return false;
-			}
-
-			SevenZip::SevenZipWrapper archiver(pack_dll);
-			auto& extractor = archiver.GetExtractor();
+			auto& extractor = theApp.m_archiver.GetExtractor();
 			extractor.SetArchivePath(cache_file);
 			extractor.SetCompressionFormat(file_fmt);
 

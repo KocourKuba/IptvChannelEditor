@@ -240,9 +240,7 @@ void CMainSettingsPage::OnBnClickedButtonReset()
 
 void CMainSettingsPage::OnBnClickedButtonClearCache()
 {
-	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
-	std::error_code err;
-	std::filesystem::remove_all(cache_file, err);
+	utils::CUrlDownload::ClearCache();
 	if (m_epg_cache)
 	{
 		for(auto& item : *m_epg_cache)

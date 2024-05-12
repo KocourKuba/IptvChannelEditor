@@ -56,9 +56,6 @@ DEALINGS IN THE SOFTWARE.
 #include "Constants.h"
 #include "FillParamsInfoDlg.h"
 
-#include "7zpp\SevenZipWrapper.h"
-
-
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 #include "UtilsLib\md5.h"
@@ -1207,14 +1204,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 		if (m_playlistMap.empty())
 		{
 			AfxMessageBox(IDS_STRING_ERR_EMPTY_PLAYLIST, MB_OK | MB_ICONERROR);
-			utils::CUrlDownload dl;
-
-			const auto& cache_file = dl.GetCachePath(m_playlist_url);
-			if (std::filesystem::exists(cache_file))
-			{
-				std::error_code err;
-				std::filesystem::remove(cache_file, err);
-			}
+			utils::CUrlDownload::ClearCachedUrl(m_playlist_url);
 		}
 	}
 
@@ -3855,13 +3845,14 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			const auto& dir_path = image_cache / std::filesystem::path(image_lib.get_package_name()).stem() / L"";
 			CWaitCursor cur;
 			std::stringstream file_data;
-			utils::CUrlDownload dl;
-			const auto& file_path = dl.GetCachePath(image_cache / image_lib.get_package_name());
+			const auto& file_path = utils::CUrlDownload::GetCachedPath(image_lib.get_url());
 			if (!std::filesystem::exists(file_path) || std::filesystem::file_size(file_path) == 0)
 			{
 				std::error_code err;
 				std::filesystem::remove_all(dir_path, err);
 
+				utils::CUrlDownload dl;
+				dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL, 24));
 				if (!dl.DownloadFile(image_lib.get_url(), file_data))
 				{
 					AfxMessageBox(dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
@@ -3871,25 +3862,13 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 
 			if (!std::filesystem::exists(dir_path))
 			{
-				std::ofstream os(file_path, std::ofstream::binary);
-				os << file_data.rdbuf();
-				if (os.bad())
+				auto& extractor = theApp.m_archiver.GetExtractor();
+				extractor.SetArchivePath(file_path);
+				extractor.DetectCompressionFormat();
+				if (!extractor.ExtractArchive(dir_path.wstring()))
 				{
-					AfxMessageBox(dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
-					break;
-				}
-
-				os.close();
-				SevenZip::SevenZipWrapper archiver(GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL);
-				if (!archiver.OpenArchive(file_path))
-				{
-					AfxMessageBox(L"Error open archive. Aborting.", MB_ICONERROR | MB_OK);
-					break;
-				}
-
-				if (!archiver.GetExtractor().ExtractArchive(dir_path.c_str()))
-				{
-					AfxMessageBox(L"Error unpacking archive. Aborting.", MB_ICONERROR | MB_OK);
+					const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_UNPACK_PACKAGE), file_path.wstring(), dir_path.wstring());
+					AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
 					break;
 				}
 			}
@@ -4080,9 +4059,8 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 		if (!theApp.PackPlugin(pair.first, false, m_wndMakeWebUpdate.GetCheck()))
 		{
 			success = false;
-			CString str;
-			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, plugin->get_title().c_str());
-			if (IDNO == AfxMessageBox(str, MB_YESNO)) break;
+			const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_PACK_PLUGIN), plugin->get_title());
+			if (IDNO == AfxMessageBox(msg.c_str(), MB_YESNO)) break;
 		}
 	}
 
@@ -4130,9 +4108,8 @@ void CIPTVChannelEditorDlg::OnMakeAllAccounts()
 		if (!theApp.PackPlugin(m_plugin_type, false, m_wndMakeWebUpdate.GetCheck()))
 		{
 			success = false;
-			CString str;
-			str.Format(IDS_STRING_ERR_FAILED_PACK_PLUGIN, title.c_str());
-			if (IDNO == AfxMessageBox(str, MB_ICONEXCLAMATION|MB_YESNO)) break;
+			const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_PACK_PLUGIN), title);
+			if (IDNO == AfxMessageBox(msg.c_str(), MB_ICONEXCLAMATION | MB_YESNO)) break;
 		}
 	}
 

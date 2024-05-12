@@ -1762,8 +1762,8 @@ BEGIN
     IDS_STRING_BUTTON_UPDATE_CHANGED "Update channels changed in the playlist"
     IDS_STRING_USED_CONFIG  "Used config: {:s}"
     IDS_STRING_WARN_DELETE_ITEMS "Delete selected items. Are your sure?"
-    IDS_STRING_ERR_FAILED_PACK "Failed to pack plugin %s"
-    IDS_STRING_ERR_FAILED_PACK_PLUGIN "Failed to pack plugin %s. Continue?"
+    IDS_STRING_ERR_FAILED_PACK "Failed to pack plugin {:s}"
+    IDS_STRING_ERR_FAILED_PACK_PLUGIN "Failed to pack plugin {:s}. Continue?"
     IDS_STRING_INFO_CREATE_ALL_SUCCESS "All plugins created succesefully"
     IDS_STRING_LOAD_CHANNELS_MASK "Channels xml(*.xml)|*.xml||"
     IDS_STRING_LOAD_ICON    "PNG file(*.png)|*.png|All Files (*.*)|*.*||"
@@ -1818,6 +1818,14 @@ BEGIN
     IDS_STRING_EDEM_STANDARD_SQ "Standard (Square icons)"
     IDS_STRING_EDEM_THEMATIC_SQ "Thematic (Square icons)"
     IDS_STRING_EDEM_THEMATIC_SORTED_SQ "Thematic Sorted (Square icons)"
+    IDS_STRING_ERR_CANT_LOAD_CONFIG "Can't load plugins configurations!"
+    IDS_STRING_BUTTON_ADD_EPG "Add XMLTV source"
+    IDS_STRING_COMBO_CUSTOM_XMLTV_EPG "XMLTV source"
+    IDS_STRING_COMBO_CUSTOM_STREAM_TYPE "Stream type for live URL"
+    IDS_STRING_COMBO_CUSTOM_ARC_STREAM_TYPE "Stream type for archive URL"
+    IDS_STRING_ERR_FAILED_UNPACK_PACKAGE 
+                            "Failed to unpack package!\n\nunpack: {:s}\nto: {:s}"
+    IDS_STRING_ERR_FAILED_DOWNLOAD_PACKAGE "Failed to download package!\n{:s}"
 END
 
 STRINGTABLE
@@ -1951,8 +1959,6 @@ BEGIN
     IDS_STRING_EDIT_PARSE_PATTERN 
                             "Regular expression for parsing channel url from the playlist. Capture groups mapped to the templates replaceble values. If url does not match the pattern it will be threat as Custom Url. User defined regex capture groups not supported!"
     IDS_STRING_COL_WEB_PATH "Web Path"
-    IDS_STRING_ERR_FAILED_UNPACK_PLUGIN_SOURCE 
-                            "Failed to unpack plugin package!"
     IDS_STRING_EDIT_DURATION 
                             "{DURATION} value used in the flussonic archive template and set length of the requested archive frame in seconds. {STOP} value used in the archive template Rostelecom to calculate end timestamp of archive frame in seconds. Typically 3-4 hours."
     IDS_STRING_EDIT_STREAM_TEMPLATE 
@@ -2063,7 +2069,7 @@ BEGIN
                             "Set Global Plugin Action manifest entries. See http://files.dune-hd.com/sdk/doc/html/plugins.html#global_plugin_actions"
     IDS_STRING_COPY_LISTS   "The root of the Channels lists path changed. Copy contained files to the new location? \nExisting files with the same name will be overwritten."
     IDS_STRING_COPY_CONFIGS "The root of the Plugins configuration path changed. Copy contained files to the new location? \nExisting files with the same name will be overwritten."
-    IDS_STRING_ERR_COPY     "Copy error! Error code {:d}"
+    IDS_STRING_ERR_COPY     "Copy error ({:d})!\nCopy: {:s} to {:s}"
     IDS_STRING_EDIT_PLUGIN_UPDATE_NAME_TEMPLATE 
                             "Template for generating web update name and description"
     IDS_STRING_COMBO_LANG   "Change application language"
@@ -2106,15 +2112,6 @@ BEGIN
     IDS_STRING_CHECK_ENABLE_BALANCE 
                             "Enable show balance/account info in the plugin (if supported)"
     IDS_STRING_BUTTON_PLAYLIST_SHOW_LINK "Show playlist url"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_STRING_ERR_CANT_LOAD_CONFIG "Can't load plugins configurations!"
-    IDS_STRING_BUTTON_ADD_EPG "Add XMLTV source"
-    IDS_STRING_COMBO_CUSTOM_XMLTV_EPG "XMLTV source"
-    IDS_STRING_COMBO_CUSTOM_STREAM_TYPE "Stream type for live URL"
-    IDS_STRING_COMBO_CUSTOM_ARC_STREAM_TYPE "Stream type for archive URL"
 END
 
 #endif    // English (United States) resources
