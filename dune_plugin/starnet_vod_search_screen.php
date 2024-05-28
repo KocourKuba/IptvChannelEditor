@@ -4,7 +4,7 @@ require_once 'lib/abstract_preloaded_regular_screen.php';
 class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
 {
     const ID = 'search_screen';
-    const SEARCH_ICON_PATH = 'plugin_file://icons/icon_search.png';
+    const SEARCH_ICON_PATH = 'plugin_file://img/icon_search.png';
 
     const VOD_SEARCH_LIST = 'vod_search_items';
     const VOD_SEARCH_ITEM = 'vod_search_item';

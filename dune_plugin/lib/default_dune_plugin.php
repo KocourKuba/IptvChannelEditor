@@ -30,7 +30,7 @@ class Default_Dune_Plugin implements DunePlugin
     const VOD_CHANNEL_ICON_HEIGHT = 290;
 
     const DEFAULT_CHANNEL_ICON_PATH = 'plugin_file://icons/channel_unset.png';
-    const DEFAULT_MOV_ICON_PATH = 'plugin_file://icons/mov_unset.png';
+    const DEFAULT_MOV_ICON_PATH = 'plugin_file://img/mov_unset.png';
     const VOD_ICON_PATH = 'gui_skin://small_icons/movie.aai';
     const RESOURCE_URL = 'http://iptv.esalecrm.net/res';
     const HISTORY_FOLDER = 'history/';

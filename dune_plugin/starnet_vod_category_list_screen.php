@@ -8,16 +8,16 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
     const ID = 'vod_category_list';
 
     const FAV_MOVIES_GROUP_CAPTION = 'plugin_favorites';
-    const FAV_MOVIES_GROUP_ICON = 'plugin_file://icons/fav_movie.png';
+    const FAV_MOVIES_GROUP_ICON = 'plugin_file://img/fav_movie.png';
 
     const SEARCH_MOVIES_GROUP_CAPTION = 'search';
-    const SEARCH_MOVIES_GROUP_ICON = 'plugin_file://icons/search_movie.png';
+    const SEARCH_MOVIES_GROUP_ICON = 'plugin_file://img/search_movie.png';
 
     const FILTER_MOVIES_GROUP_CAPTION = 'filter';
-    const FILTER_MOVIES_GROUP_ICON = 'plugin_file://icons/filter_movie.png';
+    const FILTER_MOVIES_GROUP_ICON = 'plugin_file://img/filter_movie.png';
 
     const HISTORY_MOVIES_GROUP_CAPTION = 'plugin_history';
-    const HISTORY_MOVIES_GROUP_ICON = 'plugin_file://icons/history_movie.png';
+    const HISTORY_MOVIES_GROUP_ICON = 'plugin_file://img/history_movie.png';
 
     /**
      * @var array
