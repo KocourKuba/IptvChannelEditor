@@ -17,6 +17,7 @@ class Plugin_Constants
     // Non configurable parameters by external config
     const /* (bool) */ TV_FAVORITES_SUPPORTED = 'tv_fav';
     const /* (bool) */ VOD_QUALITY_SUPPORTED = 'vod_quality';
+    const /* (bool) */ VOD_AUDIO_SUPPORTED = 'vod_audio';
     const /* (bool) */ VOD_FILTER_SUPPORTED = 'vod_filter';
     const /* (bool) */ BALANCE_SUPPORTED = 'balance_support';
 

@@ -100,6 +100,16 @@ class Movie implements User_Input_Handler
     public $budget = '';
 
     /**
+     * @var array
+     */
+    public $details = array();
+
+    /**
+     * @var array
+     */
+    public $rate_details = array();
+
+    /**
      * @var string
      */
     public $type = 'movie';
@@ -117,7 +127,12 @@ class Movie implements User_Input_Handler
     /**
      * @var array|string[]
      */
-    public $variants_list;
+    public $qualities_list;
+
+    /**
+     * @var array|string[]
+     */
+    public $audio_list;
 
     /**
      * @param string $id
@@ -234,7 +249,7 @@ class Movie implements User_Input_Handler
      * @param string $description
      * @param string $poster_url
      * @param string $length_min
-     * @param int $year
+     * @param string $year
      * @param string $directors_str
      * @param string $scenarios_str
      * @param string $actors_str
@@ -244,6 +259,8 @@ class Movie implements User_Input_Handler
      * @param string $rate_mpaa
      * @param string $country
      * @param string $budget
+     * @param array $details
+     * @param array $rate_details
      */
     public function set_data(
         $name,
@@ -260,7 +277,9 @@ class Movie implements User_Input_Handler
         $rate_kinopoisk,
         $rate_mpaa,
         $country,
-        $budget)
+        $budget = '',
+        $details = array(),
+        $rate_details = array())
     {
         $this->name = $this->to_string($name);
         $this->name_original = $this->to_string($name_original);
@@ -277,6 +296,8 @@ class Movie implements User_Input_Handler
         $this->rate_mpaa = $this->to_string($rate_mpaa);
         $this->country = $this->to_string($country);
         $this->budget = $this->to_string($budget);
+        $this->details = $details;
+        $this->rate_details = $rate_details;
     }
 
     /**
@@ -294,21 +315,23 @@ class Movie implements User_Input_Handler
     }
 
     /**
-     * @param string $id
-     * @param string $name
-     * @param string $description
-     * @param string $playback_url
-     * @param bool $playback_url_is_stream_url
+     * @param $id string
+     * @param $name string
+     * @param $description
+     * @param $playback_url string
+     * @param $season_id string
+     * @param $movie_image string
+     * @param $playback_url_is_stream_url bool
      * @throws Exception
      */
-    public function add_series_data($id, $name, $description, $playback_url, $season_id = '', $series_image = '', $playback_url_is_stream_url = true)
+    public function add_series_data($id, $name, $description, $playback_url, $season_id = '', $movie_image = '', $playback_url_is_stream_url = true)
     {
         $series = new Movie_Series($id);
         $series->name = $this->to_string($name);
         $series->series_desc = $this->to_string($description);
         $series->season_id = $this->to_string($season_id);
         $series->playback_url = $this->to_string($playback_url);
-        $series->movie_image = $this->to_string($series_image);
+        $series->movie_image = $this->to_string($movie_image);
         $series->playback_url_is_stream_url = $playback_url_is_stream_url;
 
         $this->series_list[$id] = $series;
@@ -319,22 +342,33 @@ class Movie implements User_Input_Handler
      * @param $name
      * @param $description
      * @param $playback_url
-     * @param $variants
+     * @param $qualities
+     * @param $audios
      * @param $season_id
      * @param $playback_url_is_stream_url
      * @throws Exception
      */
-    public function add_series_variants_data($id, $name, $description, $variants, $playback_url = '', $season_id = '', $playback_url_is_stream_url = true)
+    public function add_series_with_variants_data($id,
+                                                  $name,
+                                                  $description,
+                                                  $qualities,
+                                                  $audios,
+                                                  $playback_url = '',
+                                                  $season_id = '',
+                                                  $playback_url_is_stream_url = true)
     {
         $series = new Movie_Series($id);
         $series->name = $this->to_string($name);
         $series->series_desc = $this->to_string($description);
-        $series->variants = $variants;
         $series->season_id = $this->to_string($season_id);
         $series->playback_url = $this->to_string($playback_url);
         $series->playback_url_is_stream_url = $playback_url_is_stream_url;
+        $series->qualities = $qualities;
+        $this->qualities_list = array_keys($qualities);
+        $series->audios = $audios;
+        $this->audio_list = array_keys($audios);
+
         $this->series_list[$id] = $series;
-        $this->variants_list = array_keys($variants);
     }
 
     /**
@@ -357,14 +391,16 @@ class Movie implements User_Input_Handler
             PluginMovie::rate_kinopoisk => $this->rate_kinopoisk,
             PluginMovie::rate_mpaa => $this->rate_mpaa,
             PluginMovie::country => $this->country,
-            PluginMovie::budget => $this->budget
+            PluginMovie::budget => $this->budget,
+            PluginMovie::details => $this->details,
+            PluginMovie::rate_details => $this->rate_details,
         );
     }
 
     /**
      * @return bool
      */
-    public function has_variants()
+    public function has_qualities()
     {
         if (empty($this->series_list)) {
             return false;
@@ -372,7 +408,21 @@ class Movie implements User_Input_Handler
 
         $values = array_values($this->series_list);
         $val = $values[0];
-        return isset($val->variants) && count($val->variants) > 1;
+        return isset($val->qualities) && count($val->qualities) > 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function has_audios()
+    {
+        if (empty($this->series_list)) {
+            return false;
+        }
+
+        $values = array_values($this->series_list);
+        $val = $values[0];
+        return isset($val->audios) && count($val->audios) > 1;
     }
 
     /**
@@ -382,7 +432,7 @@ class Movie implements User_Input_Handler
     public function get_movie_play_info(MediaURL $media_url)
     {
         hd_debug_print(null, true);
-        hd_debug_print($media_url->get_media_url_str(), true);
+        hd_debug_print($media_url, true);
 
         if (!isset($media_url->screen_id)) {
             hd_debug_print("get_movie_play_info: List screen in media url not set: " . $media_url->get_raw_string());
@@ -420,22 +470,22 @@ class Movie implements User_Input_Handler
         $sel_id = isset($media_url->episode_id) ? $media_url->episode_id : null;
         $series_array = array();
         $initial_series_ndx = 0;
-        $variant = $this->plugin->get_parameter(PARAM_VOD_DEFAULT_VARIANT, 'auto');
+        $variant = $this->plugin->get_parameter(PARAM_VOD_DEFAULT_QUALITY, 'auto');
         $counter = 0; // series index. Not the same as the key of series list
         $initial_start_array = array();
         foreach ($list as $series) {
-            if (isset($series->variants)) {
-                if (!array_key_exists($variant, $series->variants)) {
-                    $best_var = $series->variants;
+            if (isset($series->qualities)) {
+                if (!array_key_exists($variant, $series->qualities)) {
+                    $best_var = $series->qualities;
                     array_pop($best_var);
                     foreach ($best_var as $key => $var) {
                         $variant = $key;
                     }
                 }
 
-                if (isset($series->variants[$variant])) {
-                    $playback_url = $series->variants[$variant]->playback_url;
-                    $playback_url_is_stream_url = $series->variants[$variant]->playback_url_is_stream_url;
+                if (isset($series->qualities[$variant])) {
+                    $playback_url = $series->qualities[$variant]->playback_url;
+                    $playback_url_is_stream_url = $series->qualities[$variant]->playback_url_is_stream_url;
                 } else {
                     $playback_url = $series->playback_url;
                     $playback_url_is_stream_url = $series->playback_url_is_stream_url;

@@ -112,6 +112,8 @@ class Default_Dune_Plugin implements DunePlugin
 
     protected function __construct()
     {
+        ini_set('memory_limit', '256M');
+
         $this->screens = array();
         $this->new_ui_support = HD::rows_api_support();
         $this->m3u_parser = new M3uParser();
@@ -997,7 +999,7 @@ class Default_Dune_Plugin implements DunePlugin
             PARAM_VOD_LAST => PARAM_VOD_LAST,
             PARAM_PLAYLIST_IDX => PARAM_PLAYLIST_IDX,
             PARAM_CHANNELS_LIST_PATH => PARAM_CHANNELS_LIST_PATH,
-            PARAM_VOD_DEFAULT_VARIANT => PARAM_VOD_DEFAULT_VARIANT,
+            PARAM_VOD_DEFAULT_QUALITY => PARAM_VOD_DEFAULT_QUALITY,
             'channels_list' => PARAM_CHANNELS_LIST_NAME,
             'buf_time' => PARAM_BUFFERING_TIME,
             'delay_time' => PARAM_ARCHIVE_DELAY_TIME,

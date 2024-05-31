@@ -61,9 +61,7 @@ class sharavoz_config extends default_config
     }
 
     /**
-     * @param string $movie_id
-     * @return Movie
-     * @throws Exception
+     * @inheritDoc
      */
     public function TryLoadMovie($movie_id)
     {
@@ -147,6 +145,9 @@ class sharavoz_config extends default_config
         //    },
         //
 
+        $age = self::get_data_variant($item->info, "age");
+        $age_limit = empty($age) ? array() : array(TR::t('vod_screen_age_limit') => $age);
+
         $movie = new Movie($movie_id, $this->plugin);
         $movie->set_data(
             self::get_data_variant($item->info, "name"), // name,
@@ -161,9 +162,11 @@ class sharavoz_config extends default_config
             self::get_data_variant($item->info, "genre"), // genres_str,
             self::get_data_variant($item->info, "rating"), // rate_imdb,
             self::get_data_variant($item->info, "rating_count_kinopoisk"), // rate_kinopoisk,
-            self::get_data_variant($item->info, "age"), // rate_mpaa,
+            '', // rate_mpaa,
             self::get_data_variant($item->info, "country"), // country,
-            '' // budget
+            '',
+            array(),
+            $age_limit // rate details
         );
 
         if ($stream_type === xtream_codes_api::VOD) {
@@ -200,8 +203,6 @@ class sharavoz_config extends default_config
     {
         hd_debug_print(null, true);
 
-        $t = microtime(1);
-
         $category_tree = array();
         $this->parse_categories(xtream_codes_api::VOD, $category_tree);
         $this->parse_categories(xtream_codes_api::SERIES, $category_tree);
@@ -223,9 +224,7 @@ class sharavoz_config extends default_config
             $category_index[$category->get_id()] = $category;
         }
 
-        hd_debug_print("Categories read: " . count($category_list));
-        hd_debug_print("Fetched categories at " . (microtime(1) - $t) . " secs");
-        HD::ShowMemoryUsage();
+        hd_debug_print("Categories read: $category_count");
 
         return true;
     }
@@ -233,46 +232,44 @@ class sharavoz_config extends default_config
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     * @param string $query_id
-     * @return array
-     * @throws Exception
+     * @inheritDoc
      */
     public function getMovieList($query_id)
     {
         hd_debug_print(null, true);
         hd_debug_print($query_id);
 
+        $page_idx = $this->get_current_page($query_id);
+        if ($page_idx < 0)
+            return array();
+
         // Фильмы_1_vod
         $arr = explode("_", $query_id);
         $category_id = isset($arr[1]) ? $arr[1] : $query_id;
 
         $vod_items = $this->xtream->get_streams($arr[2], $category_id);
-        $current_offset = $this->get_next_page($query_id, 0);
-
         $pos = 0;
         $movies = array();
         foreach ($vod_items as $movie) {
-            if ($pos++ < $current_offset) continue;
+            if ($pos++ < $page_idx) continue;
 
             $category = (string)$movie->category_id;
             if (empty($category)) {
                 $category = TR::load_string('no_category');
             }
 
-            if ($category_id === Vod_Category::FLAG_ALL || $category_id === $category) {
+            if ($category_id === Vod_Category::FLAG_ALL_MOVIES || $category_id === $category) {
                 $movies[] = self::CreateShortMovie($movie);
             }
         }
-        $this->get_next_page($query_id, $pos - $current_offset);
+        $this->get_next_page($query_id, $pos - $page_idx);
 
         hd_debug_print("Movies read for query: $query_id: " . count($movies));
         return $movies;
     }
 
     /**
-     * @param string $keyword
-     * @return array
-     * @throws Exception
+     * @inheritDoc
      */
     public function getSearchList($keyword)
     {
@@ -280,6 +277,8 @@ class sharavoz_config extends default_config
         hd_debug_print($keyword);
 
         $movies = array();
+
+        $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
         $this->search(xtream_codes_api::VOD, $keyword, $movies);
         $this->search(xtream_codes_api::SERIES, $keyword, $movies);

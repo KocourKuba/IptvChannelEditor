@@ -11,8 +11,8 @@ class vidok_config extends default_config
         $servers = parent::get_servers();
         if (empty($servers) && $this->load_settings()) {
             $servers = array();
-            foreach ($this->account_data['settings']['lists']['servers'] as $item) {
-                $servers[$item['id']] = $item['name'];
+            foreach ($this->account_data->settings->lists->servers as $item) {
+                $servers[$item['id']] = $item->name;
             }
         }
 
@@ -25,7 +25,7 @@ class vidok_config extends default_config
     public function get_server_id()
     {
         if ($this->load_settings()) {
-            $server = $this->account_data['settings']['current']['server']['id'];
+            $server = $this->account_data->settings->current->server->id;
         } else {
             $server = parent::get_server_id();
         }
@@ -41,8 +41,8 @@ class vidok_config extends default_config
         $quality = parent::get_qualities();
         if (empty($quality) && $this->load_settings()) {
             $quality = array();
-            foreach ($this->account_data['settings']['lists']['quality'] as $item) {
-                $quality[$item['id']] = $item['name'];
+            foreach ($this->account_data->settings->lists->quality as $item) {
+                $quality[$item['id']] = $item->name;
             }
         }
 
@@ -90,7 +90,7 @@ class vidok_config extends default_config
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$token";
                 // provider returns token used to download playlist
                 $this->account_data = HD::DownloadJson($url);
-                if (!isset($this->account_data['account']['login'])) {
+                if (!isset($this->account_data->account->login)) {
                     throw new Exception("Account info invalid");
                 }
             }
@@ -158,9 +158,9 @@ class vidok_config extends default_config
     //////////////////////////////////////////////////////////////////////
 
     /**
-     * @return bool
+     * @inheritDoc
      */
-    protected function ensure_token_loaded()
+    protected function ensure_token_loaded($force = false)
     {
         $login = $this->get_login();
         $password = $this->get_password();

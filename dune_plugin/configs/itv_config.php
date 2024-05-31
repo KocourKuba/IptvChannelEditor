@@ -35,7 +35,7 @@ class itv_config extends default_config
     }
 
     /**
-     * @param array &$defs
+     * @inheritDoc
      */
     public function AddSubscriptionUI(&$defs)
     {

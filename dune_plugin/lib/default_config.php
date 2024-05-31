@@ -10,6 +10,10 @@ require_once 'm3u/M3uParser.php';
 
 class default_config extends dynamic_config
 {
+    const VOD_FAVORITES_LIST = 'vod_favorite_items';
+    const VOD_HISTORY_ITEMS = 'vod_history_items';
+    const API_PARAM_PATH = 'path';
+
     // page counter for some plugins
     protected $pages = array();
     protected $is_entered = false;
@@ -27,7 +31,7 @@ class default_config extends dynamic_config
     protected $last_error;
 
     /**
-     * @var array
+     * @var object
      */
     protected $account_data;
 
@@ -45,6 +49,16 @@ class default_config extends dynamic_config
      * @var array[]
      */
     protected $vod_m3u_indexes;
+
+    /**
+     * @var array|false
+     */
+    protected $vod_items;
+
+    /**
+     * @var array
+     */
+    protected $vod_filters = array();
 
     public function set_plugin($plugin)
     {
@@ -503,28 +517,43 @@ class default_config extends dynamic_config
     }
 
     /**
-     * @param string $idx
+     * @param string $page_id
      * @param int $increment
      * @return int
      */
-    public function get_next_page($idx, $increment = 1)
+    public function get_next_page($page_id, $increment = 1)
     {
-        if (!array_key_exists($idx, $this->pages)) {
-            $this->pages[$idx] = 0;
+        if (!array_key_exists($page_id, $this->pages)) {
+            $this->pages[$page_id] = 0;
         }
 
-        $this->pages[$idx] += $increment;
+        if ($this->pages[$page_id] !== -1) {
+            $this->pages[$page_id] += $increment;
+        }
 
-        return $this->pages[$idx];
+        hd_debug_print("get_next_page page_id: $page_id next_idx: {$this->pages[$page_id]}", true);
+        return $this->pages[$page_id];
     }
 
     /**
-     * @param string $idx
+     * @param string $page_id
      * @param int $value
      */
-    public function set_next_page($idx, $value)
+    public function set_next_page($page_id, $value)
     {
-        $this->pages[$idx] = $value;
+        hd_debug_print("set_next_page page_id: $page_id idx: $value", true);
+        $this->pages[$page_id] = $value;
+    }
+
+    /**
+     * @param string $page_id
+     * @return int
+     */
+    public function get_current_page($page_id)
+    {
+        $current_idx = array_key_exists($page_id, $this->pages) ? $this->pages[$page_id] : 0;
+        hd_debug_print("get_current_page page_id: $page_id current_idx: $current_idx", true);
+        return $current_idx;
     }
 
     /**
@@ -566,23 +595,113 @@ class default_config extends dynamic_config
     }
 
     /**
-     * @param array $defs
      * @param Starnet_Vod_Filter_Screen $parent
-     * @param int $initial
-     * @return bool
+     * @param string $user_filter
+     * @return array|null
      */
-    public function AddFilterUI(&$defs, $parent, $initial = -1)
+    public function AddFilterUI($parent, $user_filter)
     {
-        return false;
+        if (empty($this->vod_filters)) {
+            return null;
+        }
+
+        hd_debug_print("used filter: $user_filter", true);
+        $added = false;
+        $filter_items = HD::get_data_items(Starnet_Vod_Filter_Screen::VOD_FILTER_LIST);
+        hd_debug_print("user filters: " . raw_json_encode($filter_items), true);
+        $initial = array_search($user_filter, $filter_items);
+        hd_debug_print("user filter idx: " . ($initial !== false ? $initial: -1), true);
+
+        $defs = array();
+        Control_Factory::add_vgap($defs, 20);
+
+        foreach ($this->vod_filters as $name) {
+            $filter = $this->get_filter($name);
+            hd_debug_print("filter: $name : " . json_encode($filter), true);
+            if ($filter === null) {
+                hd_debug_print("no filters with '$name'");
+                continue;
+            }
+
+            // fill get value from already set user filter
+            if (!empty($user_filter)) {
+                $pairs = explode(",", $user_filter);
+                foreach ($pairs as $pair) {
+                    if (strpos($pair, $name . ":") !== false && preg_match("/^$name:(.+)/", $pair, $m)) {
+                        $user_value = $m[1];
+                        break;
+                    }
+                }
+            }
+
+            if (isset($filter['text'])) {
+                $initial_value = isset($user_value) ? $user_value : '';
+                Control_Factory::add_text_field($defs, $parent, null, $name,
+                    $filter['title'], $initial_value, true, false, false, false, 600);
+                Control_Factory::add_vgap($defs, 20);
+                $added = true;
+            }
+
+            if (!empty($filter['values'])) {
+                $idx = -1;
+                if (isset($user_value)) {
+                    $idx = array_search($user_value, $filter['values']) ?: -1;
+                }
+
+                Control_Factory::add_combobox($defs, $parent, null, $name,
+                    $filter['title'], $idx, $filter['values'], 600, true);
+                Control_Factory::add_vgap($defs, 20);
+                $added = true;
+            }
+        }
+
+        if (!$added) {
+            return null;
+        }
+
+        Control_Factory::add_close_dialog_and_apply_button($defs, $parent, array(ACTION_ITEMS_EDIT => $initial), ACTION_RUN_FILTER, TR::t('ok'), 300);
+        Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
+        Control_Factory::add_vgap($defs, 10);
+        return Action_Factory::show_dialog(TR::t('filter'), $defs, true);
     }
 
     /**
-     * @param array $user_input
+     * @param Object $user_input
      * @return string
      */
     public function CompileSaveFilterItem($user_input)
     {
-        return '';
+        hd_debug_print(null, true);
+        dump_input_handler($user_input);
+
+        if (empty($this->vod_filters)) {
+            return '';
+        }
+
+        $compiled_string = "";
+        foreach ($this->vod_filters as $name) {
+            $filter = $this->get_filter($name);
+            if ($filter === null) continue;
+
+            $add_text = '';
+            if (isset($filter['text']) && !empty($user_input->{$name})) {
+                $add_text = $user_input->{$name};
+            } else if ((int)$user_input->{$name} !== -1){
+                $add_text = $filter['values'][$user_input->{$name}];
+            }
+
+            if (empty($add_text)) {
+                continue;
+            }
+
+            if (!empty($compiled_string)) {
+                $compiled_string .= ",";
+            }
+
+            $compiled_string .= $name . ":" . $add_text;
+        }
+
+        return $compiled_string;
     }
 
     /**
@@ -716,7 +835,7 @@ class default_config extends dynamic_config
     /**
      * Get information from the account
      * @param bool $force default false, force downloading playlist even it already cached
-     * @return bool | array[] | string[] information collected and status valid otherwise - false
+     * @return bool | object | string[] information collected and status valid otherwise - false
      */
     public function GetAccountInfo($force = false)
     {
@@ -882,16 +1001,16 @@ class default_config extends dynamic_config
             }
         }
         sort($all_indexes);
-        $this->vod_m3u_indexes[Vod_Category::FLAG_ALL] = $all_indexes;
+        $this->vod_m3u_indexes[Vod_Category::FLAG_ALL_MOVIES] = $all_indexes;
 
         // all movies
         $count = count($all_indexes);
-        $category = new Vod_Category(Vod_Category::FLAG_ALL, "Все фильмы ($count)");
+        $category = new Vod_Category(Vod_Category::FLAG_ALL_MOVIES, "Все фильмы ($count)");
         $category_list[] = $category;
-        $category_index[Vod_Category::FLAG_ALL] = $category;
+        $category_index[Vod_Category::FLAG_ALL_MOVIES] = $category;
 
         foreach ($this->vod_m3u_indexes as $group => $indexes) {
-            if ($group === Vod_Category::FLAG_ALL) continue;
+            if ($group === Vod_Category::FLAG_ALL_MOVIES) continue;
 
             $count = count($indexes);
             $cat = new Vod_Category($group, "$group ($count)");
@@ -919,7 +1038,7 @@ class default_config extends dynamic_config
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
-        foreach ($this->vod_m3u_indexes[Vod_Category::FLAG_ALL] as $index) {
+        foreach ($this->vod_m3u_indexes[Vod_Category::FLAG_ALL_MOVIES] as $index) {
             $title = $this->plugin->get_m3u_parser()->getTitleByIdx($index);
             if (empty($title)) continue;
 
@@ -950,7 +1069,6 @@ class default_config extends dynamic_config
      */
     public function getFilterList($params)
     {
-        //hd_debug_print("$params");
         return array();
     }
 
@@ -966,7 +1084,7 @@ class default_config extends dynamic_config
         $arr = explode("_", $query_id);
         $category_id = ($arr === false) ? $query_id : $arr[0];
 
-        $current_offset = $this->get_next_page($query_id, 0);
+        $current_offset = $this->get_current_page($query_id);
         $indexes = $this->vod_m3u_indexes[$category_id];
 
         $vod_pattern = $this->get_vod_parse_pattern();
@@ -1024,7 +1142,7 @@ class default_config extends dynamic_config
 
             $category = '';
             foreach ($this->vod_m3u_indexes as $group => $indexes) {
-                if ($group === Vod_Category::FLAG_ALL) continue;
+                if ($group === Vod_Category::FLAG_ALL_MOVIES) continue;
                 if (in_array($movie_id, $indexes)) {
                     $category = $group;
                     break;
@@ -1045,8 +1163,7 @@ class default_config extends dynamic_config
                 '',// $xml->rate_imdb,
                 '',// $xml->rate_kinopoisk,
                 '',// $xml->rate_mpaa,
-                $country,// $xml->country,
-                ''// $xml->budget
+                $country // $xml->country,
             );
 
             $movie->add_series_data($movie_id, $title, '', $entry->getPath());
@@ -1106,6 +1223,51 @@ class default_config extends dynamic_config
     }
 
     /**
+     * @param string $command
+     * @param string $file
+     * @param bool $decode
+     * @param array $curl_options
+     * @return bool|object
+     */
+    public function execApiCommand($command, $file = null, $decode = true, $curl_options = array())
+    {
+        hd_debug_print(null, true);
+        hd_debug_print("execApiCommand: $command", true);
+
+        $command_url = $this->replace_account_vars($command);
+        if (isset($curl_options[self::API_PARAM_PATH])) {
+            $command_url .= $curl_options[self::API_PARAM_PATH];
+        }
+
+        hd_debug_print("ApiCommandUrl: $command_url", true);
+
+        $response = HD::http_download_https_proxy($command_url, $file, $curl_options);
+        if ($response === false) {
+            hd_debug_print("Can't get response on request: $command_url");
+            return false;
+        }
+
+        if (!is_null($file)) {
+            return true;
+        }
+
+        if (!$decode) {
+            return $response;
+        }
+
+        hd_debug_print("Decode response on request: $command_url");
+        $data = HD::decodeResponse(false, $response);
+        if ($data === false || $data === null) {
+            hd_debug_print("Can't decode response on request: $command_url");
+        }
+
+        return $data;
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+    /// protected functions
+
+    /**
      * @param bool $is_tv
      * @param bool $force
      * @return string
@@ -1145,8 +1307,6 @@ class default_config extends dynamic_config
 
         return $m3u_file;
     }
-
-    ///////////////////////////////////////////////////////////////////////
 
     /**
      * @return string
@@ -1280,7 +1440,7 @@ class default_config extends dynamic_config
     /**
      * @return bool
      */
-    protected function ensure_token_loaded()
+    protected function ensure_token_loaded($force = false)
     {
         return true;
     }
@@ -1336,5 +1496,50 @@ class default_config extends dynamic_config
             $vod_pattern = "/$vod_pattern/";
 
         return $vod_pattern;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function load_vod_json_full($assoc = false)
+    {
+        $this->vod_items = false;
+        $tmp_file = self::get_vod_cache_file();
+        $need_load = true;
+        if (file_exists($tmp_file)) {
+            $mtime = filemtime($tmp_file);
+            $diff = time() - $mtime;
+            if ($diff > 3600) {
+                hd_debug_print("Vod playlist cache expired " . ($diff - 3600) . " sec ago. Timestamp $mtime. Forcing reload");
+                unlink($tmp_file);
+            } else {
+                $need_load = false;
+            }
+        }
+
+        if (!$need_load) {
+            $this->vod_items = HD::ReadContentFromFile($tmp_file, $assoc);
+        } else {
+            $responce = $this->execApiCommand($this->GetVodListUrl(), $tmp_file);
+            if ($responce === false) {
+                $logfile = file_get_contents(get_temp_path(HD::HTTPS_PROXY_LOG));
+                $exception_msg = "Ошибка чтения медиатеки!\n\n$logfile";
+                HD::set_last_error("vod_last_error", $exception_msg);
+                if (file_exists($tmp_file)) {
+                    unlink($tmp_file);
+                }
+            } else {
+                $this->vod_items = HD::decodeResponse(true, $tmp_file, $assoc);
+                if ($this->vod_items === false) {
+                    $exception_msg = "Ошибка декодирования данных медиатеки!\n\n";
+                    HD::set_last_error("vod_last_error", $exception_msg);
+                    if (file_exists($tmp_file)) {
+                        unlink($tmp_file);
+                    }
+                }
+            }
+        }
+
+        return $this->vod_items !== false;
     }
 }

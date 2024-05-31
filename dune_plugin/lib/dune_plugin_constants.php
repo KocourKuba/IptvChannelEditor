@@ -36,6 +36,7 @@ const ACTION_CHANNEL_INFO = 'channel_info';
 const ACTION_CHANGE_EPG_SOURCE = 'change_epg_source';
 const ACTION_EPG_SOURCE_SELECTED = 'epg_source_selected';
 const ACTION_SHOW_INDEX_PROGRESS = 'show_index_progress';
+const ACTION_FILTER = 'action_filter';
 const ACTION_CREATE_FILTER = 'create_filter';
 const ACTION_RUN_FILTER = 'run_filter';
 const ACTION_CREATE_SEARCH = 'create_search';
@@ -43,6 +44,7 @@ const ACTION_NEW_SEARCH = 'new_search';
 const ACTION_RUN_SEARCH = 'run_search';
 const ACTION_WATCHED = 'watched';
 const ACTION_QUALITY = 'quality';
+const ACTION_AUDIO = 'audio';
 const ACTION_CHANNELS_SETTINGS = 'channels_settings';
 const ACTION_NEED_CONFIGURE = 'configure';
 const ACTION_BALANCE = 'balance';
@@ -92,8 +94,7 @@ const PARAM_PER_CHANNELS_ZOOM = 'per_channels_zoom';
 const PARAM_FAKE_EPG = 'fake_epg';
 const PARAM_USE_HTTPS_PROXY = 'use_proxy';
 const PARAM_STREAM_FORMAT = 'stream_format';
-const PARAM_VOD_DEFAULT_VARIANT = 'variant';
-
+const PARAM_VOD_DEFAULT_QUALITY = 'variant';
 const PARAM_LOGIN = 'login';
 const PARAM_PASSWORD = 'password';
 

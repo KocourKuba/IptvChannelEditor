@@ -52,7 +52,7 @@ class tvclub_config extends default_config
     }
 
     /**
-     * @param array &$defs
+     * @inheritDoc
      */
     public function AddSubscriptionUI(&$defs)
     {
@@ -63,21 +63,21 @@ class tvclub_config extends default_config
             return;
         }
 
-        $info = $this->account_data['account']['info'];
-        $settings = $this->account_data['account']['settings'];
-        Control_Factory::add_label($defs, TR::t('balance'), $info['balance'] . ' €', -10);
-        Control_Factory::add_label($defs, TR::t('login'), $info['login'], -10);
-        Control_Factory::add_label($defs, TR::t('server'), $settings['server_name'], -10);
-        Control_Factory::add_label($defs, TR::t('time_zone'), $settings['tz_name'] . " {$settings['tz_gmt']}", -10);
+        $info = $this->account_data->account->info;
+        $settings = $this->account_data->account->settings;
+        Control_Factory::add_label($defs, TR::t('balance'), $info->balance . ' €', -10);
+        Control_Factory::add_label($defs, TR::t('login'), $info->login, -10);
+        Control_Factory::add_label($defs, TR::t('server'), $settings->server_name, -10);
+        Control_Factory::add_label($defs, TR::t('time_zone'), $settings->tz_name . " {$settings->tz_gmt}", -10);
 
-        $packages = $this->account_data['account']['services'];
+        $packages = $this->account_data->account->services;
         if (count($packages) === 0) {
             Control_Factory::add_label($defs, TR::t('packages'), TR::t('no_packages'), 20);
             return;
         }
 
         foreach ($packages as $item) {
-            Control_Factory::add_label($defs, TR::t('package'), $item['name'] . ' ' . $item['type'] .' - '. date('j.m.Y', $item['expire']), -10);
+            Control_Factory::add_label($defs, TR::t('package'), $item->name . ' ' . $item->type .' - '. date('j.m.Y', $item['expire']), -10);
         }
 
         Control_Factory::add_vgap($defs, 20);
@@ -136,9 +136,9 @@ class tvclub_config extends default_config
     //////////////////////////////////////////////////////////////////////
 
     /**
-     * @return bool
+     * @inheritDoc
      */
-    protected function ensure_token_loaded()
+    protected function ensure_token_loaded($force = false)
     {
         $login = $this->get_login();
         $password = $this->get_password();

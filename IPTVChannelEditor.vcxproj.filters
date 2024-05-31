@@ -49,9 +49,6 @@
     <Filter Include="Resource Files\PNG">
       <UniqueIdentifier>{35e70383-4749-424d-af38-4efd108f437e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="defaults">
-      <UniqueIdentifier>{c0e8d41f-a62b-44d9-b3eb-f51398e7b22c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPTVChannelEditor.h">

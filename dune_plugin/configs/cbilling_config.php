@@ -33,13 +33,14 @@ class cbilling_config extends default_config
             }
 
             if ($force !== false || empty($this->account_data)) {
-                $headers[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
-                $json = HD::DownloadJson($this->get_feature(Plugin_Constants::PROVIDER_API_URL) . '/auth/info', true, $headers);
-                if ($json === false || !isset($json['data'])) {
+                $params[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
+                $params[self::API_PARAM_PATH] = "/auth/info";
+                $response = $this->execApiCommand($this->get_feature(Plugin_Constants::PROVIDER_API_URL), null, true, $params);
+                if (!isset($response->data)) {
                     throw new Exception("Account info not loaded. " . HD::get_last_error());
                 }
-                $this->account_data = $json['data'];
-                $this->plugin->set_credentials(Ext_Params::M_TOKEN, $this->account_data['private_token']);
+                $this->account_data = $response->data;
+                $this->plugin->set_credentials(Ext_Params::M_TOKEN, $this->account_data->private_token);
             }
         } catch (Exception $ex) {
             hd_debug_print($ex->getMessage());
@@ -62,6 +63,7 @@ class cbilling_config extends default_config
             return;
         }
 
+        $account_data = (array)$account_data;
         Control_Factory::add_label($defs, TR::t('packages'), empty($account_data['package']) ? TR::t('no_packages') : $account_data['package'], -10);
         Control_Factory::add_label($defs, TR::t('end_date'), $account_data['end_date'], -10);
         Control_Factory::add_label($defs, TR::t('devices'), $account_data['devices_num'], -10);
@@ -71,20 +73,20 @@ class cbilling_config extends default_config
     }
 
     /**
-     * @param string $movie_id
-     * @return Movie
-     * @throws Exception
+     * @inheritDoc
      */
     public function TryLoadMovie($movie_id)
     {
         hd_debug_print($movie_id);
         $movie = new Movie($movie_id, $this->plugin);
-        $json = HD::DownloadJson($this->GetVodListUrl() . "/video/$movie_id", false);
-        if ($json === false) {
+
+        $params[self::API_PARAM_PATH] = "/video/$movie_id";
+        $response = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
+        if (!isset($response->data)) {
             return $movie;
         }
 
-        $movieData = $json->data;
+        $movieData = $response->data;
 
         $genresArray = array();
         foreach ($movieData->genres as $genre) {
@@ -105,11 +107,10 @@ class cbilling_config extends default_config
             $movieData->rating,// rate_imdb,
             '',// rate_kinopoisk,
             $movieData->age,// rate_mpaa,
-            $movieData->country,// country,
-            ''// budget
+            $movieData->country// country,
         );
 
-        $domain = $this->account_data['server'];
+        $domain = $this->account_data->server;
         $token = $this->plugin->get_credentials(Ext_Params::M_TOKEN);
         $vod_url = 'http://%s%s?token=%s';
         if (isset($movieData->seasons)) {
@@ -134,13 +135,14 @@ class cbilling_config extends default_config
      */
     public function fetchVodCategories(&$category_list, &$category_index)
     {
-        hd_debug_print(null, true);
-        $jsonItems = HD::DownloadJson($this->GetVodListUrl(), false);
+        $jsonItems = $this->execApiCommand($this->GetVodListUrl());
         if ($jsonItems === false) {
+            $logfile = file_get_contents(get_temp_path(HD::HTTPS_PROXY_LOG));
+            $exception_msg = "Ошибка чтения медиатеки!\n\n$logfile";
+            hd_debug_print($exception_msg);
+            HD::set_last_error("vod_last_error", $exception_msg);
             return false;
         }
-
-        $t = microtime(1);
 
         $category_list = array();
         $category_index = array();
@@ -152,14 +154,17 @@ class cbilling_config extends default_config
             $total += $node->count;
 
             // fetch genres for category
-            $genres = HD::DownloadJson($this->GetVodListUrl() . "/cat/$id/genres", false);
+            $params[self::API_PARAM_PATH] = "/cat/$id/genres";
+            $genres = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
             if ($genres === false) {
                 continue;
             }
 
             $gen_arr = array();
-            foreach ($genres->data as $genre) {
-                $gen_arr[] = new Vod_Category((string)$genre->id, (string)$genre->title, $category);
+            if (isset($genres->data)) {
+                foreach ($genres->data as $genre) {
+                    $gen_arr[] = new Vod_Category((string)$genre->id, (string)$genre->title, $category);
+                }
             }
 
             $category->set_sub_categories($gen_arr);
@@ -169,41 +174,40 @@ class cbilling_config extends default_config
         }
 
         // all movies
-        $category = new Vod_Category(Vod_Category::FLAG_ALL, "Все фильмы ($total)");
+        $category = new Vod_Category(Vod_Category::FLAG_ALL_MOVIES, TR::t('vod_screen_all_movies__1', " ($total)"));
         array_unshift($category_list, $category);
-        $category_index[Vod_Category::FLAG_ALL] = $category;
+        $category_index[Vod_Category::FLAG_ALL_MOVIES] = $category;
 
         hd_debug_print("Categories read: " . count($category_list));
-        hd_debug_print("Fetched categories at " . (microtime(1) - $t) . " secs");
-        HD::ShowMemoryUsage();
-
         return true;
     }
 
     /**
-     * @param string $keyword
-     * @return array
-     * @throws Exception
+     * @inheritDoc
      */
     public function getSearchList($keyword)
     {
-        $url = $this->GetVodListUrl() . "/filter/by_name?name=" . urlencode($keyword) . "&page=" . $this->get_next_page($keyword);
-        $searchRes = HD::DownloadJson($url, false);
-        return $searchRes === false ? array() : $this->CollectSearchResult($searchRes);
+        $page_idx = $this->get_next_page($keyword);
+        if ($page_idx < 0)
+            return array();
+
+        $params[self::API_PARAM_PATH] = "/filter/by_name?name=" . urlencode($keyword) . "&page=$page_idx";
+        $response = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
+        return $response === false ? array() : $this->CollectSearchResult($response);
     }
 
     /**
-     * @param string $query_id
-     * @return array
-     * @throws Exception
+     * @inheritDoc
      */
     public function getMovieList($query_id)
     {
         hd_debug_print($query_id);
-        $val = $this->get_next_page($query_id);
+        $page_idx = $this->get_next_page($query_id);
+        if ($page_idx < 0)
+            return array();
 
-        if ($query_id === Vod_Category::FLAG_ALL) {
-            $url = "/filter/new?page=$val";
+        if ($query_id === Vod_Category::FLAG_ALL_MOVIES) {
+            $params[self::API_PARAM_PATH] = "/filter/new?page=$page_idx";
         } else {
             $arr = explode("_", $query_id);
             if ($arr === false) {
@@ -212,11 +216,11 @@ class cbilling_config extends default_config
                 $genre_id = $arr[1];
             }
 
-            $url = "/genres/$genre_id?page=$val";
+            $params[self::API_PARAM_PATH] = "/genres/$genre_id?page=$page_idx";
         }
 
-        $categories = HD::DownloadJson($this->GetVodListUrl() . $url, false);
-        return $categories === false ? array() : $this->CollectSearchResult($categories);
+        $response = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
+        return $response === false ? array() : $this->CollectSearchResult($response);
     }
 
     /**

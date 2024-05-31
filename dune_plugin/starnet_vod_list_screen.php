@@ -100,10 +100,10 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_In
     public function get_folder_range(MediaURL $media_url, $from_ndx, &$plugin_cookies)
     {
         hd_debug_print(null, true);
-        hd_debug_print("from_ndx: $from_ndx, MediaURL: " . $media_url->get_media_url_str(), true);
+        hd_debug_print("from_ndx: $from_ndx, MediaURL: $media_url", true);
 
         $this->plugin->config->try_reset_pages();
-        if (empty($media_url->genre_id) || $media_url->category_id === Vod_Category::FLAG_ALL) {
+        if (empty($media_url->genre_id) || $media_url->category_id === Vod_Category::FLAG_ALL_MOVIES) {
             $key = $media_url->category_id;
         } else {
             $key = $media_url->category_id . "_" . $media_url->genre_id;

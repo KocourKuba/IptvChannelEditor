@@ -18,6 +18,10 @@ class Short_Movie
     public $poster_url;
 
     /**
+     * @var string
+     */
+    public $big_poster_url;
+    /**
      * @var
      */
     public $info;

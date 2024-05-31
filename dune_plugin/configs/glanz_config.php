@@ -8,25 +8,25 @@ class glanz_config extends default_config
         parent::init_defaults();
 
         $this->set_feature(Plugin_Constants::VOD_FILTER_SUPPORTED, true);
+        $this->vod_filters = array("genre", "from", "to");
     }
 
     /**
-     * @param string $movie_id
-     * @return Movie
-     * @throws Exception
+     * @inheritDoc
      */
     public function TryLoadMovie($movie_id)
     {
+        hd_debug_print(null, true);
         hd_debug_print($movie_id);
-        $movie = new Movie($movie_id, $this->plugin);
-        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
 
-        if ($jsonItems === false) {
+        $movie = new Movie($movie_id, $this->plugin);
+        if ($this->vod_items === false) {
             hd_debug_print("failed to load movie: $movie_id");
             return $movie;
         }
 
-        foreach ($jsonItems as $item) {
+        foreach ($this->vod_items as $item) {
+            $item = (object)$item;
             if (isset($item->id)) {
                 $id = (string)$item->id;
             } else {
@@ -59,8 +59,7 @@ class glanz_config extends default_config
                 '',           // rate_imdb,
                 '',        // rate_kinopoisk,
                 '',           // rate_mpaa,
-                $item->country,         // country,
-                ''               // budget
+                $item->country          // country,
             );
 
             hd_debug_print("movie playback_url: $item->url");
@@ -76,26 +75,21 @@ class glanz_config extends default_config
      */
     public function fetchVodCategories(&$category_list, &$category_index)
     {
-        hd_debug_print(null, true);
-        $jsonItems = HD::DownloadJson($this->GetVodListUrl(), false);
-        if ($jsonItems === false) {
+        if ($this->load_vod_json_full(true) === false) {
             return false;
         }
 
-        HD::StoreContentToFile(self::get_vod_cache_file(), $jsonItems);
-
-        $t = microtime(1);
-
+        $count = count($this->vod_items);
         $category_list = array();
         $category_index = array();
         $cat_info = array();
 
         // all movies
-        $count = count($jsonItems);
-        $cat_info[Vod_Category::FLAG_ALL] = $count;
+        $cat_info[Vod_Category::FLAG_ALL_MOVIES] = $count;
         $genres = array();
         $years = array();
-        foreach ($jsonItems as $movie) {
+        foreach ($this->vod_items as $movie) {
+            $movie = (object)$movie;
             $category = (string)$movie->category;
             if (empty($category)) {
                 $category = TR::load_string('no_category');
@@ -116,7 +110,7 @@ class glanz_config extends default_config
 
         foreach ($cat_info as $category => $movie_count) {
             $cat = new Vod_Category($category,
-                ($category === Vod_Category::FLAG_ALL) ? TR::t('vod_screen_all_movies__1', "($movie_count)") : "$category ($movie_count)");
+                ($category === Vod_Category::FLAG_ALL_MOVIES) ? TR::t('vod_screen_all_movies__1', "($movie_count)") : "$category ($movie_count)");
             $category_list[] = $cat;
             $category_index[$category] = $cat;
         }
@@ -136,30 +130,29 @@ class glanz_config extends default_config
         $this->set_filters($filters);
 
         hd_debug_print("Categories read: " . count($category_list));
-        hd_debug_print("Fetched categories at " . (microtime(1) - $t) . " secs");
+        hd_debug_print("Total items loaded: " . count($this->vod_items));
+        hd_debug_print_separator();
         HD::ShowMemoryUsage();
 
         return true;
     }
 
     /**
-     * @param string $keyword
-     * @return array
-     * @throws Exception
+     * @inheritDoc
      */
     public function getSearchList($keyword)
     {
         hd_debug_print($keyword);
         $movies = array();
-        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
-        if ($jsonItems === false) {
+        if ($this->vod_items === false) {
             hd_debug_print("failed to load movies");
             return $movies;
         }
 
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
-        foreach ($jsonItems as $item) {
-            $search  = utf8_encode(mb_strtolower($item->name, 'UTF-8'));
+        foreach ($this->vod_items as $item) {
+            $item = (object)$item;
+            $search = utf8_encode(mb_strtolower($item->name, 'UTF-8'));
             if (strpos($search, $keyword) !== false) {
                 $movies[] = self::CreateShortMovie($item);
             }
@@ -170,16 +163,13 @@ class glanz_config extends default_config
     }
 
     /**
-     * @param string $query_id
-     * @return array
-     * @throws Exception
+     * @inheritDoc
      */
     public function getMovieList($query_id)
     {
         $movies = array();
 
-        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
-        if ($jsonItems === false) {
+        if ($this->vod_items === false) {
             hd_debug_print("failed to load movies");
             return $movies;
         }
@@ -187,41 +177,44 @@ class glanz_config extends default_config
         $arr = explode("_", $query_id);
         $category_id = ($arr === false) ? $query_id : $arr[0];
 
-        $current_offset = $this->get_next_page($query_id, 0);
-        $pos = 0;
-        foreach ($jsonItems as $movie) {
-            if ($pos++ < $current_offset) continue;
+        $page_idx = $this->get_current_page($query_id);
+        if ($page_idx < 0)
+            return array();
 
+        $pos = 0;
+        foreach ($this->vod_items as $movie) {
+            if ($pos++ < $page_idx) continue;
+
+            $movie = (object)$movie;
             $category = $movie->category;
             if (empty($category)) {
                 $category = TR::load_string('no_category');
             }
 
-            if ($category_id === Vod_Category::FLAG_ALL || $category_id === $category) {
+            if ($category_id === Vod_Category::FLAG_ALL_MOVIES || $category_id === $category) {
                 $movies[] = self::CreateShortMovie($movie);
             }
         }
-        $this->get_next_page($query_id, $pos - $current_offset);
+        $this->get_next_page($query_id, $pos - $page_idx);
 
         hd_debug_print("Movies read for query: $query_id - " . count($movies));
         return $movies;
     }
 
     /**
-     * @param string $params
-     * @return array
-     * @throws Exception
+     * @inheritDoc
      */
     public function getFilterList($params)
     {
-        hd_debug_print($params);
-        $movies = array();
+        hd_debug_print(null, true);
+        hd_debug_print("getFilterList: $params");
 
-        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
-        if ($jsonItems === false) {
+        if ($this->vod_items === false) {
             hd_debug_print("failed to load movies");
-            return $movies;
+            return array();
         }
+
+        $movies = array();
 
         $pairs = explode(",", $params);
         $post_params = array();
@@ -237,7 +230,9 @@ class glanz_config extends default_config
             }
         }
 
-        foreach ($jsonItems as $movie) {
+        foreach ($this->vod_items as $movie) {
+            $movie = (object)$movie;
+
             $match_genre = !isset($post_params['genre']);
             if (!$match_genre) {
                 foreach ($movie->genres as $genre) {
@@ -291,73 +286,5 @@ class glanz_config extends default_config
             (string)$movie_obj->cover,
             TR::t('vod_screen_movie_info__4', $movie_obj->name, $movie_obj->year, $movie_obj->country, $genres_str)
         );
-    }
-
-    /**
-     * @param array &$defs
-     * @param Starnet_Vod_Filter_Screen $parent
-     * @param int $initial
-     * @return bool
-     */
-    public function AddFilterUI(&$defs, $parent, $initial = -1)
-    {
-        $filters = array("genre", "from", "to");
-        hd_debug_print($initial);
-        Control_Factory::add_vgap($defs, 20);
-        $added = false;
-        foreach ($filters as $name) {
-            $filter = $this->get_filter($name);
-            if ($filter === null) {
-                hd_debug_print("no filters with '$name'");
-                continue;
-            }
-
-            $values = $filter['values'];
-            if (empty($values)) {
-                hd_debug_print("no filters values for '$name'");
-                continue;
-            }
-
-            $idx = $initial;
-            if ($initial !== -1) {
-                $pairs = explode(" ", $initial);
-                foreach ($pairs as $pair) {
-                    if (strpos($pair, $name . ":") !== false && preg_match("/^$name:(.+)/", $pair, $m)) {
-                        $idx = array_search($m[1], $values) ?: -1;
-                        break;
-                    }
-                }
-            }
-
-            Control_Factory::add_combobox($defs, $parent, null, $name,
-                $filter['title'], $idx, $values, 600, true);
-
-            Control_Factory::add_vgap($defs, 30);
-            $added = true;
-        }
-
-        return $added;
-    }
-
-    /**
-     * @param $user_input
-     * @return string
-     */
-    public function CompileSaveFilterItem($user_input)
-    {
-        $filters = array("genre", "from", "to");
-        $compiled_string = "";
-        foreach ($filters as $name) {
-            $filter = $this->get_filter($name);
-            if ($filter !== null && $user_input->{$name} !== -1) {
-                if (!empty($compiled_string)) {
-                    $compiled_string .= ",";
-                }
-
-                $compiled_string .= $name . ":" . $filter['values'][$user_input->{$name}];
-            }
-        }
-
-        return $compiled_string;
     }
 }

@@ -546,7 +546,7 @@ class Starnet_Tv implements User_Input_Handler
     public function get_tv_info(MediaURL $media_url)
     {
         hd_debug_print(null, true);
-        hd_debug_print($media_url->get_media_url_str(), true);
+        hd_debug_print($media_url, true);
 
         if ($this->load_channels() === -1) {
             hd_debug_print("Channels not loaded!");

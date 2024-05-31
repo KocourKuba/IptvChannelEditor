@@ -43,7 +43,7 @@ static constexpr auto API_COMMAND_SET_URL = L"{:s}/{:s}?token={:s}&{:s}={:s}";
 
 std::wstring plugin_vidok::get_api_token(const Credentials& creds) const
 {
-	std::string login_a = utils::string_tolower(utils::utf16_to_utf8(creds.get_login()));
+	std::string login_a = utils::utf16_to_utf8(creds.get_login());
 	std::string password_a = utils::utf16_to_utf8(creds.get_password());
 	return utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
 }

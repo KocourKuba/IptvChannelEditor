@@ -931,7 +931,7 @@
       "title": "IPTV Best"
     },
     "iptvonline": {
-      "access_type": "pin",
+      "access_type": "login",
       "epg_params": [
         {
           "epg_param": "first",
@@ -955,37 +955,7 @@
         }
       ],
       "provider_url": "https://iptv.online/",
-      "servers_list": [
-        {
-          "id": "ca.seetv.cc",
-          "name": "Canada"
-        },
-        {
-          "id": "gr.seetv.cc",
-          "name": "Greece"
-        },
-        {
-          "id": "de.seetv.cc",
-          "name": "Germany"
-        },
-        {
-          "id": "pl.seetv.cc",
-          "name": "Poland"
-        },
-        {
-          "id": "nl.seetv.cc",
-          "name": "Netherlands"
-        },
-        {
-          "id": "ru.seetv.cc",
-          "name": "Russia"
-        },
-        {
-          "id": "ukr.seetv.cc",
-          "name": "Ukraine"
-        }
-      ],
-      "static_servers": true,
+      "provider_api_url": "https://iptv.online/api/v4",
       "streams_config": [
         {
           "cu_type": "flussonic",

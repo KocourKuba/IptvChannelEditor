@@ -121,17 +121,13 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
      * @param MediaURL $media_url
      * @param $plugin_cookies
      * @return array
-     * @throws Exception
      */
     public function get_all_folder_items(MediaURL $media_url, &$plugin_cookies)
     {
         hd_debug_print(null, true);
 
         if (is_null($this->category_index) || is_null($this->category_list)) {
-            $res = $this->plugin->config->fetchVodCategories($this->category_list, $this->category_index);
-            if (!$res) {
-                throw new Exception(HD::get_last_error());
-            }
+            $this->plugin->config->fetchVodCategories($this->category_list, $this->category_index);
         }
 
         $category_list = $this->category_list;
@@ -139,7 +135,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         if (isset($media_url->category_id)) {
             if (!isset($this->category_index[$media_url->category_id])) {
                 hd_debug_print("Error: parent category (id: $media_url->category_id) not found.");
-                throw new Exception("No parent category found");
+                return array();
             }
 
             $parent_category = $this->category_index[$media_url->category_id];
@@ -201,7 +197,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                 $category_id = $category->get_id();
                 if (!is_null($category->get_sub_categories())) {
                     $media_url_str = self::get_media_url_string($category_id);
-                } else if ($category_id === Vod_Category::FLAG_ALL
+                } else if ($category_id === Vod_Category::FLAG_ALL_MOVIES
                     || $category_id === Vod_Category::FLAG_SEARCH
                     || $category_id === Vod_Category::FLAG_FILTER) {
                     // special category id's

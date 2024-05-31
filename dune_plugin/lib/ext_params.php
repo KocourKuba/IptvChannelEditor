@@ -23,4 +23,6 @@ class Ext_Params
     const /* (char *) */ M_VAR1        = 'var1';      // custom regex capture group
     const /* (char *) */ M_VAR2        = 'var2';      // custom regex capture group
     const /* (char *) */ M_VAR3        = 'var3';      // custom regex capture group
+    const /* (char *) */ M_R_TOKEN     = 'r_token';   // refresh token
+    const /* (char *) */ M_EXPIRE_DATA = 'expire_data'; // expire data
 }

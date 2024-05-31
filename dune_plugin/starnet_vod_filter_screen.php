@@ -25,19 +25,16 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        $actions = array();
-        $add_params['filter_actions'] = 'open';
-        $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_FILTER, null, $add_params);
-
-        $add_params['filter_actions'] = 'keyboard';
-        $actions[GUI_EVENT_KEY_PLAY] = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_FILTER, null, $add_params);
-
-        $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('up'));
-        $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('down'));
-        $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete'));
-        $actions[GUI_EVENT_KEY_POPUP_MENU] = Action_Factory::show_popup_menu(array());
-
-        return $actions;
+        return array(
+            GUI_EVENT_KEY_ENTER      => User_Input_Handler_Registry::create_action($this,
+                ACTION_CREATE_FILTER, null, array(ACTION_FILTER => ACTION_OPEN_FOLDER)),
+            GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('up')),
+            GUI_EVENT_KEY_C_YELLOW   => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('down')),
+            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete')),
+            GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
+            GUI_EVENT_KEY_RETURN     => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN),
+            GUI_EVENT_KEY_STOP       => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_STOP),
+        );
     }
 
     /**
@@ -49,29 +46,26 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
         dump_input_handler($user_input);
 
         switch ($user_input->control_id) {
-            case ACTION_CREATE_FILTER:
-                if (!isset($user_input->parent_media_url)) break;
+            case GUI_EVENT_KEY_RETURN:
+                return Action_Factory::close_and_run();
 
+            case GUI_EVENT_KEY_POPUP_MENU:
+                if (isset($user_input->selected_media_url)
+                    && MediaURL::decode($user_input->selected_media_url)->genre_id !== Vod_Category::FLAG_FILTER) {
+
+                    $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ITEMS_EDIT, TR::t('edit'), "edit.png");
+                    return Action_Factory::show_popup_menu($menu_items);
+                }
+
+                break;
+
+            case ACTION_CREATE_FILTER:
                 $media_url = MediaURL::decode($user_input->selected_media_url);
-                if ($media_url->genre_id !== Vod_Category::FLAG_FILTER && $user_input->filter_actions !== 'keyboard') {
+                if ($media_url->genre_id !== Vod_Category::FLAG_FILTER && $user_input->{ACTION_FILTER} === ACTION_OPEN_FOLDER) {
                     return Action_Factory::open_folder($user_input->selected_media_url);
                 }
 
-                if ($user_input->filter_actions === 'keyboard') {
-                    $filter_string = $media_url->genre_id;
-                } else {
-                    $filter_items = HD::get_data_items(self::VOD_FILTER_LIST);
-                    $filter_string = empty($filter_items) ? "" : $filter_items[0];
-                }
-
-                $defs = array();
-                if (false === $this->plugin->config->AddFilterUI($defs, $this, $filter_string)) break;
-
-                Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, ACTION_RUN_FILTER, TR::t('ok'), 300);
-                Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
-                Control_Factory::add_vgap($defs, 10);
-
-                return Action_Factory::show_dialog(TR::t('filter'), $defs, true);
+                return $this->plugin->config->AddFilterUI($this, $media_url->genre_id);
 
             case ACTION_RUN_FILTER:
                 $filter_string = $this->plugin->config->CompileSaveFilterItem($user_input);
@@ -79,13 +73,27 @@ class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implem
 
                 hd_debug_print("filter_screen filter string: $filter_string");
                 $filter_items = new Ordered_Array(HD::get_data_items(self::VOD_FILTER_LIST));
-                $filter_items->insert_item($filter_string, false);
-                HD::put_data_items(self::VOD_FILTER_LIST, $filter_items->get_order());
+                if (!empty($user_input->{ACTION_ITEMS_EDIT}) && (int)$user_input->{ACTION_ITEMS_EDIT} !== -1) {
+                    $filter_items->set_item_by_idx($user_input->{ACTION_ITEMS_EDIT}, $filter_string);
+                } else {
+                    $filter_items->add_item($filter_string);
+                }
 
-                return Action_Factory::invalidate_folders(array(self::get_media_url_str()),
+                HD::put_data_items(self::VOD_FILTER_LIST, $filter_items->get_order());
+                return Action_Factory::invalidate_folders(
+                    array($user_input->parent_media_url),
                     Action_Factory::open_folder(
                         Starnet_Vod_List_Screen::get_media_url_string(Vod_Category::FLAG_FILTER, $filter_string),
-                        TR::t('filter__1', $filter_string)));
+                        TR::t('filter')
+                    )
+                );
+
+            case ACTION_ITEMS_EDIT:
+                return User_Input_Handler_Registry::create_action($this,
+                    ACTION_CREATE_FILTER,
+                    null,
+                    array(ACTION_FILTER => ACTION_ITEMS_EDIT)
+                );
 
             case ACTION_ITEM_UP:
             case ACTION_ITEM_DOWN:

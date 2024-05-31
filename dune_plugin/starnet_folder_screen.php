@@ -91,7 +91,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Inpu
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         hd_debug_print(null, true);
-        hd_debug_print($media_url->get_media_url_str(), true);
+        hd_debug_print($media_url, true);
 
         $actions = array();
 

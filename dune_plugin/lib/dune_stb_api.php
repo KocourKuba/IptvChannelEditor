@@ -352,6 +352,34 @@ function get_platform_info()
     return $platform;
 }
 
+function get_platform_curl()
+{
+    static $curl = null;
+    if (is_null($curl)) {
+        $v = get_platform_info();
+        hd_debug_print("platform: " . $v['platform']);
+        hd_debug_print("type: " . $v['type']);
+        $curl = "curl";
+        if ($v['platform'] === 'android') {
+            $curl = getenv('FS_PREFIX') . "/firmware/bin/curl";
+        } else if ($v['platform'] === 'sigma') {
+            $short3 = substr($v['type'], 0, 3);
+            if (strpos($v['type'], '87') === 0) {
+                $curl = get_install_path("/bin/curl.87xx");
+            } else if ($short3 === '864') {
+                $curl = get_install_path("/bin/curl.864x");
+            } else if ($short3 === '865') {
+                $curl = get_install_path("/bin/curl.865x");
+            } else if ($short3 === '867') {
+                $curl = get_install_path("/bin/curl.867x");
+            }
+        }
+        hd_debug_print("used curl: $curl");
+    }
+
+    return $curl;
+}
+
 function get_bug_platform_kind()
 {
     static $bug_platform_kind = null;
@@ -1953,14 +1981,24 @@ function hd_debug_print_separator()
     hd_print(str_repeat("-", 80));
 }
 
-function raw_json_encode($arr)
+function escaped_raw_json_encode($param)
+{
+    return str_replace('"', '\"', raw_json_encode($param));
+}
+
+function decode_html_entity($string)
 {
     $pattern = "/\\\\u([0-9a-fA-F]{4})/";
     $callback = function ($m) {
         return html_entity_decode("&#x$m[1];", ENT_QUOTES, 'UTF-8');
     };
 
-    return str_replace('\\/', '/', preg_replace_callback($pattern, $callback, json_encode($arr)));
+    return preg_replace_callback($pattern, $callback, $string);
+}
+
+function raw_json_encode($arr)
+{
+    return decode_html_entity(json_encode($arr));
 }
 
 function wrap_string_to_lines($long_string, $max_chars)
