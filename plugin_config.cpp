@@ -52,16 +52,20 @@ void plugin_config::configure_plugin()
 
 const PlaylistTemplateInfo& plugin_config::get_playlist_info(size_t idx) const
 {
+	static PlaylistTemplateInfo emptyInfo;
+
 	if (idx != -1 && idx >= playlist_templates.size())
 	{
 		idx = 0;
 	}
 
-	return playlist_templates[idx];
+	return playlist_templates.empty() ? emptyInfo : playlist_templates[idx];
 }
 
 PlaylistTemplateInfo& plugin_config::get_playlist_info(size_t idx)
 {
+	static PlaylistTemplateInfo emptyInfo;
+
 	if (idx != -1 && idx >= playlist_templates.size())
 	{
 		idx = 0;
