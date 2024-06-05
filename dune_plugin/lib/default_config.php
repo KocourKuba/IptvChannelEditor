@@ -1520,8 +1520,8 @@ class default_config extends dynamic_config
         if (!$need_load) {
             $this->vod_items = HD::ReadContentFromFile($tmp_file, $assoc);
         } else {
-            $responce = $this->execApiCommand($this->GetVodListUrl(), $tmp_file);
-            if ($responce === false) {
+            $response = $this->execApiCommand($this->GetVodListUrl(), $tmp_file);
+            if ($response === false) {
                 $logfile = file_get_contents(get_temp_path(HD::HTTPS_PROXY_LOG));
                 $exception_msg = "Ошибка чтения медиатеки!\n\n$logfile";
                 HD::set_last_error("vod_last_error", $exception_msg);

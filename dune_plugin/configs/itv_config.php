@@ -19,8 +19,8 @@ class itv_config extends default_config
 
             if ($force !== false || empty($this->account_data)) {
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/data/$password";
-                $json = HD::DownloadJson($url);
-                if (empty($json['package_info'])) {
+                $json = HD::decodeResponse(false, HD::http_download_https_proxy($url), true);
+                if ($json === false || empty($json['package_info'])) {
                     throw new Exception("Account status unknown");
                 }
                 $this->account_data = $json;

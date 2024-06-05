@@ -176,10 +176,10 @@ class xtream_codes_api
 
     /**
      * @param $url string
-     * @param bool $to_array
+     * @param bool $assoc
      * @return mixed|false
      */
-    protected function get_cached_response($url, $to_array = false, $opts = null)
+    protected function get_cached_response($url, $assoc = false, $opts = null)
     {
         $url_hash = hash('crc32', $url . json_encode($opts));
         if (!is_null($this->cache) && isset($this->cache[$url_hash])) {
@@ -191,9 +191,9 @@ class xtream_codes_api
             $mtime = filemtime($tmp_file);
             $diff = time() - $mtime;
             if ($diff <= 3600) {
-                $cached_data = HD::ReadContentFromFile($tmp_file, $to_array);
-                if ($cached_data !== false) {
-                    return $this->update_cache($url_hash, $cached_data);
+                $response = HD::ReadContentFromFile($tmp_file, $assoc);
+                if ($response !== false) {
+                    return $this->update_cache($url_hash, $response);
                 }
             }
 
@@ -201,12 +201,8 @@ class xtream_codes_api
             unlink($tmp_file);
         }
 
-        $cached_data = HD::DownloadJson($url, $to_array, $opts);
-        if ($cached_data !== false) {
-            HD::StoreContentToFile($tmp_file, $cached_data);
-        }
-
-        return $this->update_cache($url_hash, $cached_data);
+        $response = HD::http_download_https_proxy($url, $tmp_file, $opts);
+        return $this->update_cache($url_hash, $response);
     }
 
     /**
