@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="312" scanned="20240512115127" built="20240421143256" lang="ru" pane="TLogPane" col="4" row="Strings.40.IDS_STRING_BUTTON_ADD_EPG">
+<desktop scan="313" scanned="20240605180443" built="20240605180501" lang="ru" pane="TLogPane" col="4" row="Dialogs.105.1158.Text">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="3"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>

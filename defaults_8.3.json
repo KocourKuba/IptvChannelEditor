@@ -932,6 +932,7 @@
     },
     "iptvonline": {
       "access_type": "login",
+      "class_name": "iptvonline_config",
       "epg_params": [
         {
           "epg_param": "first",

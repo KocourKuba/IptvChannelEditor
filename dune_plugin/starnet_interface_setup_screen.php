@@ -70,17 +70,18 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
                 PARAM_SHOW_VOD, TR::t('setup_show_vod'), SetupControlSwitchDefs::$on_off_translated[$show_vod],
                 get_image_path(SetupControlSwitchDefs::$on_off_img[$show_vod]), self::CONTROLS_WIDTH);
 
-            //////////////////////////////////////
-            // show vod at the end of categories
-            $vod_last = $this->plugin->get_parameter(PARAM_VOD_LAST, SetupControlSwitchDefs::switch_on);
-            Control_Factory::add_image_button($defs, $this, null,
-                PARAM_VOD_LAST, TR::t('setup_vod_last'), SetupControlSwitchDefs::$on_off_translated[$vod_last],
-                get_image_path(SetupControlSwitchDefs::$on_off_img[$vod_last]), self::CONTROLS_WIDTH);
+            if ($show_vod) {            //////////////////////////////////////
+                // show vod at the end of categories
+                $vod_last = $this->plugin->get_parameter(PARAM_VOD_LAST, SetupControlSwitchDefs::switch_off);
+                Control_Factory::add_image_button($defs, $this, null,
+                    PARAM_VOD_LAST, TR::t('setup_vod_last'), SetupControlSwitchDefs::$on_off_translated[$vod_last],
+                    get_image_path(SetupControlSwitchDefs::$on_off_img[$vod_last]), self::CONTROLS_WIDTH);
+            }
         }
 
         //////////////////////////////////////
         // epg font size
-        $font_size = $this->plugin->get_parameter(PARAM_EPG_FONT_SIZE, SetupControlSwitchDefs::switch_off);
+        $font_size = $this->plugin->get_parameter(PARAM_EPG_FONT_SIZE, SetupControlSwitchDefs::switch_on);
         $font_ops_translated[SetupControlSwitchDefs::switch_on] = TR::t('setup_small');
         $font_ops_translated[SetupControlSwitchDefs::switch_off] = TR::t('setup_normal');
 

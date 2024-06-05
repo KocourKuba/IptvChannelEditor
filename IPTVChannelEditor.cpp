@@ -924,6 +924,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 		}
 	}
 
+	// copy logo and background
 	std::filesystem::path plugin_logo;
 	std::filesystem::path plugin_bgnd;
 	if (!noCustom)
