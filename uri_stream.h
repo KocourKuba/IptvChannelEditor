@@ -25,8 +25,8 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "base_plugin.h"
 #include "uri_base.h"
+#include "PluginEnums.h"
 
 #include "UtilsLib\json_wrapper.h"
 
@@ -39,8 +39,6 @@ typedef void (uri_stream::*pointer_to_setter)(const std::wstring&);
 
 class uri_stream : public uri_base
 {
-	friend class base_plugin;
-
 public:
 	uri_stream() = default;
 	uri_stream(const uri_stream& src)
@@ -48,10 +46,7 @@ public:
 		copy_data(src);
 	}
 
-	uri_stream(InfoType type, std::shared_ptr<base_plugin> plugin/*, std::wstring root_path*/)
-		: base_type(type)
-		, parent_plugin(plugin)
-	{};
+	uri_stream(InfoType type) : base_type(type) {};
 
 public:
 
@@ -213,7 +208,6 @@ protected:
 	static std::string uri_stream::stream_type_to_str(int type);
 	static int uri_stream::str_to_stream_type(const std::string& str_type);
 
-	std::shared_ptr<base_plugin> parent_plugin;
 	InfoType base_type = InfoType::enUndefined;
 
 	bool is_template = false;

@@ -68,20 +68,20 @@ std::wstring base_plugin::get_playlist_url(const TemplateParams& params, std::ws
 	if (!get_provider_api_url().empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
 
-	if (!params.s_token.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.s_token);
+	if (!params.creds.s_token.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.creds.get_s_token());
 
-	if (!params.login.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
+	if (!params.creds.login.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.creds.get_login());
 
-	if (!params.password.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+	if (!params.creds.password.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.creds.get_password());
 
-	if (!params.subdomain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+	if (!params.creds.subdomain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.creds.get_subdomain());
 
-	if (!params.ott_key.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.ott_key);
+	if (!params.creds.ott_key.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.creds.get_ott_key());
 
 	if (!domains_list.empty())
 	{
@@ -156,28 +156,28 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 	}
 
 	utils::string_replace_inplace<wchar_t>(url, REPL_CGI_BIN, fmt::format(L"http://127.0.0.1/cgi-bin/plugins/{:s}/", utils::utf8_to_utf16(get_name())));
-	utils::string_replace_inplace<wchar_t>(url, REPL_SCHEME, info->scheme);
-	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, info->domain);
-	utils::string_replace_inplace<wchar_t>(url, REPL_PORT, info->port);
+	utils::string_replace_inplace<wchar_t>(url, REPL_SCHEME, info->get_scheme());
+	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN, info->get_domain());
+	utils::string_replace_inplace<wchar_t>(url, REPL_PORT, info->get_port());
 	utils::string_replace_inplace<wchar_t>(url, REPL_ID, info->get_id());
-	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, info->token);
-	utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, info->int_id);
-	utils::string_replace_inplace<wchar_t>(url, REPL_HOST, info->host);
-	utils::string_replace_inplace<wchar_t>(url, REPL_VAR1, info->var1);
-	utils::string_replace_inplace<wchar_t>(url, REPL_VAR2, info->var2);
-	utils::string_replace_inplace<wchar_t>(url, REPL_VAR3, info->var2);
+	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, info->get_token());
+	utils::string_replace_inplace<wchar_t>(url, REPL_INT_ID, info->get_int_id());
+	utils::string_replace_inplace<wchar_t>(url, REPL_HOST, info->get_host());
+	utils::string_replace_inplace<wchar_t>(url, REPL_VAR1, info->get_var1());
+	utils::string_replace_inplace<wchar_t>(url, REPL_VAR2, info->get_var2());
+	utils::string_replace_inplace<wchar_t>(url, REPL_VAR3, info->get_var2());
 
-	if (!params.subdomain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+	if (!params.creds.subdomain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.creds.get_subdomain());
 
-	if (!params.ott_key.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.ott_key);
+	if (!params.creds.ott_key.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.creds.get_ott_key());
 
-	if (!params.login.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
+	if (!params.creds.login.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.creds.get_login());
 
-	if (!params.password.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+	if (!params.creds.password.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.creds.get_password());
 
 	if (params.shift_back)
 	{
@@ -305,21 +305,21 @@ std::wstring base_plugin::get_vod_url(size_t idx, const TemplateParams& params) 
 	if (!get_provider_api_url().empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
 
-	if (!params.s_token.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.s_token);
+	if (!params.creds.s_token.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.creds.get_s_token());
 
 
-	if (!params.login.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.login);
+	if (!params.creds.login.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.creds.get_login());
 
-	if (!params.password.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.password);
+	if (!params.creds.password.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.creds.get_password());
 
-	if (!params.ott_key.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.ott_key);
+	if (!params.creds.ott_key.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.creds.get_ott_key());
 
-	if (!params.subdomain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.subdomain);
+	if (!params.creds.subdomain.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.creds.get_subdomain());
 
 	return url;
 }
@@ -595,11 +595,11 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	auto epg_template = params.get_epg_url();
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_API_URL, get_provider_api_url());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_DOMAIN, params.get_epg_domain());
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DOMAIN, info->domain);
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->id);
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DOMAIN, info->get_domain());
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->get_id());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, epg_id);
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, info->token);
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_S_TOKEN, info->token);
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, info->get_token());
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_S_TOKEN, info->get_token());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DATE, params.get_epg_date_format());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_YEAR, std::to_wstring(dt.GetYear()));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_MONTH, std::to_wstring(dt.GetMonth()));

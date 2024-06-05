@@ -30,5 +30,8 @@ DEALINGS IN THE SOFTWARE.
 class plugin_cbilling : public base_plugin
 {
 public:
-	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(const TemplateParams& params) override;
+	void parse_account_info(Credentials& creds) override;
+	void parse_vod(const CThreadConfig& config) override;
+	void fetch_movie_info(const Credentials& creds, vod_movie& movie) override;
+	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie) override;
 };

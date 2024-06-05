@@ -24,26 +24,11 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-#include "pch.h"
-#include "BaseThread.h"
+#pragma once
+#include "base_plugin.h"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
-
-void CBaseThread::ThreadConfig::SendNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+class plugin_ottclub : public base_plugin
 {
-	CWnd* parent = (CWnd*)m_parent;
-	if (parent->GetSafeHwnd())
-		parent->SendMessage(message, wParam, lParam);
-
-}
-
-void CBaseThread::ThreadConfig::PostNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
-{
-	CWnd* parent = (CWnd*)m_parent;
-	if (parent->GetSafeHwnd())
-		parent->PostMessage(message, wParam, lParam);
-}
+public:
+	void update_entry(PlaylistEntry& entry) override;
+};

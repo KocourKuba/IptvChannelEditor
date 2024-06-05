@@ -104,6 +104,8 @@ class HD
      */
     public static function get_storage_size($path, $arg = null)
     {
+        flush();
+        shell_exec('sync');
         $d[0] = disk_free_space($path);
         $d[1] = disk_total_space($path);
         foreach ($d as $bytes) {

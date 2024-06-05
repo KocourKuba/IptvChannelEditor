@@ -25,9 +25,10 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "plugin_config.h"
-#include "uri_stream.h"
+#include "PlayListEntry.h"
 #include "Credentials.h"
+#include "ThreadConfig.h"
+#include "vod_movie.h"
 
 class uri_stream;
 
@@ -56,6 +57,13 @@ public:
 	virtual ~base_plugin() = default;
 
 public:
+	struct movie_request
+	{
+		int season_idx = -1;
+		int episode_idx = -1;
+		int quality_idx = -1;
+		int audio_idx = -1;
+	};
 
 	/// <summary>
 	/// regex of uri parse template
@@ -161,12 +169,20 @@ public:
 	void parse_stream_uri(const std::wstring& url, uri_stream& info);
 
 	/// <summary>
+	/// returns parsed account info
+	/// </summary>
+	const std::map<std::wstring, std::wstring, std::less<>>& get_account_info() { return account_info; }
+
+	/// <summary>
+	/// clear account info
+	/// </summary>
+	void clear_account_info() { return account_info.clear(); }
+
+	/// <summary>
 	/// parse access info
 	/// </summary>
-	/// <param name="params">parameters used to download access info</param>
-	/// <param name="info_list">parsed parameters list</param>
-	/// <returns>std::map<std::wstring, std::wstring, std::less<>></returns>
-	virtual std::map<std::wstring, std::wstring, std::less<>> parse_access_info(const TemplateParams& params) { return {}; }
+	/// <param name="creds">parameters used to download access info</param>
+	virtual void parse_account_info(Credentials& creds) {}
 
 	/// <summary>
 	/// get url to obtain account playlist
@@ -176,12 +192,31 @@ public:
 	virtual std::wstring get_playlist_url(const TemplateParams& params, std::wstring url = L"");
 
 	/// <summary>
-	/// returns token from account if exist
+	/// returns s_token from account if exist
 	/// </summary>
-	/// <param name="login">login</param>
-	/// <param name="password">password</param>
-	/// <returns>wstring</returns>
-	virtual std::wstring get_api_token(const Credentials& creds) const { return L""; };
+	/// <param name="creds">credentials</param>
+	virtual void update_entry(PlaylistEntry& entry) {};
+
+	/// <summary>
+	/// returns s_token from account if exist
+	/// </summary>
+	/// <param name="creds">credentials</param>
+	virtual void get_api_token(Credentials& creds) {};
+
+	/// <summary>
+	/// parse vod
+	/// </summary>
+	virtual void parse_vod(const CThreadConfig& config) {}
+
+	/// <summary>
+	/// parse movie
+	/// </summary>
+	virtual void fetch_movie_info(const Credentials& creds, vod_movie& movie) {}
+
+	/// <summary>
+	/// get movie url
+	/// </summary>
+	virtual std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie) { return movie.url; }
 
 protected:
 
@@ -192,8 +227,9 @@ protected:
 	std::string internal_name;
 
 	// compiled regex for uri parse template
-	boost::wregex regex_uri_template;
+	boost::wregex regex_uri_template{};
 
 	// extracted named groups from uri parse template
-	std::vector<std::wstring> regex_named_groups;
+	std::vector<std::wstring> regex_named_groups{};
+	std::map<std::wstring, std::wstring, std::less<>> account_info{};
 };

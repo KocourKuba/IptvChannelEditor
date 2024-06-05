@@ -72,6 +72,7 @@ protected:
 	afx_msg void OnCbnSelchangeComboSeason();
 	afx_msg void OnCbnSelchangeComboEpisode();
 	afx_msg void OnCbnSelchangeComboQuality();
+	afx_msg void OnCbnSelchangeComboAudio();
 	afx_msg void OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedButtonRefresh();
 	afx_msg void OnBnClickedButtonSearch();
@@ -86,14 +87,12 @@ private:
 	void FillCategories();
 	void FillSeasons(const std::shared_ptr<vod_movie>& movie);
 	void FillEpisodes(const std::shared_ptr<vod_movie>& movie);
-	void FillQuality(const vod_quality_storage& qualities);
+	void FillQuality(const vod_variants_storage& qualities);
+	void FillAudio(const vod_variants_storage& audios);
 	void FillGenres();
 	void FillYears();
 	void LoadMovieInfo(int idx);
 	void FilterList();
-	void FetchMovieCbilling(vod_movie& movie) const;
-	void FetchMovieEdem(vod_movie& movie) const;
-	void FetchMovieSharavoz(vod_movie& movie) const;
 	void GetUrl(int idx);
 
 public:
@@ -108,6 +107,7 @@ protected:
 	CComboBox m_wndSeason;
 	CComboBox m_wndEpisode;
 	CComboBox m_wndQuality;
+	CComboBox m_wndAudio;
 	CListCtrlEx m_wndMoviesList;
 	CButton m_wndSearch;
 	CEdit m_wndTotal;
@@ -129,6 +129,7 @@ private:
 	int m_season_idx = -1;
 	int m_episode_idx = -1;
 	int m_quality_idx = -1;
+	int m_audio_idx = -1;
 	size_t m_total = 0;
 	vod_category_storage m_current_vod;
 	std::map<std::wstring, vod_category_storage>& m_vod_storages;

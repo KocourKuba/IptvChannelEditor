@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-#include "base_plugin.h"
 #include "BaseThread.h"
 
 class CPlaylistParseM3U8Thread : public CBaseThread
@@ -35,7 +34,4 @@ class CPlaylistParseM3U8Thread : public CBaseThread
 
 public:
 	BOOL InitInstance() override;
-
-protected:
-	boost::wregex m_re;
 };

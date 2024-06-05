@@ -50,7 +50,7 @@ class ChannelInfo : public uri_stream, public IconContainer
 public:
 	ChannelInfo() = delete;
 	ChannelInfo(const ChannelInfo& src);
-	ChannelInfo(std::shared_ptr<base_plugin>& plugin, const std::wstring& root_path);
+	ChannelInfo(const std::wstring& root_path);
 
 public:
 	void ParseNode(rapidxml::xml_node<>* node);

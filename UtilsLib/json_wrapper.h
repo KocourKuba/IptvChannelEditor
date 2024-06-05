@@ -136,6 +136,16 @@ namespace utils
 		return ret_value;
 	}
 
+	inline bool get_json_bool(const std::string& key, const nlohmann::json& node)
+	{
+		bool ret_value = false;
+		if (node.contains(key) && node[key].is_boolean())
+		{
+			ret_value = node[key].get<bool>();
+		}
+
+		return ret_value;
+	}
 
 	inline std::string get_json_string_value(const std::string& key, const nlohmann::json& val)
 	{

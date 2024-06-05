@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "base_plugin.h"
+#include "IconPackInfo.h"
 
 /// <summary>
 /// Container for stream interface

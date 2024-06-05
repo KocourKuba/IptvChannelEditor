@@ -28,46 +28,47 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_base.h"
 #include "UtilsLib\vectormap.h"
 
-class vod_filter
+class vod_filter_def
 {
 public:
 	std::wstring id;
 	std::wstring title;
 };
 
-using vod_filter_storage = utils::vectormap<std::wstring, vod_filter>;
+using vod_filter_storage = utils::vectormap<std::wstring, vod_filter_def>;
 
-class vod_genre
+class vod_genre_def
 {
 public:
 	std::wstring id;
 	std::wstring title;
 };
 
-using vod_genre_storage = utils::vectormap<std::wstring, vod_genre>;
+using vod_genre_storage = utils::vectormap<std::wstring, vod_genre_def>;
 
-class vod_quality
+class vod_variant_def
 {
 public:
 	std::wstring title;
 	std::wstring url;
 };
 
-using vod_quality_storage = utils::vectormap<std::wstring, vod_quality>;
+using vod_variants_storage = utils::vectormap<std::wstring, vod_variant_def>;
 
-class vod_episode
+class vod_episode_def
 {
 public:
 	std::wstring id;
 	std::wstring episode_id;
 	std::wstring title;
 	std::wstring url;
-	vod_quality_storage quality;
+	vod_variants_storage qualities;
+	vod_variants_storage audios;
 };
 
-using vod_episode_episode = utils::vectormap<std::wstring, vod_episode>;
+using vod_episode_episode = utils::vectormap<std::wstring, vod_episode_def>;
 
-class vod_season
+class vod_season_def
 {
 public:
 	std::wstring id;
@@ -76,7 +77,7 @@ public:
 	vod_episode_episode episodes;
 };
 
-using vod_season_storage = utils::vectormap<std::wstring, vod_season>;
+using vod_season_storage = utils::vectormap<std::wstring, vod_season_def>;
 
 class vod_movie
 {
@@ -98,7 +99,8 @@ public:
 	vod_genre_storage genres;
 	uri_base poster_url;
 	vod_season_storage seasons;
-	vod_quality_storage quality;
+	vod_variants_storage quality;
+	vod_variants_storage audios;
 
 	vod_movie& operator=(const vod_movie& src)
 	{

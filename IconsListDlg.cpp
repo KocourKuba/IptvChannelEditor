@@ -128,7 +128,7 @@ BOOL CIconsListDlg::OnInitDialog()
 			const auto& str = data.str();
 			int lines = (int)std::count(str.begin(), str.end(), '\n');
 
-			CBaseThread::ThreadConfig cfg;
+			CThreadConfig cfg;
 			cfg.m_parent = this;
 			cfg.m_data = std::move(data);
 			cfg.m_hStop = m_evtStop;

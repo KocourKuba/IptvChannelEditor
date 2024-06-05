@@ -37,48 +37,47 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
 
-std::map<std::wstring, std::wstring, std::less<>> plugin_itv::parse_access_info(const TemplateParams& params)
+void plugin_itv::parse_account_info(Credentials& creds)
 {
-	std::map<std::wstring, std::wstring, std::less<>> info;
-
-	CWaitCursor cur;
-	std::stringstream data;
-	if (download_url(fmt::format(ACCOUNT_TEMPLATE, params.password), data))
+	if (account_info.empty())
 	{
-		JSON_ALL_TRY
+		CWaitCursor cur;
+		const auto& url = fmt::format(ACCOUNT_TEMPLATE, creds.get_password());
+		std::stringstream data;
+		if (download_url(url, data))
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
-			if (parsed_json.contains("user_info"))
+			JSON_ALL_TRY
 			{
-				const auto& js_data = parsed_json["user_info"];
-
-				set_json_info("login", js_data, info);
-				set_json_info("pay_system", js_data, info);
-				set_json_info("cash", js_data, info);
-			}
-
-			std::wstring subscription;
-			if (!parsed_json.contains("package_info"))
-			{
-				subscription = L"No packages";
-			}
-			else
-			{
-				const auto& pkg_data = parsed_json["package_info"];
-				for (const auto& item : pkg_data)
+				const auto & parsed_json = nlohmann::json::parse(data.str());
+				if (parsed_json.contains("user_info"))
 				{
-					if (!subscription.empty())
-						subscription += L", ";
+					const auto& js_data = parsed_json["user_info"];
 
-					subscription += fmt::format(L"{:s}", utils::utf8_to_utf16(item.value("name", "")));
+					set_json_info("login", js_data, account_info);
+					set_json_info("pay_system", js_data, account_info);
+					set_json_info("cash", js_data, account_info);
 				}
+
+				std::wstring subscription;
+				if (!parsed_json.contains("package_info"))
+				{
+					subscription = L"No packages";
+				}
+				else
+				{
+					const auto& pkg_data = parsed_json["package_info"];
+					for (const auto& item : pkg_data)
+					{
+						if (!subscription.empty())
+							subscription += L", ";
+
+						subscription += fmt::format(L"{:s}", utils::utf8_to_utf16(item.value("name", "")));
+					}
+				}
+
+				account_info.emplace(L"package_info", subscription);
 			}
-
-			info.emplace(L"package_info", subscription);
+			JSON_ALL_CATCH;
 		}
-		JSON_ALL_CATCH;
 	}
-
-
-	return info;
 }

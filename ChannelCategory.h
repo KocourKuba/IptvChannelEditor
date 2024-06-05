@@ -27,6 +27,8 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "ChannelInfo.h"
 #include "IconContainer.h"
+#include "uri_stream.h"
+#include "Resource.h"
 
 // <tv_category>
 //   <id>1</id>

@@ -25,12 +25,8 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "base_plugin.h"
+#include "plugin_cbilling.h"
 
-// API documentation http://protected-api.com/api/documentation
-
-class plugin_antifriz : public base_plugin
+class plugin_antifriz : public plugin_cbilling
 {
-public:
-	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(const TemplateParams& params) override;
 };

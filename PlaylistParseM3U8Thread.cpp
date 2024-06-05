@@ -51,7 +51,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 		{
 			m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
 
-			auto entry = std::make_shared<PlaylistEntry>(m_parent_plugin, playlist, m_config.m_rootPath);
+			auto entry = std::make_shared<PlaylistEntry>(playlist, m_config.m_rootPath);
 			const auto& pl_info = m_parent_plugin->get_current_playlist_info();
 			int channels = 0;
 			int step = 0;
@@ -64,6 +64,12 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 
 				if (entry->Parse(line))
 				{
+					m_parent_plugin->parse_stream_uri(utils::utf8_to_utf16(line), *entry);
+					if (entry->is_valid() && entry->get_category().empty())
+					{
+						entry->set_category(load_string_resource(IDS_STRING_UNSET));
+					}
+
 					if (entry->get_id().empty())
 					{
 						entry->search_id(pl_info.get_tag_id_match());
@@ -74,20 +80,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 						}
 					}
 
-					switch (m_parent_plugin->get_plugin_type())
-					{
-						case PluginType::enOttclub:
-							entry->set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", entry->get_domain(), entry->get_id()));
-							break;
-						case PluginType::enKineskop:
-							entry->set_icon_uri(boost::regex_replace(entry->get_icon_uri().get_uri(), boost::wregex(LR"(http:\/\/\w{2}\.(.*))"), L"http://$1"));
-							break;
-						case PluginType::enGlanz:
-							entry->set_icon_uri(utils::string_replace<wchar_t>(entry->get_icon_uri().get_uri(), L"https://", L"http://"));
-							break;
-						default:
-							break;
-					}
+					m_parent_plugin->update_entry(*entry);
 
 					// special cases after parsing
 					if (pl_info.get_epg_id_from_id())
@@ -101,7 +94,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					}
 
 					playlist->m_entries.emplace_back(entry);
-					entry = std::make_shared<PlaylistEntry>(m_parent_plugin, playlist, m_config.m_rootPath);
+					entry = std::make_shared<PlaylistEntry>(playlist, m_config.m_rootPath);
 
 					channels++;
 					if (channels % 100 == 0)
@@ -117,7 +110,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 
 				if (entry->get_m3u_entry().get_directive() == m3u_entry::directives::ext_header)
 				{
-					entry = std::make_shared<PlaylistEntry>(m_parent_plugin, playlist, m_config.m_rootPath);
+					entry = std::make_shared<PlaylistEntry>(playlist, m_config.m_rootPath);
 				}
 			}
 		}

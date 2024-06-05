@@ -61,7 +61,7 @@ public:
 					  std::stringstream& vData,
 					  std::vector<std::string>* pHeaders = nullptr,
 					  bool verb_post = false,
-					  const char* post_data = nullptr);
+					  const char* post_data = nullptr) const;
 
 
 	/**
@@ -73,7 +73,7 @@ public:
 	*/
 	void SetCacheTtl(int cache_ttl) { m_cache_ttl_sec = cache_ttl; }
 	const std::wstring& GetLastErrorMessage() { return m_error_message; };
-	bool CheckIsCacheExpired(const std::wstring& cache_file);
+	bool CheckIsCacheExpired(const std::wstring& cache_file) const;
 
 	static void ClearCache();
 	static void ClearCachedUrl(const std::wstring& url);
@@ -82,7 +82,7 @@ public:
 
 private:
 	int m_cache_ttl_sec = 0;
-	std::wstring m_error_message;
+	mutable std::wstring m_error_message;
 	std::wstring m_user_agent = pc_user_agent;
 };
 
@@ -117,7 +117,7 @@ public:
 
 protected:
 	//Member variables
-	std::vector<unsigned char> m_buf;
+	std::vector<unsigned char> m_buf{};
 	int m_nSize = 0;
 };
 
@@ -153,11 +153,11 @@ protected:
 
 protected:
 	//Member variables
-	std::vector<unsigned char> m_buf;
+	std::vector<unsigned char> m_buf{};
 	size_t m_nSize = 0;
 
 	bool m_bKeySet = false;
-	unsigned char m_state[256] = { 0 };
+	unsigned char m_state[256] { 0 };
 	unsigned char m_x = 0;
 	unsigned char m_y = 0;
 };

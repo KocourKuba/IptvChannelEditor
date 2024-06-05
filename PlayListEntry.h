@@ -28,10 +28,12 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_stream.h"
 #include "m3u_entry.h"
 #include "ChannelCategory.h"
+#include "PluginEnums.h"
 
 using m3u_tags = std::map<m3u_entry::info_tags, std::string>;
 
 class PlaylistEntry;
+class base_plugin;
 
 class Playlist
 {
@@ -49,8 +51,8 @@ class PlaylistEntry : public uri_stream, public IconContainer
 {
 public:
 	PlaylistEntry() = delete;
-	PlaylistEntry(std::shared_ptr<base_plugin>& plugin, std::unique_ptr<Playlist>& m3u_playlist, std::wstring root_path = L"")
-		: uri_stream(InfoType::enPlEntry, plugin)
+	PlaylistEntry(std::unique_ptr<Playlist>& m3u_playlist, std::wstring root_path = L"")
+		: uri_stream(InfoType::enPlEntry)
 		, IconContainer(root_path)
 		, playlist(m3u_playlist)
 	{}

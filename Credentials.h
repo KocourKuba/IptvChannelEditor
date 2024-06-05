@@ -89,8 +89,10 @@ public:
 	{
 		SERIALIZE_STRUCT(j, c, login);
 		SERIALIZE_STRUCT(j, c, password);
+		SERIALIZE_STRUCT(j, c, token);
 		SERIALIZE_STRUCT(j, c, ott_key);
 		SERIALIZE_STRUCT(j, c, subdomain);
+		SERIALIZE_STRUCT(j, c, domain);
 		SERIALIZE_STRUCT(j, c, portal);
 		SERIALIZE_STRUCT(j, c, s_token);
 		SERIALIZE_STRUCT(j, c, comment);
@@ -118,6 +120,7 @@ public:
 		SERIALIZE_STRUCT(j, c, quality_id);
 		SERIALIZE_STRUCT(j, c, domain_id);
 		SERIALIZE_STRUCT(j, c, embed);
+		SERIALIZE_STRUCT(j, c, expired);
 		SERIALIZE_STRUCT(j, c, ch_list);
 		SERIALIZE_STRUCT(j, c, m_direct_links);
 		SERIALIZE_STRUCT(j, c, use_dropbox); //-V601
@@ -158,6 +161,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, quality_id);
 		DESERIALIZE_STRUCT(j, c, domain_id);
 		DESERIALIZE_STRUCT(j, c, embed);
+		DESERIALIZE_STRUCT(j, c, expired);
 		DESERIALIZE_STRUCT(j, c, ch_list);
 		DESERIALIZE_STRUCT(j, c, m_direct_links);
 		DESERIALIZE_STRUCT(j, c, use_dropbox);
@@ -166,10 +170,12 @@ public:
 public:
 	std::string login;
 	std::string password;
+	std::string token;
 	std::string ott_key;
 	std::string subdomain;
-	std::string s_token;
+	std::string domain;
 	std::string portal;
+	std::string s_token;
 	std::string comment;
 	std::string config;
 	std::string caption;
@@ -183,8 +189,6 @@ public:
 	std::string package_name;
 	std::string ch_web_path;
 
-	std::string token;
-	std::string domain;
 
 	int custom_caption = 0;
 	int custom_logo = 0;
@@ -198,10 +202,22 @@ public:
 	int quality_id = 0; // zero based index
 	int domain_id = 0; // zero based index
 	int embed = 0;
+	int expired = 0;
 
 	bool not_valid = false;
 	bool use_dropbox = false;
 
 	std::vector<std::string> ch_list;
 	std::map<std::string, std::string> m_direct_links;
+
+	bool operator!=(const Credentials& that)
+	{
+		return login != that.login
+			|| password != that.password
+			|| token != that.token
+			|| s_token != that.s_token
+			|| ott_key != that.ott_key
+			|| subdomain != that.subdomain
+			|| expired != that.expired;
+	}
 };

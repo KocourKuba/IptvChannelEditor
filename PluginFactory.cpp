@@ -27,10 +27,15 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "PluginFactory.h"
 #include "plugin_antifriz.h"
+#include "plugin_edem.h"
+#include "plugin_glanz.h"
+#include "plugin_iptvonline.h"
 #include "plugin_itv.h"
+#include "plugin_kineskop.h"
 #include "plugin_oneott.h"
+#include "plugin_ottclub.h"
 #include "plugin_sharaclub.h"
-#include "plugin_cbilling.h"
+#include "plugin_sharavoz.h"
 #include "plugin_vidok.h"
 #include "plugin_tvclub.h"
 
@@ -106,16 +111,40 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(PluginType type)
 				plugin = std::make_shared<plugin_cbilling>();
 				break;
 
+			case PluginType::enEdem:
+				plugin = std::make_shared<plugin_edem>();
+				break;
+
+			case PluginType::enGlanz:
+				plugin = std::make_shared<plugin_glanz>();
+				break;
+
+			case PluginType::enIptvOnline:
+				plugin = std::make_shared<plugin_iptvonline>();
+				break;
+
 			case PluginType::enItv:
 				plugin = std::make_shared<plugin_itv>();
+				break;
+
+			case PluginType::enKineskop:
+				plugin = std::make_shared<plugin_kineskop>();
 				break;
 
 			case PluginType::enOneOtt:
 				plugin = std::make_shared<plugin_oneott>();
 				break;
 
+			case PluginType::enOttclub:
+				plugin = std::make_shared<plugin_ottclub>();
+				break;
+
 			case PluginType::enSharaclub:
 				plugin = std::make_shared<plugin_sharaclub>();
+				break;
+
+			case PluginType::enSharavoz:
+				plugin = std::make_shared<plugin_sharavoz>();
 				break;
 
 			case PluginType::enTVClub:

@@ -607,8 +607,11 @@
 #define IDC_STATIC_SEASON               1156
 #define IDC_COMBO_EPISODE               1157
 #define IDC_COMBO_PROFILE               1158
+#define IDC_STATIC_QUALITY2             1158
 #define IDC_STATIC_EPISODE              1159
 #define IDC_BUTTON_CLEAR_CACHE          1160
+#define IDC_COMBO_QUALITY2              1160
+#define IDC_COMBO_AUDIO                 1160
 #define IDC_MFCEDITBROWSE_PLUGIN_LOGO   1161
 #define IDC_MFCEDITBROWSE_PLUGIN_BGND   1162
 #define IDC_BUTTON_ADDED                1163
@@ -749,7 +752,7 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        281

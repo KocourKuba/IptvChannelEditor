@@ -26,6 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_sharaclub.h"
+#include "Constants.h"
+#include "AccountSettings.h"
 
 #include "UtilsLib\utils.h"
 
@@ -76,42 +78,40 @@ std::wstring plugin_sharaclub::get_playlist_url(const TemplateParams& params, st
 	return base_plugin::get_playlist_url(params, url);
 }
 
-std::map<std::wstring, std::wstring, std::less<>> plugin_sharaclub::parse_access_info(const TemplateParams& params)
+void plugin_sharaclub::parse_account_info(Credentials& creds)
 {
-	const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"subscr_info", params.login, params.password);
-
-	std::map<std::wstring, std::wstring, std::less<>> info;
-
-	CWaitCursor cur;
-	std::stringstream data;
-	if (download_url(url, data))
+	if (account_info.empty())
 	{
-		JSON_ALL_TRY;
+		CWaitCursor cur;
+		const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"subscr_info", creds.get_login(), creds.get_password());
+		std::stringstream data;
+		if (download_url(url, data))
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
-			if (parsed_json.contains("status"))
+			JSON_ALL_TRY;
 			{
-				info.emplace(L"state", utils::utf8_to_utf16(parsed_json.value("status", "")));
-			}
+				const auto& parsed_json = nlohmann::json::parse(data.str());
+				if (parsed_json.contains("status"))
+				{
+					account_info.emplace(L"state", utils::utf8_to_utf16(parsed_json.value("status", "")));
+				}
 
-			if (parsed_json.contains("data"))
-			{
-				const auto& js_data = parsed_json["data"];
-				set_json_info("login", js_data, info);
-				set_json_info("money", js_data, info);
-				set_json_info("money_need", js_data, info);
-				set_json_info("abon", js_data, info);
+				if (parsed_json.contains("data"))
+				{
+					const auto& js_data = parsed_json["data"];
+					set_json_info("login", js_data, account_info);
+					set_json_info("money", js_data, account_info);
+					set_json_info("money_need", js_data, account_info);
+					set_json_info("abon", js_data, account_info);
+				}
 			}
+			JSON_ALL_CATCH;
 		}
-		JSON_ALL_CATCH;
 	}
-
-	return info;
 }
 
 void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 {
-	if (params.login.empty() || params.password.empty() || !get_servers_list().empty())
+	if (params.creds.login.empty() || params.creds.password.empty() || !get_servers_list().empty())
 		return;
 
 	std::vector<DynamicParamsInfo> servers;
@@ -119,8 +119,8 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 	const auto& url = fmt::format(API_COMMAND_GET_URL,
 									get_provider_api_url(),
 									L"ch_cdn",
-									params.login,
-									params.password);
+									params.creds.get_login(),
+									params.creds.get_password());
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -161,8 +161,8 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 									  L"ch_cdn",
 									  L"num",
 									  servers_list[params.server_idx].get_id(),
-									  params.login,
-									  params.password);
+									  params.creds.get_login(),
+									  params.creds.get_password());
 
 		CWaitCursor cur;
 		std::stringstream data;
@@ -182,14 +182,14 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 
 void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 {
-	if (!get_profiles_list().empty() || params.login.empty() || params.password.empty())
+	if (!get_profiles_list().empty() || params.creds.login.empty() || params.creds.password.empty())
 		return;
 
 	const auto& url = fmt::format(API_COMMAND_GET_URL,
 								  get_provider_api_url(),
 								  L"list_profiles",
-								  params.login,
-								  params.password);
+								  params.creds.get_login(),
+								  params.creds.get_password());
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -234,8 +234,8 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 									  L"list_profiles",
 									  L"num",
 									  profiles_list[params.profile_idx].get_id(),
-									  params.login,
-									  params.password);
+									  params.creds.get_login(),
+									  params.creds.get_password());
 
 		CWaitCursor cur;
 		std::stringstream data;
@@ -251,4 +251,103 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 	}
 
 	return false;
+}
+
+void plugin_sharaclub::parse_vod(const CThreadConfig& config)
+{
+	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
+	auto categories = std::make_unique<vod_category_storage>();
+
+	do
+	{
+		const auto& all_name = load_string_resource(IDS_STRING_ALL);
+		auto all_category = std::make_shared<vod_category>(all_name);
+		all_category->name = all_name;
+		categories->set_back(all_name, all_category);
+
+		std::stringstream data;
+		if (!download_url(config.m_url, data, cache_ttl)) break;
+
+		nlohmann::json parsed_json;
+		JSON_ALL_TRY;
+		parsed_json = nlohmann::json::parse(data.str());
+		JSON_ALL_CATCH;
+
+		if (parsed_json.empty()) break;
+
+		config.SendNotifyParent(WM_INIT_PROGRESS, (int)parsed_json.size(), 0);
+
+		int cnt = 0;
+		for (const auto& item : parsed_json.items())
+		{
+			const auto& val = item.value();
+			if (val.empty()) continue;
+
+			std::shared_ptr<vod_category> category;
+			std::wstring category_name;
+			auto movie = std::make_shared<vod_movie>();
+
+			JSON_ALL_TRY;
+			category_name = utils::get_json_wstring("category", val);
+
+			if (!categories->tryGet(category_name, category))
+			{
+				category = std::make_shared<vod_category>(category_name);
+				category->name = category_name;
+				categories->set_back(category_name, category);
+			}
+
+			movie->title = utils::get_json_wstring("name", val);
+			movie->id = utils::get_json_wstring("id", val);
+			movie->url = utils::get_json_wstring("video", val);
+
+			const auto& info = val["info"];
+			if (!info.empty())
+			{
+				movie->poster_url.set_uri(utils::get_json_wstring("poster", info));
+				movie->description = utils::get_json_wstring("plot", info);
+				movie->rating = utils::get_json_wstring("rating", info);
+				movie->year = utils::get_json_wstring("year", info);
+				movie->director = utils::get_json_wstring("director", info);
+				movie->casting = utils::get_json_wstring("cast", info);
+				movie->age = utils::get_json_wstring("adult", info);
+				movie->movie_time = info.value("duration_secs", 0) / 60;
+
+				for (const auto& genre_item : info["genre"].items())
+				{
+					const auto& title = utils::utf8_to_utf16(genre_item.value().get<std::string>());
+					vod_genre_def genre({ title, title });
+
+					movie->genres.set_back(title, genre);
+				}
+
+				std::string country;
+				for (const auto& country_item : info["country"].items())
+				{
+					if (!country.empty())
+					{
+						country += ", ";
+					}
+					country += country_item.value().get<std::string>();
+				}
+				movie->country = utils::utf8_to_utf16(country);
+			}
+
+			category->movies.set_back(movie->id, movie);
+			JSON_ALL_CATCH;
+
+			if (++cnt % 100 == 0)
+			{
+				config.SendNotifyParent(WM_UPDATE_PROGRESS, cnt, cnt);
+				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
+			}
+		}
+	} while (false);
+
+	if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
+	{
+		categories.reset();
+	}
+
+	config.SendNotifyParent(WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }

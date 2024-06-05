@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 ChannelCategory::ChannelCategory(const std::wstring& root_path)
-	: uri_stream(InfoType::enCategory, nullptr)
+	: uri_stream(InfoType::enCategory)
 	, IconContainer(root_path)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);

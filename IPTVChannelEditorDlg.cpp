@@ -714,6 +714,12 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_plugin->configure_plugin();
 	m_plugin->configure_provider_plugin();
 
+	m_plugin->get_api_token(m_cur_account);
+
+	TemplateParams params;
+	params.creds = m_cur_account;
+	m_plugin->parse_account_info(m_cur_account);
+
 	const auto& streams = m_plugin->get_supported_streams();
 
 	m_wndBtnVod.ShowWindow(m_plugin->get_vod_engine() != VodEngine::enNone ? SW_SHOW : SW_HIDE);
@@ -950,23 +956,26 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 {
 	int idx = m_wndPlaylist.GetCurSel();
 
+	Credentials old_credentials(m_cur_account);
+
+	m_plugin->get_api_token(m_cur_account);
+
+	if (old_credentials != m_cur_account)
+	{
+		m_all_credentials[GetConfig().get_int(false, REG_ACTIVE_ACCOUNT)] = m_cur_account;
+		nlohmann::json j_serialize = m_all_credentials;
+		GetConfig().set_string(false, REG_ACCOUNT_DATA, utils::utf8_to_utf16(nlohmann::to_string(j_serialize)));
+		GetConfig().SaveSettings();
+	}
+
 	TemplateParams params;
-	params.login = m_cur_account.get_login();
-	params.password = m_cur_account.get_password();
-	params.ott_key = m_cur_account.get_ott_key();
-	params.subdomain= m_cur_account.get_subdomain();
-	params.s_token = m_cur_account.get_s_token();
+	params.creds = m_cur_account;
 	params.server_idx = m_cur_account.server_id;
 	params.profile_idx = m_cur_account.profile_id;
 	params.quality_idx = m_cur_account.quality_id;
 	params.device_idx = m_cur_account.device_id;
 	params.domain_idx = m_cur_account.domain_id;
 	params.playlist_idx = idx;
-
-	if (m_plugin->get_requested_token())
-	{
-		params.s_token = m_plugin->get_api_token(m_cur_account);
-	}
 
 	m_plugin->update_provider_params(params);
 
@@ -1080,7 +1089,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_evtStop.ResetEvent();
 	m_evtThreadExit.ResetEvent();
 
-	CBaseThread::ThreadConfig cfg;
+	CThreadConfig cfg;
 	cfg.m_parent = this;
 	cfg.m_data = std::move(data);
 	cfg.m_hStop = m_evtStop;
@@ -1832,10 +1841,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	m_epgID2 = m_plugin->get_epg_parameter(1).epg_url.empty() ? L"" : channel->get_epg_id(1).c_str();
 
 	TemplateParams params;
-	params.ott_key = m_cur_account.get_ott_key();
-	params.subdomain = m_cur_account.get_subdomain();
-	params.login = m_cur_account.get_login();
-	params.password = m_cur_account.get_password();
+	params.creds = m_cur_account;
 	params.streamSubtype = (StreamType)stream_idx;
 	params.server_idx = m_cur_account.server_id;
 	params.quality_idx = m_cur_account.quality_id;
@@ -2269,7 +2275,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 	// Iterate <tv_channel> nodes
 	while (ch_node)
 	{
-		auto channel = std::make_shared<ChannelInfo>(m_plugin, image_path);
+		auto channel = std::make_shared<ChannelInfo>(image_path);
 		channel->ParseNode(ch_node);
 		if (channel->get_icon_uri().get_uri() == utils::ICON_OLD_TEMPLATE)
 		{
@@ -2414,7 +2420,7 @@ void CIPTVChannelEditorDlg::OnNewChannel()
 	if (!category)
 		return;
 
-	auto channel = std::make_shared<ChannelInfo>(m_plugin, GetAppPath(utils::PLUGIN_ROOT));
+	auto channel = std::make_shared<ChannelInfo>(GetAppPath(utils::PLUGIN_ROOT));
 	channel->set_title(L"New Channel");
 	channel->set_icon_uri(utils::ICON_TEMPLATE);
 
@@ -3315,10 +3321,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		dlg.m_plugin = m_plugin;
 		dlg.m_epg_idx = epg_idx;
 		dlg.m_epg_cache = &m_epg_cache;
-		dlg.m_params.ott_key = m_cur_account.get_ott_key();
-		dlg.m_params.subdomain = m_cur_account.get_subdomain();
-		dlg.m_params.login = m_cur_account.get_login();
-		dlg.m_params.password = m_cur_account.get_password();
+		dlg.m_params.creds = m_cur_account;
 		dlg.m_params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 		dlg.m_params.server_idx = m_cur_account.server_id;
 
@@ -3410,10 +3413,7 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 	if (auto info = GetBaseInfo(m_lastTree, hItem); info != nullptr)
 	{
 		TemplateParams params;
-		params.ott_key = m_cur_account.get_ott_key();
-		params.subdomain = m_cur_account.get_subdomain();
-		params.login = m_cur_account.get_login();
-		params.password = m_cur_account.get_password();
+		params.creds = m_cur_account;
 		params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 		params.server_idx = m_cur_account.server_id;
 
@@ -4195,10 +4195,7 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 	}
 
 	TemplateParams params;
-	params.ott_key = m_cur_account.get_ott_key();
-	params.subdomain = m_cur_account.get_subdomain();
-	params.login = m_cur_account.get_login();
-	params.password = m_cur_account.get_password();
+	params.creds = m_cur_account;
 	params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 	params.server_idx = m_cur_account.server_id;
 
@@ -4731,10 +4728,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_hExit = m_evtThreadExit;
 	cfg.m_probe = GetConfig().get_string(true, REG_FFPROBE);
 	cfg.m_max_threads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
-	cfg.m_params.ott_key = m_cur_account.get_ott_key();
-	cfg.m_params.subdomain = m_cur_account.get_subdomain();
-	cfg.m_params.login = m_cur_account.get_login();
-	cfg.m_params.password = m_cur_account.get_password();
+	cfg.m_params.creds = m_cur_account;
 	cfg.m_params.shift_back = 0;
 	cfg.m_params.server_idx = m_cur_account.server_id;
 
@@ -5307,7 +5301,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 	{
 		// Create new channel
 		add = true;
-		auto newChannel = std::make_shared<ChannelInfo>(m_plugin, root_path);
+		auto newChannel = std::make_shared<ChannelInfo>(root_path);
 		newChannel->copy_data(*entry);
 		// Add to channel array
 		pair = m_channelsMap.emplace(newChannel->get_id(), newChannel).first;

@@ -41,66 +41,58 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"{:s}/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"{:s}/{:s}?token={:s}&{:s}={:s}";
 
-std::wstring plugin_vidok::get_api_token(const Credentials& creds) const
+void plugin_vidok::get_api_token(Credentials& creds)
 {
-	std::string login_a = utils::utf16_to_utf8(creds.get_login());
-	std::string password_a = utils::utf16_to_utf8(creds.get_password());
-	return utils::utf8_to_utf16(utils::md5_hash_hex(login_a + utils::md5_hash_hex(password_a)));
+	creds.s_token = utils::md5_hash_hex(creds.login + utils::md5_hash_hex(creds.password));
 }
 
-std::map<std::wstring, std::wstring, std::less<>> plugin_vidok::parse_access_info(const TemplateParams& params)
+void plugin_vidok::parse_account_info(Credentials& creds)
 {
-	std::map<std::wstring, std::wstring, std::less<>> info;
-
-	Credentials creds;
-	creds.set_login(params.login);
-	creds.set_password(params.password);
-
-	CWaitCursor cur;
-	std::stringstream data;
-	if (download_url(fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"account", get_api_token(creds)), data))
+	if (account_info.empty())
 	{
-		JSON_ALL_TRY
+		CWaitCursor cur;
+		const auto& url = fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"account", creds.get_s_token());
+		std::stringstream data;
+		if (download_url(url, data))
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
-			if (parsed_json.contains("account"))
+			JSON_ALL_TRY
 			{
-				const auto& js_account = parsed_json["account"];
-
-				set_json_info("login", js_account, info);
-				set_json_info("balance", js_account, info);
-
-				if (js_account.contains("packages"))
+				const auto & parsed_json = nlohmann::json::parse(data.str());
+				if (parsed_json.contains("account"))
 				{
-					for (auto& item : js_account["packages"].items())
+					const auto& js_account = parsed_json["account"];
+
+					set_json_info("login", js_account, account_info);
+					set_json_info("balance", js_account, account_info);
+
+					if (js_account.contains("packages"))
 					{
-						COleDateTime dt(utils::char_to_int64(item.value().value("expire", "")));
-						info.emplace(utils::utf8_to_utf16(item.value().value("name", "")),
-									 utils::utf8_to_utf16(fmt::format("expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear())));
+						for (auto& item : js_account["packages"].items())
+						{
+							COleDateTime dt(utils::char_to_int64(item.value().value("expire", "")));
+							account_info.emplace(utils::utf8_to_utf16(item.value().value("name", "")),
+												 utils::utf8_to_utf16(fmt::format("expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear())));
+						}
 					}
 				}
 			}
+			JSON_ALL_CATCH;
 		}
-		JSON_ALL_CATCH;
 	}
-
-	return info;
 }
 
 void plugin_vidok::fill_servers_list(TemplateParams& params)
 {
-	if (params.login.empty() || params.password.empty() || !get_servers_list().empty())
+	if (params.creds.login.empty() || params.creds.password.empty() || !get_servers_list().empty())
 		return;
+
+	CWaitCursor cur;
 
 	std::vector<DynamicParamsInfo> servers;
 
-	Credentials creds;
-	creds.set_login(params.login);
-	creds.set_password(params.password);
+	get_api_token(params.creds);
 
-	const auto& url = fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"settings", get_api_token(creds));
-
-	CWaitCursor cur;
+	const auto& url = fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"settings", params.creds.get_s_token());
 	std::stringstream data;
 	if (download_url(url, data))
 	{
@@ -139,14 +131,12 @@ bool plugin_vidok::set_server(TemplateParams& params)
 
 	if (!servers_list.empty())
 	{
-		Credentials creds;
-		creds.set_login(params.login);
-		creds.set_password(params.password);
+		get_api_token(params.creds);
 
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
 									  utils::utf8_to_utf16(provider_api_url),
 									  L"settings_set",
-									  get_api_token(creds),
+									  params.creds.get_s_token(),
 									  L"server",
 									  servers_list[params.server_idx].get_id());
 

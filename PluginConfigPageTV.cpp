@@ -376,10 +376,7 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 {
 	const auto& cred = GetPropertySheet()->m_selected_cred;
 	TemplateParams params;
-	params.login = cred.get_login();
-	params.password = cred.get_password();
-	params.ott_key = cred.get_ott_key();
-	params.subdomain = cred.get_subdomain();
+	params.creds = cred;
 	params.server_idx = cred.server_id;
 	params.device_idx = cred.device_id;
 	params.profile_idx = cred.profile_id;
@@ -462,10 +459,7 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShowLink()
 	{
 		const auto& cred = GetPropertySheet()->m_selected_cred;
 		TemplateParams params;
-		params.login = cred.get_login();
-		params.password = cred.get_password();
-		params.ott_key = cred.get_ott_key();
-		params.subdomain = cred.get_subdomain();
+		params.creds = cred;
 		params.server_idx = cred.server_id;
 		params.device_idx = cred.device_id;
 		params.profile_idx = cred.profile_id;

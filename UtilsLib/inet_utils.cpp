@@ -106,7 +106,7 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 								std::stringstream& vData,
 								std::vector<std::string>* pHeaders /*= nullptr*/,
 								bool verb_post /*= false*/,
-								const char* post_data /*= nullptr*/)
+								const char* post_data /*= nullptr*/) const
 {
 	m_error_message.clear();
 	if (url.empty())
@@ -401,7 +401,7 @@ void CUrlDownload::ClearCachedUrl(const std::wstring& url)
 	}
 }
 
-bool CUrlDownload::CheckIsCacheExpired(const std::wstring& cache_file)
+bool CUrlDownload::CheckIsCacheExpired(const std::wstring& cache_file) const
 {
 	if (m_cache_ttl_sec && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
 	{

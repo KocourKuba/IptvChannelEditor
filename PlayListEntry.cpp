@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "PlayListEntry.h"
+
 #include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
@@ -64,13 +65,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 		}
 		case m3u_entry::directives::ext_pathname:
 		{
-			parent_plugin->parse_stream_uri(utils::utf8_to_utf16(str), *this);
-			result = is_valid();
-			if (result && category.empty())
-			{
-				set_category(load_string_resource(IDS_STRING_UNSET));
-			}
-			break;
+			return true;
 		}
 		case m3u_entry::directives::ext_group:
 		{
@@ -100,15 +95,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 			search_epg(tags);
 			if (auto logo = search_logo(tags); !logo.empty())
 			{
-				if (parent_plugin->get_plugin_type() == PluginType::enEdem)
-				{
-					const auto& pl_info = parent_plugin->get_current_playlist_info();
-					if (!pl_info.get_square_icons())
-					{
-						logo = utils::string_replace<char>(logo, "/img/", "/img2/");
-					}
-				}
-				else if (playlist && !playlist->logo_root.empty())
+				if (playlist && !playlist->logo_root.empty())
 				{
 					logo = playlist->logo_root + logo;
 				}
@@ -163,11 +150,7 @@ void PlaylistEntry::search_group(const m3u_tags& tags)
 	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_group_title); pair != tags.end())
 	{
 		category = pair->second;
-		if (category.empty())
-		{
-			set_category(load_string_resource(IDS_STRING_UNSET));
-		}
-		else
+		if (!category.empty())
 		{
 			check_adult(tags, category);
 		}

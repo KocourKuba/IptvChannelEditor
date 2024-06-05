@@ -292,6 +292,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function start_bg_indexing()
     {
+        hd_debug_print("Start background indexing...");
         $config = array(
             'debug' => LogSeverity::$is_debug,
             'log_file' => $this->get_epg_manager()->get_cache_stem('.log'),

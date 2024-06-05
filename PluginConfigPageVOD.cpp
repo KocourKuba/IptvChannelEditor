@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "IPTVChannelEditor.h"
 #include "PluginConfigPageVOD.h"
 #include "FillParamsInfoDlg.h"
+#include "PluginEnums.h"
 #include "Constants.h"
 
 #include "UtilsLib/inet_utils.h"
@@ -171,7 +172,7 @@ void CPluginConfigPageVOD::FillControls()
 	m_wndVodEngine.ResetContent();
 	for (auto it = (size_t)VodEngine::enNone; it != (size_t)VodEngine::enLast; ((size_t&)it)++)
 	{
-		m_wndVodEngine.AddString(vod_enum::enum_to_string<VodEngine, std::wstring>((VodEngine)it).c_str());
+		m_wndVodEngine.AddString(enum_to_string((VodEngine)it).c_str());
 	}
 
 	m_wndChkFilterSupport.SetCheck(plugin->get_vod_filter() != false);
@@ -228,15 +229,13 @@ void CPluginConfigPageVOD::SaveParameters()
 
 void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 {
+	const auto& plugin = GetPropertySheet()->m_plugin;
+	plugin->get_api_token(GetPropertySheet()->m_selected_cred);
+
 	auto& cred = GetPropertySheet()->m_selected_cred;
 
-	const auto& plugin = GetPropertySheet()->m_plugin;
 	TemplateParams params;
-	params.s_token = plugin->get_api_token(cred);
-	params.login = cred.get_login();
-	params.password = cred.get_password();
-	params.ott_key = cred.get_ott_key();
-	params.subdomain = cred.get_subdomain();
+	params.creds = cred;
 	params.server_idx = cred.server_id;
 	params.device_idx = cred.device_id;
 	params.profile_idx = cred.profile_id;
@@ -329,14 +328,11 @@ void CPluginConfigPageVOD::OnBnClickedCheckPlaylistShowLink()
 
 	if (show)
 	{
-		auto& cred = GetPropertySheet()->m_selected_cred;
+		GetPropertySheet()->m_plugin->get_api_token(GetPropertySheet()->m_selected_cred);
 
+		auto& cred = GetPropertySheet()->m_selected_cred;
 		TemplateParams params;
-		params.s_token = GetPropertySheet()->m_plugin->get_api_token(cred);
-		params.login = cred.get_login();
-		params.password = cred.get_password();
-		params.ott_key = cred.get_ott_key();
-		params.subdomain = cred.get_subdomain();
+		params.creds = cred;
 		params.server_idx = cred.server_id;
 		params.device_idx = cred.device_id;
 		params.profile_idx = cred.profile_id;

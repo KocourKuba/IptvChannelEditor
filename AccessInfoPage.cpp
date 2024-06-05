@@ -401,9 +401,7 @@ BOOL CAccessInfoPage::OnApply()
 	}
 
 	TemplateParams params;
-	params.login = selected.get_login();
-	params.password = selected.get_password();
-	params.subdomain = selected.get_subdomain();
+	params.creds = selected;
 	params.server_idx = selected.server_id;
 	params.device_idx = selected.device_id;
 	params.profile_idx = selected.profile_id;
@@ -506,12 +504,15 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 
 				Credentials cred;
 				auto playlist = std::make_unique<Playlist>();
-				auto entry = std::make_unique<PlaylistEntry>(m_plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
+				auto entry = std::make_unique<PlaylistEntry>(playlist, GetAppPath(utils::PLUGIN_ROOT));
 				std::string line;
 				while (std::getline(stream, line))
 				{
 					utils::string_rtrim(line, "\r");
 					if (!entry->Parse(line)) continue;
+
+					m_plugin->parse_stream_uri(utils::utf8_to_utf16(line), *entry);
+					if(!entry->is_valid()) continue;
 
 					const auto& access_key = entry->get_ott_key();
 					if (!access_key.empty() && access_key != L"00000000000000")
@@ -760,9 +761,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	m_wndConfigs.SetCurSel(sel_idx);
 
 	TemplateParams params;
-	params.login = selected.get_login();
-	params.password = selected.get_password();
-	params.subdomain = selected.get_subdomain();
+	params.creds = selected;
 	params.server_idx = selected.server_id;
 	params.device_idx = selected.device_id;
 	params.profile_idx = selected.profile_id;
@@ -986,34 +985,27 @@ void CAccessInfoPage::GetAccountInfo()
 	if (m_plugin->get_access_type() == AccountAccessType::enNone)
 		return;
 
-	const auto& plugin_type = m_plugin->get_plugin_type();
 	// reset template flag for new parse
 	auto playlist = std::make_unique<Playlist>();
-	auto entry = std::make_shared<PlaylistEntry>(m_plugin, playlist, GetAppPath(utils::PLUGIN_ROOT));
+	auto entry = std::make_shared<PlaylistEntry>(playlist, GetAppPath(utils::PLUGIN_ROOT));
 	entry->set_is_template(false);
 
+	m_plugin->get_api_token(selected_cred);
+	m_plugin->clear_account_info();
+	m_plugin->parse_account_info(selected_cred);
+
 	TemplateParams params;
-	params.login = selected_cred.get_login();
-	params.password = selected_cred.get_password();
-	params.ott_key = selected_cred.get_ott_key();
-	params.subdomain = selected_cred.get_subdomain();
-	params.s_token = selected_cred.get_s_token();
+	params.creds = selected_cred;
 	params.server_idx = selected_cred.server_id;
 	params.device_idx = selected_cred.device_id;
 	params.profile_idx = selected_cred.profile_id;
 	params.quality_idx = selected_cred.quality_id;
 
-	if (m_plugin->get_requested_token())
-	{
-		params.s_token = m_plugin->get_api_token(selected_cred);
-	}
-
-	CWaitCursor cur;
-
 	m_plugin->update_provider_params(params);
 	auto& pl_url = m_plugin->get_playlist_url(params);
-	auto& acc_info = m_plugin->parse_access_info(params);
-	if (const auto& it = acc_info.find(L"url"); it != acc_info.end())
+
+	const auto& account_info = m_plugin->get_account_info();
+	if (const auto& it = account_info.find(L"url"); it != account_info.end())
 	{
 		pl_url = it->second;
 	}
@@ -1038,30 +1030,10 @@ void CAccessInfoPage::GetAccountInfo()
 		}
 	}
 
-	if (const auto& it = acc_info.find(L"token"); it != acc_info.end())
-	{
-		selected_cred.set_s_token(it->second);
-	}
-
-	if (plugin_type == PluginType::enSmile || plugin_type == PluginType::en101film)
-	{
-		static std::vector<std::string> skipped_tag = {
-			"bitrates", "url-tvg", "x-tvg-url", "servers"
-		};
-
-		const auto& tags = playlist->m3u_header.get_ext_tags();
-		for (const auto& tag : tags)
-		{
-			if (std::find(skipped_tag.begin(), skipped_tag.end(), tag.first) != skipped_tag.end()) continue;
-
-			acc_info.emplace(utils::utf8_to_utf16(tag.first), utils::utf8_to_utf16(tag.second));
-		}
-	}
-
 	int idx = 0;
 	m_wndInfo.InsertItem(idx, load_string_resource(IDS_STRING_STATUS).c_str());
 	m_wndInfo.SetItemText(idx, 1, m_status);
-	for (const auto& item : acc_info)
+	for (const auto& item : account_info)
 	{
 		m_wndInfo.InsertItem(++idx, item.first.c_str());
 		m_wndInfo.SetItemText(idx, 1, item.second.c_str());

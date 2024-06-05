@@ -235,7 +235,7 @@ void AccountSettings::set_plugin_type(PluginType val)
 	m_pluginType = val;
 }
 
-std::vector<Credentials> AccountSettings::LoadCredentials()
+std::vector<Credentials> AccountSettings::LoadCredentials() const
 {
 	std::vector<Credentials> credentials;
 	nlohmann::json creds;

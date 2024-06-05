@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-void ThreadConfig::SendNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+void CThreadConfig::SendNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/) const
 {
 	CWnd* parent = (CWnd*)m_parent;
 	if (parent->GetSafeHwnd())
@@ -41,7 +41,7 @@ void ThreadConfig::SendNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM 
 
 }
 
-void ThreadConfig::PostNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+void CThreadConfig::PostNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/) const
 {
 	CWnd* parent = (CWnd*)m_parent;
 	if (parent->GetSafeHwnd())

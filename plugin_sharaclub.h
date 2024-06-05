@@ -32,9 +32,10 @@ class plugin_sharaclub : public base_plugin
 public:
 	void configure_provider_plugin() override;
 	std::wstring get_playlist_url(const TemplateParams& params, std::wstring url = L"") override;
-	std::map<std::wstring, std::wstring, std::less<>> parse_access_info(const TemplateParams& params) override;
+	void parse_account_info(Credentials& creds) override;
 	void fill_servers_list(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;
 	void fill_profiles_list(TemplateParams& params) override;
 	bool set_profile(TemplateParams& params) override;
+	void parse_vod(const CThreadConfig& config) override;
 };

@@ -26,38 +26,24 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "base_plugin.h"
+#include "ThreadConfig.h"
+#include "UtilsLib/inet_utils.h"
+
+class base_plugin;
 
 class CBaseThread : public CWinThread
 {
 public:
-	class ThreadConfig
-	{
-	public:
-		void SendNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
-		void PostNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
-
-		std::stringstream m_data;
-		void* m_parent = nullptr;
-		HANDLE m_hStop = nullptr;
-		HANDLE m_hExit = nullptr;
-		TemplateParams m_params;
-		std::wstring m_rootPath;
-		std::wstring m_url;
-		std::string nparam;
-		std::wstring wparam;
-		int m_cache_ttl = 0;
-	};
-
 protected:
 	CBaseThread() { m_bAutoDelete = TRUE; }
 
 public:
 	virtual ~CBaseThread() = default;
 
-	void SetData(ThreadConfig& config) { m_config = std::move(config); };
+	void SetData(CThreadConfig& config) { m_config = std::move(config); };
 	void SetPlugin(std::shared_ptr<base_plugin>& parent_plugin) { m_parent_plugin = parent_plugin; };
 
 protected:
-	ThreadConfig m_config;
-	std::shared_ptr<base_plugin> m_parent_plugin{};
+	CThreadConfig m_config;
+	std::shared_ptr<base_plugin> m_parent_plugin;
 };

@@ -69,7 +69,7 @@ public:
 	BOOL IsPortable() const { return m_bPortable; }
 	void SetPortable(BOOL val) { m_bPortable = val; }
 
-	std::vector<Credentials> LoadCredentials();
+	std::vector<Credentials> LoadCredentials() const;
 
 public:
 	std::wstring get_string(bool isApp, const std::wstring& key, const wchar_t* def = L"") const;

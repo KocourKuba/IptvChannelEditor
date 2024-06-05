@@ -25,18 +25,22 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+#include "plugin_config.h"
 
-class ThreadConfig
+class CThreadConfig
 {
 public:
-	void SendNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
-	void PostNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+	void SendNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0) const;
+	void PostNotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0) const;
 
 	std::stringstream m_data;
 	void* m_parent = nullptr;
 	HANDLE m_hStop = nullptr;
 	HANDLE m_hExit = nullptr;
+	TemplateParams m_params;
+	int m_cache_ttl = 0;
 	std::wstring m_rootPath;
 	std::wstring m_url;
-	int m_cache_ttl = 0;
+	std::string nparam;
+	std::wstring wparam;
 };

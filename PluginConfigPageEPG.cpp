@@ -132,7 +132,8 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 
 	m_wndEpgType.SetCurSel(0);
 	m_DuneIP = GetConfig().get_string(true, REG_DUNE_IP).c_str();
-	m_Token = GetPropertySheet()->m_plugin->get_api_token(GetPropertySheet()->m_selected_cred).c_str();
+	GetPropertySheet()->m_plugin->get_api_token(GetPropertySheet()->m_selected_cred);
+	m_Token = GetPropertySheet()->m_selected_cred.s_token.c_str();
 	m_wndEpgType.SetCurSel(0);
 
 	const auto& presets = GetPluginFactory().get_epg_presets();

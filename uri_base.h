@@ -43,51 +43,52 @@ public:
 	virtual void clear() { scheme.clear(); path.clear(); }
 
 	/// <summary>
+	/// is uri valid
+	/// </summary>
+	/// <returns>bool</returns>
+	virtual bool is_valid() const { return !scheme.empty() && !path.empty(); }
+
+	/// <summary>
 	/// get combined uri
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::wstring get_uri() const { return scheme + path; }
+	std::wstring get_uri() const { return scheme + path; }
 
 	/// <summary>
 	/// set combined uri
 	/// </summary>
 	/// <returns></returns>
-	virtual void set_uri(const std::wstring& url);
+	void set_uri(const std::wstring& url);
 
 	/// <summary>
 	/// get path
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::wstring get_path() const { return path; }
+	std::wstring get_path() const { return path; }
 
 	/// <summary>
 	/// set path
 	/// </summary>
 	/// <returns></returns>
-	virtual void set_path(const std::wstring& val) { path = val; };
+	void set_path(const std::wstring& val) { path = val; };
 
 	/// <summary>
 	/// get schema (http://, https://, plugin_file://)
 	/// </summary>
 	/// <returns>string</returns>
-	virtual std::wstring get_scheme() const { return scheme; }
+	const std::wstring& get_scheme() const { return scheme; }
+
 	/// <summary>
 	/// set schema
 	/// </summary>
 	/// <returns></returns>
-	virtual void set_scheme(const std::wstring& val) { scheme = val; };
+	void set_scheme(const std::wstring& val) { scheme = val; };
 
 	/// <summary>
 	/// is uri local (plugin_file), internal schema for plugin
 	/// </summary>
 	/// <returns>string</returns>
 	bool is_local() const { return scheme == utils::PLUGIN_SCHEME; }
-
-	/// <summary>
-	/// is uri valid
-	/// </summary>
-	/// <returns>bool</returns>
-	virtual bool is_valid() const { return !scheme.empty() && !path.empty();  }
 
 	/// <summary>
 	/// get filesystem path

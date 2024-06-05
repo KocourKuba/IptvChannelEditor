@@ -34,8 +34,8 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-ChannelInfo::ChannelInfo(std::shared_ptr<base_plugin>& plugin, const std::wstring& root_path)
-	: uri_stream(InfoType::enChannel, plugin)
+ChannelInfo::ChannelInfo(const std::wstring& root_path)
+	: uri_stream(InfoType::enChannel)
 	, IconContainer(root_path)
 {
 	set_icon_uri(utils::ICON_TEMPLATE);

@@ -35,36 +35,27 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-std::map<std::wstring, std::wstring, std::less<>> plugin_oneott::parse_access_info(const TemplateParams& params)
+void plugin_oneott::parse_account_info(Credentials& creds)
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"{:s}/PinApi/{:s}/{:s}";
 
-	std::map<std::wstring, std::wstring, std::less<>> info;
-
-	CWaitCursor cur;
-	std::stringstream data;
-	const auto& url = fmt::format(ACCOUNT_TEMPLATE, get_provider_api_url(), params.login, params.password);
-	if (download_url(url, data))
+	if (account_info.empty())
 	{
-		JSON_ALL_TRY
+		CWaitCursor cur;
+		const auto& url = fmt::format(ACCOUNT_TEMPLATE, get_provider_api_url(), creds.get_login(), creds.get_password());
+		std::stringstream data;
+		if (download_url(url, data))
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
-			if (parsed_json.contains("token"))
+			JSON_ALL_TRY
 			{
-				const auto& token = utils::utf8_to_utf16(parsed_json.value("token", ""));
-				info.emplace(L"token", token);
-
-				TemplateParams param;
-				param.s_token = token;
-
-				update_provider_params(param);
-
-				info.emplace(L"url", get_playlist_url(param));
+				const auto & parsed_json = nlohmann::json::parse(data.str());
+				if (parsed_json.contains("token"))
+				{
+					creds.s_token = parsed_json.value("token", "");
+					account_info.emplace(L"token", creds.get_s_token());
+				}
 			}
+			JSON_ALL_CATCH;
 		}
-		JSON_ALL_CATCH;
 	}
-
-
-	return info;
 }

@@ -102,7 +102,6 @@ void plugin_config::clear()
 	access_type = AccountAccessType::enNone;
 	provider_url.clear();
 
-	requested_token = false;
 	balance_support = false;
 
 	playlist_template_index = 0;
