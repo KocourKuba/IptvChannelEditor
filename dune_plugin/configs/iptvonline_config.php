@@ -346,8 +346,12 @@ class iptvonline_config extends default_config
             $curl_opt[self::API_PARAM_PATH] = $params[self::API_PARAM_PATH];
         }
 
+        $curl_opt[CURLOPT_HTTPHEADER] = array(
+            "Content-Type: application/json; charset=utf-8",
+            "Authorization: Bearer " . $this->plugin->get_credentials(Ext_Params::M_S_TOKEN)
+        );
+
         if (isset($params[CURLOPT_POSTFIELDS])) {
-            $curl_opt[CURLOPT_HTTPHEADER] = array("Content-Type: application/json; charset=utf-8");
             $curl_opt[CURLOPT_POSTFIELDS] = escaped_raw_json_encode($params[CURLOPT_POSTFIELDS]);
         }
 

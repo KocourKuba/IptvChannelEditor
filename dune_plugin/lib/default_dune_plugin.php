@@ -295,7 +295,7 @@ class Default_Dune_Plugin implements DunePlugin
         hd_debug_print("Start background indexing...");
         $config = array(
             'debug' => LogSeverity::$is_debug,
-            'log_file' => $this->get_epg_manager()->get_cache_stem('.log'),
+            'log_file' => get_temp_path($this->get_epg_manager()->get_cache_name() . '.log'),
             'version' => $this->config->plugin_info['app_version'],
             'cache_dir' => $this->get_cache_dir(),
             'cache_engine' => $this->get_parameter(PARAM_EPG_CACHE_ENGINE),
@@ -303,6 +303,7 @@ class Default_Dune_Plugin implements DunePlugin
             'xmltv_url' => $this->get_active_xmltv_source(),
         );
 
+        hd_debug_print("indexing config: " . json_encode($config), true);
         file_put_contents(get_temp_path('parse_config.json'), json_encode($config));
 
         $cmd = get_install_path('bin/cgi_wrapper.sh') . " 'index_epg.php' &";

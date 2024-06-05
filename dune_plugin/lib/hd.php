@@ -480,8 +480,10 @@ class HD
             get_temp_path("*.xml"),
             get_temp_path("*.json"),
             get_temp_path("*.m3u8"),
+            get_temp_path("*.log"),
             "$apk_subst/$plugin_name-updater.log",
-            "$apk_subst/tmp/run/shell.*",
+            "$apk_subst/tmp/run/shell.log",
+            "$apk_subst/tmp/run/shell.log.old",
         );
 
         if (file_exists("$apk_subst/D/dune_plugin_logs/$plugin_name.log")) {
@@ -798,6 +800,7 @@ class HD
         $ret_content = empty($save_file);
 
         $logfile = get_temp_path(self::HTTPS_PROXY_LOG);
+        hd_debug_print("proxy log: $logfile", true);
         if (file_exists($logfile)) {
             unlink($logfile);
         }

@@ -17,17 +17,17 @@ if (!file_exists($config_file)) {
 $config = json_decode(file_get_contents($config_file));
 if ($config === false) {
     HD::set_last_error("xmltv_last_error", "Invalid config file for indexing");
-    @unlink($config_file);
     return;
 }
 
-$LOG_FILE = $config->log_file;
-if (!empty($LOG_FILE)) {
-    if (file_exists($LOG_FILE)) {
-        @unlink($LOG_FILE);
+if (!empty($config->log_file)) {
+    if (file_exists($config->log_file)) {
+        @unlink($config->log_file);
     }
     date_default_timezone_set('UTC');
 }
+
+$LOG_FILE = $config->log_file;
 
 hd_debug_print_separator();
 hd_print("Script start: index_epg");
@@ -35,7 +35,7 @@ hd_print("Version: $config->version");
 hd_print("XMLTV source: $config->xmltv_url");
 hd_print("Engine: $config->cache_engine");
 hd_print("Cache TTL: $config->cache_ttl");
-hd_print("Log: $LOG_FILE");
+hd_print("Log: $config->log_file");
 
 set_debug_log($config->debug);
 

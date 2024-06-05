@@ -638,13 +638,17 @@ class Action_Factory
 
     public static function clear_rows_info_cache($post_action=null)
     {
-        return array(
-            GuiAction::handler_string_id => PLUGIN_UPDATE_ROWS_INFO_ACTION_ID,
-            GuiAction::data => array(
-                PluginUpdateRowsInfoActionData::clear_cache => true,
-                PluginUpdateRowsInfoActionData::post_action => $post_action
-            )
-        );
+        if (HD::rows_api_support()) {
+            return array(
+                GuiAction::handler_string_id => PLUGIN_UPDATE_ROWS_INFO_ACTION_ID,
+                GuiAction::data => array(
+                    PluginUpdateRowsInfoActionData::clear_cache => true,
+                    PluginUpdateRowsInfoActionData::post_action => $post_action
+                )
+            );
+        }
+
+        return $post_action;
     }
 
     public static function update_rows_info($folder_key, $item_id, $info_defs,
