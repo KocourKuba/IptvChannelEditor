@@ -509,7 +509,7 @@
     </None>
     <None Include="dune_plugin\changelog.md" />
     <None Include="Readme.md" />
-    <None Include="defaults_8.2.json" />
+    <None Include="defaults_8.3.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\IPTVChannelEditor.ico">

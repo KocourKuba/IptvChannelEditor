@@ -768,7 +768,11 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	const auto& plugin_dir = GetAppPath(utils::PLUGIN_ROOT);
 	const auto& plugin_root = std::filesystem::temp_directory_path() / utils::PLUGIN_ROOT;
 	auto dir_status = std::filesystem::symlink_status(plugin_dir).type();
+#ifdef _DEBUG
+	if (true)
+#else
 	if (dir_status == std::filesystem::file_type::junction || dir_status == std::filesystem::file_type::symlink)
+#endif // _DEBUG
 	{
 		std::filesystem::copy(plugin_dir, plugin_root, recursive_copy | overwrite, err);
 		if (err.value() != 0)
