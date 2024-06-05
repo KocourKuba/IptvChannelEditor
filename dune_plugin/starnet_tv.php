@@ -655,7 +655,7 @@ class Starnet_Tv implements User_Input_Handler
 
             PluginTvInfo::initial_archive_tm => isset($media_url->archive_tm) ? (int)$media_url->archive_tm : -1,
 
-            PluginTvInfo::epg_font_size => $this->plugin->get_bool_parameter(PARAM_EPG_FONT_SIZE, false) ? PLUGIN_FONT_SMALL : PLUGIN_FONT_NORMAL,
+            PluginTvInfo::epg_font_size => $this->plugin->get_bool_parameter(PARAM_EPG_FONT_SIZE, true) ? PLUGIN_FONT_SMALL : PLUGIN_FONT_NORMAL,
 
             PluginTvInfo::actions => $this->get_action_map(),
             PluginTvInfo::timer => Action_Factory::timer(1000),
