@@ -734,10 +734,11 @@ class HD
         $config_data .= "--silent" . PHP_EOL;
         $config_data .= "--dump-header -" . PHP_EOL;
         $config_data .= "--connect-timeout 30" . PHP_EOL;
-        $config_data .= "--max-time 30" . PHP_EOL;
+        $config_data .= "--max-time 90" . PHP_EOL;
         $config_data .= "--location" . PHP_EOL;
         $config_data .= "--max-redirs 4" . PHP_EOL;
         $config_data .= "--compressed" . PHP_EOL;
+        $config_data .= "--parallel" . PHP_EOL;
         $config_data .= "--user-agent \"" . self::get_dune_user_agent() ."\"" . PHP_EOL;
         $config_data .= "--url \"$url\"" . PHP_EOL;
         $config_data .= "--output \"$save_file\"" . PHP_EOL;
