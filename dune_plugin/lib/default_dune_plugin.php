@@ -880,6 +880,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function set_parameter($type, $val)
     {
+        hd_debug_print(null, true);
         $this->parameters[$type] = $val;
         $this->is_durty = true;
         $this->save();

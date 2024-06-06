@@ -96,7 +96,7 @@ class glanz_config extends default_config
             // collect filters information
             $years[(int)$movie->year] = $movie->year;
             foreach ($movie->genres as $genre) {
-                $genres[(int)$genre->id] = $genre->title;
+                $genres[(int)$genre['id']] = $genre['title'];
             }
         }
 
@@ -228,7 +228,7 @@ class glanz_config extends default_config
             $match_genre = !isset($post_params['genre']);
             if (!$match_genre) {
                 foreach ($movie->genres as $genre) {
-                    if (!isset($post_params['genre']) || (int)$genre->id === $post_params['genre']) {
+                    if (!isset($post_params['genre']) || (int)$genre['id'] === $post_params['genre']) {
                         $match_genre = true;
                         break;
                     }

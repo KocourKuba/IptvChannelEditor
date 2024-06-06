@@ -127,7 +127,10 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         hd_debug_print(null, true);
 
         if (is_null($this->category_index) || is_null($this->category_list)) {
-            $this->plugin->config->fetchVodCategories($this->category_list, $this->category_index);
+            if (!$this->plugin->config->fetchVodCategories($this->category_list, $this->category_index)) {
+                hd_debug_print("Error: Fetch categories");
+                return array();
+            }
         }
 
         $category_list = $this->category_list;

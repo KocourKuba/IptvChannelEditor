@@ -325,12 +325,20 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
             case self::CONTROL_PROFILE:
             case self::CONTROL_QUALITY:
             case self::CONTROL_DOMAIN:
-                $func_get = "get_{$control_id}_id";
-                $func_set = "set_{$control_id}_id";
-                if ($this->plugin->config->{$func_get}() !== $user_input->{$control_id}) {
+                $func_get_id = "get_{$control_id}_id";
+                $func_get_name = "get_{$control_id}_name";
+                $func_set_id = "set_{$control_id}_id";
+                $curr_id = $this->plugin->config->{$func_get_id}();
+                $curr_name = $this->plugin->config->{$func_get_name}();
+                $selected_value = $user_input->{$control_id};
+                hd_debug_print("selected $control_id id: $selected_value", true);
+                hd_debug_print("current plugin $control_id id: '$curr_id' name: '$curr_name'", true);
+                if ($curr_id !== $selected_value) {
                     $need_reload = true;
-                    $this->plugin->config->{$func_set}($user_input->{$control_id});
-                    hd_debug_print("$control_id id: " . $user_input->{$control_id} . " name: '" . $this->plugin->config->{$func_get}() . "'", true);
+                    $this->plugin->config->{$func_set_id}($selected_value);
+                    $new_id = $this->plugin->config->{$func_get_id}();
+                    $new_name = $this->plugin->config->{$func_get_name}();
+                    hd_debug_print("new plugin $control_id id: '$new_id' name: '$new_name'", true);
                 }
                 break;
 

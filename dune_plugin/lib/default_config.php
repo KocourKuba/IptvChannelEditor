@@ -317,9 +317,11 @@ class default_config extends dynamic_config
     {
         $embedded_acc = $this->get_embedded_account();
         $domain_id = $this->plugin->get_parameter(Ext_Params::M_DOMAIN_ID);
-        if (!is_null($embedded_acc) && isset($embedded_acc->domain_id) && empty($domain_id)) {
+        hd_debug_print("get_domain_id: $domain_id");
+        if (is_null($domain_id) && !is_null($embedded_acc) && isset($embedded_acc->domain_id)) {
             $this->plugin->set_parameter(Ext_Params::M_DOMAIN_ID, $embedded_acc->domain_id);
             $domain_id = $embedded_acc->domain_id;
+            hd_debug_print("get_domain_id default: $domain_id");
         }
 
         $domains = $this->get_domains();
@@ -1520,7 +1522,7 @@ class default_config extends dynamic_config
             $response = $this->execApiCommand($this->GetVodListUrl(), $tmp_file);
             if ($response === false) {
                 $logfile = file_get_contents(get_temp_path(HD::HTTPS_PROXY_LOG));
-                $exception_msg = "Ошибка чтения медиатеки!\n\n$logfile";
+                $exception_msg = "Ошибка скачивания медиатеки!\n\n$logfile";
                 HD::set_last_error("vod_last_error", $exception_msg);
                 if (file_exists($tmp_file)) {
                     unlink($tmp_file);
@@ -1531,7 +1533,10 @@ class default_config extends dynamic_config
                     $exception_msg = "Ошибка декодирования данных медиатеки!\n\n";
                     HD::set_last_error("vod_last_error", $exception_msg);
                     if (file_exists($tmp_file)) {
-                        unlink($tmp_file);
+                        if (file_exists($tmp_file . "_bad.json")) {
+                            unlink($tmp_file . "_bad.json");
+                        }
+                        rename($tmp_file, $tmp_file . "_bad.json");
                     }
                 }
             }
