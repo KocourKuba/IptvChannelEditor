@@ -45,5 +45,9 @@ private:
 						const CThreadConfig & config,
 						std::unique_ptr<vod_category_storage>& categories,
 						bool is_serial = false);
-	nlohmann::json server_request(const std::wstring& url, const Credentials& creds, bool web_post = false, const nlohmann::json& post_data = {});
+	nlohmann::json server_request(const std::wstring& url,
+								  const Credentials& creds,
+								  int cache_ttl,
+								  bool web_post = false,
+								  const nlohmann::json& post_data = {});
 };

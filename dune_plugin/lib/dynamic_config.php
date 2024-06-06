@@ -23,8 +23,6 @@ class dynamic_config
     public function init_defaults()
     {
         hd_debug_print(null, true);
-        $this->features[Plugin_Constants::VOD_QUALITY_SUPPORTED] = false; // currently supported only in edem
-        $this->features[Plugin_Constants::VOD_FILTER_SUPPORTED] = false; // filter list screen
     }
 
     /**
@@ -37,60 +35,72 @@ class dynamic_config
 
         $settings = HD::parse_json_file(get_install_path('config.json'), true);
 
-        $this->set_feature(Plugin_Constants::ACCESS_TYPE, $settings[Plugin_Constants::ACCESS_TYPE]);
-        $this->set_feature(Plugin_Constants::PROVIDER_API_URL, $settings[Plugin_Constants::PROVIDER_API_URL]);
-        $this->set_feature(Plugin_Constants::BALANCE_SUPPORTED, $settings[Plugin_Constants::BALANCE_SUPPORTED]);
-        $this->set_feature(Plugin_Constants::PLAYLIST_TEMPLATES, $settings[Plugin_Constants::PLAYLIST_TEMPLATES]);
-        $this->set_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX, $settings[Plugin_Constants::PLAYLIST_TEMPLATE_INDEX]);
-        $this->set_feature(Plugin_Constants::VOD_ENGINE, $settings[Plugin_Constants::VOD_ENGINE]);
-        $this->set_feature(Plugin_Constants::VOD_TEMPLATES, $settings[Plugin_Constants::VOD_TEMPLATES]);
+        $this->set_feature_from_settings(Plugin_Constants::ACCESS_TYPE, $settings);
+        $this->set_feature_from_settings(Plugin_Constants::PROVIDER_API_URL, $settings);
+        $this->set_feature_from_settings(Plugin_Constants::BALANCE_SUPPORTED, $settings, false);
+        $this->set_feature_from_settings(Plugin_Constants::PLAYLIST_TEMPLATES, $settings, array());
+        $this->set_feature_from_settings(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX, $settings);
+        $this->set_feature_from_settings(Plugin_Constants::VOD_ENGINE, $settings);
+        $this->set_feature_from_settings(Plugin_Constants::VOD_TEMPLATES, $settings, array());
+        $this->set_feature_from_settings(Plugin_Constants::VOD_FILTER_SUPPORTED, $settings, false);
+        $this->set_feature_from_settings(Plugin_Constants::VOD_QUALITY_SUPPORTED, $settings, false);
+        $this->set_feature_from_settings(Plugin_Constants::VOD_AUDIO_SUPPORTED, $settings, false);
+        $this->set_feature_from_settings(Plugin_Constants::VOD_FILTERS, $settings, array());
 
-        HD::set_dune_user_agent($settings[Plugin_Constants::USER_AGENT]);
-        HD::set_plugin_dev_code($settings[Plugin_Constants::DEV_CODE]);
+        HD::set_dune_user_agent($this->read_settings(Plugin_Constants::USER_AGENT, $settings));
+        HD::set_plugin_dev_code($this->read_settings(Plugin_Constants::DEV_CODE, $settings));
 
-        foreach ($settings[Plugin_Constants::STREAMS_CONFIG] as $config) {
+        foreach ($this->read_settings(Plugin_Constants::STREAMS_CONFIG, $settings, array()) as $config) {
             $param_idx = $config[Stream_Params::STREAM_TYPE];
             $this->set_stream_params($param_idx, $config);
         }
 
-        foreach ($settings[Plugin_Constants::EPG_PARAMS] as $epg) {
+        foreach ($this->read_settings(Plugin_Constants::EPG_PARAMS, $settings, array()) as $epg) {
             $param_idx = $epg[Epg_Params::EPG_PARAM];
             $this->set_epg_params($param_idx, $epg);
         }
 
-        $this->set_feature(Plugin_Constants::EPG_CUSTOM_SOURCE, $settings[Plugin_Constants::EPG_CUSTOM_SOURCE]);
+        $this->set_feature_from_settings(Plugin_Constants::EPG_CUSTOM_SOURCE, $settings, array());
 
         $servers = array();
-        foreach ($settings[Plugin_Constants::SERVERS_LIST] as $pair) {
+        foreach ($this->read_settings(Plugin_Constants::SERVERS_LIST, $settings, array()) as $pair) {
             $servers[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
-        $this->set_servers($servers);
+        if (!empty($servers)) {
+            $this->set_servers($servers);
+        }
 
         $devices = array();
-        foreach ($settings[Plugin_Constants::DEVICES_LIST] as $pair) {
+        foreach ($this->read_settings(Plugin_Constants::DEVICES_LIST, $settings, array()) as $pair) {
             $devices[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
-        $this->set_devices($devices);
+        if (!empty($devices)) {
+            $this->set_devices($devices);
+        }
 
         $qualities = array();
-        foreach ($settings[Plugin_Constants::QUALITIES_LIST] as $pair) {
+        foreach ($this->read_settings(Plugin_Constants::QUALITIES_LIST, $settings, array()) as $pair) {
             $qualities[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
-        $this->set_qualities($qualities);
+        if (!empty($qualities)) {
+            $this->set_qualities($qualities);
+        }
 
         $profiles = array();
-        foreach ($settings[Plugin_Constants::PROFILES_LIST] as $pair) {
+        foreach ($this->read_settings(Plugin_Constants::PROFILES_LIST, $settings, array()) as $pair) {
             $profiles[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
-        $this->set_profiles($profiles);
+        if (!empty($profiles)) {
+            $this->set_profiles($profiles);
+        }
 
         $domains = array();
-        foreach ($settings[Plugin_Constants::DOMAINS_LIST] as $pair) {
+        foreach ($this->read_settings(Plugin_Constants::DOMAINS_LIST, $settings, array()) as $pair) {
             $domains[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
         }
-        $this->set_domains($domains);
-
-        //HD::print_array($this->features);
+        if (!empty($domains)) {
+            $this->set_domains($domains);
+        }
     }
 
     /**
@@ -265,5 +275,30 @@ class dynamic_config
     public function set_domains($val)
     {
         $this->domains = $val;
+    }
+
+    /**
+     * @param string $key
+     * @param array $settings
+     * @param mixed $default
+     */
+    protected function set_feature_from_settings($key, $settings, $default = '')
+    {
+        $this->features[$key] = $this->read_settings($key, $settings, $default);
+    }
+
+    /**
+     * @param $key string
+     * @param $settings array
+     * @param $default mixed
+     * @return mixed|string
+     */
+    protected function read_settings($key, $settings, $default = '')
+    {
+        if (isset($settings[$key])) {
+            return $settings[$key];
+        }
+
+        return $default;
     }
 }

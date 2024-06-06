@@ -578,6 +578,8 @@
       "title": "iEdem/iLook TV",
       "vod_engine": "Json",
       "vod_filter": true,
+      "vod_filters": [ "years", "genre" ],
+      "vod_quality": true,
       "vod_templates": [
         {
           "name": "Standard",
@@ -793,6 +795,7 @@
       "title": "glanz TV",
       "vod_engine": "Json",
       "vod_filter": true,
+      "vod_filters": [ "genre", "from", "to" ],
       "vod_templates": [
         {
           "name": "Standard",
@@ -962,21 +965,23 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
+          "uri_arc_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video.m3u8"
+          "uri_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
-          "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/mpegts"
+          "uri_arc_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
+          "uri_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/mpegts"
         }
       ],
       "title": "IPTV Online",
       "vod_engine": "Json",
+      "vod_audio": true,
       "vod_filter": true,
+      "vod_filters": [ "source", "year", "country", "genre" ],
       "vod_templates": [
         {
           "name": "Standard",
@@ -1754,6 +1759,7 @@
       "title": "Sharaclub TV",
       "vod_engine": "Json",
       "vod_filter": true,
+      "vod_filters": [ "genre", "from", "to" ],
       "vod_templates": [
         {
           "name": "Standard",

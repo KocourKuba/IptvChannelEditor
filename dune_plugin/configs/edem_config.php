@@ -3,15 +3,6 @@ require_once 'lib/default_config.php';
 
 class edem_config extends default_config
 {
-    public function init_defaults()
-    {
-        parent::init_defaults();
-
-        $this->set_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED, true);
-        $this->set_feature(Plugin_Constants::VOD_FILTER_SUPPORTED, true);
-        $this->vod_filters = array("years", "genre");
-    }
-
     /**
      * @return string
      */

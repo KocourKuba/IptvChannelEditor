@@ -100,7 +100,7 @@ std::wstring plugin_iptvonline::get_playlist_url(const TemplateParams& params, s
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = server_request(fmt::format(API_COMMAND_PLAYLIST, get_provider_api_url()), params.creds);
+		const auto& parsed_json = server_request(fmt::format(API_COMMAND_PLAYLIST, get_provider_api_url()), params.creds, 0);
 		if (utils::get_json_bool("success", parsed_json) == true && parsed_json.contains("data"))
 		{
 			const auto& server_url = utils::get_json_wstring("data", parsed_json);
@@ -123,7 +123,7 @@ void plugin_iptvonline::parse_account_info(Credentials& creds)
 	if (account_info.empty())
 	{
 		const auto& url = fmt::format(API_COMMAND_INFO, get_provider_api_url());
-		const auto& parsed_json = server_request(url, creds);
+		const auto& parsed_json = server_request(url, creds, 0);
 
 		JSON_ALL_TRY;
 		{
@@ -171,7 +171,7 @@ void plugin_iptvonline::fill_servers_list(TemplateParams& params)
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = server_request(url, params.creds);
+		const auto& parsed_json = server_request(url, params.creds, 0);
 		if (utils::get_json_int("status", parsed_json) == 200)
 		{
 			if (parsed_json.contains("device")
@@ -217,14 +217,31 @@ bool plugin_iptvonline::set_server(TemplateParams& params)
 	if (!servers_list.empty())
 	{
 		nlohmann::json json_request;
-		json_request["server_location"] = params.server_id;
-		const auto& post = json_request.dump();
+		json_request["server_location"] = std::stoi(servers_list[params.server_idx].id);
 		const auto& url = fmt::format(API_COMMAND_DEVICE, get_provider_api_url(), L"settings");
 
-		const auto& parsed_json = server_request(url, params.creds, true, json_request);
+		const auto& parsed_json = server_request(url, params.creds, 0, true, json_request);
 
 		JSON_ALL_TRY;
 		{
+			if (parsed_json.contains("device")
+				&& parsed_json["device"].contains("settings")
+				&& parsed_json["device"]["settings"].contains("server_location")
+				&& parsed_json["device"]["settings"]["server_location"].contains("value")
+				)
+			{
+				int idx = 0;
+				for (auto& item : parsed_json["device"]["settings"]["server_location"]["value"].items())
+				{
+					if (utils::get_json_bool("selected", item.value()))
+					{
+						params.server_idx = idx;
+						break;
+					}
+					idx++;
+				}
+			}
+
 			return utils::get_json_int("status", parsed_json) == 200;
 		}
 		JSON_ALL_CATCH;
@@ -264,7 +281,8 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 
 	const auto& url = fmt::format(L"{:s}/{:s}/{:s}", get_vod_url(params), movie.category, movie.id);
 
-	nlohmann::json movies_json = server_request(url, creds);
+	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
+	nlohmann::json movies_json = server_request(url, creds, cache_ttl);
 	if (movies_json.empty() || !movies_json.contains("data"))
 	{
 		return;
@@ -383,7 +401,8 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 	movie_category->name = name;
 
 	std::wstring cat_url = fmt::format(L"{:s}/{:s}/?limit=100&page=1", get_vod_url(config.m_params), id);
-	const auto& meta_info_json = server_request(cat_url, config.m_params.creds);
+	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
+	const auto& meta_info_json = server_request(cat_url, config.m_params.creds, cache_ttl);
 
 	if (meta_info_json.empty()
 		|| !utils::get_json_bool("success", meta_info_json)
@@ -405,7 +424,7 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 		if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 
 		cat_url = fmt::format(L"{:s}/{:s}/?limit=100&page={:d}", config.m_url, movie_category->id, page);
-		nlohmann::json movies_json = server_request(cat_url, config.m_params.creds);
+		nlohmann::json movies_json = server_request(cat_url, config.m_params.creds, cache_ttl);
 		if (movies_json.empty() || !movies_json.contains("data") || !movies_json["data"].contains("items"))
 		{
 			continue;
@@ -469,10 +488,8 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 	categories->set_back(movie_category->id, movie_category);
 }
 
-nlohmann::json plugin_iptvonline::server_request(const std::wstring& url, const Credentials& creds, bool web_post /*= false*/, const nlohmann::json& post_data /*= {}*/)
+nlohmann::json plugin_iptvonline::server_request(const std::wstring& url, const Credentials& creds, int cache_ttl, bool web_post /*= false*/, const nlohmann::json& post_data /*= {}*/)
 {
-	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
-
 	std::vector<std::string> headers;
 	headers.emplace_back("accept: */*");
 	headers.emplace_back("Content-Type: application/json; charset=utf-8");

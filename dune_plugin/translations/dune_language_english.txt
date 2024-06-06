@@ -40,6 +40,7 @@ end_date = End date
 devices = Devices
 server = Server
 server_addr = Server address
+quality = Quality:
 by_default = By default
 balance = Balance
 balance_not_support = Account balance information not supported

@@ -55,11 +55,6 @@ class default_config extends dynamic_config
      */
     protected $vod_items;
 
-    /**
-     * @var array
-     */
-    protected $vod_filters = array();
-
     public function set_plugin($plugin)
     {
         $this->plugin = $plugin;
@@ -601,7 +596,8 @@ class default_config extends dynamic_config
      */
     public function AddFilterUI($parent, $user_filter)
     {
-        if (empty($this->vod_filters)) {
+        $vod_filters = $this->get_feature(Plugin_Constants::VOD_FILTERS);
+        if (empty($vod_filters)) {
             return null;
         }
 
@@ -615,7 +611,7 @@ class default_config extends dynamic_config
         $defs = array();
         Control_Factory::add_vgap($defs, 20);
 
-        foreach ($this->vod_filters as $name) {
+        foreach ($vod_filters as $name) {
             $filter = $this->get_filter($name);
             hd_debug_print("filter: $name : " . json_encode($filter), true);
             if ($filter === null) {
@@ -674,12 +670,13 @@ class default_config extends dynamic_config
         hd_debug_print(null, true);
         dump_input_handler($user_input);
 
-        if (empty($this->vod_filters)) {
+        $vod_filters = $this->get_feature(Plugin_Constants::VOD_FILTERS);
+        if (empty($vod_filters)) {
             return '';
         }
 
         $compiled_string = "";
-        foreach ($this->vod_filters as $name) {
+        foreach ($vod_filters as $name) {
             $filter = $this->get_filter($name);
             if ($filter === null) continue;
 

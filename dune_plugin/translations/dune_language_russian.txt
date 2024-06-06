@@ -40,6 +40,7 @@ end_date = Дата окончания
 devices = Устройств
 server = Сервер
 server_addr = Адрес сервера
+quality = Качество:
 by_default = По умолчанию
 balance = Баланс
 balance_not_support = Информация о балансе не поддерживается

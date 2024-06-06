@@ -20,6 +20,7 @@ class Plugin_Constants
     const /* (bool) */ VOD_AUDIO_SUPPORTED = 'vod_audio';
     const /* (bool) */ VOD_FILTER_SUPPORTED = 'vod_filter';
     const /* (bool) */ BALANCE_SUPPORTED = 'balance_support';
+    const /* (bool) */ VOD_FILTERS = 'vod_filters';
 
     // parameters loaded from external config
 

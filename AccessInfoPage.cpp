@@ -434,6 +434,8 @@ BOOL CAccessInfoPage::OnApply()
 
 	m_selected_cred = selected;
 
+	utils::CUrlDownload::ClearCachedUrl(m_plugin->get_playlist_url(params));
+
 	return TRUE;
 }
 

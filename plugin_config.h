@@ -455,6 +455,9 @@ public:
 		SERIALIZE_STRUCT(j, c, playlist_template_index);
 		SERIALIZE_STRUCT(j, c, vod_engine); //-V601
 		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
+		SERIALIZE_STRUCT(j, c, vod_filters);
+		SERIALIZE_STRUCT(j, c, vod_quality);
+		SERIALIZE_STRUCT(j, c, vod_audio);
 		SERIALIZE_STRUCT(j, c, vod_templates);
 		SERIALIZE_STRUCT(j, c, vod_template_index);
 		SERIALIZE_STRUCT(j, c, balance_support); //-V601
@@ -493,6 +496,9 @@ public:
 		DESERIALIZE_STRUCT(j, c, playlist_template_index);
 		DESERIALIZE_STRUCT(j, c, vod_engine);
 		DESERIALIZE_STRUCT(j, c, vod_filter);
+		DESERIALIZE_STRUCT(j, c, vod_filters);
+		DESERIALIZE_STRUCT(j, c, vod_quality);
+		DESERIALIZE_STRUCT(j, c, vod_audio);
 		DESERIALIZE_STRUCT(j, c, vod_templates);
 		DESERIALIZE_STRUCT(j, c, vod_template_index);
 		DESERIALIZE_STRUCT(j, c, balance_support);
@@ -548,12 +554,17 @@ protected:
 	bool balance_support = false;
 	// use channels logo are squared, plugin UI settings
 	bool vod_filter = false;
+	bool vod_quality = false;
+	bool vod_audio = false;
 	// flag for php plugin if uri does not contains parsed 'id' for channel
 	bool static_servers = false;
 	bool static_qualities = false;
 	bool static_devices = false;
 	bool static_profiles = false;
 	bool static_domains = false;
+
+	std::vector<std::string> vod_filters;
+
 	// selected playlist template
 	size_t playlist_template_index = 0;
 	// available playlist templates
