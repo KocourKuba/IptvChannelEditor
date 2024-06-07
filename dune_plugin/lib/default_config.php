@@ -1461,7 +1461,7 @@ class default_config extends dynamic_config
         $template = $this->get_current_tv_template();
         $parse_pattern = isset($template[Plugin_Constants::PARSE_REGEX]) ? $template[Plugin_Constants::PARSE_REGEX] : '';
         if (!empty($parse_pattern))
-            $parse_pattern = "/$parse_pattern/";
+            $parse_pattern = "#$parse_pattern#";
 
         return $parse_pattern;
     }
@@ -1492,7 +1492,7 @@ class default_config extends dynamic_config
         $vod_template = $this->get_current_vod_template();
         $vod_pattern = isset($vod_template[Plugin_Constants::PARSE_REGEX]) ? $vod_template[Plugin_Constants::PARSE_REGEX] : '';
         if (!empty($vod_pattern))
-            $vod_pattern = "/$vod_pattern/";
+            $vod_pattern = "#$vod_pattern#";
 
         return $vod_pattern;
     }
