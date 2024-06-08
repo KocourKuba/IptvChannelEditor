@@ -716,7 +716,6 @@ class HD
         $ret_content = empty($save_file);
 
         $logfile = get_temp_path(self::HTTPS_PROXY_LOG);
-        hd_debug_print("proxy log: $logfile", true);
         if (file_exists($logfile)) {
             unlink($logfile);
         }
@@ -732,6 +731,7 @@ class HD
 
         $config_data  = "--insecure" . PHP_EOL;
         $config_data .= "--silent" . PHP_EOL;
+        $config_data .= "--show-error" . PHP_EOL;
         $config_data .= "--dump-header -" . PHP_EOL;
         $config_data .= "--connect-timeout 30" . PHP_EOL;
         $config_data .= "--max-time 90" . PHP_EOL;
@@ -772,7 +772,13 @@ class HD
 
         $cmd = get_install_path('bin/https_proxy.sh') . " " . get_platform_curl() . " '$config_file' '$logfile'";
         hd_debug_print("Exec: $cmd", true);
-        shell_exec($cmd);
+        $result = shell_exec($cmd);
+        if ($result === false) {
+            hd_debug_print("Problem with exec https_proxy script");
+        } else {
+            hd_debug_print("Exec result: " . (int)$result);
+        }
+
         if (!file_exists($logfile)) {
             $log_content = "No http_proxy log!";
             hd_debug_print($log_content);
@@ -781,7 +787,7 @@ class HD
             if (LogSeverity::$is_debug && $log_content !== false) {
                 hd_debug_print("---------  Read http_proxy log ---------");
                 foreach ($log_content as $line) {
-                    hd_debug_print($line, true);
+                    hd_debug_print($line);
                 }
                 hd_debug_print("---------     Read finished    ---------");
             }
@@ -793,7 +799,6 @@ class HD
         }
 
         if ($ret_content) {
-            hd_debug_print("Read content: $save_file");
             $content = file_get_contents($save_file);
             unlink($save_file);
             return $content;
