@@ -952,6 +952,10 @@ class default_config extends dynamic_config
             unset($this->tv_m3u_entries);
         } else {
             unset($this->vod_m3u_indexes);
+            $vod_cache = self::get_vod_cache_file();
+            if (file_exists($vod_cache)) {
+                unlink($vod_cache);
+            }
         }
     }
 
