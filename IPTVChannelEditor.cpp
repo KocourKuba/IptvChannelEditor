@@ -763,6 +763,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 
 	const std::filesystem::path www_path = LR"(www\cgi-bin\)";
 	const std::filesystem::path bin_path = LR"(bin\)";
+	const std::filesystem::path arm_path = LR"(.platform.87xx\bin\)";
 
 	// extract plugin package
 	const auto& plugin_dir = GetAppPath(utils::PLUGIN_ROOT);
@@ -844,6 +845,21 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 		return false;
 	}
 
+	const auto& arm_dir = plugin_root / arm_path;
+	if (!std::filesystem::exists(arm_dir))
+	{
+		const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_DIR_MISSING), arm_dir.wstring());
+		if (showMessage)
+		{
+			AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+		}
+		else
+		{
+			LogProtocol(msg);
+		}
+		return false;
+	}
+
 	std::filesystem::copy(plugin_root, packFolder, default_copy, err);
 	std::filesystem::copy(plugin_root / L"lib", packFolder / L"lib", recursive_copy, err);
 	std::filesystem::copy(plugin_root / L"img", packFolder / L"img", recursive_copy, err);
@@ -878,6 +894,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 
 	std::filesystem::create_directory(packFolder / bin_path, err);
 	std::filesystem::create_directories(packFolder / www_path, err);
+	std::filesystem::create_directories(packFolder / arm_path, err);
 
 	for (const auto& item : plugin->get_files_list())
 	{
@@ -905,8 +922,8 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	{
 		if (std::find(mandatory_bin.begin(), mandatory_bin.end(), dir_entry.path().filename().wstring()) != mandatory_bin.end())
 		{
-			const auto& curl_file = bin_path / dir_entry.path().filename();
-			std::filesystem::copy_file(plugin_root / curl_file, packFolder / curl_file, default_copy, err);
+			const auto& file = bin_path / dir_entry.path().filename();
+			std::filesystem::copy_file(plugin_root / file, packFolder / file, default_copy, err);
 		}
 	}
 
@@ -919,8 +936,21 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	{
 		if (std::find(mandatory_www.begin(), mandatory_www.end(), dir_entry.path().filename().wstring()) != mandatory_www.end())
 		{
-			const auto& curl_file = www_path / dir_entry.path().filename();
-			std::filesystem::copy_file(plugin_root / curl_file, packFolder / curl_file, default_copy, err);
+			const auto& file = www_path / dir_entry.path().filename();
+			std::filesystem::copy_file(plugin_root / file, packFolder / file, default_copy, err);
+		}
+	}
+
+	static std::vector<std::wstring> mandatory_arm = {
+		L"php-cgi"
+	};
+
+	for (const auto& dir_entry : std::filesystem::directory_iterator{ arm_dir })
+	{
+		if (std::find(mandatory_arm.begin(), mandatory_arm.end(), dir_entry.path().filename().wstring()) != mandatory_arm.end())
+		{
+			const auto& file = arm_path / dir_entry.path().filename();
+			std::filesystem::copy_file(plugin_root / file, packFolder / file, default_copy, err);
 		}
 	}
 
