@@ -74,7 +74,6 @@ static std::vector<std::pair<PluginType, std::string>> s_all_plugins = {
 	{ PluginType::enVidok,      "vidok"      },
 	{ PluginType::enVipLime,    "viplime"    },
 	{ PluginType::enYossoTV,    "yosso"      },
-	{ PluginType::enOttIptv,    "ottiptv"    },
 	{ PluginType::en101film,    "101film"    },
 	{ PluginType::enIpstream,   "ipstream"   },
 	{ PluginType::enOnlineOtt,  "onlineott"  },

@@ -53,7 +53,6 @@ enum class PluginType
 	enOneUsd,
 	enOnlineOtt,
 	enOttclub,
-	enOttIptv,
 	enPing,
 	enRusskoeTV,
 	enRuTV,
