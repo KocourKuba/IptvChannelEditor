@@ -294,7 +294,7 @@
         }
       ],
       "provider_api_url": "http://protected-api.com",
-      "provider_url": "https://antifriztv.com/",
+      "provider_url": "https://antifriz.tv/",
       "streams_config": [
         {
           "cu_type": "flussonic",
@@ -1482,49 +1482,6 @@
       ],
       "title": "OttClub"
     },
-    "ottiptv": {
-      "access_type": "login",
-      "epg_params": [
-        {
-          "epg_param": "first",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_url": "http://epg.drm-play.com/ottiptv%2Fepg%2F{EPG_ID}.json"
-        },
-        {}
-      ],
-      "name": "ottiptv",
-      "playlist_templates": [
-        {
-          "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<var1>.+)\\/(?<id>.+)\\/video\\.m3u8\\?token=(?<token>.+)$",
-          "pl_parse_regex": "https?://.+\/(?<login>.+)\/(?<password>.+)\/.+$",
-          "pl_template": "https://ottiptv.ru/{LOGIN}/{PASSWORD}/playlist.m3u8"
-        }
-      ],
-      "provider_url": "https://ottiptv.ru/",
-      "streams_config": [
-        {
-          "cu_type": "flussonic",
-          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
-          "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{VAR1}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{VAR1}/{ID}/video.m3u8?token={TOKEN}"
-        },
-        {
-          "cu_type": "flussonic",
-          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
-          "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{VAR1}/{ID}/index-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/{VAR1}/{ID}/mpegts?token={TOKEN}"
-        }
-      ],
-      "title": "Ott Iptv"
-    },
     "ping": {
       "access_type": "login",
       "epg_params": [
@@ -1600,7 +1557,7 @@
         }
       ],
       "provider_api_url": "http://protected-api.com",
-      "provider_url": "https://russkoetv.tv/",
+      "provider_url": "https://russkoetv.shop/",
       "streams_config": [
         {
           "cu_type": "shift",
