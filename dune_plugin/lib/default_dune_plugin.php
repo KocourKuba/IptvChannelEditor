@@ -895,8 +895,8 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_bool_parameter($type, $default = true)
     {
-        return $this->get_parameter($type,
-                $default ? SetupControlSwitchDefs::switch_on : SetupControlSwitchDefs::switch_off) === SetupControlSwitchDefs::switch_on;
+        $val = $this->get_parameter($type, $default ? SetupControlSwitchDefs::switch_on : SetupControlSwitchDefs::switch_off);
+        return $val === SetupControlSwitchDefs::switch_on;
     }
 
     /**

@@ -99,12 +99,17 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
                 switch ($user_input->action_id) {
                     case self::ACTION_LAUNCH:
+                        hd_debug_print_separator();
+                        hd_debug_print("LANUCH PLUGIN");
+                        hd_debug_print_separator();
+
                         if (toggle_https_proxy($this->plugin->get_bool_parameter(PARAM_USE_HTTPS_PROXY, false))) {
                             return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'),
                                 Action_Factory::restart(), TR::t('entry_https_proxy_enabled'));
                         }
 
                         $this->plugin->init_epg_manager();
+                        $this->plugin->tv->reload_channels();
 
                         if ((int)$user_input->mandatory_playback === 1
                             || (isset($plugin_cookies->auto_play) && $plugin_cookies->auto_play === SetupControlSwitchDefs::switch_on)) {
@@ -131,7 +136,12 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         return $action;
 
                     case self::ACTION_AUTO_RESUME:
+                        hd_debug_print_separator();
+                        hd_debug_print("LANUCH PLUGIN AUTO RESUME MODE");
+                        hd_debug_print_separator();
+
                         $this->plugin->init_epg_manager();
+                        $this->plugin->tv->reload_channels();
 
                         if ((int)$user_input->mandatory_playback !== 1
                             || (isset($plugin_cookies->auto_resume) && $plugin_cookies->auto_resume === SetupControlSwitchDefs::switch_off)) break;

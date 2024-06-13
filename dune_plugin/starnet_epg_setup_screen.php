@@ -205,12 +205,14 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 break;
 
             case self::ACTION_CLEAR_EPG_CACHE:
+                $this->plugin->get_epg_manager()->clear_epg_cache();
                 if ($this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON) !== ENGINE_JSON) {
                     $this->plugin->tv->unload_channels();
+                    $post_action = User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
+                } else {
+                    $post_action = Action_Factory::reset_controls($this->do_get_control_defs());
                 }
-                $this->plugin->get_epg_manager()->clear_epg_cache();
-                return Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared'),
-                    Action_Factory::reset_controls($this->do_get_control_defs()));
+                return Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared'), $post_action);
 
             case ACTION_RESET_DEFAULT:
                 hd_debug_print(ACTION_RESET_DEFAULT);

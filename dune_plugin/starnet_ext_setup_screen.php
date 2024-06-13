@@ -271,10 +271,9 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
                     Action_Factory::reset_controls($this->do_get_control_defs()));
 
             case PARAM_ENABLE_DEBUG:
-                $this->plugin->toggle_parameter(PARAM_ENABLE_DEBUG, false);
-                $debug = $this->plugin->get_bool_parameter(PARAM_ENABLE_DEBUG);
-                set_debug_log($debug);
+                $debug = $this->plugin->toggle_parameter(PARAM_ENABLE_DEBUG, false);
                 hd_debug_print("Debug logging: " . var_export($debug, true));
+                set_debug_log($debug);
                 break;
 
             case ACTION_RELOAD:

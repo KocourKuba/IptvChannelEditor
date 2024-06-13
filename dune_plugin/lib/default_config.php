@@ -795,9 +795,10 @@ class default_config extends dynamic_config
 
         if ($is_archive) {
             // replace macros to live url
+            $cu_source = isset($ext_params[Stream_Params::CU_SOURCE]) ? $ext_params[Stream_Params::CU_SOURCE] : "";
             $play_template_url = str_replace(
                 array(Plugin_Macros::LIVE_URL, Plugin_Macros::CH_CATCHUP),
-                array($live_url, $ext_params[Stream_Params::CU_SOURCE]),
+                array($live_url, $cu_source),
                 $archive_url);
             $custom_stream_type = $channel->get_custom_archive_url_type();
             foreach ($m3u_replaces as $key => $value) {
