@@ -620,10 +620,7 @@ class Default_Dune_Plugin implements DunePlugin
                 );
             }
         } catch (Exception $ex) {
-            $msg = $ex->getMessage();
-            if (!empty($msg)) {
-                hd_debug_print($msg);
-            }
+            print_backtrace_exception($ex);
         }
 
         return $day_epg;
@@ -1329,14 +1326,14 @@ class Default_Dune_Plugin implements DunePlugin
             $live_url = $this->config->GenerateStreamUrl($channel, -1, true);
             $info .= "Live URL: " . wrap_string_to_lines($live_url, 76) . PHP_EOL;
         } catch (Exception $ex) {
-            hd_debug_print($ex);
+            print_backtrace_exception($ex);
         }
 
         try {
             $archive_url = $this->config->GenerateStreamUrl($channel, time() - 3600, true);
             $info .= "Archive URL: " . wrap_string_to_lines($archive_url, 76) . PHP_EOL;
         } catch (Exception $ex) {
-            hd_debug_print($ex);
+            print_backtrace_exception($ex);
         }
 
         $dune_params = $this->config->UpdateDuneParams('');

@@ -69,7 +69,7 @@ class vidok_config extends default_config
                 }
             }
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
             return false;
         }
 
@@ -98,7 +98,7 @@ class vidok_config extends default_config
                 }
             }
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
             return false;
         }
         return $this->account_data;
@@ -152,7 +152,7 @@ class vidok_config extends default_config
             }
             return true;
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
         }
 
         return false;

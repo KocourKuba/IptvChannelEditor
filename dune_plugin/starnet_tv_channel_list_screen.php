@@ -77,7 +77,8 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 try {
                     $post_action = $this->plugin->tv_player_exec($selected_media_url);
                 } catch (Exception $ex) {
-                    hd_debug_print("Movie can't played, exception info: " . $ex->getMessage());
+                    hd_debug_print("Movie can't played");
+                    print_backtrace_exception($ex);
                     return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
                         null,
                         TR::t('warn_msg2__1', $ex->getMessage()));
@@ -312,8 +313,9 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                     PluginRegularFolderItem::starred => $this->plugin->get_favorites()->in_order($channel->get_id()),
                 );
             }
-        } catch (Exception $e) {
-            hd_debug_print("Failed collect folder items! " . $e->getMessage());
+        } catch (Exception $ex) {
+            hd_debug_print("Failed collect folder items!");
+            print_backtrace_exception($ex);
         }
 
         return $items;

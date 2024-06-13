@@ -243,7 +243,7 @@ class Epg_Manager
                 hd_debug_print("Fetch data from XMLTV cache in: " . (microtime(true) - $t) . " secs");
             }
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
         }
 
         if (empty($day_epg)) {
@@ -456,7 +456,7 @@ class Epg_Manager
 
             $ret = 1;
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
             if (!empty($tmp_filename) && file_exists($tmp_filename)) {
                 unlink($tmp_filename);
             }
@@ -540,7 +540,7 @@ class Epg_Manager
             HD::StoreContentToFile($channels_file, $this->xmltv_channels);
             file_put_contents($version_file, $this->version);
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
         }
 
         $this->set_index_locked(false);
@@ -649,7 +649,7 @@ class Epg_Manager
             hd_debug_print("Reindexing EPG program done: " . (microtime(true) - $t) . " secs");
             hd_debug_print_separator();
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
         }
 
         $this->set_index_locked(false);
@@ -860,7 +860,7 @@ class Epg_Manager
 
             return $this->xmltv_positions[$channel_id];
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
         }
 
         return array();

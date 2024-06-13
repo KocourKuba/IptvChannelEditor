@@ -43,7 +43,7 @@ class antifriz_config extends default_config
                 $this->plugin->set_credentials(Ext_Params::M_TOKEN, $this->account_data->private_token);
             }
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
             return false;
         }
 

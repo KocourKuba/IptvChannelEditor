@@ -54,7 +54,8 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
                 try {
                     $post_action = $this->plugin->tv_player_exec($media_url);
                 } catch (Exception $ex) {
-                    hd_debug_print("Movie can't played, exception info: " . $ex->getMessage());
+                    hd_debug_print("Movie can't played");
+                    print_backtrace_exception($ex);
                     return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
                         null,
                         TR::t('warn_msg2__1', $ex->getMessage()));

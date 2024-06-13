@@ -31,7 +31,7 @@ class oneott_config extends default_config
                 $this->account_data = $json;
             }
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
             return false;
         }
 

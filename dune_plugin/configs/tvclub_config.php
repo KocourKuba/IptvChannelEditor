@@ -30,6 +30,7 @@ class tvclub_config extends default_config
                 $this->set_servers($servers);
             } catch (Exception $ex) {
                 hd_debug_print("Servers not loaded");
+                print_backtrace_exception($ex);
             }
         }
 
@@ -103,7 +104,7 @@ class tvclub_config extends default_config
             }
             $this->account_data = $json;
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
             return false;
         }
 
@@ -129,6 +130,7 @@ class tvclub_config extends default_config
             return true;
         } catch (Exception $ex) {
             hd_debug_print("Settings not saved");
+            print_backtrace_exception($ex);
         }
 
         return false;

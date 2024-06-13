@@ -27,7 +27,7 @@ class itv_config extends default_config
             }
 
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
             return false;
         }
 

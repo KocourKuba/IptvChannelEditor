@@ -1305,7 +1305,8 @@ class default_config extends dynamic_config
                 }
                 file_put_contents($m3u_file, HD::http_get_document($url));
             } catch (Exception $ex) {
-                hd_debug_print("Unable to load $type playlist: " . $ex->getMessage());
+                hd_debug_print("Unable to load $type playlist");
+                print_backtrace_exception($ex);
             }
         }
 

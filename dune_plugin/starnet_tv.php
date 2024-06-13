@@ -225,7 +225,8 @@ class Starnet_Tv implements User_Input_Handler
                     file_put_contents($channels_list_path, HD::http_get_document($url_path));
                 } catch (Exception $ex) {
                     if (!file_exists($channels_list_path)) {
-                        hd_debug_print("Can't fetch channel_list from $url_path " . $ex->getMessage());
+                        hd_debug_print("Can't fetch channel_list from $url_path");
+                        print_backtrace_exception($ex);
                         return -1;
                     }
                 }
@@ -234,7 +235,8 @@ class Starnet_Tv implements User_Input_Handler
             file_put_contents(get_temp_path("current_list.xml"), file_get_contents($channels_list_path));
             $xml = HD::parse_xml_file($channels_list_path);
         } catch (Exception $ex) {
-            hd_debug_print("Can't fetch channel_list $channels_list_path " . $ex->getMessage());
+            hd_debug_print("Can't fetch channel_list $channels_list_path ");
+            print_backtrace_exception($ex);
             return -1;
         }
 
@@ -532,7 +534,7 @@ class Starnet_Tv implements User_Input_Handler
 
             hd_debug_print($url);
         } catch (Exception $ex) {
-            hd_debug_print("Exception: " . $ex->getMessage());
+            print_backtrace_exception($ex);
             $url = '';
         }
 

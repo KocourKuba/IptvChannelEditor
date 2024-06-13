@@ -43,6 +43,7 @@ class sharaclub_config extends default_config
                 }
             } catch (Exception $ex) {
                 hd_debug_print("Error during downloading servers information");
+                print_backtrace_exception($ex);
             }
         }
 
@@ -68,6 +69,7 @@ class sharaclub_config extends default_config
             }
         } catch (Exception $ex) {
             hd_debug_print("Failed to change server");
+            print_backtrace_exception($ex);
         }
     }
 
@@ -95,6 +97,7 @@ class sharaclub_config extends default_config
                 }
             } catch (Exception $ex) {
                 hd_debug_print("Error during downloading profiles information");
+                print_backtrace_exception($ex);
             }
         }
 
@@ -120,6 +123,7 @@ class sharaclub_config extends default_config
             }
         } catch (Exception $ex) {
             hd_debug_print("Failed to change profile");
+            print_backtrace_exception($ex);
         }
     }
 
@@ -170,7 +174,7 @@ class sharaclub_config extends default_config
                 }
             }
         } catch (Exception $ex) {
-            hd_debug_print($ex->getMessage());
+            print_backtrace_exception($ex);
             return false;
         }
 
