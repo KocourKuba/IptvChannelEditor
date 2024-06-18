@@ -106,10 +106,10 @@ void plugin_glanz::parse_vod(const CThreadConfig& config)
 				{
 					const auto& genre_item = item.value();
 					const auto& id = utils::get_json_wstring("id", genre_item);
-					const auto& title = utils::get_json_wstring("title", genre_item);
-					vod_genre_def genre({ id, title });
+					const auto& vod_title = utils::get_json_wstring("title", genre_item);
+					vod_genre_def genre({ id, vod_title });
 
-					movie->genres.set_back(title, genre);
+					movie->genres.set_back(vod_title, genre);
 				}
 
 				category->movies.set_back(movie->id, movie);

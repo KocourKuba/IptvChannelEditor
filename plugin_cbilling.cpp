@@ -175,9 +175,9 @@ void plugin_cbilling::parse_vod(const CThreadConfig& config)
 
 						for (const auto& genre_item : movie_item["genres"].items())
 						{
-							const auto& title = utils::get_json_wstring("title", genre_item.value());
-							vod_genre_def genre({ title, title });
-							movie->genres.set_back(title, genre);
+							const auto& vod_title = utils::get_json_wstring("title", genre_item.value());
+							vod_genre_def genre({ vod_title, vod_title });
+							movie->genres.set_back(vod_title, genre);
 						}
 
 						category->movies.set_back(movie->id, movie);

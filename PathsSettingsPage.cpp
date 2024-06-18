@@ -105,7 +105,7 @@ BOOL CPathsSettingsPage::OnApply()
 		m_lists_path += '\\';
 
 	const auto& list_path = GetConfig().get_string(true, REG_LISTS_PATH);
-	if (m_lists_path != list_path.c_str())
+	if (m_lists_path != list_path.c_str()) //-V1051
 	{
 		auto res = AfxMessageBox(IDS_STRING_COPY_LISTS, MB_ICONEXCLAMATION | MB_YESNO);
 		if (res == IDYES)
@@ -140,7 +140,7 @@ BOOL CPathsSettingsPage::OnApply()
 		m_plugins_settings_path += '\\';
 
 	const auto& settings_path = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH);
-	if (m_plugins_settings_path != settings_path.c_str())
+	if (m_plugins_settings_path != settings_path.c_str()) //-V1051
 	{
 		auto res = AfxMessageBox(IDS_STRING_COPY_CONFIGS, MB_ICONEXCLAMATION | MB_YESNO);
 		if (res == IDYES)

@@ -315,10 +315,10 @@ void plugin_sharaclub::parse_vod(const CThreadConfig& config)
 
 				for (const auto& genre_item : info["genre"].items())
 				{
-					const auto& title = utils::utf8_to_utf16(genre_item.value().get<std::string>());
-					vod_genre_def genre({ title, title });
+					const auto& vod_title = utils::utf8_to_utf16(genre_item.value().get<std::string>());
+					vod_genre_def genre({ vod_title, vod_title });
 
-					movie->genres.set_back(title, genre);
+					movie->genres.set_back(vod_title, genre);
 				}
 
 				std::string country;

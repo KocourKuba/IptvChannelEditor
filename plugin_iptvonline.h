@@ -41,7 +41,7 @@ public:
 
 private:
 	void collect_movies(const std::wstring& id,
-						const std::wstring& name,
+						const std::wstring& category_name,
 						const CThreadConfig & config,
 						std::unique_ptr<vod_category_storage>& categories,
 						bool is_serial = false);

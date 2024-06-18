@@ -109,8 +109,8 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 				{
 					const auto& filter_sub = filter_sub_it.value();
 					const auto& id = utils::get_json_wstring(id_tag, filter_sub["request"]);
-					const auto& title = utils::get_json_wstring("title", filter_sub);
-					vod_filter_def filter({ id, title });
+					const auto& vod_title = utils::get_json_wstring("title", filter_sub);
+					vod_filter_def filter({ id, vod_title });
 					filters.set_back(id, filter);
 				}
 				categories->vec().front().second->filters.set_back(utils::utf8_to_utf16(id_tag), filters);
@@ -273,10 +273,10 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 					{
 						for (const auto& variant_it : variants_data["variants"].items())
 						{
-							const auto& title = utils::utf8_to_utf16(variant_it.key());
+							const auto& vod_title = utils::utf8_to_utf16(variant_it.key());
 							const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
 
-							episode.qualities.set_back(title, vod_variant_def({ title, q_url }));
+							episode.qualities.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
 						}
 					}
 				}
@@ -291,10 +291,10 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 			{
 				for (const auto& variant_it : json_data["variants"].items())
 				{
-					const auto& title = utils::utf8_to_utf16(variant_it.key());
+					const auto& vod_title = utils::utf8_to_utf16(variant_it.key());
 					const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
 
-					movie.quality.set_back(title, vod_variant_def({ title, q_url }));
+					movie.quality.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
 				}
 			}
 		}

@@ -373,7 +373,6 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 
 std::filesystem::path CUrlDownload::GetCachedPath(const std::wstring& url)
 {
-	std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
 	return GetCacheDir() / fmt::format(L"{:08x}", xxh::xxhash<32>(url));
 }
 

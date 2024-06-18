@@ -530,6 +530,7 @@ bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 	{
 		std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
 		msg += utils::utf8_to_utf16(fmt::format("\nIncorrect update info: parse error: {:s}", ex.what()));
+		AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
 		return false;
 	}
 

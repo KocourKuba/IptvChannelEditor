@@ -72,7 +72,7 @@ struct IconPackInfo
 		SERIALIZE_STRUCT(j, c, name);
 		SERIALIZE_STRUCT(j, c, package_name);
 		SERIALIZE_STRUCT(j, c, url);
-		SERIALIZE_STRUCT(j, c, square);
+		SERIALIZE_STRUCT(j, c, square); //-V601
 	}
 
 	friend void from_json(const nlohmann::json& j, IconPackInfo& c)

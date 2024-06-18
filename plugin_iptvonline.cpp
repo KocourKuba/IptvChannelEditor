@@ -323,12 +323,12 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 						{
 							const auto& audios = variant_it.value();
 
-							const auto& title = utils::get_json_wstring("translate", audios);
+							const auto& vod_title = utils::get_json_wstring("translate", audios);
 							const auto& q_url = utils::get_json_wstring("url", audios);
 
-							if (!title.empty() && !q_url.empty())
+							if (!vod_title.empty() && !q_url.empty())
 							{
-								episode.audios.set_back(title, vod_variant_def({ title, q_url }));
+								episode.audios.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
 							}
 						}
 					}
@@ -350,11 +350,11 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 				{
 					const auto& audios = variant_it.value();
 
-					const auto& title = utils::get_json_wstring("translate", audios);
+					const auto& vod_title = utils::get_json_wstring("translate", audios);
 					const auto& q_url = utils::get_json_wstring("url", audios);
-					if (!title.empty() && !q_url.empty())
+					if (!vod_title.empty() && !q_url.empty())
 					{
-						movie.audios.set_back(title, vod_variant_def({ title, q_url }));
+						movie.audios.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
 					}
 				}
 			}
@@ -392,13 +392,13 @@ std::wstring plugin_iptvonline::get_movie_url(const Credentials& creds, const mo
 }
 
 void plugin_iptvonline::collect_movies(const std::wstring& id,
-									   const std::wstring& name,
+									   const std::wstring& category_name,
 									   const CThreadConfig& config,
 									   std::unique_ptr<vod_category_storage>& categories,
 									   bool is_serial /*= false*/)
 {
 	auto movie_category = std::make_shared<vod_category>(id);
-	movie_category->name = name;
+	movie_category->name = category_name;
 
 	std::wstring cat_url = fmt::format(L"{:s}/{:s}/?limit=100&page=1", get_vod_url(config.m_params), id);
 	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
@@ -465,9 +465,9 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 				for (const auto& genre_item : movie_item["genres"].items())
 				{
 					const auto& genre_value = genre_item.value();
-					const auto& title = utils::utf8_to_utf16(genre_value.get<std::string>());
-					vod_genre_def genre({ title, title });
-					movie->genres.set_back(title, genre);
+					const auto& vod_title = utils::utf8_to_utf16(genre_value.get<std::string>());
+					vod_genre_def genre({ vod_title, vod_title });
+					movie->genres.set_back(vod_title, genre);
 				}
 
 				movie_category->movies.set_back(movie->id, movie);

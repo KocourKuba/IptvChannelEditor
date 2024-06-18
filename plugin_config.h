@@ -456,8 +456,8 @@ public:
 		SERIALIZE_STRUCT(j, c, vod_engine); //-V601
 		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
 		SERIALIZE_STRUCT(j, c, vod_filters);
-		SERIALIZE_STRUCT(j, c, vod_quality);
-		SERIALIZE_STRUCT(j, c, vod_audio);
+		SERIALIZE_STRUCT(j, c, vod_quality); //-V601
+		SERIALIZE_STRUCT(j, c, vod_audio); //-V601
 		SERIALIZE_STRUCT(j, c, vod_templates);
 		SERIALIZE_STRUCT(j, c, vod_template_index);
 		SERIALIZE_STRUCT(j, c, balance_support); //-V601
