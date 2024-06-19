@@ -118,6 +118,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_UNKNOWN, &CIPTVChannelEditorDlg::OnBnClickedCheckShowUnknown)
 	ON_BN_CLICKED(IDC_BUTTON_PL_FILTER, &CIPTVChannelEditorDlg::OnBnClickedButtonPlFilter)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_NEW_CHANNELS_LIST, &CIPTVChannelEditorDlg::OnBnClickedButtonCreateNewChannelsList)
+	ON_BN_CLICKED(IDC_BUTTON_REFRESH, &CIPTVChannelEditorDlg::OnBnClickedButtonReload)
 	ON_BN_CLICKED(IDC_BUTTON_DOWNLOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnBnClickedButtonDownloadPlaylist)
 	ON_BN_CLICKED(IDC_BUTTON_TEST_EPG, &CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg)
 	ON_BN_CLICKED(IDC_CHECK_ADULT, &CIPTVChannelEditorDlg::OnBnClickedCheckAdult)
@@ -324,6 +325,7 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_PLAYLIST, m_wndPlaylist);
 	DDX_Control(pDX, IDC_COMBO_CHANNELS, m_wndChannels);
 	DDX_Control(pDX, IDC_BUTTON_ACCOUNT_SETTINGS, m_wndBtnAccountSetting);
+	DDX_Control(pDX, IDC_BUTTON_REFRESH, m_wndBtnReloadPlaylist);
 	DDX_Control(pDX, IDC_BUTTON_DOWNLOAD_PLAYLIST, m_wndBtnDownloadPlaylist);
 	DDX_Control(pDX, IDC_PROGRESS_LOAD, m_wndProgress);
 	DDX_Control(pDX, IDC_BUTTON_CACHE_ICON, m_wndBtnCacheIcon);
@@ -511,6 +513,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	AddTooltip(IDC_BUTTON_SETTINGS, IDS_STRING_BUTTON_SETTINGS);
 	AddTooltip(IDC_BUTTON_ACCOUNT_SETTINGS, IDS_STRING_ACCOUNT_SETTINGS);
 	AddTooltip(IDC_BUTTON_EDIT_CONFIG, IDS_STRING_BUTTON_EDIT_CONFIG);
+	AddTooltip(IDC_BUTTON_REFRESH, IDS_STRING_BUTTON_REFRESH);
 	AddTooltip(IDC_BUTTON_DOWNLOAD_PLAYLIST, IDS_STRING_BUTTON_DOWNLOAD_PLAYLIST);
 	AddTooltip(IDC_EDIT_PL_SEARCH, IDS_STRING_EDIT_PL_SEARCH);
 	AddTooltip(IDC_BUTTON_PL_SEARCH_NEXT, IDS_STRING_BUTTON_PL_SEARCH_NEXT);
@@ -576,6 +579,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	SetButtonImage(IDB_PNG_ACCOUNT, m_wndBtnAccountSetting);
 	SetButtonImage(IDB_PNG_CONFIG, m_wndBtnEditConfig);
 	SetButtonImage(IDB_PNG_VOD, m_wndBtnVod);
+	SetButtonImage(IDB_PNG_RELOAD, m_wndBtnReloadPlaylist);
 	SetButtonImage(IDB_PNG_DOWNLOAD, m_wndBtnDownloadPlaylist);
 	SetButtonImage(IDB_PNG_FILTER, m_wndBtnFilter);
 	SetButtonImage(IDB_PNG_ADD_EPG, m_wndBtnAddEPG);
@@ -952,7 +956,7 @@ void CIPTVChannelEditorDlg::LoadTimerEPG()
 	m_load_epg_timer = SetTimer(ID_LOAD_EPG_TIMER, 50, nullptr);
 }
 
-void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
+void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force /*= false*/)
 {
 	int idx = m_wndPlaylist.GetCurSel();
 
@@ -1037,8 +1041,9 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	}
 	else if (cracked.CrackUrl(m_playlist_url))
 	{
+		int cache_ttl = force ? 0 : GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
 		CWaitCursor cur;
-		if (!m_plugin->download_url(m_playlist_url, data, GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
+		if (!m_plugin->download_url(m_playlist_url, data, cache_ttl))
 		{
 			CString msg;
 			msg.Format(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, m_plugin->get_download_error().c_str());
@@ -1079,6 +1084,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/)
 	m_wndPlaylistTree.EnableWindow(FALSE);
 	m_wndChannels.EnableWindow(FALSE);
 	m_wndBtnFilter.EnableWindow(FALSE);
+	m_wndBtnReloadPlaylist.EnableWindow(FALSE);
 	m_wndBtnDownloadPlaylist.EnableWindow(FALSE);
 	m_wndBtnAccountSetting.EnableWindow(FALSE);
 
@@ -1226,6 +1232,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 
 	m_loading = false;
 	m_wndBtnAccountSetting.EnableWindow(TRUE);
+	m_wndBtnReloadPlaylist.EnableWindow(TRUE);
 	m_wndBtnDownloadPlaylist.EnableWindow(TRUE);
 	m_wndPlaylist.EnableWindow(TRUE);
 	m_wndBtnExportM3u.EnableWindow(!m_playlistMap.empty() && !m_channelsMap.empty());
@@ -1385,6 +1392,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM 
 	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
 	m_wndPlaylist.EnableWindow(TRUE);
 	m_wndBtnAccountSetting.EnableWindow(TRUE);
+	m_wndBtnReloadPlaylist.EnableWindow(TRUE);
 	m_wndBtnDownloadPlaylist.EnableWindow(TRUE);
 	m_wndBtnSettings.EnableWindow(TRUE);
 
@@ -4709,6 +4717,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	m_wndChannels.EnableWindow(FALSE);
 	m_wndPlaylist.EnableWindow(FALSE);
 	m_wndBtnAccountSetting.EnableWindow(FALSE);
+	m_wndBtnReloadPlaylist.EnableWindow(FALSE);
 	m_wndBtnDownloadPlaylist.EnableWindow(FALSE);
 	m_wndBtnSettings.EnableWindow(FALSE);
 
@@ -5046,6 +5055,11 @@ void CIPTVChannelEditorDlg::OnUpdateToggleCategory(CCmdUI* pCmdUI)
 		pCmdUI->SetText(load_string_resource(IDS_STRING_ENABLE_CATEGORY).c_str());
 	}
 	pCmdUI->Enable(enable);
+}
+
+void CIPTVChannelEditorDlg::OnBnClickedButtonReload()
+{
+	LoadPlaylist(false, true);
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonDownloadPlaylist()
