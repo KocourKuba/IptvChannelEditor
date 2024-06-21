@@ -36,8 +36,9 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_ottclub.h"
 #include "plugin_sharaclub.h"
 #include "plugin_sharavoz.h"
-#include "plugin_vidok.h"
 #include "plugin_tvclub.h"
+#include "plugin_tvizi.h"
+#include "plugin_vidok.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -148,6 +149,10 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(PluginType type)
 
 			case PluginType::enTVClub:
 				plugin = std::make_shared<plugin_tvclub>();
+				break;
+
+			case PluginType::enTvizi:
+				plugin = std::make_shared<plugin_tvizi>();
 				break;
 
 			case PluginType::enVidok:

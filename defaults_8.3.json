@@ -2058,17 +2058,8 @@
       "title": "TV Club"
     },
     "tvizi": {
-      "access_type": "pin",
-      "domains_list": [
-        {
-          "id": "0",
-          "name": "https://tvizi.net"
-        },
-        {
-          "id": "1",
-          "name": "https://bistv.top"
-        }
-      ],
+      "access_type": "login",
+      "class_name": "tvizi_config",
       "epg_params": [
         {
           "epg_param": "first",
@@ -2088,60 +2079,39 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/play\\/(?<password>.+)\\/m3u8?$",
-          "pl_template": "{PL_DOMAIN}/play/{PASSWORD}/m3u8"
+          "pl_template": "http://iptv.online/play/{PASSWORD}/m3u8"
         }
       ],
-      "provider_url": "https://tvizi.net/",
-      "servers_list": [
-        {
-          "id": "ca.seetv.cc",
-          "name": "Canada"
-        },
-        {
-          "id": "gr.seetv.cc",
-          "name": "Greece"
-        },
-        {
-          "id": "de.seetv.cc",
-          "name": "Germany"
-        },
-        {
-          "id": "pl.seetv.cc",
-          "name": "Poland"
-        },
-        {
-          "id": "nl.seetv.cc",
-          "name": "Netherlands"
-        },
-        {
-          "id": "ru.seetv.cc",
-          "name": "Russia"
-        },
-        {
-          "id": "ukr.seetv.cc",
-          "name": "Ukraine"
-        }
-      ],
-      "static_domains": true,
-      "static_servers": true,
+      "provider_url": "https://tvizi.online//",
+      "provider_api_url": "https://iptv.online/api/v4",
       "streams_config": [
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
+          "uri_arc_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video.m3u8"
+          "uri_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
-          "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/mpegts"
+          "uri_arc_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
+          "uri_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/mpegts"
         }
       ],
-      "title": "TVIZI Net"
+      "title": "TVIZI Net",
+      "vod_engine": "Json",
+      "vod_audio": true,
+      "vod_filter": true,
+      "vod_filters": [ "source", "year", "country", "genre" ],
+      "vod_templates": [
+        {
+          "name": "Standard",
+          "pl_template": "{API_URL}/catalog"
+        }
+      ]
     },
     "tvteam": {
       "access_type": "pin",

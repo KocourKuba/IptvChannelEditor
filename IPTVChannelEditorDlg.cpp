@@ -4006,7 +4006,6 @@ bool CIPTVChannelEditorDlg::ChooseIconFromFile(const CString& path, uri_stream* 
 			trgtPath += oFN.lpstrFileTitle;
 			std::error_code err;
 			std::filesystem::copy_file(file.GetString(), trgtPath, std::filesystem::copy_options::overwrite_existing, err);
-			SetImageControl(GetIconCache().get_icon(trgtPath), m_wndChannelIcon);
 		}
 
 		m_iconUrl = utils::PLUGIN_SCHEME;
@@ -5315,7 +5314,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 	{
 		// Create new channel
 		add = true;
-		auto newChannel = std::make_shared<ChannelInfo>(root_path);
+		auto newChannel = std::make_shared<ChannelInfo>(GetConfig().get_string(true, REG_SAVE_IMAGE_PATH));
 		newChannel->copy_data(*entry);
 		// Add to channel array
 		pair = m_channelsMap.emplace(newChannel->get_id(), newChannel).first;
@@ -5343,7 +5342,7 @@ bool CIPTVChannelEditorDlg::AddChannel(const std::shared_ptr<PlaylistEntry>& ent
 	else
 	{
 		// Category not exist, create new
-		auto category = std::make_shared<ChannelCategory>(root_path);
+		auto category = std::make_shared<ChannelCategory>(GetConfig().get_string(true, REG_SAVE_IMAGE_PATH));
 		categoryId = GetNewCategoryID();
 		category->set_key(categoryId);
 		category->set_title(entry->get_category_w());
