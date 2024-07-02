@@ -492,7 +492,12 @@ bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 
 	if (std::filesystem::exists(plugin_root))
 	{
-		std::filesystem::rename(plugin_root, plugin_root + L".del");
+		std::error_code err;
+		std::filesystem::rename(plugin_root, plugin_root + L".del", err);
+		if (err.value() != 0) {
+			LogProtocol(fmt::format(L"Unable to rename {:s} Error code: {:d}", plugin_root, err.value()));
+			LogProtocol(err.message());
+		}
 	}
 
 	const auto& update_pkg = GetAppPath(utils::UPDATES_FOLDER) + utils::UPDATE_NAME;
