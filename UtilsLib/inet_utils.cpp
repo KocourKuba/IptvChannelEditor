@@ -341,7 +341,7 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 
 		if (!bResults && !bSaveBadCache) break;
 
-		if (vData.good() || bSaveBadCache)
+		if (!vData.fail() || bSaveBadCache)
 		{
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
 			out_stream << vData.rdbuf();

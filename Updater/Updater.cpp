@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include <tchar.h>
 #include <iostream>
 #include <wtypes.h>
+#include <string.h>
 #pragma warning(push)
 #pragma warning(disable:4091)
 #include <dbghelp.h>
@@ -270,10 +271,12 @@ static int download_update(UpdateInfo& info)
 
 		const auto& update_file = fmt::format(L"{:s}{:s}", info.update_path, info.info_file);
 		std::ofstream os(update_file, std::ofstream::binary);
+		info.update_info.seekg(0);
 		os << info.update_info.rdbuf();
-		if (os.bad())
+		if (os.fail())
 		{
 			ret = err_save_pkg; // Unable to save update package!
+			LogProtocol(fmt::format(L"error save: {:s} Error code: {:d}", update_file, GetLastError()));
 			break;
 		}
 		LogProtocol(fmt::format(L"saved to: {:s}", update_file));
@@ -301,10 +304,12 @@ static int download_update(UpdateInfo& info)
 			}
 
 			std::ofstream os_file(loaded_file, std::ofstream::binary);
+			file_data.seekg(0);
 			os_file << file_data.rdbuf();
-			if (os_file.bad())
+			if (os_file.fail())
 			{
 				ret = err_save_pkg; // Unable to save update package!
+				LogProtocol(fmt::format(L"error save: {:s} Error code: {:d}", update_file, GetLastError()));
 				break;
 			}
 			LogProtocol(fmt::format(L"saved to: {:s}", loaded_file));

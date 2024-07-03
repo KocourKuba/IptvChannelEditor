@@ -114,7 +114,6 @@ rem mklink /J ChannelsLists "%ROOT%ChannelsLists" >nul 2>&1
 IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom /Dev .
 rd dune_plugin /q
 rem rd ChannelsLists /q
-del *.log  >nul 2>&1
 
 echo %BUILD_NAME%.exe				>packing.lst
 echo %BUILD_NAME%RUS.dll			>>packing.lst

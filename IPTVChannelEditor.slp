@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20240619222353" scan="314" scanned="20240619222306">
+<document created="20211012165442" version="4.0.374" date="20240703161139" scan="315" scanned="20240703161046">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240619195910" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20240703135410" usesmfc="1">
     <headerfiles>
       <header name="..\..\resource.h"/>
       <resource name="..\..\IPTVChannelEditor.rc"/>
@@ -4881,7 +4881,7 @@
         </row>
         <row id="IDS_STRING_ERR_COPY" created="20230425212643" changed="20240512113223">
           <native>Copy error ({:d})!#lCopy: {:s} to {:s}</native>
-          <lang id="ru" date="20240512113246">Ошибка копирования! ({:s})!#nКопирование: {:d} в {:s}</lang>
+          <lang id="ru" date="20240703161118">Ошибка копирования! ({:d})!#nКопирование: {:s} в {:s}</lang>
         </row>
         <row id="IDS_STRING_VALUE" created="20230408002741">
           <native>Value</native>
@@ -5052,34 +5052,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20240619222306">
-          <prev>8.3.2026, 5 Jun 2024</prev>
-          <native>8.3.2051, 18 Jun 2024</native>
+        <row id="FileVersion" locked="1" state="3" changed="20240703161046">
+          <prev>8.3.2051, 18 Jun 2024</prev>
+          <native>8.3.2060, 3 Jul 2024</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
         <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20240605180443">
           <prev>2</prev>
           <native>3</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240619222306">
-          <prev>2026</prev>
-          <native>2051</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240703161046">
+          <prev>2051</prev>
+          <native>2060</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20240619222306">
-          <prev>8.3.2026</prev>
-          <native>8.3.2051</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20240703161046">
+          <prev>8.3.2051</prev>
+          <native>8.3.2060</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
         <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20240605180443">
           <prev>2</prev>
           <native>3</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240619222306">
-          <prev>2026</prev>
-          <native>2051</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20240703161046">
+          <prev>2051</prev>
+          <native>2060</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

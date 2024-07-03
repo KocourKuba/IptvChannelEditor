@@ -634,11 +634,11 @@ void CIPTVChannelEditorApp::FillLangMap()
 }
 
 bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
-				bool showMessage,
-				bool make_web_update /*= false*/,
-				std::wstring output_path /*= L""*/,
-				bool noEmbed /*= false*/,
-				bool noCustom /*= false*/)
+									   bool showMessage,
+									   bool make_web_update /*= false*/,
+									   std::wstring output_path /*= L""*/,
+									   bool noEmbed /*= false*/,
+									   bool noCustom /*= false*/)
 {
 	const std::wstring& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
 	if (!std::filesystem::exists(pack_dll))
@@ -765,7 +765,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	constexpr auto skip = std::filesystem::copy_options::skip_existing;
 
 	// extract plugin package
-	const auto& plugin_dir = GetAppPath(utils::PLUGIN_ROOT);
+	const auto& plugin_dir = utils::PLUGIN_ROOT;
 	const auto& plugin_root = std::filesystem::temp_directory_path() / utils::PLUGIN_ROOT;
 	auto dir_status = std::filesystem::symlink_status(plugin_dir).type();
 #ifdef _DEBUG
@@ -1951,7 +1951,7 @@ void LogProtocol(const std::string& str)
 		while (line.back() == '\r')
 			line.pop_back();
 
-		out << csTimeStamp << ' ' << line;
+		out << csTimeStamp << ' ' << line << std::endl;
 	}
 
 	std::ofstream file(GetAppPath() + L"IPTVChannelEditor.log", std::ofstream::binary | std::ofstream::app);
@@ -1976,7 +1976,7 @@ void LogProtocol(const std::wstring& str)
 		while (line.back() == '\r')
 			line.pop_back();
 
-		out << csTimeStamp << ' ' << line;
+		out << csTimeStamp << ' ' << line << std::endl;
 	}
 
 	std::ofstream file(GetAppPath() + L"IPTVChannelEditor.log", std::ofstream::binary | std::ofstream::app);
