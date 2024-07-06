@@ -70,7 +70,7 @@ class tvclub_config extends default_config
         Control_Factory::add_label($defs, TR::t('balance'), $info->balance . ' €', -10);
         Control_Factory::add_label($defs, TR::t('login'), $info->login, -10);
         Control_Factory::add_label($defs, TR::t('server'), $settings->server_name, -10);
-        Control_Factory::add_label($defs, TR::t('time_zone'), $settings->tz_name . " {$settings->tz_gmt}", -10);
+        Control_Factory::add_label($defs, TR::t('time_zone'), "$settings->tz_name $settings->tz_gmt", -10);
 
         $packages = $this->account_data->account->services;
         if (count($packages) === 0) {

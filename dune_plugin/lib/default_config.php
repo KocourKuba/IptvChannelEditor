@@ -2,11 +2,11 @@
 
 require_once 'default_dune_plugin.php';
 require_once 'dynamic_config.php';
-require_once 'epg_manager_json.php';
-require_once 'epg_manager_sql.php';
 require_once 'channel.php';
 require_once 'catchup_params.php';
 require_once 'm3u/M3uParser.php';
+require_once 'lib/epg/epg_manager_json.php';
+require_once 'lib/epg/epg_manager_xmltv.php';
 
 class default_config extends dynamic_config
 {

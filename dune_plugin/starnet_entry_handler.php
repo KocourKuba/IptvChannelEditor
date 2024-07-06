@@ -77,7 +77,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 return Action_Factory::show_title_dialog(TR::t('entry_log_not_sent_too_old'));
 
             case self::ACTION_DO_CLEAR_EPG:
-                $this->plugin->get_epg_manager()->clear_all_epg_cache();
+                $this->plugin->clear_all_epg_cache();
                 $this->plugin->tv->unload_channels();
                 return Action_Factory::clear_rows_info_cache(Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared')));
 
@@ -173,7 +173,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         break;
 
                     case self::ACTION_UNINSTALL:
-                        $this->plugin->get_epg_manager()->clear_all_epg_cache();
+                        $this->plugin->clear_all_epg_cache();
                         break;
 
                     default:

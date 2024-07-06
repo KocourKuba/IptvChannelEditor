@@ -1,7 +1,6 @@
 <?php
 
 require_once 'stream_params.php';
-require_once 'epg_params.php';
 require_once 'ext_params.php';
 
 class Plugin_Constants

@@ -1,5 +1,5 @@
 <?php
-require_once 'lib/ext_epg_program.php';
+require_once 'lib/epg/ext_epg_program.php';
 
 require_once 'lib/epfs/abstract_rows_screen.php';
 require_once 'lib/epfs/rows_factory.php';

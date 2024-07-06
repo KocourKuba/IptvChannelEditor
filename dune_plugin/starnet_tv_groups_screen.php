@@ -125,7 +125,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 if ($user_input->reload_action === 'epg') {
                     $this->plugin->get_epg_manager()->clear_epg_cache();
                     $this->plugin->init_epg_manager();
-                    $this->plugin->start_bg_indexing();
+                    $this->plugin->get_epg_manager()->start_bg_indexing();
                 }
 
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);

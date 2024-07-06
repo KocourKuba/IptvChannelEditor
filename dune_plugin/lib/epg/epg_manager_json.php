@@ -23,10 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-require_once 'hd.php';
-require_once 'epg_params.php';
+require_once 'epg_manager_xmltv.php';
 
-class Epg_Manager_Json extends Epg_Manager
+class Epg_Manager_Json extends Epg_Manager_Xmltv
 {
     /**
      * contains current dune IP
@@ -42,14 +41,7 @@ class Epg_Manager_Json extends Epg_Manager
 
     /**
      * @inheritDoc
-     */
-    public function get_picons()
-    {
-        return null;
-    }
-
-    /**
-     * @inheritDoc
+     * @override
      */
     public function get_day_epg_items(Channel $channel, $day_start_ts)
     {
@@ -75,8 +67,6 @@ class Epg_Manager_Json extends Epg_Manager
             $channel_id = $channel->get_id();
             $channel_title = $channel->get_title();
             hd_debug_print("Try to load EPG ID: '$epg_id' for channel '$channel_id' ($channel_title)");
-
-            $this->url_hash = (empty($this->epg_url) ? '' : Hashed_Array::hash($epg_url));
 
             $epg_url = str_replace(
                 array(Plugin_Macros::API_URL,
@@ -190,7 +180,23 @@ class Epg_Manager_Json extends Epg_Manager
         }
 
         return $day_epg;
+     }
+
+    /**
+     * @inheritDoc
+     * @override
+     */
+    public function clear_epg_cache()
+    {
+        $this->epg_cache = array();
+        $files = get_temp_path('*.cache');
+        hd_debug_print("clear cache files: $files");
+        shell_exec('rm -f '. $files);
+        flush();
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// protected methods
 
     /**
      * request server for epg and parse json response
@@ -271,17 +277,5 @@ class Epg_Manager_Json extends Epg_Manager
 
         ksort($channel_epg, SORT_NUMERIC);
         return $channel_epg;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function clear_epg_cache($url = null)
-    {
-        $this->epg_cache = array();
-        $files = get_temp_path('*.cache');
-        hd_debug_print("clear cache files: $files");
-        shell_exec('rm -f '. $files);
-        flush();
     }
 }

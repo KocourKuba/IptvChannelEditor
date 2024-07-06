@@ -2,7 +2,7 @@
 require_once 'lib/hashed_array.php';
 require_once 'lib/default_group.php';
 require_once 'lib/default_channel.php';
-require_once 'lib/default_epg_item.php';
+require_once 'lib/epg/default_epg_item.php';
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_vod_category_list_screen.php';
 
@@ -172,8 +172,6 @@ class Starnet_Tv implements User_Input_Handler
         }
 
         HD::ShowMemoryUsage();
-
-        $this->plugin->get_epg_manager()->set_cache_ttl($this->plugin->get_parameter(PARAM_EPG_CACHE_TTL, 3));
 
         $pass_sex = $this->plugin->get_parameter(PARAM_ADULT_PASSWORD, '0000');
         $enable_protected = !empty($pass_sex);
@@ -467,7 +465,7 @@ class Starnet_Tv implements User_Input_Handler
         HD::ShowMemoryUsage();
 
         if ($this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE) === ENGINE_XMLTV) {
-            $this->plugin->start_bg_indexing();
+            $this->plugin->get_epg_manager()->start_bg_indexing();
             sleep(1);
         }
 
@@ -661,7 +659,7 @@ class Starnet_Tv implements User_Input_Handler
 
             PluginTvInfo::initial_archive_tm => isset($media_url->archive_tm) ? (int)$media_url->archive_tm : -1,
 
-            PluginTvInfo::epg_font_size => $this->plugin->get_bool_parameter(PARAM_EPG_FONT_SIZE, true) ? PLUGIN_FONT_SMALL : PLUGIN_FONT_NORMAL,
+            PluginTvInfo::epg_font_size => $this->plugin->get_bool_parameter(PARAM_EPG_FONT_SIZE) ? PLUGIN_FONT_SMALL : PLUGIN_FONT_NORMAL,
 
             PluginTvInfo::actions => $this->get_action_map(),
             PluginTvInfo::timer => Action_Factory::timer(1000),
@@ -677,7 +675,7 @@ class Starnet_Tv implements User_Input_Handler
             GUI_EVENT_TIMER => User_Input_Handler_Registry::create_action($this,
                 GUI_EVENT_TIMER,
                 null,
-                $this->plugin->get_epg_manager()->is_index_locked() ? array('locked' => true) : null),
+                $this->plugin->get_epg_manager()->get_indexer()->is_index_locked() ? array('locked' => true) : null),
         );
     }
 
@@ -702,7 +700,7 @@ class Starnet_Tv implements User_Input_Handler
                     $post_action = $this->plugin->invalidate_epfs_folders($plugin_cookies, array(Starnet_TV_History_Screen::ID));
                 } else if (isset($user_input->locked)) {
                     clearstatcache();
-                    if ($this->plugin->get_epg_manager()->is_index_locked()) {
+                    if ($this->plugin->get_epg_manager()->get_indexer()->is_index_locked()) {
                         $new_actions = $this->get_action_map();
                         $new_actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this,
                             GUI_EVENT_TIMER,

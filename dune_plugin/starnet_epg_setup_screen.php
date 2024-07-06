@@ -1,7 +1,7 @@
 <?php
 require_once 'lib/abstract_controls_screen.php';
 require_once 'lib/user_input_handler.php';
-require_once 'lib/epg_manager.php';
+require_once 'lib/epg/epg_manager_xmltv.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -216,7 +216,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case ACTION_RESET_DEFAULT:
                 hd_debug_print(ACTION_RESET_DEFAULT);
-                $this->plugin->get_epg_manager()->clear_all_epg_cache();
+                $this->plugin->clear_all_epg_cache();
                 $this->plugin->remove_parameter(PARAM_CACHE_PATH);
                 $this->plugin->init_epg_manager();
 
@@ -229,7 +229,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 hd_debug_print(self::CONTROL_EPG_FOLDER . ": $data->filepath");
                 if ($this->plugin->get_cache_dir() === $data->filepath) break;
 
-                $this->plugin->get_epg_manager()->clear_all_epg_cache();
+                $this->plugin->clear_all_epg_cache();
                 $this->plugin->set_parameter(PARAM_CACHE_PATH, $data->filepath);
                 $this->plugin->init_epg_manager();
 
@@ -245,13 +245,13 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 hd_debug_print(self::ACTION_RELOAD_EPG);
                 $this->plugin->get_epg_manager()->clear_epg_cache();
                 $this->plugin->init_epg_manager();
-                $res = $this->plugin->get_epg_manager()->is_xmltv_cache_valid();
+                $res = $this->plugin->get_epg_manager()->get_indexer()->is_xmltv_cache_valid();
                 if ($res === -1) {
                     return Action_Factory::show_title_dialog(TR::t('err_epg_not_set'), null, HD::get_last_error("xmltv_last_error"));
                 }
 
                 if ($res === 0) {
-                    $res = $this->plugin->get_epg_manager()->download_xmltv_source();
+                    $res = $this->plugin->get_epg_manager()->get_indexer()->download_xmltv_source();
                     if ($res === -1) {
                         return Action_Factory::show_title_dialog(TR::t('err_load_xmltv_epg'), null, HD::get_last_error("xmltv_last_error"));
                     }

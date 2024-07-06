@@ -10,6 +10,8 @@ require_once 'control_factory.php';
 require_once 'control_factory_ext.php';
 require_once 'plugin_constants.php';
 require_once 'plugin_macros.php';
+require_once 'lib/epg/epg_manager_xmltv.php';
+require_once 'lib/epg/epg_manager_json.php';
 
 class Default_Dune_Plugin implements DunePlugin
 {
@@ -71,7 +73,7 @@ class Default_Dune_Plugin implements DunePlugin
     protected $m3u_parser;
 
     /**
-     * @var Epg_Manager
+     * @var Epg_Manager_Xmltv|Epg_Manager_Json
      */
     protected $epg_manager;
 
@@ -228,7 +230,7 @@ class Default_Dune_Plugin implements DunePlugin
     }
 
     /**
-     * @return Epg_Manager
+     * @return Epg_Manager_Xmltv|Epg_Manager_Json
      */
     public function get_epg_manager()
     {
@@ -267,54 +269,21 @@ class Default_Dune_Plugin implements DunePlugin
     public function init_epg_manager()
     {
         $this->epg_manager = null;
-        $engine = $this->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
+        $engine = $this->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_XMLTV);
         if ($engine === ENGINE_JSON) {
             if ($this->is_json_capable()) {
-                $engine_class = 'Epg_Manager_Json';
+                $this->epg_manager = new Epg_Manager_Xmltv($this);
             } else {
                 $this->set_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_XMLTV);
-                $engine = ENGINE_XMLTV;
             }
         }
-        if ($engine === ENGINE_XMLTV && class_exists('SQLite3')) {
-            $engine_class = 'Epg_Manager_Sql';
+
+        if (is_null($this->epg_manager)) {
+            hd_debug_print("Using 'Epg_Manager_Xmltv' cache engine");
+            $this->epg_manager = new Epg_Manager_Xmltv($this);
         }
 
-        if (empty($engine_class)) {
-            $engine_class = 'Epg_Manager';
-        }
-
-        hd_debug_print("Using $engine_class cache engine");
-        $this->epg_manager = new $engine_class($this->config->plugin_info['app_version'], $this->get_cache_dir(), $this->get_active_xmltv_source(), $this);
-
-        $flags = $this->get_bool_parameter(PARAM_FAKE_EPG, false) ? EPG_FAKE_EPG : 0;
-        $this->epg_manager->set_flags($flags);
-        $this->epg_manager->set_cache_ttl($this->get_parameter(PARAM_EPG_CACHE_TTL, 3));
-    }
-
-    /**
-     * Start indexing in background and return immediately
-     * @return void
-     */
-    public function start_bg_indexing()
-    {
-        hd_debug_print("Start background indexing...");
-        $config = array(
-            'debug' => LogSeverity::$is_debug,
-            'log_file' => get_temp_path($this->get_epg_manager()->get_cache_name() . '.log'),
-            'version' => $this->config->plugin_info['app_version'],
-            'cache_dir' => $this->get_cache_dir(),
-            'cache_engine' => $this->get_parameter(PARAM_EPG_CACHE_ENGINE),
-            'cache_ttl' => $this->get_parameter(PARAM_EPG_CACHE_TTL, 3),
-            'xmltv_url' => $this->get_active_xmltv_source(),
-        );
-
-        hd_debug_print("indexing config: " . json_encode($config), true);
-        file_put_contents(get_temp_path('parse_config.json'), json_encode($config));
-
-        $cmd = get_install_path('bin/cgi_wrapper.sh') . " 'index_epg.php' &";
-        hd_debug_print("exec: $cmd", true);
-        exec($cmd);
+        $this->epg_manager->init_indexer($this->get_cache_dir(), $this->get_active_xmltv_source());
     }
 
     /**
@@ -1306,6 +1275,18 @@ class Default_Dune_Plugin implements DunePlugin
         $menu_items[] = $this->create_menu_item($handler, ACTION_RELOAD, TR::t('refresh_epg'), "refresh.png", array('reload_action' => 'epg'));
 
         return $menu_items;
+    }
+
+    /**
+     * clear memory cache and entire cache folder
+     *
+     * @return void
+     */
+    public function clear_all_epg_cache()
+    {
+        if (isset($this->epg_manager)) {
+            $this->epg_manager->get_indexer()->clear_epg_files('');
+        }
     }
 
     /**
