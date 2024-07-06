@@ -101,6 +101,11 @@ class Default_Dune_Plugin implements DunePlugin
     protected $favorite_ids;
 
     /**
+     * @var Ordered_Array
+     */
+    protected $favorite_channel_list_ids;
+
+    /**
      * @var Playback_Points
      */
     protected $playback_points;
@@ -205,6 +210,7 @@ class Default_Dune_Plugin implements DunePlugin
         }
 
         $this->playback_points = new Playback_Points($this);
+        $this->favorite_channel_list_ids = new Ordered_Array();
 
         $this->init_epg_manager();
         $this->create_screen_views();
@@ -1210,6 +1216,14 @@ class Default_Dune_Plugin implements DunePlugin
         }
 
         return $this->favorite_ids;
+    }
+
+    /**
+     * @return Ordered_Array
+     */
+    public function &get_channels_list_favorites()
+    {
+        return $this->favorite_channel_list_ids;
     }
 
     /**

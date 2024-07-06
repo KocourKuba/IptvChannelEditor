@@ -332,6 +332,9 @@ class Starnet_Tv implements User_Input_Handler
             }
         }
 
+        $fav_channel_list_ids = $this->plugin->get_channels_list_favorites();
+        $fav_channel_list_ids->clear();
+
         $fav_channel_ids = $this->plugin->get_favorites();
         $fav_cnt = $fav_channel_ids->size();
 
@@ -424,6 +427,7 @@ class Starnet_Tv implements User_Input_Handler
             // Link group and channel.
             if (($tv_category_id === $fav_category_id || isset($xml_tv_channel->favorite))) {
                 // favorites category
+                $fav_channel_list_ids->add_item($channel_id);
                 if (!$fav_channel_ids->in_order($channel_id)) {
                     hd_debug_print("Added from channels list to favorites channel $hash ($xml_tv_channel->caption)");
                     $fav_channel_ids->add_item($channel_id);
