@@ -201,8 +201,13 @@ class xtream_codes_api
             unlink($tmp_file);
         }
 
-        $response = HD::http_download_https_proxy($url, $tmp_file, $opts);
-        return $this->update_cache($url_hash, $response);
+        $res = HD::http_download_https_proxy($url, $tmp_file, $opts);
+        if ($res !== false) {
+            $response = HD::decodeResponse(true, $tmp_file);
+            return $this->update_cache($url_hash, $response);
+        }
+
+        return false;
     }
 
     /**
