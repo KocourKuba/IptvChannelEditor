@@ -36,7 +36,7 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-void plugin_cbilling::parse_account_info(Credentials& creds)
+void plugin_cbilling::parse_account_info(TemplateParams& params)
 {
 	/*
 	{
@@ -61,7 +61,7 @@ void plugin_cbilling::parse_account_info(Credentials& creds)
 		CWaitCursor cur;
 		std::vector<std::string> headers;
 		headers.emplace_back("accept: */*");
-		headers.emplace_back(fmt::format(ACCOUNT_HEADER_TEMPLATE, creds.password));
+		headers.emplace_back(fmt::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password));
 		std::stringstream data;
 		if (download_url(get_provider_api_url() + ACCOUNT_TEMPLATE, data, 0, &headers))
 		{
@@ -81,8 +81,8 @@ void plugin_cbilling::parse_account_info(Credentials& creds)
 					set_json_info("public_token", js_data, account_info);
 					set_json_info("private_token", js_data, account_info);
 
-					creds.set_subdomain(account_info[L"server"]);
-					creds.set_s_token(account_info[L"private_token"]);
+					params.creds.set_subdomain(account_info[L"server"]);
+					params.creds.set_s_token(account_info[L"private_token"]);
 				}
 			}
 			JSON_ALL_CATCH;

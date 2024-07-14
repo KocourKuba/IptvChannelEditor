@@ -1384,13 +1384,23 @@ class default_config extends dynamic_config
                 }
             }
 
-            if (strpos($url, Plugin_Macros::S_TOKEN) !== false) {
+            if (strpos($url, Plugin_Macros::TOKEN) !== false) {
                 $this->ensure_token_loaded();
-                $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
+                $token = $this->plugin->get_credentials(Ext_Params::M_TOKEN);
                 if (empty($token)) {
                     hd_debug_print("Token not set, but macro was used");
                 } else {
-                    $url = str_replace(Plugin_Macros::S_TOKEN, $token, $url);
+                    $url = str_replace(Plugin_Macros::TOKEN, $token, $url);
+                }
+            }
+
+            if (strpos($url, Plugin_Macros::S_TOKEN) !== false) {
+                $this->ensure_token_loaded();
+                $s_token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
+                if (empty($s_token)) {
+                    hd_debug_print("Token not set, but macro was used");
+                } else {
+                    $url = str_replace(Plugin_Macros::S_TOKEN, $s_token, $url);
                 }
             }
 

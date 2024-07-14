@@ -204,12 +204,10 @@ class Default_Dune_Plugin implements DunePlugin
     public function init_plugin()
     {
         hd_debug_print_separator();
+        // small hack to show parameters in log
+        set_debug_log(true);
         $this->load(true);
         $this->update_log_level();
-        if (LogSeverity::$is_debug) {
-            // small hack to show parameters in log
-            $this->load(true);
-        }
 
         $this->playback_points = new Playback_Points($this);
         $this->favorite_channel_list_ids = new Ordered_Array();
@@ -269,9 +267,11 @@ class Default_Dune_Plugin implements DunePlugin
     public function init_epg_manager()
     {
         $this->epg_manager = null;
-        $engine = $this->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_XMLTV);
+        $engine = $this->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
+        hd_debug_print("Selected Epg_Manager: $engine");
         if ($engine === ENGINE_JSON) {
             if ($this->is_json_capable()) {
+                hd_debug_print("Using 'Epg_Manager_Json' cache engine");
                 $this->epg_manager = new Epg_Manager_Xmltv($this);
             } else {
                 $this->set_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_XMLTV);

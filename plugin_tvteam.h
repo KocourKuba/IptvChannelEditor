@@ -27,8 +27,16 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "base_plugin.h"
 
-class plugin_itv : public base_plugin
+// API documentation https://tv.team/api/manual.php
+
+class plugin_tvteam : public base_plugin
 {
 public:
+	bool get_api_token(TemplateParams& params) override;
 	void parse_account_info(TemplateParams& params) override;
+	void fill_servers_list(TemplateParams& params) override;
+	bool set_server(TemplateParams& params) override;
+
+private:
+	void sync_server_id(TemplateParams& params);
 };

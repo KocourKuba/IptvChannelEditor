@@ -49,6 +49,9 @@ public:
 	std::wstring get_portal() const { return utils::utf8_to_utf16(portal); }
 	void set_portal(const std::wstring& value) { portal = utils::utf16_to_utf8(value); }
 
+	std::wstring get_token() const { return utils::utf8_to_utf16(token); }
+	void set_token(const std::wstring& value) { token = utils::utf16_to_utf8(value); }
+
 	std::wstring get_s_token() const { return utils::utf8_to_utf16(s_token); }
 	void set_s_token(const std::wstring& value) { s_token = utils::utf16_to_utf8(value); }
 
@@ -89,11 +92,11 @@ public:
 	{
 		SERIALIZE_STRUCT(j, c, login);
 		SERIALIZE_STRUCT(j, c, password);
-		SERIALIZE_STRUCT(j, c, token);
 		SERIALIZE_STRUCT(j, c, ott_key);
 		SERIALIZE_STRUCT(j, c, subdomain);
 		SERIALIZE_STRUCT(j, c, domain);
 		SERIALIZE_STRUCT(j, c, portal);
+		SERIALIZE_STRUCT(j, c, token);
 		SERIALIZE_STRUCT(j, c, s_token);
 		SERIALIZE_STRUCT(j, c, comment);
 		SERIALIZE_STRUCT(j, c, config);
@@ -130,11 +133,11 @@ public:
 	{
 		DESERIALIZE_STRUCT(j, c, login);
 		DESERIALIZE_STRUCT(j, c, password);
-		DESERIALIZE_STRUCT(j, c, token);
 		DESERIALIZE_STRUCT(j, c, ott_key);
 		DESERIALIZE_STRUCT(j, c, subdomain);
 		DESERIALIZE_STRUCT(j, c, domain);
 		DESERIALIZE_STRUCT(j, c, portal);
+		DESERIALIZE_STRUCT(j, c, token);
 		DESERIALIZE_STRUCT(j, c, s_token);
 		DESERIALIZE_STRUCT(j, c, comment);
 		DESERIALIZE_STRUCT(j, c, config);
@@ -188,7 +191,6 @@ public:
 	std::string update_name;
 	std::string package_name;
 	std::string ch_web_path;
-
 
 	int custom_caption = 0;
 	int custom_logo = 0;

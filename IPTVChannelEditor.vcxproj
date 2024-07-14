@@ -290,6 +290,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="plugin_ottclub.h" />
     <ClInclude Include="plugin_sharavoz.h" />
     <ClInclude Include="plugin_tvizi.h" />
+    <ClInclude Include="plugin_tvteam.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="StreamParameters.h" />
     <ClInclude Include="TemplateParams.h" />
@@ -392,6 +393,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="plugin_ottclub.cpp" />
     <ClCompile Include="plugin_sharavoz.cpp" />
     <ClCompile Include="plugin_tvizi.cpp" />
+    <ClCompile Include="plugin_tvteam.cpp" />
     <ClCompile Include="ThreadConfig.cpp" />
     <ClCompile Include="TooltipPropertyPage.cpp" />
     <ClCompile Include="ResizedPropertySheet.cpp" />
@@ -429,7 +431,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ResourceCompile Include="IPTVChannelEditor.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="defaults_8.3.json" />
+    <None Include="defaults_8.4.json" />
     <None Include="dune_plugin\changelog.md" />
     <None Include="Readme.md" />
     <None Include="res\IPTVChannelEditor.rc2" />

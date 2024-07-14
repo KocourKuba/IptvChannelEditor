@@ -78,12 +78,12 @@ std::wstring plugin_sharaclub::get_playlist_url(const TemplateParams& params, st
 	return base_plugin::get_playlist_url(params, url);
 }
 
-void plugin_sharaclub::parse_account_info(Credentials& creds)
+void plugin_sharaclub::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"subscr_info", creds.get_login(), creds.get_password());
+		const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"subscr_info", params.creds.get_login(), params.creds.get_password());
 		std::stringstream data;
 		if (download_url(url, data))
 		{

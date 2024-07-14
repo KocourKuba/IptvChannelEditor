@@ -622,9 +622,11 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			{
 				case 1:
 					cred.set_login(std::wstring(dispinfo->item.pszText));
+					cred.s_token.clear();
 					break;
 				case 2:
 					cred.set_password(std::wstring(dispinfo->item.pszText));
+					cred.s_token.clear();
 					break;
 				case 3:
 					cred.set_comment(std::wstring(dispinfo->item.pszText));
@@ -770,6 +772,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	params.quality_idx = selected.quality_id;
 	params.domain_idx = selected.domain_id;
 
+	m_plugin->parse_account_info(params);
 	m_plugin->update_provider_params(params);
 
 	m_servers = m_plugin->get_servers_list();
@@ -992,10 +995,6 @@ void CAccessInfoPage::GetAccountInfo()
 	auto entry = std::make_shared<PlaylistEntry>(playlist, GetAppPath(utils::PLUGIN_ROOT));
 	entry->set_is_template(false);
 
-	m_plugin->get_api_token(selected_cred);
-	m_plugin->clear_account_info();
-	m_plugin->parse_account_info(selected_cred);
-
 	TemplateParams params;
 	params.creds = selected_cred;
 	params.server_idx = selected_cred.server_id;
@@ -1003,7 +1002,12 @@ void CAccessInfoPage::GetAccountInfo()
 	params.profile_idx = selected_cred.profile_id;
 	params.quality_idx = selected_cred.quality_id;
 
+	m_plugin->get_api_token(params);
+	m_plugin->clear_account_info();
+	m_plugin->parse_account_info(params);
 	m_plugin->update_provider_params(params);
+	selected_cred = params.creds;
+
 	auto& pl_url = m_plugin->get_playlist_url(params);
 
 	const auto& account_info = m_plugin->get_account_info();

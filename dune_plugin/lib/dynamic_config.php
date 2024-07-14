@@ -6,15 +6,15 @@ class dynamic_config
     public $plugin_info;
 
     // features constants
-    private $features = array();
-    private $stream_params = array();
-    private $epg_parser_params = array();
-    private $vod_templates = array();
-    private $servers = array();
-    private $devices = array();
-    private $qualities = array();
-    private $profiles = array();
-    private $domains = array();
+    protected $features = array();
+    protected $stream_params = array();
+    protected $epg_parser_params = array();
+    protected $vod_templates = array();
+    protected $servers = array();
+    protected $devices = array();
+    protected $qualities = array();
+    protected $profiles = array();
+    protected $domains = array();
 
     /**
      * load configuration

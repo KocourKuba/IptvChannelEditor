@@ -35,14 +35,14 @@ DEALINGS IN THE SOFTWARE.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-void plugin_oneott::parse_account_info(Credentials& creds)
+void plugin_oneott::parse_account_info(TemplateParams& params)
 {
 	static constexpr auto ACCOUNT_TEMPLATE = L"{:s}/PinApi/{:s}/{:s}";
 
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(ACCOUNT_TEMPLATE, get_provider_api_url(), creds.get_login(), creds.get_password());
+		const auto& url = fmt::format(ACCOUNT_TEMPLATE, get_provider_api_url(), params.creds.get_login(), params.creds.get_password());
 		std::stringstream data;
 		if (download_url(url, data))
 		{
@@ -51,8 +51,8 @@ void plugin_oneott::parse_account_info(Credentials& creds)
 				const auto & parsed_json = nlohmann::json::parse(data.str());
 				if (parsed_json.contains("token"))
 				{
-					creds.s_token = parsed_json.value("token", "");
-					account_info.emplace(L"token", creds.get_s_token());
+					params.creds.s_token = parsed_json.value("token", "");
+					account_info.emplace(L"token", params.creds.get_s_token());
 				}
 			}
 			JSON_ALL_CATCH;

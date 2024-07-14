@@ -24,20 +24,17 @@ class sharaclub_config extends default_config
      */
     public function get_servers()
     {
-        $servers = parent::get_servers();
-        if (empty($servers)) {
-            $servers = array();
+        if (empty($this->servers)) {
             try {
                 $url = $this->replace_api_command('ch_cdn');
                 $content = HD::decodeResponse(false, HD::http_download_https_proxy($url), true);
 
                 if ($content !== false && $content['status'] === '1') {
                     foreach ($content['allow_nums'] as $server) {
-                        $servers[$server['id']] = $server['name'];
+                        $this->servers[$server['id']] = $server['name'];
                     }
                     $this->plugin->set_parameter(Ext_Params::M_SERVER_ID, $content['current']);
                     hd_debug_print("Current server: {$content['current']}");
-                    $this->set_servers($servers);
                 } else {
                     hd_debug_print("Unable to download servers information");
                 }
@@ -47,7 +44,7 @@ class sharaclub_config extends default_config
             }
         }
 
-        return $servers;
+        return $this->servers;
     }
 
     /**

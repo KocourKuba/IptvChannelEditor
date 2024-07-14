@@ -127,7 +127,9 @@ BOOL CVodViewer::OnInitDialog()
 
 	m_wndMoviesList.InsertColumn(0, load_string_resource(IDS_STRING_COL_INFO).c_str(), LVCFMT_LEFT, vWidth, 0);
 
-	m_plugin->get_api_token(m_account);
+	TemplateParams params;
+	params.creds = m_account;
+	m_plugin->get_api_token(params);
 
 	SetButtonImage(IDB_PNG_RELOAD, m_wndBtnReload);
 

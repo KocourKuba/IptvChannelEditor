@@ -181,13 +181,13 @@ public:
 	/// <summary>
 	/// parse access info
 	/// </summary>
-	/// <param name="creds">parameters used to download access info</param>
-	virtual void parse_account_info(Credentials& creds) {}
+	/// <param name="params">parameters used to download access info</param>
+	virtual void parse_account_info(TemplateParams& params) {}
 
 	/// <summary>
 	/// get url to obtain account playlist
 	/// </summary>
-	/// <param name="params">parameters used to download access info</param>
+	/// <param name="params">parameters used to download url</param>
 	/// <returns>wstring</returns>
 	virtual std::wstring get_playlist_url(const TemplateParams& params, std::wstring url = L"");
 
@@ -200,8 +200,8 @@ public:
 	/// <summary>
 	/// returns s_token from account if exist
 	/// </summary>
-	/// <param name="creds">credentials</param>
-	virtual void get_api_token(Credentials& creds) {};
+	/// <param name="params">parameters used to download url</param>
+	virtual bool get_api_token(TemplateParams& params) { return true; };
 
 	/// <summary>
 	/// parse vod
@@ -219,6 +219,9 @@ public:
 	virtual std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie) { return movie.url; }
 
 protected:
+
+	std::string get_file_cookie(const std::wstring& name) const;
+	void set_file_cookie(const std::wstring& name, const std::string& session) const;
 
 	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const;
 

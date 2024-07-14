@@ -69,6 +69,10 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
         try {
             if (!$this->open_sqlite_db()) {
+                throw new Exception("EPG database not exist!");
+            }
+
+            if (!$this->is_index_valid('positions')) {
                 throw new Exception("EPG not indexed!");
             }
 

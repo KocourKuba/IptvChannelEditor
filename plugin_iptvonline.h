@@ -30,9 +30,9 @@ DEALINGS IN THE SOFTWARE.
 class plugin_iptvonline : public base_plugin
 {
 public:
-	void get_api_token(Credentials& creds) override;
+	bool get_api_token(TemplateParams& params) override;
 	std::wstring get_playlist_url(const TemplateParams& params, std::wstring url = L"") override;
-	void parse_account_info(Credentials& creds) override;
+	void parse_account_info(TemplateParams& params) override;
 	void fill_servers_list(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;
 	void parse_vod(const CThreadConfig& config) override;

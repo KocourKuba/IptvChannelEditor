@@ -230,8 +230,6 @@ void CPluginConfigPageVOD::SaveParameters()
 void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 {
 	const auto& plugin = GetPropertySheet()->m_plugin;
-	plugin->get_api_token(GetPropertySheet()->m_selected_cred);
-
 	auto& cred = GetPropertySheet()->m_selected_cred;
 
 	TemplateParams params;
@@ -242,7 +240,9 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	params.quality_idx = cred.quality_id;
 	params.playlist_idx = m_wndVodTemplates.GetCurSel();
 
+	plugin->get_api_token(params);
 	plugin->update_provider_params(params);
+
 	CWaitCursor cur;
 
 	const auto& url = plugin->get_vod_url(params);
@@ -328,15 +328,16 @@ void CPluginConfigPageVOD::OnBnClickedCheckPlaylistShowLink()
 
 	if (show)
 	{
-		GetPropertySheet()->m_plugin->get_api_token(GetPropertySheet()->m_selected_cred);
-
 		auto& cred = GetPropertySheet()->m_selected_cred;
+
 		TemplateParams params;
 		params.creds = cred;
 		params.server_idx = cred.server_id;
 		params.device_idx = cred.device_id;
 		params.profile_idx = cred.profile_id;
 		params.quality_idx = cred.quality_id;
+
+		GetPropertySheet()->m_plugin->get_api_token(params);
 		params.playlist_idx = m_wndVodTemplates.GetCurSel();
 
 		GetPropertySheet()->m_plugin->update_provider_params(params);

@@ -303,6 +303,9 @@
     <ClInclude Include="plugin_tvizi.h">
       <Filter>Header Files\plugin</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_tvteam.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -503,6 +506,9 @@
     <ClCompile Include="plugin_tvizi.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
+    <ClCompile Include="plugin_tvteam.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IPTVChannelEditor.rc">
@@ -515,7 +521,7 @@
     </None>
     <None Include="dune_plugin\changelog.md" />
     <None Include="Readme.md" />
-    <None Include="defaults_8.3.json" />
+    <None Include="defaults_8.4.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\IPTVChannelEditor.ico">

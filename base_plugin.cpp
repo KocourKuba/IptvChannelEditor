@@ -33,6 +33,8 @@ DEALINGS IN THE SOFTWARE.
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 
+static constexpr auto FILE_COOKIE = L"{:s}/{:s}_{:s}";
+
 void base_plugin::parse_stream_uri(const std::wstring& url, uri_stream& info)
 {
 	info.set_uri(url);
@@ -68,14 +70,17 @@ std::wstring base_plugin::get_playlist_url(const TemplateParams& params, std::ws
 	if (!get_provider_api_url().empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
 
-	if (!params.creds.s_token.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.creds.get_s_token());
-
 	if (!params.creds.login.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.creds.get_login());
 
 	if (!params.creds.password.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.creds.get_password());
+
+	if (!params.creds.token.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.creds.get_token());
+
+	if (!params.creds.s_token.empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.creds.get_s_token());
 
 	if (!params.creds.subdomain.empty())
 		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.creds.get_subdomain());
@@ -608,6 +613,45 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DUNE_IP, GetConfig().get_string(true, REG_DUNE_IP).c_str());
 
 	return epg_template;
+}
+
+std::string base_plugin::get_file_cookie(const std::wstring& name) const
+{
+	const auto& session_id_name = fmt::format(FILE_COOKIE,
+											  std::filesystem::temp_directory_path().append(L"iptv_cache").wstring(),
+											  get_internal_name(),
+											  name);
+
+	if (std::filesystem::exists(session_id_name))
+	{
+		std::error_code ec;
+		std::filesystem::file_time_type ftime = std::filesystem::last_write_time(session_id_name, ec);
+		auto now = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+		auto ft = std::chrono::duration_cast<std::chrono::seconds>(ftime.time_since_epoch()).count();
+		if (now - ft < 86400)
+		{
+			std::ifstream ssd(session_id_name);
+			std::stringstream buffer;
+			buffer << ssd.rdbuf();
+			ssd.close();
+			return buffer.str();
+		}
+
+		std::filesystem::remove(session_id_name, ec);
+	}
+
+	return {};
+}
+
+void base_plugin::set_file_cookie(const std::wstring& name, const std::string& session) const
+{
+	const auto& cookie_name = fmt::format(FILE_COOKIE,
+											  std::filesystem::temp_directory_path().append(L"iptv_cache").wstring(),
+											  get_internal_name(),
+											  name);
+	std::ofstream ssd(cookie_name);
+	ssd << session;
+	ssd.close();
 }
 
 void base_plugin::set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const

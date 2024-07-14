@@ -8,15 +8,13 @@ class vidok_config extends default_config
      */
     public function get_servers()
     {
-        $servers = parent::get_servers();
-        if (empty($servers) && $this->load_settings()) {
-            $servers = array();
+        if (empty($this->servers) && $this->load_settings()) {
             foreach ($this->account_data->settings->lists->servers as $item) {
-                $servers[$item['id']] = $item->name;
+                $this->servers[$item['id']] = $item->name;
             }
         }
 
-        return $servers;
+        return $this->servers;
     }
 
     /**

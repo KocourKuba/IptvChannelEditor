@@ -42,6 +42,7 @@ struct TemplateParams
 	std::wstring profile_id;
 	std::wstring command;
 	std::wstring command_param;
+	std::wstring error_string;
 	int shift_back = 0;
 	int playlist_idx = 0;
 	int server_idx = 0;

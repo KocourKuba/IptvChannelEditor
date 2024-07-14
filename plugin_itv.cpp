@@ -37,12 +37,12 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
 
-void plugin_itv::parse_account_info(Credentials& creds)
+void plugin_itv::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(ACCOUNT_TEMPLATE, creds.get_password());
+		const auto& url = fmt::format(ACCOUNT_TEMPLATE, params.creds.get_password());
 		std::stringstream data;
 		if (download_url(url, data))
 		{

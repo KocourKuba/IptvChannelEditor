@@ -718,11 +718,13 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_plugin->configure_plugin();
 	m_plugin->configure_provider_plugin();
 
-	m_plugin->get_api_token(m_cur_account);
-
 	TemplateParams params;
 	params.creds = m_cur_account;
-	m_plugin->parse_account_info(m_cur_account);
+
+	m_plugin->get_api_token(params);
+	m_plugin->parse_account_info(params);
+	m_plugin->update_provider_params(params);
+	m_cur_account = params.creds;
 
 	const auto& streams = m_plugin->get_supported_streams();
 
@@ -962,7 +964,16 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 
 	Credentials old_credentials(m_cur_account);
 
-	m_plugin->get_api_token(m_cur_account);
+	TemplateParams params;
+	params.creds = m_cur_account;
+	params.server_idx = m_cur_account.server_id;
+	params.profile_idx = m_cur_account.profile_id;
+	params.quality_idx = m_cur_account.quality_id;
+	params.device_idx = m_cur_account.device_id;
+	params.domain_idx = m_cur_account.domain_id;
+	params.playlist_idx = idx;
+
+	m_plugin->get_api_token(params);
 
 	if (old_credentials != m_cur_account)
 	{
@@ -972,14 +983,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 		GetConfig().SaveSettings();
 	}
 
-	TemplateParams params;
-	params.creds = m_cur_account;
-	params.server_idx = m_cur_account.server_id;
-	params.profile_idx = m_cur_account.profile_id;
-	params.quality_idx = m_cur_account.quality_id;
-	params.device_idx = m_cur_account.device_id;
-	params.domain_idx = m_cur_account.domain_id;
-	params.playlist_idx = idx;
 
 	m_plugin->update_provider_params(params);
 

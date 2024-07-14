@@ -41,17 +41,19 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"{:s}/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"{:s}/{:s}?token={:s}&{:s}={:s}";
 
-void plugin_vidok::get_api_token(Credentials& creds)
+bool plugin_vidok::get_api_token(TemplateParams& params)
 {
-	creds.s_token = utils::md5_hash_hex(creds.login + utils::md5_hash_hex(creds.password));
+	params.creds.s_token = utils::md5_hash_hex(params.creds.login + utils::md5_hash_hex(params.creds.password));
+
+	return true;
 }
 
-void plugin_vidok::parse_account_info(Credentials& creds)
+void plugin_vidok::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"account", creds.get_s_token());
+		const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"account", params.creds.get_s_token());
 		std::stringstream data;
 		if (download_url(url, data))
 		{
@@ -90,9 +92,9 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 
 	std::vector<DynamicParamsInfo> servers;
 
-	get_api_token(params.creds);
+	get_api_token(params);
 
-	const auto& url = fmt::format(API_COMMAND_GET_URL, utils::utf8_to_utf16(provider_api_url), L"settings", params.creds.get_s_token());
+	const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"settings", params.creds.get_s_token());
 	std::stringstream data;
 	if (download_url(url, data))
 	{
@@ -131,10 +133,10 @@ bool plugin_vidok::set_server(TemplateParams& params)
 
 	if (!servers_list.empty())
 	{
-		get_api_token(params.creds);
+		get_api_token(params);
 
 		const auto& url = fmt::format(API_COMMAND_SET_URL,
-									  utils::utf8_to_utf16(provider_api_url),
+									  get_provider_api_url(),
 									  L"settings_set",
 									  params.creds.get_s_token(),
 									  L"server",

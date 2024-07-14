@@ -17,24 +17,21 @@ class tvclub_config extends default_config
      */
     public function get_servers()
     {
-        $servers = parent::get_servers();
-        if (empty($servers)) {
+        if (empty($this->servers)) {
             try {
                 $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/servers?token=$token";
                 $json = HD::decodeResponse(false, HD::http_download_https_proxy($url), true);
-                $servers = array();
                 foreach ($json['servers'] as $item) {
-                    $servers[$item['id']] = $item['name'];
+                    $this->servers[$item['id']] = $item['name'];
                 }
-                $this->set_servers($servers);
             } catch (Exception $ex) {
                 hd_debug_print("Servers not loaded");
                 print_backtrace_exception($ex);
             }
         }
 
-        return $servers;
+        return $this->servers;
     }
 
     /**
@@ -143,6 +140,7 @@ class tvclub_config extends default_config
      */
     protected function ensure_token_loaded($force = false)
     {
+        hd_debug_print("Ensure token loaded: $force");
         $login = $this->get_login();
         $password = $this->get_password();
 

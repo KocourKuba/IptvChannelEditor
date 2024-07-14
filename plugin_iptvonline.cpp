@@ -47,10 +47,10 @@ static constexpr const char* client_id = "TestAndroidAppV0";
 static constexpr const char* client_secret = "kshdiouehruyiwuresuygr736t4763b7637";
 static constexpr const char* device_id = "IPTV Channel Editor " STRPRODUCTVER;
 
-void plugin_iptvonline::get_api_token(Credentials& creds)
+bool plugin_iptvonline::get_api_token(TemplateParams& params)
 {
 	std::wstring url;
-	bool expired = creds.expired <= time(nullptr) && !creds.token.empty();
+	bool expired = params.creds.expired <= time(nullptr) && !params.creds.token.empty();
 
 	nlohmann::json json_request;
 
@@ -58,13 +58,17 @@ void plugin_iptvonline::get_api_token(Credentials& creds)
 	{
 		url = fmt::format(API_COMMAND_REFRESH_TOKEN, get_provider_api_url());
 		json_request["grant_type"] = "refresh_token";
-		json_request["refresh_token"] = creds.token;
+		json_request["refresh_token"] = params.creds.token;
 	}
-	else if (creds.s_token.empty() || creds.token.empty())
+	else if (params.creds.s_token.empty() || params.creds.token.empty())
 	{
 		url = fmt::format(API_COMMAND_AUTH, get_provider_api_url());
-		json_request["login"] = creds.login;
-		json_request["password"] = creds.password;
+		json_request["login"] = params.creds.login;
+		json_request["password"] = params.creds.password;
+	}
+	else
+	{
+		return true;
 	}
 
 	if (!url.empty())
@@ -85,13 +89,16 @@ void plugin_iptvonline::get_api_token(Credentials& creds)
 			JSON_ALL_TRY;
 			{
 				const auto& parsed_json = nlohmann::json::parse(data.str());
-				creds.s_token = utils::get_json_string("access_token", parsed_json);
-				creds.token = utils::get_json_string("refresh_token", parsed_json);
-				creds.expired = utils::get_json_int("expires_time", parsed_json);
+				params.creds.s_token = utils::get_json_string("access_token", parsed_json);
+				params.creds.token = utils::get_json_string("refresh_token", parsed_json);
+				params.creds.expired = utils::get_json_int("expires_time", parsed_json);
+				return true;
 			}
 			JSON_ALL_CATCH;
 		}
 	}
+
+	return false;
 }
 
 std::wstring plugin_iptvonline::get_playlist_url(const TemplateParams& params, std::wstring url /* = L"" */)
@@ -118,12 +125,12 @@ std::wstring plugin_iptvonline::get_playlist_url(const TemplateParams& params, s
 	return base_plugin::get_playlist_url(params, url);
 }
 
-void plugin_iptvonline::parse_account_info(Credentials& creds)
+void plugin_iptvonline::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
 		const auto& url = fmt::format(API_COMMAND_INFO, get_provider_api_url());
-		const auto& parsed_json = server_request(url, creds, 0);
+		const auto& parsed_json = server_request(url, params.creds, 0);
 
 		JSON_ALL_TRY;
 		{

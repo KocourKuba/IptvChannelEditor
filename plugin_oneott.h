@@ -30,5 +30,5 @@ DEALINGS IN THE SOFTWARE.
 class plugin_oneott : public base_plugin
 {
 public:
-	void parse_account_info(Credentials& creds) override;
+	void parse_account_info(TemplateParams& params) override;
 };
