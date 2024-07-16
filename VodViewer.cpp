@@ -331,11 +331,6 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 
 	TemplateParams params;
 	params.creds = m_account;
-	params.domain_idx = m_account.domain_id;
-	params.server_idx = m_account.server_id;
-	params.device_idx = m_account.device_id;
-	params.profile_idx = m_account.profile_id;
-	params.quality_idx = m_account.quality_id;
 
 	m_plugin->update_provider_params(params);
 

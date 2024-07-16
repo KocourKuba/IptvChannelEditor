@@ -226,6 +226,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	Credentials& GetCurrentAccount();
+	void SetCurrentAccount(const Credentials& creds);
+
 	bool is_allow_save() const { return m_allow_save; }
 	void set_allow_save(bool val = true);
 
@@ -242,7 +245,7 @@ private:
 	void LoadChannelInfo(std::shared_ptr<ChannelInfo> channel = nullptr);
 	void LoadPlayListInfo(HTREEITEM hItem = nullptr);
 
-	void PlayItem(HTREEITEM hItem, int archive_hour = 0, int archiveHour = 0) const;
+	void PlayItem(HTREEITEM hItem, int archive_hour = 0, int archiveHour = 0);
 
 	void SearchTreeItem(InfoType type, bool next = false);
 
@@ -389,8 +392,6 @@ protected:
 	int m_xmltvEpgSource = 0;
 
 private:
-	Credentials m_cur_account;
-
 	PluginType m_plugin_type = PluginType::enCustom;
 	std::shared_ptr<base_plugin> m_plugin;
 

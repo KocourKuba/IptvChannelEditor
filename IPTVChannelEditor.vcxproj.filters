@@ -273,9 +273,6 @@
     <ClInclude Include="ThreadConfig.h">
       <Filter>Header Files\Threads</Filter>
     </ClInclude>
-    <ClInclude Include="TemplateParams.h">
-      <Filter>Header Files\Containers</Filter>
-    </ClInclude>
     <ClInclude Include="PluginEnums.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>

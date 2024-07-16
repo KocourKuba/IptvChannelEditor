@@ -377,10 +377,6 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 	const auto& cred = GetPropertySheet()->m_selected_cred;
 	TemplateParams params;
 	params.creds = cred;
-	params.server_idx = cred.server_id;
-	params.device_idx = cred.device_id;
-	params.profile_idx = cred.profile_id;
-	params.quality_idx = cred.quality_id;
 	params.playlist_idx = m_wndPlaylistTemplates.GetCurSel();
 
 	GetPropertySheet()->m_plugin->update_provider_params(params);
@@ -460,10 +456,6 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShowLink()
 		const auto& cred = GetPropertySheet()->m_selected_cred;
 		TemplateParams params;
 		params.creds = cred;
-		params.server_idx = cred.server_id;
-		params.device_idx = cred.device_id;
-		params.profile_idx = cred.profile_id;
-		params.quality_idx = cred.quality_id;
 		params.playlist_idx = m_wndPlaylistTemplates.GetCurSel();
 
 		GetPropertySheet()->m_plugin->update_provider_params(params);

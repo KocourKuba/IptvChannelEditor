@@ -69,10 +69,10 @@ void plugin_sharaclub::configure_provider_plugin()
 std::wstring plugin_sharaclub::get_playlist_url(const TemplateParams& params, std::wstring url /* = L"" */)
 {
 	url = get_playlist_info(params.playlist_idx).get_pl_template(); //-V763
-	if (params.profile_idx != 0)
+	if (params.creds.profile_id != 0)
 	{
 		const auto& profiles = get_profiles_list();
-		url += L"/" + profiles[params.profile_idx].get_id();
+		url += L"/" + profiles[params.creds.profile_id].get_id();
 	}
 
 	return base_plugin::get_playlist_url(params, url);
@@ -131,7 +131,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 			const auto& parsed_json = nlohmann::json::parse(data.str());
 			if (utils::get_json_int("status", parsed_json) == 1)
 			{
-				params.server_idx = utils::get_json_int("current", parsed_json);
+				params.creds.server_id = utils::get_json_int("current", parsed_json);
 				const auto& js_data = parsed_json["allow_nums"];
 				for (const auto& item : js_data.items())
 				{
@@ -160,7 +160,7 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 									  get_provider_api_url(),
 									  L"ch_cdn",
 									  L"num",
-									  servers_list[params.server_idx].get_id(),
+									  servers_list[params.creds.server_id].get_id(),
 									  params.creds.get_login(),
 									  params.creds.get_password());
 
@@ -214,7 +214,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 					info.set_id(utils::get_json_wstring("id", profile));
 					info.set_name(utils::get_json_wstring("name", profile));
 					if (info.get_id() == current)
-						params.profile_idx = (int)profiles.size();
+						params.creds.profile_id = (int)profiles.size();
 
 					profiles.emplace_back(info);
 				}
@@ -233,7 +233,7 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 									  get_provider_api_url(),
 									  L"list_profiles",
 									  L"num",
-									  profiles_list[params.profile_idx].get_id(),
+									  profiles_list[params.creds.profile_id].get_id(),
 									  params.creds.get_login(),
 									  params.creds.get_password());
 

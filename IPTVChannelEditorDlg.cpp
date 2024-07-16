@@ -686,29 +686,16 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	LockWindowUpdate();
 	CollectCredentials();
 
-	m_cur_account.Clear();
-
-	int selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
-	if (selected == -1 || selected >= (int)m_all_credentials.size())
-	{
-		selected = 0;
-		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, 0);
-		GetConfig().SaveSettings();
-	}
-
-	if (selected < (int)m_all_credentials.size())
-	{
-		m_cur_account = m_all_credentials[selected];
-	}
+	auto& cur_account = GetCurrentAccount();
 
 	m_plugin_type = GetConfig().get_plugin_type();
 	m_plugin = GetPluginFactory().create_plugin(m_plugin_type);
 
 	ReloadConfigs();
-	m_plugin->load_plugin_parameters(m_cur_account.get_config(), m_plugin->get_internal_name());
+	m_plugin->load_plugin_parameters(cur_account.get_config(), m_plugin->get_internal_name());
 
 	m_wndBtnExportM3u.EnableWindow(FALSE);
-	BOOL showWebUpdate = (!m_cur_account.update_url.empty() && !m_cur_account.update_package_url.empty() || m_cur_account.use_dropbox);
+	BOOL showWebUpdate = (!cur_account.update_url.empty() && !cur_account.update_package_url.empty() || cur_account.use_dropbox);
 	m_wndMakeWebUpdate.EnableWindow(showWebUpdate);
 	if (!showWebUpdate)
 	{
@@ -719,12 +706,15 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_plugin->configure_provider_plugin();
 
 	TemplateParams params;
-	params.creds = m_cur_account;
+	params.creds = cur_account;
 
 	m_plugin->get_api_token(params);
 	m_plugin->parse_account_info(params);
 	m_plugin->update_provider_params(params);
-	m_cur_account = params.creds;
+	if (cur_account != params.creds)
+	{
+		cur_account = params.creds;
+	}
 
 	const auto& streams = m_plugin->get_supported_streams();
 
@@ -874,11 +864,11 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_blockChecking = false;
 
 	const auto& used_cfg = fmt::format(load_string_resource(IDS_STRING_USED_CONFIG),
-									   m_cur_account.config.empty() ? load_string_resource(IDS_STRING_STR_DEFAULT) : m_cur_account.get_config());
+									   cur_account.config.empty() ? load_string_resource(IDS_STRING_STR_DEFAULT) : cur_account.get_config());
 	GetDlgItem(IDC_STATIC_CONFIG)->SetWindowText(used_cfg.c_str());
 
 	const auto& used_acc = fmt::format(load_string_resource(IDS_STRING_USED_ACCOUNT),
-									   m_cur_account.get_comment().empty() ? std::to_wstring(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT) + 1) : m_cur_account.get_comment());
+									   cur_account.get_comment().empty() ? std::to_wstring(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT) + 1) : cur_account.get_comment());
 	GetDlgItem(IDC_STATIC_ACCOUNT)->SetWindowText(used_acc.c_str());
 
 	m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 100, nullptr);
@@ -962,27 +952,20 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 {
 	int idx = m_wndPlaylist.GetCurSel();
 
-	Credentials old_credentials(m_cur_account);
+	auto& cur_account = GetCurrentAccount();
+
+	Credentials old_credentials(cur_account);
 
 	TemplateParams params;
-	params.creds = m_cur_account;
-	params.server_idx = m_cur_account.server_id;
-	params.profile_idx = m_cur_account.profile_id;
-	params.quality_idx = m_cur_account.quality_id;
-	params.device_idx = m_cur_account.device_id;
-	params.domain_idx = m_cur_account.domain_id;
+	params.creds = old_credentials;
 	params.playlist_idx = idx;
 
 	m_plugin->get_api_token(params);
 
-	if (old_credentials != m_cur_account)
+	if (old_credentials != params.creds)
 	{
-		m_all_credentials[GetConfig().get_int(false, REG_ACTIVE_ACCOUNT)] = m_cur_account;
-		nlohmann::json j_serialize = m_all_credentials;
-		GetConfig().set_string(false, REG_ACCOUNT_DATA, utils::utf8_to_utf16(nlohmann::to_string(j_serialize)));
-		GetConfig().SaveSettings();
+		SetCurrentAccount(params.creds);
 	}
-
 
 	m_plugin->update_provider_params(params);
 
@@ -1466,6 +1449,34 @@ void CIPTVChannelEditorDlg::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI)
 	__super::OnGetMinMaxInfo(lpMMI);
 }
 
+Credentials& CIPTVChannelEditorDlg::GetCurrentAccount()
+{
+	int selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
+	if (selected == -1 || selected >= (int)m_all_credentials.size())
+	{
+		selected = 0;
+		GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, 0);
+		GetConfig().SaveSettings();
+	}
+
+	if (selected < (int)m_all_credentials.size())
+	{
+		return m_all_credentials[selected];
+	}
+
+	static Credentials empty_account;
+	return empty_account;
+}
+
+void CIPTVChannelEditorDlg::SetCurrentAccount(const Credentials& creds)
+{
+	int selected = GetConfig().get_int(false, REG_ACTIVE_ACCOUNT);
+	if (selected == -1 && selected < (int)m_all_credentials.size())
+	{
+		m_all_credentials[selected] = creds;
+	}
+}
+
 void CIPTVChannelEditorDlg::set_allow_save(bool val)
 {
 	m_allow_save = val;
@@ -1852,12 +1863,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	m_epgID2 = m_plugin->get_epg_parameter(1).epg_url.empty() ? L"" : channel->get_epg_id(1).c_str();
 
 	TemplateParams params;
-	params.creds = m_cur_account;
+	params.creds = GetCurrentAccount();
 	params.streamSubtype = (StreamType)stream_idx;
-	params.server_idx = m_cur_account.server_id;
-	params.quality_idx = m_cur_account.quality_id;
-	params.device_idx = m_cur_account.device_id;
-	params.profile_idx = m_cur_account.profile_id;
 
 	UpdateExtToken(channel.get());
 	UpdateVars(channel.get());
@@ -3326,23 +3333,25 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 	{
 		int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3) - IDC_RADIO_EPG1;
 		if (epg_idx < 0 || epg_idx > 2)
+		{
 			epg_idx = 0;
+		}
 
 		CEpgListDlg dlg;
 		dlg.m_plugin = m_plugin;
 		dlg.m_epg_idx = epg_idx;
 		dlg.m_epg_cache = &m_epg_cache;
-		dlg.m_params.creds = m_cur_account;
+		dlg.m_params.creds = GetCurrentAccount();
 		dlg.m_params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-		dlg.m_params.server_idx = m_cur_account.server_id;
 
 		if (m_xmltvEpgSource >= 0 && m_xmltvEpgSource < (int)m_xmltv_sources.size())
+		{
 			dlg.m_xmltv_source = m_xmltv_sources[m_xmltvEpgSource];
+		}
 
 		UpdateExtToken(info);
 		UpdateVars(info);
 		dlg.m_info = info;
-
 
 		dlg.DoModal();
 	}
@@ -3419,14 +3428,13 @@ void CIPTVChannelEditorDlg::OnRemoveUnknownChannels()
 	}
 }
 
-void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, int archive_day /*= 0*/) const
+void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, int archive_day /*= 0*/)
 {
 	if (auto info = GetBaseInfo(m_lastTree, hItem); info != nullptr)
 	{
 		TemplateParams params;
-		params.creds = m_cur_account;
+		params.creds = GetCurrentAccount();
 		params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-		params.server_idx = m_cur_account.server_id;
 
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
@@ -3456,7 +3464,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgInfo.m_plugin = GetPluginFactory().create_plugin(m_plugin_type);
 	dlgInfo.m_plugin->copy_config(*m_plugin);
-	dlgInfo.m_selected_cred = m_cur_account;
+	dlgInfo.m_selected_cred = GetCurrentAccount();
 	dlgInfo.m_configs = m_all_configs_lists;
 	dlgInfo.m_all_channels_lists = m_all_channels_lists;
 	dlgInfo.m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
@@ -3466,7 +3474,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	auto res = (pSheet->DoModal() == IDOK);
 	if (res)
 	{
-		m_cur_account = dlgInfo.m_selected_cred;
+		SetCurrentAccount(dlgInfo.m_selected_cred);
 		m_plugin->copy_config(*dlgInfo.m_plugin);
 		GetConfig().UpdatePluginSettings();
 		PostMessage(WM_SWITCH_PLUGIN);
@@ -4205,9 +4213,8 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 	}
 
 	TemplateParams params;
-	params.creds = m_cur_account;
+	params.creds = GetCurrentAccount();
 	params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-	params.server_idx = m_cur_account.server_id;
 
 
 	CFileDialog dlg(FALSE);
@@ -4739,9 +4746,8 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_hExit = m_evtThreadExit;
 	cfg.m_probe = GetConfig().get_string(true, REG_FFPROBE);
 	cfg.m_max_threads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
-	cfg.m_params.creds = m_cur_account;
+	cfg.m_params.creds = GetCurrentAccount();
 	cfg.m_params.shift_back = 0;
-	cfg.m_params.server_idx = m_cur_account.server_id;
 
 	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
@@ -5718,7 +5724,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 {
 	CVodViewer dlg(m_vod_categories[m_plugin_type]);
 	dlg.m_plugin = m_plugin;
-	dlg.m_account = m_cur_account;
+	dlg.m_account = GetCurrentAccount();
 	dlg.DoModal();
 }
 
@@ -5729,7 +5735,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 	pSheet->m_plugin = GetPluginFactory().create_plugin(m_plugin_type);
 	pSheet->m_plugin->copy_config(*m_plugin);
-	pSheet->m_selected_cred = m_cur_account;
+	pSheet->m_selected_cred = GetCurrentAccount();
 	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 	pSheet->m_configPages = true;
 

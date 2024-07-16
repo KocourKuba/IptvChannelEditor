@@ -46,8 +46,7 @@ private:
 						std::unique_ptr<vod_category_storage>& categories,
 						bool is_serial = false);
 	nlohmann::json server_request(const std::wstring& url,
-								  const Credentials& creds,
-								  int cache_ttl,
+								  int cache_ttl = 0,
 								  bool web_post = false,
 								  const nlohmann::json& post_data = {});
 };

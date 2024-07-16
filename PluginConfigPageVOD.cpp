@@ -234,10 +234,6 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 
 	TemplateParams params;
 	params.creds = cred;
-	params.server_idx = cred.server_id;
-	params.device_idx = cred.device_id;
-	params.profile_idx = cred.profile_id;
-	params.quality_idx = cred.quality_id;
 	params.playlist_idx = m_wndVodTemplates.GetCurSel();
 
 	plugin->get_api_token(params);
@@ -332,10 +328,6 @@ void CPluginConfigPageVOD::OnBnClickedCheckPlaylistShowLink()
 
 		TemplateParams params;
 		params.creds = cred;
-		params.server_idx = cred.server_id;
-		params.device_idx = cred.device_id;
-		params.profile_idx = cred.profile_id;
-		params.quality_idx = cred.quality_id;
 
 		GetPropertySheet()->m_plugin->get_api_token(params);
 		params.playlist_idx = m_wndVodTemplates.GetCurSel();

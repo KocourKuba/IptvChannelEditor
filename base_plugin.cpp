@@ -90,32 +90,32 @@ std::wstring base_plugin::get_playlist_url(const TemplateParams& params, std::ws
 
 	if (!domains_list.empty())
 	{
-		size_t domain = ((params.domain_idx >= (int)domains_list.size()) ? domains_list.size() - 1 : params.domain_idx);
+		size_t domain = ((params.creds.domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : params.creds.domain_id);
 		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
 	}
 
 	if (!servers_list.empty())
 	{
-		size_t server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
+		size_t server = (params.creds.server_id >= (int)servers_list.size()) ? servers_list.size() - 1 : params.creds.server_id;
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
 	}
 
 	if (!devices_list.empty())
 	{
-		size_t device = (params.device_idx >= (int)devices_list.size()) ? devices_list.size() - 1 : params.device_idx;
+		size_t device = (params.creds.device_id >= (int)devices_list.size()) ? devices_list.size() - 1 : params.creds.device_id;
 		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[device].get_id());
 	}
 
 	if (!qualities_list.empty())
 	{
-		size_t quality = (params.quality_idx >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.quality_idx;
+		size_t quality = (params.creds.quality_id >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.creds.quality_id;
 		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[quality].get_id());
 	}
 
 	if (!profiles_list.empty())
 	{
-		size_t profile = (params.profile_idx >= (int)profiles_list.size()) ? profiles_list.size() - 1 : params.profile_idx;
+		size_t profile = (params.creds.profile_id >= (int)profiles_list.size()) ? profiles_list.size() - 1 : params.creds.profile_id;
 		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[profile].get_id());
 	}
 
@@ -195,16 +195,16 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 	}
 
 	if (!servers_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[params.server_idx].get_id()));
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[params.creds.server_id].get_id()));
 
 	if (!profiles_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[params.profile_idx].get_id());
+		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[params.creds.profile_id].get_id());
 
 	if (!qualities_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[params.quality_idx].get_id());
+		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[params.creds.quality_id].get_id());
 
 	if (!devices_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[params.device_idx].get_id());
+		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[params.creds.device_id].get_id());
 
 
 	return url;
@@ -296,13 +296,13 @@ std::wstring base_plugin::get_vod_url(size_t idx, const TemplateParams& params) 
 
 	if (!domains_list.empty())
 	{
-		size_t domain = (params.domain_idx >= (int)domains_list.size()) ? domains_list.size() - 1 : params.domain_idx;
+		size_t domain = (params.creds.domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : params.creds.domain_id;
 		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
 	}
 
 	if (!servers_list.empty())
 	{
-		size_t server = (params.server_idx >= (int)servers_list.size()) ? servers_list.size() - 1 : params.server_idx;
+		size_t server = (params.creds.server_id >= (int)servers_list.size()) ? servers_list.size() - 1 : params.creds.server_id;
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
 		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
 	}
@@ -617,33 +617,31 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 
 std::string base_plugin::get_file_cookie(const std::wstring& name) const
 {
-	const auto& session_id_name = fmt::format(FILE_COOKIE,
-											  std::filesystem::temp_directory_path().append(L"iptv_cache").wstring(),
-											  get_internal_name(),
-											  name);
+	const auto& cookie_name = fmt::format(FILE_COOKIE,
+										  std::filesystem::temp_directory_path().append(L"iptv_cache").wstring(),
+										  get_internal_name(),
+										  name);
 
-	if (std::filesystem::exists(session_id_name))
+	if (std::filesystem::exists(cookie_name))
 	{
-		std::error_code ec;
-		std::filesystem::file_time_type ftime = std::filesystem::last_write_time(session_id_name, ec);
-		auto now = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-		auto ft = std::chrono::duration_cast<std::chrono::seconds>(ftime.time_since_epoch()).count();
-		if (now - ft < 86400)
+		CFileStatus fs;
+		if (CFile::GetStatus(cookie_name.c_str(), fs) && CTime::GetCurrentTime() < fs.m_mtime)
 		{
-			std::ifstream ssd(session_id_name);
+			std::ifstream ssd(cookie_name);
 			std::stringstream buffer;
 			buffer << ssd.rdbuf();
 			ssd.close();
 			return buffer.str();
 		}
 
-		std::filesystem::remove(session_id_name, ec);
+		std::error_code ec;
+		std::filesystem::remove(cookie_name, ec);
 	}
 
 	return {};
 }
 
-void base_plugin::set_file_cookie(const std::wstring& name, const std::string& session) const
+void base_plugin::set_file_cookie(const std::wstring& name, const std::string& session, time_t expire_time) const
 {
 	const auto& cookie_name = fmt::format(FILE_COOKIE,
 											  std::filesystem::temp_directory_path().append(L"iptv_cache").wstring(),
@@ -652,6 +650,13 @@ void base_plugin::set_file_cookie(const std::wstring& name, const std::string& s
 	std::ofstream ssd(cookie_name);
 	ssd << session;
 	ssd.close();
+
+	CFileStatus fs;
+	if (CFile::GetStatus(cookie_name.c_str(), fs))
+	{
+		fs.m_mtime = CTime(expire_time);
+		CFile::SetStatus(cookie_name.c_str(), fs);
+	}
 }
 
 void base_plugin::set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const

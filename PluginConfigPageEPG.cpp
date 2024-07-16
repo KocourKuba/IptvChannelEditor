@@ -134,6 +134,7 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	m_DuneIP = GetConfig().get_string(true, REG_DUNE_IP).c_str();
 	TemplateParams params;
 	params.creds = GetPropertySheet()->m_selected_cred;
+
 	GetPropertySheet()->m_plugin->get_api_token(params);
 	m_Token = GetPropertySheet()->m_selected_cred.s_token.c_str();
 	m_wndEpgType.SetCurSel(0);

@@ -26,6 +26,8 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
+#include "PluginEnums.h"
+
 #include "UtilsLib\json_wrapper.h"
 
 class Credentials
@@ -123,7 +125,6 @@ public:
 		SERIALIZE_STRUCT(j, c, quality_id);
 		SERIALIZE_STRUCT(j, c, domain_id);
 		SERIALIZE_STRUCT(j, c, embed);
-		SERIALIZE_STRUCT(j, c, expired);
 		SERIALIZE_STRUCT(j, c, ch_list);
 		SERIALIZE_STRUCT(j, c, m_direct_links);
 		SERIALIZE_STRUCT(j, c, use_dropbox); //-V601
@@ -164,7 +165,6 @@ public:
 		DESERIALIZE_STRUCT(j, c, quality_id);
 		DESERIALIZE_STRUCT(j, c, domain_id);
 		DESERIALIZE_STRUCT(j, c, embed);
-		DESERIALIZE_STRUCT(j, c, expired);
 		DESERIALIZE_STRUCT(j, c, ch_list);
 		DESERIALIZE_STRUCT(j, c, m_direct_links);
 		DESERIALIZE_STRUCT(j, c, use_dropbox);
@@ -204,7 +204,6 @@ public:
 	int quality_id = 0; // zero based index
 	int domain_id = 0; // zero based index
 	int embed = 0;
-	int expired = 0;
 
 	bool not_valid = false;
 	bool use_dropbox = false;
@@ -219,7 +218,16 @@ public:
 			|| token != that.token
 			|| s_token != that.s_token
 			|| ott_key != that.ott_key
-			|| subdomain != that.subdomain
-			|| expired != that.expired;
+			|| subdomain != that.subdomain;
 	}
+};
+
+struct TemplateParams
+{
+	Credentials creds;
+	std::string server_id;
+	std::wstring error_string;
+	StreamType streamSubtype = StreamType::enHLS;
+	int shift_back = 0;
+	int playlist_idx = 0;
 };

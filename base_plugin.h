@@ -221,7 +221,7 @@ public:
 protected:
 
 	std::string get_file_cookie(const std::wstring& name) const;
-	void set_file_cookie(const std::wstring& name, const std::string& session) const;
+	void set_file_cookie(const std::wstring& name, const std::string& session, time_t expire_time) const;
 
 	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const;
 

@@ -49,27 +49,27 @@ static char THIS_FILE[] = __FILE__;
 
 constexpr int min_cache_ttl = 5;
 
-inline std::string get_utf8(const std::wstring& value)
+static std::string get_utf8(const std::wstring& value)
 {
 	return utils::utf16_to_utf8(value);
 }
 
-inline std::string get_utf8(const CString& value)
+static std::string get_utf8(const CString& value)
 {
 	return utils::utf16_to_utf8(value.GetString(), value.GetLength());
 }
 
-inline std::string get_utf8(const wchar_t* value)
+static std::string get_utf8(const wchar_t* value)
 {
 	return utils::utf16_to_utf8(std::wstring_view(value));
 }
 
-inline std::wstring get_utf16(const std::string& value)
+static std::wstring get_utf16(const std::string& value)
 {
 	return utils::utf8_to_utf16(value);
 }
 
-inline std::wstring get_utf16(const char* value)
+static std::wstring get_utf16(const char* value)
 {
 	return utils::utf8_to_utf16(std::string_view(value));
 }
@@ -402,10 +402,6 @@ BOOL CAccessInfoPage::OnApply()
 
 	TemplateParams params;
 	params.creds = selected;
-	params.server_idx = selected.server_id;
-	params.device_idx = selected.device_id;
-	params.profile_idx = selected.profile_id;
-	params.quality_idx = selected.quality_id;
 
 	if (m_wndServers.GetCount())
 	{
@@ -766,11 +762,6 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 
 	TemplateParams params;
 	params.creds = selected;
-	params.server_idx = selected.server_id;
-	params.device_idx = selected.device_id;
-	params.profile_idx = selected.profile_id;
-	params.quality_idx = selected.quality_id;
-	params.domain_idx = selected.domain_id;
 
 	m_plugin->parse_account_info(params);
 	m_plugin->update_provider_params(params);
@@ -786,12 +777,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndServers.AddString(info.get_name().c_str());
 		}
 
-		if (params.server_idx >= (int)m_servers.size())
+		if (params.creds.server_id >= (int)m_servers.size())
 		{
-			params.server_idx = 0;
+			params.creds.server_id = 0;
 		}
 
-		m_wndServers.SetCurSel(params.server_idx);
+		m_wndServers.SetCurSel(params.creds.server_id);
 	}
 
 	m_devices = m_plugin->get_devices_list();
@@ -804,12 +795,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndDevices.AddString(info.get_name().c_str());
 		}
 
-		if (params.device_idx >= (int)m_devices.size())
+		if (params.creds.device_id >= (int)m_devices.size())
 		{
-			params.device_idx = 0;
+			params.creds.device_id = 0;
 		}
 
-		m_wndDevices.SetCurSel(params.device_idx);
+		m_wndDevices.SetCurSel(params.creds.device_id);
 	}
 
 	m_qualities = m_plugin->get_qualities_list();
@@ -822,12 +813,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndQualities.AddString(info.get_name().c_str());
 		}
 
-		if (params.quality_idx >= (int)m_qualities.size())
+		if (params.creds.quality_id >= (int)m_qualities.size())
 		{
-			params.quality_idx = 0;
+			params.creds.quality_id = 0;
 		}
 
-		m_wndQualities.SetCurSel(params.quality_idx);
+		m_wndQualities.SetCurSel(params.creds.quality_id);
 	}
 
 	m_profiles = m_plugin->get_profiles_list();
@@ -841,12 +832,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndProfiles.AddString(info.get_name().c_str());
 		}
 
-		if (params.profile_idx >= (int)m_profiles.size())
+		if (params.creds.profile_id >= (int)m_profiles.size())
 		{
-			params.profile_idx = 0;
+			params.creds.profile_id = 0;
 		}
 
-		m_wndProfiles.SetCurSel(params.profile_idx);
+		m_wndProfiles.SetCurSel(params.creds.profile_id);
 	}
 
 	m_domains = m_plugin->get_domains_list();
@@ -859,12 +850,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndDomains.AddString(info.get_name().c_str());
 		}
 
-		if (params.domain_idx >= (int)m_domains.size())
+		if (params.creds.domain_id >= (int)m_domains.size())
 		{
-			params.domain_idx = 0;
+			params.creds.domain_id = 0;
 		}
 
-		m_wndDomains.SetCurSel(params.domain_idx);
+		m_wndDomains.SetCurSel(params.creds.domain_id);
 	}
 	m_wndDomains.EnableWindow(m_domains.size() > 1 && enable);
 
@@ -997,16 +988,15 @@ void CAccessInfoPage::GetAccountInfo()
 
 	TemplateParams params;
 	params.creds = selected_cred;
-	params.server_idx = selected_cred.server_id;
-	params.device_idx = selected_cred.device_id;
-	params.profile_idx = selected_cred.profile_id;
-	params.quality_idx = selected_cred.quality_id;
 
 	m_plugin->get_api_token(params);
 	m_plugin->clear_account_info();
 	m_plugin->parse_account_info(params);
 	m_plugin->update_provider_params(params);
-	selected_cred = params.creds;
+	if (selected_cred != params.creds)
+	{
+		selected_cred = params.creds;
+	}
 
 	auto& pl_url = m_plugin->get_playlist_url(params);
 

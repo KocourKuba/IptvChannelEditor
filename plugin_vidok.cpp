@@ -112,7 +112,7 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 					const auto& server = item.value();
 					DynamicParamsInfo info{ utils::get_json_string("id", server), utils::get_json_string("name", server) };
 					if (info.get_id() == current)
-						params.server_idx = (int)servers.size();
+						params.creds.server_id = (int)servers.size();
 
 					servers.emplace_back(info);
 				}
@@ -140,7 +140,7 @@ bool plugin_vidok::set_server(TemplateParams& params)
 									  L"settings_set",
 									  params.creds.get_s_token(),
 									  L"server",
-									  servers_list[params.server_idx].get_id());
+									  servers_list[params.creds.server_id].get_id());
 
 		CWaitCursor cur;
 		std::stringstream data;
@@ -152,7 +152,7 @@ bool plugin_vidok::set_server(TemplateParams& params)
 				for (const auto& item : parsed_json["settings"].items())
 				{
 					const auto& server = item.value();
-					return (utils::get_json_wstring("value", server) == servers_list[params.server_idx].get_id()); //-V612
+					return (utils::get_json_wstring("value", server) == servers_list[params.creds.server_id].get_id()); //-V612
 				}
 			}
 			JSON_ALL_CATCH;

@@ -293,7 +293,6 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="plugin_tvteam.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="StreamParameters.h" />
-    <ClInclude Include="TemplateParams.h" />
     <ClInclude Include="ThreadConfig.h" />
     <ClInclude Include="TooltipPropertyPage.h" />
     <ClInclude Include="PluginDefines.h" />

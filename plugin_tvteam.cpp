@@ -64,7 +64,12 @@ bool plugin_tvteam::get_api_token(TemplateParams& params)
 			const auto& parsed_json = nlohmann::json::parse(data.str());
 			if (parsed_json.contains("status") && parsed_json["status"] == 1)
 			{
-				set_file_cookie(SESSION_ID, utils::get_json_string("sessionId", parsed_json["data"]));
+				set_file_cookie(SESSION_ID, utils::get_json_string("sessionId", parsed_json["data"]), time(nullptr) + 86400);
+
+				if (!params.creds.s_token.empty())
+				{
+					params.creds.s_token.clear();
+				}
 				return true;
 			}
 		}
@@ -121,7 +126,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 	}
 
 	params.creds.set_s_token(account_info[L"userToken"]);
-	params.server_id = account_info[L"groupId"];
+	params.server_id = utils::utf16_to_utf8(account_info[L"groupId"]);
 
 }
 
@@ -182,7 +187,7 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 									  get_provider_api_url(),
 									  L"updateUserData",
 									  L"groupId",
-									  servers_list[params.server_idx].get_id(),
+									  servers_list[params.creds.server_id].get_id(),
 									  utils::utf8_to_utf16(session_id));
 
 		CWaitCursor cur;
@@ -215,9 +220,9 @@ void plugin_tvteam::sync_server_id(TemplateParams& params)
 
 	for (int i = 0; i < (int)servers_list.size(); ++i)
 	{
-		if (servers_list[i].id == params.get_server_id())
+		if (servers_list[i].id == params.server_id)
 		{
-			params.server_idx = i;
+			params.creds.server_id = i;
 			break;
 		}
 	}

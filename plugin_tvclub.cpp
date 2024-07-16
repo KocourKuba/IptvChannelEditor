@@ -121,7 +121,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 					const auto& server = item.value();
 					DynamicParamsInfo info{ utils::get_json_string("id", server), utils::get_json_string("name", server) };
 					if (info.get_id() == current)
-						params.server_idx = (int)servers.size();
+						params.creds.server_id = (int)servers.size();
 
 					servers.emplace_back(info);
 				}
@@ -149,7 +149,7 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 									  L"set",
 									  params.creds.get_s_token(),
 									  L"server",
-									  servers_list[params.server_idx].get_id());
+									  servers_list[params.creds.server_id].get_id());
 
 		CWaitCursor cur;
 		std::stringstream data;

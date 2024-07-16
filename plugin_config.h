@@ -28,7 +28,6 @@ DEALINGS IN THE SOFTWARE.
 #include <variant>
 #include "IPTVChannelEditor.h"
 #include "Credentials.h"
-#include "TemplateParams.h"
 #include "DynamicParamsInfo.h"
 #include "PlaylistTemplateInfo.h"
 #include "StreamParameters.h"
