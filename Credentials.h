@@ -225,7 +225,6 @@ public:
 struct TemplateParams
 {
 	Credentials creds;
-	std::string server_id;
 	std::wstring error_string;
 	StreamType streamSubtype = StreamType::enHLS;
 	int shift_back = 0;

@@ -272,7 +272,7 @@ class Default_Dune_Plugin implements DunePlugin
         if ($engine === ENGINE_JSON) {
             if ($this->is_json_capable()) {
                 hd_debug_print("Using 'Epg_Manager_Json' cache engine");
-                $this->epg_manager = new Epg_Manager_Xmltv($this);
+                $this->epg_manager = new Epg_Manager_Json($this);
             } else {
                 $this->set_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_XMLTV);
             }

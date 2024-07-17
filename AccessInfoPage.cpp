@@ -666,6 +666,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 
 	if (dispinfo->item.iItem == GetCheckedAccountIdx())
 	{
+		m_plugin->clear_account_info();
 		GetAccountInfo();
 	}
 	GetParent()->GetDlgItem(IDOK)->EnableWindow(changed);
@@ -703,6 +704,7 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 		FillChannelsList();
 
 		m_wndInfo.DeleteAllItems();
+		m_plugin->clear_account_info();
 		GetAccountInfo();
 	}
 
@@ -990,7 +992,6 @@ void CAccessInfoPage::GetAccountInfo()
 	params.creds = selected_cred;
 
 	m_plugin->get_api_token(params);
-	m_plugin->clear_account_info();
 	m_plugin->parse_account_info(params);
 	m_plugin->update_provider_params(params);
 	if (selected_cred != params.creds)

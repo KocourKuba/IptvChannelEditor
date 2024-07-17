@@ -37,18 +37,19 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto API_COMMAND_AUTH = L"{:s}?userLogin={:s}&userPasswd={:s}";
-static constexpr auto API_COMMAND_GET_URL = L"{:s}/?apiAction={:s}&sessionId={:s}";
+static constexpr auto API_COMMAND_GET_URL = L"{:s}/?apiAction={:s},{:s},{:s}&sessionId={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"{:s}/?apiAction={:s}&{:s}={:s}&sessionId={:s}";
-static constexpr auto SESSION_ID = L"session_id";
+static constexpr auto SESSION_ID = L"session_{:s}";
 
 bool plugin_tvteam::get_api_token(TemplateParams& params)
 {
-	if (params.creds.login.empty())
+	if (params.creds.login.empty() || params.creds.password.empty())
 	{
 		return false;
 	}
 
-	const auto& session_id = get_file_cookie(SESSION_ID);
+	const auto& session_id_name = fmt::format(SESSION_ID, params.creds.get_login());
+	const auto& session_id = get_file_cookie(session_id_name);
 	if (!session_id.empty())
 	{
 		return true;
@@ -56,7 +57,10 @@ bool plugin_tvteam::get_api_token(TemplateParams& params)
 
 	CWaitCursor cur;
 	std::stringstream data;
-	const std::wstring& url = fmt::format(API_COMMAND_AUTH, get_provider_api_url(), params.creds.get_login(), utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
+	const std::wstring& url = fmt::format(API_COMMAND_AUTH,
+										  get_provider_api_url(),
+										  params.creds.get_login(),
+										  utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
 	if (download_url(url, data))
 	{
 		JSON_ALL_TRY;
@@ -64,7 +68,7 @@ bool plugin_tvteam::get_api_token(TemplateParams& params)
 			const auto& parsed_json = nlohmann::json::parse(data.str());
 			if (parsed_json.contains("status") && parsed_json["status"] == 1)
 			{
-				set_file_cookie(SESSION_ID, utils::get_json_string("sessionId", parsed_json["data"]), time(nullptr) + 86400);
+				set_file_cookie(session_id_name, utils::get_json_string("sessionId", parsed_json["data"]), time(nullptr) + 86400*6);
 
 				if (!params.creds.s_token.empty())
 				{
@@ -81,16 +85,28 @@ bool plugin_tvteam::get_api_token(TemplateParams& params)
 
 void plugin_tvteam::parse_account_info(TemplateParams& params)
 {
-	const auto& session_id = get_file_cookie(SESSION_ID);
+	const auto& session_id = get_file_cookie(fmt::format(SESSION_ID, params.creds.get_login()));
 	if (session_id.empty())
 	{
 		return;
 	}
 
-	if (account_info.empty())
+	if (!account_info.empty())
+	{
+		if (params.creds.s_token.empty())
+		{
+			params.creds.set_s_token(account_info[L"userToken"]);
+		}
+	}
+	else
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"getUserData", utils::utf8_to_utf16(session_id));
+		const auto& url = fmt::format(API_COMMAND_GET_URL,
+									  get_provider_api_url(),
+									  L"getUserData",
+									  L"getServersGroups",
+									  L"getUserPackages",
+									  utils::utf8_to_utf16(session_id));
 		std::stringstream data;
 		if (!download_url(url, data))
 		{
@@ -105,81 +121,70 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 			{
 				set_json_info("error", parsed_json, account_info);
 			}
-			else if (parsed_json.contains("data") && parsed_json["data"].contains("userData"))
+			else
 			{
-				const auto& js_account = parsed_json["data"]["userData"];
-				set_json_info("userLogin", js_account, account_info);
-				set_json_info("userEmail", js_account, account_info);
-				set_json_info("userToken", js_account, account_info);
-				set_json_info("groupId", js_account, account_info);
-				set_json_info("userIsTimed", js_account, account_info);
-				set_json_info("userBalance", js_account, account_info);
+				std::string selected_server_id;
+				if (parsed_json.contains("data") && parsed_json["data"].contains("userData"))
+				{
+					const auto& js_account = parsed_json["data"]["userData"];
+					set_json_info("userLogin", js_account, account_info);
+					set_json_info("userEmail", js_account, account_info);
+					set_json_info("userBalance", js_account, account_info);
+					set_json_info("showPorno", js_account, account_info);
+					params.creds.s_token = utils::get_json_string("userToken", js_account);
+					selected_server_id = utils::get_json_string("groupId", js_account);
+				}
+
+				if (parsed_json.contains("data") && parsed_json["data"].contains("userPackagesList"))
+				{
+					for (const auto& item : parsed_json["data"]["userPackagesList"].items())
+					{
+						const auto& package = item.value();
+						set_json_info("packageName", package, account_info);
+						set_json_info("fromDate", package, account_info);
+						set_json_info("toDate", package, account_info);
+						set_json_info("salePrice", package, account_info);
+					}
+				}
+
+				std::vector<DynamicParamsInfo> servers;
+				if (parsed_json.contains("data") && parsed_json["data"].contains("serversGroupsList"))
+				{
+					int idx = 0;
+					for (const auto& item : parsed_json["data"]["serversGroupsList"].items())
+					{
+						const auto& server = item.value();
+						const auto& status = utils::get_json_string("showStatus", server);
+						const auto& server_id = utils::get_json_string("groupId", server);
+						const auto& server_name = fmt::format("{:s} ({:s})",
+															  utils::get_json_string("groupCountry", server),
+															  utils::get_json_string("streamDomainName", server));
+
+						if (status != "1" && server_id != selected_server_id) continue;
+
+						if (server_id == selected_server_id)
+						{
+							params.creds.server_id = idx;
+						}
+
+						DynamicParamsInfo info{ server_id, server_name };
+						servers.emplace_back(info);
+						++idx;
+					}
+					set_servers_list(servers);
+				}
+
 
 				success = true;
 			}
 		}
 		JSON_ALL_CATCH;
-		if (!success)
-		{
-			return;
-		}
 	}
-
-	params.creds.set_s_token(account_info[L"userToken"]);
-	params.server_id = utils::utf16_to_utf8(account_info[L"groupId"]);
-
-}
-
-void plugin_tvteam::fill_servers_list(TemplateParams& params)
-{
-	const auto& session_id = get_file_cookie(SESSION_ID);
-	if (session_id.empty())
-	{
-		return;
-	}
-
-
-	if (!servers_list.empty())
-	{
-		sync_server_id(params);
-		return;
-	}
-
-	const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"getServersGroups", utils::utf8_to_utf16(session_id));
-
-	CWaitCursor cur;
-
-	std::vector<DynamicParamsInfo> servers;
-	std::stringstream data;
-	if (download_url(url, data))
-	{
-		JSON_ALL_TRY;
-		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
-			if (parsed_json.contains("data") && parsed_json["data"].contains("serversGroupsList"))
-			{
-				int idx = 0;
-				for (const auto& item : parsed_json["data"]["serversGroupsList"].items())
-				{
-					const auto& server = item.value();
-					const auto& server_name = fmt::format("{:s} ({:s}", utils::get_json_string("streamDomainName", server), utils::get_json_string("portalDomainName", server));
-					const auto& server_id = utils::get_json_string("groupId", server);
-					DynamicParamsInfo info{ server_id, server_name };
-					servers.emplace_back(info);
-					++idx;
-				}
-			}
-		}
-		JSON_ALL_CATCH;
-	}
-
-	sync_server_id(params);
-	set_servers_list(servers);
 }
 
 bool plugin_tvteam::set_server(TemplateParams& params)
 {
-	const auto& session_id = get_file_cookie(SESSION_ID);
+	const auto& session_id = get_file_cookie(fmt::format(SESSION_ID, params.creds.get_login()));
 	if (!servers_list.empty() && !session_id.empty())
 	{
 
@@ -209,21 +214,4 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 	}
 
 	return false;
-}
-
-void plugin_tvteam::sync_server_id(TemplateParams& params)
-{
-	if (servers_list.empty() || params.server_id.empty())
-	{
-		return;
-	}
-
-	for (int i = 0; i < (int)servers_list.size(); ++i)
-	{
-		if (servers_list[i].id == params.server_id)
-		{
-			params.creds.server_id = i;
-			break;
-		}
-	}
 }

@@ -34,9 +34,5 @@ class plugin_tvteam : public base_plugin
 public:
 	bool get_api_token(TemplateParams& params) override;
 	void parse_account_info(TemplateParams& params) override;
-	void fill_servers_list(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;
-
-private:
-	void sync_server_id(TemplateParams& params);
 };
