@@ -331,6 +331,19 @@ class Epg_Indexer_Classic extends Epg_Indexer
         $this->xmltv_positions = null;
     }
 
+    /**
+     * @inheritDoc
+     * @override
+     */
+    public function remove_index($name)
+    {
+        $name = $this->get_index_name($name);
+        if (file_exists($name)) {
+            hd_debug_print("Remove index: $name");
+            unlink($name);
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////
     /// protected methods
 

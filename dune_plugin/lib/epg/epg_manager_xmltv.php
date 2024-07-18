@@ -172,13 +172,14 @@ class Epg_Manager_Xmltv
         $date_end_l = format_datetime("Y-m-d H:i", $day_end_ts);
         hd_debug_print("Fetch entries for from: $date_start_l ($day_start_ts) to: $date_end_l ($day_end_ts)", true);
 
+        $xml_str = '';
         try {
             $positions = $this->indexer->load_program_index($channel);
             if (!empty($positions)) {
                 $t = microtime(true);
                 $cached_file = $this->indexer->get_cached_filename();
                 if (!file_exists($cached_file)) {
-                    throw new Exception("cache file not exist");
+                    throw new Exception("cache file $cached_file not exist");
                 }
 
                 $handle = fopen($cached_file, 'rb');
@@ -204,7 +205,7 @@ class Epg_Manager_Xmltv
 
                             $day_epg[$program_start][Epg_Params::EPG_DESC] = '';
                             foreach ($tag->getElementsByTagName('desc') as $tag_desc) {
-                                $day_epg[$program_start][Epg_Params::EPG_DESC] = $tag_desc->nodeValue;
+                                $day_epg[$program_start][Epg_Params::EPG_DESC] = trim($tag_desc->nodeValue);
                             }
 
                             foreach ($tag->getElementsByTagName('icon') as $tag_icon) {
@@ -218,6 +219,7 @@ class Epg_Manager_Xmltv
                 hd_debug_print("Fetch data from XMLTV cache in: " . (microtime(true) - $t) . " secs");
             }
         } catch (Exception $ex) {
+            hd_debug_print("Exception in line: $xml_str");
             print_backtrace_exception($ex);
         }
 
@@ -298,22 +300,7 @@ class Epg_Manager_Xmltv
     {
         $start = microtime(true);
 
-        $res = $this->indexer->is_xmltv_cache_valid();
-        if ($res === -1) {
-            hd_debug_print("Error load xmltv, url not set");
-            return;
-        }
-
-        if ($res === 0) {
-            hd_debug_print("XMLTV source valid, no need to processing");
-            return;
-        }
-
-        if ($res === 1) {
-            $this->indexer->download_xmltv_source();
-            $this->indexer->index_xmltv_channels();
-        }
-
+        $this->indexer->index_only_channels();
         $this->indexer->index_xmltv_positions();
 
         hd_print("Script execution time: ". format_duration(round(1000 * (microtime(true) - $start))));
@@ -326,6 +313,7 @@ class Epg_Manager_Xmltv
      */
     public function clear_epg_cache()
     {
+        $this->get_indexer()->clear_current_epg_files();
     }
 
     /**

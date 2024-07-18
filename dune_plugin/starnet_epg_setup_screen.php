@@ -250,12 +250,11 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                     return Action_Factory::show_title_dialog(TR::t('err_epg_not_set'), null, HD::get_last_error("xmltv_last_error"));
                 }
 
-                if ($res === 0) {
-                    $res = $this->plugin->get_epg_manager()->get_indexer()->download_xmltv_source();
-                    if ($res === -1) {
-                        return Action_Factory::show_title_dialog(TR::t('err_load_xmltv_epg'), null, HD::get_last_error("xmltv_last_error"));
-                    }
+                $res = $this->plugin->get_epg_manager()->get_indexer()->download_xmltv_source();
+                if ($res === -1) {
+                    return Action_Factory::show_title_dialog(TR::t('err_load_xmltv_epg'), null, HD::get_last_error("xmltv_last_error"));
                 }
+
                 return $action_reload;
 
             case ACTION_RELOAD:
