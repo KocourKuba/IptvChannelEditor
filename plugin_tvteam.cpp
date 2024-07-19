@@ -37,8 +37,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto API_COMMAND_AUTH = L"{:s}?userLogin={:s}&userPasswd={:s}";
-static constexpr auto API_COMMAND_GET_URL = L"{:s}/?apiAction={:s},{:s},{:s}&sessionId={:s}";
-static constexpr auto API_COMMAND_SET_URL = L"{:s}/?apiAction={:s}&{:s}={:s}&sessionId={:s}";
 static constexpr auto SESSION_ID = L"session_{:s}";
 
 bool plugin_tvteam::get_api_token(TemplateParams& params)
@@ -101,7 +99,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 	else
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(API_COMMAND_GET_URL,
+		const auto& url = fmt::format(L"{:s}/?apiAction={:s},{:s},{:s}&sessionId={:s}",
 									  get_provider_api_url(),
 									  L"getUserData",
 									  L"getServersGroups",
@@ -188,7 +186,7 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 	if (!servers_list.empty() && !session_id.empty())
 	{
 
-		const auto& url = fmt::format(API_COMMAND_SET_URL,
+		const auto& url = fmt::format(L"{:s}/?apiAction={:s}&{:s}={:s}&sessionId={:s}",
 									  get_provider_api_url(),
 									  L"updateUserData",
 									  L"groupId",
