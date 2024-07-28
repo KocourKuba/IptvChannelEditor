@@ -451,8 +451,8 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 			epg_info->time_start = utils::parse_xmltv_date(attr_start->value(), attr_start->value_size());
 			const auto& attr_stop = prog_node->first_attribute("stop");
 			epg_info->time_end = utils::parse_xmltv_date(attr_stop->value(), attr_stop->value_size());
-			epg_info->name = rapidxml::get_value_string(prog_node->first_node("title"));
-			epg_info->desc = rapidxml::get_value_string(prog_node->first_node("desc"));
+			epg_info->name = std::move(utils::make_text_rtf_safe(rapidxml::get_value_string(prog_node->first_node("title"))));
+			epg_info->desc = std::move(utils::make_text_rtf_safe(rapidxml::get_value_string(prog_node->first_node("desc"))));
 
 			epg_map[channel].emplace(epg_info->time_start, epg_info);
 			const auto& range = channels_map.equal_range(channel);
