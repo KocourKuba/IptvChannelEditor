@@ -139,6 +139,12 @@ BOOL CPathsSettingsPage::OnApply()
 	if (m_plugins_settings_path.Right(1) != '\\')
 		m_plugins_settings_path += '\\';
 
+	if (m_plugins_image_path.IsEmpty())
+		m_plugins_image_path = _T(".\\ImageCache\\");
+
+	if (m_plugins_image_path.Right(1) != '\\')
+		m_plugins_image_path += '\\';
+
 	const auto& settings_path = GetConfig().get_string(true, REG_SAVE_SETTINGS_PATH);
 	if (m_plugins_settings_path != settings_path.c_str()) //-V1051
 	{
@@ -162,6 +168,7 @@ BOOL CPathsSettingsPage::OnApply()
 	GetConfig().set_string(true, REG_OUTPUT_PATH, m_plugins_path.GetString());
 	GetConfig().set_string(true, REG_WEB_UPDATE_PATH, m_plugins_web_update_path.GetString());
 	GetConfig().set_string(true, REG_SAVE_SETTINGS_PATH, m_plugins_settings_path.GetString());
+	GetConfig().set_string(true, REG_SAVE_IMAGE_PATH, m_plugins_image_path.GetString());
 
 	return __super::OnApply();
 }
