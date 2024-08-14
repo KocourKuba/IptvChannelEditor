@@ -2227,6 +2227,91 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		set_allow_save(true);
 	}
 
+	CreateSpecialCategories();
+
+	const auto& image_path = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
+	auto cat_node = i_node->first_node(utils::TV_CATEGORIES)->first_node(utils::TV_CATEGORY);
+	// Iterate <tv_category> nodes
+	while (cat_node)
+	{
+		auto category = std::make_shared<ChannelCategory>(image_path);
+		category->ParseNode(cat_node);
+		if (list_version < CHANNELS_LIST_VERSION)
+		{
+			auto& url = category->get_icon_uri();
+			if (url.is_local())
+			{
+				std::filesystem::path fname(url.get_path());
+				auto newPath = utils::CATEGORIES_LOGO_URL + fname.filename().wstring();
+				url.set_path(newPath);
+			}
+		}
+
+		CategoryInfo info = { nullptr, category };
+		auto& res = m_categoriesMap.emplace(category->get_key(), info);
+		if (!res.second && category->is_not_movable())
+		{
+			res.first->second.category->set_icon_uri(category->get_icon_uri());
+		}
+
+		cat_node = cat_node->next_sibling();
+	}
+
+	const auto& fav_info = m_categoriesMap[ID_FAVORITE];
+
+	auto ch_node = i_node->first_node(utils::TV_CHANNELS)->first_node(utils::TV_CHANNEL);
+	// Iterate <tv_channel> nodes
+	while (ch_node)
+	{
+		auto channel = std::make_shared<ChannelInfo>(image_path);
+		channel->ParseNode(ch_node);
+		if (channel->get_icon_uri().get_uri() == utils::ICON_OLD_TEMPLATE)
+		{
+			channel->set_icon_uri(utils::ICON_TEMPLATE);
+			set_allow_save(true);
+		}
+
+		const auto& id = channel->get_id();
+		ASSERT(!id.empty());
+
+		auto ch_pair = m_channelsMap.find(id);
+		if (ch_pair != m_channelsMap.end())
+		{
+			// Only one unique channel must used!
+			// at first add parsed categories
+			ch_pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
+			// now replace channel to unique reference
+			channel = ch_pair->second;
+		}
+		else
+		{
+			ch_pair = m_channelsMap.emplace(id, channel).first;
+			// compatibility with channel list version < 5
+			if (channel->is_favorite())
+			{
+				fav_info.category->add_channel(channel);
+			}
+
+			ch_pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
+		}
+
+		for (const auto& cat_id : channel->get_category_ids())
+		{
+			auto cat_pair = m_categoriesMap.find(cat_id);
+			ASSERT(cat_pair != m_categoriesMap.end());
+			cat_pair->second.category->add_channel(channel);
+		}
+
+		ch_node = ch_node->next_sibling();
+	}
+
+	m_wndSearch.EnableWindow(!m_channelsMap.empty());
+
+	return true;
+}
+
+void CIPTVChannelEditorDlg::CreateSpecialCategories()
+{
 	const auto& image_path = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
 	std::wstring category_root = utils::PLUGIN_SCHEME;
 	category_root += utils::CATEGORIES_LOGO_URL;
@@ -2261,81 +2346,6 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 
 	CategoryInfo fav_info = { nullptr, fav_category };
 	m_categoriesMap.emplace(ID_FAVORITE, fav_info);
-
-	auto cat_node = i_node->first_node(utils::TV_CATEGORIES)->first_node(utils::TV_CATEGORY);
-	// Iterate <tv_category> nodes
-	while (cat_node)
-	{
-		auto category = std::make_shared<ChannelCategory>(image_path);
-		category->ParseNode(cat_node);
-		if (list_version < CHANNELS_LIST_VERSION)
-		{
-			auto& url = category->get_icon_uri();
-			if (url.is_local())
-			{
-				std::filesystem::path fname(url.get_path());
-				auto newPath = utils::CATEGORIES_LOGO_URL + fname.filename().wstring();
-				url.set_path(newPath);
-			}
-		}
-
-		CategoryInfo info = { nullptr, category };
-		auto& res = m_categoriesMap.emplace(category->get_key(), info);
-		if (!res.second && category->is_not_movable())
-		{
-			res.first->second.category->set_icon_uri(category->get_icon_uri());
-		}
-
-		cat_node = cat_node->next_sibling();
-	}
-
-	auto ch_node = i_node->first_node(utils::TV_CHANNELS)->first_node(utils::TV_CHANNEL);
-	// Iterate <tv_channel> nodes
-	while (ch_node)
-	{
-		auto channel = std::make_shared<ChannelInfo>(image_path);
-		channel->ParseNode(ch_node);
-		if (channel->get_icon_uri().get_uri() == utils::ICON_OLD_TEMPLATE)
-		{
-			channel->set_icon_uri(utils::ICON_TEMPLATE);
-			set_allow_save(true);
-		}
-
-		const auto& id = channel->get_id();
-		ASSERT(!id.empty());
-
-		auto ch_pair = m_channelsMap.find(id);
-		if (ch_pair != m_channelsMap.end())
-		{
-			// Only one unique channel must used!
-			// at first add parsed categories
-			ch_pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
-			// now replace channel to unique reference
-			channel = ch_pair->second;
-		}
-		else
-		{
-			ch_pair = m_channelsMap.emplace(id, channel).first;
-			// compatibility with channel list version < 5
-			if (channel->is_favorite())
-				fav_category->add_channel(channel);
-
-			ch_pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
-		}
-
-		for (const auto& cat_id : channel->get_category_ids())
-		{
-			auto cat_pair = m_categoriesMap.find(cat_id);
-			ASSERT(cat_pair != m_categoriesMap.end());
-			cat_pair->second.category->add_channel(channel);
-		}
-
-		ch_node = ch_node->next_sibling();
-	}
-
-	m_wndSearch.EnableWindow(!m_channelsMap.empty());
-
-	return true;
 }
 
 void CIPTVChannelEditorDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -3668,6 +3678,7 @@ void CIPTVChannelEditorDlg::OnSave()
 	// Категория должна содержать хотя бы один канал. Иначе плагин падает с ошибкой
 	// [plugin] error: invalid plugin TV info: wrong num_channels(0) for group id '' in num_channels_by_group_id.
 
+	CreateSpecialCategories();
 	int lst_idx = GetConfig().get_int(false, REG_CHANNELS_TYPE);
 	if (lst_idx == -1 || m_all_channels_lists.empty())
 	{
