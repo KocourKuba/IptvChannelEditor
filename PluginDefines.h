@@ -48,6 +48,7 @@ enum class PluginType
 	enKliMedia,
 	enLightIptv,
 	enMymagic,
+	enNasharu,
 	enOneCent,
 	enOneOtt,
 	enOneUsd,

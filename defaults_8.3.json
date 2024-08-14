@@ -604,7 +604,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<int_id>.+)\\/index\\.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<int_id>.+)\\/(?<var1>.+)\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+)\\/(?<password>.+)\\/(?:hls|ts)\\/(?<server>.+)\\/playlist\\.m3u8$",
           "pl_template": "http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8",
           "tag_id_match": "tvg-id"
@@ -645,7 +645,7 @@
           "stream_type": "hls",
           "uri_arc_template": "{SCHEME}{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{INT_ID}/index.m3u8?token={TOKEN}"
+          "uri_template": "{SCHEME}{DOMAIN}/{INT_ID}/{VAR1}.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
