@@ -3882,8 +3882,9 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 				std::filesystem::remove_all(dir_path, err);
 
 				utils::CUrlDownload dl;
+				dl.SetUrl(image_lib.get_url());
 				dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL, 24));
-				if (!dl.DownloadFile(image_lib.get_url(), file_data))
+				if (!dl.DownloadFile(file_data))
 				{
 					AfxMessageBox(dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
 					break;
@@ -4550,7 +4551,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		CWaitCursor cur;
 		std::stringstream image;
 		utils::CUrlDownload dl;
-		if (!dl.DownloadFile(channel->get_icon_uri().get_uri(), image))
+		dl.SetUrl(channel->get_icon_uri().get_uri());
+		if (!dl.DownloadFile(image))
 		{
 			AfxMessageBox(dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
 			continue;

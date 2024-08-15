@@ -57,17 +57,27 @@ class CUrlDownload
 public:
 	CUrlDownload() = default;
 
-	bool DownloadFile(const std::wstring& url,
-					  std::stringstream& vData,
+	bool DownloadFile(std::stringstream& vData,
 					  std::vector<std::string>* pHeaders = nullptr,
 					  bool verb_post = false,
-					  const char* post_data = nullptr) const;
+					  const char* post_data = nullptr);
 
+
+	/**
+	* Set URL
+	*/
+	void SetUrl(const std::wstring& url) { m_url = url; }
+
+	/**
+	* Get URL
+	*/
+	const std::wstring& GetUrl() { return m_url; }
 
 	/**
 	* Set user agent
 	*/
 	void SetUserAgent(const std::wstring& userAgent) { m_user_agent = userAgent; }
+
 	/**
 	* Set cache time in seconds
 	*/
@@ -81,7 +91,9 @@ public:
 	static std::filesystem::path GetCachedPath(const std::wstring& url);
 
 private:
+	std::wstring m_url;
 	int m_cache_ttl_sec = 0;
+	int m_max_redirect = 5;
 	mutable std::wstring m_error_message;
 	std::wstring m_user_agent = pc_user_agent;
 };

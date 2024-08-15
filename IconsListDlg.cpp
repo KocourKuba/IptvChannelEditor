@@ -123,7 +123,8 @@ BOOL CIconsListDlg::OnInitDialog()
 		std::unique_ptr<std::istream> pl_stream;
 		std::stringstream data;
 		utils::CUrlDownload dl;
-		if (dl.DownloadFile(m_iconSource, data))
+		dl.SetUrl(m_iconSource);
+		if (dl.DownloadFile(data))
 		{
 			const auto& str = data.str();
 			int lines = (int)std::count(str.begin(), str.end(), '\n');

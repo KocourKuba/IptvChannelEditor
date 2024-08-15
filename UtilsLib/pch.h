@@ -37,5 +37,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include <fmt/xchar.h>
 #include <rapidxml/rapidxml.hpp>
+#include <boost/regex.hpp>
 
 #endif //PCH_H

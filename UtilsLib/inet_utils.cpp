@@ -102,21 +102,20 @@ bool CrackedUrl::CrackUrl(const std::wstring& url)
 	return false;
 }
 
-bool CUrlDownload::DownloadFile(const std::wstring& url,
-								std::stringstream& vData,
+bool CUrlDownload::DownloadFile(std::stringstream& vData,
 								std::vector<std::string>* pHeaders /*= nullptr*/,
 								bool verb_post /*= false*/,
-								const char* post_data /*= nullptr*/) const
+								const char* post_data /*= nullptr*/)
 {
 	m_error_message.clear();
-	if (url.empty())
+	if (m_url.empty())
 		return false;
 
-	std::wstring hash_str = url;
+	std::wstring hash_str = m_url;
 	if (post_data)
 		hash_str += utf8_to_utf16(std::string(post_data));
 
-	ATLTRACE(L"\ndownload url: %s\n", url.c_str());
+	ATLTRACE(L"\ndownload url: %s\n", m_url.c_str());
 
 	const auto& cache_file = GetCachedPath(hash_str);
 	if (!CheckIsCacheExpired(cache_file))
@@ -142,7 +141,7 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 	do
 	{
 		CrackedUrl cracked;
-		if (!cracked.CrackUrl(url))
+		if (!cracked.CrackUrl(m_url))
 		{
 			m_error_message += L"Error: Failed to parse url";
 			break;
@@ -289,9 +288,39 @@ bool CUrlDownload::DownloadFile(const std::wstring& url,
 				}
 
 				case 200:
+					m_max_redirect = 5;
 					bResults = true;
 					bRepeat = false;
 					break;
+
+				case 301:
+				case 302:
+				{
+					--m_max_redirect;
+					if (m_max_redirect <= 0)
+					{
+						return false;
+					}
+
+					DWORD dwBuffer = 0;
+					WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_RAW_HEADERS_CRLF, nullptr, nullptr, &dwBuffer, nullptr);
+					std::basic_string<wchar_t> chData;
+					chData.resize(dwBuffer / 2);
+					wchar_t* chBuf = &chData[0];
+					WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_RAW_HEADERS_CRLF, nullptr, (LPVOID)chBuf, &dwBuffer, nullptr);
+					const auto& lines = utils::regex_split(chData, L"\r\n");
+					boost::wregex re(LR"(^Location:\s(.+)$)");
+					boost::wsmatch m;
+					for (const auto& line : lines)
+					{
+						if (boost::regex_match(line, m, re))
+						{
+							m_url = m[1].str();
+							return DownloadFile(vData, pHeaders, verb_post, post_data);
+						}
+					}
+					break;
+				}
 
 				case 304:
 					bResults = false;

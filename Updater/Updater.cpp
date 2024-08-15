@@ -252,7 +252,8 @@ static int check_for_update(UpdateInfo& info)
 {
 	LogProtocol("Try to download update info...");
 	utils::CUrlDownload dl;
-	if (!dl.DownloadFile(fmt::format(L"{:s}/{:s}", info.server, utils::UPDATE_NAME), info.update_info))
+	dl.SetUrl(fmt::format(L"{:s}/{:s}", info.server, utils::UPDATE_NAME));
+	if (!dl.DownloadFile(info.update_info))
 	{
 		LogProtocol(fmt::format(L"{:s}", dl.GetLastErrorMessage()));
 		return err_download_info; // Unable to download update info!
@@ -294,9 +295,9 @@ static int download_update(UpdateInfo& info)
 			}
 
 			std::stringstream file_data;
-			const auto& url = fmt::format(L"{:s}/{:s}/{:s}", info.server, info.version, item.name);
-			LogProtocol(fmt::format(L"download: {:s}", url));
-			if (!dl.DownloadFile(url, file_data))
+			dl.SetUrl(fmt::format(L"{:s}/{:s}/{:s}", info.server, info.version, item.name));
+			LogProtocol(dl.GetUrl());
+			if (!dl.DownloadFile(file_data))
 			{
 				ret = err_download_pkg; // Unable to download update package!
 				LogProtocol(fmt::format(L"{:s}", dl.GetLastErrorMessage()));

@@ -372,11 +372,12 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 	if (file_fmt == SevenZip::CompressionFormat::Unknown)
 		return false;
 
-	auto cache_file = utils::CUrlDownload::GetCachedPath(internal_epg_url);
+	const auto& real_url = m_dl.GetUrl();
+	auto cache_file = utils::CUrlDownload::GetCachedPath(real_url);
 	if (file_fmt == SevenZip::CompressionFormat::GZip || file_fmt == SevenZip::CompressionFormat::Zip)
 	{
 		std::vector<char> buffer;
-		const auto& unpacked_path = utils::CUrlDownload::GetCachedPath(internal_epg_url.substr(0, internal_epg_url.length() - 3));
+		const auto& unpacked_path = utils::CUrlDownload::GetCachedPath(real_url.substr(0, real_url.length() - 3));
 		if (m_dl.CheckIsCacheExpired(unpacked_path))
 		{
 			auto& extractor = theApp.m_archiver.GetExtractor();

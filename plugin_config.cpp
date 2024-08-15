@@ -156,7 +156,8 @@ bool plugin_config::download_url(const std::wstring& url,
 {
 	m_dl.SetUserAgent(get_user_agent());
 	m_dl.SetCacheTtl(cache_ttl);
-	return m_dl.DownloadFile(url, vData, pHeaders, verb_post, post_data);
+	m_dl.SetUrl(url);
+	return m_dl.DownloadFile(vData, pHeaders, verb_post, post_data);
 }
 
 bool plugin_config::save_plugin_parameters(const std::wstring& filename, const std::wstring& parent_name, bool use_full_path/* = false*/)

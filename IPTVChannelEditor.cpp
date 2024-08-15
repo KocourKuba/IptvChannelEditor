@@ -1698,7 +1698,8 @@ BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 		CWaitCursor cur;
 		std::stringstream data;
 		utils::CUrlDownload dl;
-		if (dl.DownloadFile(fullPath, data))
+		dl.SetUrl(fullPath);
+		if (dl.DownloadFile(data))
 		{
 			// Still not clear if this is making a copy internally
 			auto view = data.rdbuf()->_Get_buffer_view();
