@@ -89,6 +89,7 @@ static std::vector<std::pair<PluginType, std::string>> s_all_plugins = {
 	{ PluginType::enIptvBest,   "iptvbest"   },
 	{ PluginType::enUspeh,      "uspeh"      },
 	{ PluginType::enNasharu,    "nasharu"    },
+	{ PluginType::enOttPub,     "ottpub"     },
 	{ PluginType::enCustom,     "custom"     },
 };
 
@@ -223,12 +224,12 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 
 	if (!dev)
 	{
-		const auto& url = fmt::format(L"{:s}/editor/configs?ver={:d}.{:d}.{:d}", utils::utf8_to_utf16(g_szServerPath), MAJOR, MINOR, BUILD);
 		utils::CUrlDownload dl;
+		dl.SetUrl(fmt::format(L"{:s}/editor/configs?ver={:d}.{:d}.{:d}", utils::utf8_to_utf16(g_szServerPath), MAJOR, MINOR, BUILD));
 		dl.SetUserAgent(fmt::format(L"IPTV Channel Editor/{:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
 		dl.SetCacheTtl(0);
 
-		if (!dl.DownloadFile(url, data))
+		if (!dl.DownloadFile(data))
 		{
 			data.clear();
 		}
