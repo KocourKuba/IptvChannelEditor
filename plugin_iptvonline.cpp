@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE.
 #include "AccountSettings.h"
 
 #include "UtilsLib\utils.h"
+#include "UtilsLib\md5.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,12 +48,12 @@ static constexpr const char* client_id = "TestAndroidAppV0";
 static constexpr const char* client_secret = "kshdiouehruyiwuresuygr736t4763b7637";
 static constexpr const char* device_id = "IPTV Channel Editor " STRPRODUCTVER;
 
-static constexpr auto SESSION_TOKEN = L"session_token";
-
 bool plugin_iptvonline::get_api_token(TemplateParams& params)
 {
-	const auto& session_token = get_file_cookie(SESSION_TOKEN);
+	session_token_file = utils::utf8_to_utf16(fmt::format("session_token_{:s}",
+														  utils::md5_hash_hex(params.creds.login + utils::md5_hash_hex(params.creds.password))));
 
+	const auto& session_token = get_file_cookie(session_token_file);
 	nlohmann::json json_request;
 	std::wstring url;
 	if (session_token.empty() && !params.creds.token.empty())
@@ -90,7 +91,7 @@ bool plugin_iptvonline::get_api_token(TemplateParams& params)
 			JSON_ALL_TRY;
 			{
 				const auto& parsed_json = nlohmann::json::parse(data.str());
-				set_file_cookie(SESSION_TOKEN,
+				set_file_cookie(session_token_file,
 								utils::get_json_string("access_token", parsed_json),
 								utils::get_json_int("expires_time", parsed_json));
 				params.creds.token = utils::get_json_string("refresh_token", parsed_json);
@@ -274,8 +275,8 @@ void plugin_iptvonline::parse_vod(const CThreadConfig& config)
 	all_category->name = all_name;
 	categories->set_back(all_name, all_category);
 
-	collect_movies(L"movies", L"Movies", config, categories);
-	collect_movies(L"serials", L"Serials", config, categories, true);
+	collect_movies(L"movie", L"Movies", config, categories);
+	collect_movies(L"serial", L"Serials", config, categories, true);
 
 	if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
 	{
@@ -414,7 +415,7 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 	auto movie_category = std::make_shared<vod_category>(id);
 	movie_category->name = category_name;
 
-	std::wstring cat_url = fmt::format(L"{:s}/{:s}/?limit=100&page=1", get_vod_url(config.m_params), id);
+	std::wstring cat_url = fmt::format(L"{:s}/movies/?limit=100&page=1&category={:s}", get_vod_url(config.m_params), id);
 	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
 	const auto& meta_info_json = server_request(cat_url, cache_ttl);
 
@@ -437,7 +438,7 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 	{
 		if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 
-		cat_url = fmt::format(L"{:s}/{:s}/?limit=100&page={:d}", config.m_url, movie_category->id, page);
+		cat_url = fmt::format(L"{:s}/movies/?limit=100&page={:d}&category={:s}", config.m_url, page, id);
 		nlohmann::json movies_json = server_request(cat_url, cache_ttl);
 		if (movies_json.empty() || !movies_json.contains("data") || !movies_json["data"].contains("items"))
 		{
@@ -504,7 +505,7 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 
 nlohmann::json plugin_iptvonline::server_request(const std::wstring& url, int cache_ttl, bool web_post /*= false*/, const nlohmann::json& post_data /*= {}*/)
 {
-	const auto& session_token = get_file_cookie(SESSION_TOKEN);
+	const auto& session_token = get_file_cookie(session_token_file);
 	if (!session_token.empty())
 	{
 		std::vector<std::string> headers;
@@ -514,8 +515,13 @@ nlohmann::json plugin_iptvonline::server_request(const std::wstring& url, int ca
 
 		CWaitCursor cur;
 		std::stringstream data;
-		const auto& post = post_data.dump();
-		if (download_url(url, data, cache_ttl, &headers, web_post, post.c_str()))
+		std::string post;
+		if (!post_data.empty())
+		{
+			post = post_data.dump();
+		}
+
+		if (download_url(url, data, cache_ttl, &headers, web_post, post.empty() ? nullptr : post.c_str()))
 		{
 			JSON_ALL_TRY;
 			{

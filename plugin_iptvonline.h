@@ -49,4 +49,6 @@ private:
 								  int cache_ttl = 0,
 								  bool web_post = false,
 								  const nlohmann::json& post_data = {});
+
+	std::wstring session_token_file;
 };
