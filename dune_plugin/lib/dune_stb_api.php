@@ -110,31 +110,31 @@ if (!defined('GUI_EVENT_DISCRETE_POWER_OFF')) define('GUI_EVENT_DISCRETE_POWER_O
 
 # Dune colors const's.
 # Common:
-const DEF_LABEL_TEXT_COLOR_BLACK        = 0;  #0x000000	Black						IPTV plugin playback time and number of EPG item
-const DEF_LABEL_TEXT_COLOR_BLUE         = 1;  #0x0000a0	Blue						unknown
-const DEF_LABEL_TEXT_COLOR_PALEGREEN    = 2;  #0xc0e0c0	Light light grin			unknown
-const DEF_LABEL_TEXT_COLOR_LIGHTBLUE    = 3;  #0xa0c0ff	Light blue					unknown
-const DEF_LABEL_TEXT_COLOR_RED          = 4;  #0xff4040	Red							Symbol R Recorded Channel Kartina TV
-const DEF_LABEL_TEXT_COLOR_LIMEGREEN    = 5;  #0xc0ff40	Light green					unknown
-const DEF_LABEL_TEXT_COLOR_GOLD         = 6;  #0xffe040	Light yellow				unknown
-const DEF_LABEL_TEXT_COLOR_SILVER       = 7;  #0xc0c0c0	Light grey					File browser (right sub description)
-const DEF_LABEL_TEXT_COLOR_GRAY         = 8;  #0x808080	Grey						IPTV plugin playback, categories
-const DEF_LABEL_TEXT_COLOR_VIOLET       = 9;  #0x4040c0	Violet						unknown
-const DEF_LABEL_TEXT_COLOR_GREEN        = 10; #0x40ff40	Green						VOD description rating(IMDB..)
-const DEF_LABEL_TEXT_COLOR_TURQUOISE    = 11; #0x40ffff	Cyan						unknown
-const DEF_LABEL_TEXT_COLOR_ORANGE       = 12; #0xff8040	Orange						unknown
-const DEF_LABEL_TEXT_COLOR_MAGENTA      = 13; #0xff40ff	Purple						unknown
-const DEF_LABEL_TEXT_COLOR_LIGHTYELLOW  = 14; #0xffff40	Light yellow				Widget(time, temp), path (last item), messages, IPTV playback (channels number, )
-const DEF_LABEL_TEXT_COLOR_WHITE        = 15; #0xffffe0	White						Main color, widget, combobox etc
+const DEF_LABEL_TEXT_COLOR_BLACK = 0;  #0x000000	Black						IPTV plugin playback time and number of EPG item
+const DEF_LABEL_TEXT_COLOR_BLUE = 1;  #0x0000a0	Blue						unknown
+const DEF_LABEL_TEXT_COLOR_PALEGREEN = 2;  #0xc0e0c0	Light light grin			unknown
+const DEF_LABEL_TEXT_COLOR_LIGHTBLUE = 3;  #0xa0c0ff	Light blue					unknown
+const DEF_LABEL_TEXT_COLOR_RED = 4;  #0xff4040	Red							Symbol R Recorded Channel Kartina TV
+const DEF_LABEL_TEXT_COLOR_LIMEGREEN = 5;  #0xc0ff40	Light green					unknown
+const DEF_LABEL_TEXT_COLOR_GOLD = 6;  #0xffe040	Light yellow				unknown
+const DEF_LABEL_TEXT_COLOR_SILVER = 7;  #0xc0c0c0	Light grey					File browser (right sub description)
+const DEF_LABEL_TEXT_COLOR_GRAY = 8;  #0x808080	Grey						IPTV plugin playback, categories
+const DEF_LABEL_TEXT_COLOR_VIOLET = 9;  #0x4040c0	Violet						unknown
+const DEF_LABEL_TEXT_COLOR_GREEN = 10; #0x40ff40	Green						VOD description rating(IMDB..)
+const DEF_LABEL_TEXT_COLOR_TURQUOISE = 11; #0x40ffff	Cyan						unknown
+const DEF_LABEL_TEXT_COLOR_ORANGE = 12; #0xff8040	Orange						unknown
+const DEF_LABEL_TEXT_COLOR_MAGENTA = 13; #0xff40ff	Purple						unknown
+const DEF_LABEL_TEXT_COLOR_LIGHTYELLOW = 14; #0xffff40	Light yellow				Widget(time, temp), path (last item), messages, IPTV playback (channels number, )
+const DEF_LABEL_TEXT_COLOR_WHITE = 15; #0xffffe0	White						Main color, widget, combobox etc
 # Extra:
-const DEF_LABEL_TEXT_COLOR_DARKGRAY     = 16; #0x404040	Dark grey					Color buttons,
-const DEF_LABEL_TEXT_COLOR_DIMGRAY      = 17; #0xaaaaa0	Grey						Some VOD description text
-const DEF_LABEL_TEXT_COLOR_YELLOW       = 18; #0xffff00	Yellow						VOD descr
-const DEF_LABEL_TEXT_COLOR_LIGHTGREEN   = 19; #0x50ff50	Green						VOD descr
-const DEF_LABEL_TEXT_COLOR_SKYBLUE      = 20; #0x5080ff	Blue						VOD descr
-const DEF_LABEL_TEXT_COLOR_CORAL        = 21; #0xff5030	Light red					VOD descr
-const DEF_LABEL_TEXT_COLOR_DARKGRAY2    = 22; #0x404040	Dark grey					VOD descr
-const DEF_LABEL_TEXT_COLOR_GAINSBORO    = 23; #0xe0e0e0	Light light light grey		P+ P-
+const DEF_LABEL_TEXT_COLOR_DARKGRAY = 16; #0x404040	Dark grey					Color buttons,
+const DEF_LABEL_TEXT_COLOR_DIMGRAY = 17; #0xaaaaa0	Grey						Some VOD description text
+const DEF_LABEL_TEXT_COLOR_YELLOW = 18; #0xffff00	Yellow						VOD descr
+const DEF_LABEL_TEXT_COLOR_LIGHTGREEN = 19; #0x50ff50	Green						VOD descr
+const DEF_LABEL_TEXT_COLOR_SKYBLUE = 20; #0x5080ff	Blue						VOD descr
+const DEF_LABEL_TEXT_COLOR_CORAL = 21; #0xff5030	Light red					VOD descr
+const DEF_LABEL_TEXT_COLOR_DARKGRAY2 = 22; #0x404040	Dark grey					VOD descr
+const DEF_LABEL_TEXT_COLOR_GAINSBORO = 23; #0xe0e0e0	Light light light grey		P+ P-
 
 const CMD_STATUS_GREP = '" /firmware/ext_command/cgi-bin/do | grep "command_status" | sed -n "s|^<param name=\"command_status\" value=\"(.*)\"/>|\1|p"';
 
@@ -150,7 +150,7 @@ class LogSeverity
 
 class SetupControlSwitchDefs
 {
-    const switch_on  = 'yes';
+    const switch_on = 'yes';
     const switch_off = 'no';
 
     public static $on_off_translated = array
@@ -218,67 +218,67 @@ class DuneParamsDeintMode
 class DuneIrControl
 {
     public static $key_codes = array(
-        GUI_EVENT_KEY_VENDOR            => '0',
-        GUI_EVENT_KEY_ENTER             => 'EB14BF00',
-        GUI_EVENT_KEY_PLAY              => 'B748BF00',
-        GUI_EVENT_KEY_A_RED             => 'BF40BF00',
-        GUI_EVENT_KEY_B_GREEN           => 'E01FBF00',
-        GUI_EVENT_KEY_C_YELLOW          => 'FF00BF00',
-        GUI_EVENT_KEY_D_BLUE            => 'BE41BF00',
-        GUI_EVENT_KEY_POPUP_MENU        => 'F807BF00',
-        GUI_EVENT_KEY_INFO              => 'AF50BF00',
-        GUI_EVENT_KEY_LEFT              => 'E817BF00',
-        GUI_EVENT_KEY_RIGHT             => 'E718BF00',
-        GUI_EVENT_KEY_UP                => 'EA15BF00',
-        GUI_EVENT_KEY_DOWN              => 'E916BF00',
-        GUI_EVENT_KEY_P_PLUS            => 'B44BBF00',
-        GUI_EVENT_KEY_P_MINUS           => 'B34CBF00',
-        GUI_EVENT_KEY_NEXT              => 'E21DBF00',
-        GUI_EVENT_KEY_PREV              => 'B649BF00',
-        GUI_EVENT_KEY_SETUP             => 'B14EBF00',
-        GUI_EVENT_KEY_RETURN            => 'FB04BF00',
-        GUI_EVENT_KEY_SELECT            => 'BD42BF00',
-        GUI_EVENT_KEY_CLEAR             => 'FA05BF00',
-        GUI_EVENT_KEY_PAUSE             => 'E11EBF00',
-        GUI_EVENT_KEY_FWD               => 'E41BBF00',
-        GUI_EVENT_KEY_REW               => 'E31CBF00',
-        GUI_EVENT_KEY_SLOW              => 'E51ABF00',
-        GUI_EVENT_KEY_STOP              => 'E619BF00',
-        GUI_EVENT_KEY_TOP_MENU          => 'AE51BF00',
-        GUI_EVENT_KEY_POWER             => 'BC43BF00',
-        GUI_EVENT_KEY_EJECT             => 'EF10BF00',
-        GUI_EVENT_KEY_MODE              => 'BA45BF00',
-        GUI_EVENT_KEY_MUTE              => 'B946BF00',
-        GUI_EVENT_KEY_V_PLUS            => 'AD52BF00',
-        GUI_EVENT_KEY_V_MINUS           => 'AC53BF00',
-        GUI_EVENT_KEY_SEARCH            => 'F906BF00',
-        GUI_EVENT_KEY_ZOOM              => 'FD02BF00',
-        GUI_EVENT_KEY_SUBTITLE          => 'AB54BF00',
-        GUI_EVENT_KEY_REPEAT            => 'B24DBF00',
-        GUI_EVENT_KEY_AUDIO             => 'BB44BF00',
-        GUI_EVENT_KEY_REC               => '9F60BF00',
-        GUI_EVENT_KEY_DUNE              => '9E61BF00',
-        GUI_EVENT_KEY_URL               => '9D62BF00',
-        GUI_EVENT_KEY_0                 => 'F50ABF00',
-        GUI_EVENT_KEY_1                 => 'F40BBF00',
-        GUI_EVENT_KEY_2                 => 'F30CBF00',
-        GUI_EVENT_KEY_3                 => 'F20DBF00',
-        GUI_EVENT_KEY_4                 => 'F10EBF00',
-        GUI_EVENT_KEY_5                 => 'F00FBF00',
-        GUI_EVENT_KEY_6                 => 'FE01BF00',
-        GUI_EVENT_KEY_7                 => 'EE11BF00',
-        GUI_EVENT_KEY_8                 => 'ED12BF00',
-        GUI_EVENT_KEY_9                 => 'EC13BF00',
-        GUI_EVENT_KEY_SHUFFLE           => 'B847BF00',
-        GUI_EVENT_KEY_KEYBRD            => 'FC03BF00',
-        GUI_EVENT_KEY_MOUSE             => 'B04FBF00',
-        GUI_EVENT_KEY_RECENT            => '9E61BF00',
-        GUI_EVENT_KEY_TV                => '9C63BF00',
-        GUI_EVENT_KEY_MOVIES            => 'B847BF00',
-        GUI_EVENT_KEY_MUSIC             => 'A758BF00',
-        GUI_EVENT_KEY_ANGLE             => 'B24DBF00',
-        GUI_EVENT_DISCRETE_POWER_ON     => 'A05FBF00',
-        GUI_EVENT_DISCRETE_POWER_OFF    => 'A15EBF00');
+        GUI_EVENT_KEY_VENDOR => '0',
+        GUI_EVENT_KEY_ENTER => 'EB14BF00',
+        GUI_EVENT_KEY_PLAY => 'B748BF00',
+        GUI_EVENT_KEY_A_RED => 'BF40BF00',
+        GUI_EVENT_KEY_B_GREEN => 'E01FBF00',
+        GUI_EVENT_KEY_C_YELLOW => 'FF00BF00',
+        GUI_EVENT_KEY_D_BLUE => 'BE41BF00',
+        GUI_EVENT_KEY_POPUP_MENU => 'F807BF00',
+        GUI_EVENT_KEY_INFO => 'AF50BF00',
+        GUI_EVENT_KEY_LEFT => 'E817BF00',
+        GUI_EVENT_KEY_RIGHT => 'E718BF00',
+        GUI_EVENT_KEY_UP => 'EA15BF00',
+        GUI_EVENT_KEY_DOWN => 'E916BF00',
+        GUI_EVENT_KEY_P_PLUS => 'B44BBF00',
+        GUI_EVENT_KEY_P_MINUS => 'B34CBF00',
+        GUI_EVENT_KEY_NEXT => 'E21DBF00',
+        GUI_EVENT_KEY_PREV => 'B649BF00',
+        GUI_EVENT_KEY_SETUP => 'B14EBF00',
+        GUI_EVENT_KEY_RETURN => 'FB04BF00',
+        GUI_EVENT_KEY_SELECT => 'BD42BF00',
+        GUI_EVENT_KEY_CLEAR => 'FA05BF00',
+        GUI_EVENT_KEY_PAUSE => 'E11EBF00',
+        GUI_EVENT_KEY_FWD => 'E41BBF00',
+        GUI_EVENT_KEY_REW => 'E31CBF00',
+        GUI_EVENT_KEY_SLOW => 'E51ABF00',
+        GUI_EVENT_KEY_STOP => 'E619BF00',
+        GUI_EVENT_KEY_TOP_MENU => 'AE51BF00',
+        GUI_EVENT_KEY_POWER => 'BC43BF00',
+        GUI_EVENT_KEY_EJECT => 'EF10BF00',
+        GUI_EVENT_KEY_MODE => 'BA45BF00',
+        GUI_EVENT_KEY_MUTE => 'B946BF00',
+        GUI_EVENT_KEY_V_PLUS => 'AD52BF00',
+        GUI_EVENT_KEY_V_MINUS => 'AC53BF00',
+        GUI_EVENT_KEY_SEARCH => 'F906BF00',
+        GUI_EVENT_KEY_ZOOM => 'FD02BF00',
+        GUI_EVENT_KEY_SUBTITLE => 'AB54BF00',
+        GUI_EVENT_KEY_REPEAT => 'B24DBF00',
+        GUI_EVENT_KEY_AUDIO => 'BB44BF00',
+        GUI_EVENT_KEY_REC => '9F60BF00',
+        GUI_EVENT_KEY_DUNE => '9E61BF00',
+        GUI_EVENT_KEY_URL => '9D62BF00',
+        GUI_EVENT_KEY_0 => 'F50ABF00',
+        GUI_EVENT_KEY_1 => 'F40BBF00',
+        GUI_EVENT_KEY_2 => 'F30CBF00',
+        GUI_EVENT_KEY_3 => 'F20DBF00',
+        GUI_EVENT_KEY_4 => 'F10EBF00',
+        GUI_EVENT_KEY_5 => 'F00FBF00',
+        GUI_EVENT_KEY_6 => 'FE01BF00',
+        GUI_EVENT_KEY_7 => 'EE11BF00',
+        GUI_EVENT_KEY_8 => 'ED12BF00',
+        GUI_EVENT_KEY_9 => 'EC13BF00',
+        GUI_EVENT_KEY_SHUFFLE => 'B847BF00',
+        GUI_EVENT_KEY_KEYBRD => 'FC03BF00',
+        GUI_EVENT_KEY_MOUSE => 'B04FBF00',
+        GUI_EVENT_KEY_RECENT => '9E61BF00',
+        GUI_EVENT_KEY_TV => '9C63BF00',
+        GUI_EVENT_KEY_MOVIES => 'B847BF00',
+        GUI_EVENT_KEY_MUSIC => 'A758BF00',
+        GUI_EVENT_KEY_ANGLE => 'B24DBF00',
+        GUI_EVENT_DISCRETE_POWER_ON => 'A05FBF00',
+        GUI_EVENT_DISCRETE_POWER_OFF => 'A15EBF00');
 }
 
 
@@ -286,13 +286,143 @@ class DuneIrControl
 # System functions
 ###############################################################################
 
+function print_backtrace()
+{
+    hd_print("Back trace:");
+    foreach (debug_backtrace() as $f) {
+        hd_print("  - {$f['function']} at {$f['file']}:{$f['line']}");
+    }
+}
+
+/**
+ * provide a Java style exception trace
+ *
+ * @param Exception|Throwable $ex
+ * @param bool $as_string
+ * @param array|null $seen - array passed to recursive calls to accumulate trace lines already seen
+ *                leave as NULL when calling this function
+ * @return array|string of strings, one entry per trace line
+ */
+function backtrace_exception($ex, $as_string = false, $seen = null)
+{
+    $starter = $seen ? 'Caused by: ' : '';
+    $result = array();
+    if (!$seen) {
+        $seen = array();
+    }
+
+    $trace = $ex->getTrace();
+    $prev = $ex->getPrevious();
+    $result[] = sprintf('%s%s: %s', $starter, get_class($ex), $ex->getMessage());
+    $file = $ex->getFile();
+    $line = $ex->getLine();
+    while (true) {
+        $current = "$file:$line";
+        if (is_array($seen) && in_array($current, $seen)) {
+            $result[] = sprintf(' ... %d more', count($trace) + 1);
+            break;
+        }
+        $result[] = sprintf(' at %s%s%s(%s%s%s)',
+            count($trace) && array_key_exists('class', $trace[0]) ? str_replace('\\', '.', $trace[0]['class']) : '',
+            count($trace) && array_key_exists('class', $trace[0]) && array_key_exists('function', $trace[0]) ? '.' : '',
+            count($trace) && array_key_exists('function', $trace[0]) ? str_replace('\\', '.', $trace[0]['function']) : '(main)',
+            $line === null ? $file : basename($file),
+            $line === null ? '' : ':',
+            $line === null ? '' : $line);
+        if (is_array($seen))
+            $seen[] = "$file:$line";
+        if (!count($trace))
+            break;
+        $file = array_key_exists('file', $trace[0]) ? $trace[0]['file'] : 'Unknown Source';
+        $line = array_key_exists('file', $trace[0]) && array_key_exists('line', $trace[0]) && $trace[0]['line'] ? $trace[0]['line'] : null;
+        array_shift($trace);
+    }
+
+    if ($as_string) {
+        $result = implode(PHP_EOL, $result);
+
+        if ($prev) {
+            $result .= PHP_EOL . backtrace_exception($prev, $as_string, $seen);
+        }
+    } else if ($prev) {
+        $result = array_merge($result, backtrace_exception($prev, $as_string, $seen));
+    }
+
+    return $result;
+}
+
+/**
+ * print exception backtrace to log
+ *
+ * @param Exception|Throwable $ex
+ * @param bool $as_string
+ */
+function print_backtrace_exception($ex, $as_string = false)
+{
+    if ($as_string) {
+        hd_debug_print(backtrace_exception($ex, $as_string));
+    } else {
+        foreach (backtrace_exception($ex, $as_string) as $line) {
+            hd_debug_print($line);
+        }
+    }
+}
+
+/**
+ * @param mixed $val
+ * @param bool $is_debug
+ * @return void
+ */
+function hd_debug_print($val = null, $is_debug = false)
+{
+    if ($is_debug && !LogSeverity::$is_debug)
+        return;
+
+    $bt = debug_backtrace();
+    $caller = array_shift($bt);
+    $caller_name = array_shift($bt);
+    $prefix = "(" . str_pad($caller['line'], 4) . ") ";
+    if (isset($caller_name['class'])) {
+        if (!is_null($val)) {
+            $val = str_replace(array('"{', '}"', '\"'), array('{', '}', '"'), (string)raw_json_encode($val));
+        }
+        $prefix .= "{$caller_name['class']}::";
+    }
+    $prefix .= "{$caller_name['function']}(): ";
+
+    if ($val === null) {
+        $val = '';
+        $parent_caller = array_shift($bt);
+        if (!isset($caller_name['line'])) {
+            $prefix .= "unknown line: $caller ";
+            print_backtrace();
+        } else {
+            $prefix .= "called from: (" . str_pad($caller_name['line'], 4) . ") ";
+        }
+        if (isset($parent_caller['class'])) {
+            $prefix .= "{$parent_caller['class']}:";
+        }
+
+        $prefix .= "{$parent_caller['function']}(): ";
+    } else if (is_bool($val)) {
+        $val = $val ? 'true' : 'false';
+    }
+
+    hd_print($prefix . $val);
+}
+
+function hd_debug_print_separator()
+{
+    hd_print(str_repeat("-", 80));
+}
+
 /**
  * return is shell is APK.
  * @return bool
  */
 function is_apk()
 {
-    return (getenv("HD_APK") === '1');
+    return (bool)getenv("HD_APK");
 }
 
 /**
@@ -301,7 +431,7 @@ function is_apk()
  */
 function is_fw_apk()
 {
-    return (getenv("HD_FW_APK") === '1');
+    return (bool)getenv("HD_FW_APK");
 }
 
 /**
@@ -321,7 +451,7 @@ function get_platform_info()
 {
     static $platform = null;
 
-    if (is_null($platform)){
+    if (is_null($platform)) {
         if (is_apk()) {
             $platform['platform'] = 'android';
             if (is_fw_apk()) {
@@ -330,8 +460,8 @@ function get_platform_info()
                 $platform['type'] = 'apk';
             }
         } else {
-            $ini_arr = parse_ini_file('/tmp/run/versions.txt');
-            if (isset($ini_arr['platform_kind'])) {
+            $ini_arr = @parse_ini_file('/tmp/run/versions.txt');
+            if ($ini_arr !== false && isset($ini_arr['platform_kind'])) {
                 if ($ini_arr['platform_kind'] === 'android') {
                     $platform['platform'] = $ini_arr['platform_kind'];
                     if (isset($ini_arr['android_platform'])) {
@@ -350,6 +480,20 @@ function get_platform_info()
         }
     }
     return $platform;
+}
+
+function get_platform_kind()
+{
+    static $platform_kind = null;
+
+    if (is_null($platform_kind)) {
+        $v = get_platform_info();
+        if ($v['platform'] !== 'android') {
+            $platform_kind = $v['type'];
+        }
+    }
+
+    return $platform_kind;
 }
 
 function get_platform_curl()
@@ -443,7 +587,7 @@ function get_parsed_firmware_ver()
     //     'string' => '150729_0139_r10_js_stb_opera33',
     //     'build_date' => '150729',
     //     'build_number' => '0139',
-    //     'rev_literal => 'r',
+    //     'rev_literal => 'r' or 'b',
     //     'rev_number' => '10',
     //     'features' => 'js_stb_opera33',
     //	)
@@ -608,7 +752,7 @@ function is_android()
  * @return string
  * @throws Exception
  */
-function getAndroidTime ($format)
+function getAndroidTime($format)
 {
     $airDate = exec('date');
     $date = new DateTime($airDate);
@@ -726,7 +870,7 @@ function get_shell_exec($cmd)
 }
 
 /**
- * @param $key
+ * @param string $key
  * @return false|string|null
  */
 function send_ir_code($key)
@@ -740,7 +884,7 @@ function send_ir_code($key)
 }
 
 /**
- * @param $key
+ * @param string $key
  * @return string
  */
 function send_ir_code_return_status($key)
@@ -787,7 +931,7 @@ function get_standby_mode()
 }
 
 /**
- * @param $mode
+ * @param int $mode
  * @return string
  */
 function set_standby_mode($mode)
@@ -880,7 +1024,7 @@ function get_speed()
 }
 
 /**
- * @param $value
+ * @param int $value
  * @return string
  */
 function set_speed($value)
@@ -924,7 +1068,7 @@ function get_position_seconds()
 }
 
 /**
- * @param $seconds
+ * @param int $seconds
  * @return string
  */
 function set_position_seconds($seconds)
@@ -935,8 +1079,8 @@ function set_position_seconds($seconds)
 }
 
 /**
- * @param $speed
- * @param $seconds
+ * @param string $speed
+ * @param int $seconds
  * @return string
  */
 function set_speed_and_position_seconds($speed, $seconds)
@@ -1390,7 +1534,7 @@ function get_video_zoom()
 }
 
 /**
- * @param $value string
+ * @param string $value
  * @return string
  */
 function set_video_zoom($value)
@@ -1405,7 +1549,7 @@ function set_video_zoom($value)
 }
 
 /**
- * @param $preset DuneVideoZoomPresets::const
+ * @param DuneVideoZoomPresets::const $preset
  * @return string
  */
 function get_zoom_value($preset)
@@ -1453,6 +1597,15 @@ function get_plugin_name()
  * @param string $image
  * @return string
  */
+function get_image_path($image = '')
+{
+    return get_install_path("img" . DIRECTORY_SEPARATOR . ltrim($image, DIRECTORY_SEPARATOR));
+}
+
+/**
+ * @param string $image
+ * @return string
+ */
 function get_cached_image_path($image = '')
 {
     $cache_image_path = get_data_path(CACHED_IMAGE_SUBDIR);
@@ -1474,32 +1627,18 @@ function get_plugin_manifest_info()
             throw new Exception("Empty plugin manifest!");
         }
 
-        $direct_links = array();
-        foreach ($xml->channels_direct_links->children() as $links_info) {
-            if ($links_info->getName() !== 'links_info') {
-                $error_string = __METHOD__ . ": Error: unexpected node '{$links_info->getName()}'. Expected: 'links_info'";
-                hd_debug_print($error_string);
-            }
-
-            $direct_links[(string)$links_info->list] = (string)$links_info->link;
-        }
-
-        $result['app_type_name'] = (string)$xml->type_name;
         $result['app_name'] = (string)$xml->name;
         $result['app_caption'] = (string)$xml->caption;
         $result['app_class_name'] = (string)$xml->class_name;
         $result['app_version'] = (string)$xml->version;
+        $ver = explode('.', $result['app_version']);
+        $result['app_base_version'] = "$ver[0].$ver[1]";
         $result['app_version_idx'] = isset($xml->version_index) ? (string)$xml->version_index : '0';
         $result['app_release_date'] = (string)$xml->release_date;
-        $result['app_logo'] = (string)$xml->icon_url;
         $result['app_background'] = (string)$xml->background;
-        $result['app_ch_list_version'] = (string)$xml->list_version_support;
-        $result['app_channels_url_path'] = (string)$xml->channels_url_path;
-        $result['app_direct_links'] = $direct_links;
-        $result['app_update_path'] = (string)$xml->check_update->url;
         $result['app_manifest_path'] = $manifest_path;
 
-        foreach(func_get_args() as $node_name) {
+        foreach (func_get_args() as $node_name) {
             $result[$node_name] = json_decode(json_encode($xml->xpath("//$node_name")), true);
         }
     } catch (Exception $ex) {
@@ -1648,7 +1787,7 @@ function get_filename($path)
 # creating directories along the way
 function create_path($path, $dir_mode = 0777)
 {
-    if (!file_exists($path) && !mkdir($path, $dir_mode, true) && !is_dir($path)) {
+    if (!file_exists($path) && !@mkdir($path, $dir_mode, true) && !is_dir($path)) {
         hd_debug_print("Directory '$path' was not created");
         return false;
     }
@@ -1679,6 +1818,8 @@ function print_sysinfo()
     $platform = get_platform_info();
     $dns = get_dns_address();
     $values = curl_version();
+    $ext_curl = trim(shell_exec(get_platform_curl() . ' --version|grep curl'));
+
     $table = array(
         'Dune Product' => get_product_id(),
         'Dune Model' => get_dune_model(),
@@ -1689,7 +1830,9 @@ function print_sysinfo()
         'Dune IP Addr' => get_ip_address(),
         'Dune DNS servers' => $dns,
         'PHP Version' => PHP_VERSION,
+        'Plugin Memory' => ini_get('memory_limit'),
         'libCURL Version' => "{$values['version']} ({$values['ssl_version']})",
+        'CURL Version' => $ext_curl,
     );
 
     if (class_exists("SQLite3")) {
@@ -1711,7 +1854,8 @@ function print_sysinfo()
 /**
  * @return string Model name
  */
-function get_dune_model() {
+function get_dune_model()
+{
     static $models = array(
         // android models
         'boxy_apk' => 'Boxy',
@@ -1736,6 +1880,9 @@ function get_dune_model() {
         'tv175v' => 'Pro Vision 4K Solo',
         'tv175x' => 'RealBox 4K',
         'tv175y' => 'Real Vision 4K Plus',
+        'tv182a' => 'AV1 4K',
+        'tv184a' => 'Pro Vision 4K',
+        'tv188b' => 'Pro 8K Plus',
         'tv274a' => 'Sky 4K Plus',
         'tv288b' => 'Pro One 8K Plus',
         'tv292a' => 'Pro 4K',
@@ -1923,151 +2070,28 @@ function safe_merge_array($ar1, $ar2)
     return $ar1;
 }
 
-function print_backtrace()
-{
-    hd_print("Back trace:");
-    foreach (debug_backtrace() as $f) {
-        hd_print("  - {$f['function']} at {$f['file']}:{$f['line']}");
-    }
-}
-
-/**
- * provide a Java style exception trace
- *
- * @param Exception|Throwable $ex
- * @param bool $as_string
- * @param array|null $seen - array passed to recursive calls to accumulate trace lines already seen
- *                leave as NULL when calling this function
- * @return array|string of strings, one entry per trace line
- */
-function backtrace_exception($ex, $as_string = false, $seen = null) {
-    $starter = $seen ? 'Caused by: ' : '';
-    $result = array();
-    if (!$seen) {
-        $seen = array();
-    }
-
-    $trace  = $ex->getTrace();
-    $prev   = $ex->getPrevious();
-    $result[] = sprintf('%s%s: %s', $starter, get_class($ex), $ex->getMessage());
-    $file = $ex->getFile();
-    $line = $ex->getLine();
-    while (true) {
-        $current = "$file:$line";
-        if (is_array($seen) && in_array($current, $seen)) {
-            $result[] = sprintf(' ... %d more', count($trace)+1);
-            break;
-        }
-        $result[] = sprintf(' at %s%s%s(%s%s%s)',
-            count($trace) && array_key_exists('class', $trace[0]) ? str_replace('\\', '.', $trace[0]['class']) : '',
-            count($trace) && array_key_exists('class', $trace[0]) && array_key_exists('function', $trace[0]) ? '.' : '',
-            count($trace) && array_key_exists('function', $trace[0]) ? str_replace('\\', '.', $trace[0]['function']) : '(main)',
-            $line === null ? $file : basename($file),
-            $line === null ? '' : ':',
-            $line === null ? '' : $line);
-        if (is_array($seen))
-            $seen[] = "$file:$line";
-        if (!count($trace))
-            break;
-        $file = array_key_exists('file', $trace[0]) ? $trace[0]['file'] : 'Unknown Source';
-        $line = array_key_exists('file', $trace[0]) && array_key_exists('line', $trace[0]) && $trace[0]['line'] ? $trace[0]['line'] : null;
-        array_shift($trace);
-    }
-
-    if ($as_string) {
-        $result = implode(PHP_EOL, $result);
-
-        if ($prev) {
-            $result .= PHP_EOL . backtrace_exception($prev, $as_string, $seen);
-        }
-    } else if ($prev) {
-        $result = array_merge($result, backtrace_exception($prev, $as_string, $seen));
-    }
-
-    return $result;
-}
-
-/**
- * print exception backtrace to log
- *
- * @param Exception|Throwable $ex
- * @param bool $as_string
- */
-function print_backtrace_exception($ex, $as_string = false)
-{
-    if ($as_string) {
-        hd_debug_print(backtrace_exception($ex, $as_string));
-    } else {
-        foreach (backtrace_exception($ex, $as_string) as $line) {
-            hd_debug_print($line);
-        }
-    }
-}
-
-/**
- * @param mixed $val
- * @param bool $is_debug
- * @return void
- */
-function hd_debug_print($val = null, $is_debug = false)
-{
-    if ($is_debug && !LogSeverity::$is_debug)
-        return;
-
-    $bt = debug_backtrace();
-    $caller = array_shift($bt);
-    $caller_name = array_shift($bt);
-    $prefix = "(" . str_pad($caller['line'], 4) . ") ";
-    if (isset($caller_name['class'])) {
-        if (!is_null($val)) {
-            $val = str_replace(array('"{', '}"', '\"'), array('{', '}', '"'), (string)raw_json_encode($val));
-        }
-        $prefix .= "{$caller_name['class']}::";
-    }
-    $prefix .= "{$caller_name['function']}(): ";
-
-    if ($val === null) {
-        $val = '';
-        $parent_caller = array_shift($bt);
-        $prefix .= "called from: (". str_pad($caller_name['line'], 4) . ") ";
-        if (isset($parent_caller['class'])) {
-            $prefix .= "{$parent_caller['class']}:";
-        }
-
-        $prefix .= "{$parent_caller['function']}(): ";
-    }
-    else if (is_bool($val)) {
-        $val = $val ? 'true' : 'false';
-    }
-
-    hd_print($prefix . $val);
-}
-
-function hd_debug_print_separator()
-{
-    hd_print(str_repeat("-", 80));
-}
-
 function escaped_raw_json_encode($param)
 {
     return str_replace('"', '\"', raw_json_encode($param));
 }
 
-function decode_html_entity($string)
+function raw_json_encode($arr)
 {
     $pattern = "/\\\\u([0-9a-fA-F]{4})/";
     $callback = function ($m) {
         return html_entity_decode("&#x$m[1];", ENT_QUOTES, 'UTF-8');
     };
 
-    return preg_replace_callback($pattern, $callback, $string);
+    return preg_replace_callback($pattern, $callback, json_encode($arr));
 }
 
-function raw_json_encode($arr)
-{
-    return decode_html_entity(json_encode($arr));
-}
-
+/**
+ * return wrapped string
+ *
+ * @param string $long_string
+ * @param int $max_chars
+ * @return string
+ */
 function wrap_string_to_lines($long_string, $max_chars)
 {
     $lines = array_slice(
@@ -2081,4 +2105,91 @@ function wrap_string_to_lines($long_string, $max_chars)
     );
 
     return implode(PHP_EOL, $lines);
+}
+
+function is_assoc_array($array)
+{
+    $keys = array_keys($array);
+    return $keys !== array_keys($keys);
+}
+
+function register_all_known_events($handler, &$actions)
+{
+    $all_events = array(
+        GUI_EVENT_KEY_NEXT,
+        GUI_EVENT_KEY_PREV,
+        GUI_EVENT_KEY_FIP_NEXT,
+        GUI_EVENT_KEY_FIP_PREV,
+        GUI_EVENT_KEY_SETUP,
+        GUI_EVENT_KEY_RETURN,
+        GUI_EVENT_KEY_SELECT,
+        GUI_EVENT_KEY_CLEAR,
+        GUI_EVENT_KEY_PAUSE,
+        GUI_EVENT_KEY_FWD,
+        GUI_EVENT_KEY_REW,
+        GUI_EVENT_KEY_SLOW,
+        GUI_EVENT_KEY_STOP,
+        GUI_EVENT_KEY_TOP_MENU,
+        GUI_EVENT_KEY_POWER,
+        GUI_EVENT_KEY_EJECT,
+        GUI_EVENT_KEY_MODE,
+        GUI_EVENT_KEY_VENDOR,
+        GUI_EVENT_KEY_SHUFFLE,
+        GUI_EVENT_KEY_MUSIC,
+        GUI_EVENT_KEY_MUTE,
+        GUI_EVENT_KEY_SEARCH,
+        GUI_EVENT_KEY_ZOOM,
+        GUI_EVENT_KEY_SUBTITLE,
+        GUI_EVENT_KEY_REPEAT,
+        GUI_EVENT_KEY_AUDIO,
+        GUI_EVENT_KEY_REC,
+        GUI_EVENT_KEY_DUNE,
+        GUI_EVENT_KEY_URL,
+        GUI_EVENT_UI_ACTION,
+        GUI_EVENT_TIMER,
+        GUI_EVENT_PLUGIN_ROWS_INFO_UPDATE,
+        GUI_EVENT_FOLDER_LEAVE,
+        GUI_EVENT_FOLDER_ENTER,
+        GUI_EVENT_FOLDER_RETURN_BACK,
+        GUI_EVENT_PLAYBACK_USER_ACTION,
+        GUI_EVENT_PLAYBACK_STATE_CHANGED,
+        GUI_EVENT_MENU_PLAYBACK_OSD_CLOSED,
+        GUI_EVENT_MENU_PLAYBACK_OSD_GOING_TO_OPEN,
+        GUI_EVENT_MENU_PLAYBACK_FINISH,
+        GUI_EVENT_MENU_EXT_APP_FINISH,
+        GUI_EVENT_WEB_BROWSER_FINISH,
+        GUI_EVENT_GOING_TO_UPDATE,
+        GUI_EVENT_GOING_TO_STOP,
+        GUI_EVENT_TOPMENU_POPUP_MENU,
+        GUI_EVENT_GOING_TO_RELOAD_ALL_FOLDERS,
+        GUI_EVENT_FAVORITES_UPDATED,
+        GUI_EVENT_SHUTDOWN,
+    );
+
+    foreach ($all_events as $action) {
+        if (!isset($actions[$action])) {
+            hd_debug_print("register event: $action");
+            $actions[$action] = User_Input_Handler_Registry::create_action($handler, $action);
+        }
+    }
+}
+
+function dune_params_to_array($str)
+{
+    $params_array = array();
+    $dune_params = explode(',', $str);
+    foreach ($dune_params as $param) {
+        $param_pair = explode(':', $param);
+        if (empty($param_pair) || count($param_pair) < 2) continue;
+
+        $param_pair[0] = trim($param_pair[0]);
+        if (strpos($param_pair[1], ",,") !== false) {
+            $param_pair[1] = str_replace(array(",,", ",", "%2C%2C"), array("%2C%2C", ",,", ",,"), $param_pair[1]);
+        } else {
+            $param_pair[1] = str_replace(",", ",,", $param_pair[1]);
+        }
+
+        $params_array[$param_pair[0]] = $param_pair[1];
+    }
+    return $params_array;
 }
