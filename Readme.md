@@ -45,6 +45,9 @@
 38. [TopIPTV](https://topiptv.info/)
 39. [IPTV Best](https://ip-tv.best/)
 40. [Uspeh TV](https://uspeh.tv/)
+41. [Peak TV](https://peaktv.info/)
+42. [Nasharu TV](https://nasharu.tv/)
+43. [Ott Pub](https://ott.pub/)
 </details>
 
 ## License and copyright
