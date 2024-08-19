@@ -21,8 +21,8 @@ class tvclub_config extends default_config
             try {
                 $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/servers?token=$token";
-                $json = HD::decodeResponse(false, HD::http_download_https_proxy($url), true);
-                foreach ($json['servers'] as $item) {
+                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
+                foreach ($content['servers'] as $item) {
                     $this->servers[$item['id']] = $item['name'];
                 }
             } catch (Exception $ex) {
@@ -95,11 +95,11 @@ class tvclub_config extends default_config
             $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$token";
             // provider returns token used to download playlist
-            $json = HD::decodeResponse(false, HD::http_download_https_proxy($url), true);
-            if (!isset($json['account']['info']['login'])) {
+            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
+            if (!isset($content['account']['info']['login'])) {
                 throw new Exception("Account status unknown");
             }
-            $this->account_data = $json;
+            $this->account_data = $content;
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
             return false;

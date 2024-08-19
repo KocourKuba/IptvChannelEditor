@@ -962,7 +962,7 @@ class Default_Dune_Plugin implements DunePlugin
 
         $params = array(
             PARAM_HISTORY_PATH => PARAM_HISTORY_PATH,
-            PARAM_USE_HTTPS_PROXY => PARAM_USE_HTTPS_PROXY,
+            PARAM_USE_UPDATER_PROXY => PARAM_USE_UPDATER_PROXY,
             PARAM_STREAM_FORMAT => PARAM_STREAM_FORMAT,
             PARAM_CACHE_PATH => PARAM_CACHE_PATH,
             PARAM_EPG_CACHE_TTL => PARAM_EPG_CACHE_TTL,

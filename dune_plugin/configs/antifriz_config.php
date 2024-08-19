@@ -115,8 +115,7 @@ class antifriz_config extends default_config
     {
         $jsonItems = $this->execApiCommand($this->GetVodListUrl());
         if ($jsonItems === false) {
-            $logfile = file_get_contents(get_temp_path(HD::HTTPS_PROXY_LOG));
-            $exception_msg = "Ошибка чтения медиатеки!\n\n$logfile";
+            $exception_msg = "Ошибка чтения медиатеки!\n\n" . $this->curl_wrapper->get_raw_response_headers();
             hd_debug_print($exception_msg);
             HD::set_last_error("vod_last_error", $exception_msg);
             return false;

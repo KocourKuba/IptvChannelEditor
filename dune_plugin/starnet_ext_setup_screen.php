@@ -92,10 +92,10 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
 
         //////////////////////////////////////
         // https proxy settings
-        if (is_https_proxy_needs()) {
-            $use_proxy = $this->plugin->get_parameter(PARAM_USE_HTTPS_PROXY, SetupControlSwitchDefs::switch_off);
-            Control_Factory::add_image_button($defs, $this, null, PARAM_USE_HTTPS_PROXY,
-                TR::t('setup_https_proxy'), SetupControlSwitchDefs::$on_off_translated[$use_proxy],
+        if (is_updater_proxy_needs()) {
+            $use_proxy = $this->plugin->get_parameter(PARAM_USE_UPDATER_PROXY, SetupControlSwitchDefs::switch_off);
+            Control_Factory::add_image_button($defs, $this, null, PARAM_USE_UPDATER_PROXY,
+                TR::t('setup_updater_proxy'), SetupControlSwitchDefs::$on_off_translated[$use_proxy],
                 get_image_path(SetupControlSwitchDefs::$on_off_img[$use_proxy]), self::CONTROLS_WIDTH);
         }
 
@@ -216,15 +216,15 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
 
                 return Action_Factory::show_title_dialog(TR::t('setup_copy_done'), $action_reload);
 
-            case PARAM_USE_HTTPS_PROXY:
-                $old_val = $this->plugin->get_bool_parameter(PARAM_USE_HTTPS_PROXY, false);
-                $use_proxy = $this->plugin->toggle_parameter(PARAM_USE_HTTPS_PROXY, false);
-                if (!toggle_https_proxy($use_proxy)) {
-                    $this->plugin->set_bool_parameter(PARAM_USE_HTTPS_PROXY, $old_val);
+            case PARAM_USE_UPDATER_PROXY:
+                $old_val = $this->plugin->get_bool_parameter(PARAM_USE_UPDATER_PROXY, false);
+                $use_proxy = $this->plugin->toggle_parameter(PARAM_USE_UPDATER_PROXY, false);
+                if (!toggle_updater_proxy($use_proxy)) {
+                    $this->plugin->set_bool_parameter(PARAM_USE_UPDATER_PROXY, $old_val);
                     return Action_Factory::show_title_dialog(TR::t('err_changes_failed'));
                 }
 
-                $msg = $use_proxy ? TR::t('setup_use_https_proxy_enabled') : TR::t('setup_use_https_proxy_disabled');
+                $msg = $use_proxy ? TR::t('setup_use_updater_proxy_enabled') : TR::t('setup_use_updater_proxy_disable');
                 return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'), Action_Factory::restart(), $msg);
 
             case self::CONTROL_TV_HISTORY_CLEAR:

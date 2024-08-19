@@ -5,6 +5,7 @@ require_once 'dynamic_config.php';
 require_once 'channel.php';
 require_once 'catchup_params.php';
 require_once 'm3u/M3uParser.php';
+require_once "lib/curl_wrapper.php";
 require_once 'lib/epg/epg_manager_json.php';
 require_once 'lib/epg/epg_manager_xmltv.php';
 
@@ -55,9 +56,15 @@ class default_config extends dynamic_config
      */
     protected $vod_items;
 
+    /**
+     * @var Curl_Wrapper
+     */
+    protected $curl_wrapper;
+
     public function set_plugin($plugin)
     {
         $this->plugin = $plugin;
+        $this->curl_wrapper = new Curl_Wrapper();
     }
 
     public function load_embedded_account()
@@ -1245,9 +1252,38 @@ class default_config extends dynamic_config
 
         hd_debug_print("ApiCommandUrl: $command_url", true);
 
-        $response = HD::http_download_https_proxy($command_url, $file, $curl_options);
+        $this->curl_wrapper->set_url($command_url);
+
+        $send_headers = array();
+        if (isset($curl_opt[CURLOPT_HTTPHEADER])) {
+            $send_headers = array_merge($send_headers, $curl_opt[CURLOPT_HTTPHEADER]);
+        }
+
+        if (!empty($send_headers)) {
+            foreach ($send_headers as $header) {
+                hd_debug_print("CURLOPT_HTTPHEADER: " . $header, true);
+            }
+            $this->curl_wrapper->set_send_headers($send_headers);
+        }
+
+        if (isset($curl_opt[CURLOPT_POST])) {
+            hd_debug_print("CURLOPT_POST: " . var_export($curl_opt[CURLOPT_POST], true), true);
+            $this->curl_wrapper->set_post($curl_opt[CURLOPT_POST]);
+        }
+
+        if (isset($curl_opt[CURLOPT_POSTFIELDS])) {
+            hd_debug_print("CURLOPT_POSTFIELDS: {$curl_opt[CURLOPT_POSTFIELDS]}", true);
+            $this->curl_wrapper->set_post_data($curl_opt[CURLOPT_POSTFIELDS]);
+        }
+
+        if (is_null($file)) {
+            $response = $this->curl_wrapper->download_content();
+        } else {
+            $response = $this->curl_wrapper->download_file($file);
+        }
+
         if ($response === false) {
-            hd_debug_print("Can't get response on request: $command_url");
+            hd_debug_print("Can't get response on request: " . $command_url);
             return false;
         }
 
@@ -1259,10 +1295,9 @@ class default_config extends dynamic_config
             return $response;
         }
 
-        hd_debug_print("Decode response on request: $command_url");
-        $data = HD::decodeResponse(false, $response);
+        $data = Curl_Wrapper::decodeJsonResponse(false, $response);
         if ($data === false || $data === null) {
-            hd_debug_print("Can't decode response on request: $command_url");
+            hd_debug_print("Can't decode response on request: " . $command_url);
         }
 
         return $data;
@@ -1537,14 +1572,13 @@ class default_config extends dynamic_config
         } else {
             $response = $this->execApiCommand($this->GetVodListUrl(), $tmp_file);
             if ($response === false) {
-                $logfile = file_get_contents(get_temp_path(HD::HTTPS_PROXY_LOG));
-                $exception_msg = "Ошибка скачивания медиатеки!\n\n$logfile";
+                $exception_msg = "Ошибка скачивания медиатеки!\n\n" . $this->curl_wrapper->get_raw_response_headers();
                 HD::set_last_error("vod_last_error", $exception_msg);
                 if (file_exists($tmp_file)) {
                     unlink($tmp_file);
                 }
             } else {
-                $this->vod_items = HD::decodeResponse(true, $tmp_file, $assoc);
+                $this->vod_items = Curl_Wrapper::decodeJsonResponse(true, $tmp_file, $assoc);
                 if ($this->vod_items === false) {
                     $exception_msg = "Ошибка декодирования данных медиатеки!\n\n";
                     HD::set_last_error("vod_last_error", $exception_msg);

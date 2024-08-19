@@ -27,6 +27,7 @@ require_once 'epg_indexer_interface.php';
 
 require_once 'lib/hd.php';
 require_once 'lib/hashed_array.php';
+require_once 'lib/curl_wrapper.php';
 
 abstract class Epg_Indexer implements Epg_Indexer_Interface
 {
@@ -64,6 +65,21 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     protected $cache_ttl;
 
     /**
+     * @var string
+     */
+    protected $cache_type = XMLTV_CACHE_AUTO;
+
+    /**
+     * @var Curl_Wrapper
+     */
+    protected $curl_wrapper;
+
+    public function __construct()
+    {
+        $this->curl_wrapper = new Curl_Wrapper();
+    }
+
+    /**
      * @param string $cache_dir
      * @param string $url
      */
@@ -92,37 +108,12 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
-     * @param string $ext
-     * @return string
+     * @param string $type
+     * @return void
      */
-    public function get_cache_stem($ext)
+    public function set_cache_type($type)
     {
-        return $this->cache_dir . DIRECTORY_SEPARATOR . $this->url_hash . $ext;
-    }
-
-    /**
-     * @return bool
-     */
-    public function is_index_locked()
-    {
-        $lock_dir = $this->get_cache_stem('.lock');
-        return is_dir($lock_dir);
-    }
-
-    /**
-     * @param bool $lock
-     */
-    public function set_index_locked($lock)
-    {
-        $lock_dir = $this->get_cache_stem('.lock');
-        if ($lock) {
-            if (!create_path($lock_dir, 0644)) {
-                hd_debug_print("Directory '$lock_dir' was not created");
-            }
-        } else if (is_dir($lock_dir)){
-            hd_debug_print("Unlock $lock_dir");
-            @rmdir($lock_dir);
-        }
+        $this->cache_type = $type;
     }
 
     /**
@@ -179,42 +170,81 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         HD::set_last_error("xmltv_last_error", null);
         $cached_file = $this->get_cached_filename();
         hd_debug_print("Checking cached xmltv file: $cached_file");
-
-        if (file_exists($cached_file) && filesize($cached_file) !== 0) {
-            $check_time_file = filemtime($cached_file);
-            $max_cache_time = 3600 * 24 * $this->cache_ttl;
-            if ($check_time_file && $check_time_file + $max_cache_time > time()) {
-                hd_debug_print("Cached file: $cached_file is not expired "
-                    . date("Y-m-d H:i", $check_time_file)
-                    . " date expiration: " . date("Y-m-d H:i", $check_time_file + $max_cache_time));
-
-                $channels_index_valid = $this->is_index_valid(self::INDEX_CHANNELS);
-                $picons_index_valid = $this->is_index_valid(self::INDEX_PICONS);
-                $pos_index_valid = $this->is_index_valid(self::INDEX_POSITIONS);
-
-                if ($channels_index_valid && $picons_index_valid && $pos_index_valid) {
-                    hd_debug_print("Xmltv cache valid");
-                    return 0;
-                }
-
-                if ($channels_index_valid && $picons_index_valid) {
-                    hd_debug_print("Xmltv cache channels and picons valid");
-                    return 2;
-                }
-
-                hd_debug_print("Xmltv cache indexes invalid");
-                return 3;
-            }
-
-            hd_debug_print("Xmltv cache expired");
-        } else {
+        if (!file_exists($cached_file)) {
             hd_debug_print("Cached xmltv file not exist");
+            return 1;
         }
 
-        return 1;
+        $check_time_file = filemtime($cached_file);
+        hd_debug_print("Xmltv cache last modified: " . date("Y-m-d H:i", $check_time_file));
+
+        $expired = true;
+        if ($this->cache_type === XMLTV_CACHE_AUTO) {
+            $this->curl_wrapper->set_url($this->xmltv_url);
+            if ($this->curl_wrapper->check_is_expired()) {
+                $this->curl_wrapper->clear_cached_etag($this->xmltv_url);
+            } else {
+                $expired = false;
+            }
+        } else if (filesize($cached_file) !== 0) {
+            $max_cache_time = 3600 * 24 * $this->cache_ttl;
+            if ($check_time_file && $check_time_file + $max_cache_time > time()) {
+                $expired = false;
+            }
+        }
+
+        if ($expired) {
+            hd_debug_print("Xmltv cache expired.");
+            return 1;
+        }
+
+        hd_debug_print("Cached file: $cached_file is not expired");
+        $channels_index_valid = $this->is_index_valid(self::INDEX_CHANNELS);
+        $picons_index_valid = $this->is_index_valid(self::INDEX_PICONS);
+        $pos_index_valid = $this->is_index_valid(self::INDEX_POSITIONS);
+
+        if ($channels_index_valid && $picons_index_valid && $pos_index_valid) {
+            hd_debug_print("Xmltv cache valid");
+            return 0;
+        }
+
+        if ($channels_index_valid && $picons_index_valid) {
+            hd_debug_print("Xmltv cache channels and picons are valid");
+            return 2;
+        }
+
+        hd_debug_print("Xmltv cache indexes are invalid");
+        return 3;
     }
 
     /**
+     * @return string
+     */
+    public function get_cached_filename()
+    {
+        return $this->get_cache_stem(".xmltv");
+    }
+
+    /**
+     * @param string $ext
+     * @return string
+     */
+    public function get_cache_stem($ext)
+    {
+        return $this->cache_dir . DIRECTORY_SEPARATOR . $this->url_hash . $ext;
+    }
+
+    /**
+     * Check is selected index is valid
+     *
+     * @param string $name
+     * @return bool
+     */
+    abstract protected function is_index_valid($name);
+
+    /**
+     * Download XMLTV source.
+     *
      * @return int
      */
     public function download_xmltv_source()
@@ -230,10 +260,6 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         hd_debug_print("Storage space in cache dir: " . HD::get_storage_size($this->cache_dir));
         $cached_file = $this->get_cached_filename();
         $tmp_filename = $cached_file . '.tmp';
-        if (file_exists($cached_file)) {
-            unlink($cached_file);
-        }
-
         if (file_exists($tmp_filename)) {
             unlink($tmp_filename);
         }
@@ -246,9 +272,22 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 throw new Exception("Unsupported EPG format (JTV)");
             }
 
-            if (HD::http_download_https_proxy($this->xmltv_url, $tmp_filename) === false) {
-                $logfile = file_get_contents(get_temp_path(HD::HTTPS_PROXY_LOG));
-                throw new Exception("Ошибка скачивания $this->xmltv_url\n\n$logfile");
+            $this->curl_wrapper->set_url($this->xmltv_url);
+            $expired = $this->curl_wrapper->check_is_expired() || !file_exists($tmp_filename);
+            if (!$expired) {
+                hd_debug_print("File not changed, using cached file: $cached_file");
+                $this->set_index_locked(false);
+                hd_debug_print_separator();
+                return 1;
+            }
+
+            $this->curl_wrapper->clear_cached_etag($this->xmltv_url);
+            if (!$this->curl_wrapper->download_file($tmp_filename, true)) {
+                throw new Exception("Ошибка скачивания $this->xmltv_url\n\n" . $this->curl_wrapper->get_raw_response_headers());
+            }
+
+            if ($this->curl_wrapper->get_response_code() !== 200) {
+                throw new Exception("Ошибка скачивания $this->xmltv_url\n\n" . $this->curl_wrapper->get_raw_response_headers());
             }
 
             $file_time = filemtime($tmp_filename);
@@ -262,13 +301,17 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             hd_debug_print("Last changed time of local file: " . date("Y-m-d H:i", $file_time));
             hd_debug_print("Download xmltv source $this->xmltv_url done in: $dl_time secs (speed $speed)");
 
+            if (file_exists($cached_file)) {
+                unlink($cached_file);
+            }
+
             $t = microtime(true);
 
             $handle = fopen($tmp_filename, "rb");
             $hdr = fread($handle, 8);
             fclose($handle);
 
-            if (0 === mb_strpos($hdr , "\x1f\x8b\x08")) {
+            if (0 === mb_strpos($hdr, "\x1f\x8b\x08")) {
                 hd_debug_print("GZ signature: " . bin2hex(substr($hdr, 0, 3)), true);
                 rename($tmp_filename, $cached_file . '.gz');
                 $tmp_filename = $cached_file . '.gz';
@@ -310,9 +353,6 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             } else if (false !== mb_strpos($hdr, "<?xml")) {
                 hd_debug_print("XML signature: " . substr($hdr, 0, 5), true);
                 hd_debug_print("rename $tmp_filename to $cached_file");
-                if (file_exists($cached_file)) {
-                    unlink($cached_file);
-                }
                 rename($tmp_filename, $cached_file);
                 $size = filesize($cached_file);
                 touch($cached_file, $file_time);
@@ -345,6 +385,51 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
+     * @return bool
+     */
+    public function is_index_locked()
+    {
+        $lock_dir = $this->get_cache_stem('.lock');
+        return is_dir($lock_dir);
+    }
+
+    /**
+     * @param bool $lock
+     */
+    public function set_index_locked($lock)
+    {
+        $lock_dir = $this->get_cache_stem('.lock');
+        if ($lock) {
+            if (!create_path($lock_dir, 0644)) {
+                hd_debug_print("Directory '$lock_dir' was not created");
+            }
+        } else if (is_dir($lock_dir)) {
+            hd_debug_print("Unlock $lock_dir");
+            @rmdir($lock_dir);
+        }
+    }
+
+    /**
+     * Remove is selected index
+     *
+     * @param string $name
+     */
+    abstract public function remove_index($name);
+
+    /**
+     * clear memory cache and cache for current xmltv source
+     *
+     * @return void
+     */
+    public function clear_current_epg_files()
+    {
+        $this->clear_epg_files($this->url_hash);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// protected methods
+
+    /**
      * clear memory cache and cache for selected filename mask
      *
      * @return void
@@ -359,44 +444,10 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
         $files = $this->cache_dir . DIRECTORY_SEPARATOR . "$filename*";
         hd_debug_print("clear epg files: $files");
-        shell_exec('rm -f '. $files);
+        shell_exec('rm -f ' . $files);
         flush();
         hd_debug_print("Storage space in cache dir: " . HD::get_storage_size($this->cache_dir));
     }
-
-    /**
-     * clear memory cache and cache for current xmltv source
-     *
-     * @return void
-     */
-    public function clear_current_epg_files()
-    {
-        $this->clear_epg_files($this->url_hash);
-    }
-
-    /**
-     * @return string
-     */
-    public function get_cached_filename()
-    {
-        return $this->get_cache_stem(".xmltv");
-    }
-
-    /**
-     * Remove is selected index
-     *
-     * @param $name string
-     */
-    abstract public function remove_index($name);
-
-    ///////////////////////////////////////////////////////////////////////////////
-    /// protected methods
-
-    /**
-     * @param Channel $channel
-     * @return array
-     */
-    abstract protected function load_program_index($channel);
 
     /**
      * Clear memory index
@@ -406,12 +457,10 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     abstract protected function clear_memory_index();
 
     /**
-     * Check is selected index is valid
-     *
-     * @param $name string
-     * @return bool
+     * @param Channel $channel
+     * @return array
      */
-    abstract protected function is_index_valid($name);
+    abstract protected function load_program_index($channel);
 
     /**
      * check version of index file
@@ -428,7 +477,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     {
         $cached_file = $this->get_cached_filename();
         if (!file_exists($cached_file)) {
-            throw new Exception("cache file not exist");
+            throw new Exception("cache file $cached_file not exist");
         }
 
         $file = fopen($cached_file, 'rb');

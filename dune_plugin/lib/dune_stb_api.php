@@ -1648,7 +1648,7 @@ function get_plugin_manifest_info()
     return $result;
 }
 
-function is_https_proxy_needs()
+function is_updater_proxy_needs()
 {
     $v = get_platform_info();
     $plugin_info = get_plugin_manifest_info();
@@ -1656,7 +1656,7 @@ function is_https_proxy_needs()
         || (strpos($v['type'], '86') !== 0 &&  strpos($plugin_info['app_update_path'], 'https://') === 0));
 }
 
-function is_https_proxy_enabled()
+function is_updater_proxy_enabled()
 {
     $plugin_info = get_plugin_manifest_info();
     return strpos($plugin_info['app_update_path'], get_plugin_cgi_url("updater.sh?")) === 0;
@@ -1666,7 +1666,7 @@ function is_https_proxy_enabled()
  * @param bool $use_proxy
  * @return bool
  */
-function toggle_https_proxy($use_proxy)
+function toggle_updater_proxy($use_proxy)
 {
     $plugin_info = get_plugin_manifest_info();
     $update_url = $plugin_info['app_update_path'];
@@ -1675,9 +1675,9 @@ function toggle_https_proxy($use_proxy)
         return false;
     }
 
-    hd_debug_print("Use https proxy: " . var_export($use_proxy, true), true);
+    hd_debug_print("Use updater proxy: " . var_export($use_proxy, true), true);
 
-    $proxy_enabled = is_https_proxy_enabled();
+    $proxy_enabled = is_updater_proxy_enabled();
     hd_debug_print("Proxy enabled: " . var_export($proxy_enabled, true), true);
 
     if (($use_proxy && $proxy_enabled) || (!$use_proxy && !$proxy_enabled)) {
@@ -1695,15 +1695,6 @@ function toggle_https_proxy($use_proxy)
 
     $new_manifest = str_replace($update_url, $new_url, @file_get_contents($plugin_info['app_manifest_path']));
     return @file_put_contents($plugin_info['app_manifest_path'], $new_manifest) !== 0;
-}
-
-/**
- * @param string $image
- * @return string
- */
-function get_image_path($image = '')
-{
-    return get_install_path("img" . DIRECTORY_SEPARATOR . ltrim($image, DIRECTORY_SEPARATOR));
 }
 
 /**

@@ -72,7 +72,7 @@ class vidok_config extends default_config
                 $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$token";
                 // provider returns token used to download playlist
-                $this->account_data = HD::decodeResponse(false, HD::http_download_https_proxy($url), true);
+                $this->account_data = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
                 if (!isset($this->account_data["account"]["login"])) {
                     throw new Exception("Account info invalid");
                 }
@@ -126,9 +126,9 @@ class vidok_config extends default_config
             $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
             $param_set = $this->plugin->get_parameter($param, '');
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/settings_set?token=$token&$param=$param_set";
-            $json = HD::decodeResponse(false, HD::http_download_https_proxy($url), true);
-            if (isset($json['error'])) {
-                throw new Exception($json['error']['msg']);
+            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
+            if (isset($content['error'])) {
+                throw new Exception($content['error']['msg']);
             }
             return true;
         } catch (Exception $ex) {

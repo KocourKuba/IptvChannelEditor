@@ -81,6 +81,7 @@ class Epg_Manager_Xmltv
             $flags |= $this->plugin->get_bool_parameter(PARAM_FAKE_EPG, false) ? EPG_FAKE_EPG : 0;
             $this->set_flags($flags);
             $this->indexer->set_cache_ttl($this->plugin->get_parameter(PARAM_EPG_CACHE_TTL, 3));
+            $this->indexer->set_cache_type($this->plugin->get_parameter(PARAM_EPG_CACHE_TYPE, XMLTV_CACHE_AUTO));
         }
     }
 
@@ -285,6 +286,7 @@ class Epg_Manager_Xmltv
             'log_file' => $this->indexer->get_cache_stem('.log'),
             'cache_dir' => $this->plugin->get_cache_dir(),
             'cache_ttl' => $this->plugin->get_parameter(PARAM_EPG_CACHE_TTL, 3),
+            'cache_type' => $this->plugin->get_parameter(PARAM_EPG_CACHE_TYPE, XMLTV_CACHE_AUTO),
             'xmltv_url' => $this->plugin->get_active_xmltv_source(),
         );
 

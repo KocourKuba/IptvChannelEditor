@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The MIT License (MIT)
  *
@@ -25,6 +24,7 @@
  */
 
 require_once 'lib/hd.php';
+require_once 'lib/curl_wrapper.php';
 
 class xtream_codes_api
 {
@@ -60,9 +60,9 @@ class xtream_codes_api
     ///////////////////////////////////////////////////////////////////////////////
 
     /**
-     * @param $base_url string
-     * @param $username string
-     * @param $password string
+     * @param string $base_url
+     * @param string $username
+     * @param string $password
      * @return void
      */
     public function init($base_url, $username, $password)
@@ -72,6 +72,10 @@ class xtream_codes_api
         $this->password = $password;
     }
 
+    /**
+     * Reset cache
+     * @return void
+     */
     public function reset_cache()
     {
         $this->auth_info = null;
@@ -79,6 +83,7 @@ class xtream_codes_api
     }
 
     /**
+     * Get authentication info
      * @return false|mixed
      */
     public function get_auth()
@@ -91,48 +96,55 @@ class xtream_codes_api
     }
 
     /**
-     * @return array|false
-     */
-    public function get_categories($stream_type = self::VOD)
-    {
-        return $this->get_cached_response($this->get_categories_url($stream_type));
-    }
-
-    /**
-     * @param $category_id string|null
+     * Get response if it already requested return cached value
+     * @param string $url
      * @return mixed|false
      */
-    public function get_streams($stream_type = self::VOD, $category_id = null)
+    protected function get_cached_response($url)
     {
-        return $this->get_cached_response($this->get_streams_url($stream_type, $category_id));
+        $url_hash = hash('crc32', $url);
+        if (!is_null($this->cache) && isset($this->cache[$url_hash])) {
+            return $this->cache[$url_hash];
+        }
+
+        $tmp_file = get_temp_path("$url_hash.json");
+        if (file_exists($tmp_file)) {
+            $mtime = filemtime($tmp_file);
+            $diff = time() - $mtime;
+            if ($diff <= 3600) {
+                $cached_data = HD::ReadContentFromFile($tmp_file, false);
+                return $this->update_cache($url_hash, $cached_data);
+            }
+
+            hd_debug_print("xtream response cache expired " . ($diff - 3600) . " sec ago. Timestamp $mtime. Forcing reload");
+            unlink($tmp_file);
+        }
+
+        $cached_data = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
+        if ($cached_data !== false) {
+            HD::StoreContentToFile($tmp_file, $cached_data);
+        }
+
+        return $this->update_cache($url_hash, $cached_data);
     }
 
     /**
-     * @param $id string
-     * @return mixed|false
+     * Update cache
+     * @param string $url_hash
+     * @param mixed $cached_data
+     * @return mixed
      */
-    public function get_stream_info($id, $stream_type = self::VOD)
+    protected function update_cache($url_hash, $cached_data)
     {
-        return $this->get_cached_response($this->get_stream_info_url($id, $stream_type));
+        if ($cached_data !== false) {
+            $this->cache[$url_hash] = $cached_data;
+        }
+
+        return $cached_data;
     }
 
     /**
-     * @param $id string
-     * @return string
-     */
-    public function get_stream_url($id, $stream_type = self::VOD)
-    {
-        $stream_type = ($stream_type !== self::LIVE) ? "movie" : $stream_type;
-        return sprintf("%s/%s/%s/%s/$id",
-            $this->base_url,
-            $stream_type,
-            $this->username,
-            $this->password);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-
-    /**
+     * Get auth url
      * @return string
      */
     protected function get_auth_url()
@@ -141,6 +153,18 @@ class xtream_codes_api
     }
 
     /**
+     * Get categories
+     * @return array|false
+     */
+    public function get_categories($stream_type = self::VOD)
+    {
+        return $this->get_cached_response($this->get_categories_url($stream_type));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Get categories url
      * @return string
      */
     protected function get_categories_url($stream_type = self::VOD)
@@ -149,6 +173,17 @@ class xtream_codes_api
     }
 
     /**
+     * Get streams
+     * @param string|null $category_id
+     * @return mixed|false
+     */
+    public function get_streams($stream_type = self::VOD, $category_id = null)
+    {
+        return $this->get_cached_response($this->get_streams_url($stream_type, $category_id));
+    }
+
+    /**
+     * Get streams url
      * @return string|null
      */
     protected function get_streams_url($stream_type = self::VOD, $category_id = null)
@@ -167,6 +202,17 @@ class xtream_codes_api
     }
 
     /**
+     * Get stream info
+     * @param string $id
+     * @return mixed|false
+     */
+    public function get_stream_info($id, $stream_type = self::VOD)
+    {
+        return $this->get_cached_response($this->get_stream_info_url($id, $stream_type));
+    }
+
+    /**
+     * Get stream info url
      * @return string
      */
     protected function get_stream_info_url($id, $stream_type = self::VOD)
@@ -175,52 +221,17 @@ class xtream_codes_api
     }
 
     /**
-     * @param $url string
-     * @param bool $assoc
-     * @return mixed|false
+     * Get stream url
+     * @param string $id
+     * @return string
      */
-    protected function get_cached_response($url, $assoc = false, $opts = null)
+    public function get_stream_url($id, $stream_type = self::VOD)
     {
-        $url_hash = hash('crc32', $url . json_encode($opts));
-        if (!is_null($this->cache) && isset($this->cache[$url_hash])) {
-            return $this->cache[$url_hash];
-        }
-
-        $tmp_file = get_temp_path("$url_hash.json");
-        if (file_exists($tmp_file)) {
-            $mtime = filemtime($tmp_file);
-            $diff = time() - $mtime;
-            if ($diff <= 3600) {
-                $response = HD::ReadContentFromFile($tmp_file, $assoc);
-                if ($response !== false) {
-                    return $this->update_cache($url_hash, $response);
-                }
-            }
-
-            hd_debug_print("xtream response cache expired " . ($diff - 3600) . " sec ago. Timestamp $mtime. Forcing reload");
-            unlink($tmp_file);
-        }
-
-        $res = HD::http_download_https_proxy($url, $tmp_file, $opts);
-        if ($res !== false) {
-            $response = HD::decodeResponse(true, $tmp_file);
-            return $this->update_cache($url_hash, $response);
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $url_hash string
-     * @param $cached_data mixed
-     * @return mixed
-     */
-    protected function update_cache($url_hash, $cached_data)
-    {
-        if ($cached_data !== false) {
-            $this->cache[$url_hash] = $cached_data;
-        }
-
-        return $cached_data;
+        $stream_type = ($stream_type !== self::LIVE) ? "movie" : $stream_type;
+        return sprintf("%s/%s/%s/%s/$id",
+            $this->base_url,
+            $stream_type,
+            $this->username,
+            $this->password);
     }
 }

@@ -103,9 +103,9 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         hd_debug_print("LANUCH PLUGIN");
                         hd_debug_print_separator();
 
-                        if (toggle_https_proxy($this->plugin->get_bool_parameter(PARAM_USE_HTTPS_PROXY, false))) {
+                        if (toggle_updater_proxy($this->plugin->get_bool_parameter(PARAM_USE_UPDATER_PROXY, false))) {
                             return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'),
-                                Action_Factory::restart(), TR::t('entry_https_proxy_enabled'));
+                                Action_Factory::restart(), TR::t('entry_updater_proxy_enabled'));
                         }
 
                         $this->plugin->init_epg_manager();
@@ -169,7 +169,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                     case self::ACTION_INSTALL:
                     case self::ACTION_UPDATE:
                         $this->plugin->upgrade_old_settings($plugin_cookies);
-                        toggle_https_proxy($this->plugin->get_bool_parameter(PARAM_USE_HTTPS_PROXY, false));
+                        toggle_updater_proxy($this->plugin->get_bool_parameter(PARAM_USE_UPDATER_PROXY, false));
                         break;
 
                     case self::ACTION_UNINSTALL:
