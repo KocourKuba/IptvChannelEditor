@@ -35,4 +35,6 @@ public:
 	bool get_api_token(TemplateParams& params) override;
 	void parse_account_info(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;
+private:
+	std::wstring session_id_name;
 };

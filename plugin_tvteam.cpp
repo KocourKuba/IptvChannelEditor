@@ -37,7 +37,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static constexpr auto API_COMMAND_AUTH = L"{:s}?userLogin={:s}&userPasswd={:s}";
-static constexpr auto SESSION_ID = L"session_{:s}";
 
 bool plugin_tvteam::get_api_token(TemplateParams& params)
 {
@@ -46,7 +45,8 @@ bool plugin_tvteam::get_api_token(TemplateParams& params)
 		return false;
 	}
 
-	const auto& session_id_name = fmt::format(SESSION_ID, params.creds.get_login());
+	session_id_name = utils::utf8_to_utf16(fmt::format("session_{:s}", utils::md5_hash_hex(params.creds.login)));
+
 	const auto& session_id = get_file_cookie(session_id_name);
 	if (!session_id.empty())
 	{
@@ -83,7 +83,7 @@ bool plugin_tvteam::get_api_token(TemplateParams& params)
 
 void plugin_tvteam::parse_account_info(TemplateParams& params)
 {
-	const auto& session_id = get_file_cookie(fmt::format(SESSION_ID, params.creds.get_login()));
+	const auto& session_id = get_file_cookie(session_id_name);
 	if (session_id.empty())
 	{
 		return;
@@ -182,7 +182,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 
 bool plugin_tvteam::set_server(TemplateParams& params)
 {
-	const auto& session_id = get_file_cookie(fmt::format(SESSION_ID, params.creds.get_login()));
+	const auto& session_id = get_file_cookie(session_id_name);
 	if (!servers_list.empty() && !session_id.empty())
 	{
 
