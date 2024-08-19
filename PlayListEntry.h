@@ -39,6 +39,7 @@ class Playlist
 {
 public:
 	std::string catchup_source;
+	int catchup_days;
 	CatchupType catchup = CatchupType::cu_not_set;
 	bool per_channel_catchup = false;
 	std::string logo_root;
@@ -72,7 +73,7 @@ public:
 
 protected:
 	void search_group(const m3u_tags& tags);
-	void search_archive(const m3u_tags& tags);
+	int search_archive(const m3u_tags& tags);
 	void search_epg(const m3u_tags& tags);
 	std::string search_logo(const m3u_tags& tags);
 	std::string search_catchup_source(const m3u_tags& tags);

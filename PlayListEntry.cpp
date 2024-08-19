@@ -55,11 +55,13 @@ bool PlaylistEntry::Parse(const std::string& str)
 			{
 				playlist->logo_root = root;
 			}
+
 			if (auto value = search_catchup(tags); value != CatchupType::cu_not_set)
 			{
 				playlist->catchup = value;
 			}
 
+			playlist->catchup_days = search_archive(tags);
 			playlist->catchup_source = search_catchup_source(tags);
 			break;
 		}
@@ -91,8 +93,17 @@ bool PlaylistEntry::Parse(const std::string& str)
 			}
 
 			search_group(tags);
-			search_archive(tags);
 			search_epg(tags);
+			int value = search_archive(tags);
+			if (value != 0)
+			{
+				set_archive_days(value);
+			}
+			else if (playlist->catchup_days != 0)
+			{
+				set_archive_days(playlist->catchup_days);
+			}
+
 			if (auto logo = search_logo(tags); !logo.empty())
 			{
 				if (playlist && !playlist->logo_root.empty())
@@ -157,7 +168,7 @@ void PlaylistEntry::search_group(const m3u_tags& tags)
 	}
 }
 
-void PlaylistEntry::search_archive(const m3u_tags& tags)
+int PlaylistEntry::search_archive(const m3u_tags& tags)
 {
 	// priority -> catchup_days -> catchup_time -> tag_timeshift ... -> tvg_rec
 	static std::array<m3u_entry::info_tags, 6> archive_search_tags =
@@ -170,17 +181,19 @@ void PlaylistEntry::search_archive(const m3u_tags& tags)
 		m3u_entry::info_tags::tag_tvg_rec,
 	};
 
+	int day = 0;
 	for (const auto& tag : archive_search_tags)
 	{
 		if (const auto& pair = tags.find(tag); pair != tags.end() && !pair->second.empty())
 		{
-			int day = utils::char_to_int(pair->second);
+			day = utils::char_to_int(pair->second);
 			if (tag == m3u_entry::info_tags::tag_catchup_time)
 				day /= 86400;
-			set_archive_days(day);
 			break;
 		}
 	}
+
+	return day;
 }
 
 void PlaylistEntry::search_epg(const m3u_tags& tags)
