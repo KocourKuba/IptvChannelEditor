@@ -1237,17 +1237,17 @@ class default_config extends dynamic_config
      * @param string $command
      * @param string $file
      * @param bool $decode
-     * @param array $curl_options
+     * @param array $curl_opt
      * @return bool|object
      */
-    public function execApiCommand($command, $file = null, $decode = true, $curl_options = array())
+    public function execApiCommand($command, $file = null, $decode = true, $curl_opt = array())
     {
         hd_debug_print(null, true);
         hd_debug_print("execApiCommand: $command", true);
 
         $command_url = $this->replace_account_vars($command);
-        if (isset($curl_options[self::API_PARAM_PATH])) {
-            $command_url .= $curl_options[self::API_PARAM_PATH];
+        if (isset($curl_opt[self::API_PARAM_PATH])) {
+            $command_url .= $curl_opt[self::API_PARAM_PATH];
         }
 
         hd_debug_print("ApiCommandUrl: $command_url", true);
