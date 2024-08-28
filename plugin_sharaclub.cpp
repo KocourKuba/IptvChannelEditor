@@ -39,32 +39,8 @@ static char THIS_FILE[] = __FILE__;
 
 // API documentation https://list.playtv.pro/api/players.txt
 
-static constexpr auto API_COMMAND_GET_URL = L"{:s}/api/players.php?a={:s}&u={:s}-{:s}&source=dune_editor";
-static constexpr auto API_COMMAND_SET_URL = L"{:s}/api/players.php?a={:s}&{:s}={:s}&u={:s}-{:s}&source=dune_editor";
-
-void plugin_sharaclub::configure_provider_plugin()
-{
-	base_plugin::configure_provider_plugin();
-
-	CWaitCursor cur;
-	std::stringstream data;
-
-	if (provider_api_url.empty())
-	{
-		if (download_url(L"http://conf.playtv.pro/api/con8fig.php?source=dune_editor", data))
-		{
-			JSON_ALL_TRY;
-			const auto& parsed_json = nlohmann::json::parse(data.str());
-			provider_api_url = "http://" + parsed_json["listdomain"].get<std::string>();
-			epg_params[0].epg_domain = "http://" + parsed_json["jsonEpgDomain"].get<std::string>();
-			JSON_ALL_CATCH;
-		}
-		else
-		{
-			AfxMessageBox(get_download_error().c_str(), MB_ICONERROR | MB_OK);
-		}
-	}
-}
+static constexpr auto API_COMMAND_GET_URL = L"{:s}?a={:s}&u={:s}-{:s}&source=dune_editor";
+static constexpr auto API_COMMAND_SET_URL = L"{:s}?a={:s}&{:s}={:s}&u={:s}-{:s}&source=dune_editor";
 
 std::wstring plugin_sharaclub::get_playlist_url(const TemplateParams& params, std::wstring url /* = L"" */)
 {
@@ -102,6 +78,11 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 					set_json_info("money", js_data, account_info);
 					set_json_info("money_need", js_data, account_info);
 					set_json_info("abon", js_data, account_info);
+					if (domains_list.empty()) {
+						domains_list.resize(1);
+					}
+					domains_list[0] = {"0", js_data["listdomain"].get<std::string>()};
+					epg_params[0].epg_domain = js_data["jsonEpgDomain"].get<std::string>();
 				}
 			}
 			JSON_ALL_CATCH;

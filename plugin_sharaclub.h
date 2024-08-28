@@ -30,7 +30,6 @@ DEALINGS IN THE SOFTWARE.
 class plugin_sharaclub : public base_plugin
 {
 public:
-	void configure_provider_plugin() override;
 	std::wstring get_playlist_url(const TemplateParams& params, std::wstring url = L"") override;
 	void parse_account_info(TemplateParams& params) override;
 	void fill_servers_list(TemplateParams& params) override;

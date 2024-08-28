@@ -1810,7 +1810,7 @@
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_start": "time",
-          "epg_url": "http://api.playtv.pro/get/?type=epg&ch={EPG_ID}"
+          "epg_url": "http://{EPG_DOMAIN}/get/?type=epg&ch={EPG_ID}"
         },
         {}
       ],
@@ -1820,9 +1820,10 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)\\/.+\\.m3u8$",
           "pl_parse_regex": "https?:\\/\\/[^\\/]+\\/tv-m3u8\\/(?<login>[^-]+)-(?<password>.+)$",
-          "pl_template": "{API_URL}/tv_live-m3u8/{LOGIN}-{PASSWORD}"
+          "pl_template": "http://{PL_DOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}"
         }
       ],
+      "provider_api_url": "https://list.playtv.pro/api/players.php",
       "provider_url": "https://shara.club/",
       "streams_config": [
         {
@@ -1848,7 +1849,7 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "pl_template": "{API_URL}/kino-full/{LOGIN}-{PASSWORD}"
+          "pl_template": "http://{PL_DOMAIN}/kino-full/{LOGIN}-{PASSWORD}"
         }
       ]
     },
