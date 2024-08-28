@@ -75,9 +75,9 @@ class iptvonline_config extends default_config
 
         // movies_84636 or serials_84636
         $arr = explode("_", $movie_id);
-        hd_debug_print("TryLoadMovie: category: $arr[0], id: $arr[1]");
+        hd_debug_print("TryLoadMovie: category: movies, id: $arr[1]");
 
-        $params[self::API_PARAM_PATH] = "/$arr[0]/$arr[1]";
+        $params[self::API_PARAM_PATH] = "/movies/$arr[1]";
         $json = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
 
         if ($json === false || $json === null) {
