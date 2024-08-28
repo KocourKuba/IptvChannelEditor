@@ -34,6 +34,7 @@ enum class PluginType
 	enAntifriz,
 	enBcuMedia,
 	enBitTV,
+	enBlinkTV,
 	enCbilling,
 	enCRDTV,
 	enEdem,

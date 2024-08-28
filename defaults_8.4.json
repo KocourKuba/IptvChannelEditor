@@ -402,6 +402,41 @@
       ],
       "title": "BitTV"
     },
+    "blinktv": {
+      "access_type": "login",
+      "epg_params": [
+        {},
+        {}
+      ],
+      "name": "blinktv",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?<var1>.+)?\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/(?<login>.+)\\/(?<password>.+)\\/.+\\/playlist\\.m3u8?$",
+          "pl_template": "https://blinktv.cc/{LOGIN}/{PASSWORD}/hls/playlist.m3u8"
+        }
+      ],
+      "provider_url": "https://blinktv.cc/",
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
+          "uri_template": "{SCHEME}{DOMAIN}/{ID}/{VAR1}?token={TOKEN}"
+        },
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}{DOMAIN}/{ID}/{VAR1}?token={TOKEN}"
+        }
+      ],
+      "title": "Blink TV"
+    },
     "cbilling": {
       "access_type": "pin",
       "balance_support": true,

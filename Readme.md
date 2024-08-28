@@ -48,6 +48,7 @@
 41. [Peak TV](https://peaktv.info/)
 42. [Nasharu TV](https://nasharu.tv/)
 43. [Ott Pub](https://ott.pub/)
+44. [Blink TV](https://blinktv.cc/)
 </details>
 
 ## License and copyright
