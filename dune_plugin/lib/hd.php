@@ -453,74 +453,7 @@ class HD
         return $ret;
     }
 
-    /**
-     * @param string $doc
-     * @return SimpleXMLElement
-     * @throws Exception
-     */
-    public static function parse_xml_document($doc)
-    {
-        $xml = simplexml_load_string($doc);
-
-        if ($xml === false) {
-            hd_debug_print("Error: can not parse XML document.");
-            hd_debug_print("XML-text: $doc.");
-            throw new Exception('Illegal XML document');
-        }
-
-        return $xml;
-    }
-
-    /**
-     * @param string $path
-     * @return SimpleXMLElement
-     * @throws Exception
-     */
-    public static function parse_xml_file($path)
-    {
-        $xml = simplexml_load_string(file_get_contents($path));
-
-        if ($xml === false) {
-            hd_debug_print("Error: can't parse XML document.");
-            hd_debug_print("path to XML: $path");
-            throw new Exception('Illegal XML document');
-        }
-
-        return $xml;
-    }
-
-    /**
-     * @param string $path
-     * @param bool $to_array
-     * @return mixed
-     */
-    public static function parse_json_file($path, $to_array = false)
-    {
-        return json_decode(file_get_contents(
-            $path,
-            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES),
-            $to_array);
-    }
-
     ///////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param string $op_name
-     * @param string $params
-     * @return array
-     */
-    public static function make_json_rpc_request($op_name, $params)
-    {
-        static $request_id = 0;
-
-        return array
-        (
-            'jsonrpc' => '2.0',
-            'id' => ++$request_id,
-            'method' => $op_name,
-            'params' => $params
-        );
-    }
 
     public static function compress_file($source, $dest)
     {
@@ -724,33 +657,6 @@ class HD
         return $contents;
     }
 
-    /**
-     * @param $path string
-     * @param $content mixed
-     */
-    public static function StoreContentToFile($path, $content, $raw = true)
-    {
-        if (empty($path)) {
-            hd_debug_print("Path not set");
-        } else {
-            file_put_contents($path, $raw ? raw_json_encode($content) : json_encode($content));
-        }
-    }
-
-    /**
-     * @param $path string
-     * @param $assoc boolean
-     */
-    public static function ReadContentFromFile($path, $assoc = true)
-    {
-        if (empty($path) || !file_exists($path)) {
-            hd_debug_print("Path not exists: $path");
-            return false;
-        }
-
-        return json_decode(file_get_contents($path), $assoc);
-    }
-
     public static function ShowMemoryUsage()
     {
         hd_debug_print("Memory usage: " . round(memory_get_usage(true) / 1024) . "kb / " . ini_get('memory_limit'));
@@ -871,101 +777,6 @@ class HD
         } else if (file_exists($error_file)) {
             unlink($error_file);
         }
-    }
-
-    public static function pretty_json_format($json, $options = 448)
-    {
-        $pretty_print = (bool)($options & JSON_PRETTY_PRINT);
-        $unescape_unicode = (bool)($options & JSON_UNESCAPED_UNICODE);
-        $unescape_slashes = (bool)($options & JSON_UNESCAPED_SLASHES);
-
-        if (!$pretty_print && !$unescape_unicode && !$unescape_slashes) {
-            return $json;
-        }
-
-        $result = '';
-        $pos = 0;
-        $strLen = strlen($json);
-        $indentStr = ' ';
-        $newLine = PHP_EOL;
-        $outOfQuotes = true;
-        $buffer = '';
-        $noescape = true;
-
-        for ($i = 0; $i < $strLen; $i++) {
-            // take the next character in the string
-            $char = substr($json, $i, 1);
-
-            // Inside a quoted string?
-            if ('"' === $char && $noescape) {
-                $outOfQuotes = !$outOfQuotes;
-            }
-
-            if (!$outOfQuotes) {
-                $buffer .= $char;
-                $noescape = !('\\' === $char) || !$noescape;
-                continue;
-            }
-
-            if ('' !== $buffer) {
-                if ($unescape_slashes) {
-                    $buffer = str_replace('\\/', '/', $buffer);
-                }
-
-                if ($unescape_unicode && function_exists('mb_convert_encoding')) {
-                    $buffer = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/',
-                        function ($match) {
-                            return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
-                        }, $buffer);
-                }
-
-                $result .= $buffer . $char;
-                $buffer = '';
-                continue;
-            }
-
-            if (false !== strpos(" \t\r\n", $char)) {
-                continue;
-            }
-
-            if (':' === $char) {
-                // Add a space after the : character
-                $char .= ' ';
-            } else if ('}' === $char || ']' === $char) {
-                $pos--;
-                $prevChar = substr($json, $i - 1, 1);
-
-                if ('{' !== $prevChar && '[' !== $prevChar) {
-                    // If this character is the end of an element,
-                    // output a new line and indent the next line
-                    $result .= $newLine . str_repeat($indentStr, $pos);
-                } else {
-                    // Collapse empty {} and []
-                    $result = rtrim($result) . "\n\n" . $indentStr;
-                }
-            }
-
-            $result .= $char;
-
-            // If the last character was the beginning of an element,
-            // output a new line and indent the next line
-            if (',' === $char || '{' === $char || '[' === $char) {
-                $result .= $newLine;
-
-                if ('{' === $char || '[' === $char) {
-                    $pos++;
-                }
-                $result .= str_repeat($indentStr, $pos);
-            }
-        }
-
-        // If buffer not empty after formating we have an unclosed quote
-        if ($buffer !== '') {
-            //json is incorrectly formatted
-            $result = false;
-        }
-
-        return $result;
     }
 
     public static function copy_data($sourcePath, $source_pattern, $destPath){

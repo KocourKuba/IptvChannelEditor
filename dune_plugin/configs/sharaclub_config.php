@@ -15,7 +15,7 @@ class sharaclub_config extends default_config
                 $this->get_login(),
                 $this->get_password(),
                 $command),
-            Plugin_Macros::API_URL . "/api/players.php?a=" . Plugin_Macros::COMMAND .
+            Plugin_Macros::API_URL . "?a=" . Plugin_Macros::COMMAND .
             "&u=" . Plugin_Macros::LOGIN. "-" . Plugin_Macros::PASSWORD . "&source=dune_editor");
     }
 
@@ -154,21 +154,16 @@ class sharaclub_config extends default_config
             }
 
             if ($force !== false || empty($this->account_data)) {
-                hd_debug_print("Load player configuration");
-                $api = HD::DownloadJson(base64_decode("aHR0cDovL2NvbmYucGxheXR2LnByby9hcGkvY29uOGZpZy5waHA/c291cmNlPWR1bmVfZWRpdG9y"), false);
-                if ($api === false) {
-                    hd_debug_print("Unable to load player configuration");
-                } else {
-                    $this->set_feature(Plugin_Constants::PROVIDER_API_URL, "http://$api->listdomain");
-                    $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_DOMAIN, "http://$api->jsonEpgDomain");
-
-                    $url = $this->replace_api_command('subscr_info');
-                    $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
-                    if ($content === false || !isset($content['status']) || $content['status'] !== '1') {
-                        throw new Exception("Account status unknown. " . HD::get_last_error());
-                    }
-                    $this->account_data = $content;
+                $url = $this->replace_api_command('subscr_info');
+                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
+                if ($content === false || !isset($content['status']) || $content['status'] !== '1') {
+                    throw new Exception("Account status unknown. " . HD::get_last_error());
                 }
+                $this->account_data = $content;
+
+                $this->set_domains(array(0 => $this->account_data['data']['listdomain']));
+                $this->set_domain_id(0);
+                $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_DOMAIN, $this->account_data['data']['jsonEpgDomain']);
             }
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
@@ -214,7 +209,7 @@ class sharaclub_config extends default_config
     {
         hd_debug_print(null, true);
         hd_debug_print($movie_id);
-        $jsonItems = HD::parse_json_file(self::get_vod_cache_file());
+        $jsonItems = parse_json_file(self::get_vod_cache_file(), false);
 
         if ($jsonItems === false) {
             hd_debug_print("failed to load movie: $movie_id");
@@ -321,8 +316,9 @@ class sharaclub_config extends default_config
             ++$cat_info[$category];
 
             // collect filters information
-            $years[(int)$movie->info->year] = $movie->info->year;
-            foreach ($movie->info->genre as $genre) {
+            $movie_year = (int)$movie->info['year'];
+            $years[$movie_year] = $movie_year;
+            foreach ($movie->info['genre'] as $genre) {
                 $genres[$genre] = $genre;
             }
         }
@@ -453,7 +449,7 @@ class sharaclub_config extends default_config
         foreach ($this->vod_items as $movie) {
             $movie = (object)$movie;
             if (isset($post_params['genre'])) {
-                $match_genre = in_array($post_params['genre'], $movie->info->genre);
+                $match_genre = in_array($post_params['genre'], $movie->info['genre']);
             } else {
                 $match_genre = true;
             }
@@ -462,7 +458,8 @@ class sharaclub_config extends default_config
             $year_from = isset($post_params['from']) ? $post_params['from'] : ~PHP_INT_MAX;
             $year_to = isset($post_params['to']) ? $post_params['to'] : PHP_INT_MAX;
 
-            if ((int)$movie->info->year >= $year_from && (int)$movie->info->year <= $year_to) {
+            $movie_year = (int)$movie->info['year'];
+            if ($movie_year >= $year_from && $movie_year <= $year_to) {
                 $match_year = true;
             }
 
@@ -488,7 +485,7 @@ class sharaclub_config extends default_config
             $id = $movie_obj->series_id . "_serial";
         }
 
-        $info = $movie_obj->info;
+        $info = (object)$movie_obj->info;
         $genres = HD::ArrayToStr($info->genre);
         $country = HD::ArrayToStr($info->country);
         return new Short_Movie(

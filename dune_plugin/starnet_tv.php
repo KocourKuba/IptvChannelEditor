@@ -231,7 +231,7 @@ class Starnet_Tv implements User_Input_Handler
             }
 
             file_put_contents(get_temp_path("current_list.xml"), file_get_contents($channels_list_path));
-            $xml = HD::parse_xml_file($channels_list_path);
+            $xml = parse_xml_file($channels_list_path);
         } catch (Exception $ex) {
             hd_debug_print("Can't fetch channel_list $channels_list_path ");
             print_backtrace_exception($ex);

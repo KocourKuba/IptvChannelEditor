@@ -33,7 +33,7 @@ class dynamic_config
     {
         hd_debug_print(null, true);
 
-        $settings = HD::parse_json_file(get_install_path('config.json'), true);
+        $settings = parse_json_file(get_install_path('config.json'));
 
         $this->set_feature_from_settings(Plugin_Constants::ACCESS_TYPE, $settings);
         $this->set_feature_from_settings(Plugin_Constants::PROVIDER_API_URL, $settings);

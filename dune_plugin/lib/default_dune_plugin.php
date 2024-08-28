@@ -737,7 +737,7 @@ class Default_Dune_Plugin implements DunePlugin
             $post_action
         );
 
-        hd_debug_print(raw_json_encode($action));
+        hd_debug_print(pretty_json_format($action));
         return $action;
     }
     ///////////////////////////////////////////////////////////////////////

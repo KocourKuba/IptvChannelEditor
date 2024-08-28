@@ -67,7 +67,7 @@ class Epg_Indexer_Classic extends Epg_Indexer
             if (empty($this->xmltv_positions)) {
                 $index_file = $this->get_index_name('positions');
                 hd_debug_print("load positions index $$index_file");
-                $data = HD::ReadContentFromFile($index_file);
+                $data = parse_json_file($index_file);
                 if (empty($data)) {
                     throw new Exception("load positions index failed '$index_file'");
                 }
@@ -78,7 +78,7 @@ class Epg_Indexer_Classic extends Epg_Indexer
             if (empty($this->xmltv_channels)) {
                 $index_file = $this->get_index_name('channels');
                 hd_debug_print("load channels index $$index_file");
-                $this->xmltv_channels = HD::ReadContentFromFile($index_file);
+                $this->xmltv_channels = parse_json_file($index_file);
                 if (empty($this->xmltv_channels)) {
                     $this->xmltv_channels = null;
                     throw new Exception("load channels index failed '$index_file'");
@@ -125,7 +125,7 @@ class Epg_Indexer_Classic extends Epg_Indexer
         if (!isset($this->xmltv_picons)) {
             $name = $this->get_index_name('picons');
             hd_debug_print("Load picons from: $name");
-            $this->xmltv_picons = HD::ReadContentFromFile($name);
+            $this->xmltv_picons = parse_json_file($name);
         }
 
         return isset($this->xmltv_picons[$alias]) ? $this->xmltv_picons[$alias] : '';
@@ -140,7 +140,7 @@ class Epg_Indexer_Classic extends Epg_Indexer
         $channels_file = $this->get_index_name('channels');
         if (file_exists($channels_file)) {
             hd_debug_print("Load cache channels index: $channels_file");
-            $this->xmltv_channels = HD::ReadContentFromFile($channels_file);
+            $this->xmltv_channels = parse_json_file($channels_file);
             return;
         }
 
@@ -196,8 +196,8 @@ class Epg_Indexer_Classic extends Epg_Indexer
             }
             fclose($file);
 
-            HD::StoreContentToFile($this->get_index_name('picons'), $this->xmltv_picons);
-            HD::StoreContentToFile($channels_file, $this->xmltv_channels);
+            store_to_json_file($this->get_index_name('picons'), $this->xmltv_picons);
+            store_to_json_file($channels_file, $this->xmltv_channels);
 
             hd_debug_print("Total entries id's: " . count($this->xmltv_channels));
             hd_debug_print("Total known picons: " . count($this->xmltv_picons));
@@ -228,7 +228,7 @@ class Epg_Indexer_Classic extends Epg_Indexer
         $index_program = $this->get_index_name('positions');
         if (file_exists($index_program)) {
             hd_debug_print("Load cache program index: $index_program");
-            $this->xmltv_positions = HD::ReadContentFromFile($index_program);
+            $this->xmltv_positions = parse_json_file($index_program);
             if ($this->xmltv_positions !== false) {
                 $cache_valid = true;
             }
@@ -301,7 +301,7 @@ class Epg_Indexer_Classic extends Epg_Indexer
 
             if (!empty($xmltv_index)) {
                 hd_debug_print("Save index: $index_program", true);
-                HD::StoreContentToFile($this->get_index_name('positions'), $xmltv_index);
+                store_to_json_file($this->get_index_name('positions'), $xmltv_index);
                 $this->xmltv_positions = $xmltv_index;
             }
 

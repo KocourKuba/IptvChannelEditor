@@ -126,6 +126,9 @@ const TS_REPL_PATTERN = '/^(https?:\/\/)(.+)$/';
 const DUNE_MOUNTED_STORAGES_PATH = '/tmp/mnt/storage';
 const DUNE_APK_STORAGE_PATH = '/sdcard/DuneHD/Dune_backup';
 
+const JSON_ENCODE_STANDARD = 0;
+const JSON_ENCODE_RAW = 1;
+
 if (!defined('JSON_UNESCAPED_SLASHES'))
     define("JSON_UNESCAPED_SLASHES", 64);
 if (!defined('JSON_PRETTY_PRINT'))

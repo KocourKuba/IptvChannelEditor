@@ -613,7 +613,7 @@ class default_config extends dynamic_config
         hd_debug_print("used filter: $user_filter", true);
         $added = false;
         $filter_items = HD::get_data_items(Starnet_Vod_Filter_Screen::VOD_FILTER_LIST);
-        hd_debug_print("user filters: " . raw_json_encode($filter_items), true);
+        hd_debug_print("user filters: " . pretty_json_format($filter_items), true);
         $initial = array_search($user_filter, $filter_items);
         hd_debug_print("user filter idx: " . ($initial !== false ? $initial: -1), true);
 
@@ -1568,7 +1568,7 @@ class default_config extends dynamic_config
         }
 
         if (!$need_load) {
-            $this->vod_items = HD::ReadContentFromFile($tmp_file, $assoc);
+            $this->vod_items = parse_json_file($tmp_file, $assoc);
         } else {
             $response = $this->execApiCommand($this->GetVodListUrl(), $tmp_file);
             if ($response === false) {
