@@ -461,7 +461,7 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 			}
 
 			channel_node = channel_node->next_sibling();
-			if (pCtrl && (++i % 10) == 0)
+			if (pCtrl && (++i % 100) == 0)
 			{
 				pCtrl->SetPos(i);
 			}

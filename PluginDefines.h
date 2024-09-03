@@ -56,6 +56,7 @@ enum class PluginType
 	enOnlineOtt,
 	enOttclub,
 	enOttPub,
+	enPeakTV,
 	enPing,
 	enRusskoeTV,
 	enRuTV,

@@ -1645,6 +1645,40 @@
       ],
       "title": "OttPub"
     },
+    "peaktv": {
+      "access_type": "pin",
+      "epg_params": [
+        {},
+        {}
+      ],
+      "name": "peaktv",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/(?<password>.+)\\/.+\\/.*$",
+          "pl_template": "https://peaktv.info/{PASSWORD}/hls/peaktvinfo.m3u8"
+        }
+      ],
+      "provider_url": "https://peaktv.info/",
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8??token={TOKEN}",
+          "uri_template": "{SCHEME}{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
+        },
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts??token={TOKEN}",
+          "uri_template": "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+        }
+      ],
+      "title": "Peak TV"
+    },
     "ping": {
       "access_type": "login",
       "epg_params": [
