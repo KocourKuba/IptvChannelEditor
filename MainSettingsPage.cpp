@@ -249,5 +249,10 @@ void CMainSettingsPage::OnBnClickedButtonClearCache()
 		}
 	}
 
+	if (m_epg_aliases)
+	{
+		m_epg_aliases->clear();
+	}
+
 	m_wndClearCache.EnableWindow(FALSE);
 }

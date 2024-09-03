@@ -300,8 +300,7 @@ void PlaylistEntry::check_adult(const m3u_tags& tags, const std::string& categor
 		}
 	}
 
-	std::wstring lowcase(utils::utf8_to_utf16(category));
-	utils::wstring_tolower(lowcase);
+	std::wstring lowcase = utils::wstring_tolower_l(utils::utf8_to_utf16(category));
 	if (lowcase.find(L"зрослы") != std::wstring::npos
 		|| lowcase.find(L"adult") != std::wstring::npos
 		|| lowcase.find(L"18+") != std::wstring::npos

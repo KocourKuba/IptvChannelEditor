@@ -504,9 +504,11 @@ private:
 	// Loaded when fill playlist tree
 	std::unordered_map<HTREEITEM, std::wstring> m_pl_categoriesMap;
 
-	//////////////////////////////////////////////////////////////////////////
 	// map epg to channel id
 	std::array<EpgStorage, 3> m_epg_cache;
+
+	// map channel names to channel id
+	EpgAliases m_epg_aliases;
 
 	//////////////////////////////////////////////////////////////////////////
 	// vod

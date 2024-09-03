@@ -134,11 +134,11 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		{
 			if (!val.empty())
 			{
-				ids.emplace(val);
+				ids.emplace(utils::wstring_tolower_l_copy(val));
 			}
 		}
-		ids.emplace(m_info->get_id());
-		ids.emplace(m_info->get_title());
+		ids.emplace(utils::wstring_tolower_l_copy(m_info->get_title()));
+		ids.emplace(utils::wstring_tolower_l_copy(m_info->get_id()));
 	}
 
 
@@ -147,14 +147,23 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 	{
 		if (!found_id.empty() || epg_id.empty()) continue;
 
-		if (auto& it = m_epg_cache->at(m_epg_idx).find(epg_id); it != m_epg_cache->at(m_epg_idx).end())
+		std::wstring alias = epg_id;
+		if (m_epg_aliases)
 		{
-			m_pEpgChannelMap = &(m_epg_cache->at(m_epg_idx)[epg_id]);
+			if (const auto& pair = m_epg_aliases->find(epg_id); pair != m_epg_aliases->end())
+			{
+				alias = pair->second;
+			}
+		}
+
+		if (auto& it = m_epg_cache->at(m_epg_idx).find(alias); it != m_epg_cache->at(m_epg_idx).end())
+		{
+			m_pEpgChannelMap = &(m_epg_cache->at(m_epg_idx)[alias]);
 			for (auto& epg_pair : it->second)
 			{
 				if (epg_pair.second->time_start <= now && now <= epg_pair.second->time_end)
 				{
-					found_id = epg_id;
+					found_id = alias;
 					break;
 				}
 			}

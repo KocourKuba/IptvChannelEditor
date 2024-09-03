@@ -45,6 +45,7 @@ struct EpgInfo
 };
 
 using EpgStorage = std::unordered_map<std::wstring, std::map<time_t, std::shared_ptr<EpgInfo>>>;
+using EpgAliases = std::unordered_map<std::wstring, std::wstring>;
 
 /// <summary>
 /// Interface for stream
@@ -101,7 +102,7 @@ public:
 	/// <param name="epg_id">channel epg id</param>
 	/// <param name="epg_map">map of downloaded epg entries, used for cache</param>
 	/// <returns>bool</returns>
-	bool parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage& epg_map, CProgressCtrl* pCtrl = nullptr);
+	bool parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage& epg_map, EpgAliases& alias_map, CProgressCtrl* pCtrl = nullptr);
 
 	/// <summary>
 	/// parse epg for channel.

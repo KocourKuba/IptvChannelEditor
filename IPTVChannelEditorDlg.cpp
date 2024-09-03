@@ -792,6 +792,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndChannels.ResetContent();
 	m_all_channels_lists.clear();
 	m_xmltv_sources.clear();
+	m_epg_aliases.clear();
 	for (auto& item : m_epg_cache)
 	{
 		item.clear();
@@ -2015,7 +2016,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 				auto& epg_cache = m_epg_cache.at(epg_idx);
 				if (epg_cache.find(L"file already parsed") == epg_cache.end())
 				{
-					bool res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, &m_wndProgress);
+					bool res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, m_epg_aliases, &m_wndProgress);
 					if (res)
 					{
 						epg_cache[L"file already parsed"] = std::map<time_t, std::shared_ptr<EpgInfo>>();
@@ -2039,18 +2040,27 @@ void CIPTVChannelEditorDlg::FillEPG()
 		{
 			if (!val.empty())
 			{
-				ids.emplace(val);
+				ids.emplace(utils::wstring_tolower_l_copy(val));
 			}
 		}
-		ids.emplace(info->get_id());
-		ids.emplace(info->get_title());
+		ids.emplace(utils::wstring_tolower_l_copy(info->get_title()));
+		ids.emplace(utils::wstring_tolower_l_copy(info->get_id()));
 	}
 
 	for(const auto& epg_id : ids)
 	{
 		if (found || epg_id.empty()) continue;
 
-		if (auto& it = m_epg_cache[epg_idx].find(epg_id); it != m_epg_cache[epg_idx].end())
+		std::wstring alias = epg_id;
+		if (!m_epg_aliases.empty())
+		{
+			if (const auto& pair = m_epg_aliases.find(alias); pair != m_epg_aliases.end())
+			{
+				alias = pair->second;
+			}
+		}
+
+		if (auto& it = m_epg_cache[epg_idx].find(alias); it != m_epg_cache[epg_idx].end())
 		{
 			for (auto& epg_pair : it->second)
 			{
@@ -3351,6 +3361,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		dlg.m_plugin = m_plugin;
 		dlg.m_epg_idx = epg_idx;
 		dlg.m_epg_cache = &m_epg_cache;
+		dlg.m_epg_aliases = (epg_idx == 2) ? &m_epg_aliases : nullptr;
 		dlg.m_params.creds = GetCurrentAccount();
 		dlg.m_params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 
@@ -4473,6 +4484,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 
 	CMainSettingsPage dlg1;
 	dlg1.m_epg_cache = &m_epg_cache;
+	dlg1.m_epg_aliases = &m_epg_aliases;
 
 	CPathsSettingsPage dlg2;
 	CUpdateSettingsPage dlg3;
@@ -5918,5 +5930,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomXmltvEpg()
 {
 	UpdateData(TRUE);
 	m_epg_cache[2].clear();
+	m_epg_aliases.clear();
+
 	FillEPG();
 }

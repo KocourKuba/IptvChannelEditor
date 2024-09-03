@@ -59,6 +59,7 @@ protected:
 
 public:
 	std::array<EpgStorage, 3>* m_epg_cache = nullptr;
+	EpgAliases* m_epg_aliases = nullptr;
 
 protected:
 	CComboBox m_wndLanguage;

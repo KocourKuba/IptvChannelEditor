@@ -65,6 +65,8 @@ public:
 	uri_stream* m_info = nullptr;
 	std::shared_ptr<base_plugin> m_plugin;
 	std::array<EpgStorage, 3>* m_epg_cache = nullptr;
+	EpgAliases* m_epg_aliases = nullptr;
+
 	std::wstring m_xmltv_source;
 
 protected:

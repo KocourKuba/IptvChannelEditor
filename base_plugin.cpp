@@ -329,7 +329,7 @@ std::wstring base_plugin::get_vod_url(size_t idx, const TemplateParams& params) 
 	return url;
 }
 
-bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage& epg_map, CProgressCtrl* pCtrl /*= nullptr*/)
+bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage& epg_map, EpgAliases& alias_map, CProgressCtrl* pCtrl /*= nullptr*/)
 {
 	if (internal_epg_url.empty())
 		return false;
@@ -403,71 +403,111 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 
 	// Parse the buffer using the xml file parsing library into doc
 	bool added = false;
-	DWORD dwStart = GetTickCount();
 	try
 	{
-		auto doc = std::make_unique<rapidxml::xml_document<>>();
-		rapidxml::file<> xmlFile(utils::utf16_to_utf8(cache_file).c_str());
-		doc->parse<rapidxml::parse_default>(xmlFile.data());
+		DWORD dwStart = GetTickCount();
+		int ch_cnt = 0;
+		auto node_doc = std::make_unique<rapidxml::xml_document<>>();
+		rapidxml::file<> xmlFileTmp(utils::utf16_to_utf8(cache_file).c_str());
+		node_doc->parse<rapidxml::parse_fastest>(xmlFileTmp.data());
+		auto ch_node = node_doc->first_node("tv")->first_node("channel");
+		while (ch_node)
+		{
+			++ch_cnt;
+			ch_node = ch_node->next_sibling();
+		}
 
-		std::multimap<std::wstring, std::wstring> channels_map;
-		auto channel_node = doc->first_node("tv")->first_node("channel");
+		int prg_cnt = 0;
+		auto prog_node = node_doc->first_node("tv")->first_node("programme");
+		while (prog_node)
+		{
+			++prg_cnt;
+			prog_node = prog_node->next_sibling();
+		}
+		node_doc.release();
+
+		DWORD dwEnd = GetTickCount();
+		TRACE("\nCount nodes time %f, Total channel nodes %d, programme nodes %d\n", (double)(dwEnd - dwStart) / 1000., ch_cnt, prg_cnt);
+
+		//////////////////////////////////////////////////////////////////////////
+
+		auto docParse = std::make_unique<rapidxml::xml_document<>>();
+		rapidxml::file<> xmlFile(utils::utf16_to_utf8(cache_file).c_str());
+		docParse->parse<rapidxml::parse_default>(xmlFile.data());
+
+		//////////////////////////////////////////////////////////////////////////
+		// begin parsing channels nodes
+		int i = 0;
+
+		if (pCtrl)
+		{
+			pCtrl->SetRange32(0, ch_cnt);
+			pCtrl->ShowWindow(SW_SHOW);
+		}
+
+		auto channel_node = docParse->first_node("tv")->first_node("channel");
 		while (channel_node)
 		{
-			const auto& id = rapidxml::get_value_wstring(channel_node->first_attribute("id"));
+			const auto channel_id = rapidxml::get_value_wstring(channel_node->first_attribute("id"));
 			auto display_name_node = channel_node->first_node("display-name");
 			while (display_name_node)
 			{
-				const auto& ch_name = rapidxml::get_value_wstring(display_name_node);
-				channels_map.emplace(id, ch_name);
+				std::wstring name = utils::wstring_tolower_l(rapidxml::get_value_wstring(display_name_node));
+				if (!name.empty())
+				{
+					alias_map.emplace(name, channel_id);
+				}
 				display_name_node = display_name_node->next_sibling();
 			}
 
 			channel_node = channel_node->next_sibling();
-		}
-
-		auto prog_node = doc->first_node("tv")->first_node("programme");
-		int cnt = 0;
-		while (prog_node)
-		{
-			cnt++;
-			prog_node = prog_node->next_sibling();
-		}
-
-		TRACE("\nParse time %d, Total nodes %d\n", GetTickCount() - dwStart, cnt);
-
-		if (pCtrl)
-		{
-			pCtrl->SetRange32(0, cnt);
-			pCtrl->ShowWindow(SW_SHOW);
-		}
-		// Iterate <tv_category> nodes
-		int i = 0;
-		prog_node = doc->first_node("tv")->first_node("programme");
-		while (prog_node)
-		{
-			auto epg_info = std::make_shared<EpgInfo>();
-			const auto& channel = rapidxml::get_value_wstring(prog_node->first_attribute("channel"));
-			const auto& attr_start = prog_node->first_attribute("start");
-			epg_info->time_start = utils::parse_xmltv_date(attr_start->value(), attr_start->value_size());
-			const auto& attr_stop = prog_node->first_attribute("stop");
-			epg_info->time_end = utils::parse_xmltv_date(attr_stop->value(), attr_stop->value_size());
-			epg_info->name = std::move(utils::make_text_rtf_safe(rapidxml::get_value_string(prog_node->first_node("title"))));
-			epg_info->desc = std::move(utils::make_text_rtf_safe(rapidxml::get_value_string(prog_node->first_node("desc"))));
-
-			epg_map[channel].emplace(epg_info->time_start, epg_info);
-			const auto& range = channels_map.equal_range(channel);
-			for(auto it = range.first; it != range.second; ++it) {
-				epg_map[it->second].emplace(epg_info->time_start, epg_info);
-			}
-
-			prog_node = prog_node->next_sibling();
-			added = true;
 			if (pCtrl && (++i % 10) == 0)
 			{
 				pCtrl->SetPos(i);
 			}
 		}
+		dwEnd = GetTickCount();
+		TRACE("\nParse channels time %f\n", (double)(dwEnd - dwStart) / 1000.);
+
+		//////////////////////////////////////////////////////////////////////////
+		// begin parsing programme nodes
+		dwStart = dwEnd;
+
+		if (pCtrl)
+		{
+			pCtrl->SetRange32(0, prg_cnt);
+			pCtrl->ShowWindow(SW_SHOW);
+		}
+
+		dwStart = dwEnd;
+		i = 0;
+		// Iterate <tv_category> nodes
+		prog_node = docParse->first_node("tv")->first_node("programme");
+		while (prog_node)
+		{
+			auto epg_info = std::make_shared<EpgInfo>();
+
+			const auto& channel_id = rapidxml::get_value_wstring(prog_node->first_attribute("channel"));
+
+			const auto& attr_start = prog_node->first_attribute("start");
+			epg_info->time_start = utils::parse_xmltv_date(attr_start->value(), attr_start->value_size());
+
+			const auto& attr_stop = prog_node->first_attribute("stop");
+			epg_info->time_end = utils::parse_xmltv_date(attr_stop->value(), attr_stop->value_size());
+
+			epg_info->name = utils::make_text_rtf_safe(rapidxml::get_value_string(prog_node->first_node("title")));
+			epg_info->desc = utils::make_text_rtf_safe(rapidxml::get_value_string(prog_node->first_node("desc")));
+
+			epg_map[channel_id].emplace(epg_info->time_start, epg_info);
+			prog_node = prog_node->next_sibling();
+			added = true;
+			if (pCtrl && (++i % 100) == 0)
+			{
+				pCtrl->SetPos(i);
+			}
+		}
+		dwEnd = GetTickCount();
+		TRACE("\nParse programme time %f\n", (double)(dwEnd - dwStart) / 1000.);
 	}
 	catch (rapidxml::parse_error& ex)
 	{

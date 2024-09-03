@@ -27,6 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include <algorithm>
 #include <locale>
+#include <cwctype>
 
 namespace utils
 {
@@ -142,6 +143,17 @@ inline std::string& string_tolower(std::string& s)
 	return s;
 }
 
+inline std::string string_tolower_copy(const std::string& s)
+{
+	std::string str(s);
+	std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
+				   {
+					   return (char)std::tolower(c);
+				   });
+
+	return str;
+}
+
 inline std::wstring& wstring_tolower(std::wstring& s)
 {
 	std::transform(s.begin(), s.end(), s.begin(), [](wchar_t c)
@@ -150,6 +162,23 @@ inline std::wstring& wstring_tolower(std::wstring& s)
 				   });
 
 	return s;
+}
+
+inline std::wstring& wstring_tolower_l(std::wstring& s)
+{
+	auto& f = std::use_facet<std::ctype<wchar_t>>(std::locale());
+	f.tolower(&s[0], &s[0] + s.size());
+
+	return s;
+}
+
+inline std::wstring wstring_tolower_l_copy(const std::wstring& s)
+{
+	std::wstring str(s);
+	auto& f = std::use_facet<std::ctype<wchar_t>>(std::locale());
+	f.tolower(&str[0], &str[0] + str.size());
+
+	return str;
 }
 
 template<typename T>
