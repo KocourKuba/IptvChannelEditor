@@ -340,6 +340,7 @@ LRESULT CIconsListDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
 				  });
 
 		UpdateListCtrl();
+		OnBnClickedButtonSearchNext();
 	}
 
 	return 0;
