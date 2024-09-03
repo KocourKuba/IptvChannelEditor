@@ -132,6 +132,13 @@
     },
     {
       "type": "html",
+      "name": "gabbarit",
+      "package_name": "",
+      "url": "https://epg.drm-play.com/?prov=gabbarit",
+      "square": false
+    },
+    {
+      "type": "html",
       "name": "fiptv",
       "package_name": "",
       "url": "https://epg.drm-play.com/?prov=fiptv",
