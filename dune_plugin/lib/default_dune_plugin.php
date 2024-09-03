@@ -36,6 +36,7 @@ class Default_Dune_Plugin implements DunePlugin
     const VOD_ICON_PATH = 'gui_skin://small_icons/movie.aai';
     const RESOURCE_URL = 'http://iptv.esalecrm.net/res';
     const HISTORY_FOLDER = 'history/';
+    const PARSE_CONFIG = "%s_parse_config.json";
 
     /**
      * @var bool
@@ -283,7 +284,7 @@ class Default_Dune_Plugin implements DunePlugin
             $this->epg_manager = new Epg_Manager_Xmltv($this);
         }
 
-        $this->epg_manager->init_indexer($this->get_cache_dir(), $this->get_active_xmltv_source());
+        $this->epg_manager->init_indexer($this->get_cache_dir());
     }
 
     /**
@@ -307,9 +308,10 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * get all xmltv source
      *
+     * @param bool $with_separator
      * @return Hashed_Array const
      */
-    public function get_all_xmltv_sources()
+    public function get_all_xmltv_sources($with_separator = true)
     {
         hd_debug_print(null, true);
 
@@ -320,10 +322,10 @@ class Default_Dune_Plugin implements DunePlugin
         }
 
         $ext_sources = $this->config->get_feature(Plugin_Constants::EPG_CUSTOM_SOURCE);
-        hd_debug_print("ext xmltv sources: " . json_encode($ext_sources), true);
 
         if (!empty($ext_sources)) {
-            if ($xmltv_sources->size() !== 0) {
+            hd_debug_print("ext xmltv sources: " . json_encode($ext_sources), true);
+            if ($with_separator && $xmltv_sources->size() !== 0) {
                 $xmltv_sources->add(EPG_SOURCES_SEPARATOR_TAG);
             }
 
@@ -336,50 +338,6 @@ class Default_Dune_Plugin implements DunePlugin
             hd_debug_print("$key => $source", true);
         }
         return $xmltv_sources;
-    }
-
-    /**
-     * @return string
-     */
-    public function get_active_xmltv_source_key()
-    {
-        return $this->get_parameter(PARAM_XMLTV_SOURCE_KEY, '');
-    }
-
-    /**
-     * @param string $key
-     * @return void
-     */
-    public function set_active_xmltv_source_key($key)
-    {
-        $xmltv_source = $this->get_all_xmltv_sources()->get($key);
-        $this->postpone_save = true;
-        $this->set_parameter(PARAM_XMLTV_SOURCE_KEY, $key);
-        $this->set_parameter(PARAM_CUR_XMLTV_SOURCE, $xmltv_source);
-        $this->postpone_save = false;
-        $this->save();
-    }
-
-    /**
-     * @return string
-     */
-    public function get_active_xmltv_source()
-    {
-        $source = $this->get_parameter(PARAM_CUR_XMLTV_SOURCE, '');
-        if (empty($source)) {
-            $xmltv_sources = $this->get_all_xmltv_sources();
-            if ($xmltv_sources->size() !== 0) {
-                $xmltv_sources->rewind();
-                $source = $xmltv_sources->current();
-                $this->postpone_save = true;
-                $this->set_parameter(PARAM_CUR_XMLTV_SOURCE, $source);
-                $this->set_active_xmltv_source_key($xmltv_sources->key());
-                $this->postpone_save = false;
-                $this->save();
-            }
-        }
-        hd_debug_print("Active XMLTV source: " . json_encode($source), true);
-        return $source;
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -670,7 +628,7 @@ class Default_Dune_Plugin implements DunePlugin
 
         $this->save_favorites();
         $this->set_need_update_epfs();
-        return Starnet_Epfs_Handler::invalidate_folders(array(
+        return Starnet_Epfs_Handler::epfs_invalidate_folders(array(
                 Starnet_Tv_Favorites_Screen::get_media_url_string(FAVORITES_GROUP_ID),
                 Starnet_Tv_Channel_List_Screen::get_media_url_string(ALL_CHANNEL_GROUP_ID))
         );
@@ -731,14 +689,11 @@ class Default_Dune_Plugin implements DunePlugin
             Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
         }
 
-        $action = Action_Factory::update_invalidate_folders(
+        return Action_Factory::update_invalidate_folders(
             Action_Factory::update_invalidate_folders($action, Starnet_Tv_Rows_Screen::ID),
             $media_urls,
             $post_action
         );
-
-        hd_debug_print(pretty_json_format($action));
-        return $action;
     }
     ///////////////////////////////////////////////////////////////////////
     //
@@ -1243,7 +1198,6 @@ class Default_Dune_Plugin implements DunePlugin
         $menu_items = array();
 
         $sources = $this->get_all_xmltv_sources();
-        $source_key = $this->get_active_xmltv_source_key();
 
         $idx = 0;
         foreach ($sources as $key => $item) {
@@ -1263,12 +1217,7 @@ class Default_Dune_Plugin implements DunePlugin
                 $name .= " (" . date("d.m H:i", $check_time_file) . ")";
             }
 
-            $menu_items[] = $this->create_menu_item($handler,
-                ACTION_EPG_SOURCE_SELECTED,
-                $name,
-                ($source_key === $key) ? "check.png" : null,
-                array('list_idx' => $key)
-            );
+            $menu_items[] = $this->create_menu_item($handler, null, $name);
         }
 
         $menu_items[] = $this->create_menu_item($handler, GuiMenuItemDef::is_separator);
@@ -1286,6 +1235,38 @@ class Default_Dune_Plugin implements DunePlugin
     {
         if (isset($this->epg_manager)) {
             $this->epg_manager->get_indexer()->clear_epg_files('');
+        }
+    }
+
+    /**
+     * @param Hashed_Array|null $sources
+     * @return void
+     */
+    public function run_bg_epg_indexing($sources = null)
+    {
+        hd_debug_print(null, true);
+        if (is_null($sources)) {
+            $sources = $this->get_all_xmltv_sources(false);
+        }
+
+        foreach ($sources as $key => $value) {
+            if (empty($value)) continue;
+
+            hd_debug_print("Run background indexing for: ($key) $value");
+            $config = array(
+                'debug' => LogSeverity::$is_debug,
+                'cache_dir' => $this->get_cache_dir(),
+                'cache_ttl' => $this->get_parameter(PARAM_EPG_CACHE_TTL, 3),
+                'cache_type' => $this->get_parameter(PARAM_EPG_CACHE_TYPE, XMLTV_CACHE_AUTO),
+                'xmltv_urls' => array($key => $value)
+            );
+            $config_file = get_temp_path(sprintf(self::PARSE_CONFIG, $key));
+            hd_debug_print("Config: " . json_encode($config), true);
+            file_put_contents($config_file, pretty_json_format($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+            $cmd = get_install_path('bin/cgi_wrapper.sh') . " index_epg.php $config_file &";
+            hd_debug_print("exec: $cmd", true);
+            exec($cmd);
         }
     }
 

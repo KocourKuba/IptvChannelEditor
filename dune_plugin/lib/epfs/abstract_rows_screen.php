@@ -157,7 +157,6 @@ abstract class Abstract_Rows_Screen implements Rows_Screen
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
         hd_debug_print(null, true);
-        hd_debug_print($media_url, true);
 
         return $this->get_folder_view_v2($media_url, null, $plugin_cookies);
     }

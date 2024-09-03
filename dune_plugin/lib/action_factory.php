@@ -78,7 +78,7 @@ class Action_Factory
                 PluginTvPlayActionData::initial_group_id => isset($media_url->group_id) ? $media_url->group_id : null,
                 PluginTvPlayActionData::initial_channel_id => isset($media_url->channel_id) ? $media_url->channel_id : null,
                 PluginTvPlayActionData::initial_is_favorite => isset($media_url->is_favorite) && $media_url->is_favorite,
-                PluginTvPlayActionData::initial_archive_tm => isset($media_url->archive_tm) ? (int) $media_url->archive_tm : -1,
+                PluginTvPlayActionData::initial_archive_tm => isset($media_url->archive_tm) ? (int)$media_url->archive_tm : -1,
             );
         }
 
@@ -134,6 +134,65 @@ class Action_Factory
     }
 
     /**
+     * @return array
+     */
+    public static function close_dialog()
+    {
+        return self::close_dialog_and_run(null);
+    }
+
+    /**
+     * @param array|null $post_action
+     * @return array
+     */
+    public static function close_dialog_and_run($post_action)
+    {
+        return array(
+            GuiAction::handler_string_id => CLOSE_DIALOG_AND_RUN_ACTION_ID,
+            GuiAction::caption => null,
+            GuiAction::data => array(CloseDialogAndRunActionData::post_action => $post_action),
+            GuiAction::params => null
+        );
+    }
+
+    /**
+     * @param string $title
+     * @param array|null $post_action
+     * @param array|string|null $multiline
+     * @param int $preferred_width
+     * @return array
+     */
+    public static function show_title_dialog($title, $post_action = null, $multiline = '', $preferred_width = 0)
+    {
+        $defs = array();
+
+        $text = '';
+        if ($preferred_width === 0) {
+            $preferred_width = (int)mb_strlen($title, 'UTF-8') * 40;
+            if (!empty($multiline)) {
+                if (is_array($multiline)) {
+                    $lines = $multiline;
+                    $text = implode("\n", $multiline);
+                } else {
+                    $text = $multiline;
+                    $lines = explode("\n", $multiline);
+                }
+                foreach ($lines as $line) {
+                    $px = mb_strlen($line, 'UTF-8') * 40;
+                    if ($px > $preferred_width) {
+                        $preferred_width = (int)$px;
+                    }
+                }
+            }
+        }
+
+        Control_Factory::add_multiline_label($defs, '', $text, 15);
+        Control_Factory::add_custom_close_dialog_and_apply_buffon($defs, 'close_button', TR::t('ok'), 300, $post_action);
+
+        return self::show_dialog($title, $defs, false, $preferred_width);
+    }
+
+    /**
      * @param string $title
      * @param array &$defs
      * @param bool $close_by_return
@@ -170,62 +229,6 @@ class Action_Factory
     }
 
     /**
-     * @param array|null $post_action
-     * @return array
-     */
-    public static function close_dialog_and_run($post_action)
-    {
-        return array(
-            GuiAction::handler_string_id => CLOSE_DIALOG_AND_RUN_ACTION_ID,
-            GuiAction::caption => null,
-            GuiAction::data => array(CloseDialogAndRunActionData::post_action => $post_action),
-            GuiAction::params => null
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public static function close_dialog()
-    {
-        return self::close_dialog_and_run(null);
-    }
-
-    /**
-     * @param string $title
-     * @param array|null $post_action
-     * @param array|string|null $multiline
-     * @param int $preferred_width
-     * @return array
-     */
-    public static function show_title_dialog($title, $post_action = null, $multiline = '', $preferred_width = 0)
-    {
-        $defs = array();
-
-        if ($preferred_width === 0) {
-            $preferred_width = (int)mb_strlen($title, 'UTF-8') * 21 + 100;
-            if (!empty($multiline)) {
-                if (is_array($multiline)) {
-                    $lines = $multiline;
-                    $multiline = implode("\n", $multiline);
-                } else {
-                    $lines = explode("\n", $multiline);
-                }
-                foreach ($lines as $line) {
-                    $px = mb_strlen($line, 'UTF-8') * 21;
-                    if ($px > $preferred_width)
-                        $preferred_width = (int)$px;
-                }
-            }
-        }
-
-        Control_Factory::add_multiline_label($defs, '', $multiline, 15);
-        Control_Factory::add_custom_close_dialog_and_apply_buffon($defs, 'close_button', TR::t('ok'), 300, $post_action);
-
-        return self::show_dialog($title, $defs, false, $preferred_width);
-    }
-
-    /**
      * Confirmation dialog
      * @return array
      */
@@ -244,15 +247,6 @@ class Action_Factory
     }
 
     /**
-     * @param int $delay_ms
-     * @return array
-     */
-    public static function timer($delay_ms)
-    {
-        return array(GuiTimerDef::delay_ms => $delay_ms);
-    }
-
-    /**
      * @param int $status
      * @return array
      */
@@ -263,23 +257,6 @@ class Action_Factory
             GuiAction::caption => null,
             GuiAction::data => array(StatusActionData::status => $status),
             GuiAction::params => null
-        );
-    }
-
-    /**
-     * @param array $media_urls
-     * @param array $post_action
-     * @return array
-     */
-    public static function invalidate_folders($media_urls, $post_action = null, $all_except = false)
-    {
-        return array(
-            GuiAction::handler_string_id => PLUGIN_INVALIDATE_FOLDERS_ACTION_ID,
-            GuiAction::data => array(
-                PluginInvalidateFoldersActionData::media_urls => $media_urls,
-                PluginInvalidateFoldersActionData::post_action => $post_action,
-                PluginInvalidateFoldersActionData::all_except => $all_except
-            )
         );
     }
 
@@ -415,6 +392,15 @@ class Action_Factory
     }
 
     /**
+     * @param int $delay_ms
+     * @return array
+     */
+    public static function timer($delay_ms)
+    {
+        return array(GuiTimerDef::delay_ms => $delay_ms);
+    }
+
+    /**
      * @param string $url
      * @param array|null $post_action
      * @return array
@@ -471,16 +457,38 @@ class Action_Factory
     }
 
     /**
-     * @param $plugin_cookies
+     * @param Object $plugin_cookies
      * @param array|null $post_action
-     * @param array|null $except_media_urls
      * @return array|null
      */
-    public static function invalidate_all_folders($plugin_cookies, $post_action = null, $except_media_urls = null)
+    public static function invalidate_all_folders($plugin_cookies, $post_action = null)
     {
         Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
 
-        return Starnet_Epfs_Handler::invalidate_all_folders(null, $post_action, $except_media_urls);
+        if (Starnet_Epfs_Handler::$enabled) {
+            $post_invalidate = self::invalidate_folders(array(Starnet_Epfs_Handler::$epf_id), $post_action);
+        } else {
+            $post_invalidate = $post_action;
+        }
+
+        return self::invalidate_folders(array(), $post_invalidate, true);
+    }
+
+    /**
+     * @param array $media_urls
+     * @param array $post_action
+     * @return array
+     */
+    public static function invalidate_folders($media_urls, $post_action = null, $all_except = false)
+    {
+        return array(
+            GuiAction::handler_string_id => PLUGIN_INVALIDATE_FOLDERS_ACTION_ID,
+            GuiAction::data => array(
+                PluginInvalidateFoldersActionData::media_urls => $media_urls,
+                PluginInvalidateFoldersActionData::post_action => $post_action,
+                PluginInvalidateFoldersActionData::all_except => $all_except
+            )
+        );
     }
 
     /**
@@ -508,11 +516,11 @@ class Action_Factory
     }
 
     /**
-     * @param $channel_id
-     * @param $clear
-     * @param $day_start_tm_sec
-     * @param $programs
-     * @param $post_action
+     * @param string $channel_id
+     * @param bool $clear
+     * @param int $day_start_tm_sec
+     * @param string $programs
+     * @param array $post_action
      * @return array
      */
     public static function update_epg($channel_id, $clear, $day_start_tm_sec = 0, $programs = null, $post_action = null)
@@ -570,7 +578,7 @@ class Action_Factory
     }
 
     /**
-     * @param $comps
+     * @param array $comps
      * @param array $post_action
      * @return array
      */
@@ -636,19 +644,15 @@ class Action_Factory
         return array();
     }
 
-    public static function clear_rows_info_cache($post_action=null)
+    public static function clear_rows_info_cache($post_action = null)
     {
-        if (HD::rows_api_support()) {
-            return array(
-                GuiAction::handler_string_id => PLUGIN_UPDATE_ROWS_INFO_ACTION_ID,
-                GuiAction::data => array(
-                    PluginUpdateRowsInfoActionData::clear_cache => true,
-                    PluginUpdateRowsInfoActionData::post_action => $post_action
-                )
-            );
-        }
-
-        return $post_action;
+        return array(
+            GuiAction::handler_string_id => PLUGIN_UPDATE_ROWS_INFO_ACTION_ID,
+            GuiAction::data => array(
+                PluginUpdateRowsInfoActionData::clear_cache => true,
+                PluginUpdateRowsInfoActionData::post_action => $post_action
+            )
+        );
     }
 
     public static function update_rows_info($folder_key, $item_id, $info_defs,

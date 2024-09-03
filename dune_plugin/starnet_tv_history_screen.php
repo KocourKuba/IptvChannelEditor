@@ -45,14 +45,14 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
             return null;
         }
 
-        $media_url = MediaURL::decode($user_input->selected_media_url);
-        $channel_id = $media_url->channel_id;
+        $selected_media_url = MediaURL::decode($user_input->selected_media_url);
+        $channel_id = $selected_media_url->channel_id;
 
         switch ($user_input->control_id)
         {
             case ACTION_PLAY_ITEM:
                 try {
-                    $post_action = $this->plugin->tv_player_exec($media_url);
+                    $post_action = $this->plugin->tv_player_exec($selected_media_url);
                 } catch (Exception $ex) {
                     hd_debug_print("Movie can't played");
                     print_backtrace_exception($ex);
@@ -80,11 +80,9 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
                 $is_favorite = $this->plugin->get_favorites()->in_order($channel_id);
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
-                $action = $this->plugin->change_tv_favorites($opt_type, $channel_id);
                 $this->plugin->save_favorites();
-                return Action_Factory::update_invalidate_folders($action,
-                    self::get_media_url_string(HISTORY_GROUP_ID),
-                    Action_Factory::show_title_dialog($message));
+                return Action_Factory::show_title_dialog($message,
+                    $this->plugin->change_tv_favorites($opt_type, $selected_media_url->channel_id));
 
             case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ITEMS_CLEAR, TR::t('clear_history'), "brush.png");

@@ -465,8 +465,7 @@ class Starnet_Tv implements User_Input_Handler
         HD::ShowMemoryUsage();
 
         if ($this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE) === ENGINE_XMLTV) {
-            $this->plugin->get_epg_manager()->start_bg_indexing();
-            sleep(1);
+            $this->plugin->run_bg_epg_indexing();
         }
 
         return 1;
@@ -672,10 +671,7 @@ class Starnet_Tv implements User_Input_Handler
 
         return array(
             GUI_EVENT_PLAYBACK_STOP => User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLAYBACK_STOP),
-            GUI_EVENT_TIMER => User_Input_Handler_Registry::create_action($this,
-                GUI_EVENT_TIMER,
-                null,
-                $this->plugin->get_epg_manager()->get_indexer()->is_index_locked() ? array('locked' => true) : null),
+            GUI_EVENT_TIMER => User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER),
         );
     }
 
@@ -693,51 +689,38 @@ class Starnet_Tv implements User_Input_Handler
         switch ($user_input->control_id) {
             case GUI_EVENT_TIMER:
                 $post_action = null;
-
-                if (isset($user_input->stop_play)) {
-                    // rising after playback end + 100 ms
-                    $this->plugin->set_need_update_epfs();
-                    $post_action = $this->plugin->invalidate_epfs_folders($plugin_cookies, array(Starnet_TV_History_Screen::ID));
-                } else if (isset($user_input->locked)) {
-                    clearstatcache();
-                    if ($this->plugin->get_epg_manager()->get_indexer()->is_index_locked()) {
-                        $new_actions = $this->get_action_map();
-                        $new_actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this,
-                            GUI_EVENT_TIMER,
-                            null,
-                            array('locked' => true));
-
-                        hd_debug_print("EPG still indexed...");
-                        $post_action = Action_Factory::change_behaviour($new_actions, 5000);
-                    } else {
-                        hd_debug_print("Index EPG done");
-                        foreach($this->plugin->get_epg_manager()->get_delayed_epg() as $channel_id) {
-                            hd_debug_print("Refresh EPG for channel ID: $channel_id");
-                            $day_start_ts = strtotime(date("Y-m-d")) + get_local_time_zone_offset();
-                            $day_epg = $this->plugin->get_day_epg($channel_id, $day_start_ts, $plugin_cookies);
-                            $post_action = Action_Factory::update_epg($channel_id, true, $day_start_ts, $day_epg, $post_action);
-                        }
-                        $this->plugin->get_epg_manager()->clear_delayed_epg();
-                    }
-                }
-
-                return $post_action;
-
-            case GUI_EVENT_PLAYBACK_STOP:
-                $this->plugin->get_playback_points()->update_point($user_input->plugin_tv_channel_id);
-
-                if (!isset($user_input->playback_stop_pressed) && !isset($user_input->playback_power_off_needed)) {
+                $epg_manager = $this->plugin->get_epg_manager();
+                if ($epg_manager === null) {
                     return null;
                 }
 
-                $this->plugin->get_playback_points()->save();
-                $new_actions = $this->get_action_map();
-                $new_actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this,
-                    GUI_EVENT_TIMER,
-                    null,
-                    array('stop_play' => true));
+                clearstatcache();
+                $res = $epg_manager->import_indexing_log();
+                if ($res === false) {
+                    return Action_Factory::change_behaviour($this->get_action_map(), 1000);
+                }
+                hd_debug_print("delayed epg: " . json_encode($epg_manager->get_delayed_epg()));
 
-                return Action_Factory::change_behaviour($new_actions, 100);
+                foreach ($epg_manager->get_delayed_epg() as $channel_id) {
+                    hd_debug_print("Refresh EPG for channel ID: $channel_id");
+                    $day_start_ts = strtotime(date("Y-m-d")) + get_local_time_zone_offset();
+                    $day_epg = $this->plugin->get_day_epg($channel_id, $day_start_ts, $plugin_cookies);
+                    $post_action = Action_Factory::update_epg($channel_id, true, $day_start_ts, $day_epg, $post_action);
+                }
+
+                $epg_manager->clear_delayed_epg();
+                return $post_action;
+
+            case GUI_EVENT_PLAYBACK_STOP:
+                $channel = $this->plugin->tv->get_channel($user_input->plugin_tv_channel_id);
+                if (is_null($channel) || $channel->is_protected()) break;
+
+                $this->plugin->get_playback_points()->update_point($user_input->plugin_tv_channel_id);
+
+                if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
+                    $this->plugin->get_playback_points()->save();
+                    return Action_Factory::invalidate_folders(array(Starnet_Tv_Groups_Screen::ID));
+                }
         }
 
         return null;

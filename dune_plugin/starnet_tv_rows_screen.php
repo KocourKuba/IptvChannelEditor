@@ -513,7 +513,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
                 if (isset($user_input->action_origin)) {
                     Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                    return Action_Factory::close_and_run(Starnet_Epfs_Handler::invalidate_folders(null, $tv_play_action));
+                    return Action_Factory::close_and_run(Starnet_Epfs_Handler::epfs_invalidate_folders(null, $tv_play_action));
                 }
 
                 $new_actions = array_merge($this->get_action_map($media_url, $plugin_cookies),
@@ -579,15 +579,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 }
 
                 return Action_Factory::show_popup_menu($menu_items);
-
-            case ACTION_EPG_SOURCE_SELECTED:
-                if (!isset($user_input->list_idx)) break;
-
-                $this->plugin->set_active_xmltv_source_key($user_input->list_idx);
-                $this->plugin->tv->reload_channels();
-                $this->plugin->set_need_update_epfs();
-
-                return $this->plugin->invalidate_epfs_folders($plugin_cookies);
 
             case PLUGIN_FAVORITES_OP_ADD:
             case PLUGIN_FAVORITES_OP_REMOVE:

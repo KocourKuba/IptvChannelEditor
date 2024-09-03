@@ -66,7 +66,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
 
             case self::ACTION_CONFIRM_DLG_APPLY:
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                return Starnet_Epfs_Handler::invalidate_folders(null, Action_Factory::close_and_run());
+                return Starnet_Epfs_Handler::epfs_invalidate_folders(null, Action_Factory::close_and_run());
 
             case ACTION_NEED_CONFIGURE:
                 if ($this->IsSetupNeeds()) {
@@ -112,20 +112,11 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 hd_debug_print("Start event popup menu for epg source");
                 return User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU, null, array(ACTION_CHANGE_EPG_SOURCE => true));
 
-            case ACTION_EPG_SOURCE_SELECTED:
-                if (!isset($user_input->list_idx)) break;
-
-                $this->plugin->set_active_xmltv_source_key($user_input->list_idx);
-                $this->plugin->tv->reload_channels();
-
-                Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                return Action_Factory::invalidate_all_folders($plugin_cookies);
-
             case ACTION_RELOAD:
                 if ($user_input->reload_action === 'epg') {
                     $this->plugin->get_epg_manager()->clear_epg_cache();
                     $this->plugin->init_epg_manager();
-                    $this->plugin->get_epg_manager()->start_bg_indexing();
+                    $this->plugin->run_bg_epg_indexing();
                 }
 
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
