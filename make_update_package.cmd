@@ -108,13 +108,6 @@ call :add_node ChannelsLists.pkg				>>%outfile%
 echo ^</package^> >>%outfile%
 copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
 
-echo build standard archive...
-mklink /J dune_plugin "%ROOT%dune_plugin" >nul 2>&1
-rem mklink /J ChannelsLists "%ROOT%ChannelsLists" >nul 2>&1
-IPTVChannelEditor.exe /MakeAll /NoEmbed /NoCustom /Dev .
-rd dune_plugin /q
-rem rd ChannelsLists /q
-
 echo %BUILD_NAME%.exe				>packing.lst
 echo %BUILD_NAME%RUS.dll			>>packing.lst
 echo Updater.exe					>>packing.lst
@@ -126,7 +119,6 @@ echo defaults_%MAJOR%.%MINOR%.json	>>packing.lst
 echo dune_plugin.pkg				>>packing.lst
 echo picons.pkg						>>packing.lst
 echo ChannelsLists.pkg				>>packing.lst
-echo dune_plugin_*.zip				>>packing.lst
 
 echo "remove %ROOT%package\dune_channel_editor_universal.7z" >nul
 del "%ROOT%package\dune_channel_editor_universal.7z" >nul
@@ -144,7 +136,6 @@ goto :EOF
 :update_source
 
 call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT% "%BUILD_PATH%"
-rem call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT%Updater "%ROOT%Updater\%BUILD_TYPE%"
 call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT%BugTrap "%ROOT%BugTrap\bin"
 goto :EOF
 
