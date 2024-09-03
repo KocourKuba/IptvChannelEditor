@@ -39,7 +39,7 @@ class Playlist
 {
 public:
 	std::string catchup_source;
-	int catchup_days;
+	int catchup_days = 0;
 	CatchupType catchup = CatchupType::cu_not_set;
 	bool per_channel_catchup = false;
 	std::string logo_root;

@@ -452,10 +452,10 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 			auto display_name_node = channel_node->first_node("display-name");
 			while (display_name_node)
 			{
-				std::wstring name = utils::wstring_tolower_l(rapidxml::get_value_wstring(display_name_node));
-				if (!name.empty())
+				std::wstring channel_name = utils::wstring_tolower_l(rapidxml::get_value_wstring(display_name_node));
+				if (!channel_name.empty())
 				{
-					alias_map.emplace(name, channel_id);
+					alias_map.emplace(channel_name, channel_id);
 				}
 				display_name_node = display_name_node->next_sibling();
 			}
@@ -472,6 +472,7 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 		//////////////////////////////////////////////////////////////////////////
 		// begin parsing programme nodes
 		dwStart = dwEnd;
+		i = 0;
 
 		if (pCtrl)
 		{
@@ -479,8 +480,6 @@ bool base_plugin::parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage
 			pCtrl->ShowWindow(SW_SHOW);
 		}
 
-		dwStart = dwEnd;
-		i = 0;
 		// Iterate <tv_category> nodes
 		prog_node = docParse->first_node("tv")->first_node("programme");
 		while (prog_node)
