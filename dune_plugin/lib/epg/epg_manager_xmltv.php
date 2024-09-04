@@ -129,6 +129,7 @@ class Epg_Manager_Xmltv
             $this->set_flags($flags);
             $this->indexer->set_cache_ttl($this->plugin->get_parameter(PARAM_EPG_CACHE_TTL, 3));
             $this->indexer->set_cache_type($this->plugin->get_parameter(PARAM_EPG_CACHE_TYPE, XMLTV_CACHE_AUTO));
+            $this->indexer->set_active_sources($this->plugin->get_all_xmltv_sources());
         }
     }
 
