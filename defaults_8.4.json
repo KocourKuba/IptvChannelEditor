@@ -189,7 +189,7 @@
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
           "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ]
@@ -212,7 +212,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.101film.org/{LOGIN}/{PASSWORD}/tv.m3u?srv={SERVER_ID}",
           "tag_id_match": "CUID"
@@ -248,8 +248,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ],
@@ -294,7 +293,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>.+)\\/s\\/(?<token>.+)\\/.+\\/.+\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+):(?<port>.+)\\/s\\/(?<token>.+)\\/.+\\/.+\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "https://af-play.com/playlist/{PASSWORD}.m3u8",
           "tag_id_match": "tvg-id"
@@ -307,16 +306,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}/video.m3u8"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}:80/{ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}:80/{ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "Antifriz TV",
@@ -345,7 +343,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<token>.+)\\/video\\.m3u8\\?token=(?<password>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<token>.+)\\/video\\.m3u8\\?token=(?<password>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/hls\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "https://bcumedia.pro/playlist/hls/{PASSWORD}.m3u",
           "tag_id_match": "tvg-id"
@@ -357,16 +355,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{TOKEN}/archive-{START}-{DURATION}.ts?token={PASSWORD}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{TOKEN}/archive-{START}-{DURATION}.ts?token={PASSWORD}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}"
         }
       ],
       "title": "BCU Media"
@@ -389,7 +386,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/.*\\.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/.*\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+):(?<password>.+)\\/playlist\\.m3u8?$",
           "pl_template": "https://bittv.ltd/playlists/{LOGIN}:{PASSWORD}/playlist.m3u"
         }
@@ -401,8 +398,8 @@
           "cu_duration": 14400,
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
         },
         {
         }
@@ -419,7 +416,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?<var1>.+)?\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?<var1>.+)?\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/(?<login>.+)\\/(?<password>.+)\\/.+\\/playlist\\.m3u8?$",
           "pl_template": "https://blinktv.cc/{LOGIN}/{PASSWORD}/hls/playlist.m3u8"
         }
@@ -430,16 +427,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/{VAR1}?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/{VAR1}?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}?token={TOKEN}"
         }
       ],
       "title": "Blink TV"
@@ -485,7 +481,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>.+)\\/s\\/(?<token>.+)\\/.+\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+):(?<port>.+)\\/s\\/(?<token>.+)\\/.+\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/(?<token>.+)_otp_dev.*$",
           "pl_template": "http://248on.com/playlist/{PASSWORD}_otp_dev{DEVICE_ID}.m3u8",
           "tag_id_match": "tvg-id"
@@ -500,15 +496,14 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8"
+          "uri_template": "{SCHEME}://{DOMAIN}:{PORT}/s/{TOKEN}/{ID}.m3u8"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "Cbilling TV",
@@ -538,8 +533,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/{PASSWORD}/live.m3u8"
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{PASSWORD}/live.m3u8"
         },
         {}
       ],
@@ -564,42 +558,42 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico.m3u8",
           "square_icons": false
         },
         {
           "name": "Thematic",
-          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico2.m3u8",
           "square_icons": false
         },
         {
           "name": "Thematic Sorted",
-          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico3.m3u8",
           "square_icons": false
         },
         {
           "name": "Standard (Square icons)",
-          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico.m3u8",
           "square_icons": true
         },
         {
           "name": "Thematic (Square icons)",
-          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico2.m3u8",
           "square_icons": true
         },
         {
           "name": "Thematic Sorted (Square icons)",
-          "parse_regex": "^(?<scheme>https?:\\/\\/).+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico3.m3u8",
           "square_icons": true
@@ -612,8 +606,7 @@
           "dune_params": "hls_forced_type:event,psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}junior.edmonst.net/iptv/{OTT_KEY}/{ID}/index.m3u8"
+          "uri_template": "{SCHEME}://junior.edmonst.net/iptv/{OTT_KEY}/{ID}/index.m3u8"
         },
         {}
       ],
@@ -646,7 +639,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<int_id>.+)\\/(?<var1>.+)\\.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<int_id>.+)\\/(?<var1>.+)\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+)\\/(?<password>.+)\\/(?:hls|ts)\\/(?<server>.+)\\/playlist\\.m3u8$",
           "pl_template": "http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8",
           "tag_id_match": "tvg-id"
@@ -685,16 +678,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{INT_ID}/{VAR1}.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{INT_ID}/{VAR1}.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/{INT_ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{INT_ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "Filmax TV"
@@ -717,7 +709,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/(?<server>.+)\\/.*$",
           "pl_template": "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
@@ -730,8 +722,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ],
@@ -804,13 +795,13 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.+\\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$",
           "pl_template": "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls"
         },
         {
           "name": "No Adults",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.+\\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$",
           "pl_template": "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0"
         }
@@ -822,9 +813,8 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "http://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "http://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
@@ -868,7 +858,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)\\/.+\\.m3u\\d?$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)\\/.+\\.m3u\\d?$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/iptv\\/m3u_plus-(?<password>.+)-m3u8$",
           "pl_template": "http://file.ipstr.im/iptv/m3u_plus-{PASSWORD}-m3u8"
         }
@@ -880,15 +870,14 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8"
+          "uri_template": "{SCHEME}://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8"
         },
         {
           "cu_type": "append",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
-          "uri_template": "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}.ts"
+          "uri_template": "{SCHEME}://{DOMAIN}/live/{TOKEN}/{ID}.ts"
         }
       ],
       "title": "IpStream/Ishara"
@@ -918,7 +907,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/play\\/(?<password>.+)\\/m3u8?$",
           "pl_template": "{PL_DOMAIN}/pl/{PASSWORD}/playlist.m3u8"
         }
@@ -961,16 +950,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video.m3u8"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
+          "uri_template": "{SCHEME}://{SERVER_ID}/play/{ID}/{TOKEN}/video.m3u8"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
-          "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/mpegts"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
+          "uri_template": "{SCHEME}://{SERVER_ID}/play/{ID}/{TOKEN}/mpegts"
         }
       ],
       "title": "IPTV Best"
@@ -995,7 +983,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/play\\/(?<password>.+)\\/m3u8?$",
           "pl_template": "http://iptv.online/play/{PASSWORD}/m3u8"
         }
@@ -1007,16 +995,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
+          "uri_template": "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
-          "uri_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/mpegts"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
+          "uri_template": "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/mpegts"
         }
       ],
       "title": "IPTV Online",
@@ -1051,7 +1038,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/.+\\/video\\.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/.+\\/video\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/p\\/(?<password>.+)\\/.+$",
           "pl_template": "https://itv.ooo/p/{PASSWORD}/hls.m3u8",
           "tag_id_match": "tvg-id"
@@ -1064,16 +1051,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/video.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "ITV Live TV"
@@ -1096,7 +1082,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<host>.+)\\/(?<id>.+)\\/(?<token>.+)\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<host>.+)\\/(?<id>.+)\\/(?<token>.+)\\.m3u8$",
           "pl_template": "http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER}/1"
         }
       ],
@@ -1126,8 +1112,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8"
+          "uri_template": "{SCHEME}://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8"
         },
         {}
       ],
@@ -1139,7 +1124,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/lb\\/(?<id>.+)\\/index.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/lb\\/(?<id>.+)\\/index.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/.+\\/(?<login>.+)\\/(?<password>.+)\\/.+$",
           "pl_template": "https://klimedia.space/hls/{LOGIN}/{PASSWORD}/playlist.m3u8"
         }
@@ -1150,15 +1135,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/lb/{ID}/index.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/lb/{ID}/index.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/lb/{ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/lb/{ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "KLI Media"
@@ -1181,7 +1166,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<token>.+)\\/video\\.m3u8\\?token=(?<password>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<token>.+)\\/video\\.m3u8\\?token=(?<password>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/hls\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "http://lightiptv.cc/playlist/hls/{PASSWORD}.m3u",
           "tag_id_match": "tvg-id"
@@ -1193,16 +1178,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{TOKEN}/video-{START}-{DURATION}.m3u8?token={PASSWORD}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}/video.m3u8?token={PASSWORD}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{TOKEN}/timeshift_abs-{START}-{DURATION}.ts?token={PASSWORD}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{TOKEN}/timeshift_abs-{START}-{DURATION}.ts?token={PASSWORD}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}/mpegts?token={PASSWORD}"
         }
       ],
       "title": "LightIPTV"
@@ -1225,7 +1209,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/srv\\/(?<server>.+)\\/(?<quality>.+)\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.mymagic.tv/srv/{SERVER_ID}/{QUALITY_ID}/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
@@ -1280,8 +1264,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ],
@@ -1305,7 +1288,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?<var1>.+)\\.m3u8?\\?(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?<var1>.+)\\.m3u8?\\?(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/srv\\/(?<server>.+)\\/(?<quality>.+)\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://nasharu.tv/iptv/{PASSWORD}/m3u8/playlist.m3u8"
         }
@@ -1317,8 +1300,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ],
@@ -1359,7 +1341,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/index\\.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/index\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/pl\\/(?<password>.+)\\/.*$",
           "pl_template": "http://only4.tv/pl/{PASSWORD}/102/only4tv.m3u8"
         }
@@ -1371,8 +1353,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}&utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
         },
         {}
       ],
@@ -1405,7 +1386,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/~(?<token>.+)\\/(?<id>.+)\\/hlsx?\\/.+\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/~(?<token>.+)\\/(?<id>.+)\\/hlsx?\\/.+\\.m3u8$",
           "pl_template": "http://list.1ott.net/api/{S_TOKEN}/high/unix.m3u8"
         }
       ],
@@ -1417,15 +1398,14 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8"
+          "uri_template": "{SCHEME}://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8"
         },
         {
           "cu_type": "shift",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/~{TOKEN}/{ID}"
+          "uri_template": "{SCHEME}://{DOMAIN}/~{TOKEN}/{ID}"
         }
       ],
       "title": "1OTT TV"
@@ -1456,7 +1436,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/mono\\.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/mono\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/pl-(?<password>.+)-hls$",
           "pl_template": "http://1usd.tv/pl-{PASSWORD}-hls"
         }
@@ -1467,16 +1447,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "1USD TV"
@@ -1487,7 +1466,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.onlineott-tv.site/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
@@ -1500,8 +1479,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ],
@@ -1549,7 +1527,7 @@
         {
           "epg_id_from_id": true,
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/stream\\/(?<token>.+)\\/(?<id>.+)\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/stream\\/(?<token>.+)\\/(?<id>.+)\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/(?<password>.+)\\/.*$",
           "pl_template": "{PL_DOMAIN}/playlist/{PASSWORD}/m3u"
         }
@@ -1562,8 +1540,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/stream/{TOKEN}/{ID}.m3u8"
+          "uri_template": "{SCHEME}://{DOMAIN}/stream/{TOKEN}/{ID}.m3u8"
         },
         {}
       ],
@@ -1588,7 +1565,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/play\\/(?<password>.+)\\/m3u8?$",
           "pl_template": "https://cassy.tv/pls/{PASSWORD}/playlist.m3u8"
         }
@@ -1630,16 +1607,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/video.m3u8"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
+          "uri_template": "{SCHEME}://{SERVER_ID}/play/{ID}/{TOKEN}/video.m3u8"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
-          "uri_template": "{SCHEME}{SERVER_ID}/play/{ID}/{TOKEN}/mpegts"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
+          "uri_template": "{SCHEME}://{SERVER_ID}/play/{ID}/{TOKEN}/mpegts"
         }
       ],
       "vod_engine": "M3U",
@@ -1673,15 +1649,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8??token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8??token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts??token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts??token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "Peak TV"
@@ -1704,7 +1680,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
@@ -1717,8 +1693,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ],
@@ -1754,7 +1729,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/s\\/(?<token>.+)\\/.+\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/s\\/(?<token>.+)\\/.+\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "https://russkoetv.shop/play/{PASSWORD}.m3u8",
           "tag_id_match": "tvg-id"
@@ -1768,8 +1743,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/s/{TOKEN}/{ID}.m3u8"
+          "uri_template": "{SCHEME}://{DOMAIN}/s/{TOKEN}/{ID}.m3u8"
         },
         {}
       ],
@@ -1781,7 +1755,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.ru-tv.site/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
@@ -1794,8 +1768,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ],
@@ -1815,7 +1788,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?<token>.+)\\/(video\\.m3u8|mpegts)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?<token>.+)\\/(video\\.m3u8|mpegts)$",
           "pl_parse_regex": "^https?:\\/\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "http://iptv11.com/1/{PASSWORD}.m3u8"
         }
@@ -1861,16 +1834,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{SERVER_ID}/{ID}/{TOKEN}/video.m3u8"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{SERVER_ID}/{ID}/{TOKEN}/video.m3u8"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "buffering_ms:{BUFFERING}",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{SERVER_ID}/{ID}/{TOKEN}/mpegts"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{SERVER_ID}/{ID}/{TOKEN}/mpegts"
         }
       ],
       "title": "Satq TV"
@@ -1894,7 +1866,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)\\/.+\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)\\/.+\\.m3u8$",
           "pl_parse_regex": "https?:\\/\\/[^\\/]+\\/tv-m3u8\\/(?<login>[^-]+)-(?<password>.+)$",
           "pl_template": "http://{PL_DOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}"
         }
@@ -1907,15 +1879,14 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8"
+          "uri_template": "{SCHEME}://{DOMAIN}/live/{TOKEN}/{ID}/video.m3u8"
         },
         {
           "cu_type": "append",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
-          "uri_template": "{SCHEME}{DOMAIN}/live/{TOKEN}/{ID}.ts"
+          "uri_template": "{SCHEME}://{DOMAIN}/live/{TOKEN}/{ID}.ts"
         }
       ],
       "title": "Sharaclub TV",
@@ -1947,7 +1918,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+):(?<password>.+)\\/.+\\/.*$",
           "pl_template": "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u"
         }
@@ -1959,7 +1930,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{TOKEN}"
         },
         {}
       ],
@@ -1995,14 +1966,14 @@
         {
           "epg_id_from_id": true,
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/iptv\\/p\\/(?<password>.+)\\/.*$",
           "pl_template": "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u"
         },
         {
           "epg_id_from_id": true,
           "name": "Secondary",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/iptv\\/p\\/(?<password>.+)\\/.*$",
           "pl_template": "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Playlist.navigator-ott.m3u"
         }
@@ -2049,16 +2020,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{SERVER_ID}/{ID}/index.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{SERVER_ID}/{ID}/index.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{SERVER_ID}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{SERVER_ID}/{ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{SERVER_ID}/{ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "Sharavoz TV",
@@ -2088,7 +2058,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/~(?<token>.+)\\/(?<id>.+)\\/hls\\/.+\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/~(?<token>.+)\\/(?<id>.+)\\/hls\\/.+\\.m3u8$",
           "pl_template": "http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva"
         }
       ],
@@ -2110,8 +2080,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?archive={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8"
+          "uri_template": "{SCHEME}://{DOMAIN}/~{TOKEN}/{ID}/hls/pl.m3u8"
         },
         {}
       ],
@@ -2135,7 +2104,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
           "pl_template": "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/tv.m3u?srv={SERVER_ID}",
           "tag_id_match": "CUID"
@@ -2171,8 +2140,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ],
@@ -2197,7 +2165,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+):(?<port>.+)\\/live\\/(?<id>.+)\\?token=(?<token>.*)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+):(?<port>.+)\\/live\\/(?<id>.+)\\?token=(?<token>.*)$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/list\\.php\\?login=(?<login>.+)&password=(?<password>.+)&.+$",
           "pl_template": "https://s.topiptv.link/list.php?login={LOGIN}&password={PASSWORD}&type=m3u"
         }
@@ -2209,7 +2177,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{CH_CATCHUP}",
-          "uri_template": "{SCHEME}{DOMAIN}:{PORT}/live/{ID}?token={TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}:{PORT}/live/{ID}?token={TOKEN}"
         },
         {
         }
@@ -2236,7 +2204,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/p\\/(?<token>.+)\\/.+$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/p\\/(?<token>.+)\\/.+$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/p\\/(?<password>.+)$",
           "pl_template": "http://celn.shott.top/p/{S_TOKEN}",
           "tag_id_match": "tvg-id"
@@ -2249,15 +2217,14 @@
           "cu_type": "shift",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}"
+          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}"
         },
         {
           "cu_type": "append",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
-          "uri_template": "{SCHEME}{DOMAIN}/p/{TOKEN}/{ID}"
+          "uri_template": "{SCHEME}://{DOMAIN}/p/{TOKEN}/{ID}"
         }
       ],
       "title": "TV Club"
@@ -2282,7 +2249,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/play\\/(?<password>.+)\\/m3u8?$",
           "pl_template": "http://iptv.online/play/{PASSWORD}/m3u8"
         }
@@ -2294,16 +2261,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
+          "uri_template": "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/video.m3u8"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
-          "uri_template": "{SCHEME}{DOMAIN}/play/{ID}/{TOKEN}/mpegts"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/archive-{START}-{DURATION}.ts",
+          "uri_template": "{SCHEME}://{DOMAIN}/play/{ID}/{TOKEN}/mpegts"
         }
       ],
       "title": "TVIZI Net",
@@ -2346,7 +2312,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/.+\\/.+\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/.+\\/.+\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/pl\\/11\\/(?<password>.+)\\/.*$",
           "pl_template": "http://troya.one/pl/11/{S_TOKEN}/playlist.m3u8",
           "tag_id_match": "tvg-name"
@@ -2359,16 +2325,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mono.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "TV Team"
@@ -2383,7 +2348,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/(?<server>.+)\\/.*$",
           "pl_template": "http://pl.uspeh.sbs/{LOGIN}/{PASSWORD}/tv.m3u",
           "tag_id_match": "CUID"
@@ -2396,8 +2361,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{TOKEN}"
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ],
@@ -2435,7 +2399,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/p\\/(?<token>.+)\\/.+$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/p\\/(?<token>.+)\\/.+$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/p\\/(?<password>.+)$",
           "pl_template": "http://bddpv.plist.top/p/{S_TOKEN}",
           "tag_id_match": "tvg-id"
@@ -2449,8 +2413,7 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/p/{TOKEN}/{ID}"
+          "uri_template": "{SCHEME}://{DOMAIN}/p/{TOKEN}/{ID}"
         },
         {}
       ],
@@ -2474,7 +2437,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/(?<quality>.+)\\/(?<token>.+)\\/.+$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<quality>.+)\\/(?<token>.+)\\/.+$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/.*\\/(?<password>.+)\\/.*$",
           "pl_template": "http://cdntv.online/high/{PASSWORD}/playlist.m3u8",
           "tag_id_match": "tvg-id"
@@ -2510,15 +2473,14 @@
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_custom_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.m3u8"
+          "uri_template": "{SCHEME}://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.m3u8"
         },
         {
           "cu_type": "shift",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
           "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg"
+          "uri_template": "{SCHEME}://{DOMAIN}/{QUALITY_ID}/{TOKEN}/{ID}.mpeg"
         }
       ],
       "title": "VipLime TV",
@@ -2549,7 +2511,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?:\\/\\/)(?<domain>.+)\\/balancer\\/(?<id>.+)\\/(?<token>.+)\\/(?<var1>.+)\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/balancer\\/(?<id>.+)\\/(?<token>.+)\\/(?<var1>.+)\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/p12\\/(?<login>.+)\\/(?<password>.+)\\/.+\\/.*$",
           "pl_template": "https://streaming-elbrus.su/p12/{LOGIN}/{PASSWORD}/BL/playlist.m3u8"
         }
@@ -2560,8 +2522,8 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}{DOMAIN}/balancer/{ID}/{TOKEN}/{VAR1}-{START}-{DURATION}.m3u8",
-          "uri_template": "{SCHEME}{DOMAIN}/balancer/{ID}/{TOKEN}/index.m3u8"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/balancer/{ID}/{TOKEN}/{VAR1}-{START}-{DURATION}.m3u8",
+          "uri_template": "{SCHEME}://{DOMAIN}/balancer/{ID}/{TOKEN}/index.m3u8"
         },
         {}
       ],
