@@ -151,7 +151,6 @@ class Epg_Manager_Xmltv
      */
     public function get_day_epg_items(Channel $channel, $day_start_ts)
     {
-        $t = microtime(true);
         $active_sources = $this->plugin->get_all_xmltv_sources(false);
         $any_lock = $this->indexer->is_any_index_locked($active_sources);
         $day_epg = array();
@@ -174,7 +173,6 @@ class Epg_Manager_Xmltv
             try {
                 $positions = $this->indexer->load_program_index($channel);
                 if (!empty($positions)) {
-                    $t = microtime(true);
                     $cached_file = $this->indexer->get_cached_filename();
                     if (!file_exists($cached_file)) {
                         throw new Exception("cache file $cached_file not exist");
@@ -226,8 +224,6 @@ class Epg_Manager_Xmltv
             }
         }
 
-        hd_debug_print("Fetch data from XMLTV cache in: " . (microtime(true) - $t) . " secs");
-
         if (empty($day_epg)) {
             if ($any_lock !== false) {
                 $this->delayed_epg = array_unique($this->delayed_epg);
@@ -241,9 +237,8 @@ class Epg_Manager_Xmltv
         }
 
         hd_debug_print("Total EPG entries loaded: " . count($day_epg));
-        ksort($day_epg);
-        hd_debug_print("Entries collected in: " . (microtime(true) - $t) . " secs");
 
+        ksort($day_epg);
         return $day_epg;
     }
 

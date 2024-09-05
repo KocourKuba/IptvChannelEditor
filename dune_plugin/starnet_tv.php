@@ -3,6 +3,7 @@ require_once 'lib/hashed_array.php';
 require_once 'lib/default_group.php';
 require_once 'lib/default_channel.php';
 require_once 'lib/epg/default_epg_item.php';
+require_once 'lib/perf_collector.php';
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_vod_category_list_screen.php';
 
@@ -41,6 +42,11 @@ class Starnet_Tv implements User_Input_Handler
      */
     protected $special_groups;
 
+    /**
+     * @var Perf_Collector
+     */
+    protected $perf;
+
     ///////////////////////////////////////////////////////////////////////
 
     /**
@@ -50,6 +56,7 @@ class Starnet_Tv implements User_Input_Handler
     {
         $this->plugin = $plugin;
         $this->playback_url_is_stream_url = false;
+        $this->perf = new Perf_Collector();
 
         User_Input_Handler_Registry::get_instance()->register_handler($this);
     }
@@ -171,7 +178,7 @@ class Starnet_Tv implements User_Input_Handler
             return 0;
         }
 
-        HD::ShowMemoryUsage();
+        $this->perf->reset('start');
 
         $pass_sex = $this->plugin->get_parameter(PARAM_ADULT_PASSWORD, '0000');
         $enable_protected = !empty($pass_sex);
@@ -461,8 +468,12 @@ class Starnet_Tv implements User_Input_Handler
             $this->plugin->config->ClearPlaylistCache(true);
         }
 
+        $this->perf->setLabel('end');
+        $report = $this->perf->getFullReport();
         hd_debug_print("Loaded: channels: {$this->channels->size()}, groups: {$this->groups->size()}");
-        HD::ShowMemoryUsage();
+        hd_debug_print("Load time: {$report[Perf_Collector::TIME]} sec");
+        hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+        hd_debug_print_separator();
 
         if ($this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE) === ENGINE_XMLTV) {
             $this->plugin->run_bg_epg_indexing();

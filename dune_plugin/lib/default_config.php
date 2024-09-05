@@ -6,6 +6,7 @@ require_once 'channel.php';
 require_once 'catchup_params.php';
 require_once 'm3u/M3uParser.php';
 require_once "lib/curl_wrapper.php";
+require_once 'lib/perf_collector.php';
 require_once 'lib/epg/epg_manager_json.php';
 require_once 'lib/epg/epg_manager_xmltv.php';
 
@@ -61,10 +62,16 @@ class default_config extends dynamic_config
      */
     protected $curl_wrapper;
 
+    /**
+     * @var Perf_Collector
+     */
+    protected $perf;
+
     public function set_plugin($plugin)
     {
         $this->plugin = $plugin;
         $this->curl_wrapper = new Curl_Wrapper();
+        $this->perf = new Perf_Collector();
     }
 
     public function load_embedded_account()
@@ -120,10 +127,15 @@ class default_config extends dynamic_config
     {
         hd_debug_print(null, true);
         if (empty($this->tv_m3u_entries)) {
+            $this->perf->reset('start');
             if ($this->plugin->get_m3u_parser()->parseInMemory()) {
                 $this->tv_m3u_entries = $this->plugin->get_m3u_parser()->getM3uEntries();
+
+                $this->perf->setLabel('end');
+                $report = $this->perf->getFullReport();
                 hd_debug_print("Total entries loaded from playlist m3u file:" . count($this->tv_m3u_entries));
-                HD::ShowMemoryUsage();
+                hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+                hd_debug_print_separator();
             } else {
                 hd_debug_print("Failed to parse M3U file");
                 return array();
@@ -997,12 +1009,12 @@ class default_config extends dynamic_config
      */
     public function fetchVodCategories(&$category_list, &$category_index)
     {
+        $this->perf->reset('start');
+
         $category_list = array();
         $category_index = array();
 
         $this->plugin->get_m3u_parser()->setupParser($this->FetchM3U(false));
-
-        $t = microtime(1);
 
         $this->vod_m3u_indexes = $this->plugin->get_m3u_parser()->indexFile();
         $all_indexes = array();
@@ -1029,9 +1041,12 @@ class default_config extends dynamic_config
             $category_index[$group] = $cat;
         }
 
+        $this->perf->setLabel('end');
+        $report = $this->perf->getFullReport();
         hd_debug_print("Categories read: " . count($category_list));
-        hd_debug_print("Fetched categories at " . (microtime(1) - $t) . " secs");
-        HD::ShowMemoryUsage();
+        hd_debug_print("Fetch categories time: {$report[Perf_Collector::TIME]} sec");
+        hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+        hd_debug_print_separator();
 
         return true;
     }
@@ -1044,8 +1059,9 @@ class default_config extends dynamic_config
     {
         hd_debug_print($keyword);
 
+        $this->perf->reset('start');
+
         $vod_pattern = $this->get_vod_parse_pattern();
-        $t = microtime(1);
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
@@ -1068,8 +1084,11 @@ class default_config extends dynamic_config
             $movies[] = new Short_Movie($index, $title, $poster_url);
         }
 
+        $this->perf->setLabel('end');
+        $report = $this->perf->getFullReport();
+
         hd_debug_print("Movies found: " . count($movies));
-        hd_debug_print("Search at " . (microtime(1) - $t) . " secs");
+        hd_debug_print("Search time: {$report[Perf_Collector::TIME]} sec");
 
         return $movies;
     }

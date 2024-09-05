@@ -24,6 +24,7 @@
  */
 
 require_once 'Entry.php';
+require_once 'lib/perf_collector.php';
 
 class M3uParser extends Json_Serializer
 {
@@ -40,7 +41,7 @@ class M3uParser extends Json_Serializer
     /**
      * @var Entry[]
      */
-    protected $m3u_info = array();
+    protected $m3u_info;
 
     /**
      * @var Ordered_Array
@@ -51,6 +52,16 @@ class M3uParser extends Json_Serializer
      * @var SplFileObject
      */
     private $m3u_file;
+
+    /**
+     * @var Perf_Collector
+     */
+    private $perf;
+
+    public function __construct()
+    {
+        $this->perf = new Perf_Collector();
+    }
 
     /**
      * @param string $file_name
@@ -64,7 +75,7 @@ class M3uParser extends Json_Serializer
             $this->clear_data();
 
             try {
-                if (!empty($this->file_name)){
+                if (!empty($this->file_name)) {
                     $file = new SplFileObject($this->file_name);
                     $file->setFlags(SplFileObject::DROP_NEW_LINE);
                     $this->m3u_file = $file;
@@ -75,6 +86,17 @@ class M3uParser extends Json_Serializer
                 return;
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    protected function clear_data()
+    {
+        unset($this->m3u_entries, $this->m3u_info);
+        $this->m3u_entries = array();
+        $this->m3u_info = array();
+        $this->xmltv_sources = null;
     }
 
     /**
@@ -95,10 +117,10 @@ class M3uParser extends Json_Serializer
 
         $this->m3u_file->rewind();
 
-        $t = microtime(true);
+        $this->perf->reset('start');
 
         $entry = new Entry();
-        foreach($this->m3u_file as $line) {
+        foreach ($this->m3u_file as $line) {
             // something wrong or not supported
             switch ($this->parseLine($line, $entry)) {
                 case 1: // parse done
@@ -114,9 +136,38 @@ class M3uParser extends Json_Serializer
             }
         }
 
-        hd_debug_print("parseFile " . (microtime(true) - $t) . " secs");
+        $this->perf->setLabel('end');
+        $report = $this->perf->getFullReport();
+        hd_debug_print("ParseFile: {$report[Perf_Collector::TIME]} secs");
+        hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
         hd_debug_print_separator();
+
         return true;
+    }
+
+    /**
+     * Parse one line
+     * return true if line is a url or parsed tag is header tag
+     *
+     * @param string $line
+     * @param Entry& $entry
+     * @return int
+     */
+    protected function parseLine($line, &$entry)
+    {
+        $line = trim($line);
+        if (empty($line)) {
+            return -1;
+        }
+
+        $tag = $entry->parseExtTag($line, true);
+        if (is_null($tag)) {
+            // untagged line must be a stream url
+            $entry->setPath($line);
+            return 1;
+        }
+
+        return $entry->isM3U_Header() ? 2 : 0;
     }
 
     /**
@@ -141,12 +192,12 @@ class M3uParser extends Json_Serializer
 
         $this->m3u_file->rewind();
 
-        $t = microtime(true);
+        $this->perf->reset('start');
 
         $entry = new Entry();
         $pos = $this->m3u_file->ftell();
         while (!$this->m3u_file->eof()) {
-            if ($this->parseLine($this->m3u_file->fgets(), $entry) !== 0) {
+            if ($this->parseLine($this->m3u_file->fgets(), $entry)) {
                 $group_name = $entry->getGroupTitle();
                 if (!array_key_exists($group_name, $data)) {
                     $data[$group_name] = array();
@@ -158,8 +209,12 @@ class M3uParser extends Json_Serializer
             }
         }
 
-        hd_debug_print("indexFile " . (microtime(true) - $t) . " secs");
+        $this->perf->setLabel('end');
+        $report = $this->perf->getFullReport();
+        hd_debug_print("IndexFile: {$report[Perf_Collector::TIME]} secs");
+        hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
         hd_debug_print_separator();
+
         return $data;
     }
 
@@ -179,13 +234,13 @@ class M3uParser extends Json_Serializer
 
         $this->clear_data();
 
-        $t = microtime(true);
+        $this->perf->reset('start');
 
         hd_debug_print("Open: $this->file_name");
         $lines = file($this->file_name, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         $entry = new Entry();
-        foreach($lines as $line) {
+        foreach ($lines as $line) {
             // if parsed line is not path or is not header tag parse next line
             switch ($this->parseLine($line, $entry)) {
                 case 1: // parse done
@@ -201,10 +256,16 @@ class M3uParser extends Json_Serializer
             }
         }
 
-        hd_debug_print("parseInMemory " . (microtime(true) - $t) . " sec.");
+        $this->perf->setLabel('end');
+        $report = $this->perf->getFullReport();
+        hd_debug_print("ParseInMemory: {$report[Perf_Collector::TIME]} secs");
+        hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
         hd_debug_print_separator();
+
         return true;
     }
+
+    ///////////////////////////////////////////////////////////
 
     /**
      * get entry by idx
@@ -221,7 +282,7 @@ class M3uParser extends Json_Serializer
         $this->m3u_file->fseek((int)$idx);
         $entry = new Entry();
         while (!$this->m3u_file->eof()) {
-            if ($this->parseLine($this->m3u_file->fgets(), $entry) !== 0) {
+            if ($this->parseLine($this->m3u_file->fgets(), $entry)) {
                 return $entry;
             }
         }
@@ -258,58 +319,6 @@ class M3uParser extends Json_Serializer
         }
 
         return '';
-    }
-
-    ///////////////////////////////////////////////////////////
-
-    /**
-     * Parse one line
-     * return true if line is a url or parsed tag is header tag
-     *
-     * @param string $line
-     * @param Entry& $entry
-     * @return int
-     */
-    protected function parseLine($line, &$entry)
-    {
-        $line = trim($line);
-        if (empty($line)) {
-            return -1;
-        }
-
-        $tag = $entry->parseExtTag($line, true);
-        if (is_null($tag)) {
-            // untagged line must be a stream url
-            $entry->setPath($line);
-            return 1;
-        }
-
-        return $entry->isM3U_Header() ? 2 : 0;
-    }
-
-    /**
-     * Parse one line
-     * return true if line is a url or parsed tag is header tag
-     *
-     * @param string $line
-     * @param Entry& $entry
-     * @return bool
-     */
-    protected function parseLineFast($line, &$entry)
-    {
-        $line = trim($line);
-        if (empty($line)) {
-            return false;
-        }
-
-        $tag = $entry->parseExtTag($line, false);
-        if (is_null($tag)) {
-            // untagged line must be a stream url
-            $entry->setPath($line);
-            return true;
-        }
-
-        return $entry->isM3U_Header();
     }
 
     /**
@@ -351,7 +360,6 @@ class M3uParser extends Json_Serializer
                 $attributes[] = $attr;
             }
         }
-
         return array_unique($attributes);
     }
 
@@ -376,19 +384,49 @@ class M3uParser extends Json_Serializer
     }
 
     /**
+     * @param string|array $attrs
+     * @param null $tag
+     * @param null $found_attr
+     * @return string
+     */
+    public function getAnyHeaderAttribute($attrs, $tag = null, &$found_attr = null)
+    {
+        if (!is_array($attrs)) {
+            $attrs = array($attrs);
+        }
+
+        $val = '';
+        foreach ($this->m3u_info as $entry) {
+            foreach ($attrs as $attr) {
+                $val = $entry->getEntryAttribute($attr, $tag);
+                if (empty($val)) continue;
+
+                if ($found_attr !== null) {
+                    $found_attr = $attr;
+                }
+                break;
+            }
+        }
+
+        return $val;
+    }
+
+    /**
      * @return Ordered_Array
      */
     public function getXmltvSources()
     {
         if (is_null($this->xmltv_sources)) {
             $this->xmltv_sources = new Ordered_Array();
-            foreach ($this->m3u_info as $entry) {
-                $arr = $entry->getEpgSources();
-                foreach ($arr as $value) {
-                    $urls = explode(',', $value);
-                    foreach ($urls as $url) {
-                        if (!empty($url) && preg_match(HTTP_PATTERN, $url)) {
-                            $this->xmltv_sources->add_item($url);
+            if (is_array($this->m3u_info)) {
+                foreach ($this->m3u_info as $entry) {
+                    $arr = $entry->getEpgSources();
+                    foreach ($arr as $value) {
+                        $urls = explode(',', $value);
+                        foreach ($urls as $url) {
+                            if (!empty($url) && preg_match(HTTP_PATTERN, $url)) {
+                                $this->xmltv_sources->add_item($url);
+                            }
                         }
                     }
                 }
@@ -399,13 +437,27 @@ class M3uParser extends Json_Serializer
     }
 
     /**
-     * @return void
+     * Parse one line
+     * return true if line is a url or parsed tag is header tag
+     *
+     * @param string $line
+     * @param Entry& $entry
+     * @return bool
      */
-    protected function clear_data()
+    protected function parseLineFast($line, &$entry)
     {
-        unset($this->m3u_entries, $this->m3u_info);
-        $this->m3u_entries = array();
-        $this->m3u_info = array();
-        $this->xmltv_sources = null;
+        $line = trim($line);
+        if (empty($line)) {
+            return false;
+        }
+
+        $tag = $entry->parseExtTag($line, false);
+        if (is_null($tag)) {
+            // untagged line must be a stream url
+            $entry->setPath($line);
+            return true;
+        }
+
+        return $entry->isM3U_Header();
     }
 }

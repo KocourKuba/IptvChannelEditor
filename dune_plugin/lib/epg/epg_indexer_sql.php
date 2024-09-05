@@ -186,7 +186,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
             hd_debug_print("Start reindex channels and picons...");
 
             $this->set_index_locked(true);
-            $t = microtime(true);
+            $this->perf->reset('start');
 
             $this->remove_index($this->channels_table);
 
@@ -257,11 +257,14 @@ class Epg_Indexer_Sql extends Epg_Indexer
             $result = $db->querySingle("SELECT count(*) FROM $this->picons_table;");
             $picons = empty($result) ? 0 : (int)$result;
 
+            $this->perf->setLabel('end');
+            $report = $this->perf->getFullReport();
+
             hd_debug_print("Total entries id's: $channels");
             hd_debug_print("Total known picons: $picons");
-            hd_debug_print("Reindexing EPG channels done: " . (microtime(true) - $t) . " secs");
+            hd_debug_print("Reindexing EPG channels time: {$report[Perf_Collector::TIME]} sec");
+            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
-            HD::ShowMemoryUsage();
             hd_debug_print_separator();
 
         } catch (Exception $ex) {
@@ -353,7 +356,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
             $this->set_index_locked(true);
 
-            $t = microtime(true);
+            $this->perf->reset('start');
             $this->remove_index($this->positions_table);
 
             $db->exec("CREATE TABLE $this->positions_table (channel_id STRING, start INTEGER, end INTEGER);");
@@ -435,10 +438,13 @@ class Epg_Indexer_Sql extends Epg_Indexer
             $result = $db->querySingle("SELECT count(channel_id) FROM $this->positions_table;");
             $total_epg = empty($result) ? 0 : (int)$result;
 
+            $this->perf->setLabel('end');
+            $report = $this->perf->getFullReport();
+
             hd_debug_print("Total unique epg id's indexed: $total_epg");
-            hd_debug_print("Reindexing EPG positions done: " . (microtime(true) - $t) . " secs");
+            hd_debug_print("Reindexing EPG positions time: {$report[Perf_Collector::TIME]} sec");
+            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
-            HD::ShowMemoryUsage();
             hd_debug_print_separator();
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG positions failed");

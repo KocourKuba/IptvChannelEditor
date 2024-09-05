@@ -67,6 +67,7 @@ class glanz_config extends default_config
      */
     public function fetchVodCategories(&$category_list, &$category_index)
     {
+        $this->perf->reset('start');
         if ($this->load_vod_json_full(true) === false) {
             return false;
         }
@@ -121,10 +122,14 @@ class glanz_config extends default_config
 
         $this->set_filters($filters);
 
+        $this->perf->setLabel('end');
+        $report = $this->perf->getFullReport();
+
         hd_debug_print("Categories read: " . count($category_list));
         hd_debug_print("Total items loaded: " . count($this->vod_items));
+        hd_debug_print("Load time: {$report[Perf_Collector::TIME]} sec");
+        hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
         hd_debug_print_separator();
-        HD::ShowMemoryUsage();
 
         return true;
     }
