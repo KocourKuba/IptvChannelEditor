@@ -34,7 +34,7 @@ class antifriz_config extends default_config
 
             if ($force !== false || empty($this->account_data)) {
                 $params[CURLOPT_HTTPHEADER] = array("accept: */*", "x-public-key: $password");
-                $params[self::API_PARAM_PATH] = "/auth/info";
+                $params[CURLOPT_CUSTOMREQUEST] = "/auth/info";
                 $response = $this->execApiCommand($this->get_feature(Plugin_Constants::PROVIDER_API_URL), null, true, $params);
                 if (!isset($response->data)) {
                     throw new Exception("Account info not loaded. " . HD::get_last_error());
@@ -58,7 +58,7 @@ class antifriz_config extends default_config
         hd_debug_print($movie_id);
         $movie = new Movie($movie_id, $this->plugin);
 
-        $params[self::API_PARAM_PATH] = "/video/$movie_id";
+        $params[CURLOPT_CUSTOMREQUEST] = "/video/$movie_id";
         $response = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
         if (!isset($response->data)) {
             return $movie;
@@ -131,7 +131,7 @@ class antifriz_config extends default_config
             $total += $node->count;
 
             // fetch genres for category
-            $params[self::API_PARAM_PATH] = "/cat/$id/genres";
+            $params[CURLOPT_CUSTOMREQUEST] = "/cat/$id/genres";
             $genres = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
             if ($genres === false) {
                 continue;
@@ -168,7 +168,7 @@ class antifriz_config extends default_config
         if ($page_idx < 0)
             return array();
 
-        $params[self::API_PARAM_PATH] = "/filter/by_name?name=" . urlencode($keyword) . "&page=$page_idx";
+        $params[CURLOPT_CUSTOMREQUEST] = "/filter/by_name?name=" . urlencode($keyword) . "&page=$page_idx";
         $response = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
         return $response === false ? array() : $this->CollectSearchResult($response);
     }
@@ -184,7 +184,7 @@ class antifriz_config extends default_config
             return array();
 
         if ($query_id === Vod_Category::FLAG_ALL_MOVIES) {
-            $params[self::API_PARAM_PATH] = "/filter/new?page=$page_idx";
+            $params[CURLOPT_CUSTOMREQUEST] = "/filter/new?page=$page_idx";
         } else {
             $arr = explode("_", $query_id);
             if ($arr === false) {
@@ -193,7 +193,7 @@ class antifriz_config extends default_config
                 $genre_id = $arr[1];
             }
 
-            $params[self::API_PARAM_PATH] = "/genres/$genre_id?page=$page_idx";
+            $params[CURLOPT_CUSTOMREQUEST] = "/genres/$genre_id?page=$page_idx";
         }
 
         $response = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);

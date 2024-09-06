@@ -14,7 +14,6 @@ class default_config extends dynamic_config
 {
     const VOD_FAVORITES_LIST = 'vod_favorite_items';
     const VOD_HISTORY_ITEMS = 'vod_history_items';
-    const API_PARAM_PATH = 'path';
 
     // page counter for some plugins
     protected $pages = array();
@@ -1265,8 +1264,8 @@ class default_config extends dynamic_config
         hd_debug_print("execApiCommand: $command", true);
 
         $command_url = $this->replace_account_vars($command);
-        if (isset($curl_opt[self::API_PARAM_PATH])) {
-            $command_url .= $curl_opt[self::API_PARAM_PATH];
+        if (isset($curl_opt[CURLOPT_CUSTOMREQUEST])) {
+            $command_url .= $curl_opt[CURLOPT_CUSTOMREQUEST];
         }
 
         hd_debug_print("ApiCommandUrl: $command_url", true);

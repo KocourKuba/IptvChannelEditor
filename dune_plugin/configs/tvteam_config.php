@@ -147,14 +147,14 @@ class tvteam_config extends default_config
         $session_file = get_temp_path(self::SESSION_FILE);
         $expired = true;
         if (file_exists($session_file)) {
-            $this->session_id[self::API_PARAM_PATH] = file_get_contents($session_file);
+            $this->session_id[CURLOPT_CUSTOMREQUEST] = file_get_contents($session_file);
             $expired = time() > filemtime($session_file);
             if ($expired) {
                 unlink($session_file);
             }
         }
 
-        if (!$force && isset($this->session_id[self::API_PARAM_PATH]) && !$expired) {
+        if (!$force && isset($this->session_id[CURLOPT_CUSTOMREQUEST]) && !$expired) {
             hd_debug_print("request not required", true);
             return true;
         }
@@ -167,7 +167,7 @@ class tvteam_config extends default_config
         } else {
             HD::set_last_error("pl_last_error", null);
             HD::set_last_error("rq_last_error", null);
-            $curl_options[self::API_PARAM_PATH] = md5($password);
+            $curl_options[CURLOPT_CUSTOMREQUEST] = md5($password);
             $response = $this->execApiCommand(self::API_COMMAND_REQUEST_TOKEN, null, true, $curl_options);
             hd_debug_print("request provider token response: " . pretty_json_format($response), true);
             if ($response->status === 0 || !empty($response->error)) {
@@ -177,7 +177,7 @@ class tvteam_config extends default_config
                 file_put_contents($session_file, $response->data->sessionId);
                 touch($session_file, time() + 86400);
                 HD::set_last_error("rq_last_error", null);
-                $this->session_id[self::API_PARAM_PATH] = $response->data->sessionId;
+                $this->session_id[CURLOPT_CUSTOMREQUEST] = $response->data->sessionId;
                 return true;
             }
         }

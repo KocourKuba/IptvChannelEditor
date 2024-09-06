@@ -4,8 +4,8 @@ require_once 'lib/default_config.php';
 
 class tvizi_config extends default_config
 {
-    const API_ACTION_MOVIES = 'movies';
-    const API_ACTION_SERIALS = 'serials';
+    const API_ACTION_MOVIE = 'movie';
+    const API_ACTION_SERIAL = 'serial';
     const API_ACTION_FILTERS = 'filters';
     const API_ACTION_SEARCH = 'search';
     const API_ACTION_FILTER = 'filter';
@@ -17,6 +17,8 @@ class tvizi_config extends default_config
     const API_COMMAND_SET_DEVICE = '{API_URL}/device/settings';
     const API_COMMAND_REQUEST_TOKEN = '{API_URL}/auth';
     const API_COMMAND_REFRESH_TOKEN = '{API_URL}/oauth2';
+
+    const REQUEST_TEMPLATE = "/movies?limit=100&page=%s&category=%s";
 
     /**
      * @var Object
@@ -75,9 +77,9 @@ class tvizi_config extends default_config
 
         // movies_84636 or serials_84636
         $arr = explode("_", $movie_id);
-        hd_debug_print("TryLoadMovie: category: $arr[0], id: $arr[1]");
+        hd_debug_print("TryLoadMovie: category: movies, id: $arr[1]");
 
-        $params[self::API_PARAM_PATH] = "/$arr[0]/$arr[1]";
+        $params[CURLOPT_CUSTOMREQUEST] = "/movies/$arr[1]";
         $json = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
 
         if ($json === false || $json === null) {
@@ -87,14 +89,14 @@ class tvizi_config extends default_config
 
         $movie = new Movie($movie_id, $this->plugin);
         $movieData = $json->data;
-        if ($arr[0] === self::API_ACTION_MOVIES) {
+        if ($arr[0] === self::API_ACTION_MOVIE) {
             $audios = array();
             foreach ($movieData->medias->audios as $item) {
                 $key = $item->translate;
                 $audios[$key] = new Movie_Variant($key, $key, $item->url);
             }
             $movie->add_series_with_variants_data($arr[1], $movieData->medias->title, '', array(), $audios, $movieData->medias->url);
-        } else if ($arr[0] === self::API_ACTION_SERIALS) {
+        } else if ($arr[0] === self::API_ACTION_SERIAL) {
             // collect series
             foreach ($movieData->seasons as $season) {
                 $movie->add_season_data($season->season,
@@ -157,15 +159,15 @@ class tvizi_config extends default_config
         $category_list = array();
         $category_index = array();
 
-        $cat = new Vod_Category(self::API_ACTION_MOVIES, TR::t('vod_screen_all_movies'));
+        $cat = new Vod_Category(self::API_ACTION_MOVIE, TR::t('vod_screen_all_movies'));
         $category_list[] = $cat;
         $category_index[$cat->get_id()] = $cat;
-        $cat = new Vod_Category(self::API_ACTION_SERIALS, TR::t('vod_screen_all_serials'));
+        $cat = new Vod_Category(self::API_ACTION_SERIAL, TR::t('vod_screen_all_serials'));
         $category_list[] = $cat;
         $category_index[$cat->get_id()] = $cat;
 
         $exist_filters = array();
-        $params[self::API_PARAM_PATH] = '/' . self::API_ACTION_FILTERS;
+        $params[CURLOPT_CUSTOMREQUEST] = '/' . self::API_ACTION_FILTERS;
         $data = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
         if (!isset($data->success, $data->data->filter_by) || !$data->success) {
             hd_debug_print("Wrong response on filter request: " . json_encode($data), true);
@@ -175,8 +177,8 @@ class tvizi_config extends default_config
         $exist_filters['source'] = array(
             'title' => TR::load_string('category'),
             'values' => array(
-                self::API_ACTION_MOVIES => TR::load_string('vod_screen_all_movies'),
-                self::API_ACTION_SERIALS => TR::load_string('vod_screen_all_serials')
+                self::API_ACTION_MOVIE => TR::load_string('vod_screen_all_movies'),
+                self::API_ACTION_SERIAL => TR::load_string('vod_screen_all_serials')
             )
         );
 
@@ -213,24 +215,24 @@ class tvizi_config extends default_config
         $params[CURLOPT_POSTFIELDS] = array("search" => $keyword);
 
         $movies = array();
-        $page_id = self::API_ACTION_MOVIES . "_" . self::API_ACTION_SEARCH;
+        $page_id = self::API_ACTION_MOVIE . "_" . self::API_ACTION_SEARCH;
         $page_idx = $this->get_next_page($page_id);
         if ($page_idx < 0)
             return $movies;
 
-        $params[self::API_PARAM_PATH] = "/" . self::API_ACTION_MOVIES . "?limit=100&page=$page_idx";
+        $params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, self::API_ACTION_MOVIE);
         $searchRes = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
 
-        $movies = ($searchRes === false) ? array() : $this->CollectSearchResult(self::API_ACTION_MOVIES, $searchRes, self::API_ACTION_SEARCH);
+        $movies = ($searchRes === false) ? array() : $this->CollectSearchResult(self::API_ACTION_MOVIE, $searchRes, self::API_ACTION_SEARCH);
 
-        $page_id = self::API_ACTION_SERIALS . "_" . self::API_ACTION_SEARCH;
+        $page_id = self::API_ACTION_SERIAL . "_" . self::API_ACTION_SEARCH;
         $page_idx = $this->get_next_page($page_id);
         if ($page_idx < 0)
             return $movies;
 
-        $params[self::API_PARAM_PATH] = "/" . self::API_ACTION_SERIALS . "?limit=100&page=$page_idx";
+        $params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, self::API_ACTION_SERIAL);
         $searchRes = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
-        $serials = ($searchRes === false) ? array() : $this->CollectSearchResult(self::API_ACTION_SERIALS, $searchRes, self::API_ACTION_SEARCH);
+        $serials = ($searchRes === false) ? array() : $this->CollectSearchResult(self::API_ACTION_SERIAL, $searchRes, self::API_ACTION_SEARCH);
 
         return array_merge($movies, $serials);
     }
@@ -241,7 +243,7 @@ class tvizi_config extends default_config
     public function getFilterList($params)
     {
         hd_debug_print(null, true);
-        hd_debug_print("getFilterList : $params", true);
+        hd_debug_print("getFilterList: $params");
 
         $pairs = explode(",", $params);
         $filter_params = array();
@@ -269,11 +271,18 @@ class tvizi_config extends default_config
         }
 
         $param_str = '';
-        $query_id = self::API_ACTION_MOVIES;
+        $query_id = self::API_ACTION_MOVIE;
         foreach ($filter_params as $key => $value) {
             if ($key === 'source') {
                 $query_id = $value;
                 continue;
+            }
+
+            if ($key === 'year') {
+                $values = explode('-', $value);
+                if (count($values) === 1) {
+                    $value = "$value-$value";
+                }
             }
 
             if (!empty($param_str)) {
@@ -289,7 +298,7 @@ class tvizi_config extends default_config
 
         hd_debug_print("filter page_idx:  $page_idx");
 
-        $post_params[self::API_PARAM_PATH] = "/$query_id?limit=100&page=$page_idx";
+        $post_params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, $query_id);
         $post_params[CURLOPT_POSTFIELDS]['features_hash'] = $param_str;
         $json = $this->make_json_request(self::API_COMMAND_GET_VOD, $post_params);
 
@@ -302,7 +311,7 @@ class tvizi_config extends default_config
     public function getMovieList($query_id)
     {
         $page_idx = $this->get_next_page($query_id);
-        $params[self::API_PARAM_PATH] = "/$query_id?limit=100&page=$page_idx";
+        $params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, $query_id);
         $json = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
 
         return ($json === false || $json === null) ? array() : $this->CollectSearchResult($query_id, $json);
@@ -377,8 +386,8 @@ class tvizi_config extends default_config
 
         $curl_opt = array();
 
-        if (isset($params[self::API_PARAM_PATH])) {
-            $curl_opt[self::API_PARAM_PATH] = $params[self::API_PARAM_PATH];
+        if (isset($params[CURLOPT_CUSTOMREQUEST])) {
+            $curl_opt[CURLOPT_CUSTOMREQUEST] = $params[CURLOPT_CUSTOMREQUEST];
         }
 
         $curl_opt[CURLOPT_HTTPHEADER] = array(

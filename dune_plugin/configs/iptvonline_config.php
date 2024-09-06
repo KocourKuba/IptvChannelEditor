@@ -18,6 +18,8 @@ class iptvonline_config extends default_config
     const API_COMMAND_REQUEST_TOKEN = '{API_URL}/auth';
     const API_COMMAND_REFRESH_TOKEN = '{API_URL}/oauth2';
 
+    const REQUEST_TEMPLATE = "/movies?limit=100&page=%s&category=%s";
+
     /**
      * @var Object
      */
@@ -77,7 +79,7 @@ class iptvonline_config extends default_config
         $arr = explode("_", $movie_id);
         hd_debug_print("TryLoadMovie: category: movies, id: $arr[1]");
 
-        $params[self::API_PARAM_PATH] = "/movies/$arr[1]";
+        $params[CURLOPT_CUSTOMREQUEST] = "/movies/$arr[1]";
         $json = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
 
         if ($json === false || $json === null) {
@@ -165,7 +167,7 @@ class iptvonline_config extends default_config
         $category_index[$cat->get_id()] = $cat;
 
         $exist_filters = array();
-        $params[self::API_PARAM_PATH] = '/' . self::API_ACTION_FILTERS;
+        $params[CURLOPT_CUSTOMREQUEST] = '/' . self::API_ACTION_FILTERS;
         $data = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
         if (!isset($data->success, $data->data->filter_by) || !$data->success) {
             hd_debug_print("Wrong response on filter request: " . json_encode($data), true);
@@ -218,7 +220,7 @@ class iptvonline_config extends default_config
         if ($page_idx < 0)
             return $movies;
 
-        $params[self::API_PARAM_PATH] = "/movies?limit=100&page=$page_idx&category=" . self::API_ACTION_MOVIE;
+        $params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, self::API_ACTION_MOVIE);
         $searchRes = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
 
         $movies = ($searchRes === false) ? array() : $this->CollectSearchResult(self::API_ACTION_MOVIE, $searchRes, self::API_ACTION_SEARCH);
@@ -228,7 +230,7 @@ class iptvonline_config extends default_config
         if ($page_idx < 0)
             return $movies;
 
-        $params[self::API_PARAM_PATH] = "/movies?limit=100&page=$page_idx&category=" . self::API_ACTION_SERIAL;
+        $params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, self::API_ACTION_SERIAL);
         $searchRes = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
         $serials = ($searchRes === false) ? array() : $this->CollectSearchResult(self::API_ACTION_SERIAL, $searchRes, self::API_ACTION_SEARCH);
 
@@ -241,7 +243,7 @@ class iptvonline_config extends default_config
     public function getFilterList($params)
     {
         hd_debug_print(null, true);
-        hd_debug_print("getFilterList : $params", true);
+        hd_debug_print("getFilterList: $params");
 
         $pairs = explode(",", $params);
         $filter_params = array();
@@ -276,6 +278,13 @@ class iptvonline_config extends default_config
                 continue;
             }
 
+            if ($key === 'year') {
+                $values = explode('-', $value);
+                if (count($values) === 1) {
+                    $value = "$value-$value";
+                }
+            }
+
             if (!empty($param_str)) {
                 $param_str .= "_";
             }
@@ -289,7 +298,7 @@ class iptvonline_config extends default_config
 
         hd_debug_print("filter page_idx:  $page_idx");
 
-        $post_params[self::API_PARAM_PATH] = "/$query_id?limit=100&page=$page_idx";
+        $post_params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, $query_id);
         $post_params[CURLOPT_POSTFIELDS]['features_hash'] = $param_str;
         $json = $this->make_json_request(self::API_COMMAND_GET_VOD, $post_params);
 
@@ -302,7 +311,7 @@ class iptvonline_config extends default_config
     public function getMovieList($query_id)
     {
         $page_idx = $this->get_next_page($query_id);
-        $params[self::API_PARAM_PATH] = "/movies?limit=100&page=$page_idx&category=$query_id";
+        $params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, $query_id);
         $json = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
 
         return ($json === false || $json === null) ? array() : $this->CollectSearchResult($query_id, $json);
@@ -377,8 +386,8 @@ class iptvonline_config extends default_config
 
         $curl_opt = array();
 
-        if (isset($params[self::API_PARAM_PATH])) {
-            $curl_opt[self::API_PARAM_PATH] = $params[self::API_PARAM_PATH];
+        if (isset($params[CURLOPT_CUSTOMREQUEST])) {
+            $curl_opt[CURLOPT_CUSTOMREQUEST] = $params[CURLOPT_CUSTOMREQUEST];
         }
 
         $curl_opt[CURLOPT_HTTPHEADER] = array(
