@@ -294,7 +294,7 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 
 	CWaitCursor cur;
 
-	const auto& url = fmt::format(L"{:s}/{:s}/{:s}", get_vod_url(params), movie.category, movie.id);
+	const auto& url = fmt::format(L"{:s}/movies/{:s}", get_vod_url(params),  movie.id);
 
 	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
 	nlohmann::json movies_json = server_request(url, cache_ttl);
