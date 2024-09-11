@@ -241,13 +241,13 @@ class Epg_Indexer_Classic extends Epg_Indexer
             hd_debug_print("Reindexing EPG channels time: {$report[Perf_Collector::TIME]} sec");
             hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
-            hd_debug_print_separator();
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG channels failed");
             print_backtrace_exception($ex);
         }
 
         $this->set_index_locked(false);
+        hd_debug_print_separator();
     }
 
     /**
@@ -365,13 +365,13 @@ class Epg_Indexer_Classic extends Epg_Indexer
             hd_debug_print("Reindexing EPG postions time: {$report[Perf_Collector::TIME]} sec");
             hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
-            hd_debug_print_separator();
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG positions failed");
             print_backtrace_exception($ex);
         }
 
         $this->set_index_locked(false);
+        hd_debug_print_separator();
     }
 
     ///////////////////////////////////////////////////////////////////////////////

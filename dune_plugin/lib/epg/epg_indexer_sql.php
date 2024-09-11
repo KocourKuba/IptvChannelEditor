@@ -185,10 +185,10 @@ class Epg_Indexer_Sql extends Epg_Indexer
             hd_debug_print_separator();
             hd_debug_print("Start reindex channels and picons...");
 
-            $this->set_index_locked(true);
             $this->perf->reset('start');
-
             $this->remove_index($this->channels_table);
+
+            $this->set_index_locked(true);
 
             $db->exec("CREATE TABLE $this->channels_table(alias STRING not null, channel_id STRING not null, picon_hash STRING);");
 
@@ -265,7 +265,6 @@ class Epg_Indexer_Sql extends Epg_Indexer
             hd_debug_print("Reindexing EPG channels time: {$report[Perf_Collector::TIME]} sec");
             hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
-            hd_debug_print_separator();
 
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG channels failed");
@@ -273,6 +272,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
         }
 
         $this->set_index_locked(false);
+        hd_debug_print_separator();
     }
 
     /**
@@ -354,10 +354,10 @@ class Epg_Indexer_Sql extends Epg_Indexer
             hd_debug_print_separator();
             hd_debug_print("Start reindex positions...");
 
-            $this->set_index_locked(true);
-
             $this->perf->reset('start');
             $this->remove_index($this->positions_table);
+
+            $this->set_index_locked(true);
 
             $db->exec("CREATE TABLE $this->positions_table (channel_id STRING, start INTEGER, end INTEGER);");
             $db->exec('PRAGMA journal_mode=MEMORY;');
@@ -445,13 +445,13 @@ class Epg_Indexer_Sql extends Epg_Indexer
             hd_debug_print("Reindexing EPG positions time: {$report[Perf_Collector::TIME]} sec");
             hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
-            hd_debug_print_separator();
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG positions failed");
             print_backtrace_exception($ex);
         }
 
         $this->set_index_locked(false);
+        hd_debug_print_separator();
     }
 
     /**

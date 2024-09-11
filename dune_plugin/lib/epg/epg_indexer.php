@@ -507,7 +507,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             if (!create_path($lock_dir, 0644)) {
                 hd_debug_print("Directory '$lock_dir' was not created");
             } else {
-                hd_debug_print("Unlock $lock_dir");
+                hd_debug_print("Lock $lock_dir");
             }
         } else if (is_dir($lock_dir)) {
             hd_debug_print("Unlock $lock_dir");
