@@ -1660,6 +1660,32 @@
           "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
+      "servers_list": [
+        {
+          "id": "peaktv.pro",
+          "name": "Russia 1"
+        },
+        {
+          "id": "peak-tv.shop",
+          "name": "Russia 2"
+        },
+        {
+          "id": "peaktv.com.ru",
+          "name": "Germany 1"
+        },
+        {
+          "id": "peak-tv.xyz",
+          "name": "Germany 2"
+        },
+        {
+          "id": "peaktv.space",
+          "name": "Poland"
+        },
+        {
+          "id": "peaktv.fun",
+          "name": "Czech Republic"
+        }
+      ],
       "title": "Peak TV"
     },
     "ping": {
