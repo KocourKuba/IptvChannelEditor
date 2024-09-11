@@ -87,11 +87,12 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
         //////////////////////////////////////
         // playlist source
-        $all_tv_lists = $this->plugin->config->get_tv_list_names($play_list_idx);
+        $all_tv_lists = $this->plugin->config->get_tv_list_names();
+        $play_list_idx = $this->plugin->config->get_tv_list_idx();
         hd_debug_print("current playlist index: $play_list_idx");
 
         if (count($all_tv_lists) > 1) {
-            Control_Factory::add_combobox($defs, $this, null, ACTION_CHANGE_PLAYLIST,
+            Control_Factory::add_combobox($defs, $this, null, PARAM_PLAYLIST_IDX,
                 TR::t('setup_channels_src_playlist'), $play_list_idx,
                 $all_tv_lists, self::CONTROLS_WIDTH, true);
         }
@@ -181,7 +182,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 );
                 return Action_Factory::open_folder($media_url_str, TR::t('setup_channels_src_folder_caption'));
 
-            case ACTION_CHANGE_PLAYLIST:
+            case PARAM_PLAYLIST_IDX:
             case PARAM_CHANNELS_SOURCE:
                 hd_debug_print("$control_id: " . $new_value);
                 $this->plugin->set_parameter($control_id, $new_value);

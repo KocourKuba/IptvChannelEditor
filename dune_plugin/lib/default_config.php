@@ -417,17 +417,15 @@ class default_config extends dynamic_config
     public function get_tv_list_idx()
     {
         $playlist_idx = $this->plugin->get_parameter(PARAM_PLAYLIST_IDX);
-        return empty($playlist_idx) ? $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX) : $playlist_idx;
+        return $playlist_idx === null ? $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX) : $playlist_idx;
     }
 
     /**
-     * @param $current_idx
      * @return array
      */
-    public function get_tv_list_names(&$current_idx)
+    public function get_tv_list_names()
     {
         $tv_lists_array = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
-        $current_idx = $this->get_tv_list_idx();
         $tv_lists = array();
         foreach ($tv_lists_array as $list) {
             $tv_lists[] = $list[Plugin_Constants::PLAYLIST_NAME];
