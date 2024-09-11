@@ -285,6 +285,7 @@ class Default_Dune_Plugin implements DunePlugin
         }
 
         $this->epg_manager->init_indexer($this->get_cache_dir());
+        $this->epg_manager->get_indexer()->clear_stalled_locks();
     }
 
     /**

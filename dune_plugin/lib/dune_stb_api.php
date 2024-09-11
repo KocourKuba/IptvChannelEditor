@@ -905,7 +905,8 @@ function send_ir_code_return_status($key)
  */
 function get_player_state()
 {
-    # return string (PLAYER_STATE_STANDBY | PLAYER_STATE_BLACK_SCREEN | PLAYER_STATE_NAVIGATOR | PLAYER_STATE_FILE_PLAYBACK | PLAYER_STATE_DVD_PLAYBACK | PLAYER_STATE_BLURAY_PLAYBACK)
+    # return string (PLAYER_STATE_STANDBY | PLAYER_STATE_BLACK_SCREEN | PLAYER_STATE_NAVIGATOR | PLAYER_STATE_FILE_PLAYBACK
+    # | PLAYER_STATE_DVD_PLAYBACK | PLAYER_STATE_BLURAY_PLAYBACK)
 
     $cmd = 'cat /tmp/run/ext_command.state | grep -w "player_state" | sed -n "s/^.*player_state = /\1/p"';
     return get_shell_exec($cmd);
@@ -939,7 +940,9 @@ function set_standby_mode($mode)
     # return string (command execution status)
     # argument values (STANDBY_MODE_OFF | STANDBY_MODE_ON)
 
-    $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=ir_code&ir_code=' . (($mode === STANDBY_MODE_OFF) ? GUI_EVENT_DISCRETE_POWER_ON : GUI_EVENT_DISCRETE_POWER_OFF) . CMD_STATUS_GREP;
+    $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=ir_code&ir_code=' . (($mode === STANDBY_MODE_OFF)
+            ? GUI_EVENT_DISCRETE_POWER_ON
+            : GUI_EVENT_DISCRETE_POWER_OFF) . CMD_STATUS_GREP;
     return get_shell_exec($cmd);
 }
 
@@ -966,7 +969,8 @@ function get_shell_settings($setting)
  */
 function get_playback_state()
 {
-    # return string (PLAYBACK_STOPPED | PLAYBACK_INITIALIZING | PLAYBACK_PLAYING | PLAYBACK_PAUSED | PLAYBACK_SEEKING | PLAYBACK_BUFFERING | PLAYBACK_FINISHED | PLAYBACK_DEINITIALIZING)
+    # return string (PLAYBACK_STOPPED | PLAYBACK_INITIALIZING | PLAYBACK_PLAYING | PLAYBACK_PAUSED
+    # | PLAYBACK_SEEKING | PLAYBACK_BUFFERING | PLAYBACK_FINISHED | PLAYBACK_DEINITIALIZING)
 
     $cmd = 'cat /tmp/run/ext_command.state | grep -w "playback_state" | sed -n "s/^.*playback_state = /\1/p"';
     return get_shell_exec($cmd);
@@ -1087,7 +1091,9 @@ function set_speed_and_position_seconds($speed, $seconds)
 {
     # return string (command execution status)
 
-    $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=' . ((empty($speed) || empty($seconds)) ? 'status' : 'set_playback_state&speed=' . $speed . '&position=' . $seconds) . CMD_STATUS_GREP;
+    $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=' . ((empty($speed) || empty($seconds))
+            ? 'status'
+            : 'set_playback_state&speed=' . $speed . '&position=' . $seconds) . CMD_STATUS_GREP;
     return get_shell_exec($cmd);
 }
 
@@ -1408,7 +1414,9 @@ function set_window_rect($x, $y, $width, $height)
 {
     # Return: command execution status
 
-    $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=set_playback_state&window_fullscreen=0&window_rect_x=' . $x . '&window_rect_y=' . $y . '&window_rect_width=' . $width . '&window_rect_height=' . $height . CMD_STATUS_GREP;
+    $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=set_playback_state&window_fullscreen=0&window_rect_x='
+        . $x . '&window_rect_y=' . $y . '&window_rect_width='
+        . $width . '&window_rect_height=' . $height . CMD_STATUS_GREP;
     return get_shell_exec($cmd);
 }
 
@@ -1448,7 +1456,9 @@ function set_clip_rect($x, $y, $width, $height)
 {
     # Return: command execution status
 
-    $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=set_playback_state&clip_rect_x=' . $x . '&clip_rect_y=' . $y . '&clip_rect_width=' . $width . '&clip_rect_height=' . $height . CMD_STATUS_GREP;
+    $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=set_playback_state&clip_rect_x='
+        . $x . '&clip_rect_y=' . $y . '&clip_rect_width='
+        . $width . '&clip_rect_height=' . $height . CMD_STATUS_GREP;
     return get_shell_exec($cmd);
 }
 
@@ -1505,7 +1515,9 @@ function set_video_source_rect($x, $y, $width, $height)
     # original video so programmer should take care to avoid such situations.
     # Return: command execution status
 
-    $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=set_playback_state&video_source_rect_x=' . $x . '&video_source_rect_y=' . $y . '&video_source_rect_width=' . $width . '&video_source_rect_height=' . $height . CMD_STATUS_GREP;
+    $cmd = 'env REQUEST_METHOD="GET" QUERY_STRING="cmd=set_playback_state&video_source_rect_x='
+        . $x . '&video_source_rect_y=' . $y . '&video_source_rect_width='
+        . $width . '&video_source_rect_height=' . $height . CMD_STATUS_GREP;
     return get_shell_exec($cmd);
 }
 
@@ -1961,7 +1973,8 @@ function get_system_language_string_value($string_key)
     # Returns a string constant in the system language by key
 
     if ($sys_settings = parse_ini_file('/config/settings.properties', false, INI_SCANNER_RAW)) {
-        $sys_lang = file_exists('/firmware/translations/dune_language_' . $sys_settings['interface_language'] . '.txt') ? $sys_settings['interface_language'] : 'english';
+        $sys_lang = file_exists('/firmware/translations/dune_language_' . $sys_settings['interface_language'] . '.txt')
+            ? $sys_settings['interface_language'] : 'english';
         if (($lang_txt = file_get_contents("/firmware/translations/dune_language_$sys_lang.txt")) &&
             preg_match("/^$string_key\\s*=(.*)$/m", $lang_txt, $m)) {
             return trim($m[1]);
@@ -2355,4 +2368,12 @@ function dune_params_to_array($str)
         $params_array[$param_pair[0]] = $param_pair[1];
     }
     return $params_array;
+}
+
+function send_process_signal($pid, $sig_num) {
+    if (function_exists("posix_kill")) {
+        return posix_kill($pid, $sig_num);
+    }
+    exec("kill -s $sig_num $pid 2>&1", $junk, $return_code);
+    return !$return_code;
 }

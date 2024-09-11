@@ -65,6 +65,21 @@ class Epg_Indexer_Classic extends Epg_Indexer
         try {
             $this->perf->reset('start');
 
+            if (empty($this->xmltv_positions[$this->url_hash])) {
+                $index_file = $this->get_index_name(self::INDEX_POSITIONS);
+                hd_debug_print("load positions index $$index_file");
+                $data = parse_json_file($index_file);
+                if (empty($data)) {
+                    throw new Exception("load positions index failed '$index_file'");
+                }
+                $this->xmltv_positions[$this->url_hash] = $data;
+                $this->perf->setLabel('end_load');
+
+                $report = $this->perf->getFullReport();
+                hd_debug_print("Load time: {$report[Perf_Collector::TIME]} secs");
+                hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+            }
+
             if (empty($this->xmltv_channels[$this->url_hash])) {
                 $index_file = $this->get_index_name(self::INDEX_CHANNELS);
                 hd_debug_print("load channels index $$index_file");
@@ -76,28 +91,12 @@ class Epg_Indexer_Classic extends Epg_Indexer
 
                 $this->perf->setLabel('end_load');
                 $report = $this->perf->getFullReport();
-                hd_debug_print("Load channels time: {$report[Perf_Collector::TIME]} sec");
+                hd_debug_print("Load time: {$report[Perf_Collector::TIME]} secs");
                 hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
             }
 
-            if (empty($this->xmltv_positions[$this->url_hash])) {
-                $index_file = $this->get_index_name(self::INDEX_POSITIONS);
-                hd_debug_print("load positions index $$index_file");
-                $data = parse_json_file($index_file);
-                if (empty($data)) {
-                    throw new Exception("load positions index failed '$index_file'");
-                }
-                $this->xmltv_positions[$this->url_hash] = $data;
-
-                $this->perf->setLabel('end_load');
-                $report = $this->perf->getFullReport();
-                hd_debug_print("Load position time: {$report[Perf_Collector::TIME]} sec");
-                hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
-            }
-
-            // try found channel_id by epg_id
             $this->perf->setLabel('fetch');
-
+            // try found channel_id by epg_id
             $epg_ids = $channel->get_epg_ids();
             foreach ($epg_ids as $epg_id) {
                 $epg_id_lower = mb_convert_case($epg_id, MB_CASE_LOWER, "UTF-8");
@@ -117,9 +116,10 @@ class Epg_Indexer_Classic extends Epg_Indexer
 
             $this->perf->setLabel('end');
             $report = $this->perf->getFullReport('fetch');
+
             hd_debug_print("Fetch positions "
                 . count($this->xmltv_positions[$this->url_hash][$channel_id])
-                . " for '$channel_id' by channel: '{$channel->get_title()}' ({$channel->get_id()}) done in: {$report[Perf_Collector::TIME]} sec");
+                . " for '$channel_id' by channel: '{$channel->get_title()}' ({$channel->get_id()}) done in: {$report[Perf_Collector::TIME]} secs");
 
             return $this->xmltv_positions[$this->url_hash][$channel_id];
         } catch (Exception $ex) {
@@ -127,15 +127,6 @@ class Epg_Indexer_Classic extends Epg_Indexer
         }
 
         return array();
-    }
-
-    /**
-     * @param string $name
-     * @return string
-     */
-    protected function get_index_name($name)
-    {
-        return $this->get_cache_stem("_$name$this->index_ext");
     }
 
     /**
@@ -168,20 +159,26 @@ class Epg_Indexer_Classic extends Epg_Indexer
         }
 
         $this->perf->reset('start');
+
         $channels_file = $this->get_index_name(self::INDEX_CHANNELS);
         $picons_file = $this->get_index_name(self::INDEX_PICONS);
-        if ($this->is_index_valid(self::INDEX_CHANNELS) && $this->is_index_valid(self::INDEX_PICONS)) {
-            hd_debug_print("Load cache channels index: $channels_file");
+        if ($this->is_all_indexes_valid(array(self::INDEX_CHANNELS, self::INDEX_PICONS))) {
+            hd_debug_print("Load cache channels and picons index: $channels_file");
             $this->xmltv_channels[$this->url_hash] = parse_json_file($channels_file);
             $this->xmltv_picons[$this->url_hash] = parse_json_file($picons_file);
-            hd_debug_print("Memory usage: " . $this->perf->getReportItemCurrent(Perf_Collector::MEMORY_USAGE_KB) . " kb");
+
+            $this->perf->setLabel('end');
+            $report = $this->perf->getFullReport();
+            hd_debug_print("ParseFile: {$report[Perf_Collector::TIME]} secs");
+            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+            hd_debug_print_separator();
             return;
         }
 
         $this->xmltv_channels[$this->url_hash] = array();
         $this->xmltv_picons[$this->url_hash] = array();
+        $this->perf->setLabel('reindex');
 
-        $this->perf->setLabel('index');
         try {
             $this->set_index_locked(true);
 
@@ -234,13 +231,12 @@ class Epg_Indexer_Classic extends Epg_Indexer
             store_to_json_file($picons_file, $this->xmltv_picons[$this->url_hash]);
 
             $this->perf->setLabel('end');
-            $report = $this->perf->getFullReport('index');
-
+            $report = $this->perf->getFullReport('reindex');
             hd_debug_print("Total entries id's: " . count($this->xmltv_channels[$this->url_hash]));
             hd_debug_print("Total known picons: " . count($this->xmltv_picons[$this->url_hash]));
-            hd_debug_print("Reindexing EPG channels time: {$report[Perf_Collector::TIME]} sec");
-            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+            hd_debug_print("Reindexing EPG channels done: {$report[Perf_Collector::TIME]} secs");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
+            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG channels failed");
             print_backtrace_exception($ex);
@@ -248,16 +244,6 @@ class Epg_Indexer_Classic extends Epg_Indexer
 
         $this->set_index_locked(false);
         hd_debug_print_separator();
-    }
-
-    /**
-     * @inheritDoc
-     * @override
-     */
-    public function is_index_valid($name)
-    {
-        $name = $this->get_index_name($name);
-        return file_exists($name) && filesize($name) !== 0;
     }
 
     /**
@@ -277,13 +263,19 @@ class Epg_Indexer_Classic extends Epg_Indexer
 
         $cache_valid = false;
         $positions_file = $this->get_index_name(self::INDEX_POSITIONS);
-        if ($this->is_index_valid(self::INDEX_POSITIONS)) {
+        if ($this->is_all_indexes_valid(array(self::INDEX_POSITIONS))) {
             hd_debug_print("Load cache program index: $positions_file");
             $this->xmltv_positions[$this->url_hash] = parse_json_file($positions_file);
+
+            $this->perf->setLabel('end');
+            $report = $this->perf->getFullReport();
+
+            hd_debug_print("Load time: {$report[Perf_Collector::TIME]} secs");
+            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+
             if ($this->xmltv_positions[$this->url_hash] !== false) {
                 $cache_valid = true;
             }
-            hd_debug_print("Memory usage: " . $this->perf->getReportItemCurrent(Perf_Collector::MEMORY_USAGE_KB) . " kb");
         }
 
         if ($cache_valid) {
@@ -291,14 +283,14 @@ class Epg_Indexer_Classic extends Epg_Indexer
         }
 
         try {
-            $this->set_index_locked(true);
 
-            hd_debug_print_separator();
             hd_debug_print("Start reindex: $positions_file");
 
-            $this->perf->setLabel('index');
+            $this->perf->setLabel('reindex');
 
             $this->remove_index(self::INDEX_POSITIONS);
+
+            $this->set_index_locked(true);
             $file = $this->open_xmltv_file();
 
             $start_program_block = 0;
@@ -359,12 +351,11 @@ class Epg_Indexer_Classic extends Epg_Indexer
             }
 
             $this->perf->setLabel('end');
-            $report = $this->perf->getFullReport('index');
-
+            $report = $this->perf->getFullReport('reindex');
             hd_debug_print("Total unique epg id's indexed: " . count($xmltv_index));
-            hd_debug_print("Reindexing EPG postions time: {$report[Perf_Collector::TIME]} sec");
-            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+            hd_debug_print("Reindexing EPG program done: {$report[Perf_Collector::TIME]} secs");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
+            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG positions failed");
             print_backtrace_exception($ex);
@@ -373,9 +364,6 @@ class Epg_Indexer_Classic extends Epg_Indexer
         $this->set_index_locked(false);
         hd_debug_print_separator();
     }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    /// protected methods
 
     /**
      * @inheritDoc
@@ -388,6 +376,64 @@ class Epg_Indexer_Classic extends Epg_Indexer
             hd_debug_print("Remove index: $name");
             unlink($name);
         }
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     * @override
+     */
+    public function remove_indexes($names)
+    {
+        foreach ($names as $name) {
+            $filename = $this->get_index_name($name);
+            if (file_exists($filename)) {
+                hd_debug_print("Remove index: $filename");
+                @unlink($filename);
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// protected methods
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected function get_index_name($name)
+    {
+        return $this->get_cache_stem("_$name$this->index_ext");
+    }
+
+    /**
+     * @inheritDoc
+     * @override
+     */
+    protected function get_indexes_valid($names)
+    {
+        foreach ($names as $name) {
+            $name = $this->get_index_name($name);
+            $result[] = file_exists($name) && filesize($name) !== 0;
+        }
+
+        return empty($result) ? false : $result;
+    }
+
+    /**
+     * @inheritDoc
+     * @override
+     */
+    protected function is_all_indexes_valid($names)
+    {
+        foreach ($names as $name) {
+            $name = $this->get_index_name($name);
+            if (!file_exists($name) || filesize($name) === 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

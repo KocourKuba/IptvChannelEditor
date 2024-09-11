@@ -30,7 +30,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
     /**
      * @var SQLite3[]
      */
-    protected $epg_db;
+    protected $epg_db = array();
 
     private $picons_table = self::INDEX_PICONS;
     private $channels_table = self::INDEX_CHANNELS;
@@ -95,7 +95,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
                 throw new Exception("Problem with open SQLite db! Possible url not set");
             }
 
-            if (!$this->check_table($this->channels_table) && !$this->check_table($this->positions_table)) {
+            if (!$this->is_all_indexes_valid(array($this->channels_table, $this->positions_table))) {
                 throw new Exception("EPG for $this->xmltv_url not indexed!");
             }
 
@@ -174,7 +174,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
                 throw new Exception("Problem with open SQLite db! Possible url not set");
             }
 
-            if ($this->is_index_valid($this->channels_table) && $this->is_index_valid($this->picons_table)) {
+            if ($this->is_all_indexes_valid(array($this->channels_table, $this->picons_table))) {
                 $channels = $db->querySingle("SELECT count(*) FROM $this->channels_table;");
                 if (!empty($channels) && (int)$channels !== 0) {
                     hd_debug_print("EPG channels info already indexed", true);
@@ -182,17 +182,15 @@ class Epg_Indexer_Sql extends Epg_Indexer
                 }
             }
 
-            hd_debug_print_separator();
             hd_debug_print("Start reindex channels and picons...");
 
-            $this->perf->reset('start');
-            $this->remove_index($this->channels_table);
+            $this->perf->reset('reindex');
 
             $this->set_index_locked(true);
 
-            $db->exec("CREATE TABLE $this->channels_table(alias STRING not null, channel_id STRING not null, picon_hash STRING);");
+            $this->remove_indexes(array($this->channels_table, $this->picons_table));
 
-            $this->remove_index($this->picons_table);
+            $db->exec("CREATE TABLE $this->channels_table(alias STRING UNIQUE PRIMARY KEY not null, channel_id STRING not null, picon_hash STRING);");
             $db->exec("CREATE TABLE $this->picons_table(picon_hash STRING UNIQUE PRIMARY KEY not null, picon_url STRING);");
 
             $db->exec('PRAGMA journal_mode=MEMORY;');
@@ -258,13 +256,13 @@ class Epg_Indexer_Sql extends Epg_Indexer
             $picons = empty($result) ? 0 : (int)$result;
 
             $this->perf->setLabel('end');
-            $report = $this->perf->getFullReport();
+            $report = $this->perf->getFullReport('reindex');
 
             hd_debug_print("Total entries id's: $channels");
             hd_debug_print("Total known picons: $picons");
-            hd_debug_print("Reindexing EPG channels time: {$report[Perf_Collector::TIME]} sec");
-            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+            hd_debug_print("Reindexing EPG channels done: {$report[Perf_Collector::TIME]} secs");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
+            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
 
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG channels failed");
@@ -273,55 +271,6 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
         $this->set_index_locked(false);
         hd_debug_print_separator();
-    }
-
-    /**
-     * @inheritDoc
-     * @override
-     */
-    public function is_index_valid($name)
-    {
-        return $this->check_table($name);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    /// protected methods
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    private function check_table($name)
-    {
-        $db = $this->open_sqlite_db();
-        if (is_null($db)) {
-            hd_debug_print("Problem with open SQLite db! Possible url not set");
-            return false;
-        }
-
-        $table = $db->querySingle("SELECT name FROM sqlite_master WHERE type='table' AND name='$name';");
-        return !empty($table);
-    }
-
-    /**
-     * @inheritDoc
-     * @override
-     */
-    public function remove_index($name)
-    {
-        if ($this->is_index_valid($name)) {
-            hd_debug_print("Remove index: $name");
-            if ($this->is_index_locked($name)) {
-                hd_debug_print("Unable to drop table because index $name is locked");
-            } else {
-                $db = $this->open_sqlite_db();
-                if (is_null($db)) {
-                    hd_debug_print("Problem with open SQLite db! Possible url not set");
-                } else {
-                    $db->exec("DROP TABLE IF EXISTS $name;");
-                }
-            }
-        }
     }
 
     /**
@@ -343,7 +292,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
                 throw new Exception("Problem with open SQLite db! Possible url not set");
             }
 
-            if ($this->is_index_valid($this->positions_table)) {
+            if ($this->is_all_indexes_valid(array($this->positions_table))) {
                 $total_pos = $db->querySingle("SELECT count(*) FROM $this->positions_table;");
                 if (!empty($total_pos) && (int)$total_pos !== 0) {
                     hd_debug_print("EPG positions info already indexed", true);
@@ -351,10 +300,10 @@ class Epg_Indexer_Sql extends Epg_Indexer
                 }
             }
 
-            hd_debug_print_separator();
             hd_debug_print("Start reindex positions...");
 
-            $this->perf->reset('start');
+            $this->perf->reset('reindex');
+
             $this->remove_index($this->positions_table);
 
             $this->set_index_locked(true);
@@ -439,12 +388,12 @@ class Epg_Indexer_Sql extends Epg_Indexer
             $total_epg = empty($result) ? 0 : (int)$result;
 
             $this->perf->setLabel('end');
-            $report = $this->perf->getFullReport();
+            $report = $this->perf->getFullReport('reindex');
 
             hd_debug_print("Total unique epg id's indexed: $total_epg");
-            hd_debug_print("Reindexing EPG positions time: {$report[Perf_Collector::TIME]} sec");
-            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+            hd_debug_print("Reindexing EPG positions done: {$report[Perf_Collector::TIME]} secs");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
+            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG positions failed");
             print_backtrace_exception($ex);
@@ -452,6 +401,92 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
         $this->set_index_locked(false);
         hd_debug_print_separator();
+    }
+
+    /**
+     * @inheritDoc
+     * @override
+     */
+    public function remove_index($name)
+    {
+        if ($this->is_current_index_locked()) {
+            hd_debug_print("Unable to drop table because index $name is locked");
+            return false;
+        }
+
+        $db = $this->open_sqlite_db();
+        if (is_null($db)) {
+            hd_debug_print("Problem with open SQLite db! Possible url not set");
+        } else {
+            hd_debug_print("Remove index: $name");
+            $db->exec("DROP TABLE IF EXISTS $name;");
+        }
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     * @override
+     */
+    public function remove_indexes($names)
+    {
+        if ($this->is_current_index_locked()) {
+            hd_debug_print("Unable to drop table because current index is locked");
+            return;
+        }
+
+        $db = $this->open_sqlite_db();
+        if (is_null($db)) {
+            hd_debug_print("Problem with open SQLite db! Possible url not set");
+            return;
+        }
+
+        foreach ($names as $name) {
+            $db->exec("DROP TABLE IF EXISTS $name;");
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// protected methods
+
+    /**
+     * @inheritDoc
+     * @override
+     */
+    protected function get_indexes_valid($names)
+    {
+        hd_debug_print(null, true);
+        $db = $this->open_sqlite_db();
+        if (is_null($db)) {
+            hd_debug_print("Problem with open SQLite db! Possible url not set");
+            return false;
+        }
+
+        foreach ($names as $name) {
+            $result[] = $db->querySingle("SELECT name FROM sqlite_master WHERE type='table' AND name='$name';");
+        }
+        return empty($result) ? false : $result;
+    }
+
+    /**
+     * @inheritDoc
+     * @override
+     */
+    protected function is_all_indexes_valid($names)
+    {
+        hd_debug_print(null, true);
+        $db = $this->open_sqlite_db();
+        if (is_null($db)) {
+            hd_debug_print("Problem with open SQLite db! Possible url not set");
+            return false;
+        }
+
+        foreach ($names as $name) {
+            if (!$db->querySingle("SELECT name FROM sqlite_master WHERE type='table' AND name='$name';")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -480,6 +515,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
      */
     private function open_sqlite_db()
     {
+        hd_debug_print(null, true);
         if (empty($this->url_hash)) {
             hd_debug_print("No handler for empty url!");
             return null;

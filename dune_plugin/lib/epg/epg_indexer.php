@@ -81,6 +81,11 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     protected $curl_wrapper;
 
     /**
+     * @var int
+     */
+    protected $pid = 0;
+
+    /**
      * @var Perf_Collector
      */
     protected $perf;
@@ -89,6 +94,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     {
         $this->curl_wrapper = new Curl_Wrapper();
         $this->perf = new Perf_Collector();
+        $this->active_sources = new Hashed_Array();
     }
 
     /**
@@ -102,6 +108,23 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         hd_debug_print("Indexer engine: " . get_class($this));
         hd_debug_print("Cache dir: $this->cache_dir");
         hd_debug_print("Storage space in cache dir: " . HD::get_storage_size($this->cache_dir));
+    }
+
+    /**
+     * @param int $pid
+     * @return void
+     */
+    public function set_pid($pid)
+    {
+        $this->pid = $pid;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_pid()
+    {
+        return $this->pid;
     }
 
     /**
@@ -121,6 +144,11 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     public function set_active_sources($urls)
     {
         $this->active_sources = $urls;
+        if ($this->active_sources->size() === 0) {
+            hd_debug_print("No XMLTV source selected");
+        } else {
+            hd_debug_print("XMLTV sources selected: $this->active_sources");
+        }
     }
 
     /**
@@ -199,13 +227,10 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         hd_debug_print("cache valid status: $res", true);
         hd_debug_print("Indexing channels for: $this->xmltv_url", true);
         switch ($res) {
-            case 0:
-                $this->index_xmltv_channels();
-                break;
-
             case 1:
                 // downloaded xmltv file not exists or expired
                 hd_debug_print("Download and indexing xmltv source");
+                $this->remove_indexes(array(self::INDEX_CHANNELS, self::INDEX_PICONS, self::INDEX_POSITIONS));
                 if ($this->download_xmltv_source() === 1) {
                     $this->index_xmltv_channels();
                 }
@@ -213,9 +238,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             case 3:
                 // downloaded xmltv file exists, not expired but indexes for channels, picons and positions not exists
                 hd_debug_print("Indexing xmltv source");
-                $this->remove_index(self::INDEX_CHANNELS);
-                $this->remove_index(self::INDEX_PICONS);
-                $this->remove_index(self::INDEX_POSITIONS);
+                $this->remove_indexes(array(self::INDEX_CHANNELS, self::INDEX_PICONS, self::INDEX_POSITIONS));
                 $this->index_xmltv_channels();
                 break;
             default:
@@ -276,9 +299,8 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         }
 
         hd_debug_print("Cached file: $cached_file is not expired");
-        $channels_index_valid = $this->is_index_valid(self::INDEX_CHANNELS);
-        $picons_index_valid = $this->is_index_valid(self::INDEX_PICONS);
-        $pos_index_valid = $this->is_index_valid(self::INDEX_POSITIONS);
+        $indexed = array(self::INDEX_CHANNELS, self::INDEX_PICONS, self::INDEX_POSITIONS);
+        list($channels_index_valid, $picons_index_valid, $pos_index_valid) = $this->get_indexes_valid($indexed);
 
         if ($channels_index_valid && $picons_index_valid && $pos_index_valid) {
             hd_debug_print("Xmltv cache valid");
@@ -312,23 +334,6 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
-     * Check is selected index is valid
-     *
-     * @param string $name
-     * @return bool
-     */
-    abstract public function is_index_valid($name);
-
-    /**
-     * @return bool
-     */
-    protected function is_current_index_locked()
-    {
-        $lock_dir = $this->get_cache_stem('.lock');
-        return is_dir($lock_dir);
-    }
-
-    /**
      * Download XMLTV source.
      *
      * @return int
@@ -339,6 +344,8 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             hd_debug_print("File is indexing or downloading, skipped");
             return 0;
         }
+
+        hd_debug_print_separator();
 
         $ret = -1;
         $this->perf->reset('start');
@@ -363,7 +370,6 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             if (!$expired) {
                 hd_debug_print("File not changed, using cached file: $cached_file");
                 $this->set_index_locked(false);
-                hd_debug_print_separator();
                 return 1;
             }
 
@@ -378,14 +384,15 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
             $file_time = filemtime($tmp_filename);
             $dl_time = $this->perf->getReportItemCurrent(Perf_Collector::TIME);
-            $bps = filesize($tmp_filename) / $dl_time;
+            $file_size = filesize($tmp_filename);
+            $bps = $file_size / $dl_time;
             $si_prefix = array('B/s', 'KB/s', 'MB/s');
             $base = 1024;
             $class = min((int)log($bps, $base), count($si_prefix) - 1);
             $speed = sprintf('%1.2f', $bps / pow($base, $class)) . ' ' . $si_prefix[$class];
 
             hd_debug_print("Last changed time of local file: " . date("Y-m-d H:i", $file_time));
-            hd_debug_print("Download xmltv source $this->xmltv_url done in: $dl_time secs (speed $speed)");
+            hd_debug_print("Download $file_size bytes of xmltv source $this->xmltv_url done in: $dl_time secs (speed $speed)");
 
             if (file_exists($cached_file)) {
                 unlink($cached_file);
@@ -407,10 +414,10 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 if ($ret !== 0) {
                     throw new Exception("Failed to unpack $tmp_filename (error code: $ret)");
                 }
-                flush();
+                clearstatcache();
                 $size = filesize($cached_file);
                 touch($cached_file, $file_time);
-                hd_debug_print("$size bytes ungzipped to $cached_file in " . $this->perf->getReportItemCurrent(Perf_Collector::TIME, 'unpack') . " sec");
+                hd_debug_print("$size bytes ungzipped to $cached_file in " . $this->perf->getReportItemCurrent(Perf_Collector::TIME, 'unpack') . " secs");
             } else if (0 === mb_strpos($hdr, "\x50\x4b\x03\x04")) {
                 hd_debug_print("ZIP signature: " . bin2hex(substr($hdr, 0, 4)), true);
                 hd_debug_print("unzip $tmp_filename to $cached_file");
@@ -430,12 +437,12 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 if ($ret !== 0) {
                     throw new Exception("Failed to unpack $tmp_filename (error code: $ret)");
                 }
-                flush();
+                clearstatcache();
 
                 rename($filename, $cached_file);
                 $size = filesize($cached_file);
                 touch($cached_file, $file_time);
-                hd_debug_print("$size bytes unzipped to $cached_file in " . $this->perf->getReportItemCurrent(Perf_Collector::TIME, 'unpack') . " sec");
+                hd_debug_print("$size bytes unzipped to $cached_file in " . $this->perf->getReportItemCurrent(Perf_Collector::TIME, 'unpack') . " secs");
             } else if (false !== mb_strpos($hdr, "<?xml")) {
                 hd_debug_print("XML signature: " . substr($hdr, 0, 5), true);
                 hd_debug_print("rename $tmp_filename to $cached_file");
@@ -449,9 +456,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             }
 
             $ret = 1;
-            $this->remove_index(self::INDEX_CHANNELS);
-            $this->remove_index(self::INDEX_PICONS);
-            $this->remove_index(self::INDEX_POSITIONS);
+            $this->remove_indexes(array(self::INDEX_CHANNELS, self::INDEX_PICONS, self::INDEX_POSITIONS));
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
             if (!empty($tmp_filename) && file_exists($tmp_filename)) {
@@ -476,25 +481,29 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function is_index_locked($hash)
     {
-        $lock_dir = $this->cache_dir . DIRECTORY_SEPARATOR . "$hash.lock";
-        return is_dir($lock_dir);
+        $dirs = glob($this->cache_dir . DIRECTORY_SEPARATOR . $hash . "_*.lock", GLOB_ONLYDIR);
+        return !empty($dirs);
     }
 
     /**
-     * @param Hashed_Array $sources
      * @return bool|array
      */
-    public function is_any_index_locked($sources)
+    public function is_any_index_locked()
     {
-        $keys = array();
-        foreach ($sources as $key => $value) {
-            $lock_dir = $this->cache_dir . DIRECTORY_SEPARATOR . "$key.lock";
-            if (is_dir($lock_dir)) {
-                $keys[] = $key;
+        $locks = array();
+        $dirs = array();
+        if ($this->active_sources->size() === 0) {
+            $dirs = glob($this->cache_dir . DIRECTORY_SEPARATOR . "*_*.lock", GLOB_ONLYDIR);
+        } else {
+            foreach ($this->active_sources as $key => $value) {
+                $dirs = safe_merge_array($dirs, glob($this->cache_dir . DIRECTORY_SEPARATOR . $key . "_*.lock", GLOB_ONLYDIR));
             }
         }
 
-        return empty($keys) ? false : $keys;
+        foreach ($dirs as $dir) {
+            $locks[] = basename($dir);
+        }
+        return empty($locks) ? false : $locks;
     }
 
     /**
@@ -502,7 +511,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function set_index_locked($lock)
     {
-        $lock_dir = $this->get_cache_stem('.lock');
+        $lock_dir = $this->get_cache_stem("_$this->pid.lock");
         if ($lock) {
             if (!create_path($lock_dir, 0644)) {
                 hd_debug_print("Directory '$lock_dir' was not created");
@@ -511,16 +520,10 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             }
         } else if (is_dir($lock_dir)) {
             hd_debug_print("Unlock $lock_dir");
-            @rmdir($lock_dir);
+            shell_exec("rm -rf $lock_dir");
+            clearstatcache();
         }
     }
-
-    /**
-     * Remove is selected index
-     *
-     * @param string $name
-     */
-    abstract public function remove_index($name);
 
     /**
      * clear memory cache and cache for current xmltv source
@@ -529,11 +532,9 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function clear_current_epg_files()
     {
+        hd_debug_print(null, true);
         $this->clear_epg_files($this->url_hash);
     }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    /// protected methods
 
     /**
      * clear memory cache and cache for selected filename (hash) mask
@@ -543,18 +544,74 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function clear_epg_files($hash)
     {
+        hd_debug_print(null, true);
         $this->clear_memory_index($hash);
 
         if (empty($this->cache_dir)) {
             return;
         }
 
+        $dirs = glob($this->cache_dir . DIRECTORY_SEPARATOR . (empty($hash) ? "*" : $hash) . "_*.lock", GLOB_ONLYDIR);
+        $locks = array();
+        foreach ($dirs as $dir) {
+            hd_debug_print("Found locks: $dir");
+            $locks[] = $dir;
+        }
+
+        if (!empty($locks)) {
+            foreach ($locks as $lock) {
+                $ar = explode('_', basename($lock));
+                $pid = (int)end($ar);
+
+                if ($pid !== 0 && send_process_signal($pid, 0)) {
+                    hd_debug_print("Kill process $pid");
+                    send_process_signal($pid, -9);
+                }
+                hd_debug_print("Remove lock: $lock");
+                shell_exec("rm -rf $lock");
+            }
+        }
+
         $files = $this->cache_dir . DIRECTORY_SEPARATOR . "$hash*";
         hd_debug_print("clear epg files: $files");
-        shell_exec('rm -f ' . $files);
-        flush();
+        shell_exec('rm -rf ' . $files);
+        clearstatcache();
         hd_debug_print("Storage space in cache dir: " . HD::get_storage_size($this->cache_dir));
     }
+
+    public function clear_stalled_locks()
+    {
+        $locks = $this->is_any_index_locked();
+        if ($locks !== false) {
+            foreach ($locks as $lock) {
+                $ar = explode('_', $lock);
+                $pid = (int)end($ar);
+
+                if ($pid !== 0 && !send_process_signal($pid, 0)) {
+                    hd_debug_print("Remove stalled lock: $lock");
+                    shell_exec("rmdir $this->cache_dir" . DIRECTORY_SEPARATOR . $lock);
+                }
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// abstract methods
+
+    /**
+     * Remove is selected index
+     *
+     * @param string $name
+     * @return bool
+     */
+    abstract public function remove_index($name);
+
+    /**
+     * Remove is selected index
+     *
+     * @param array $names
+     */
+    abstract public function remove_indexes($names);
 
     /**
      * Clear memory index
@@ -569,6 +626,34 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      * @return array
      */
     abstract protected function load_program_index($channel);
+
+    /**
+     * Check is selected any indexes is valid
+     *
+     * @param array $names
+     * @return bool
+     */
+    abstract protected function get_indexes_valid($names);
+
+    /**
+     * Check is all indexes is valid
+     *
+     * @param array $names
+     * @return bool
+     */
+    abstract protected function is_all_indexes_valid($names);
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// protected methods
+
+    /**
+     * @return bool
+     */
+    protected function is_current_index_locked()
+    {
+        $lock_dir = $this->get_cache_stem('.lock');
+        return is_dir($lock_dir);
+    }
 
     /**
      * @return resource
