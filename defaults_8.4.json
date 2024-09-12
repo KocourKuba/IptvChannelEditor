@@ -1994,18 +1994,21 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/iptv\\/p\\/(?<password>.+)\\/.*$",
-          "pl_template": "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u"
-        },
-        {
-          "epg_id_from_id": true,
-          "name": "Secondary",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\/\\/.*\\/iptv\\/p\\/(?<password>.+)\\/.*$",
-          "pl_template": "http://www.sharavoz.tv/iptv/p/{PASSWORD}/Playlist.navigator-ott.m3u"
+          "pl_template": "http://{PL_DOMAIN}/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u"
         }
       ],
       "provider_api_url": "http://app.media24.cc/json/c",
       "provider_url": "https://www.sharavoz.tv/",
+      "domains_list": [
+        {
+          "id": "0",
+          "name": "shrv.gb.net"
+        },
+        {
+          "id": "1",
+          "name": "www.sharavoz.tv"
+        }
+      ],
       "servers_list": [
         {
           "id": "ru01.spr24.net",
