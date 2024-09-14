@@ -142,7 +142,7 @@ class sharaclub_config extends default_config
      */
     public function GetAccountInfo($force = false)
     {
-        hd_debug_print("Collect information from account: $force");
+        hd_debug_print("Collect information from account: " . var_export($force, true));
 
         // this account has special API to get account info
         $login = $this->get_login();

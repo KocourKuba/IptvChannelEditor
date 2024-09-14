@@ -24,7 +24,7 @@ class sharavoz_config extends default_config
         // This is a dummy info taken from xtream codes api
         $this->xtream->init($this->GetVodListUrl(), $this->get_password(), $this->get_password());
         $this->xtream->reset_cache();
-        hd_debug_print("Collect information from account: $force");
+        hd_debug_print("Collect information from account: " . var_export($force, true));
         // {
         //     "user_info": {
         //     "username": "Yz23423fL234StQ",

@@ -57,7 +57,7 @@ class tvizi_config extends default_config
     public function GetAccountInfo($force = false)
     {
         hd_debug_print(null, true);
-        hd_debug_print("Collect information from account: $force");
+        hd_debug_print("Collect information from account: " . var_export($force, true));
 
         $json = $this->make_json_request(self::API_COMMAND_ACCOUNT_INFO);
         if ($json === false || $json === null) {
