@@ -155,15 +155,15 @@ class sharaclub_config extends default_config
 
             if ($force !== false || empty($this->account_data)) {
                 $url = $this->replace_api_command('subscr_info');
-                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
-                if ($content === false || !isset($content['status']) || $content['status'] !== '1') {
+                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
+                if ($content === false || !isset($content->status) || $content->status !== '1') {
                     throw new Exception("Account status unknown. " . HD::get_last_error());
                 }
                 $this->account_data = $content;
 
-                $this->set_domains(array(0 => $this->account_data['data']['listdomain']));
+                $this->set_domains(array(0 => $this->account_data->data->listdomain));
                 $this->set_domain_id(0);
-                $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_DOMAIN, $this->account_data['data']['jsonEpgDomain']);
+                $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_DOMAIN, $this->account_data->data->jsonEpgDomain);
             }
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
@@ -186,9 +186,9 @@ class sharaclub_config extends default_config
             return;
         }
 
-        Control_Factory::add_label($defs, TR::t('balance'), $account_data['data']['money'] . ' RUR', -10);
-        Control_Factory::add_label($defs, TR::t('tv_screen_subscription'), $account_data['data']['money_need'] . ' RUR', -10);
-        $packages = $account_data['data']['abon'];
+        Control_Factory::add_label($defs, TR::t('balance'), $account_data->data->money . ' RUR', -10);
+        Control_Factory::add_label($defs, TR::t('tv_screen_subscription'), $account_data->data->money_need . ' RUR', -10);
+        $packages = $account_data->data->abon;
         if (count($packages) === 0) {
             Control_Factory::add_label($defs, TR::t('package'), TR::t('no_packages'), 20);
             return;

@@ -40,7 +40,7 @@ class vidok_config extends default_config
         if (empty($quality) && $this->load_settings()) {
             $quality = array();
             foreach ($this->account_data->settings->lists->quality as $item) {
-                $quality[$item['id']] = $item->name;
+                $quality[$item->id] = $item->name;
             }
         }
 
@@ -72,8 +72,8 @@ class vidok_config extends default_config
                 $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$token";
                 // provider returns token used to download playlist
-                $this->account_data = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
-                if (!isset($this->account_data["account"]["login"])) {
+                $this->account_data = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
+                if (!isset($this->account_data->account->login)) {
                     throw new Exception("Account info invalid");
                 }
             }
