@@ -21,9 +21,9 @@ class tvclub_config extends default_config
             try {
                 $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/servers?token=$token";
-                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
-                foreach ($content['servers'] as $item) {
-                    $this->servers[$item['id']] = $item['name'];
+                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
+                foreach ($content->servers as $item) {
+                    $this->servers->item->id = $item->name;
                 }
             } catch (Exception $ex) {
                 hd_debug_print("Servers not loaded");
@@ -39,7 +39,7 @@ class tvclub_config extends default_config
      */
     public function GetAccountInfo($force = false)
     {
-        hd_debug_print("Collect information from account: $force");
+        hd_debug_print("Collect information from account: " . var_export($force, true));
 
         if ($force !== false || empty($this->account_data)) {
             if (!$this->load_settings()) {
@@ -62,6 +62,7 @@ class tvclub_config extends default_config
             return;
         }
 
+        hd_debug_print($this->account_data);
         $info = $this->account_data->account->info;
         $settings = $this->account_data->account->settings;
         Control_Factory::add_label($defs, TR::t('balance'), $info->balance . ' €', -10);
@@ -76,7 +77,7 @@ class tvclub_config extends default_config
         }
 
         foreach ($packages as $item) {
-            Control_Factory::add_label($defs, TR::t('package'), $item->name . ' ' . $item->type .' - '. date('j.m.Y', $item['expire']), -10);
+            Control_Factory::add_label($defs, TR::t('package'), $item->name . ' ' . $item->type .' - '. date('j.m.Y', $item->expire), -10);
         }
 
         Control_Factory::add_vgap($defs, 20);
@@ -95,8 +96,8 @@ class tvclub_config extends default_config
             $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$token";
             // provider returns token used to download playlist
-            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
-            if (!isset($content['account']['info']['login'])) {
+            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), false);
+            if (!isset($content->account->info->login)) {
                 throw new Exception("Account status unknown");
             }
             $this->account_data = $content;
