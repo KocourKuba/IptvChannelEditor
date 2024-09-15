@@ -34,6 +34,10 @@ class Entry extends Json_Serializer
     const TAG_EXTHTTP = '#EXTHTTP';
     const TAG_EXTVLCOPT = '#EXTVLCOPT';
 
+    const ATTR_CHANNEL_NAME = 'name';
+    const ATTR_CHANNEL_ID = 'channel_id_attributes';
+    const ATTR_CHANNEL_HASH = 'by_default';
+
     /**
      * @var bool
      */
@@ -178,7 +182,7 @@ class Entry extends Json_Serializer
     public function getEntryTitle()
     {
         $extInf = $this->getEntryTag(self::TAG_EXTINF);
-        return is_null($extInf) ? null : $extInf->getTagValue();
+        return is_null($extInf) ? '' : $extInf->getTagValue();
     }
 
     /**
@@ -213,6 +217,18 @@ class Entry extends Json_Serializer
      */
     public function getEntryAttribute($attribute_name, $tag = null)
     {
+        if ($attribute_name === self::ATTR_CHANNEL_NAME) {
+            return $this->getEntryTitle();
+        }
+
+        if ($attribute_name === self::ATTR_CHANNEL_ID) {
+            return $this->getEntryId();
+        }
+
+        if ($attribute_name === self::ATTR_CHANNEL_HASH) {
+            return hash('crc32', $this->getPath());
+        }
+
         if (!is_null($this->tags)) {
             if (is_null($tag)) {
                 foreach ($this->tags as $item) {
