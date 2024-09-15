@@ -134,12 +134,15 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                         'group_id' => FAVORITES_GROUP_ID)
                 ),
                 PluginRegularFolderItem::caption => $channel->get_title(),
-                PluginRegularFolderItem::locked => $this->plugin->get_channels_list_favorites()->in_order($channel_id),
                 PluginRegularFolderItem::view_item_params => array(
                     ViewItemParams::icon_path => $channel->get_icon_url(),
                     ViewItemParams::item_detailed_icon_path => $channel->get_icon_url(),
                 ),
             );
+
+            if (defined('PluginRegularFolderItem::locked')) {
+                $items[][PluginRegularFolderItem::locked] = $this->plugin->get_channels_list_favorites()->in_order($channel_id);
+            }
         }
 
         return $items;
