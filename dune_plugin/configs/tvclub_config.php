@@ -96,7 +96,7 @@ class tvclub_config extends default_config
             $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$token";
             // provider returns token used to download playlist
-            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), false);
+            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
             if (!isset($content->account->info->login)) {
                 throw new Exception("Account status unknown");
             }
