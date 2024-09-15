@@ -182,10 +182,6 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
         return $day_epg;
      }
 
-    /**
-     * @inheritDoc
-     * @override
-     */
     public function clear_epg_cache()
     {
         $this->epg_cache = array();

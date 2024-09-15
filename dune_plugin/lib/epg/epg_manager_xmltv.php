@@ -101,8 +101,10 @@ class Epg_Manager_Xmltv
         hd_print("XMLTV sources: " . json_encode($config->xmltv_urls));
         hd_print("Cache type: $config->cache_type");
         hd_print("Cache TTL: $config->cache_ttl");
+        hd_print("Process ID:");
 
         $this->init_indexer($config->cache_dir);
+        $this->indexer->set_pid(getmypid());
         $this->indexer->set_active_sources($sources);
         $this->indexer->set_cache_type($config->cache_type);
         $this->indexer->set_cache_ttl($config->cache_ttl);
@@ -152,7 +154,7 @@ class Epg_Manager_Xmltv
     public function get_day_epg_items(Channel $channel, $day_start_ts)
     {
         $active_sources = $this->plugin->get_all_xmltv_sources(false);
-        $any_lock = $this->indexer->is_any_index_locked($active_sources);
+        $any_lock = $this->indexer->is_any_index_locked();
         $day_epg = array();
         foreach($active_sources as $key => $source) {
             if ($this->indexer->is_index_locked($key)) {
@@ -162,8 +164,6 @@ class Epg_Manager_Xmltv
             }
 
             $this->indexer->set_url($source);
-            if (!$this->indexer->is_index_valid(Epg_Indexer::INDEX_POSITIONS)) continue;
-
             // filter out epg only for selected day
             $day_end_ts = $day_start_ts + 86400;
             $date_start_l = format_datetime("Y-m-d H:i", $day_start_ts);
@@ -236,9 +236,8 @@ class Epg_Manager_Xmltv
             return $this->getFakeEpg($channel, $day_start_ts, $day_epg);
         }
 
-        hd_debug_print("Total EPG entries loaded: " . count($day_epg));
-
         ksort($day_epg);
+
         return $day_epg;
     }
 
@@ -246,7 +245,7 @@ class Epg_Manager_Xmltv
      * Import indexing log to plugin logs
      *
      * @param array|null $sources
-     * @return bool
+     * @return bool true if import successful and no other active locks, false if any active source is locked
      */
     public function import_indexing_log($sources = null)
     {
@@ -283,9 +282,22 @@ class Epg_Manager_Xmltv
      *
      * @return void
      */
-    public function clear_epg_cache()
+    public function clear_current_epg_cache()
     {
-        $this->get_indexer()->clear_current_epg_files();
+        hd_debug_print(null, true);
+        $this->indexer->clear_current_epg_files();
+    }
+
+    /**
+     * clear memory cache and cache for selected filename (hash) mask
+     * if hash is empty clear all cache
+     *
+     * @param string $hash
+     * @return void
+     */
+    public function clear_selected_epg_cache($hash)
+    {
+        $this->indexer->clear_epg_files($hash);
     }
 
     /**
