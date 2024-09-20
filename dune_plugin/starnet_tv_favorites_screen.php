@@ -128,7 +128,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                 continue;
             }
 
-            $items[] = array(
+            $item = array(
                 PluginRegularFolderItem::media_url => MediaURL::encode(array(
                         'channel_id' => $channel->get_id(),
                         'group_id' => FAVORITES_GROUP_ID)
@@ -141,8 +141,10 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
             );
 
             if (defined('PluginRegularFolderItem::locked')) {
-                $items[][PluginRegularFolderItem::locked] = $this->plugin->get_channels_list_favorites()->in_order($channel_id);
+                $item[PluginRegularFolderItem::locked] = $this->plugin->get_channels_list_favorites()->in_order($channel_id);
             }
+
+            $items[] = $item;
         }
 
         return $items;
