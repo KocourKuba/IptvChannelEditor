@@ -40,6 +40,7 @@ const ACTION_RUN_FILTER = 'run_filter';
 const ACTION_CREATE_SEARCH = 'create_search';
 const ACTION_NEW_SEARCH = 'new_search';
 const ACTION_RUN_SEARCH = 'run_search';
+const ACTION_SEARCH = 'action_search';
 const ACTION_WATCHED = 'watched';
 const ACTION_QUALITY = 'quality';
 const ACTION_AUDIO = 'audio';
