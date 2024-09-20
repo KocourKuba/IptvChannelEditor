@@ -187,10 +187,9 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
         $this->epg_cache = array();
         $files = get_temp_path('*.cache');
         hd_debug_print("clear cache files: $files");
-        shell_exec('rm -f '. $files);
-        flush();
+        shell_exec('rm -f ' . $files);
+        clearstatcache();
     }
-
     ///////////////////////////////////////////////////////////////////////////////
     /// protected methods
 
@@ -204,8 +203,9 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
     {
         $channel_epg = array();
 
-        if (empty($parser_params))
+        if (empty($parser_params)) {
             return $channel_epg;
+        }
 
         hd_debug_print("parser params: " . json_encode($parser_params), true);
 
@@ -233,24 +233,20 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
 
         hd_debug_print("json epg root: " . $parser_params[Epg_Params::EPG_ROOT], true);
         hd_debug_print("json start: " . $parser_params[Epg_Params::EPG_START], true);
-        hd_debug_print("json end: " . $parser_params[Epg_Params::EPG_END], true);
         hd_debug_print("json title: " . $parser_params[Epg_Params::EPG_NAME], true);
         hd_debug_print("json desc: " . $parser_params[Epg_Params::EPG_DESC], true);
 
         // collect all program that starts after day start and before day end
         $prev_start = 0;
-        $no_end = empty($parser_params[Epg_Params::EPG_END]);
         foreach ($ch_data as $entry) {
+            if (!isset($entry[$parser_params[Epg_Params::EPG_START]])) continue;
+
             $program_start = $entry[$parser_params[Epg_Params::EPG_START]];
 
-            if ($no_end) {
-                if ($prev_start !== 0) {
-                    $channel_epg[$prev_start][Epg_Params::EPG_END] = $program_start;
-                }
-                $prev_start = $program_start;
-            } else {
-                $channel_epg[$program_start][Epg_Params::EPG_END] = (int)$entry[$parser_params[Epg_Params::EPG_END]];
+            if ($prev_start !== 0) {
+                $channel_epg[$prev_start][Epg_Params::EPG_END] = $program_start;
             }
+            $prev_start = $program_start;
 
             if (isset($entry[$parser_params[Epg_Params::EPG_NAME]])) {
                 $channel_epg[$program_start][Epg_Params::EPG_NAME] = HD::unescape_entity_string($entry[$parser_params[Epg_Params::EPG_NAME]]);
@@ -265,9 +261,15 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
             } else {
                 $channel_epg[$program_start][Epg_Params::EPG_DESC] = '';
             }
+
+            if (isset($entry[$parser[Epg_Params::EPG_ICON]])) {
+                $channel_epg[$program_start][Epg_Params::EPG_ICON] = $entry[$parser_params[Epg_Params::EPG_ICON]];
+            } else {
+                $channel_epg[$program_start][Epg_Params::EPG_ICON] = '';
+            }
         }
 
-        if ($no_end && $prev_start !== 0) {
+        if ($prev_start !== 0) {
             $channel_epg[$prev_start][Epg_Params::EPG_END] = $prev_start + 3600; // fake end
         }
 

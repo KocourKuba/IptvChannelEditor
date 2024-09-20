@@ -548,6 +548,11 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     public function clear_epg_files($hash)
     {
         hd_debug_print(null, true);
+        if (empty($hash)) {
+            $this->curl_wrapper->clear_all_etag_cache();
+        } else {
+            $this->curl_wrapper->clear_cached_etag();
+        }
         $this->clear_memory_index($hash);
 
         if (empty($this->cache_dir)) {

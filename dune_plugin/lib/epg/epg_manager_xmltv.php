@@ -158,7 +158,7 @@ class Epg_Manager_Xmltv
         $day_epg = array();
         foreach($active_sources as $key => $source) {
             if ($this->indexer->is_index_locked($key)) {
-                hd_debug_print("EPG $source still indexing, append to deleyed queue channel id: " . $channel->get_id());
+                hd_debug_print("EPG $source still indexing, append to delayed queue channel id: " . $channel->get_id());
                 $this->delayed_epg[] = $channel->get_id();
                 continue;
             }
@@ -182,6 +182,8 @@ class Epg_Manager_Xmltv
                     if ($handle) {
                         foreach ($positions as $pos) {
                             fseek($handle, $pos['start']);
+                            $length = $pos['end'] - $pos['start'];
+                            if ($length <= 0) continue;
 
                             $xml_str = "<tv>" . fread($handle, $pos['end'] - $pos['start']) . "</tv>";
 
