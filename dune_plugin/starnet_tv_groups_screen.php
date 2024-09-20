@@ -31,6 +31,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
             GUI_EVENT_KEY_RETURN     => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN),
             GUI_EVENT_KEY_TOP_MENU   => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_TOP_MENU),
+            GUI_EVENT_TIMER          => User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER),
         );
 
         if ($this->IsSetupNeeds() !== false) {
@@ -55,6 +56,8 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         hd_debug_print(null, true);
         dump_input_handler($user_input);
 
+        $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+
         switch ($user_input->control_id) {
             case GUI_EVENT_KEY_TOP_MENU:
             case GUI_EVENT_KEY_RETURN:
@@ -63,6 +66,28 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 }
 
                 return User_Input_Handler_Registry::create_action($this, self::ACTION_CONFIRM_DLG_APPLY);
+
+            case GUI_EVENT_TIMER:
+                $epg_manager = $this->plugin->get_epg_manager();
+                if ($epg_manager === null) {
+                    return null;
+                }
+
+                clearstatcache();
+
+                $actions = $this->get_action_map($parent_media_url, $plugin_cookies);
+                $res = $epg_manager->import_indexing_log();
+                if ($res !== false) {
+                    foreach (array('pl_last_error', 'xmltv_last_error') as $last_error) {
+                        $error_msg = HD::get_last_error($last_error);
+                        if (!empty($error_msg)) {
+                            return Action_Factory::show_title_dialog(TR::t('err_load_playlist'), null, $error_msg);
+                        }
+                    }
+                    return null;
+                }
+
+                return Action_Factory::change_behaviour($actions, 1000);
 
             case self::ACTION_CONFIRM_DLG_APPLY:
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
@@ -117,6 +142,9 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                     $this->plugin->get_epg_manager()->clear_epg_cache();
                     $this->plugin->init_epg_manager();
                     $this->plugin->run_bg_epg_indexing();
+
+                    $actions = $this->get_action_map($parent_media_url, $plugin_cookies);
+                    return Action_Factory::change_behaviour($actions, 1000);
                 }
 
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);

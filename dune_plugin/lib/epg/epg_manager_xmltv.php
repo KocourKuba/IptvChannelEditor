@@ -144,6 +144,11 @@ class Epg_Manager_Xmltv
         $this->flags = $flags;
     }
 
+    public function clear_epg_cache()
+    {
+        $this->indexer->clear_epg_files();
+    }
+
     /**
      * Try to load epg from cached file
      *
@@ -277,29 +282,6 @@ class Epg_Manager_Xmltv
         }
 
         return !$has_locks;
-    }
-
-    /**
-     * clear memory cache and cache for current xmltv source
-     *
-     * @return void
-     */
-    public function clear_current_epg_cache()
-    {
-        hd_debug_print(null, true);
-        $this->indexer->clear_current_epg_files();
-    }
-
-    /**
-     * clear memory cache and cache for selected filename (hash) mask
-     * if hash is empty clear all cache
-     *
-     * @param string $hash
-     * @return void
-     */
-    public function clear_selected_epg_cache($hash)
-    {
-        $this->indexer->clear_epg_files($hash);
     }
 
     /**

@@ -529,37 +529,21 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
-     * clear memory cache and cache for current xmltv source
-     *
-     * @return void
-     */
-    public function clear_current_epg_files()
-    {
-        hd_debug_print(null, true);
-        $this->clear_epg_files($this->url_hash);
-    }
-
-    /**
      * clear memory cache and cache for selected filename (hash) mask
      *
-     * @param string $hash
      * @return void
      */
-    public function clear_epg_files($hash)
+    public function clear_epg_files()
     {
         hd_debug_print(null, true);
-        if (empty($hash)) {
-            $this->curl_wrapper->clear_all_etag_cache();
-        } else {
-            $this->curl_wrapper->clear_cached_etag();
-        }
-        $this->clear_memory_index($hash);
+        $this->curl_wrapper->clear_all_etag_cache();
+        $this->clear_memory_index();
 
         if (empty($this->cache_dir)) {
             return;
         }
 
-        $dirs = glob($this->cache_dir . DIRECTORY_SEPARATOR . (empty($hash) ? "*" : $hash) . "_*.lock", GLOB_ONLYDIR);
+        $dirs = glob($this->cache_dir . DIRECTORY_SEPARATOR . "*_*.lock", GLOB_ONLYDIR);
         $locks = array();
         foreach ($dirs as $dir) {
             hd_debug_print("Found locks: $dir");
@@ -580,7 +564,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             }
         }
 
-        $files = $this->cache_dir . DIRECTORY_SEPARATOR . "$hash*";
+        $files = $this->cache_dir . DIRECTORY_SEPARATOR . "*";
         hd_debug_print("clear epg files: $files");
         shell_exec('rm -rf ' . $files);
         clearstatcache();
