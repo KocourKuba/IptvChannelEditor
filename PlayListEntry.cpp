@@ -48,9 +48,17 @@ bool PlaylistEntry::Parse(const std::string& str)
 		{
 			if (!playlist) break;
 
-			playlist->m3u_header = m3uEntry;
+			if (playlist->m3u_header.get_tags_map().empty())
+			{
+				playlist->m3u_header = m3uEntry;
+			}
+			else
+			{
+				m3uEntry.get_tags_map().merge(m3uEntry.get_tags_map());
+			}
 
-			const auto& tags = m3uEntry.get_tags_map();
+			const auto& tags = playlist->m3u_header.get_tags_map();
+
 			if (const auto& root = search_logo(tags); !root.empty())
 			{
 				playlist->logo_root = root;
