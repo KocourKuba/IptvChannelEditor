@@ -282,7 +282,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         if ($this->cache_type === XMLTV_CACHE_AUTO) {
             $this->curl_wrapper->set_url($this->xmltv_url);
             if ($this->curl_wrapper->check_is_expired()) {
-                $this->curl_wrapper->clear_cached_etag($this->xmltv_url);
+                $this->curl_wrapper->clear_cached_etag();
             } else {
                 $expired = false;
             }
@@ -348,6 +348,11 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             return 0;
         }
 
+        if (empty($this->xmltv_url)) {
+            hd_debug_print("Url not set!");
+            return 0;
+        }
+
         hd_debug_print_separator();
 
         $ret = -1;
@@ -376,7 +381,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 return 1;
             }
 
-            $this->curl_wrapper->clear_cached_etag($this->xmltv_url);
+            $this->curl_wrapper->clear_cached_etag();
             if (!$this->curl_wrapper->download_file($tmp_filename, true)) {
                 throw new Exception("Ошибка скачивания $this->xmltv_url\n\n" . $this->curl_wrapper->get_raw_response_headers());
             }

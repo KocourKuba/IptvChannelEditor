@@ -1235,7 +1235,7 @@ class Default_Dune_Plugin implements DunePlugin
     public function clear_all_epg_cache()
     {
         if (isset($this->epg_manager)) {
-            $this->epg_manager->get_indexer()->clear_epg_files('');
+            $this->epg_manager->get_indexer()->clear_epg_files();
         }
     }
 

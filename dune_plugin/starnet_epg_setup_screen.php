@@ -143,7 +143,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         hd_debug_print(null, true);
         dump_input_handler($user_input);
 
-        $action_reload = User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
         $control_id = $user_input->control_id;
         if (isset($user_input->action_type, $user_input->{$control_id})
             && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
@@ -151,13 +150,14 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             hd_debug_print("Setup: changing $control_id value to $new_value");
         }
 
+        $post_action = null;
         switch ($control_id) {
             case PARAM_EPG_CACHE_ENGINE:
             case PARAM_EPG_CACHE_TYPE:
                 $this->plugin->tv->unload_channels();
                 $this->plugin->set_parameter($control_id, $user_input->{$control_id});
                 $this->plugin->init_epg_manager();
-                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
+                break;
 
             case self::CONTROL_CHANGE_CACHE_PATH:
                 $media_url_str = MediaURL::encode(
@@ -182,18 +182,18 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case self::ACTION_CLEAR_EPG_CACHE:
                 $this->plugin->get_epg_manager()->clear_epg_cache();
-                $post_action = Action_Factory::reset_controls($this->do_get_control_defs());
-                return Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared'), $post_action);
+                $post_action = Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared'));
+                break;
 
             case ACTION_RESET_DEFAULT:
                 hd_debug_print(ACTION_RESET_DEFAULT);
                 $this->plugin->clear_all_epg_cache();
                 $this->plugin->remove_parameter(PARAM_CACHE_PATH);
                 $this->plugin->init_epg_manager();
-
                 $default_path = $this->plugin->get_cache_dir();
-                return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $default_path),
-                    $action_reload, $default_path, self::CONTROLS_WIDTH);
+                $post_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $default_path),
+                    null, $default_path, self::CONTROLS_WIDTH);
+                break;
 
             case self::CONTROL_EPG_FOLDER:
                 $data = MediaURL::decode($user_input->selected_data);
@@ -204,8 +204,9 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 $this->plugin->set_parameter(PARAM_CACHE_PATH, $data->filepath);
                 $this->plugin->init_epg_manager();
 
-                return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
-                    $action_reload, $data->filepath, self::CONTROLS_WIDTH);
+                $post_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
+                    null, $data->filepath, self::CONTROLS_WIDTH);
+                break;
 
             case PARAM_FAKE_EPG:
                 $this->plugin->toggle_parameter($control_id, false);
@@ -215,15 +216,21 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             case self::ACTION_RELOAD_EPG:
                 hd_debug_print(self::ACTION_RELOAD_EPG);
                 $this->plugin->get_epg_manager()->clear_epg_cache();
+                $sources = $this->plugin->get_all_xmltv_sources(false);
+                foreach ($sources as $source) {
+                    $this->plugin->get_epg_manager()->get_indexer()->set_url($source);
+                    $this->plugin->get_epg_manager()->get_indexer()->download_xmltv_source();
+                }
                 $this->plugin->run_bg_epg_indexing();
                 break;
 
             case ACTION_RELOAD:
                 hd_debug_print(ACTION_RELOAD, true);
                 $this->plugin->tv->reload_channels();
-                return Action_Factory::invalidate_all_folders($plugin_cookies, Action_Factory::reset_controls($this->do_get_control_defs()));
+                $post_action = Action_Factory::invalidate_all_folders($plugin_cookies);
+                break;
         }
 
-        return Action_Factory::reset_controls($this->do_get_control_defs());
+        return Action_Factory::reset_controls($this->do_get_control_defs(), $post_action);
     }
 }

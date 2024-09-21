@@ -35,10 +35,8 @@ class Ordered_Array extends Json_Serializer implements Iterator
     const UP = -1;
     const DOWN = 1;
 
-    /**
-     * @var integer
-     */
-    private $pos = 0;
+    const TOP = PHP_INT_MIN;
+    const BOTTOM = PHP_INT_MAX;
 
     /**
      * @var array
@@ -48,6 +46,10 @@ class Ordered_Array extends Json_Serializer implements Iterator
      * @var int
      */
     protected $saved_pos = 0;
+    /**
+     * @var integer
+     */
+    private $pos = 0;
 
     /**
      * @param array|null $values
@@ -57,6 +59,16 @@ class Ordered_Array extends Json_Serializer implements Iterator
         if (is_array($values)) {
             $this->order = $values;
         }
+    }
+
+    /**
+     * @param string $a
+     * @param string $b
+     * @return int
+     */
+    protected static function sort_array_cb($a, $b)
+    {
+        return strnatcasecmp($a, $b);
     }
 
     /**
@@ -87,6 +99,15 @@ class Ordered_Array extends Json_Serializer implements Iterator
     }
 
     /**
+     * @param mixed $id
+     * @return mixed
+     */
+    public function get($id)
+    {
+        return $id;
+    }
+
+    /**
      * clear order and save changes
      *
      * @return void
@@ -95,14 +116,6 @@ class Ordered_Array extends Json_Serializer implements Iterator
     {
         $this->order = array();
         $this->saved_pos = 0;
-    }
-
-    /**
-     * @return array
-     */
-    public function get_order()
-    {
-        return $this->order;
     }
 
     /**
@@ -120,23 +133,45 @@ class Ordered_Array extends Json_Serializer implements Iterator
     }
 
     /**
+     * @param string $id
+     * @return bool
+     */
+    public function in_order($id)
+    {
+        return in_array($id, $this->order);
+    }
+
+    /**
+     * @param Ordered_Array $ids
+     * @return void
+     */
+    public function add_ordered_array($ids)
+    {
+        $this->add_items($ids->get_order());
+    }
+
+    /**
      * @param array $ids
      * @return void
      */
     public function add_items($ids)
     {
-        foreach ($ids as $id) {
-            if (!$this->in_order($id)) {
-                $this->order[] = $id;
-            }
-        }
+        $this->order = array_values(array_unique(array_merge($this->order, $ids)));
+    }
+
+    /**
+     * @return array
+     */
+    public function get_order()
+    {
+        return $this->order;
     }
 
     /**
      * @param string $id
      * @param bool $last
      */
-    public function insert_item($id, $last = true)
+    public function insert_item($id, $last)
     {
         if ($this->in_order($id)) {
             $this->remove_item($id);
@@ -158,7 +193,6 @@ class Ordered_Array extends Json_Serializer implements Iterator
         $key = array_search($id, $this->order);
         if ($key !== false) {
             $selected_item = $this->get_selected_item();
-            hd_debug_print("remove: $id");
             $removed = array_splice($this->order, $key, 1);
             if (count($removed) !== 0) {
                 $this->update_saved_pos($selected_item);
@@ -167,6 +201,43 @@ class Ordered_Array extends Json_Serializer implements Iterator
         }
 
         return false;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function get_selected_item()
+    {
+        return isset($this->order[$this->saved_pos]) ? $this->order[$this->saved_pos] : null;
+    }
+
+    /**
+     * @param string $item
+     * @return void
+     */
+    public function update_saved_pos($item)
+    {
+        if ($item === null) {
+            $pos = 0;
+        } else {
+            $key = array_search($item, $this->order);
+            $pos = ($key !== false) ? $key : 0;
+        }
+
+        $this->set_saved_pos($pos);
+    }
+
+    /**
+     * @param array $ids
+     * @return bool
+     */
+    public function remove_items($ids)
+    {
+        $selected_item = $this->get_selected_item();
+        $size = $this->size();
+        $this->order = array_values(array_diff($this->order, $ids));
+        $this->update_saved_pos($selected_item);
+        return $size !== $this->size();
     }
 
     /**
@@ -214,37 +285,50 @@ class Ordered_Array extends Json_Serializer implements Iterator
 
     /**
      * @param string $id
-     * @return bool
-     */
-    public function in_order($id)
-    {
-        return in_array($id, $this->order);
-    }
-
-    /**
-     * @param string $id
      * @param int $direction
      * @return bool
      */
     public function arrange_item($id, $direction)
     {
-        $selected_item = $this->get_selected_item();
         $k = array_search($id, $this->order);
-        //hd_debug_print("move id: $id from idx: $k to direction: $direction");
-
-        if ($k === false || $direction === 0)
+        if ($k === false) {
             return false;
+        }
 
-        if ($direction < 0 && $k !== 0) {
-            $t = $this->order[$k - 1];
-            $this->order[$k - 1] = $this->order[$k];
-            $this->order[$k] = $t;
-        } else if ($direction > 0 && $k !== count($this->order) - 1) {
-            $t = $this->order[$k + 1];
-            $this->order[$k + 1] = $this->order[$k];
-            $this->order[$k] = $t;
-        } else {
-            return false;
+        $selected_item = $this->get_selected_item();
+
+        switch ($direction) {
+            case self::UP:
+                if ($k !== 0) {
+                    $t = $this->order[$k - 1];
+                    $this->order[$k - 1] = $this->order[$k];
+                    $this->order[$k] = $t;
+                }
+                break;
+            case self::DOWN:
+                if ($k !== count($this->order) - 1) {
+                    $t = $this->order[$k + 1];
+                    $this->order[$k + 1] = $this->order[$k];
+                    $this->order[$k] = $t;
+                }
+                break;
+            case self::TOP:
+                if ($k !== 0) {
+                    $t = $this->order[$k];
+                    $this->remove_item_by_idx($k);
+                    $this->insert_item($t, false);
+                }
+                break;
+            case self::BOTTOM:
+                $last = count($this->order) - 1;
+                if ($k !== $last) {
+                    $t = $this->order[$k];
+                    $this->remove_item_by_idx($k);
+                    $this->insert_item($t, true);
+                }
+                break;
+            default:
+                return false;
         }
 
         $this->update_saved_pos($selected_item);
@@ -259,40 +343,6 @@ class Ordered_Array extends Json_Serializer implements Iterator
         $selected_item = $this->get_selected_item();
         usort($this->order, array(__CLASS__, "sort_array_cb"));
         $this->update_saved_pos($selected_item);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function get_selected_item()
-    {
-        return isset($this->order[$this->saved_pos]) ? $this->order[$this->saved_pos] : null;
-    }
-
-    /**
-     * @param string $item
-     * @return void
-     */
-    public function update_saved_pos($item)
-    {
-        if ($item === null) {
-            $pos = 0;
-        } else {
-            $key = array_search($item, $this->order);
-            $pos = ($key !== false) ? $key : 0;
-        }
-
-        $this->set_saved_pos($pos);
-    }
-
-    /**
-     * @param string $a
-     * @param string $b
-     * @return int
-     */
-    protected static function sort_array_cb($a, $b)
-    {
-        return strnatcasecmp($a, $b);
     }
 
     /////////////////////////////////////////////////////////////////////
