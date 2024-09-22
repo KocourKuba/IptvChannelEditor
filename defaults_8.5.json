@@ -1148,6 +1148,36 @@
       ],
       "title": "KLI Media"
     },
+    "korona": {
+      "access_type": "login",
+      "name": "korona",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/.+?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/.+\\/(?<login>.+)\\/.+\\/(?<password>.+)$",
+          "pl_template": "http://pl.korona-tv.top/{QUALITY_ID}/{SERVER_ID}/{LOGIN}/{PASSWORD}/{STREAM_ID}"
+        }
+      ],
+      "provider_url": "https://korona-tv.top/",
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}"
+        },
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/timeshift_abs-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+        }
+      ],
+      "title": "Korona"
+    },
     "lightiptv": {
       "access_type": "pin",
       "epg_params": [
@@ -1687,6 +1717,36 @@
         }
       ],
       "title": "Peak TV"
+    },
+    "piktv": {
+      "access_type": "login",
+      "name": "piktv",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/.+?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/.+\\/(?<login>.+)\\/.+\\/(?<password>.+)$",
+          "pl_template": "https://iptv360.ru/playlist/hls/{PASSWORD}.m3u"
+        }
+      ],
+      "provider_url": "https://iptv360.ru/",
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}"
+        },
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/timeshift_abs-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+        }
+      ],
+      "title": "Pik TV"
     },
     "ping": {
       "access_type": "login",
