@@ -30,8 +30,6 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
             $arr['info'] = $info;
         }
 
-        hd_debug_print("Movie ID: $movie_id, Movie name: $name, Movie Poster: $poster_url", true);
-
         return MediaURL::encode($arr);
     }
 
@@ -76,8 +74,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen implements User_
                     PluginMovieFolderView::has_right_button => false,
                     PluginMovieFolderView::has_multiple_series => false,
                     PluginMovieFolderView::series_media_url => null,
-                    PluginMovieFolderView::params => array
-                    (
+                    PluginMovieFolderView::params => array(
                         PluginFolderViewParams::paint_path_box => false,
                         PluginFolderViewParams::paint_content_box_background => true,
                         PluginFolderViewParams::background_url => $this->plugin->config->plugin_info['app_background']

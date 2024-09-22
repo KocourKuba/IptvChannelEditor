@@ -68,7 +68,7 @@ void CPluginConfigPageVOD::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_PROVIDER_VOD_URL, m_wndVodUrlTemplate);
 	DDX_Text(pDX, IDC_EDIT_PROVIDER_VOD_URL, m_VodPlaylistTemplate);
 	DDX_Control(pDX, IDC_EDIT_VOD_REGEX, m_wndVodRegex);
-	DDX_Text(pDX, IDC_EDIT_VOD_REGEX, m_VodParseRegex);
+	DDX_Text(pDX, IDC_EDIT_VOD_REGEX, m_VodParseRegexTitle);
 	DDX_Control(pDX, IDC_BUTTON_VOD_PARSE, m_wndBtnVodParseTest);
 	DDX_Control(pDX, IDC_CHECK_PLAYLIST_SHOW_LINK, m_wndBtnPlaylistShow);
 	DDX_Control(pDX, IDC_BUTTON_VOD_TEMPLATE, m_wndBtnVodTemplateTest);
@@ -194,7 +194,7 @@ void CPluginConfigPageVOD::FillControls()
 	m_wndVodTemplates.SetCurSel(vod_idx);
 	const auto& info = plugin->get_vod_info(vod_idx);
 	m_VodPlaylistTemplate = info.get_pl_template().c_str();
-	m_VodParseRegex = info.get_parse_regex().c_str();
+	m_VodParseRegexTitle = info.get_parse_regex_title().c_str();
 	m_VodUrlPrefix = info.get_url_prefix().c_str();
 	m_VodUrlParams = info.get_url_params().c_str();
 
@@ -212,7 +212,7 @@ void CPluginConfigPageVOD::SaveParameters()
 	auto& info = plugin->get_vod_info(idx);
 
 	info.set_pl_template(m_VodPlaylistTemplate.GetString());
-	info.set_parse_regex(m_VodParseRegex.GetString());
+	info.set_parse_regex_title(m_VodParseRegexTitle.GetString());
 	info.set_url_prefix(m_VodUrlPrefix.GetString());
 	info.set_url_params(m_VodUrlParams.GetString());
 
@@ -220,7 +220,7 @@ void CPluginConfigPageVOD::SaveParameters()
 	plugin->set_vod_filter(m_wndChkFilterSupport.GetCheck() != 0);
 
 	m_wndBtnVodTemplateTest.EnableWindow(!m_VodPlaylistTemplate.IsEmpty());
-	m_wndBtnVodParseTest.EnableWindow(!m_VodParseRegex.IsEmpty());
+	m_wndBtnVodParseTest.EnableWindow(!m_VodParseRegexTitle.IsEmpty());
 
 	UpdateControls();
 
@@ -268,7 +268,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 
 void CPluginConfigPageVOD::OnBnClickedButtonVodParse()
 {
-	const auto& url = fmt::format(L"https://regex101.com/?regex={:s}", utils::string_replace<wchar_t>(m_VodParseRegex.GetString(), L"+", L"%2B"));
+	const auto& url = fmt::format(L"https://regex101.com/?regex={:s}", utils::string_replace<wchar_t>(m_VodParseRegexTitle.GetString(), L"+", L"%2B"));
 	ShellExecute(nullptr, _T("open"), url.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 }
 
@@ -283,7 +283,7 @@ void CPluginConfigPageVOD::OnCbnSelchangeComboVodTemplate()
 
 	auto& info = GetPropertySheet()->m_plugin->get_vod_info(idx);
 	m_VodPlaylistTemplate = info.get_pl_template().c_str();
-	m_VodParseRegex = info.get_parse_regex().c_str();
+	m_VodParseRegexTitle = info.get_parse_regex_title().c_str();
 
 	UpdateData(FALSE);
 

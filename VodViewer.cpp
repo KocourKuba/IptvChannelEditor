@@ -382,7 +382,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	try
 	{
 		const auto& info = m_plugin->get_vod_info(m_wndPlaylist.GetCurSel());
-		const auto& pattern = info.get_parse_regex();
+		const auto& pattern = info.get_parse_regex_title();
 		if (!pattern.empty())
 		{
 			re = pattern;

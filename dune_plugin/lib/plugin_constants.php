@@ -41,6 +41,7 @@ class Plugin_Constants
     const /* (char *) */ PL_DOMAIN = 'pl_domain';
     const /* (char *) */ PL_TEMPLATE = 'pl_template';
     const /* (char *) */ PARSE_REGEX = 'parse_regex';
+    const /* (char *) */ PARSE_REGEX_TITLE = 'parse_regex_title';
     const /* (char *) */ TAG_ID_MATCH = 'tag_id_match';
     const /* (char*)  */ URL_PREFIX = 'url_prefix';
     const /* (char*)  */ URL_PARAMS = 'url_params';

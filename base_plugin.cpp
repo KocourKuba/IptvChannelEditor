@@ -284,15 +284,16 @@ void base_plugin::set_regex_parse_stream(const std::wstring& val)
 	}
 }
 
-std::wstring base_plugin::get_vod_url(const TemplateParams& params) const
+std::wstring base_plugin::get_vod_url(const TemplateParams& params)
 {
 	return get_vod_url(get_vod_info_idx(), params);
 }
 
-std::wstring base_plugin::get_vod_url(size_t idx, const TemplateParams& params) const
+std::wstring base_plugin::get_vod_url(size_t idx, const TemplateParams& params)
 {
 	const auto& info = get_vod_info(idx);
 	std::wstring url = info.get_pl_template();
+	set_regex_parse_stream(L"");
 
 	if (!domains_list.empty())
 	{

@@ -91,8 +91,8 @@ public:
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>wstring</returns>
-	std::wstring get_vod_url(const TemplateParams& params) const;
-	std::wstring get_vod_url(const size_t idx, const TemplateParams& params) const;
+	std::wstring get_vod_url(const TemplateParams& params);
+	std::wstring get_vod_url(const size_t idx, const TemplateParams& params);
 
 	/// <summary>
 	/// parse entire epg

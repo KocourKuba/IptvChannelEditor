@@ -78,7 +78,7 @@ protected:
 	CButton m_wndBtnEditVodTemplates;
 
 	CString m_VodPlaylistTemplate;
-	CString m_VodParseRegex;
+	CString m_VodParseRegexTitle;
 	CString m_VodUrlPrefix;
 	CString m_VodUrlParams;
 };

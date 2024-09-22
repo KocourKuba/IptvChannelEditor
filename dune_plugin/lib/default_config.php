@@ -1058,7 +1058,7 @@ class default_config extends dynamic_config
 
         $this->perf->reset('start');
 
-        $vod_pattern = $this->get_vod_parse_pattern();
+        $vod_pattern = $this->get_vod_parse_title_pattern();
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
 
@@ -1114,7 +1114,7 @@ class default_config extends dynamic_config
         $current_offset = $this->get_current_page($query_id);
         $indexes = $this->vod_m3u_indexes[$category_id];
 
-        $vod_pattern = $this->get_vod_parse_pattern();
+        $vod_pattern = $this->get_vod_parse_title_pattern();
         $max = count($indexes);
         $ubound = min($max, $current_offset + 5000);
         hd_debug_print("Read from: $current_offset to $ubound");
@@ -1149,7 +1149,7 @@ class default_config extends dynamic_config
         hd_debug_print($movie_id);
         $movie = new Movie($movie_id, $this->plugin);
 
-        $vod_pattern = $this->get_vod_parse_pattern();
+        $vod_pattern = $this->get_vod_parse_title_pattern();
         $entry = $this->plugin->get_m3u_parser()->getEntryByIdx($movie_id);
         if ($entry === null) {
             hd_debug_print("Movie not found");
@@ -1165,6 +1165,7 @@ class default_config extends dynamic_config
                 $title_orig = isset($match['title_orig']) ? $match['title_orig'] : $title_orig;
                 $country = isset($match['country']) ? $match['country'] : $country;
                 $year = isset($match['year']) ? $match['year'] : $year;
+                hd_debug_print("title: $title, country: $country, year: $year");
             }
 
             $category = '';
@@ -1177,20 +1178,20 @@ class default_config extends dynamic_config
             }
 
             $movie->set_data(
-                $title,// $xml->caption,
-                $title_orig,// $xml->caption_original,
-                '',// $xml->description,
-                $logo,// $xml->poster_url,
-                '',// $xml->length,
-                $year,// $xml->year,
-                '',// $xml->director,
-                '',// $xml->scenario,
-                '',// $xml->actors,
-                $category,// $xml->genres,
-                '',// $xml->rate_imdb,
-                '',// $xml->rate_kinopoisk,
-                '',// $xml->rate_mpaa,
-                $country // $xml->country,
+                $title,
+                $title_orig,
+                '',
+                $logo,
+                '',
+                $year,
+                '',
+                '',
+                '',
+                $category,
+                '',
+                '',
+                '',
+                $country
             );
 
             $movie->add_series_data($movie_id, $title, '', $entry->getPath());
@@ -1554,12 +1555,14 @@ class default_config extends dynamic_config
     /**
      * @return string
      */
-    protected function get_vod_parse_pattern()
+    protected function get_vod_parse_title_pattern()
     {
         $vod_template = $this->get_current_vod_template();
-        $vod_pattern = isset($vod_template[Plugin_Constants::PARSE_REGEX]) ? $vod_template[Plugin_Constants::PARSE_REGEX] : '';
-        if (!empty($vod_pattern))
+        $vod_pattern = isset($vod_template[Plugin_Constants::PARSE_REGEX_TITLE]) ? $vod_template[Plugin_Constants::PARSE_REGEX_TITLE] : '';
+        if (!empty($vod_pattern)) {
             $vod_pattern = "#$vod_pattern#";
+            hd_debug_print("vod pattern: $vod_pattern");
+        }
 
         return $vod_pattern;
     }
