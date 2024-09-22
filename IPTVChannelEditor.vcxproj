@@ -287,7 +287,9 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="plugin_glanz.h" />
     <ClInclude Include="plugin_iptvonline.h" />
     <ClInclude Include="plugin_kineskop.h" />
+    <ClInclude Include="plugin_korona.h" />
     <ClInclude Include="plugin_ottclub.h" />
+    <ClInclude Include="plugin_piktv.h" />
     <ClInclude Include="plugin_sharavoz.h" />
     <ClInclude Include="plugin_tvizi.h" />
     <ClInclude Include="plugin_tvteam.h" />
@@ -389,7 +391,9 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="plugin_glanz.cpp" />
     <ClCompile Include="plugin_iptvonline.cpp" />
     <ClCompile Include="plugin_kineskop.cpp" />
+    <ClCompile Include="plugin_korona.cpp" />
     <ClCompile Include="plugin_ottclub.cpp" />
+    <ClCompile Include="plugin_piktv.cpp" />
     <ClCompile Include="plugin_sharavoz.cpp" />
     <ClCompile Include="plugin_tvizi.cpp" />
     <ClCompile Include="plugin_tvteam.cpp" />
@@ -430,7 +434,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ResourceCompile Include="IPTVChannelEditor.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="defaults_8.4.json" />
+    <None Include="defaults_8.5.json" />
     <None Include="dune_plugin\changelog.md" />
     <None Include="Readme.md" />
     <None Include="res\IPTVChannelEditor.rc2" />

@@ -1030,10 +1030,14 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 	{
 		int cache_ttl = force ? 0 : GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
 		CWaitCursor cur;
-		if (!m_plugin->download_url(m_playlist_url, data, cache_ttl))
+		m_dl.SetUrl(m_playlist_url);
+		m_dl.SetUserAgent(m_plugin->get_user_agent());
+		m_dl.SetCacheTtl(cache_ttl);
+
+		if (!m_dl.DownloadFile(data))
 		{
 			CString msg;
-			msg.Format(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, m_plugin->get_download_error().c_str());
+			msg.Format(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, m_dl.GetLastErrorMessage().c_str());
 			AfxMessageBox(msg, MB_OK | MB_ICONERROR);
 			OnEndLoadPlaylist(0);
 			return;
@@ -1971,8 +1975,8 @@ void CIPTVChannelEditorDlg::FillEPG()
 	if (!m_lastTree || !m_wndShowEPG.GetCheck())
 		return;
 
-	const auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
-	if (!info)
+	const auto uri_stream = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
+	if (!uri_stream)
 		return;
 
 	int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3) - IDC_RADIO_EPG1;
@@ -1993,7 +1997,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 	ATLTRACE(L"\n%s\n", snow.c_str());
 #endif // _DEBUG
 
-	UpdateExtToken(info);
+	UpdateExtToken(uri_stream);
 	DWORD dwStart = GetTickCount();
 
 	// check end time
@@ -2003,26 +2007,14 @@ void CIPTVChannelEditorDlg::FillEPG()
 	{
 		if (epg_idx != 2)
 		{
-			bool res = m_plugin->parse_json_epg(epg_idx, info->get_epg_id(epg_idx), m_epg_cache, now, info);
-			if (!res)
+			if (!ParseJsonEpg(epg_idx, now, uri_stream))
 			{
 				need_load = false;
 			}
 		}
 		else
 		{
-			if (!m_xmltv_sources.empty())
-			{
-				auto& epg_cache = m_epg_cache.at(epg_idx);
-				if (epg_cache.find(L"file already parsed") == epg_cache.end())
-				{
-					bool res = m_plugin->parse_xml_epg(m_xmltv_sources[m_xmltvEpgSource], epg_cache, m_epg_aliases, &m_wndProgress);
-					if (res)
-					{
-						epg_cache[L"file already parsed"] = std::map<time_t, std::shared_ptr<EpgInfo>>();
-					}
-				}
-			}
+			ParseXmEpg(epg_idx);
 			need_load = false;
 		}
 	}
@@ -2031,11 +2023,11 @@ void CIPTVChannelEditorDlg::FillEPG()
 	std::set<std::wstring> ids;
 	if (epg_idx != 2)
 	{
-		ids.emplace(info->get_epg_id(epg_idx));
+		ids.emplace(uri_stream->get_epg_id(epg_idx));
 	}
 	else
 	{
-		const auto& epg_ids = info->get_epg_ids();
+		const auto& epg_ids = uri_stream->get_epg_ids();
 		for (const auto& val : epg_ids)
 		{
 			if (!val.empty())
@@ -2043,8 +2035,8 @@ void CIPTVChannelEditorDlg::FillEPG()
 				ids.emplace(utils::wstring_tolower_l_copy(val));
 			}
 		}
-		ids.emplace(utils::wstring_tolower_l_copy(info->get_title()));
-		ids.emplace(utils::wstring_tolower_l_copy(info->get_id()));
+		ids.emplace(utils::wstring_tolower_l_copy(uri_stream->get_title()));
+		ids.emplace(utils::wstring_tolower_l_copy(uri_stream->get_id()));
 	}
 
 	for(const auto& epg_id : ids)
@@ -2097,6 +2089,339 @@ void CIPTVChannelEditorDlg::FillEPG()
 		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
 		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.GetString());
 	}
+}
+
+bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_time, const uri_stream* info)
+{
+	const std::wstring& epg_id = info->get_epg_id(epg_idx);
+	if (epg_id.empty())
+	{
+		return false;
+	}
+
+	bool added = false;
+
+	CWaitCursor cur;
+	std::stringstream data;
+
+	const auto& url = m_plugin->compile_epg_url(epg_idx, epg_id, for_time, info);
+	const auto& epg_param = m_plugin->get_epg_parameter(epg_idx);
+
+	std::vector<std::string> headers;
+	if (!epg_param.epg_auth.empty())
+	{
+		TemplateParams params;
+		params.creds = GetCurrentAccount();
+		const auto& token = utils::utf8_to_utf16(m_plugin->get_api_token(params));
+		if (!token.empty())
+		{
+			std::wstring header = utils::string_replace<wchar_t>(epg_param.get_epg_auth(), REPL_TOKEN, token);
+			headers.emplace_back("accept: */*");
+			headers.emplace_back(utils::utf16_to_utf8(header));
+		}
+	}
+
+	m_dl.SetUrl(url);
+	m_dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600);
+	m_dl.SetUserAgent(m_plugin->get_user_agent());
+
+	if (!m_dl.DownloadFile(data, &headers))
+	{
+		return false;
+	}
+
+	std::wstring time_format = utils::utf8_to_utf16(epg_param.epg_time_format);
+	// replace to "%d-%m-%Y %H:%M"
+	if (!time_format.empty())
+	{
+		utils::string_replace_inplace<wchar_t>(time_format, REPL_YEAR, L"%Y");
+		utils::string_replace_inplace<wchar_t>(time_format, REPL_MONTH, L"%m");
+		utils::string_replace_inplace<wchar_t>(time_format, REPL_DAY, L"%d");
+		utils::string_replace_inplace<wchar_t>(time_format, REPL_HOUR, L"%H");
+		utils::string_replace_inplace<wchar_t>(time_format, REPL_MIN, L"%M");
+	}
+
+	JSON_ALL_TRY;
+	{
+		const auto& parsed_json = nlohmann::json::parse(data.str());
+
+		auto& epg_map = m_epg_cache[epg_idx][epg_id];
+
+		time_t prev_start = 0;
+		const auto& root = m_plugin->get_epg_root(epg_idx, parsed_json);
+		for (const auto& item : root.items())
+		{
+			const auto& val = item.value();
+
+			auto epg_info = std::make_shared<EpgInfo>();
+
+			if (time_format.empty())
+			{
+				epg_info->time_start = utils::get_json_number_value(epg_param.epg_start, val);
+			}
+			else
+			{
+				std::tm tm = {};
+				std::stringstream ss(utils::get_json_string_value(epg_param.epg_start, val));
+				ss >> std::get_time(&tm, utils::utf16_to_utf8(time_format).c_str());
+				epg_info->time_start = _mkgmtime(&tm); // parsed time assumed as UTC+00
+			}
+
+			epg_info->time_start -= 3600 * epg_param.epg_timezone; // subtract real EPG timezone offset
+
+			// Not valid time start or already added. Skip processing
+			if (epg_info->time_start == 0 || epg_map.find(epg_info->time_start) != epg_map.end()) continue;
+
+			if (epg_param.epg_end.empty())
+			{
+				if (prev_start != 0)
+				{
+					epg_map[prev_start]->time_end = epg_info->time_start;
+#ifdef _DEBUG
+					COleDateTime te(epg_info->time_start);
+					epg_map[prev_start]->end = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
+#endif // _DEBUG
+				}
+				prev_start = epg_info->time_start;
+			}
+			else
+			{
+				epg_info->time_end = utils::get_json_number_value(epg_param.epg_end, val);
+			}
+
+			if (epg_param.epg_use_duration)
+			{
+				epg_info->time_end += epg_info->time_start;
+			}
+
+#ifdef _DEBUG
+			COleDateTime ts(epg_info->time_start);
+			COleDateTime te(epg_info->time_end);
+			epg_info->start = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", ts.GetYear(), ts.GetMonth(), ts.GetDay(), ts.GetHour(), ts.GetMinute());
+			epg_info->end = fmt::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
+#endif // _DEBUG
+
+			epg_info->name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(utils::get_json_string_value(epg_param.epg_name, val))));
+			epg_info->desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(utils::get_json_string_value(epg_param.epg_desc, val))));
+
+			epg_map.emplace(epg_info->time_start, epg_info);
+			added = true;
+		}
+
+		if (epg_param.epg_end.empty() && prev_start != 0)
+		{
+			epg_map[prev_start]->time_end = epg_map[prev_start]->time_start + 3600; // fake end
+		}
+
+		return added;
+	}
+	JSON_ALL_CATCH;
+
+	return false;
+}
+
+bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
+{
+	if (m_epg_cache.at(epg_idx).find(L"file already parsed") == m_epg_cache.at(epg_idx).end())
+	{
+		return true;
+	}
+
+	if (m_xmltv_sources.empty() || m_xmltv_sources[m_xmltvEpgSource].empty())
+	{
+		return false;
+	}
+
+	m_dl.SetUrl(m_xmltv_sources[m_xmltvEpgSource]);
+	m_dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600);
+	m_dl.SetUserAgent(m_plugin->get_user_agent());
+
+	CWaitCursor cur;
+	std::stringstream data;
+	if (!m_dl.DownloadFile(data))
+	{
+		return false;
+	}
+
+	std::vector<char> buf(8);
+	data.seekg(0);
+	data.read(buf.data(), 8);
+	data.clear();
+
+	auto file_fmt = SevenZip::CompressionFormat::Unknown;
+
+	const char* str = buf.data();
+
+	if (memcmp(str, "\x1F\x8B\x08", 3) == 0)
+	{
+		file_fmt = SevenZip::CompressionFormat::GZip;
+	}
+	else if (memcmp(str, "\x50\x4B\x03\x04", 4) == 0)
+	{
+		file_fmt = SevenZip::CompressionFormat::Zip;
+	}
+	else
+	{
+		if (memcmp(str, "\xEF\xBB\xBF", 3) == 0)
+		{
+			str += 3; // Skip utf-8 bom
+		}
+
+		if (memcmp(buf.data(), "<?xml", 5) == 0)
+		{
+			file_fmt = SevenZip::CompressionFormat::XZ;
+		}
+	}
+
+	if (file_fmt == SevenZip::CompressionFormat::Unknown)
+		return false;
+
+	const auto& real_url = m_dl.GetUrl();
+	auto cache_file = utils::CUrlDownload::GetCachedPath(real_url);
+	if (file_fmt == SevenZip::CompressionFormat::GZip || file_fmt == SevenZip::CompressionFormat::Zip)
+	{
+		std::vector<char> buffer;
+		const auto& unpacked_path = utils::CUrlDownload::GetCachedPath(real_url.substr(0, real_url.length() - 3));
+		if (m_dl.CheckIsCacheExpired(unpacked_path))
+		{
+			auto& extractor = theApp.m_archiver.GetExtractor();
+			extractor.SetArchivePath(cache_file);
+			extractor.SetCompressionFormat(file_fmt);
+
+			const auto& names = extractor.GetItemsNames();
+			if (names.empty())
+				return false;
+
+			const auto& sizes = extractor.GetOrigSizes();
+			buffer.reserve(sizes[0]);
+			if (!extractor.ExtractFileToMemory(0, (std::vector<BYTE>&)buffer))
+				return false;
+
+			std::ofstream unpacked_file(unpacked_path, std::ofstream::binary);
+			unpacked_file.write((char*)buffer.data(), buffer.size());
+			unpacked_file.close();
+		}
+
+		cache_file = unpacked_path;
+	}
+
+	// Parse the buffer using the xml file parsing library into doc
+	bool added = false;
+	try
+	{
+		DWORD dwStart = GetTickCount();
+		int ch_cnt = 0;
+		auto node_doc = std::make_unique<rapidxml::xml_document<>>();
+		rapidxml::file<> xmlFileTmp(utils::utf16_to_utf8(cache_file).c_str());
+		node_doc->parse<rapidxml::parse_fastest>(xmlFileTmp.data());
+		auto ch_node = node_doc->first_node("tv")->first_node("channel");
+		while (ch_node)
+		{
+			++ch_cnt;
+			ch_node = ch_node->next_sibling();
+		}
+
+		int prg_cnt = 0;
+		auto prog_node = node_doc->first_node("tv")->first_node("programme");
+		while (prog_node)
+		{
+			++prg_cnt;
+			prog_node = prog_node->next_sibling();
+		}
+		node_doc.release();
+
+		DWORD dwEnd = GetTickCount();
+		TRACE("\nCount nodes time %f, Total channel nodes %d, programme nodes %d\n", (double)(dwEnd - dwStart) / 1000., ch_cnt, prg_cnt);
+
+		//////////////////////////////////////////////////////////////////////////
+
+		auto docParse = std::make_unique<rapidxml::xml_document<>>();
+		rapidxml::file<> xmlFile(utils::utf16_to_utf8(cache_file).c_str());
+		docParse->parse<rapidxml::parse_default>(xmlFile.data());
+
+		//////////////////////////////////////////////////////////////////////////
+		// begin parsing channels nodes
+		int i = 0;
+
+		m_wndProgress.SetRange32(0, ch_cnt);
+		m_wndProgress.ShowWindow(SW_SHOW);
+
+		auto channel_node = docParse->first_node("tv")->first_node("channel");
+		while (channel_node)
+		{
+			const auto channel_id = rapidxml::get_value_wstring(channel_node->first_attribute("id"));
+			auto display_name_node = channel_node->first_node("display-name");
+			while (display_name_node)
+			{
+				std::wstring channel_name = utils::wstring_tolower_l(rapidxml::get_value_wstring(display_name_node));
+				if (!channel_name.empty())
+				{
+					m_epg_aliases.emplace(channel_name, channel_id);
+				}
+				display_name_node = display_name_node->next_sibling();
+			}
+
+			channel_node = channel_node->next_sibling();
+			if ((++i % 100) == 0)
+			{
+				m_wndProgress.SetPos(i);
+			}
+		}
+		dwEnd = GetTickCount();
+		TRACE("\nParse channels time %f\n", (double)(dwEnd - dwStart) / 1000.);
+
+		//////////////////////////////////////////////////////////////////////////
+		// begin parsing programme nodes
+		dwStart = dwEnd;
+		i = 0;
+
+		m_wndProgress.SetRange32(0, prg_cnt);
+		m_wndProgress.ShowWindow(SW_SHOW);
+
+		auto& epg_map = m_epg_cache.at(epg_idx);
+
+		// Iterate <tv_category> nodes
+		prog_node = docParse->first_node("tv")->first_node("programme");
+		while (prog_node)
+		{
+			auto epg_info = std::make_shared<EpgInfo>();
+
+			const auto& channel_id = rapidxml::get_value_wstring(prog_node->first_attribute("channel"));
+
+			const auto& attr_start = prog_node->first_attribute("start");
+			epg_info->time_start = utils::parse_xmltv_date(attr_start->value(), attr_start->value_size());
+
+			const auto& attr_stop = prog_node->first_attribute("stop");
+			epg_info->time_end = utils::parse_xmltv_date(attr_stop->value(), attr_stop->value_size());
+
+			epg_info->name = utils::make_text_rtf_safe(rapidxml::get_value_string(prog_node->first_node("title")));
+			epg_info->desc = utils::make_text_rtf_safe(rapidxml::get_value_string(prog_node->first_node("desc")));
+
+			epg_map[channel_id].emplace(epg_info->time_start, epg_info);
+			prog_node = prog_node->next_sibling();
+			added = true;
+			if ((++i % 100) == 0)
+			{
+				m_wndProgress.SetPos(i);
+			}
+		}
+		dwEnd = GetTickCount();
+		TRACE("\nParse programme time %f\n", (double)(dwEnd - dwStart) / 1000.);
+	}
+	catch (rapidxml::parse_error& ex)
+	{
+		ex;
+		return false;
+	}
+
+	m_wndProgress.ShowWindow(SW_HIDE);
+
+	if (added)
+	{
+		m_epg_cache.at(epg_idx)[L"file already parsed"] = std::map<time_t, std::shared_ptr<EpgInfo>>();
+	}
+
+	return added;
 }
 
 std::shared_ptr<ChannelInfo> CIPTVChannelEditorDlg::FindChannel(HTREEITEM hItem) const
@@ -3892,12 +4217,11 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 				std::error_code err;
 				std::filesystem::remove_all(dir_path, err);
 
-				utils::CUrlDownload dl;
-				dl.SetUrl(image_lib.get_url());
-				dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL, 24));
-				if (!dl.DownloadFile(file_data))
+				m_dl.SetUrl(image_lib.get_url());
+				m_dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL, 24));
+				if (!m_dl.DownloadFile(file_data))
 				{
-					AfxMessageBox(dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+					AfxMessageBox(m_dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
 					break;
 				}
 			}
@@ -4562,11 +4886,12 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 
 		CWaitCursor cur;
 		std::stringstream image;
-		utils::CUrlDownload dl;
-		dl.SetUrl(channel->get_icon_uri().get_uri());
-		if (!dl.DownloadFile(image))
+		m_dl.SetUrl(channel->get_icon_uri().get_uri());
+		m_dl.SetUserAgent(m_plugin->get_user_agent());
+		m_dl.SetCacheTtl(0);
+		if (!m_dl.DownloadFile(image))
 		{
-			AfxMessageBox(dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+			AfxMessageBox(m_dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
 			continue;
 		}
 

@@ -71,7 +71,7 @@ public:
 	/**
 	* Get URL
 	*/
-	const std::wstring& GetUrl() { return m_url; }
+	const std::wstring& GetUrl() const { return m_url; }
 
 	/**
 	* Set user agent
@@ -173,4 +173,6 @@ protected:
 	unsigned char m_x = 0;
 	unsigned char m_y = 0;
 };
+
+std::string encodeURIComponent(const std::string& url);
 }

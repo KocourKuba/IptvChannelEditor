@@ -41,11 +41,11 @@ static char THIS_FILE[] = __FILE__;
 static constexpr auto API_COMMAND_GET_URL = L"{:s}/{:s}?token={:s}";
 static constexpr auto API_COMMAND_SET_URL = L"{:s}/{:s}?token={:s}&{:s}={:s}";
 
-bool plugin_vidok::get_api_token(TemplateParams& params)
+std::string plugin_vidok::get_api_token(TemplateParams& params)
 {
 	params.creds.s_token = utils::md5_hash_hex(params.creds.login + utils::md5_hash_hex(params.creds.password));
 
-	return true;
+	return params.creds.s_token;
 }
 
 void plugin_vidok::parse_account_info(TemplateParams& params)

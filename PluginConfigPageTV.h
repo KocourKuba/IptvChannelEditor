@@ -68,6 +68,7 @@ private:
 	void UpdateControls();
 
 protected:
+	utils::CUrlDownload m_dl;
 
 	CMenuEdit m_wndPlaylistTemplate;
 	CMenuEdit m_wndParseStream;

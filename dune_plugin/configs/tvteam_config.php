@@ -4,7 +4,6 @@ require_once 'lib/default_config.php';
 
 class tvteam_config extends default_config
 {
-    const API_COMMAND_GET_PLAYLIST = 'http://troya.one/pl/11/{S_TOKEN}/playlist.m3u8';
     const API_COMMAND_REQUEST_TOKEN = '{API_URL}/?userLogin={LOGIN}&userPasswd=';
     const API_COMMAND_ACCOUNT_INFO = '{API_URL}/?apiAction=getUserData,getServersGroups,getUserPackages&sessionId=';
     const API_COMMAND_SET_SERVER = '{API_URL}/?apiAction=updateUserData&groupId={SERVER_ID}&sessionId=';

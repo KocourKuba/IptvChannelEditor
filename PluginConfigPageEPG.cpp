@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CPluginConfigPageEPG, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPG_TYPE, &CPluginConfigPageEPG::OnCbnSelchangeComboEpgType)
 	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigPageEPG::OnBnClickedButtonEpgTest)
 	ON_EN_CHANGE(IDC_EDIT_EPG_DOMAIN, &CPluginConfigPageEPG::SaveParameters)
+	ON_EN_CHANGE(IDC_EDIT_EPG_AUTH, &CPluginConfigPageEPG::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_EPG_URL, &CPluginConfigPageEPG::SaveParameters)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPG_PARSER_PRESET, &CPluginConfigPageEPG::OnCbnSelchangeComboEpgParserPreset)
 	ON_EN_CHANGE(IDC_EDIT_EPG_ROOT, &CPluginConfigPageEPG::SaveParameters)
@@ -69,6 +70,8 @@ void CPluginConfigPageEPG::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_EDIT_EPG_DOMAIN, m_wndEpgDomain);
 	DDX_Text(pDX, IDC_EDIT_EPG_DOMAIN, m_EpgDomain);
+	DDX_Control(pDX, IDC_EDIT_EPG_AUTH, m_wndEpgAuth);
+	DDX_Text(pDX, IDC_EDIT_EPG_AUTH, m_EpgAuth);
 	DDX_Control(pDX, IDC_EDIT_EPG_URL, m_wndEpgUrl);
 	DDX_Text(pDX, IDC_EDIT_EPG_URL, m_EpgUrl);
 	DDX_Control(pDX, IDC_EDIT_EPG_ROOT, m_wndEpgRoot);
@@ -90,6 +93,7 @@ void CPluginConfigPageEPG::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_EPG_TZ, m_EpgTimezone);
 	DDX_Control(pDX, IDC_COMBO_EPG_TYPE, m_wndEpgType);
 	DDX_Control(pDX, IDC_BUTTON_EPG_SHOW, m_wndBtnEpgTest);
+	DDX_Text(pDX, IDC_EDIT_SET_EPG_ID, m_SetEpgID);
 	DDX_Text(pDX, IDC_EDIT_SET_ID, m_SetID);
 	DDX_Text(pDX, IDC_EDIT_SET_TOKEN, m_Token);
 	DDX_Control(pDX, IDC_CHECK_USE_DURATION, m_wndChkUseDuration);
@@ -103,6 +107,8 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 {
 	__super::OnInitDialog();
 
+	AddTooltip(IDC_EDIT_EPG_DOMAIN, IDS_STRING_EDIT_EPG_DOMAIN);
+	AddTooltip(IDC_EDIT_EPG_AUTH, IDS_STRING_EDIT_AUTH);
 	AddTooltip(IDC_EDIT_EPG_URL, IDS_STRING_EDIT_EPG_URL);
 	AddTooltip(IDC_EDIT_EPG_ROOT, IDS_STRING_EDIT_EPG_ROOT);
 	AddTooltip(IDC_EDIT_EPG_NAME, IDS_STRING_EDIT_EPG_NAME);
@@ -114,12 +120,12 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	AddTooltip(IDC_EDIT_EPG_TZ, IDS_STRING_EDIT_EPG_TZ);
 	AddTooltip(IDC_COMBO_EPG_TYPE, IDS_STRING_EPG_TYPE);
 	AddTooltip(IDC_BUTTON_EPG_SHOW, IDS_STRING_BUTTON_EPG_SHOW);
+	AddTooltip(IDC_EDIT_SET_EPG_ID, IDS_STRING_EDIT_SET_EPG_ID);
 	AddTooltip(IDC_EDIT_SET_ID, IDS_STRING_EDIT_SET_ID);
 	AddTooltip(IDC_EDIT_SET_TOKEN, IDS_STRING_EDIT_SET_TOKEN);
 	AddTooltip(IDC_DATETIMEPICKER_DATE, IDS_STRING_DATETIMEPICKER_DATE);
 	AddTooltip(IDC_EDIT_UTC, IDS_STRING_DATETIMEPICKER_DATE);
 	AddTooltip(IDC_CHECK_USE_DURATION, IDS_STRING_CHECK_USE_DURATION);
-	AddTooltip(IDC_EDIT_EPG_DOMAIN, IDS_STRING_EDIT_EPG_DOMAIN);
 
 	AssignMacros();
 
@@ -213,6 +219,7 @@ void CPluginConfigPageEPG::FillControls()
 	const auto& epg = GetEpgParameters();
 
 	m_EpgDomain = epg.get_epg_domain().c_str();
+	m_EpgAuth = epg.get_epg_auth().c_str();
 	m_EpgUrl = epg.get_epg_url().c_str();
 	m_EpgRoot = epg.get_epg_root().c_str();
 	m_EpgName = epg.get_epg_name().c_str();
@@ -224,8 +231,9 @@ void CPluginConfigPageEPG::FillControls()
 	m_EpgTimezone = (int)epg.epg_timezone;
 	m_wndChkUseDuration.SetCheck(epg.epg_use_duration != false);
 
+	m_SetID = GetPropertySheet()->m_CurrentStream->get_id().c_str();
 	int epg_type = m_wndEpgType.GetCurSel();
-	m_SetID = GetPropertySheet()->m_CurrentStream->get_epg_id(epg_type).c_str();
+	m_SetEpgID = GetPropertySheet()->m_CurrentStream->get_epg_id(epg_type).c_str();
 
 	m_wndEpgPreset.SetCurSel((int)GetPropertySheet()->m_plugin->get_epg_preset_idx(epg_type));
 
@@ -311,7 +319,8 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 
 	utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, GetPropertySheet()->m_plugin->get_provider_api_url());
 	utils::string_replace_inplace<wchar_t>(url, REPL_EPG_DOMAIN, m_EpgDomain.GetString());
-	utils::string_replace_inplace<wchar_t>(url, REPL_EPG_ID, m_SetID.GetString());
+	utils::string_replace_inplace<wchar_t>(url, REPL_EPG_ID, m_SetEpgID.GetString());
+	utils::string_replace_inplace<wchar_t>(url, REPL_ID, m_SetID.GetString());
 	utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, m_Token.GetString());
 	utils::string_replace_inplace<wchar_t>(url, REPL_DATE, m_EpgDateFormat.GetString());
 	utils::string_replace_inplace<wchar_t>(url, REPL_YEAR, std::to_wstring(m_Date.GetYear()));
@@ -320,9 +329,28 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	utils::string_replace_inplace<wchar_t>(url, REPL_TIMESTAMP, std::to_wstring(dayTime).c_str());
 	utils::string_replace_inplace<wchar_t>(url, REPL_DUNE_IP, m_DuneIP.GetString());
 
+	std::vector<std::string> headers;
+	if (!m_EpgAuth.IsEmpty())
+	{
+		TemplateParams params;
+		params.creds = GetPropertySheet()->m_selected_cred;
+		const auto& token = utils::utf8_to_utf16(GetPropertySheet()->m_plugin->get_api_token(params));
+		if (!token.empty())
+		{
+			std::wstring header = m_EpgAuth.GetString();
+			utils::string_replace_inplace<wchar_t>(header, REPL_TOKEN, token);
+			headers.emplace_back("accept: */*");
+			headers.emplace_back(utils::utf16_to_utf8(header));
+		}
+	}
+
+	m_dl.SetUrl(url);
+	m_dl.SetCacheTtl(0);
+	m_dl.SetUserAgent(GetPropertySheet()->m_plugin->get_user_agent());
+
 	CWaitCursor cur;
 	std::stringstream data;
-	if (GetPropertySheet()->m_plugin->download_url(url, data))
+	if (m_dl.DownloadFile(data, &headers))
 	{
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
@@ -348,7 +376,7 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	}
 	else
 	{
-		AfxMessageBox(GetPropertySheet()->m_plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
+		AfxMessageBox(m_dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
 	}
 }
 

@@ -381,10 +381,14 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 
 	GetPropertySheet()->m_plugin->update_provider_params(params);
 
-	CWaitCursor cur;
 	const auto& url = GetPropertySheet()->m_plugin->get_playlist_url(params);
+	m_dl.SetUrl(url);
+	m_dl.SetCacheTtl(0);
+	m_dl.SetUserAgent(GetPropertySheet()->m_plugin->get_user_agent());
+
+	CWaitCursor cur;
 	std::stringstream data;
-	if (GetPropertySheet()->m_plugin->download_url(url, data))
+	if (m_dl.DownloadFile(data))
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.m3u8";
 
@@ -403,7 +407,7 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 	}
 	else
 	{
-		AfxMessageBox(GetPropertySheet()->m_plugin->get_download_error().c_str(), MB_ICONERROR | MB_OK);
+		AfxMessageBox(m_dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
 	}
 }
 

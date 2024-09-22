@@ -286,6 +286,9 @@ private:
 
 	void LoadTimerEPG();
 	void FillEPG();
+	bool ParseJsonEpg(const int epg_idx, const time_t for_time, const uri_stream* info);
+	bool ParseXmEpg(const int epg_idx);
+
 	void UpdateExtToken(uri_stream* uri) const;
 	void UpdateVars(uri_stream* uri) const;
 	void UpdateControlsForItem(HTREEITEM hSelected = nullptr);
@@ -393,6 +396,8 @@ protected:
 	int m_xmltvEpgSource = 0;
 
 private:
+	utils::CUrlDownload m_dl;
+
 	PluginType m_plugin_type = PluginType::enCustom;
 	std::shared_ptr<base_plugin> m_plugin;
 

@@ -95,26 +95,6 @@ public:
 	std::wstring get_vod_url(const size_t idx, const TemplateParams& params);
 
 	/// <summary>
-	/// parse entire epg
-	/// </summary>
-	/// <param name="internal_epg_url">url to xmltv epg</param>
-	/// <param name="epg_idx">index of epg, primary/secondary</param>
-	/// <param name="epg_id">channel epg id</param>
-	/// <param name="epg_map">map of downloaded epg entries, used for cache</param>
-	/// <returns>bool</returns>
-	bool parse_xml_epg(const std::wstring& internal_epg_url, EpgStorage& epg_map, EpgAliases& alias_map, CProgressCtrl* pCtrl = nullptr);
-
-	/// <summary>
-	/// parse epg for channel.
-	/// </summary>
-	/// <param name="epg_idx">index of epg, primary/secondary</param>
-	/// <param name="epg_id">channel epg id</param>
-	/// <param name="epg_map">map of downloaded epg entries, used for cache</param>
-	/// <param name="for_time">date to request</param>
-	/// <returns>bool</returns>
-	bool parse_json_epg(int epg_idx, const std::wstring& epg_id, std::array<EpgStorage, 3>& epg_map, time_t for_time, const uri_stream* info);
-
-	/// <summary>
 	/// returns compiled epg url for channel
 	/// </summary>
 	/// <param name="epg_idx">index of epg, primary/secondary</param>
@@ -177,7 +157,7 @@ public:
 	/// <summary>
 	/// clear account info
 	/// </summary>
-	void clear_account_info() { return account_info.clear(); }
+	virtual void clear_account_info() { return account_info.clear(); }
 
 	/// <summary>
 	/// parse access info
@@ -202,7 +182,7 @@ public:
 	/// returns s_token from account if exist
 	/// </summary>
 	/// <param name="params">parameters used to download url</param>
-	virtual bool get_api_token(TemplateParams& params) { return true; };
+	virtual std::string get_api_token(TemplateParams& params) { return {}; };
 
 	/// <summary>
 	/// parse vod
@@ -223,6 +203,7 @@ protected:
 
 	std::string get_file_cookie(const std::wstring& name) const;
 	void set_file_cookie(const std::wstring& name, const std::string& session, time_t expire_time) const;
+	void delete_file_cookie(const std::wstring& name) const;
 
 	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const;
 

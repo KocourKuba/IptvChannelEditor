@@ -202,7 +202,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_CUSTOM_XMLTV_EPG,328,164,80,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Preview EPG",IDC_CHECK_SHOW_EPG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,177,249,84,10
     PUSHBUTTON      "View EPG",IDC_BUTTON_TEST_EPG,265,247,77,14
-    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL | WS_TABSTOP,176,179,232,65,WS_EX_STATICEDGE
+    CONTROL         "",IDC_RICHEDIT_EPG,"RichEdit20W",WS_VSCROLL | WS_TABSTOP | 0x844,176,179,232,65,WS_EX_STATICEDGE
     LTEXT           "23:59:59",IDC_STATIC_CUR_TIME,170,269,30,9
     CONTROL         "",IDC_PROGRESS_PROGRAM,"msctls_progress32",WS_BORDER,203,269,182,9
     LTEXT           "00::00",IDC_STATIC_TIME_LEFT,390,269,21,9
@@ -628,6 +628,8 @@ BEGIN
     COMBOBOX        IDC_COMBO_EPG_TYPE,7,18,63,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "EPG Domain",-1,75,7,116,8
     EDITTEXT        IDC_EDIT_EPG_DOMAIN,75,18,117,12,ES_AUTOHSCROLL
+    LTEXT           "EPG Authorization",-1,195,7,116,8
+    EDITTEXT        IDC_EDIT_EPG_AUTH,195,18,175,12,ES_AUTOHSCROLL
     LTEXT           "EPG source (URL or template)",-1,7,34,175,8
     EDITTEXT        IDC_EDIT_EPG_URL,7,45,262,12,ES_AUTOHSCROLL
     LTEXT           "{DATE}",-1,272,34,98,8
@@ -635,15 +637,17 @@ BEGIN
     LTEXT           "Test EPG Url",-1,7,63,42,8
     CONTROL         "",-1,"Static",SS_ETCHEDHORZ,53,67,317,1
     LTEXT           "{EPG_ID}",-1,7,73,39,8
-    EDITTEXT        IDC_EDIT_SET_ID,7,84,66,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SET_EPG_ID,7,84,66,12,ES_AUTOHSCROLL
     LTEXT           "{TOKEN}",-1,79,73,35,8
     EDITTEXT        IDC_EDIT_SET_TOKEN,79,84,83,12,ES_AUTOHSCROLL
+    LTEXT           "{ID}",-1,168,73,39,8
+    EDITTEXT        IDC_EDIT_SET_ID,168,84,83,12,ES_AUTOHSCROLL
     LTEXT           "{DATE}",-1,7,99,61,8
     CONTROL         "",IDC_DATETIMEPICKER_DATE,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_TABSTOP,7,110,66,15
     LTEXT           "{TIMESTAMP}",-1,79,99,59,8
     EDITTEXT        IDC_EDIT_UTC,79,111,83,12,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "{DUNE_IP}",-1,168,73,35,8
-    EDITTEXT        IDC_EDIT_SET_DUNE_IP,168,84,83,12,ES_AUTOHSCROLL
+    LTEXT           "{DUNE_IP}",-1,168,100,35,8
+    EDITTEXT        IDC_EDIT_SET_DUNE_IP,168,111,83,12,ES_AUTOHSCROLL
     PUSHBUTTON      "Test",IDC_BUTTON_EPG_SHOW,303,83,51,14
     LTEXT           "JSON Parse",-1,7,128,42,8
     CONTROL         "",-1,"Static",SS_ETCHEDHORZ,53,133,316,1
@@ -1249,13 +1253,17 @@ BEGIN
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
-    0, 0, 100, 0,
+    0, 0, 50, 0,
+    50, 0, 0, 0,
+    50, 0, 50, 0,
     0, 0, 0, 0,
     0, 0, 100, 0,
     100, 0, 0, 0,
     100, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 100, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
@@ -1833,6 +1841,9 @@ BEGIN
                             "Failed to unpack package!\n\nunpack: {:s}\nto: {:s}"
     IDS_STRING_ERR_FAILED_DOWNLOAD_PACKAGE "Failed to download package!\n{:s}"
     IDS_STRING_BUTTON_REFRESH "Reload playlist"
+    IDS_STRING_EDIT_SET_EPG_ID 
+                            "Set value for {EPG_ID} macros to test EPG template url."
+    IDS_STRING_EDIT_AUTH    "EPG HTTP authorization string"
 END
 
 STRINGTABLE
@@ -1996,7 +2007,7 @@ BEGIN
     IDS_STRING_EPG_TYPE     "Type of the EPG source. Primary or Secondary."
     IDS_STRING_BUTTON_EPG_SHOW 
                             "Load EPG from EPG url template with filled macroses. For test purposes."
-    IDS_STRING_EDIT_SET_ID  "Set value for {EPG_ID} macros to test EPG template url."
+    IDS_STRING_EDIT_SET_ID  "Set value for {ID} macros to test EPG template url."
     IDS_STRING_EDIT_SET_TOKEN 
                             "Set value for {TOKEN} macros to test EPG template url."
     IDS_STRING_DATETIMEPICKER_DATE "Set date to test EPG template url."

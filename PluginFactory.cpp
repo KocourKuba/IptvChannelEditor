@@ -32,8 +32,10 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_iptvonline.h"
 #include "plugin_itv.h"
 #include "plugin_kineskop.h"
+#include "plugin_korona.h"
 #include "plugin_oneott.h"
 #include "plugin_ottclub.h"
+#include "plugin_piktv.h"
 #include "plugin_sharaclub.h"
 #include "plugin_sharavoz.h"
 #include "plugin_tvclub.h"
@@ -138,12 +140,20 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(PluginType type)
 				plugin = std::make_shared<plugin_kineskop>();
 				break;
 
+			case PluginType::enKorona:
+				plugin = std::make_shared<plugin_korona>();
+				break;
+
 			case PluginType::enOneOtt:
 				plugin = std::make_shared<plugin_oneott>();
 				break;
 
 			case PluginType::enOttclub:
 				plugin = std::make_shared<plugin_ottclub>();
+				break;
+
+			case PluginType::enPikTV:
+				plugin = std::make_shared<plugin_piktv>();
 				break;
 
 			case PluginType::enSharaclub:

@@ -38,19 +38,19 @@ static char THIS_FILE[] = __FILE__;
 
 static constexpr auto API_COMMAND_AUTH = L"{:s}?userLogin={:s}&userPasswd={:s}";
 
-bool plugin_tvteam::get_api_token(TemplateParams& params)
+std::string plugin_tvteam::get_api_token(TemplateParams& params)
 {
 	if (params.creds.login.empty() || params.creds.password.empty())
 	{
-		return false;
+		return {};
 	}
 
 	session_id_name = utils::utf8_to_utf16(fmt::format("session_{:s}", utils::md5_hash_hex(params.creds.login)));
 
-	const auto& session_id = get_file_cookie(session_id_name);
+	auto session_id = get_file_cookie(session_id_name);
 	if (!session_id.empty())
 	{
-		return true;
+		return session_id;
 	}
 
 	CWaitCursor cur;
@@ -66,19 +66,19 @@ bool plugin_tvteam::get_api_token(TemplateParams& params)
 			const auto& parsed_json = nlohmann::json::parse(data.str());
 			if (parsed_json.contains("status") && parsed_json["status"] == 1)
 			{
-				set_file_cookie(session_id_name, utils::get_json_string("sessionId", parsed_json["data"]), time(nullptr) + 86400*6);
-
-				if (!params.creds.s_token.empty())
-				{
-					params.creds.s_token.clear();
-				}
-				return true;
+				session_id = utils::get_json_string("sessionId", parsed_json["data"]);
+				set_file_cookie(session_id_name, session_id, time(nullptr) + 86400*6);
+			}
+			else
+			{
+				session_id.clear();
+				delete_file_cookie(session_id_name);
 			}
 		}
 		JSON_ALL_CATCH;
 	}
 
-	return false;
+	return session_id;
 }
 
 void plugin_tvteam::parse_account_info(TemplateParams& params)

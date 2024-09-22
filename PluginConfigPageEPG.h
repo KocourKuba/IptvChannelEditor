@@ -67,9 +67,12 @@ private:
 	EpgParameters& GetEpgParameters();
 
 protected:
+	utils::CUrlDownload m_dl;
+
 	CDateTimeCtrl m_wndDate;
 
 	CEdit m_wndEpgDomain;
+	CEdit m_wndEpgAuth;
 	CMenuEdit m_wndEpgUrl;
 	CEdit m_wndEpgRoot;
 	CEdit m_wndEpgName;
@@ -88,6 +91,7 @@ protected:
 	CButton m_wndChkUseDuration;
 
 	CString m_EpgDomain;
+	CString m_EpgAuth;
 	CString m_EpgUrl;
 	CString m_EpgRoot;
 	CString m_EpgName;
@@ -97,6 +101,7 @@ protected:
 	CString m_EpgDateFormat;
 	CString m_EpgStartTimeFormat;
 	CString m_Token;
+	CString m_SetEpgID;
 	CString m_SetID;
 	CString m_DuneIP;
 

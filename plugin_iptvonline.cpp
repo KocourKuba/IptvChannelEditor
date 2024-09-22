@@ -48,12 +48,14 @@ static constexpr const char* client_id = "TestAndroidAppV0";
 static constexpr const char* client_secret = "kshdiouehruyiwuresuygr736t4763b7637";
 static constexpr const char* device_id = "IPTV Channel Editor " STRPRODUCTVER;
 
-bool plugin_iptvonline::get_api_token(TemplateParams& params)
+static constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
+
+std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 {
-	session_token_file = utils::utf8_to_utf16(fmt::format("session_token_{:s}",
+	session_token_file = utils::utf8_to_utf16(fmt::format(SESSION_TOKEN_TEMPLATE,
 														  utils::md5_hash_hex(params.creds.login + utils::md5_hash_hex(params.creds.password))));
 
-	const auto& session_token = get_file_cookie(session_token_file);
+	auto session_token = get_file_cookie(session_token_file);
 	nlohmann::json json_request;
 	std::wstring url;
 	if (session_token.empty() && !params.creds.token.empty())
@@ -70,7 +72,7 @@ bool plugin_iptvonline::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		return true;
+		return session_token;
 	}
 
 	if (!url.empty())
@@ -96,17 +98,24 @@ bool plugin_iptvonline::get_api_token(TemplateParams& params)
 								utils::get_json_int("expires_time", parsed_json));
 				params.creds.token = utils::get_json_string("refresh_token", parsed_json);
 
-				if (!params.creds.s_token.empty())
-				{
-					params.creds.s_token.clear();
-				}
-				return true;
 			}
 			JSON_ALL_CATCH;
 		}
+		else
+		{
+			params.creds.token.clear();
+			delete_file_cookie(session_token_file);
+			session_token.clear();
+		}
 	}
 
-	return false;
+	return session_token;
+}
+
+void plugin_iptvonline::clear_account_info()
+{
+	delete_file_cookie(session_token_file);
+	return account_info.clear();
 }
 
 std::wstring plugin_iptvonline::get_playlist_url(const TemplateParams& params, std::wstring url /* = L"" */)
@@ -483,6 +492,7 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 					const auto& vod_title = utils::utf8_to_utf16(genre_value.get<std::string>());
 					vod_genre_def genre({ vod_title, vod_title });
 					movie->genres.set_back(vod_title, genre);
+					movie_category->genres.set_back(vod_title, genre);
 				}
 
 				movie_category->movies.set_back(movie->id, movie);

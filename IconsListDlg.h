@@ -77,6 +77,8 @@ public:
 	std::shared_ptr<base_plugin> m_parent_plugin;
 
 protected:
+	utils::CUrlDownload m_dl;
+
 	std::wstring m_iconSource;
 	std::shared_ptr<std::vector<CIconSourceData>>& m_Icons;
 

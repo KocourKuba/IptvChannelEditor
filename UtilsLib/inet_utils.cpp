@@ -32,6 +32,7 @@ DEALINGS IN THE SOFTWARE.
 #include <unordered_map>
 #include <filesystem>
 #include <fstream>
+#include <regex>
 #include "xxhash.hpp"
 #include "utils.h"
 #include "SmartHandle.h"
@@ -42,6 +43,28 @@ DEALINGS IN THE SOFTWARE.
 
 namespace utils
 {
+
+std::string encodeURIComponent(const std::string& value)
+{
+	std::ostringstream escaped;
+	escaped.fill('0');
+	escaped << std::hex;
+
+	for (char c : value) {
+		// Keep alphanumeric and other accepted characters intact
+		if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+			escaped << c;
+			continue;
+		}
+
+		// Any other characters are percent-encoded
+		escaped << std::uppercase;
+		escaped << '%' << std::setw(2) << int((unsigned char)c);
+		escaped << std::nouppercase;
+	}
+
+	return escaped.str();
+}
 
 template <typename T>
 class CCloseHInternet

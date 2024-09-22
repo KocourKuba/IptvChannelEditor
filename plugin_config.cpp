@@ -220,6 +220,15 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename, const s
 	}
 }
 
+std::wstring plugin_config::get_internal_epg_url(const std::wstring& source_id)
+{
+	const auto& it = std::find_if(internal_epg_urls.begin(), internal_epg_urls.end(), [source_id](const auto& item)
+								  {
+									  return item.get_id() == source_id;
+								  });
+	return it != internal_epg_urls.end() ? it->get_name() : L"";
+}
+
 void plugin_config::set_epg_preset(size_t epg_idx, const std::string& preset_name)
 {
 	auto& epg_param = epg_params[epg_idx];

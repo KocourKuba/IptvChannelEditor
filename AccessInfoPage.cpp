@@ -489,9 +489,11 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 		{
 			case AccountAccessType::enOtt:
 			{
+				m_dl.SetUrl(dlg.m_url.GetString());
+				m_dl.SetUserAgent(m_plugin->get_user_agent());
+
 				std::stringstream data;
-				std::wstring url = dlg.m_url.GetString();
-				if (!m_plugin->download_url(url, data))
+				if (m_dl.DownloadFile(data))
 				{
 					std::ifstream instream(url);
 					data << instream.rdbuf();
@@ -1008,20 +1010,27 @@ void CAccessInfoPage::GetAccountInfo()
 	}
 
 	std::stringstream data;
-	if (!pl_url.empty() && m_plugin->download_url(pl_url, data, min_cache_ttl))
+	if (!pl_url.empty())
 	{
-		std::istringstream stream(data.str());
-		if (stream.good())
+		m_dl.SetUrl(pl_url);
+		m_dl.SetUserAgent(m_plugin->get_user_agent());
+		m_dl.SetCacheTtl(min_cache_ttl);
+
+		if (m_dl.DownloadFile(data))
 		{
-			int step = 0;
-			std::string line;
-			while (std::getline(stream, line))
+			std::istringstream stream(data.str());
+			if (stream.good())
 			{
-				utils::string_rtrim(line, "\r");
-				if (entry->Parse(line))
+				int step = 0;
+				std::string line;
+				while (std::getline(stream, line))
 				{
-					m_status = _T("Ok");
-					break;
+					utils::string_rtrim(line, "\r");
+					if (entry->Parse(line))
+					{
+						m_status = _T("Ok");
+						break;
+					}
 				}
 			}
 		}

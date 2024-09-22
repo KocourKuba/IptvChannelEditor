@@ -303,6 +303,12 @@
     <ClInclude Include="plugin_tvteam.h">
       <Filter>Header Files\plugin</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_korona.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_piktv.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -506,6 +512,12 @@
     <ClCompile Include="plugin_tvteam.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
+    <ClCompile Include="plugin_korona.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_piktv.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IPTVChannelEditor.rc">
@@ -518,7 +530,7 @@
     </None>
     <None Include="dune_plugin\changelog.md" />
     <None Include="Readme.md" />
-    <None Include="defaults_8.4.json" />
+    <None Include="defaults_8.5.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\IPTVChannelEditor.ico">

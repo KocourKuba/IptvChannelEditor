@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="315" scanned="20240703161046" built="20240605180501" lang="ru" pane="TLogPane" col="3" row="40.IDS_STRING_ERR_FAILED_UNPACK_PACKAGE">
+<desktop scan="316" scanned="20240923005244" built="20240605180501" lang="ru" pane="TLogPane" col="3" row="Strings.21.IDS_STRING_EDIT_SET_ID">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>
@@ -12,6 +12,11 @@
       <item class="TOriginalColumn" width="575"/>
       <item class="TTranslationColumn" lang="ru" width="582"/>
     </columns>
+    <filters>
+      <current>
+        <statuses>[tsNotTranslated,tsBestGuess,tsAutoTranslated,tsTranslated,tsForReview]</statuses>
+      </current>
+    </filters>
     <params>
       <findtext>IDS_STRING_ERR_COPY</findtext>
       <findtext>Splash</findtext>
@@ -25,7 +30,6 @@
   <path>
     <item>All</item>
     <item>x64\Release Unicode\IPTVChannelEditor.exe</item>
-    <item>Strings</item>
   </path>
   <export format="efXliff">
     <filter duplicates="dfDuplicatesEqual">

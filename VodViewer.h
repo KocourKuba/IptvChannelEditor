@@ -120,6 +120,7 @@ protected:
 	CButton m_wndBtnReload;
 
 private:
+	utils::CUrlDownload m_dl;
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
 	CEvent m_evtFinished;

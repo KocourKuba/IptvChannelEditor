@@ -27,13 +27,19 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "base_plugin.h"
 
-// API documentation http://wiki.tvclub.cc/index.php?title=API_v0.9
-
-class plugin_tvclub : public base_plugin
+class plugin_korona : public base_plugin
 {
 public:
 	std::string get_api_token(TemplateParams& params) override;
 	void parse_account_info(TemplateParams& params) override;
 	void fill_servers_list(TemplateParams& params) override;
-	bool set_server(TemplateParams& params) override;
+	void parse_vod(const CThreadConfig& config) override;
+	void fetch_movie_info(const Credentials& creds, vod_movie& movie) override;
+	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie) override;
+	void clear_account_info() override;
+
+private:
+	nlohmann::json server_request(const std::wstring& url, int cache_ttl = 0);
+
+	std::wstring session_token_file;
 };

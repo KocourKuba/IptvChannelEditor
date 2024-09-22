@@ -60,15 +60,6 @@ public:
 		}
 	}
 
-	bool download_url(const std::wstring& url,
-					  std::stringstream& vData,
-					  int cache_ttl = 0,
-					  std::vector<std::string>* pHeaders = nullptr,
-					  bool verb_post = false,
-					  const char* post_data = nullptr);
-
-	const std::wstring& get_download_error() { return m_dl.GetLastErrorMessage(); }
-
 	/// <summary>
 	/// save plugin parameters to file
 	/// </summary>
@@ -102,14 +93,7 @@ public:
 	/// <summary>
 	/// get playlist epg url
 	/// </summary>
-	std::wstring get_internal_epg_url(const std::wstring& source_id)
-	{
-		const auto& it = std::find_if(internal_epg_urls.begin(), internal_epg_urls.end(), [source_id](const auto& item)
-									  {
-										  return item.get_id() == source_id;
-									  });
-		return it != internal_epg_urls.end() ? it->get_name() : L"";
-	}
+	std::wstring get_internal_epg_url(const std::wstring& source_id);
 
 	/// <summary>
 	/// set prefilled EPG parsing preset for selected epg type
@@ -519,6 +503,13 @@ public:
 	}
 
 protected:
+
+	bool download_url(const std::wstring& url,
+					  std::stringstream& vData,
+					  int cache_ttl = 0,
+					  std::vector<std::string>* pHeaders = nullptr,
+					  bool verb_post = false,
+					  const char* post_data = nullptr);
 
 	utils::CUrlDownload m_dl;
 

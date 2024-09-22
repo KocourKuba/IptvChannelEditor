@@ -122,9 +122,8 @@ BOOL CIconsListDlg::OnInitDialog()
 		CWaitCursor cur;
 		std::unique_ptr<std::istream> pl_stream;
 		std::stringstream data;
-		utils::CUrlDownload dl;
-		dl.SetUrl(m_iconSource);
-		if (dl.DownloadFile(data))
+		m_dl.SetUrl(m_iconSource);
+		if (m_dl.DownloadFile(data))
 		{
 			const auto& str = data.str();
 			int lines = (int)std::count(str.begin(), str.end(), '\n');
@@ -164,7 +163,7 @@ BOOL CIconsListDlg::OnInitDialog()
 		}
 		else
 		{
-			AfxMessageBox(dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+			AfxMessageBox(m_dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
 		}
 	}
 

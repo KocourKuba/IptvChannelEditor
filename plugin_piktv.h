@@ -25,15 +25,8 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "base_plugin.h"
+#include "plugin_korona.h"
 
-// API documentation http://wiki.tvclub.cc/index.php?title=API_v0.9
-
-class plugin_tvclub : public base_plugin
+class plugin_piktv : public plugin_korona
 {
-public:
-	std::string get_api_token(TemplateParams& params) override;
-	void parse_account_info(TemplateParams& params) override;
-	void fill_servers_list(TemplateParams& params) override;
-	bool set_server(TemplateParams& params) override;
 };

@@ -245,6 +245,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	TemplateParams params;
 	params.creds = m_account;
 
+	m_plugin->get_api_token(params);
 	m_plugin->update_provider_params(params);
 
 	auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
@@ -311,8 +312,6 @@ LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /
 
 void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 {
-	CWaitCursor cur;
-
 	m_total = 0;
 	m_evtStop.ResetEvent();
 	m_evtFinished.ResetEvent();
@@ -334,10 +333,13 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 
 	m_plugin->update_provider_params(params);
 
-	const auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
+	m_dl.SetUrl(m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params));
+	m_dl.SetCacheTtl(0);
+	m_dl.SetUserAgent(m_plugin->get_user_agent());
 
+	CWaitCursor cur;
 	std::stringstream data;
-	if (!m_plugin->download_url(url, data))
+	if (!m_dl.DownloadFile(data))
 	{
 		AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 		OnEndLoadM3U8Playlist(0);
@@ -601,40 +603,44 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 	const auto& movie = m_filtered_movies[pNMItemActivate->iItem];
 
 	std::wstring url = movie->url;
-	switch (m_plugin->get_plugin_type())
+	if (m_plugin->get_plugin_type() == PluginType::enAntifriz || m_plugin->get_plugin_type() == PluginType::enCbilling)
 	{
-		case PluginType::enAntifriz:
-		case PluginType::enCbilling:
+		if (movie->url.empty() && m_season_idx != CB_ERR && m_episode_idx != CB_ERR)
 		{
-			if (movie->url.empty() && m_season_idx != CB_ERR && m_episode_idx != CB_ERR)
-			{
-				const auto& season = movie->seasons[m_season_idx];
-				url = season.episodes[m_episode_idx].url;
-			}
-			url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_s_token());
-			break;
+			const auto& season = movie->seasons[m_season_idx];
+			url = season.episodes[m_episode_idx].url;
 		}
-		case PluginType::enEdem:
-		case PluginType::enSharavoz:
-			if (!movie->quality.empty())
+		url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_s_token());
+	}
+	else
+	{
+		if (!movie->quality.empty() && m_quality_idx != CB_ERR)
+		{
+			url = movie->quality[m_quality_idx].url;
+		}
+		else if (!movie->audios.empty() && m_audio_idx != CB_ERR)
+		{
+			url = movie->audios[m_audio_idx].url;
+		}
+		else if (!movie->seasons.empty())
+		{
+			const auto& episodes = movie->seasons.front().episodes;
+			if (!episodes.empty())
 			{
-				url = movie->quality[m_quality_idx].url;
-			}
-			else if (!movie->seasons.empty())
-			{
-				const auto& episodes = movie->seasons.front().episodes;
-				if (!episodes.empty())
+				if (!episodes[m_episode_idx].qualities.empty() && m_quality_idx != CB_ERR)
 				{
-					const auto& quality = episodes[m_episode_idx].qualities;
-					if (quality.empty())
-						url = episodes[m_episode_idx].url;
-					else
-						url = episodes[m_episode_idx].qualities[m_quality_idx].url;
+					url = episodes[m_episode_idx].qualities[m_quality_idx].url;
+				}
+				else if (!episodes[m_episode_idx].audios.empty() && m_audio_idx != CB_ERR)
+				{
+					url = episodes[m_episode_idx].audios[m_audio_idx].url;
+				}
+				else
+				{
+					url = episodes[m_episode_idx].url;
 				}
 			}
-			break;
-		default:
-			break;
+		}
 	}
 
 	if (!url.empty())
@@ -1069,9 +1075,13 @@ void CVodViewer::FilterList()
 			const auto& post = json_request.dump();
 			ATLTRACE("\n%s\n", post.c_str());
 
-			int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL);
+			m_dl.SetUrl(url);
+			m_dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL));
+			m_dl.SetUserAgent(m_plugin->get_user_agent());
+
+			CWaitCursor cur;
 			std::stringstream data;
-			if (!m_plugin->download_url(url, data, cache_ttl, &headers, true, post.c_str())) break;
+			if (!m_dl.DownloadFile(data, &headers, true, post.c_str())) break;
 
 			JSON_ALL_TRY;
 			nlohmann::json parsed_json = nlohmann::json::parse(data.str());
@@ -1129,7 +1139,7 @@ void CVodViewer::FilterList()
 				std::stringstream next_data;
 				const auto& next_post = json_request.dump();
 				ATLTRACE("\n%s\n", post.c_str());
-				if (!m_plugin->download_url(url, next_data, cache_ttl, &headers, true, next_post.c_str())) break;
+				if (!m_dl.DownloadFile(next_data, &headers, true, next_post.c_str())) break;
 
 				parsed_json = nlohmann::json::parse(data.str());
 			}

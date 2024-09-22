@@ -63,6 +63,8 @@ private:
 	void UpdateControls();
 
 protected:
+	utils::CUrlDownload m_dl;
+
 	CMenuEdit m_wndVodUrlTemplate;
 	CMenuEdit m_wndVodRegex;
 	CMenuEdit m_wndVodUrlPrefix;

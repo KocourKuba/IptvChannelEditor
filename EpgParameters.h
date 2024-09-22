@@ -43,6 +43,7 @@ struct EpgParameters
 	std::string epg_end;
 	std::string epg_date_format;
 	std::string epg_time_format;
+	std::string epg_auth;
 	size_t epg_timezone = 0;
 	bool epg_use_duration = false;
 
@@ -56,6 +57,7 @@ struct EpgParameters
 				&& epg_time_format == src.epg_time_format
 				&& epg_timezone == src.epg_timezone
 				&& epg_use_duration == src.epg_use_duration
+				&& epg_auth == src.epg_auth
 				);
 	}
 
@@ -86,6 +88,9 @@ struct EpgParameters
 	std::wstring get_epg_time_format() const { return utils::utf8_to_utf16(epg_time_format); }
 	void set_epg_time_format(const std::wstring& val) { epg_time_format = utils::utf16_to_utf8(val); }
 
+	std::wstring get_epg_auth() const { return utils::utf8_to_utf16(epg_auth); }
+	void set_epg_auth(const std::wstring& val) { epg_auth = utils::utf16_to_utf8(val); }
+
 	static void to_json_wrapper(nlohmann::json& j, const EpgParameters& c)
 	{
 		to_json(j, c);
@@ -103,6 +108,7 @@ struct EpgParameters
 		SERIALIZE_STRUCT(j, c, epg_end);
 		SERIALIZE_STRUCT(j, c, epg_date_format);
 		SERIALIZE_STRUCT(j, c, epg_time_format);
+		SERIALIZE_STRUCT(j, c, epg_auth);
 		SERIALIZE_STRUCT(j, c, epg_timezone);
 		SERIALIZE_STRUCT(j, c, epg_use_duration); //-V601
 	}
@@ -124,6 +130,7 @@ struct EpgParameters
 		DESERIALIZE_STRUCT(j, c, epg_end);
 		DESERIALIZE_STRUCT(j, c, epg_date_format);
 		DESERIALIZE_STRUCT(j, c, epg_time_format);
+		DESERIALIZE_STRUCT(j, c, epg_auth);
 		DESERIALIZE_STRUCT(j, c, epg_timezone);
 		DESERIALIZE_STRUCT(j, c, epg_use_duration);
 	}
