@@ -29,12 +29,65 @@ VERSION HISTORY:
 static char THIS_FILE[] = __FILE__;
 #endif // _DEBUG
 
+static bool IsBadMemPtr(bool write, void* ptr, size_t size)
+{
+	if (size == 0)
+	{
+		return false;
+	}
+
+	if (ptr == nullptr)
+	{
+		return true;
+	}
+
+	DWORD mask = PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY;
+	if (!write)
+	{
+		mask |= PAGE_READONLY | PAGE_EXECUTE_READ;
+	}
+
+	auto current = reinterpret_cast<BYTE*>(ptr);
+	const auto last = current + size;
+
+	// So we are considering the region:
+	// [ptr, ptr+size)
+
+	while (current < last)
+	{
+		MEMORY_BASIC_INFORMATION mbi;
+
+		if (VirtualQuery(LPCVOID(current), &mbi, sizeof mbi) == 0)
+		{
+			// We couldn't get any information on this region.
+			// Let's not risk any read/write operation.
+			return true;
+		}
+
+		if ((mbi.Protect & mask) == 0)
+		{
+			// We can't perform our desired read/write operations in this region.
+			return true;
+		}
+
+		if (mbi.Protect & (PAGE_GUARD | PAGE_NOACCESS))
+		{
+			// We can't access this region.
+			return true;
+		}
+
+		// Let's consider the next region.
+		current = reinterpret_cast<BYTE*>(mbi.BaseAddress) + mbi.RegionSize;
+	}
+
+	return false;
+}
 
 HRESULT STDAPICALLTYPE DllGetVersion( IN  HMODULE hModule,
 									  OUT DLLVERSIONINFO* lpDVI )
 {
 	if( hModule == nullptr ||
-		::IsBadReadPtr( lpDVI, sizeof( DLLVERSIONINFO* ) ) )
+	   IsBadMemPtr(false, lpDVI, sizeof( DLLVERSIONINFO* ) ) )
 	{
 		ASSERT_RETURN( S_FALSE );
 	}
@@ -49,7 +102,7 @@ HRESULT STDAPICALLTYPE DllGetVersion( IN  HMODULE hModule,
 #ifdef DLLVERSIONINFO2
 		&& cbSize != sizeof( DLLVERSIONINFO2 ) )
 #endif
-		|| ::IsBadWritePtr( lpDVI, cbSize ) )
+		|| IsBadMemPtr(true, lpDVI, cbSize ) )
 	{
 		ASSERT_RETURN( S_FALSE );
 	}

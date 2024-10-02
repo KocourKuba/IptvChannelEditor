@@ -180,14 +180,14 @@ protected:
 
 protected: // Members variables
 
-	static LPCTSTR	 s_ppszStr[ 13 ];	// String names
-	VS_FIXEDFILEINFO m_vsffi;			// Fixed File Info (FFI)
+	static LPCTSTR	 s_ppszStr[13];	// String names
+	VS_FIXEDFILEINFO m_vsffi{};		// Fixed File Info (FFI)
 
-	LPBYTE		m_lpbyVIB;		// Pointer to version info block (VIB)
-	LPDWORD		m_lpdwTrans;	// Pointer to translation array in m_lpbyVIB, LOWORD = LangID and HIWORD = CodePage
-	UINT		m_nTransCur;	// Current translation index
-	UINT		m_nTransCnt;	// Translations count
-	BOOL		m_bValid;		// Version info is loaded
+	LPBYTE		m_lpbyVIB = nullptr;	// Pointer to version info block (VIB)
+	LPDWORD		m_lpdwTrans = nullptr;	// Pointer to translation array in m_lpbyVIB, LOWORD = LangID and HIWORD = CodePage
+	UINT		m_nTransCur = 0;		// Current translation index
+	UINT		m_nTransCnt = 0;		// Translations count
+	BOOL		m_bValid = FALSE;		// Version info is loaded
 
 };
 
