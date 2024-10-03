@@ -2222,7 +2222,7 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_tim
 
 bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 {
-	if (m_epg_cache.at(epg_idx).find(L"file already parsed") == m_epg_cache.at(epg_idx).end())
+	if (m_epg_cache.at(epg_idx).find(L"file already parsed") != m_epg_cache.at(epg_idx).end())
 	{
 		return true;
 	}
