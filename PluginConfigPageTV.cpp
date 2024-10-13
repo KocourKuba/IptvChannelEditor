@@ -331,7 +331,11 @@ void CPluginConfigPageTV::SaveParameters()
 	auto& info = plugin->get_playlist_info(idx);
 
 	info.set_parse_regex(m_ParseStream.GetString());
-	info.set_pl_template(m_PlaylistTemplate.GetString());
+	if (!m_wndBtnPlaylistShow.GetCheck())
+	{
+		info.set_pl_template(m_PlaylistTemplate.GetString());
+	}
+
 	info.set_square_icons(m_wndChkSquareIcons.GetCheck() != 0);
 
 	auto& stream = GetPropertySheet()->m_plugin->get_supported_stream(m_wndStreamType.GetCurSel());

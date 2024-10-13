@@ -728,6 +728,7 @@
 #define IDC_STATIC_DOMAIN               1244
 #define IDC_COMBO_VOD_ENGINE            1245
 #define IDC_COMBO_SERVER                1246
+#define IDC_CHECK_EPG_SHOW_LINK         1247
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -764,9 +765,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        281
+#define _APS_NEXT_RESOURCE_VALUE        282
 #define _APS_NEXT_COMMAND_VALUE         32809
-#define _APS_NEXT_CONTROL_VALUE         1247
+#define _APS_NEXT_CONTROL_VALUE         1248
 #define _APS_NEXT_SYMED_VALUE           1180
 #endif
 #endif

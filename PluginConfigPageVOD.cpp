@@ -211,7 +211,11 @@ void CPluginConfigPageVOD::SaveParameters()
 	auto& plugin = GetPropertySheet()->m_plugin;
 	auto& info = plugin->get_vod_info(idx);
 
-	info.set_pl_template(m_VodPlaylistTemplate.GetString());
+	if (!m_wndBtnPlaylistShow.GetCheck())
+	{
+		info.set_pl_template(m_VodPlaylistTemplate.GetString());
+	}
+
 	info.set_parse_regex_title(m_VodParseRegexTitle.GetString());
 	info.set_url_prefix(m_VodUrlPrefix.GetString());
 	info.set_url_params(m_VodUrlParams.GetString());

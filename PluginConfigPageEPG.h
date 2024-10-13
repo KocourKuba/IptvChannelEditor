@@ -55,6 +55,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void OnBnClickedButtonEpgTest();
+	afx_msg void OnBnClickedCheckEpgShowLink();
 	afx_msg void OnCbnSelchangeComboEpgType();
 	afx_msg void OnCbnSelchangeComboEpgParserPreset();
 	afx_msg void OnEnChangeEditUtc();
@@ -62,6 +63,7 @@ protected:
 	afx_msg void SaveParameters();
 
 private:
+	std::wstring CompileEpgUrl();
 	void UpdateControls();
 	void UpdateDateTimestamp(bool dateToUtc);
 	EpgParameters& GetEpgParameters();
@@ -90,6 +92,7 @@ protected:
 
 	CButton m_wndBtnEpgTest;
 	CButton m_wndChkUseDuration;
+	CButton m_wndChkShowEpgUrl;
 
 	CString m_EpgDomain;
 	CString m_EpgAuth;

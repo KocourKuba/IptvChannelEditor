@@ -632,7 +632,8 @@ BEGIN
     LTEXT           "EPG Authorization",-1,129,32,116,8
     EDITTEXT        IDC_EDIT_EPG_AUTH,129,43,175,12,ES_AUTOHSCROLL
     LTEXT           "EPG source (URL or template)",-1,7,58,175,8
-    EDITTEXT        IDC_EDIT_EPG_URL,7,69,262,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_EPG_URL,7,69,247,12,ES_AUTOHSCROLL
+    CONTROL         "<>",IDC_CHECK_EPG_SHOW_LINK,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,256,68,15,13
     LTEXT           "{DATE}",-1,272,58,98,8
     EDITTEXT        IDC_EDIT_EPG_FMT_DATE,272,69,98,12,ES_AUTOHSCROLL
     LTEXT           "Test EPG Url",-1,7,88,42,8
@@ -1260,6 +1261,7 @@ BEGIN
     50, 0, 50, 0,
     0, 0, 0, 0,
     0, 0, 100, 0,
+    100, 0, 0, 0,
     100, 0, 0, 0,
     100, 0, 0, 0,
     0, 0, 0, 0,
