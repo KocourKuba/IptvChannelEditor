@@ -68,6 +68,8 @@ const PARAM_SHOW_HISTORY = 'show_history';
 const PARAM_SHOW_VOD = 'show_vod';
 const PARAM_VOD_LAST = 'vod_last';
 const PARAM_SQUARE_ICONS = 'square_icons';
+const PARAM_ICONS_IN_ROW = 'icons_in_row';
+const PARAM_SHOW_CHANNEL_CAPTION = 'show_channel_caption';
 const PARAM_HISTORY_PATH = 'history_path';
 const PARAM_CHANNELS_LIST_PATH = 'channels_list_path';
 const PARAM_CHANNELS_LIST_NAME = 'channels_list_name';
@@ -97,6 +99,7 @@ const PARAM_STREAM_FORMAT = 'stream_format';
 const PARAM_VOD_DEFAULT_QUALITY = 'variant';
 const PARAM_LOGIN = 'login';
 const PARAM_PASSWORD = 'password';
+const PARAM_CHANNEL_POSITION = 'channel_position';
 
 const EPG_SOURCES_SEPARATOR_TAG = 'special_source_separator_tag';
 const ENGINE_JSON = 'json';
