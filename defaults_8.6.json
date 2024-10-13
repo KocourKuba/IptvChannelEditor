@@ -1854,7 +1854,7 @@
           "name": "High"
         }
       ],
-      "vod_engine": "Json",
+      "vod_engine": "none",
       "vod_templates": [
         {
           "name": "Standard",
@@ -2150,7 +2150,8 @@
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_root": "epg_data",
-          "epg_start": "time"
+          "epg_start": "time",
+          "epg_id_source": 1
         },
         {
           "epg_param": "second",
