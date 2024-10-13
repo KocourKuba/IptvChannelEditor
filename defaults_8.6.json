@@ -34,7 +34,7 @@
       "epg_end": "stopTime"
     },
     "korona": {
-      "epg_url": "{API}/xapi10/epg/{ID}",
+      "epg_url": "{API}/xapi10/epg/{EPG_ID}",
       "epg_auth": "Authorization: Bearer {TOKEN}",
       "epg_desc": "info",
       "epg_name": "title",
@@ -42,7 +42,7 @@
       "epg_start": "start"
     },
     "ottclub": {
-      "epg_url": "{API}/api/channel/{ID}",
+      "epg_url": "{API}/api/channel/{EPG_ID}",
       "epg_root": "epg_data",
       "epg_name": "name",
       "epg_desc": "descr",
@@ -64,7 +64,7 @@
       "epg_end": "time_to"
     },
     "sharavoz": {
-      "epg_url": "{API}/program?epg={ID}&date=",
+      "epg_url": "{API}/program?epg={EPG_ID}&date=",
       "epg_root": "epg_data",
       "epg_name": "name",
       "epg_desc": "descr",
@@ -96,7 +96,7 @@
       "epg_end": "end"
     },
     "my.epg.server": {
-      "epg_url": "{API}/api/channel/{ID}",
+      "epg_url": "{API}/api/channel/{EPG_ID}",
       "epg_name": "title",
       "epg_desc": "desc",
       "epg_start": "start",
