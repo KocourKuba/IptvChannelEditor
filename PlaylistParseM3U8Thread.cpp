@@ -84,7 +84,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					m_parent_plugin->update_entry(*entry);
 
 					// special cases after parsing
-					for (size_t i = 0; i < m_parent_plugin->get_epg_parameters().size(); ++i)
+					for (int i = 0; i < m_parent_plugin->get_epg_parameters().size(); ++i)
 					{
 						auto& epg_param = m_parent_plugin->get_epg_parameter(i);
 						if (epg_param.epg_url.empty()) continue;
