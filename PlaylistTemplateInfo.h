@@ -70,9 +70,6 @@ public:
 	std::wstring get_tag_id_match() const { return utils::utf8_to_utf16(tag_id_match); }
 	void set_tag_id_match(const std::wstring& val) { tag_id_match = utils::utf16_to_utf8(val); }
 
-	bool get_epg_id_from_id() const { return epg_id_from_id; }
-	void set_epg_id_from_id(bool val) { epg_id_from_id = val; }
-
 	bool get_square_icons() const { return square_icons; }
 	void set_square_icons(bool val) { square_icons = val; }
 
@@ -86,7 +83,6 @@ public:
 		SERIALIZE_STRUCT(j, c, url_prefix);
 		SERIALIZE_STRUCT(j, c, url_params);
 		SERIALIZE_STRUCT(j, c, tag_id_match);
-		SERIALIZE_STRUCT(j, c, epg_id_from_id); //-V601
 		SERIALIZE_STRUCT(j, c, square_icons); //-V601
 	}
 
@@ -100,7 +96,6 @@ public:
 		DESERIALIZE_STRUCT(j, c, url_prefix);
 		DESERIALIZE_STRUCT(j, c, url_params);
 		DESERIALIZE_STRUCT(j, c, tag_id_match);
-		DESERIALIZE_STRUCT(j, c, epg_id_from_id);
 		DESERIALIZE_STRUCT(j, c, square_icons);
 	}
 
@@ -112,7 +107,6 @@ public:
 	std::string url_prefix;
 	std::string url_params;
 	std::string tag_id_match;
-	bool epg_id_from_id = false;
 	bool square_icons = false;
 	bool is_custom = false;
 };

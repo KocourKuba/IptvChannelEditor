@@ -28,6 +28,13 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib/json_wrapper.h"
 
+typedef enum
+{
+	enEpgId = 0,
+	enChannelId = 1,
+	enChannelName = 2,
+} epg_id_sources;
+
 /// <summary>
 /// Parameters to parse EPG
 /// </summary>
@@ -44,6 +51,7 @@ struct EpgParameters
 	std::string epg_date_format;
 	std::string epg_time_format;
 	std::string epg_auth;
+	int epg_id_source = (int)epg_id_sources::enEpgId;
 	size_t epg_timezone = 0;
 	bool epg_use_duration = false;
 
@@ -58,6 +66,7 @@ struct EpgParameters
 				&& epg_timezone == src.epg_timezone
 				&& epg_use_duration == src.epg_use_duration
 				&& epg_auth == src.epg_auth
+				&& epg_id_source == src.epg_id_source
 				);
 	}
 
@@ -91,6 +100,9 @@ struct EpgParameters
 	std::wstring get_epg_auth() const { return utils::utf8_to_utf16(epg_auth); }
 	void set_epg_auth(const std::wstring& val) { epg_auth = utils::utf16_to_utf8(val); }
 
+	int get_epg_id_source() const { return epg_id_source; }
+	void set_epg_id_source(const int val) { epg_id_source = val; }
+
 	static void to_json_wrapper(nlohmann::json& j, const EpgParameters& c)
 	{
 		to_json(j, c);
@@ -110,6 +122,7 @@ struct EpgParameters
 		SERIALIZE_STRUCT(j, c, epg_time_format);
 		SERIALIZE_STRUCT(j, c, epg_auth);
 		SERIALIZE_STRUCT(j, c, epg_timezone);
+		SERIALIZE_STRUCT(j, c, epg_id_source);
 		SERIALIZE_STRUCT(j, c, epg_use_duration); //-V601
 	}
 
@@ -132,6 +145,7 @@ struct EpgParameters
 		DESERIALIZE_STRUCT(j, c, epg_time_format);
 		DESERIALIZE_STRUCT(j, c, epg_auth);
 		DESERIALIZE_STRUCT(j, c, epg_timezone);
+		DESERIALIZE_STRUCT(j, c, epg_id_source);
 		DESERIALIZE_STRUCT(j, c, epg_use_duration);
 	}
 };

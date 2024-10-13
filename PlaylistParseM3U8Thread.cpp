@@ -53,6 +53,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 
 			auto entry = std::make_shared<PlaylistEntry>(playlist, m_config.m_rootPath);
 			const auto& pl_info = m_parent_plugin->get_current_playlist_info();
+			const auto& epg_info = m_parent_plugin->get_epg_parameters();
 			int channels = 0;
 			int step = 0;
 
@@ -83,14 +84,22 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					m_parent_plugin->update_entry(*entry);
 
 					// special cases after parsing
-					if (pl_info.get_epg_id_from_id())
+					for (size_t i = 0; i < m_parent_plugin->get_epg_parameters().size(); ++i)
 					{
-						entry->set_epg_id(0, entry->get_id());
-					}
+						auto& epg_param = m_parent_plugin->get_epg_parameter(i);
+						if (epg_param.epg_url.empty()) continue;
 
-					if (!m_parent_plugin->get_epg_parameter(1).epg_url.empty())
-					{
-						entry->set_epg_id(1, entry->get_epg_id(0));
+						switch (epg_param.get_epg_id_source())
+						{
+							case enChannelId:
+								entry->set_epg_id(i, entry->get_id());
+								break;
+							case enChannelName:
+								entry->set_epg_id(i, entry->get_title());
+								break;
+							default:
+								break;
+						}
 					}
 
 					playlist->m_entries.emplace_back(entry);

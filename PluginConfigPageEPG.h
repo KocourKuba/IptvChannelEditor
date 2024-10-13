@@ -83,8 +83,9 @@ protected:
 	CMenuEdit m_wndEpgStartFormat;
 	CEdit m_wndEpgTimezone;
 
-	CComboBox m_wndCatchupType;
 	CComboBox m_wndEpgType;
+	CComboBox m_wndEpgIdSource;
+	CComboBox m_wndCatchupType;
 	CComboBox m_wndEpgPreset;
 
 	CButton m_wndBtnEpgTest;

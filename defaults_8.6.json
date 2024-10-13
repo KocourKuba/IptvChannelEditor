@@ -1190,12 +1190,13 @@
         {
           "epg_param": "second",
           "epg_domain": "http://dev.korona-tv.top/api",
-          "epg_url": "{EPG_DOMAIN}/xapi10/epg/{ID}",
+          "epg_url": "{EPG_DOMAIN}/xapi10/epg/{EPG_ID}",
           "epg_auth": "Authorization: Bearer {TOKEN}",
           "epg_desc": "info",
           "epg_name": "title",
           "epg_root": "data",
-          "epg_start": "start"
+          "epg_start": "start",
+          "epg_id_source": 1
         }
       ],
       "playlist_templates": [
@@ -1809,12 +1810,13 @@
         {
           "epg_param": "second",
           "epg_domain": "http://stb.piktv.top/api",
-          "epg_url": "{EPG_DOMAIN}/xapi10/epg/{ID}",
+          "epg_url": "{EPG_DOMAIN}/xapi10/epg/{EPG_ID}",
           "epg_auth": "Authorization: Bearer {TOKEN}",
           "epg_desc": "info",
           "epg_name": "title",
           "epg_root": "data",
-          "epg_start": "start"
+          "epg_start": "start",
+          "epg_id_source": 1
         }
       ],
       "playlist_templates": [
@@ -2248,12 +2250,13 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.propg.net/{ID}/epg2/{DATE}",
+          "epg_url": "http://epg.propg.net/{EPG_ID}/epg2/{DATE}",
           "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
           "epg_desc": "desc",
           "epg_end": "stop",
           "epg_name": "epg",
-          "epg_start": "start"
+          "epg_start": "start",
+          "epg_id_source": 1
         },
         {}
       ],
@@ -2511,7 +2514,8 @@
           "epg_name": "name",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_icon": "icon"
+          "epg_icon": "icon",
+          "epg_id_source": 2
         }
       ],
       "name": "tv.team",

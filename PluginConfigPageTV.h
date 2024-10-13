@@ -85,7 +85,6 @@ protected:
 
 	CButton m_wndChkSquareIcons;
 	CButton m_wndBtnEditTemplates;
-	CButton m_wndChkEpgIdFromID;
 	CButton m_wndBtnPlaylistShow;
 	CButton m_wndBtnPlaylistTest;
 	CButton m_wndBtnStreamParseTest;

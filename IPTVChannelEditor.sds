@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="316" scanned="20240923005244" built="20240605180501" lang="ru" pane="TLogPane" col="3" row="Strings.21.IDS_STRING_EDIT_SET_ID">
+<desktop scan="317" scanned="20241013152130" built="20241013152255" lang="ru" pane="TLogPane" col="3" row="Strings.18.IDS_STRING_COMBO_EPG_ID_SOURCE">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TValidateTrigger" position="6" enabled="0"/>

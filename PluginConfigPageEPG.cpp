@@ -40,6 +40,7 @@ IMPLEMENT_DYNAMIC(CPluginConfigPageEPG, CTooltipPropertyPage)
 
 BEGIN_MESSAGE_MAP(CPluginConfigPageEPG, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_EPG_TYPE, &CPluginConfigPageEPG::OnCbnSelchangeComboEpgType)
+	ON_CBN_SELCHANGE(IDC_COMBO_EPG_ID_SOURCE, &CPluginConfigPageEPG::SaveParameters)
 	ON_BN_CLICKED(IDC_BUTTON_EPG_SHOW, &CPluginConfigPageEPG::OnBnClickedButtonEpgTest)
 	ON_EN_CHANGE(IDC_EDIT_EPG_DOMAIN, &CPluginConfigPageEPG::SaveParameters)
 	ON_EN_CHANGE(IDC_EDIT_EPG_AUTH, &CPluginConfigPageEPG::SaveParameters)
@@ -68,6 +69,7 @@ void CPluginConfigPageEPG::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
 
+	DDX_Control(pDX, IDC_COMBO_EPG_ID_SOURCE, m_wndEpgIdSource);
 	DDX_Control(pDX, IDC_EDIT_EPG_DOMAIN, m_wndEpgDomain);
 	DDX_Text(pDX, IDC_EDIT_EPG_DOMAIN, m_EpgDomain);
 	DDX_Control(pDX, IDC_EDIT_EPG_AUTH, m_wndEpgAuth);
@@ -126,6 +128,7 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	AddTooltip(IDC_DATETIMEPICKER_DATE, IDS_STRING_DATETIMEPICKER_DATE);
 	AddTooltip(IDC_EDIT_UTC, IDS_STRING_DATETIMEPICKER_DATE);
 	AddTooltip(IDC_CHECK_USE_DURATION, IDS_STRING_CHECK_USE_DURATION);
+	AddTooltip(IDC_COMBO_EPG_ID_SOURCE, IDS_STRING_COMBO_EPG_ID_SOURCE);
 
 	AssignMacros();
 
@@ -137,13 +140,14 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	}
 
 	m_wndEpgType.SetCurSel(0);
+	m_wndEpgIdSource.SetCurSel(GetPropertySheet()->m_plugin->get_epg_parameter(0).epg_id_source);
+
 	m_DuneIP = GetConfig().get_string(true, REG_DUNE_IP).c_str();
 	TemplateParams params;
 	params.creds = GetPropertySheet()->m_selected_cred;
 
 	GetPropertySheet()->m_plugin->get_api_token(params);
 	m_Token = GetPropertySheet()->m_selected_cred.s_token.c_str();
-	m_wndEpgType.SetCurSel(0);
 
 	const auto& presets = GetPluginFactory().get_epg_presets();
 	for(const auto& preset : presets)
@@ -218,6 +222,7 @@ void CPluginConfigPageEPG::FillControls()
 {
 	const auto& epg = GetEpgParameters();
 
+	m_wndEpgIdSource.SetCurSel(epg.epg_id_source);
 	m_EpgDomain = epg.get_epg_domain().c_str();
 	m_EpgAuth = epg.get_epg_auth().c_str();
 	m_EpgUrl = epg.get_epg_url().c_str();
@@ -419,6 +424,7 @@ void CPluginConfigPageEPG::SaveParameters()
 	UpdateData(TRUE);
 
 	auto& parameters = GetEpgParameters();
+	parameters.set_epg_id_source(m_wndEpgIdSource.GetCurSel());
 	parameters.set_epg_domain(m_EpgDomain.GetString());
 	parameters.set_epg_url(m_EpgUrl.GetString());
 	parameters.set_epg_root(m_EpgRoot.GetString());
