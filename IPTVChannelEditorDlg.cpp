@@ -1886,6 +1886,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 		channel->set_custom_archive_url(m_plugin->get_archive_template(idx, channel.get()));
 	}
 
+	params.shift_back = _time32(nullptr) - 3600;
 	m_streamArchiveUrl = show ? m_plugin->get_play_stream(params, channel.get()).c_str() : m_plugin->get_archive_template(stream_idx, channel.get()).c_str();
 	m_wndCustomArchiveUrl.SetReadOnly(!custom_archive);
 	m_wndBtnCustomArchiveUrl.SetCheck(custom_archive);
@@ -6080,7 +6081,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonVod()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 {
-	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(m_all_configs_lists, load_string_resource(IDS_STRING_PLUGIN_CONFIG).c_str(), REG_PLUGIN_CFG_WINDOW_POS);
+	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(m_all_configs_lists,
+															   load_string_resource(IDS_STRING_PLUGIN_CONFIG).c_str(),
+															   REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 	pSheet->m_plugin = GetPluginFactory().create_plugin(m_plugin_type);
