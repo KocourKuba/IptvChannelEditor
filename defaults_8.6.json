@@ -358,7 +358,7 @@
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<token>.+)\\/video\\.m3u8\\?token=(?<password>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/hls\\/(?<password>.+)\\.m3u8?$",
           "pl_template": "https://bcumedia.pro/playlist/hls/{PASSWORD}.m3u",
-          "tag_id_match": "tvg-id"
+          "tag_id_match": "name"
         }
       ],
       "provider_url": "https://bcumedia.pro/",
@@ -2175,7 +2175,7 @@
         }
       ],
       "provider_api_url": "http://app.media24.cc/json/c",
-      "provider_url": "https://www.sharavoz.tv/",
+      "provider_url": "https://sh365.org/",
       "domains_list": [
         {
           "id": "0",
@@ -2184,6 +2184,18 @@
         {
           "id": "1",
           "name": "www.sharavoz.tv"
+        },
+        {
+          "id": "2",
+          "name": "sharavoz.space"
+        },
+        {
+          "id": "3",
+          "name": "sh365.org"
+        },
+        {
+          "id": "4",
+          "name": "sh24.one"
         }
       ],
       "servers_list": [
@@ -2220,6 +2232,7 @@
           "name": "Poland (PL01)"
         }
       ],
+      "static_domains": true,
       "static_servers": true,
       "streams_config": [
         {
@@ -2559,20 +2572,19 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<id>.+)\\/index.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/(?<server>.+)\\/.*$",
-          "pl_template": "http://pl.uspeh.sbs/{LOGIN}/{PASSWORD}/tv.m3u",
-          "tag_id_match": "CUID"
+          "pl_template": "http://pl.uspeh.sbs/{LOGIN}/{PASSWORD}/tv.m3u"
         }
       ],
       "provider_url": "https://uspeh.tv/",
       "streams_config": [
         {
-          "cu_type": "shift",
+          "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
         },
         {}
       ],
