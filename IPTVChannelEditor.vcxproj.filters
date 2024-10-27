@@ -506,9 +506,6 @@
     <ClCompile Include="plugin_ottclub.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_tvizi.cpp">
-      <Filter>Source Files\plugin</Filter>
-    </ClCompile>
     <ClCompile Include="plugin_tvteam.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
@@ -516,6 +513,9 @@
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
     <ClCompile Include="plugin_piktv.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_tvizi.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
   </ItemGroup>

@@ -27,8 +27,6 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "ResizedPropertySheet.h"
 #include "IPTVChannelEditor.h"
-#include "NewConfigDlg.h"
-#include "TooltipPropertyPage.h"
 
 int CALLBACK XmnPropSheetCallback(HWND hWnd, UINT message, LPARAM lParam)
 {

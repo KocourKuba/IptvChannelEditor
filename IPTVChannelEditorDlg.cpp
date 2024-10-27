@@ -42,7 +42,6 @@ DEALINGS IN THE SOFTWARE.
 #include "PluginConfigPageEPG.h"
 #include "PluginConfigPageVOD.h"
 #include "FilterDialog.h"
-#include "CustomPlaylistDlg.h"
 #include "NewChannelsListDlg.h"
 #include "PlaylistParseM3U8Thread.h"
 #include "GetStreamInfoThread.h"
@@ -58,7 +57,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
-#include "UtilsLib\md5.h"
 #include "UtilsLib\Crc32.h"
 
 #ifdef _DEBUG

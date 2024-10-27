@@ -25,7 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "ResizedPropertySheet.h"
 #include "Credentials.h"
 #include "uri_stream.h"
 #include "base_plugin.h"
@@ -92,12 +91,12 @@ protected:
 	CButton m_wndBtnSaveConf;
 	CButton m_wndBtnSaveAsConf;
 
-	CRect m_min_rc;
+	CRect m_min_rc{};
 	CString m_posKey;
 	int m_gapHeight = 30;
 
 	std::vector<std::wstring>& m_configs;
 
 	CToolTipCtrl m_wndToolTipCtrl;
-	std::map<CWnd*, std::wstring> m_tooltips_info;
+	std::map<CWnd*, std::wstring> m_tooltips_info{};
 };

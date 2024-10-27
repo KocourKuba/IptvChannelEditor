@@ -28,14 +28,12 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_base.h"
 #include "PluginEnums.h"
 
-#include "UtilsLib\json_wrapper.h"
-
 enum class InfoType { enUndefined, enChannel, enCategory, enPlEntry, enPlCategory };
 
 class uri_stream;
 
-typedef const std::wstring& (uri_stream::*pointer_to_getter)();
-typedef void (uri_stream::*pointer_to_setter)(const std::wstring&);
+using pointer_to_getter = const std::wstring& (uri_stream::*)();
+using pointer_to_setter = void (uri_stream::*)(const std::wstring&);
 
 class uri_stream : public uri_base
 {

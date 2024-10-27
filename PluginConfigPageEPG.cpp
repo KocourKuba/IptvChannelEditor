@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include <iosfwd>
-#include "IPTVChannelEditor.h"
 #include "PluginConfigPageEPG.h"
 #include "AccountSettings.h"
 #include "Constants.h"
@@ -136,19 +135,20 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 
 	UpdateDateTimestamp(true);
 
-	for (const auto& param : GetPropertySheet()->m_plugin->get_epg_parameters())
+	const auto& plugin = GetPropertySheet()->m_plugin;
+	for (const auto& param : plugin->get_epg_parameters())
 	{
 		m_wndEpgType.AddString(utils::utf8_to_utf16(param.epg_param).c_str());
 	}
 
 	m_wndEpgType.SetCurSel(0);
-	m_wndEpgIdSource.SetCurSel(GetPropertySheet()->m_plugin->get_epg_parameter(0).epg_id_source);
+	m_wndEpgIdSource.SetCurSel(plugin->get_epg_parameter(0).epg_id_source);
 
 	m_DuneIP = GetConfig().get_string(true, REG_DUNE_IP).c_str();
 	TemplateParams params;
 	params.creds = GetPropertySheet()->m_selected_cred;
 
-	GetPropertySheet()->m_plugin->get_api_token(params);
+	plugin->get_api_token(params);
 	m_Token = GetPropertySheet()->m_selected_cred.s_token.c_str();
 
 	const auto& presets = GetPluginFactory().get_epg_presets();
@@ -157,7 +157,7 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 		int idx = m_wndEpgPreset.AddString(utils::utf8_to_utf16(preset.first).c_str());
 		m_wndEpgPreset.SetItemData(idx, (DWORD_PTR)preset.first.c_str());
 	}
-	m_wndEpgPreset.SetCurSel((int)GetPropertySheet()->m_plugin->get_epg_preset_idx(0));
+	m_wndEpgPreset.SetCurSel((int)plugin->get_epg_preset_idx(0));
 
 
 	FillControls();

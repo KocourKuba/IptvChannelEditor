@@ -45,8 +45,6 @@ DEALINGS IN THE SOFTWARE.
 #include "base_plugin.h"
 #include "PlaylistTemplateInfo.h"
 
-#include "UtilsLib\json_wrapper.h"
-
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
 {

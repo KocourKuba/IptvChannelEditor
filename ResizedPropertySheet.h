@@ -61,6 +61,6 @@ protected:
 	void SetupDynamicLayout();
 
 protected:
-	CRect m_min_rc;
+	CRect m_min_rc{};
 	CString m_posKey;
 };

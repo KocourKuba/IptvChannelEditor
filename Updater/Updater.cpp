@@ -27,8 +27,6 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include <tchar.h>
 #include <iostream>
-#include <wtypes.h>
-#include <string.h>
 #pragma warning(push)
 #pragma warning(disable:4091)
 #include <dbghelp.h>

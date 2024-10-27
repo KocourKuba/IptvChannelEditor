@@ -31,8 +31,6 @@ DEALINGS IN THE SOFTWARE.
 #include "AccountSettings.h"
 #include "Constants.h"
 
-#include "UtilsLib\inet_utils.h"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE

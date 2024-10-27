@@ -25,9 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "base_plugin.h"
 #include "ThreadConfig.h"
-#include "UtilsLib/inet_utils.h"
 
 class base_plugin;
 

@@ -26,9 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-#include "base_plugin.h"
 #include "BaseThread.h"
-#include "vod_movie.h"
 
 class CPlaylistParseJsonThread : public CBaseThread
 {

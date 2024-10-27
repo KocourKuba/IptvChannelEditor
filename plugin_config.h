@@ -25,8 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include <variant>
-#include "IPTVChannelEditor.h"
 #include "Credentials.h"
 #include "DynamicParamsInfo.h"
 #include "PlaylistTemplateInfo.h"

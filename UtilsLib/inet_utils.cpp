@@ -32,7 +32,6 @@ DEALINGS IN THE SOFTWARE.
 #include <unordered_map>
 #include <filesystem>
 #include <fstream>
-#include <regex>
 #include "xxhash.hpp"
 #include "utils.h"
 #include "SmartHandle.h"

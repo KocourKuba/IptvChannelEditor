@@ -26,7 +26,10 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include <afxdialogex.h>
-#include "plugin_config.h"
+#include <variant>
+#include "DynamicParamsInfo.h"
+#include "PlaylistTemplateInfo.h"
+#include "PluginEnums.h"
 #include "EditableListCtrl.h"
 
 

@@ -25,7 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include <afxdialogex.h>
 #include "IPTVChannelEditor.h"
 #include "PathsSettingsPage.h"
 #include "AccountSettings.h"

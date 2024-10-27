@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include "plugin_iptvonline.h"
+#include "plugin_tvizi.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

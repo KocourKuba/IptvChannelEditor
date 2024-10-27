@@ -20,7 +20,6 @@ VERSION HISTORY:
 
 #include "pch.h"
 #include "FileVersionInfo.h"
-#include <string>
 
 /////////////////////////////////////////////////////////////////////////////
 #ifdef _DEBUG

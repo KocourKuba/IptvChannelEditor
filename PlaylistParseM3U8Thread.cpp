@@ -27,6 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "PlaylistParseM3U8Thread.h"
 #include "PlayListEntry.h"
+#include "base_plugin.h"
 
 #include "UtilsLib\utils.h"
 

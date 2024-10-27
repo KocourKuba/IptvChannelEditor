@@ -27,8 +27,6 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "uri_base.h"
 
-#include "UtilsLib\utils.h"
-
 class IconContainer
 {
 public:

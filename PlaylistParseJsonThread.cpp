@@ -26,9 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "PlaylistParseJsonThread.h"
-#include "PlayListEntry.h"
-
-#include "UtilsLib\utils.h"
+#include "base_plugin.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

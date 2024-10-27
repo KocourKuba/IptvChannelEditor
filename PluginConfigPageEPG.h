@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "MenuEdit.h"
 #include "TooltipPropertyPage.h"
-#include "plugin_config.h"
+#include "EpgParameters.h"
 
 class CPluginConfigPageEPG : public CTooltipPropertyPage
 {

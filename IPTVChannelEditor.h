@@ -30,7 +30,6 @@ DEALINGS IN THE SOFTWARE.
 #error "include 'StdAfx.h' before including this file for PCH"
 #endif
 
-#include "resource.h"		// main symbols
 #include "PluginDefines.h"
 
 #include "7zpp\SevenZipWrapper.h"
@@ -41,11 +40,11 @@ DEALINGS IN THE SOFTWARE.
 
 class CIPTVChannelEditorApp : public CWinAppEx
 {
-	typedef struct
+	using LangStruct = struct
 	{
 		HMODULE hLib;
 		CString csLang;
-	} LangStruct;
+	};
 
 public:
 	CIPTVChannelEditorApp();

@@ -25,6 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
+#include "resource.h"		// main symbols
 #include "IPTVChannelEditor.h"
 #include "FillParamsInfoDlg.h"
 #include "Constants.h"

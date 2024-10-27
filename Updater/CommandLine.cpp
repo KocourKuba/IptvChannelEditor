@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "CommandLine.hpp"
 
-#include <algorithm>
 #include <iomanip>
 #include <sstream>
 

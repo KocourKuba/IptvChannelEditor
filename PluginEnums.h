@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "UtilsLib\json_wrapper.h"
+#include "nlohmann\detail\macro_scope.hpp"
 
 #define ENUM_TO_STRING(ENUM_TYPE, STRING_TYPE, ...)                                                                    \
 inline STRING_TYPE enum_to_string(const ENUM_TYPE e)                                                                   \

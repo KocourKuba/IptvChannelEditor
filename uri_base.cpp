@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "uri_base.h"
-#include "UtilsLib\utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

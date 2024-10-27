@@ -28,7 +28,6 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_config.h"
 #include "AccountSettings.h"
 #include "Constants.h"
-#include "IPTVChannelEditor.h"
 #include "PluginFactory.h"
 
 plugin_config::plugin_config()

@@ -25,7 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include <thread>
 #include <BS_thread_pool.hpp>
 
 #include "GetStreamInfoThread.h"

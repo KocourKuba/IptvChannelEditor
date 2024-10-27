@@ -25,8 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include <concrt.h>
-#include <wtypes.h>
 
 //////////////////////////////////////////////////////////////////////////
 // SmartPtr for HANDLE types

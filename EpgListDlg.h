@@ -25,9 +25,9 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "PlayListEntry.h"
+#include "uri_stream.h"
 #include "ListCtrlEx.h"
-#include "IPTVChannelEditorDlg.h"
+#include "base_plugin.h"
 
 // Data object handling class
 class CEpgListDlg : public CDialogEx

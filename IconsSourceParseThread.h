@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-#include "base_plugin.h"
 #include "BaseThread.h"
 
 class CIconsSourceParseThread : public CBaseThread

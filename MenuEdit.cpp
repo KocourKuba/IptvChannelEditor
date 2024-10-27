@@ -25,6 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
+#include "resource.h"		// main symbols
 #include "MenuEdit.h"
 #include "IPTVChannelEditor.h"
 

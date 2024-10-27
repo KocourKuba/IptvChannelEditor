@@ -25,7 +25,8 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include "IPTVChannelEditor.h"		// main symbols
+#include "resource.h"		// main symbols
+#include "IPTVChannelEditor.h"
 #include "AboutDlg.h"
 
 #include "UtilsLib\utils.h"

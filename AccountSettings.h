@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include <variant>
 #include "PluginDefines.h"
 
-#include "UtilsLib\json_wrapper.h"
+#include "nlohmann\json.hpp"
 
 class Credentials;
 
@@ -98,7 +98,7 @@ protected:
 
 private:
 	BOOL m_bPortable = FALSE;
-	std::map<PluginType, map_variant> m_settings;
+	std::map<PluginType, map_variant> m_settings{};
 	PluginType m_pluginType = PluginType::enEdem;
 	nlohmann::json m_config;
 };

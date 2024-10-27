@@ -25,7 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "MenuEdit.h"
 #include "TooltipPropertyPage.h"
 
 class CPluginConfigPage : public CTooltipPropertyPage

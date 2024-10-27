@@ -25,15 +25,10 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include <iosfwd>
 #include "IPTVChannelEditor.h"
 #include "PluginConfigPage.h"
-#include "PluginFactory.h"
 #include "FillParamsInfoDlg.h"
-#include "AccountSettings.h"
 #include "Constants.h"
-
-#include "UtilsLib/inet_utils.h"
 
 // CPluginConfigPage dialog
 

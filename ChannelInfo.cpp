@@ -26,7 +26,6 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "ChannelInfo.h"
-#include "ChannelCategory.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -54,7 +54,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 			}
 			else
 			{
-				m3uEntry.get_tags_map().merge(m3uEntry.get_tags_map());
+				playlist->m3u_header.get_tags_map().merge(m3uEntry.get_tags_map());
 			}
 
 			const auto& tags = playlist->m3u_header.get_tags_map();

@@ -27,7 +27,6 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include <algorithm>
 #include <locale>
-#include <cwctype>
 
 namespace utils
 {
