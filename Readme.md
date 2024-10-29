@@ -1,9 +1,11 @@
 # IptvChannelEditor
-Редактор списков каналов и генератор плагинов для плейеров Dune HD.  
-Для сборки используется VS2022. Плагины используют PHP 5.3 не старше.
+IPTV Channels Editor and Dune plugin generator.
+For building using VS2022.
+Plugins using PHP 5.3! This is a restriction by Dune HD API
+
 
 <details>
-<summary><b>Список поддерживаемых IPTV провайдеров</b></summary>
+<summary><b>Список поддерживаемых IPTV провайдеров/All supported IPTV providers</b></summary>
 
 01. [Antifriz](https://antifriz.tv/)
 02. [BCU Media](https://bcumedia.pro/)
