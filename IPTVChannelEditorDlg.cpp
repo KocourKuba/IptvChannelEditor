@@ -1044,6 +1044,7 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 		if (saveToFile)
 		{
 			std::ofstream os(m_plFileName, std::ofstream::binary);
+			data.seekg(0);
 			os << data.rdbuf();
 			return;
 		}
@@ -4898,6 +4899,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 
 		const auto& fullPath = icon_uri.get_filesystem_path(GetAppPath(utils::PLUGIN_ROOT));
 		std::ofstream os(fullPath.c_str(), std::ios::out | std::ios::binary);
+		image.seekg(0);
 		os << image.rdbuf();
 
 		LoadChannelInfo(FindChannel(hItem));

@@ -395,6 +395,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 		if (!vData.fail() || bSaveBadCache)
 		{
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
+			vData.seekg(0);
 			out_stream << vData.rdbuf();
 			ATLTRACE("\nSave to cache for %d seconds\n", m_cache_ttl_sec);
 		}
