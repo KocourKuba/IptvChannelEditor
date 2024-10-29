@@ -391,6 +391,7 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.m3u8";
 
 		std::ofstream out_stream(out_file, std::ofstream::binary);
+		data.seekg(0);
 		out_stream << data.rdbuf();
 		out_stream.close();
 
