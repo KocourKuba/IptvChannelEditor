@@ -13,7 +13,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
     const ACTION_CLEAR_EPG_CACHE = 'clear_epg_cache';
     const ACTION_EPG_SHIFT = 'epg_shift';
     const CONTROL_CHANGE_CACHE_PATH = 'xmltv_cache_path';
-    const CONTROL_EPG_FOLDER = 'epg_folder';
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -164,11 +163,10 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                     array(
                         'screen_id' => Starnet_Folder_Screen::ID,
                         'source_window_id' => static::ID,
-                        'choose_folder' => array(
-                            'action' => self::CONTROL_EPG_FOLDER,
-                        ),
-                        'allow_reset' => true,
                         'allow_network' => !is_limited_apk(),
+                        'choose_folder' => true,
+                        'allow_reset' => true,
+                        'end_action' => ACTION_RELOAD,
                         'windowCounter' => 1,
                     )
                 );
@@ -195,9 +193,9 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                     null, $default_path, self::CONTROLS_WIDTH);
                 break;
 
-            case self::CONTROL_EPG_FOLDER:
+            case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
-                hd_debug_print(self::CONTROL_EPG_FOLDER . ": $data->filepath");
+                hd_debug_print(ACTION_FOLDER_SELECTED . ": $data->filepath");
                 if ($this->plugin->get_cache_dir() === $data->filepath) break;
 
                 $this->plugin->clear_all_epg_cache();

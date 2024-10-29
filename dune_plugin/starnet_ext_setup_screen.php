@@ -35,7 +35,6 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
     const CONTROL_HISTORY_CHANGE_FOLDER = 'change_history_folder';
     const CONTROL_COPY_TO_DATA = 'copy_to_data';
     const CONTROL_COPY_TO_PLUGIN = 'copy_to_plugin';
-    const CONTROL_HISTORY_FOLDER = 'history_folder';
     const CONTROL_TV_HISTORY_CLEAR = 'history_clear_tv';
     const CONTROL_VOD_HISTORY_CLEAR = 'history_clear_vod';
     const CONTROL_HISTORY_CLEAR = 'history_clear_vod';
@@ -168,25 +167,22 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
         }
 
         switch ($control_id) {
-
             case self::CONTROL_HISTORY_CHANGE_FOLDER:
                 $media_url_str = MediaURL::encode(
                     array(
                         'screen_id' => Starnet_Folder_Screen::ID,
                         'source_window_id' => static::ID,
-                        'choose_folder' => array(
-                            'action' => self::CONTROL_HISTORY_FOLDER,
-                        ),
-                        'allow_reset' => true,
                         'allow_network' => !is_limited_apk(),
+                        'choose_folder' => true,
+                        'allow_reset' => true,
                         'windowCounter' => 1,
                     )
                 );
                 return Action_Factory::open_folder($media_url_str, TR::t('setup_history_folder_path'));
 
-            case self::CONTROL_HISTORY_FOLDER:
+            case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
-                hd_debug_print(self::CONTROL_HISTORY_FOLDER . " $data->filepath");
+                hd_debug_print(ACTION_FOLDER_SELECTED . " $data->filepath");
                 $this->plugin->set_parameter(PARAM_HISTORY_PATH, smb_tree::set_folder_info($user_input->selected_data));
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
                     $action_reload, $data->filepath, self::CONTROLS_WIDTH);

@@ -12,7 +12,6 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
     const SETUP_ACTION_CHANNELS_URL_PATH = 'channels_url_path';
     const SETUP_ACTION_CHANNELS_URL_DLG = 'channels_url_dialog';
     const SETUP_ACTION_CHANNELS_URL_APPLY = 'channels_url_apply';
-    const CONTROL_CHANNELS_FOLDER = 'channels_folder';
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -172,11 +171,10 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                     array(
                         'screen_id' => Starnet_Folder_Screen::ID,
                         'source_window_id' => static::ID,
-                        'choose_folder' => array(
-                            'action' => self::CONTROL_CHANNELS_FOLDER,
-                        ),
-                        'allow_reset' => true,
                         'allow_network' => !is_limited_apk(),
+                        'choose_folder' => true,
+                        'allow_reset' => true,
+                        'end_action' => ACTION_RELOAD,
                         'windowCounter' => 1,
                     )
                 );
@@ -222,9 +220,9 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 hd_debug_print("Selected channels path: $url_path");
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
-            case self::CONTROL_CHANNELS_FOLDER:
+            case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
-                hd_debug_print(self::CONTROL_CHANNELS_FOLDER . " $data->filepath");
+                hd_debug_print(ACTION_FOLDER_SELECTED . " $data->filepath");
                 $this->plugin->set_parameter(PARAM_CHANNELS_LIST_PATH, smb_tree::set_folder_info($user_input->selected_data));
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
                     User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, self::CONTROLS_WIDTH);
