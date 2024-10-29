@@ -2572,19 +2572,20 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<id>.+)\\/index.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/(?<server>.+)\\/.*$",
-          "pl_template": "http://pl.uspeh.sbs/{LOGIN}/{PASSWORD}/tv.m3u"
+          "pl_template": "http://pl.uspeh.sbs/{LOGIN}/{PASSWORD}/tv.m3u",
+          "tag_id_match": "CUID"
         }
       ],
       "provider_url": "https://uspeh.tv/",
       "streams_config": [
         {
-          "cu_type": "flussonic",
+          "cu_type": "shift",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
+          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
         },
         {}
       ],
@@ -2593,12 +2594,12 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "(?<title>.+)\\s\\((?<country>.+)\\s(?<year>\\d+)\\)$",
+          "parse_regex": "^(?<title>.+)\\s\\((?<country>.+)\\s(?<year>\\d+)\\)$",
           "pl_template": "http://pl.uspeh.sbs/{LOGIN}/{PASSWORD}/vodall.m3u"
         },
         {
           "name": "No Adults",
-          "parse_regex_title": "(?<title>.+)\\s\\((?<country>.+)\\s(?<year>\\d+)\\)$",
+          "parse_regex": "^(?<title>.+)\\s\\((?<country>.+)\\s(?<year>\\d+)\\)$",
           "pl_template": "http://pl.uspeh.sbs/{LOGIN}/{PASSWORD}/vod.m3u"
         }
       ]
