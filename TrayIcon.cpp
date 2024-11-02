@@ -175,6 +175,8 @@ void CTrayIcon::RemoveAnimationIcons()
 {
 	for (auto& ti : m_aniTrayIcons)
 	{
+		if (ti.hIcon == nullptr) continue;
+
 		::DestroyIcon(ti.hIcon);
 		ti.hIcon = nullptr;
 	}
@@ -211,6 +213,11 @@ BOOL CTrayIcon::SetAnimationIcons(const UINT* lpIDArray, int nIDCount, const CSt
 	return TRUE;
 }
 
+void CTrayIcon::SetAnimationIcons(const UINT* lpIDArray, const CString* lpStrTipArray, int nIDCount)
+{
+	SetAnimationIcons(lpIDArray, nIDCount, lpStrTipArray);
+}
+
 BOOL CTrayIcon::SetTooltipText(LPCTSTR lpszTipText)
 {
 	m_toolTip = lpszTipText;
@@ -242,7 +249,7 @@ BOOL CTrayIcon::SetShellTooltip(LPCTSTR lpszTipText)
 BOOL CTrayIcon::SetTooltipText(UINT nTipText)
 {
 	CString strTipText;
-	strTipText.LoadString(nTipText);
+	const auto res = strTipText.LoadString(nTipText);
 
 	return SetTooltipText(strTipText);
 }
@@ -401,6 +408,11 @@ BOOL CTrayIcon::Create(LPCTSTR lpszCaption, CWnd* pParentWnd, UINT nIconID, UINT
 	m_flags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
 
 	return AddIcon();
+}
+
+BOOL CTrayIcon::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext /*= nullptr*/)
+{
+	return CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 }
 
 BOOL CTrayIcon::ShowBalloonTip(LPCTSTR lpszInfo, LPCTSTR lpszInfoTitle /*= nullptr*/,

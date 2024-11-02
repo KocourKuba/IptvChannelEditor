@@ -4328,11 +4328,11 @@ bool CIPTVChannelEditorDlg::ChooseIconFromFile(const CString& path, uri_stream* 
 	file.Replace('/', '\\');
 
 	CString filter;
-	filter.LoadString(IDS_STRING_LOAD_ICON);
+	auto res = filter.LoadString(IDS_STRING_LOAD_ICON);
 	filter.Replace('|', '\0');
 
 	CString title;
-	title.LoadString(IDS_STRING_LOAD_ICONS_TITLE);
+	res = title.LoadString(IDS_STRING_LOAD_ICONS_TITLE);
 
 	OPENFILENAME& oFN = dlg.GetOFN();
 	oFN.lpstrFilter = filter.GetString();
@@ -4587,11 +4587,11 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 	curPath.append(filename.wstring());
 
 	CString filter;
-	filter.LoadString(IDS_STRING_LOAD_PLAYLIST);
+	auto res = filter.LoadString(IDS_STRING_LOAD_PLAYLIST);
 	filter.Replace('|', '\0');
 
 	CString title;
-	title.LoadString(IDS_STRING_EXPORT_PLAYLIST);
+	res = title.LoadString(IDS_STRING_EXPORT_PLAYLIST);
 
 	CString file(curPath.c_str());
 	OPENFILENAME& oFN = dlg.GetOFN();

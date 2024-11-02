@@ -33,8 +33,8 @@ class CTrayIcon : public CWnd
 private:
 	struct TRAY_ICON_DATA
 	{
-		HICON hIcon;		// Handle to the icon
-		CString strToolTip; // tooltip displayed for the tray icon
+		HICON hIcon = nullptr;		// Handle to the icon
+		CString strToolTip{}; // tooltip displayed for the tray icon
 	};
 
 public:
@@ -53,10 +53,7 @@ public:
 	void StartAnimation(UINT uElapse = 500) { CWnd::SetTimer(m_timerID, uElapse, nullptr); }
 
 	BOOL SetAnimationIcons(const UINT* lpIDArray, int nIDCount, const CString* lpStrTipArray = nullptr);
-	void SetAnimationIcons(const UINT* lpIDArray, const CString* lpStrTipArray, int nIDCount)
-	{
-		SetAnimationIcons(lpIDArray, nIDCount, lpStrTipArray);
-	}
+	void SetAnimationIcons(const UINT* lpIDArray, const CString* lpStrTipArray, int nIDCount);
 
 
 	void SetDefaultValues();
@@ -67,13 +64,13 @@ public:
 	CString GetTooltipText() const { return m_toolTip; }
 
 	BOOL SetCallbackMessage(UINT newCallbackMessage);
-	UINT GetCallbackMessage() { return m_niData.uCallbackMessage; }
+	UINT GetCallbackMessage() const { return m_niData.uCallbackMessage; }
 
 	BOOL SetDefaultMenuItem(UINT uItem, BOOL bByPos);
 	void GetDefaultMenuItem(UINT& uItem, BOOL& bByPos);
 
 	BOOL SetNotificationWnd(CWnd* pWndNotify);
-	CWnd* GetNotificationWnd() { return CWnd::FromHandle(m_niData.hWnd); }
+	CWnd* GetNotificationWnd() const { return CWnd::FromHandle(m_niData.hWnd); }
 
 	HICON GetIcon() const { return m_niData.hIcon; }
 
@@ -121,32 +118,29 @@ private:
 	static BOOL CALLBACK FindTrayWnd(HWND hWnd, LPARAM lParam);
 
 	BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle,
-				const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr) override
-	{
-		return CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
-	}
+				const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr) override;
 
 	BOOL CanAnimate() const;
 	BOOL GetTrayWindowRect(CRect& rect);
 	BOOL SetShellTooltip(LPCTSTR lpszTipText);
 
 protected:
-	BOOL m_isDefMenuItemByPos;
-	BOOL m_isHidden;
-	BOOL m_isRemoved;
-	BOOL m_isShowPending;
+	BOOL m_isDefMenuItemByPos = FALSE;
+	BOOL m_isHidden = FALSE;
+	BOOL m_isRemoved = FALSE;
+	BOOL m_isShowPending = FALSE;
 
-	NOTIFYICONDATA m_niData;
+	NOTIFYICONDATA m_niData{};
 
 	UINT m_flags = 0;
-	UINT m_iconID;
-	UINT m_timerID;
-	UINT m_timerIdx;
-	UINT m_defMenuItemID;
-	HWND m_hwndNotify;
+	UINT m_iconID = 0;
+	UINT m_timerID = 0;
+	UINT m_timerIdx = 0;
+	UINT m_defMenuItemID = 0;
+	HWND m_hwndNotify = nullptr;
 	CWnd m_wndMinimize;
-	size_t m_maxTipSize;
+	size_t m_maxTipSize = 0;
 	CString m_toolTip;
-	HICON m_hDefaultIcon;
+	HICON m_hDefaultIcon = nullptr;
 	std::vector<TRAY_ICON_DATA> m_aniTrayIcons;
 };
