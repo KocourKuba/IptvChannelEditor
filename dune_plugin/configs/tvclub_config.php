@@ -58,7 +58,7 @@ class tvclub_config extends default_config
         if ($this->GetAccountInfo(true) === false) {
             hd_debug_print("Can't get account status");
             Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
-            Control_Factory::add_label($defs, TR::t('description') . ':', TR::t('warn_msg5'), 20);
+            Control_Factory::add_label($defs, TR::t('description'), TR::t('warn_msg5'), 20);
             return;
         }
 
