@@ -20,7 +20,7 @@ class itv_config extends default_config
             if ($force !== false || empty($this->account_data)) {
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/data/$password";
                 $json = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
-                if ($json === false || empty($json->package_info)) {
+                if ($json === false || !isset($json->package_info)) {
                     throw new Exception("Account status unknown");
                 }
                 $this->account_data = $json;
@@ -42,12 +42,12 @@ class itv_config extends default_config
         if ($account_data === false) {
             hd_debug_print("Can't get account status");
             Control_Factory::add_label($defs, TR::t('err_error'), TR::t('warn_msg4'), -10);
-            Control_Factory::add_label($defs, TR::t('description') . ':', TR::t('warn_msg5'), -10);
+            Control_Factory::add_label($defs, TR::t('description'), TR::t('warn_msg5'), -10);
             return;
         }
 
-        Control_Factory::add_label($defs, TR::t('balance'), $account_data['user_info']['cash'] . ' $', -10);
-        $packages = $account_data['package_info'];
+        Control_Factory::add_label($defs, TR::t('balance'), $account_data->user_info->cash . ' $', -10);
+        $packages = (array)$account_data->package_info;
         if (count($packages) === 0) {
             Control_Factory::add_label($defs, TR::t('package'), TR::t('no_packages'), 20);
             return;
@@ -55,7 +55,7 @@ class itv_config extends default_config
 
         $list = array();
         foreach ($packages as $item) {
-            $list[] = $item['name'];
+            $list[] = $item->name;
         }
 
         $emptyTitle = str_repeat(' ', strlen(TR::load_string('package')));
