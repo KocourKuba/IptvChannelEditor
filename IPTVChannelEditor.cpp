@@ -305,11 +305,6 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	ConvertAccounts();
 
-	if (!CheckPluginConsistency(m_bDev))
-	{
-		return FALSE;
-	}
-
 	if (cmdInfo.m_bCleanupReg)
 	{
 		RegDeleteTree(HKEY_CURRENT_USER, _T("SOFTWARE\\Dune IPTV Channel Editor"));
@@ -392,6 +387,12 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		return FALSE;
 	}
 
+	int res = CheckPluginConsistency(m_bDev);
+	if (res == 0)
+	{
+		return FALSE;
+	}
+
 	// cleanup old files
 	std::error_code err;
 	std::filesystem::directory_iterator dir_iter(GetAppPath(), err);
@@ -407,7 +408,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	}
 
 	int freq = GetConfig().get_int(true, REG_UPDATE_FREQ, 3);
-	if (freq && GetConfig().get_int64(true, REG_NEXT_UPDATE) < time(nullptr))
+	if (res == 2 || (freq && GetConfig().get_int64(true, REG_NEXT_UPDATE) < time(nullptr)))
 	{
 		std::wstring cmd = L"check";
 		if (RequestToUpdateServer(cmd) == 0)
@@ -423,20 +424,20 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 				if (GetConfig().get_int(true, REG_UPDATE_PL))
 					cmd += L" --optional";
 
-				time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
+				const time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
 				GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
 				RequestToUpdateServer(cmd, false);
 				return FALSE;
 			}
 		}
 
-		time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
+		const time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
 		GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
 	}
 
 	CIPTVChannelEditorDlg dlg;
 	m_pMainWnd = &dlg;
-	INT_PTR nResponse = dlg.DoModal();
+	const INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == -1)
 	{
 		TRACE(traceAppMsg, 0, "Warning: dialog creation failed, so application is terminating unexpectedly.\n");
@@ -480,13 +481,13 @@ std::wstring CIPTVChannelEditorApp::CheckAndCreateDirs(const std::wstring& setti
 	return dir;
 }
 
-bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
+int CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 {
 	const auto& plugin_root = GetAppPath(utils::PLUGIN_ROOT, true);
 	auto dir_status = std::filesystem::symlink_status(plugin_root).type();
 	if (isDev || dir_status == std::filesystem::file_type::junction || dir_status == std::filesystem::file_type::symlink)
 	{
-		return true;
+		return 1;
 	}
 
 	if (std::filesystem::exists(plugin_root))
@@ -506,7 +507,7 @@ bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 		if (RequestToUpdateServer(cmd, false) != 0)
 		{
 			AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FAILED_DOWNLOAD_PACKAGE), update_pkg).c_str(), MB_OK | MB_ICONSTOP);
-			return false;
+			return 0;
 		}
 		Sleep(500);
 	}
@@ -516,7 +517,7 @@ bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 	if (!std::filesystem::exists(update_pkg))
 	{
 		AfxMessageBox(fmt::format(load_string_resource(IDS_STRING_ERR_FILE_MISSING), update_pkg).c_str(), MB_OK | MB_ICONSTOP);
-		return false;
+		return 0;
 	}
 
 	std::ifstream file(update_pkg);
@@ -535,7 +536,7 @@ bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 		std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
 		msg += utils::utf8_to_utf16(fmt::format("\nIncorrect update info: parse error: {:s}", ex.what()));
 		AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
-		return false;
+		return 0;
 	}
 
 	auto info_node = doc->first_node("update_info");
@@ -544,25 +545,25 @@ bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 		std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
 		msg += L"\nIncorrect update info: update_info node missing";
 		AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
-		return false;
+		return 0;
 	}
 
 	const auto& version = rapidxml::get_value_string(info_node->first_attribute("version"));
-	if (version != STRPRODUCTVER)
-	{
-		std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
-		msg += utils::utf8_to_utf16(fmt::format("\ncurrent version {:s}\nexpected {:s}", version, STRPRODUCTVER));
-		AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
-		return false;
-	}
-
 	auto pkg_node = doc->first_node("package");
 	if (!pkg_node)
 	{
 		std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
 		msg += L"\nIncorrect update info: package node missing";
 		AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
-		return false;
+		return 0;
+	}
+
+	if (version != STRPRODUCTVER)
+	{
+		std::wstring msg = load_string_resource(IDS_STRING_ERR_FILES_WRONG);
+		msg += utils::utf8_to_utf16(fmt::format("\ncurrent version {:s}\nexpected {:s}", version, STRPRODUCTVER));
+		AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+		return 2;
 	}
 
 	// Iterate <tv_category> nodes
@@ -581,12 +582,12 @@ bool CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 			{
 				const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value(), name, target);
 				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
-				return false;
+				return 0;
 			}
 		}
 	}
 
-	return true;
+	return 1;
 }
 
 void CIPTVChannelEditorApp::FillLangMap()

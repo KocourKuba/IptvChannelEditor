@@ -162,6 +162,8 @@ dir /b /O:N *.exe *.dll *.pdb > upload.lst
 del /q *.exe *.dll *.pdb *.lst >nul 2>&1
 popd
 
+git.exe push --force --tags  -- "origin" master:master
+
 echo done!
 goto :EOF
 

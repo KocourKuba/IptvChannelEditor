@@ -55,7 +55,7 @@ public:
 
 	std::wstring CheckAndCreateDirs(const std::wstring& settings, const std::wstring& default_path);
 
-	bool CheckPluginConsistency(bool isDev);
+	int CheckPluginConsistency(bool isDev);
 
 	void FillLangMap();
 
