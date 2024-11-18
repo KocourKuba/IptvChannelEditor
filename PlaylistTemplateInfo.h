@@ -59,7 +59,7 @@ public:
 	void set_parse_regex(const std::wstring& val) { parse_regex = utils::utf16_to_utf8(val); }
 
 	std::wstring get_parse_regex_title() const { return utils::utf8_to_utf16(parse_regex_title); }
-	void set_parse_regex_title(const std::wstring& val) { parse_regex = utils::utf16_to_utf8(val); }
+	void set_parse_regex_title(const std::wstring& val) { parse_regex_title = utils::utf16_to_utf8(val); }
 
 	std::wstring get_url_prefix() const { return utils::utf8_to_utf16(url_prefix); }
 	void set_url_prefix(const std::wstring& val) { url_prefix = utils::utf16_to_utf8(val); }
