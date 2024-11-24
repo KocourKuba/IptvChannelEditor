@@ -361,6 +361,9 @@ void CPluginConfigPageTV::SaveParameters()
 			info.set_tag_id_match(tag.GetString());
 		}
 	}
+	else {
+		info.set_tag_id_match(L"");
+	}
 
 	AllowSave();
 }
