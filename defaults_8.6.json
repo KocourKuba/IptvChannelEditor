@@ -1763,27 +1763,31 @@
       ],
       "servers_list": [
         {
-          "id": "peaktv.pro",
+          "id": "serv5.peakantikli.online",
           "name": "Russia 1"
         },
         {
-          "id": "peak-tv.shop",
+          "id": "serv1.peakantikli.online",
           "name": "Russia 2"
         },
         {
-          "id": "peaktv.com.ru",
+          "id": "serv6.peakantikli.online",
+          "name": "Russia 3"
+        },
+        {
+          "id": "serv7.peakantikli.online",
           "name": "Germany 1"
         },
         {
-          "id": "peak-tv.xyz",
+          "id": "serv2.peakantikli.online",
           "name": "Germany 2"
         },
         {
-          "id": "peaktv.space",
+          "id": "serv4.peakantikli.online",
           "name": "Poland"
         },
         {
-          "id": "peaktv.fun",
+          "id": "serv3.peakantikli.online",
           "name": "Czech Republic"
         }
       ],
@@ -2206,6 +2210,10 @@
         {
           "id": "ru02.spr24.net",
           "name": "Moscow (RU02)"
+        },
+        {
+          "id": "ru03.spr24.net",
+          "name": "Moscow (RU03)"
         },
         {
           "id": "nl01.spr24.net",
