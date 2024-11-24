@@ -72,7 +72,6 @@ enum class PluginType
 	enTVClub,
 	enTvizi,
 	enTvTeam,
-	enUspeh,
 	enVidok,
 	enVipLime,
 	enYossoTV,
