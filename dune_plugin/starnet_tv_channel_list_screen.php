@@ -77,7 +77,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 try {
                     $post_action = $this->plugin->tv_player_exec($selected_media_url);
                 } catch (Exception $ex) {
-                    hd_debug_print("Movie can't played");
+                    hd_debug_print("Channel can't played");
                     print_backtrace_exception($ex);
                     return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
                         null,

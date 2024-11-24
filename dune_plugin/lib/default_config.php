@@ -758,7 +758,7 @@ class default_config extends dynamic_config
             Stream_Params::CU_START      => Plugin_Macros::START,
             Stream_Params::CU_NOW        => Plugin_Macros::NOW,
             Stream_Params::CU_DURATION   => Plugin_Macros::DURATION,
-            Stream_Params::CU_DURMIN       => Plugin_Macros::DURMIN,
+            Stream_Params::CU_DURMIN     => Plugin_Macros::DURMIN,
             Stream_Params::CU_STOP       => Plugin_Macros::STOP,
             Stream_Params::CU_OFFSET     => Plugin_Macros::OFFSET,
             Ext_Params::M_SCHEME         => Plugin_Macros::SCHEME,
@@ -891,6 +891,8 @@ class default_config extends dynamic_config
         $parse_pattern = $this->get_tv_parse_pattern();
         if (empty($parse_pattern)) {
             hd_debug_print("Empty tv parsing pattern!");
+        } else {
+            hd_debug_print("Parsing pattern: $parse_pattern", true);
         }
 
         $template = $this->get_current_tv_template();
@@ -932,7 +934,7 @@ class default_config extends dynamic_config
             }
         }
 
-        hd_debug_print("Total entries:" . count($pl_entries) . ", mapped to ID $mapped: ");
+        hd_debug_print("Total entries:" . count($pl_entries) . ", mapped to ID $mapped");
 
         return $pl_entries;
     }
