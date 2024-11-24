@@ -2571,44 +2571,39 @@
       "title": "TV Team"
     },
     "uspeh": {
-      "access_type": "login",
-      "epg_params": [
-        {},
-        {}
-      ],
+      "access_type": "pin",
+      "balance_support": false,
       "name": "uspeh.tv",
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/(?<server>.+)\\/.*$",
-          "pl_template": "http://pl.uspeh.sbs/{LOGIN}/{PASSWORD}/tv.m3u",
-          "tag_id_match": "CUID"
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<id>.+)\\/(?<var1>.+)\\.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^.+\/token=(?<password>.+)$",
+          "pl_template": "{API_URL}/hls/token={PASSWORD}"
         }
       ],
+      "provider_api_url": "https://m3u.admuspeh.my",
       "provider_url": "https://uspeh.tv/",
       "streams_config": [
         {
-          "cu_type": "shift",
+          "cu_duration": 10800,
+          "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}.m3u8?token={TOKEN}"
         },
         {}
       ],
       "title": "Uspeh TV",
+      "user_agent": "DuneHD/1.0",
       "vod_engine": "M3U",
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<title>.+)\\s\\((?<country>.+)\\s(?<year>\\d+)\\)$",
-          "pl_template": "http://pl.uspeh.sbs/{LOGIN}/{PASSWORD}/vodall.m3u"
-        },
-        {
-          "name": "No Adults",
-          "parse_regex": "^(?<title>.+)\\s\\((?<country>.+)\\s(?<year>\\d+)\\)$",
-          "pl_template": "http://pl.uspeh.sbs/{LOGIN}/{PASSWORD}/vod.m3u"
+          "parse_regex": "^(?<title>[^(]+)\\s\\((?<year>\\d{4})\\)$",
+          "parse_regex_title": "^(?<title>[^(]+)\\s\\((?<year>\\d{4})\\)$",
+          "pl_template": "https://m3u.admuspeh.my/movie/token={PASSWORD}",
         }
       ]
     },
