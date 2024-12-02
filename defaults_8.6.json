@@ -1732,14 +1732,23 @@
     "peaktv": {
       "access_type": "pin",
       "epg_params": [
-        {},
+        {
+          "epg_param": "first",
+          "epg_url": "http://epg.drm-play.com/yosso%2Fepg%2F{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon"
+        },
         {}
       ],
       "name": "peaktv",
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/balancer\\/(?<id>.+)\\/(?<token>.+)\\/(?<var1>.+)\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/(?<password>.+)\\/.+\\/.*$",
           "pl_template": "https://peaktv.info/{PASSWORD}/hls/peaktvinfo.m3u8"
         }
@@ -1750,45 +1759,10 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/balancer/{ID}/{TOKEN}/{VAR1}-{START}-{DURATION}.m3u8",
+          "uri_template": "{SCHEME}://{DOMAIN}/balancer/{ID}/{TOKEN}/index.m3u8"
         },
         {
-          "cu_type": "flussonic",
-          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
-          "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
-        }
-      ],
-      "servers_list": [
-        {
-          "id": "serv5.peakantikli.online",
-          "name": "Russia 1"
-        },
-        {
-          "id": "serv1.peakantikli.online",
-          "name": "Russia 2"
-        },
-        {
-          "id": "serv6.peakantikli.online",
-          "name": "Russia 3"
-        },
-        {
-          "id": "serv7.peakantikli.online",
-          "name": "Germany 1"
-        },
-        {
-          "id": "serv2.peakantikli.online",
-          "name": "Germany 2"
-        },
-        {
-          "id": "serv4.peakantikli.online",
-          "name": "Poland"
-        },
-        {
-          "id": "serv3.peakantikli.online",
-          "name": "Czech Republic"
         }
       ],
       "title": "Peak TV"
