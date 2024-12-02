@@ -2104,14 +2104,15 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_tim
 	CWaitCursor cur;
 	std::stringstream data;
 
-	const auto& url = m_plugin->compile_epg_url(epg_idx, epg_id, for_time, info);
+	TemplateParams params;
+	params.creds = GetCurrentAccount();
+
+	const auto& url = m_plugin->compile_epg_url(epg_idx, epg_id, for_time, info, params);
 	const auto& epg_param = m_plugin->get_epg_parameter(epg_idx);
 
 	std::vector<std::string> headers;
 	if (!epg_param.epg_auth.empty())
 	{
-		TemplateParams params;
-		params.creds = GetCurrentAccount();
 		const auto& token = utils::utf8_to_utf16(m_plugin->get_api_token(params));
 		if (!token.empty())
 		{

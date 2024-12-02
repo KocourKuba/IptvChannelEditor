@@ -66,57 +66,7 @@ std::wstring base_plugin::get_playlist_url(const TemplateParams& params, std::ws
 		url = info.get_pl_template();
 	}
 
-	if (!get_provider_api_url().empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
-
-	if (!params.creds.login.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.creds.get_login());
-
-	if (!params.creds.password.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.creds.get_password());
-
-	if (!params.creds.token.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.creds.get_token());
-
-	if (!params.creds.s_token.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.creds.get_s_token());
-
-	if (!params.creds.subdomain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.creds.get_subdomain());
-
-	if (!params.creds.ott_key.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.creds.get_ott_key());
-
-	if (!domains_list.empty())
-	{
-		size_t domain = ((params.creds.domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : params.creds.domain_id);
-		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
-	}
-
-	if (!servers_list.empty())
-	{
-		size_t server = (params.creds.server_id >= (int)servers_list.size()) ? servers_list.size() - 1 : params.creds.server_id;
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
-	}
-
-	if (!devices_list.empty())
-	{
-		size_t device = (params.creds.device_id >= (int)devices_list.size()) ? devices_list.size() - 1 : params.creds.device_id;
-		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[device].get_id());
-	}
-
-	if (!qualities_list.empty())
-	{
-		size_t quality = (params.creds.quality_id >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.creds.quality_id;
-		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[quality].get_id());
-	}
-
-	if (!profiles_list.empty())
-	{
-		size_t profile = (params.creds.profile_id >= (int)profiles_list.size()) ? profiles_list.size() - 1 : params.creds.profile_id;
-		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[profile].get_id());
-	}
+	replace_params_vars(params, url);
 
 	return url;
 }
@@ -171,17 +121,7 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 	utils::string_replace_inplace<wchar_t>(url, REPL_VAR2, info->get_var2());
 	utils::string_replace_inplace<wchar_t>(url, REPL_VAR3, info->get_var2());
 
-	if (!params.creds.subdomain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.creds.get_subdomain());
-
-	if (!params.creds.ott_key.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.creds.get_ott_key());
-
-	if (!params.creds.login.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.creds.get_login());
-
-	if (!params.creds.password.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.creds.get_password());
+	replace_params_vars(params, url);
 
 	if (params.shift_back)
 	{
@@ -193,17 +133,76 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 		utils::string_replace_inplace<wchar_t>(url, REPL_STOP, std::to_wstring(params.shift_back + streams_config[subtype].cu_duration));
 	}
 
+	return url;
+}
+
+std::wstring base_plugin::replace_params_vars(const TemplateParams& params, std::wstring& url) const
+{
+
+	if (!get_provider_api_url().empty())
+		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
+
+	if (!params.creds.subdomain.empty())
+	{
+		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.creds.get_subdomain());
+	}
+
+	if (!params.creds.ott_key.empty())
+	{
+		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.creds.get_ott_key());
+	}
+
+	if (!params.creds.login.empty())
+	{
+		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.creds.get_login());
+	}
+
+	if (!params.creds.password.empty())
+	{
+		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.creds.get_password());
+	}
+
+	if (!params.creds.token.empty())
+	{
+		utils::string_replace_inplace<wchar_t>(url, REPL_TOKEN, params.creds.get_token());
+	}
+
+	if (!params.creds.s_token.empty())
+	{
+		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.creds.get_s_token());
+	}
+
+
+	if (!domains_list.empty())
+	{
+		size_t domain = ((params.creds.domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : params.creds.domain_id);
+		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
+	}
+
 	if (!servers_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[params.creds.server_id].get_id()));
-
-	if (!profiles_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[params.creds.profile_id].get_id());
-
-	if (!qualities_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[params.creds.quality_id].get_id());
+	{
+		size_t server = (params.creds.server_id >= (int)servers_list.size()) ? servers_list.size() - 1 : params.creds.server_id;
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
+		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
+	}
 
 	if (!devices_list.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[params.creds.device_id].get_id());
+	{
+		size_t device = (params.creds.device_id >= (int)devices_list.size()) ? devices_list.size() - 1 : params.creds.device_id;
+		utils::string_replace_inplace<wchar_t>(url, REPL_DEVICE_ID, devices_list[device].get_id());
+	}
+
+	if (!qualities_list.empty())
+	{
+		size_t quality = (params.creds.quality_id >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.creds.quality_id;
+		utils::string_replace_inplace<wchar_t>(url, REPL_QUALITY_ID, qualities_list[quality].get_id());
+	}
+
+	if (!profiles_list.empty())
+	{
+		size_t profile = (params.creds.profile_id >= (int)profiles_list.size()) ? profiles_list.size() - 1 : params.creds.profile_id;
+		utils::string_replace_inplace<wchar_t>(url, REPL_PROFILE_ID, profiles_list[profile].get_id());
+	}
 
 
 	return url;
@@ -294,44 +293,14 @@ std::wstring base_plugin::get_vod_url(size_t idx, const TemplateParams& params)
 	std::wstring url = info.get_pl_template();
 	set_regex_parse_stream(L"");
 
-	if (!domains_list.empty())
-	{
-		size_t domain = (params.creds.domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : params.creds.domain_id;
-		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
-	}
-
-	if (!servers_list.empty())
-	{
-		size_t server = (params.creds.server_id >= (int)servers_list.size()) ? servers_list.size() - 1 : params.creds.server_id;
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
-		utils::string_replace_inplace<wchar_t>(url, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
-	}
-
-	if (!get_provider_api_url().empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_API_URL, get_provider_api_url());
-
-	if (!params.creds.s_token.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_S_TOKEN, params.creds.get_s_token());
-
-
-	if (!params.creds.login.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_LOGIN, params.creds.get_login());
-
-	if (!params.creds.password.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, params.creds.get_password());
-
-	if (!params.creds.ott_key.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_OTT_KEY, params.creds.get_ott_key());
-
-	if (!params.creds.subdomain.empty())
-		utils::string_replace_inplace<wchar_t>(url, REPL_SUBDOMAIN, params.creds.get_subdomain());
+	replace_params_vars(params, url);
 
 	return url;
 }
 
-std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time, const uri_stream* info)
+std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time, const uri_stream* info, const TemplateParams& params)
 {
-	const auto& params = epg_params[epg_idx];
+	const auto& epg_param = epg_params[epg_idx];
 
 	COleDateTime dt(for_time ? for_time : COleDateTime::GetCurrentTime());
 	// set to begin of the day
@@ -340,20 +309,22 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	lt.tm_min = 0;
 	lt.tm_sec = 0;
 
-	auto epg_template = params.get_epg_url();
+	auto epg_template = epg_param.get_epg_url();
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_API_URL, get_provider_api_url());
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_DOMAIN, params.get_epg_domain());
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_DOMAIN, epg_param.get_epg_domain());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DOMAIN, info->get_domain());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->get_id());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, epg_id);
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, info->get_token());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_S_TOKEN, info->get_token());
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DATE, params.get_epg_date_format());
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DATE, epg_param.get_epg_date_format());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_YEAR, std::to_wstring(dt.GetYear()));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_MONTH, std::to_wstring(dt.GetMonth()));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DAY, std::to_wstring(dt.GetDay()));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TIMESTAMP, fmt::format(L"{:d}", std::mktime(&lt)));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DUNE_IP, GetConfig().get_string(true, REG_DUNE_IP).c_str());
+
+	replace_params_vars(params, epg_template);
 
 	return epg_template;
 }

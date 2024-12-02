@@ -101,7 +101,7 @@ public:
 	/// <param name="epg_id">channel epg id</param>
 	/// <param name="for_time">date to request</param>
 	/// <returns>wstring</returns>
-	std::wstring compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time, const uri_stream* info);
+	std::wstring compile_epg_url(int epg_idx, const std::wstring& epg_id, time_t for_time, const uri_stream* info, const TemplateParams& params);
 
 	/// <summary>
 	/// get playable url
@@ -206,6 +206,7 @@ protected:
 	void delete_file_cookie(const std::wstring& name) const;
 
 	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const;
+	std::wstring replace_params_vars(const TemplateParams& params, std::wstring& url) const;
 
 protected:
 	PluginType plugin_type = PluginType::enCustom;

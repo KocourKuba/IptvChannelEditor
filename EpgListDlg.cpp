@@ -116,7 +116,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 	}
 	else
 	{
-		m_csEpgUrl = m_plugin->compile_epg_url(m_epg_idx, m_info->get_epg_id(m_epg_idx), start_time, m_info).c_str();
+		m_csEpgUrl = m_plugin->compile_epg_url(m_epg_idx, m_info->get_epg_id(m_epg_idx), start_time, m_info, m_params).c_str();
 	}
 
 	bool found = false;

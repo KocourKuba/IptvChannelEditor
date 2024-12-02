@@ -2495,7 +2495,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://tv.team/{EPG_ID}.json",
+          "epg_url": "http://{PL_DOMAIN}/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2525,7 +2525,18 @@
         }
       ],
       "provider_url": "https://tv.team/",
-      "provider_api_url": "http://tv.team/api",
+      "domains_list": [
+        {
+          "id": "tv.team",
+          "name": "tv.team"
+        },
+        {
+          "id": "tvteam.eu",
+          "name": "tvteam.eu"
+        }
+      ],
+      "static_domains": true,
+      "provider_api_url": "http://{PL_DOMAIN}/api",
       "streams_config": [
         {
           "cu_type": "flussonic",
@@ -2543,43 +2554,6 @@
         }
       ],
       "title": "TV Team"
-    },
-    "uspeh": {
-      "access_type": "pin",
-      "balance_support": false,
-      "name": "uspeh.tv",
-      "playlist_templates": [
-        {
-          "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>[^\\/]+)\\/(?<id>.+)\\/(?<var1>.+)\\.m3u8\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^.+\/token=(?<password>.+)$",
-          "pl_template": "{API_URL}/hls/token={PASSWORD}"
-        }
-      ],
-      "provider_api_url": "https://m3u.admuspeh.my",
-      "provider_url": "https://uspeh.tv/",
-      "streams_config": [
-        {
-          "cu_duration": 10800,
-          "cu_type": "flussonic",
-          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
-          "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}.m3u8?token={TOKEN}"
-        },
-        {}
-      ],
-      "title": "Uspeh TV",
-      "user_agent": "DuneHD/1.0",
-      "vod_engine": "M3U",
-      "vod_templates": [
-        {
-          "name": "Standard",
-          "parse_regex": "^(?<title>[^(]+)\\s\\((?<year>\\d{4})\\)$",
-          "parse_regex_title": "^(?<title>[^(]+)\\s\\((?<year>\\d{4})\\)$",
-          "pl_template": "https://m3u.admuspeh.my/movie/token={PASSWORD}"
-        }
-      ]
     },
     "vidok": {
       "access_type": "login",

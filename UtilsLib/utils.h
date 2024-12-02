@@ -481,6 +481,22 @@ static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
 	return rtf;
 }
 
+template<typename T>
+T get_safe_index(const std::vector<T>& v, const size_t idx)
+{
+	if (v.empty())
+	{
+		return T;
+	}
+
+	if (idx >= v.size())
+	{
+		return v[0];
+	}
+
+	return v[idx];
+}
+
 std::wstring& ensure_backslash(std::wstring& src);
 time_t parse_xmltv_date(const char* sz_date, size_t full_len);
 std::string generateRandomId(size_t length = 0);
