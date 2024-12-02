@@ -2020,10 +2020,10 @@ void CIPTVChannelEditorDlg::FillEPG()
 	}
 
 	bool found = false;
-	std::set<std::wstring> ids;
+	std::vector<std::wstring> ids;
 	if (epg_idx != 2)
 	{
-		ids.emplace(uri_stream->get_epg_id(epg_idx));
+		ids.emplace_back(uri_stream->get_epg_id(epg_idx));
 	}
 	else
 	{
@@ -2032,11 +2032,11 @@ void CIPTVChannelEditorDlg::FillEPG()
 		{
 			if (!val.empty())
 			{
-				ids.emplace(utils::wstring_tolower_l_copy(val));
+				ids.emplace_back(utils::wstring_tolower_l_copy(val));
 			}
 		}
-		ids.emplace(utils::wstring_tolower_l_copy(uri_stream->get_title()));
-		ids.emplace(utils::wstring_tolower_l_copy(uri_stream->get_id()));
+		ids.emplace_back(utils::wstring_tolower_l_copy(uri_stream->get_title()));
+		ids.emplace_back(utils::wstring_tolower_l_copy(uri_stream->get_id()));
 	}
 
 	for(const auto& epg_id : ids)

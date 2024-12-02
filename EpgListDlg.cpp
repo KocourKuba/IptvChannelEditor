@@ -120,10 +120,10 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 	}
 
 	bool found = false;
-	std::set<std::wstring> ids;
+	std::vector<std::wstring> ids;
 	if (m_epg_idx != 2)
 	{
-		ids.emplace(m_info->get_epg_id(m_epg_idx));
+		ids.emplace_back(m_info->get_epg_id(m_epg_idx));
 	}
 	else
 	{
@@ -132,11 +132,11 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		{
 			if (!val.empty())
 			{
-				ids.emplace(utils::wstring_tolower_l_copy(val));
+				ids.emplace_back(utils::wstring_tolower_l_copy(val));
 			}
 		}
-		ids.emplace(utils::wstring_tolower_l_copy(m_info->get_title()));
-		ids.emplace(utils::wstring_tolower_l_copy(m_info->get_id()));
+		ids.emplace_back(utils::wstring_tolower_l_copy(m_info->get_title()));
+		ids.emplace_back(utils::wstring_tolower_l_copy(m_info->get_id()));
 	}
 
 
