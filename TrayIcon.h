@@ -34,7 +34,7 @@ private:
 	struct TRAY_ICON_DATA
 	{
 		HICON hIcon = nullptr;		// Handle to the icon
-		CString strToolTip{}; // tooltip displayed for the tray icon
+		CString strToolTip; // tooltip displayed for the tray icon
 	};
 
 public:

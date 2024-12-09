@@ -32,10 +32,6 @@ class CHistoryCombo : public CComboBox
 {
 	DECLARE_SERIAL(CHistoryCombo)
 
-public:
-	CHistoryCombo() = default;
-	virtual ~CHistoryCombo() = default;
-
 protected:
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 

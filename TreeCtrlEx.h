@@ -35,15 +35,12 @@ class CTreeCtrlEx : public CTreeCtrl
 {
 	struct CLRFONT
 	{
-		LOGFONT logfont;	// A LOGFONT object that represents the tree item font.
+		LOGFONT logfont{};	// A LOGFONT object that represents the tree item font.
 		COLORREF color;		// An RGB value that represents the text color for a tree item.
 		COLORREF colorBack; // An RGB value that represents the background color for a tree item.
-		CLRFONT() : color((COLORREF)-1), colorBack((COLORREF)-1)
-		{
-			::ZeroMemory(&logfont, sizeof(LOGFONT));
-		}
+		CLRFONT() : color((COLORREF)-1), colorBack((COLORREF)-1) {}
 	};
-	typedef CMap<void*, void*, CLRFONT, CLRFONT&> CColorFontMap;
+	using CColorFontMap = CMap<void*, void*, CLRFONT, CLRFONT&>;
 
 	DECLARE_DYNAMIC(CTreeCtrlEx)
 

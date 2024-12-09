@@ -2136,7 +2136,7 @@ BEGIN
     IDS_STRING_COL_ARCHIVE  "R"
     IDS_STRING_EDIT_API_URL "Domain URL points to provider API. This value Used for {API_URL} macros"
     IDS_STRING_EDIT_PLAYLIST_DOMAIN 
-                            "Playlist domain URL. This value used for {PL_DOMAIN} macros"
+                            "Playlist domain URL. This value used for {DOMAIN_ID} macros"
     IDS_STRING_EDIT_VOD_PLAYLIST_DOMAIN 
                             "VOD playlist domain URL. This value used for {VOD_DOMAIN} macros"
     IDS_STRING_EDIT_EPG_DOMAIN 

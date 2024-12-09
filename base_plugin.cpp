@@ -176,7 +176,7 @@ std::wstring base_plugin::replace_params_vars(const TemplateParams& params, std:
 	if (!domains_list.empty())
 	{
 		size_t domain = ((params.creds.domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : params.creds.domain_id);
-		utils::string_replace_inplace<wchar_t>(url, REPL_PL_DOMAIN, domains_list[domain].get_name());
+		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN_ID, domains_list[domain].get_name());
 	}
 
 	if (!servers_list.empty())

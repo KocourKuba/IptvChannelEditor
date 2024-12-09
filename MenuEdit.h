@@ -30,9 +30,6 @@ class CMenuEdit : public CEdit
 {
 // Construction
 public:
-	CMenuEdit() = default;
-	virtual ~CMenuEdit() = default;
-
 	void SetTemplateParams(const std::vector<std::wstring>& items) { m_items = items; };
 	bool IsTextSelected();
 	bool IsReadOnly();

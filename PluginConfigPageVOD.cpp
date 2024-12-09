@@ -104,11 +104,11 @@ void CPluginConfigPageVOD::AssignMacros()
 	std::vector<std::wstring> pl_params =
 	{
 		REPL_API_URL,
-		REPL_PL_DOMAIN,
 		REPL_SUBDOMAIN,
 		REPL_LOGIN,
 		REPL_PASSWORD,
 		REPL_TOKEN,
+		REPL_DOMAIN_ID,
 		REPL_SERVER_ID,
 		REPL_DEVICE_ID,
 		REPL_QUALITY_ID,

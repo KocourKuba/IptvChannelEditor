@@ -31,7 +31,6 @@ class CResizedPropertySheet : public CMFCPropertySheet
 	DECLARE_DYNAMIC(CResizedPropertySheet)
 
 public:
-	CResizedPropertySheet() = default;
 	CResizedPropertySheet(LPCTSTR pszSection,
 						  CWnd* pParentWnd = nullptr,
 						  UINT iSelectPage = 0)
@@ -43,8 +42,6 @@ public:
 						  CWnd* pParentWnd = nullptr,
 						  UINT iSelectPage = 0)
 		: CMFCPropertySheet(pszCaption, pParentWnd, iSelectPage), m_posKey(pszSection) {}
-
-	~CResizedPropertySheet() override = default;
 
 public:
 	BOOL OnInitDialog() override;
@@ -61,6 +58,6 @@ protected:
 	void SetupDynamicLayout();
 
 protected:
-	CRect m_min_rc{};
+	CRect m_min_rc;
 	CString m_posKey;
 };

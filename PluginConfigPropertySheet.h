@@ -98,5 +98,5 @@ protected:
 	std::vector<std::wstring>& m_configs;
 
 	CToolTipCtrl m_wndToolTipCtrl;
-	std::map<CWnd*, std::wstring> m_tooltips_info{};
+	std::map<CWnd*, std::wstring> m_tooltips_info;
 };

@@ -80,7 +80,6 @@ public:
 class CCommandLineInfoEx : public CCommandLineInfo
 {
 public:
-	CCommandLineInfoEx() = default;
 	void ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast) override;
 
 public:

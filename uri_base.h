@@ -32,10 +32,6 @@ DEALINGS IN THE SOFTWARE.
 class uri_base
 {
 public:
-	uri_base() = default;
-	virtual ~uri_base() = default;
-
-public:
 
 	/// <summary>
 	/// clear uri

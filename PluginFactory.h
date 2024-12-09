@@ -62,9 +62,9 @@ private:
 	PluginFactory(const PluginFactory& source) = delete;
 
 private:
-	std::map<std::string, plugin_config> m_config_storage{};
-	std::map<std::string, EpgParameters> m_known_presets{};
-	std::vector<IconPackInfo> m_image_libs{};
+	std::map<std::string, plugin_config> m_config_storage;
+	std::map<std::string, EpgParameters> m_known_presets;
+	std::vector<IconPackInfo> m_image_libs;
 };
 
 inline PluginFactory& GetPluginFactory() { return PluginFactory::Instance(); }

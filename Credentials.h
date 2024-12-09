@@ -33,7 +33,6 @@ DEALINGS IN THE SOFTWARE.
 class Credentials
 {
 public:
-	Credentials() = default;
 	void Clear();
 
 	std::wstring get_login() const { return utils::utf8_to_utf16(login); }

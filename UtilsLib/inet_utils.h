@@ -55,8 +55,6 @@ class CUrlDownload
 {
 
 public:
-	CUrlDownload() = default;
-
 	bool DownloadFile(std::stringstream& vData,
 					  std::vector<std::string>* pHeaders = nullptr,
 					  bool verb_post = false,
@@ -102,13 +100,7 @@ std::string entityDecrypt(const std::string& text);
 
 class CBase64Coder
 {
-public:
-	//Constructors / Destructors
-	CBase64Coder() = default;
-	~CBase64Coder() = default;
-
 	//Methods
-
 public:
 	// Encode data to internal buffer to BASE64
 	bool Encode(const unsigned char* pData, int nSize, unsigned long dwFlags = ATL_BASE64_FLAG_NOCRLF);
@@ -129,7 +121,7 @@ public:
 
 protected:
 	//Member variables
-	std::vector<unsigned char> m_buf{};
+	std::vector<unsigned char> m_buf;
 	int m_nSize = 0;
 };
 
@@ -137,7 +129,6 @@ class CRC4Coder
 {
 public:
 	//Constructors / Destructors
-	CRC4Coder() = default;
 	CRC4Coder(const unsigned char* pKey, size_t nKeyLen);
 	CRC4Coder(const char* pKey, size_t nKeyLen);
 
@@ -165,7 +156,7 @@ protected:
 
 protected:
 	//Member variables
-	std::vector<unsigned char> m_buf{};
+	std::vector<unsigned char> m_buf;
 	size_t m_nSize = 0;
 
 	bool m_bKeySet = false;

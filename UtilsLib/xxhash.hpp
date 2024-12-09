@@ -105,8 +105,6 @@ namespace xxh
 			}
 
 			uint128_t(uint64_t low, uint64_t high) : low64(low), high64(high) {}
-
-			uint128_t() = default;
 		};
 
 	}

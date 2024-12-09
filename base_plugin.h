@@ -213,9 +213,9 @@ protected:
 	std::string internal_name;
 
 	// compiled regex for uri parse template
-	boost::wregex regex_uri_template{};
+	boost::wregex regex_uri_template;
 
 	// extracted named groups from uri parse template
-	std::vector<std::wstring> regex_named_groups{};
-	std::map<std::wstring, std::wstring, std::less<>> account_info{};
+	std::vector<std::wstring> regex_named_groups;
+	std::map<std::wstring, std::wstring, std::less<>> account_info;
 };

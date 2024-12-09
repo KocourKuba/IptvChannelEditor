@@ -56,5 +56,5 @@ protected:
 
 protected:
 	CToolTipCtrl m_wndToolTipCtrl;
-	std::map<CWnd*, std::wstring> m_tooltips_info{};
+	std::map<CWnd*, std::wstring> m_tooltips_info;
 };

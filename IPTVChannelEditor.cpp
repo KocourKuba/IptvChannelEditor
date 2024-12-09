@@ -1856,7 +1856,7 @@ std::wstring load_string_resource(unsigned int id)
 		return std::wstring{ p, static_cast<size_t>(len) };
 	}
 	// Return empty string; optionally replace with throwing an exception.
-	return std::wstring{};
+	return {};
 }
 
 std::wstring load_string_resource(unsigned int cp, unsigned int id)
@@ -1875,7 +1875,7 @@ std::wstring load_string_resource(unsigned int cp, unsigned int id)
 	}
 
 	// Return empty string; optionally replace with throwing an exception.
-	return std::wstring{};
+	return {};
 }
 
 std::string load_string_resource_a(unsigned int id)

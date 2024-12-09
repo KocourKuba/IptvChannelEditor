@@ -98,7 +98,7 @@ protected:
 
 private:
 	BOOL m_bPortable = FALSE;
-	std::map<PluginType, map_variant> m_settings{};
+	std::map<PluginType, map_variant> m_settings;
 	PluginType m_pluginType = PluginType::enEdem;
 	nlohmann::json m_config;
 };
