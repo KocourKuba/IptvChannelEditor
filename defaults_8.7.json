@@ -345,6 +345,7 @@
           "epg_url": "http://epg.drm-play.com/bcu%2Fepg%2F{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
+          "epg_name": "name",
           "epg_root": "epg_data",
           "epg_start": "time",
           "epg_icon": "icon"
@@ -638,7 +639,7 @@
       ]
     },
     "filmax": {
-      "access_type": "login",
+      "access_type": "pin",
       "epg_params": [
         {
           "epg_param": "first",
@@ -647,6 +648,7 @@
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_root": "epg_data",
+          "epg_start": "time",
           "epg_icon": "icon"
         },
         {}
@@ -656,12 +658,22 @@
         {
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<int_id>.+)\\/(?<var1>.+)\\.m3u8\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+)\\/(?<password>.+)\\/(?:hls|ts)\\/(?<server>.+)\\/playlist\\.m3u8$",
-          "pl_template": "http://lk.filmax-tv.ru/{LOGIN}/{PASSWORD}/hls/p{SERVER_ID}/playlist.m3u8",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/playlist\\/(?<server>.+)\\/.+\\/(?<password>.+)\\.m3u$",
+          "pl_template": "http://{DOMAIN_ID}/playlist/p{SERVER_ID}/hls/{PASSWORD}.m3u",
           "tag_id_match": "tvg-id"
         }
       ],
       "provider_url": "https://filmax-tv.ru/",
+      "domains_list": [
+        {
+          "id": "0",
+          "name": "filmax-tv.ru"
+        },
+        {
+          "id": "1",
+          "name": "fm7.pp.ru"
+        }
+      ],
       "servers_list": [
         {
           "id": "1",
@@ -694,15 +706,10 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{INT_ID}/{VAR1}-{START}-{DURATION}.m3u8?token={TOKEN}",
           "uri_template": "{SCHEME}://{DOMAIN}/{INT_ID}/{VAR1}.m3u8?token={TOKEN}"
         },
         {
-          "cu_type": "flussonic",
-          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
-          "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{INT_ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{INT_ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "Filmax TV"
@@ -815,13 +822,13 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.+\\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$",
-          "pl_template": "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls"
+          "pl_template": "http://pl.{DOMAIN_ID}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls"
         },
         {
           "name": "No Adults",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.+\\?username=(?<login>.+)&password=(?<password>[^&]+)&.*$",
-          "pl_template": "http://pl.{PL_DOMAIN}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0"
+          "pl_template": "http://pl.{DOMAIN_ID}/get.php?username={LOGIN}&password={PASSWORD}&type=m3u&output=hls&censored=0"
         }
       ],
       "provider_url": "http://ottg.cc/",
@@ -849,7 +856,7 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "pl_template": "http://api.{PL_DOMAIN}/playlist/vod?login={LOGIN}&password={PASSWORD}"
+          "pl_template": "http://api.{DOMAIN_ID}/playlist/vod?login={LOGIN}&password={PASSWORD}"
         }
       ]
     },
@@ -928,7 +935,7 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/play\\/(?<id>.+)\\/(?<token>.+)\\/video\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/play\\/(?<password>.+)\\/m3u8?$",
-          "pl_template": "{PL_DOMAIN}/pl/{PASSWORD}/playlist.m3u8"
+          "pl_template": "{DOMAIN_ID}/pl/{PASSWORD}/playlist.m3u8"
         }
       ],
       "provider_url": "https://ip-tv.best/",
@@ -1629,7 +1636,7 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/stream\\/(?<token>.+)\\/(?<id>.+)\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/(?<password>.+)\\/.*$",
-          "pl_template": "{PL_DOMAIN}/playlist/{PASSWORD}/m3u"
+          "pl_template": "{DOMAIN_ID}/playlist/{PASSWORD}/m3u"
         }
       ],
       "provider_url": "https://www.ottclub.cc/",
@@ -2047,7 +2054,7 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)\\/.+\\.m3u8$",
           "pl_parse_regex": "https?:\\/\\/[^\\/]+\\/tv-m3u8\\/(?<login>[^-]+)-(?<password>.+)$",
-          "pl_template": "http://{PL_DOMAIN}/tv_live-m3u8/{LOGIN}-{PASSWORD}"
+          "pl_template": "http://{DOMAIN_ID}/tv_live-m3u8/{LOGIN}-{PASSWORD}"
         }
       ],
       "provider_api_url": "https://list.playtv.pro/api/players.php",
@@ -2075,7 +2082,7 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "pl_template": "http://{PL_DOMAIN}/kino-full/{LOGIN}-{PASSWORD}"
+          "pl_template": "http://{DOMAIN_ID}/kino-full/{LOGIN}-{PASSWORD}"
         }
       ]
     },
@@ -2149,7 +2156,7 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/iptv\\/p\\/(?<password>.+)\\/.*$",
-          "pl_template": "http://{PL_DOMAIN}/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u"
+          "pl_template": "http://{DOMAIN_ID}/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u"
         }
       ],
       "provider_api_url": "http://app.media24.cc/json/c",
@@ -2495,7 +2502,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://{PL_DOMAIN}/{EPG_ID}.json",
+          "epg_url": "http://{DOMAIN_ID}/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2536,7 +2543,7 @@
         }
       ],
       "static_domains": true,
-      "provider_api_url": "http://{PL_DOMAIN}/api",
+      "provider_api_url": "http://{DOMAIN_ID}/api",
       "streams_config": [
         {
           "cu_type": "flussonic",
