@@ -24,8 +24,6 @@ VERSION HISTORY:
 /////////////////////////////////////////////////////////////////////////////
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif // _DEBUG
 
 static bool IsBadMemPtr(bool write, void* ptr, size_t size)

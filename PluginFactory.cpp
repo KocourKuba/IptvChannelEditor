@@ -45,8 +45,6 @@ DEALINGS IN THE SOFTWARE.
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
 
 static std::vector<std::pair<PluginType, std::string>> s_all_plugins = {

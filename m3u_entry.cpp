@@ -31,8 +31,6 @@ DEALINGS IN THE SOFTWARE.
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
 
 static std::map<std::string_view, m3u_entry::directives> s_ext_directives = {
