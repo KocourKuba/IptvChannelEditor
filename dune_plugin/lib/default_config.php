@@ -1402,12 +1402,12 @@ class default_config extends dynamic_config
                 }
             }
 
-            if (strpos($url, Plugin_Macros::PL_DOMAIN) !== false) {
+            if (strpos($url, Plugin_Macros::DOMAIN_ID) !== false) {
                 $domain = $this->get_domain_name();
                 if (empty($domain)) {
                     hd_debug_print("Domain ID not set, but macro was used");
                 } else {
-                    $url = str_replace(Plugin_Macros::PL_DOMAIN, $domain, $url);
+                    $url = str_replace(Plugin_Macros::DOMAIN_ID, $domain, $url);
                 }
             }
 

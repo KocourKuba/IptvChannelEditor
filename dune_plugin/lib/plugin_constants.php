@@ -38,7 +38,6 @@ class Plugin_Constants
     const /* (array)  */ XMLTV_SOURCES = 'xmltv_sources';
 
     const /* (char*)  */ PLAYLIST_NAME = 'name';
-    const /* (char *) */ PL_DOMAIN = 'pl_domain';
     const /* (char *) */ PL_TEMPLATE = 'pl_template';
     const /* (char *) */ PARSE_REGEX = 'parse_regex';
     const /* (char *) */ PARSE_REGEX_TITLE = 'parse_regex_title';
