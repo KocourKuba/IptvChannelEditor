@@ -112,6 +112,8 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_ACTIVE_ACCOUNT,
 	REG_ACTIVE_CH_LIST,
 	REG_CUSTOM_XMLTV_SOURCE,
+	REG_EPG_ID_IDX,
+	REG_EPG_SOURCE_IDX
 };
 
 void AccountSettings::SaveSettings()

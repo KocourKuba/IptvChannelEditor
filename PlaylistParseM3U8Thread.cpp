@@ -90,10 +90,10 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 
 						switch (epg_param.get_epg_id_source())
 						{
-							case enChannelId:
+							case epg_id_sources::enChannelId:
 								entry->set_epg_id(i, entry->get_id());
 								break;
-							case enChannelName:
+							case epg_id_sources::enChannelName:
 								entry->set_epg_id(i, entry->get_title());
 								break;
 							default:

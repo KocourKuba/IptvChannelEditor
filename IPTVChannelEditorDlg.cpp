@@ -860,6 +860,9 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_lastTree = &m_wndChannelsTree;
 	m_blockChecking = false;
 
+	int epg_id_idx = GetConfig().get_int(false, REG_EPG_ID_IDX, 0);
+	CheckRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3, IDC_RADIO_EPG1 + epg_id_idx);
+
 	const auto& used_cfg = fmt::format(load_string_resource(IDS_STRING_USED_CONFIG),
 									   cur_account.config.empty() ? load_string_resource(IDS_STRING_STR_DEFAULT) : cur_account.get_config());
 	GetDlgItem(IDC_STATIC_CONFIG)->SetWindowText(used_cfg.c_str());
@@ -1232,12 +1235,6 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 
 void CIPTVChannelEditorDlg::FillXmlSources()
 {
-	int old_data = 0;
-	if (m_wndXmltvEpgSource.GetCount())
-	{
-		old_data = (int)m_wndXmltvEpgSource.GetItemData(m_xmltvEpgSource != -1 ? m_xmltvEpgSource : 0);
-	}
-
 	m_wndXmltvEpgSource.ResetContent();
 
 	const auto& internal_source = m_plugin->get_internal_epg_urls();
@@ -1248,7 +1245,6 @@ void CIPTVChannelEditorDlg::FillXmlSources()
 	all_xmltv_sources.insert(all_xmltv_sources.end(), custom_source.begin(), custom_source.end());
 
 	int max_dropdown_size = 80;
-	m_xmltvEpgSource = 0;
 	m_xmltv_sources.clear();
 	for (const auto& source : all_xmltv_sources)
 	{
@@ -1257,10 +1253,6 @@ void CIPTVChannelEditorDlg::FillXmlSources()
 		int idx = m_wndXmltvEpgSource.AddString(text.c_str());
 		auto tag_data = crc32_bitwise(source.get_id().c_str(), source.get_id().size());
 		m_wndXmltvEpgSource.SetItemData(idx, tag_data);
-		if (tag_data == old_data)
-		{
-			m_xmltvEpgSource = idx;
-		}
 
 		CWindowDC dc(this);
 		CFont* pFont = m_wndXmltvEpgSource.GetFont();
@@ -1272,6 +1264,15 @@ void CIPTVChannelEditorDlg::FillXmlSources()
 		if (size.cx > max_dropdown_size)
 			max_dropdown_size = size.cx;
 	}
+
+	m_xmltvEpgSource = GetConfig().get_int(false, REG_EPG_SOURCE_IDX, 0);
+
+	int src_cnt = m_wndXmltvEpgSource.GetCount();
+	if (!src_cnt || m_xmltvEpgSource == -1 || m_xmltvEpgSource >= src_cnt)
+	{
+		m_xmltvEpgSource = 0;
+	}
+
 	m_wndXmltvEpgSource.SetCurSel(m_xmltvEpgSource);
 	m_wndXmltvEpgSource.SetDroppedWidth(max_dropdown_size);
 	m_wndXmltvEpgSource.EnableWindow(!all_xmltv_sources.empty());
@@ -1414,14 +1415,14 @@ void CIPTVChannelEditorDlg::OnOK()
 
 void CIPTVChannelEditorDlg::OnCancel()
 {
+	SaveWindowPos(GetSafeHwnd(), REG_WINDOW_POS);
+	GetConfig().UpdatePluginSettings();
+	GetConfig().SaveSettings();
+
 	if (!CheckForSave())
 	{
 		return;
 	}
-
-	SaveWindowPos(GetSafeHwnd(), REG_WINDOW_POS);
-	GetConfig().UpdatePluginSettings();
-	GetConfig().SaveSettings();
 
 	m_evtStop.SetEvent();
 
@@ -3192,7 +3193,9 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 
 	int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3) - IDC_RADIO_EPG1;
 	if (epg_idx < 0 || epg_idx > 2)
+	{
 		epg_idx = 0;
+	}
 
 	bool firstEpg = (epg_idx == 0 || epg_idx == 2);
 	m_wndBtnCustomUrl.EnableWindow(single);
@@ -3705,6 +3708,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonEpg()
 {
+	GetConfig().set_int(false, REG_EPG_ID_IDX, GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3) - IDC_RADIO_EPG1);
+
 	LoadTimerEPG();
 }
 
@@ -6259,6 +6264,8 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomXmltvEpg()
 	UpdateData(TRUE);
 	m_epg_cache[2].clear();
 	m_epg_aliases.clear();
+
+	GetConfig().set_int(false, REG_EPG_SOURCE_IDX, m_xmltvEpgSource);
 
 	FillEPG();
 }

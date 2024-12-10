@@ -28,12 +28,12 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib/json_wrapper.h"
 
-typedef enum
+enum class epg_id_sources
 {
 	enEpgId = 0,
 	enChannelId = 1,
 	enChannelName = 2,
-} epg_id_sources;
+};
 
 /// <summary>
 /// Parameters to parse EPG

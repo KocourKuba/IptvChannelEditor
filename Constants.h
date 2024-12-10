@@ -120,6 +120,8 @@ constexpr auto REG_PLUGIN_SUFFIX       = _T("PluginSuffix");
 constexpr auto REG_ACCOUNT_DATA        = _T("AccountData");
 constexpr auto REG_ACTIVE_ACCOUNT      = _T("ActiveAccount");
 constexpr auto REG_ACTIVE_CH_LIST      = _T("ActiveChannelsList");
+constexpr auto REG_EPG_ID_IDX          = _T("EpgIdIdx");
+constexpr auto REG_EPG_SOURCE_IDX      = _T("EpgSourceIdx");
 
 constexpr auto REPL_API_URL            = L"{API_URL}";       // special url used to get information from provider
 constexpr auto REPL_LIVE_URL           = L"{LIVE_URL}";      // live url, used in archive template substitution
