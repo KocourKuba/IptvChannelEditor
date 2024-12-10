@@ -2351,6 +2351,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 		while (channel_node)
 		{
 			const auto channel_id = rapidxml::get_value_wstring(channel_node->first_attribute("id"));
+			m_epg_aliases.emplace(utils::wstring_tolower_l_copy(channel_id), channel_id);
 			auto display_name_node = channel_node->first_node("display-name");
 			while (display_name_node)
 			{
