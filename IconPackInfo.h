@@ -33,14 +33,9 @@ DEALINGS IN THE SOFTWARE.
 /// <summary>
 /// Parameters to parse ImageLibs
 /// </summary>
-struct IconPackInfo
+class IconPackInfo
 {
-	ImageLibType type;
-	std::string name;
-	std::string package_name;
-	std::string url;
-	bool square;
-
+public:
 	ImageLibType get_type() const { return type; }
 	void set_type(const ImageLibType val) { type = val; }
 
@@ -83,4 +78,10 @@ struct IconPackInfo
 		DESERIALIZE_STRUCT(j, c, url);
 		DESERIALIZE_STRUCT(j, c, square);
 	}
+
+	ImageLibType type = ImageLibType::enNone;
+	std::string name;
+	std::string package_name;
+	std::string url;
+	bool square = false;
 };
