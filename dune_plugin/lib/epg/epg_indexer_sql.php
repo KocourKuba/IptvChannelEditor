@@ -142,10 +142,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
                     }
 
                     while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
-                        $data = array();
-                        foreach ($row as $key => $col) {
-                            $data[$key] = $col;
-                        }
+                        $data = array_map(function ($col) { return $col; }, $row);
                         $channel_position[] = $data;
                     }
                 }
