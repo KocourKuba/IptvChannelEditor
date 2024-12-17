@@ -2280,7 +2280,6 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 	auto cache_file = utils::CUrlDownload::GetCachedPath(real_url);
 	if (file_fmt == SevenZip::CompressionFormat::GZip || file_fmt == SevenZip::CompressionFormat::Zip)
 	{
-		std::vector<char> buffer;
 		const auto& unpacked_path = utils::CUrlDownload::GetCachedPath(real_url.substr(0, real_url.length() - 3));
 		if (m_dl.CheckIsCacheExpired(unpacked_path))
 		{
@@ -2290,16 +2289,24 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 
 			const auto& names = extractor.GetItemsNames();
 			if (names.empty())
+			{
 				return false;
+			}
 
-			const auto& sizes = extractor.GetOrigSizes();
-			buffer.reserve(sizes[0]);
-			if (!extractor.ExtractFileToMemory(0, (std::vector<BYTE>&)buffer))
+			if (!extractor.ExtractFile(names[0], utils::CUrlDownload::GetCacheDir()))
+			{
 				return false;
+			}
 
-			std::ofstream unpacked_file(unpacked_path, std::ofstream::binary);
-			unpacked_file.write((char*)buffer.data(), buffer.size());
-			unpacked_file.close();
+			// Special case for unpacking gz
+			if (names[0].empty())
+			{
+				const auto extractedPath = utils::CUrlDownload::GetCacheDir().append(L"[Content]");
+				if(std::filesystem::exists(extractedPath))
+				{
+					std::filesystem::rename(extractedPath, unpacked_path);
+				}
+			}
 		}
 
 		cache_file = unpacked_path;
