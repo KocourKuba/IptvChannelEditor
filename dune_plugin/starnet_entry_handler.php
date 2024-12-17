@@ -115,19 +115,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                             || (isset($plugin_cookies->auto_play) && $plugin_cookies->auto_play === SetupControlSwitchDefs::switch_on)) {
                             hd_debug_print("launch play");
 
-                            $media_url = null;
-                            if (file_exists('/config/resume_state.properties')) {
-                                $resume_state = parse_ini_file('/config/resume_state.properties', 0, INI_SCANNER_RAW);
-
-                                if (strpos($resume_state['plugin_name'], get_plugin_name()) !== false) {
-                                    $media_url = MediaURL::decode();
-                                    $media_url->is_favorite = $resume_state['plugin_tv_is_favorite'];
-                                    $media_url->group_id = $resume_state['plugin_tv_is_favorite'] ? Starnet_Tv_Favorites_Screen::ID : $resume_state['plugin_tv_group'];
-                                    $media_url->channel_id = $resume_state['plugin_tv_channel'];
-                                    $media_url->archive_tm = ((time() - $resume_state['plugin_tv_archive_tm']) < 259200) ? $resume_state['plugin_tv_archive_tm'] : -1;
-                                }
-                            }
-                            $action = Action_Factory::tv_play($media_url);
+                            $action = Action_Factory::tv_play($this->get_resume_mediaurl());
                         } else {
                             hd_debug_print("action: launch open");
                             $action = Action_Factory::open_folder();
@@ -146,20 +134,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         if ((int)$user_input->mandatory_playback !== 1
                             || (isset($plugin_cookies->auto_resume) && $plugin_cookies->auto_resume === SetupControlSwitchDefs::switch_off)) break;
 
-                        $media_url = null;
-                        if (file_exists('/config/resume_state.properties')) {
-                            $resume_state = parse_ini_file('/config/resume_state.properties', 0, INI_SCANNER_RAW);
-
-                            if (strpos($resume_state['plugin_name'], get_plugin_name()) !== false) {
-                                $media_url = MediaURL::decode();
-                                $media_url->is_favorite = $resume_state['plugin_tv_is_favorite'];
-                                $media_url->group_id = $resume_state['plugin_tv_is_favorite'] ? Starnet_Tv_Favorites_Screen::ID : $resume_state['plugin_tv_group'];
-                                $media_url->channel_id = $resume_state['plugin_tv_channel'];
-                                $media_url->archive_tm = ((time() - $resume_state['plugin_tv_archive_tm']) < 259200) ? $resume_state['plugin_tv_archive_tm'] : -1;
-                            }
-                        }
-
-                        return Action_Factory::tv_play($media_url);
+                        return Action_Factory::tv_play($this->get_resume_mediaurl());
 
                     case self::ACTION_UPDATE_EPFS:
                         $this->plugin->init_epg_manager();
@@ -185,5 +160,22 @@ class Starnet_Entry_Handler implements User_Input_Handler
         }
 
         return null;
+    }
+
+    private function get_resume_mediaurl()
+    {
+        $media_url = null;
+        if (file_exists('/config/resume_state.properties')) {
+            $resume_state = parse_ini_file('/config/resume_state.properties', 0, INI_SCANNER_RAW);
+
+            if (strpos($resume_state['plugin_name'], get_plugin_name()) !== false) {
+                $media_url = MediaURL::decode();
+                $media_url->is_favorite = $resume_state['plugin_tv_is_favorite'];
+                $media_url->group_id = $resume_state['plugin_tv_is_favorite'] ? Starnet_Tv_Favorites_Screen::ID : $resume_state['plugin_tv_group'];
+                $media_url->channel_id = $resume_state['plugin_tv_channel'];
+                $media_url->archive_tm = ((time() - $resume_state['plugin_tv_archive_tm']) < 259200) ? $resume_state['plugin_tv_archive_tm'] : -1;
+            }
+        }
+        return $media_url;
     }
 }
