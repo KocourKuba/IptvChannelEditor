@@ -132,9 +132,7 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
                 $this->plugin->toggle_parameter($control_id);
                 $this->plugin->tv->reload_channels();
                 $this->plugin->set_need_update_epfs();
-                return $this->plugin->invalidate_epfs_folders($plugin_cookies,
-                    array(Starnet_Tv_Groups_Screen::ID),
-                    Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)));
+                return Action_Factory::invalidate_all_folders($plugin_cookies, Action_Factory::reset_controls($this->do_get_control_defs()));
 
             case PARAM_ASK_EXIT:
             case PARAM_EPG_FONT_SIZE:

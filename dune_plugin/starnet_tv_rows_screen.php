@@ -560,7 +560,9 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
             $title = $epg_data[PluginTvEpgProgram::name];
             $desc = (!empty($epg_data[Ext_Epg_Program::sub_title]) ? $epg_data[Ext_Epg_Program::sub_title] . "\n" : '') . $epg_data[PluginTvEpgProgram::description];
-            $fanart_url = $epg_data[PluginTvEpgProgram::icon_url];
+            if (isset($epg_data[PluginTvEpgProgram::icon_url])) {
+                $fanart_url = $epg_data[PluginTvEpgProgram::icon_url];
+            }
 
             // duration
             $geom = GComp_Geom::place_top_left(PaneParams::info_width, PaneParams::prog_item_height, 0, $next_pos_y);
@@ -869,7 +871,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             return null;
         }
 
-        foreach ($group->get_items_order() as $channel_id) {
+        foreach ($this->plugin->get_favorites() as $channel_id) {
             $channel = $this->plugin->tv->get_channel($channel_id);
             if (is_null($channel) || $channel->is_disabled()) continue;
 
@@ -881,9 +883,11 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         }
 
         if (empty($items)) {
+            hd_debug_print("No channels in Favorites group");
             return null;
         }
 
+        hd_debug_print("In Favorites group added: " . count($items));
         return $this->create_rows($items,
             json_encode(array('group_id' => FAVORITES_GROUP_ID)),
             $group->get_title(),
