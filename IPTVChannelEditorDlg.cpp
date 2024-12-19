@@ -2299,13 +2299,20 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 			}
 
 			// Special case for unpacking gz
+			std::filesystem::path extractedPath;
 			if (names[0].empty())
 			{
-				const auto extractedPath = utils::CUrlDownload::GetCacheDir().append(L"[Content]");
-				if(std::filesystem::exists(extractedPath))
-				{
-					std::filesystem::rename(extractedPath, unpacked_path);
-				}
+				extractedPath = utils::CUrlDownload::GetCacheDir().append(L"[Content]");
+			}
+			else
+			{
+				extractedPath = utils::CUrlDownload::GetCacheDir().append(names[0]);
+
+			}
+
+			if(std::filesystem::exists(extractedPath))
+			{
+				std::filesystem::rename(extractedPath, unpacked_path);
 			}
 		}
 
@@ -2416,9 +2423,8 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 		dwEnd = GetTickCount();
 		TRACE("\nParse programme time %f\n", (double)(dwEnd - dwStart) / 1000.);
 	}
-	catch (rapidxml::parse_error& ex)
+	catch (...)
 	{
-		ex;
 		return false;
 	}
 
