@@ -70,27 +70,31 @@ PlaylistTemplateInfo& plugin_config::get_playlist_info(size_t idx)
 		idx = 0;
 	}
 
-	return playlist_templates[idx];
+	return playlist_templates.empty() ? emptyInfo : playlist_templates[idx];
 }
 
 const PlaylistTemplateInfo& plugin_config::get_vod_info(size_t idx) const
 {
+	static PlaylistTemplateInfo emptyInfo;
+
 	if (idx != -1 && idx >= vod_templates.size())
 	{
 		idx = 0;
 	}
 
-	return vod_templates[idx];
+	return vod_templates.empty() ? emptyInfo : vod_templates[idx];
 }
 
 PlaylistTemplateInfo& plugin_config::get_vod_info(size_t idx)
 {
+	static PlaylistTemplateInfo emptyInfo;
+
 	if (idx != -1 && idx >= vod_templates.size())
 	{
 		idx = 0;
 	}
 
-	return vod_templates[idx];
+	return vod_templates.empty() ? emptyInfo : vod_templates[idx];
 }
 
 void plugin_config::clear()

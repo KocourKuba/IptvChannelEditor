@@ -238,9 +238,13 @@ void CPluginConfigPageEPG::FillControls()
 	m_EpgTimezone = (int)epg.epg_timezone;
 	m_wndChkUseDuration.SetCheck(epg.epg_use_duration != false);
 
-	m_SetID = GetPropertySheet()->m_CurrentStream->get_id().c_str();
 	int epg_type = m_wndEpgType.GetCurSel();
-	m_SetEpgID = GetPropertySheet()->m_CurrentStream->get_epg_id(epg_type).c_str();
+
+	if (GetPropertySheet()->m_CurrentStream)
+	{
+		m_SetID = GetPropertySheet()->m_CurrentStream->get_id().c_str();
+		m_SetEpgID = GetPropertySheet()->m_CurrentStream->get_epg_id(epg_type).c_str();
+	}
 
 	m_wndEpgPreset.SetCurSel((int)GetPropertySheet()->m_plugin->get_epg_preset_idx(epg_type));
 
