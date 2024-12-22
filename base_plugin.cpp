@@ -313,8 +313,8 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_API_URL, get_provider_api_url());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_DOMAIN, epg_param.get_epg_domain());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DOMAIN, info->get_domain());
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->get_id());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_EPG_ID, epg_id);
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_ID, info->get_id());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, info->get_token());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_S_TOKEN, info->get_token());
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DATE, epg_param.get_epg_date_format());
