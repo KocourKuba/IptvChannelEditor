@@ -68,15 +68,15 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
             $channel_title = $channel->get_title();
             hd_debug_print("Try to load EPG ID: '$epg_id' for channel '$channel_id' ($channel_title)");
 
+            $epg_url = $this->plugin->config->replace_account_vars($epg_url);
+
             $epg_url = str_replace(
-                array(Plugin_Macros::API_URL,
-                    Plugin_Macros::EPG_DOMAIN,
+                array(Plugin_Macros::EPG_DOMAIN,
                     Plugin_Macros::EPG_ID,
                     Plugin_Macros::ID,
                     Plugin_Macros::DUNE_IP
                 ),
-                array($this->plugin->config->get_feature(Plugin_Constants::PROVIDER_API_URL),
-                    $this->plugin->config->get_epg_param($epg_source, Epg_Params::EPG_DOMAIN),
+                array($this->plugin->config->get_epg_param($epg_source, Epg_Params::EPG_DOMAIN),
                     str_replace(' ', '%20', $epg_id),
                     $channel_id,
                     $this->dune_ip
@@ -91,20 +91,10 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
 
                 $epg_date = gmdate($date_format, $day_start_ts + get_local_time_zone_offset());
                 $epg_url = str_replace(Plugin_Macros::DATE, $epg_date, $epg_url);
-                //hd_debug_print("From DATE: $epg_date");
             }
 
             if (strpos($epg_url, Plugin_Macros::TIMESTAMP) !== false) {
                 $epg_url = str_replace(Plugin_Macros::TIMESTAMP, $day_start_ts, $epg_url);
-                //hd_debug_print("From Timestamp: $day_start_ts");
-            }
-
-            if (strpos($epg_url, Plugin_Macros::TOKEN) !== false) {
-                $epg_url = str_replace(Plugin_Macros::TOKEN, $this->plugin->get_credentials(Ext_Params::M_S_TOKEN), $epg_url);
-            }
-
-            if (strpos($epg_url, Plugin_Macros::S_TOKEN) !== false) {
-                $epg_url = str_replace(Plugin_Macros::S_TOKEN, $this->plugin->get_credentials(Ext_Params::M_S_TOKEN), $epg_url);
             }
 
             $epg_url = str_replace('#', '%23', $epg_url);

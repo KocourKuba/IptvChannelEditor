@@ -825,14 +825,14 @@ class default_config extends dynamic_config
             $custom_stream_type = $channel->get_custom_url_type();
         }
 
-        $play_template_url = $this->replace_account_vars($play_template_url);
-
         // replace all macros
         foreach ($replaces as $key => $value) {
             if (isset($ext_params[$key])) {
                 $play_template_url = str_replace($value, $ext_params[$key], $play_template_url);
             }
         }
+
+        $play_template_url = $this->replace_account_vars($play_template_url);
 
         foreach ($replaces as $value) {
             if (strpos($play_template_url, $value) !== false) {
@@ -1390,119 +1390,126 @@ class default_config extends dynamic_config
      * @param string $url
      * @return string
      */
-    protected function replace_account_vars($url)
+    public function replace_account_vars($url)
     {
-        if (!empty($url)) {
-            if (strpos($url, Plugin_Macros::API_URL) !== false) {
-                $api_url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL);
-                if (empty($api_url)) {
-                    hd_debug_print("Provider API url not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::API_URL, $api_url, $url);
-                }
-            }
+        hd_debug_print(null, true);
+        hd_debug_print("Replace account vars in url: $url", true);
 
-            if (strpos($url, Plugin_Macros::DOMAIN_ID) !== false) {
-                $domain = $this->get_domain_name();
-                if (empty($domain)) {
-                    hd_debug_print("Domain ID not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::DOMAIN_ID, $domain, $url);
-                }
-            }
+        if (empty($url)) {
+            hd_debug_print("Url to replace is empty", true);
+            return $url;
+        }
 
-            if (strpos($url, Plugin_Macros::OTT_KEY) !== false) {
-                $ott_key = $this->get_ott_key();
-                if (empty($ott_key)) {
-                    hd_debug_print("OTT key not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::OTT_KEY, $ott_key, $url);
-                }
-            }
-
-            if (strpos($url, Plugin_Macros::LOGIN) !== false) {
-                $login = $this->get_login();
-                if (empty($login)) {
-                    hd_debug_print("Login not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::LOGIN, $login, $url);
-                }
-            }
-
-            if (strpos($url, Plugin_Macros::PASSWORD) !== false) {
-                $password = $this->get_password();
-                if (empty($password)) {
-                    hd_debug_print("Password not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::PASSWORD, $password, $url);
-                }
-            }
-
-            if (strpos($url, Plugin_Macros::TOKEN) !== false) {
-                $this->ensure_token_loaded();
-                $token = $this->plugin->get_credentials(Ext_Params::M_TOKEN);
-                if (empty($token)) {
-                    hd_debug_print("Token not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::TOKEN, $token, $url);
-                }
-            }
-
-            if (strpos($url, Plugin_Macros::S_TOKEN) !== false) {
-                $this->ensure_token_loaded();
-                $s_token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
-                if (empty($s_token)) {
-                    hd_debug_print("Token not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::S_TOKEN, $s_token, $url);
-                }
-            }
-
-            if (strpos($url, Plugin_Macros::SERVER) !== false) {
-                $server = $this->get_server_name();
-                if (empty($server)) {
-                    hd_debug_print("Server not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::SERVER, $server, $url);
-                }
-            }
-
-            if (strpos($url, Plugin_Macros::SERVER_ID) !== false) {
-                $server_id = $this->get_server_id();
-                if (empty($server_id)) {
-                    hd_debug_print("Server ID not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::SERVER_ID, $server_id, $url);
-                }
-            }
-
-            if (strpos($url, Plugin_Macros::QUALITY_ID) !== false) {
-                $quality = $this->get_quality_id();
-                if (empty($quality)) {
-                    hd_debug_print("Quality ID not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::QUALITY_ID, $quality, $url);
-                }
-            }
-
-            if (strpos($url, Plugin_Macros::DEVICE_ID) !== false) {
-                $device = $this->get_device_id();
-                if (empty($device)) {
-                    hd_debug_print("Device ID not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::DEVICE_ID, $device, $url);
-                }
-            }
-
-            if (strpos($url, Plugin_Macros::PROFILE_ID) !== false) {
-                $profile = $this->get_profile_id();
-                if (empty($profile)) {
-                    hd_debug_print("Profile ID not set, but macro was used");
-                } else {
-                    $url = str_replace(Plugin_Macros::PROFILE_ID, $profile, $url);
-                }
+        if (strpos($url, Plugin_Macros::API_URL) !== false) {
+            $api_url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL);
+            if (empty($api_url)) {
+                hd_debug_print("Provider API url not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::API_URL, $api_url, $url);
             }
         }
+
+        if (strpos($url, Plugin_Macros::DOMAIN_ID) !== false) {
+            $domain = $this->get_domain_name();
+            if (empty($domain)) {
+                hd_debug_print("Domain ID not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::DOMAIN_ID, $domain, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::OTT_KEY) !== false) {
+            $ott_key = $this->get_ott_key();
+            if (empty($ott_key)) {
+                hd_debug_print("OTT key not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::OTT_KEY, $ott_key, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::LOGIN) !== false) {
+            $login = $this->get_login();
+            if (empty($login)) {
+                hd_debug_print("Login not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::LOGIN, $login, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::PASSWORD) !== false) {
+            $password = $this->get_password();
+            if (empty($password)) {
+                hd_debug_print("Password not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::PASSWORD, $password, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::TOKEN) !== false) {
+            $this->ensure_token_loaded();
+            $token = $this->plugin->get_credentials(Ext_Params::M_TOKEN);
+            if (empty($token)) {
+                hd_debug_print("Token not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::TOKEN, $token, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::S_TOKEN) !== false) {
+            $this->ensure_token_loaded();
+            $s_token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
+            if (empty($s_token)) {
+                hd_debug_print("SToken not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::S_TOKEN, $s_token, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::SERVER) !== false) {
+            $server = $this->get_server_name();
+            if (empty($server)) {
+                hd_debug_print("Server not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::SERVER, $server, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::SERVER_ID) !== false) {
+            $server_id = $this->get_server_id();
+            if (empty($server_id)) {
+                hd_debug_print("Server ID not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::SERVER_ID, $server_id, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::QUALITY_ID) !== false) {
+            $quality = $this->get_quality_id();
+            if (empty($quality)) {
+                hd_debug_print("Quality ID not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::QUALITY_ID, $quality, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::DEVICE_ID) !== false) {
+            $device = $this->get_device_id();
+            if (empty($device)) {
+                hd_debug_print("Device ID not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::DEVICE_ID, $device, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::PROFILE_ID) !== false) {
+            $profile = $this->get_profile_id();
+            if (empty($profile)) {
+                hd_debug_print("Profile ID not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::PROFILE_ID, $profile, $url);
+            }
+        }
+
         return $url;
     }
 
