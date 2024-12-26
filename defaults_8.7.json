@@ -1620,7 +1620,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://myott.top/api/channel/{EPG_ID}",
+          "epg_url": "http://myott.top/api/channel/{ID}",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1632,7 +1632,6 @@
       "name": "ottclub",
       "playlist_templates": [
         {
-          "epg_id_from_id": true,
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/stream\\/(?<token>.+)\\/(?<id>.+)\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/(?<password>.+)\\/.*$",
@@ -2152,7 +2151,6 @@
       "name": "sharavoz.tv",
       "playlist_templates": [
         {
-          "epg_id_from_id": true,
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/iptv\\/p\\/(?<password>.+)\\/.*$",

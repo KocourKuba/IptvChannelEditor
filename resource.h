@@ -702,7 +702,6 @@
 #define IDC_EDIT_VOD_REGEX              1223
 #define IDC_CHECK_MAKE_COPY             1224
 #define IDC_BUTTON_EDIT_VOD_TEMPLATES   1225
-#define IDC_CHECK_EPG_ID_FROM_ID        1225
 #define IDC_COMBO_TAGS                  1226
 #define IDC_EDIT_ICON_PATH              1226
 #define IDC_CHECK_MAP_TAG_TO_ID         1227
