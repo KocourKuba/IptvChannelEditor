@@ -129,7 +129,11 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 $cache_engine = $this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
                 $menu_items = array();
                 if ($cache_engine === ENGINE_XMLTV) {
-                    $menu_items = $this->plugin->epg_source_menu($this);
+                    $menu_items[] = $this->plugin->create_menu_item($this,
+                        ACTION_RELOAD,
+                        TR::t('refresh_epg'),
+                        "refresh.png",
+                        array('reload_action' => 'epg'));
                 }
                 return Action_Factory::show_popup_menu($menu_items);
 
@@ -139,8 +143,8 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
 
             case ACTION_RELOAD:
                 if ($user_input->reload_action === 'epg') {
-                    $this->plugin->get_epg_manager()->clear_epg_cache();
                     $this->plugin->init_epg_manager();
+                    $this->plugin->get_epg_manager()->clear_epg_cache();
                     $this->plugin->run_bg_epg_indexing();
 
                     $actions = $this->get_action_map($parent_media_url, $plugin_cookies);
@@ -231,6 +235,14 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         }
 
         return $items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_timer(MediaURL $media_url, $plugin_cookies)
+    {
+        return Action_Factory::timer(1000);
     }
 
     /**

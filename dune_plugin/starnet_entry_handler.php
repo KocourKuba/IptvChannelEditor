@@ -62,9 +62,11 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 return array(send_ir_code(GUI_EVENT_DISCRETE_POWER_OFF));
 
             case self::ACTION_DO_PLUGIN_SETTINGS:
+                $this->plugin->tv->reload_channels();
                 return Action_Factory::open_folder('setup', TR::t('entry_setup'));
 
             case self::ACTION_DO_CHANNELS_SETTINGS:
+                $this->plugin->tv->reload_channels();
                 return Action_Factory::open_folder('channels_setup', TR::t('tv_screen_channels_setup'));
 
             case self::ACTION_DO_SEND_LOG:
@@ -108,7 +110,6 @@ class Starnet_Entry_Handler implements User_Input_Handler
                                 Action_Factory::restart(), TR::t('entry_updater_proxy_enabled'));
                         }
 
-                        $this->plugin->init_epg_manager();
                         $this->plugin->tv->reload_channels();
 
                         if ((int)$user_input->mandatory_playback === 1
@@ -128,7 +129,6 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         hd_debug_print("LANUCH PLUGIN AUTO RESUME MODE");
                         hd_debug_print_separator();
 
-                        $this->plugin->init_epg_manager();
                         $this->plugin->tv->reload_channels();
 
                         if ((int)$user_input->mandatory_playback !== 1

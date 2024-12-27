@@ -116,11 +116,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                         $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ITEMS_CLEAR, TR::t('clear_favorites'), "brush.png");
                     }
 
-                    $cache_engine = $this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
-                    if ($cache_engine === ENGINE_XMLTV) {
-                        $menu_items = $this->plugin->epg_source_menu($this);
-                    }
-
                     $menu_items[] = $this->plugin->create_menu_item($this, ACTION_SETTINGS, TR::t('entry_setup'), "settings.png");
                     $menu_items[] = $this->plugin->create_menu_item($this, GuiMenuItemDef::is_separator);
                     $menu_items[] = $this->plugin->create_menu_item($this, ACTION_REFRESH_SCREEN, TR::t('refresh'), "refresh.png");

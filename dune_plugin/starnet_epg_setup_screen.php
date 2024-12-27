@@ -14,6 +14,11 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
     const ACTION_EPG_SHIFT = 'epg_shift';
     const CONTROL_CHANGE_CACHE_PATH = 'xmltv_cache_path';
 
+    /**
+     * @var string
+     */
+    protected $selected = '';
+
     ///////////////////////////////////////////////////////////////////////
 
     /**
@@ -22,6 +27,8 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
      */
     public function do_get_control_defs()
     {
+        hd_debug_print(null, true);
+
         $defs = array();
 
         $remove_icon = get_image_path('brush.png');
@@ -37,7 +44,9 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             $epg_source_ops[ENGINE_JSON] = TR::t('setup_epg_engine_json');
         }
 
-        if ($this->plugin->get_all_xmltv_sources(false)->size() !== 0) {
+        /** @var Hashed_Array<string, Cache_Parameters> $cache_parameters */
+        $sources = $this->plugin->get_all_xmltv_sources();
+        if ($sources->size() !== 0) {
             $epg_source_ops[ENGINE_XMLTV] = TR::t('setup_epg_engine_xmltv');
         }
 
@@ -46,11 +55,11 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         $source_ops_cnt = count($epg_source_ops);
         if ($source_ops_cnt > 1) {
             Control_Factory::add_combobox($defs, $this, null,
-                PARAM_EPG_CACHE_ENGINE, TR::t('setup_epg_source'),
+                PARAM_EPG_CACHE_ENGINE, TR::t('setup_epg_engine'),
                 $cache_engine, $epg_source_ops, self::CONTROLS_WIDTH, true);
         } else if ($source_ops_cnt === 1) {
             Control_Factory::add_button($defs, $this,null, "dummy",
-                TR::t('setup_epg_source'), reset($epg_source_ops), self::CONTROLS_WIDTH);
+                TR::t('setup_epg_engine'), reset($epg_source_ops), self::CONTROLS_WIDTH);
         }
 
         //////////////////////////////////////
@@ -60,15 +69,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             PARAM_FAKE_EPG, TR::t('entry_epg_fake'), SetupControlSwitchDefs::$on_off_translated[$fake_epg],
             get_image_path(SetupControlSwitchDefs::$on_off_img[$fake_epg]), self::CONTROLS_WIDTH);
 
-        $sources = $this->plugin->get_all_xmltv_sources(false);
         if ($cache_engine === ENGINE_XMLTV && $sources->size()) {
-            //////////////////////////////////////
-            // XMLTV sources
-            //////////////////////////////////////
-            // Reload XMLTV source
-            Control_Factory::add_image_button($defs, $this, null, self::ACTION_RELOAD_EPG,
-                TR::t('setup_reload_xmltv_epg'), TR::t('refresh'), get_image_path('refresh.png'));
-
             //////////////////////////////////////
             // EPG cache dir
             $xcache_dir = $this->plugin->get_cache_dir();
@@ -77,31 +78,43 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             Control_Factory::add_image_button($defs, $this, null, self::CONTROL_CHANGE_CACHE_PATH,
                 $free_size, $xcache_dir, get_image_path('folder.png'), self::CONTROLS_WIDTH);
 
-            $cache_variants[XMLTV_CACHE_AUTO] = TR::t('setup_epg_cache_type_auto');
-            $cache_variants[XMLTV_CACHE_MANUAL] = TR::t('setup_epg_cache_type_manual');
-            $cache_type = $this->plugin->get_parameter(PARAM_EPG_CACHE_TYPE, XMLTV_CACHE_AUTO);
-            Control_Factory::add_combobox($defs, $this, null,
-                PARAM_EPG_CACHE_TYPE, TR::t('setup_epg_cache_type'),
-                $cache_type, $cache_variants, self::CONTROLS_WIDTH, true);
-
-            if ($cache_type === XMLTV_CACHE_MANUAL) {
-                //////////////////////////////////////
-                // EPG cache
-                $epg_cache_ops = array();
-                $epg_cache_ops[0.5] = 0.5;
-                $epg_cache_ops[1] = 1;
-                $epg_cache_ops[2] = 2;
-                $epg_cache_ops[3] = 3;
-                $epg_cache_ops[4] = 4;
-                $epg_cache_ops[5] = 5;
-                $epg_cache_ops[6] = 6;
-                $epg_cache_ops[7] = 7;
-
-                $cache_ttl = $this->plugin->get_parameter(PARAM_EPG_CACHE_TTL, 3);
-                Control_Factory::add_combobox($defs, $this, null,
-                    PARAM_EPG_CACHE_TTL, TR::t('setup_epg_cache_ttl'),
-                    $cache_ttl, $epg_cache_ops, self::CONTROLS_WIDTH, true);
+            //////////////////////////////////////
+            // XMLTV sources
+            if (empty($this->selected) || !$sources->has($this->selected)) {
+                $sources->rewind();
+                $this->selected = $sources->key();
+                hd_debug_print("Selected source: $this->selected");
             }
+            $cache_ttl = $sources->get($this->selected)->ttl;
+
+            $xmltv_sources = array_map(function ($source) {
+                return $source->url;
+            }, $sources->to_array());
+
+            Control_Factory::add_combobox($defs, $this, null,
+                PARAM_XMLTV_SOURCE, TR::t('setup_xmltv_epg_source'),
+                $this->selected, $xmltv_sources, self::CONTROLS_WIDTH, true);
+
+            //////////////////////////////////////
+            // EPG cache
+            $epg_cache_ops = array();
+            $epg_cache_ops[-1] = TR::t('setup_epg_cache_type_auto');
+            $epg_cache_ops[0.5] = 0.5;
+            $epg_cache_ops[1] = 1;
+            $epg_cache_ops[2] = 2;
+            $epg_cache_ops[3] = 3;
+            $epg_cache_ops[4] = 4;
+            $epg_cache_ops[5] = 5;
+            $epg_cache_ops[6] = 6;
+            $epg_cache_ops[7] = 7;
+
+            Control_Factory::add_combobox($defs, $this, null,
+                PARAM_EPG_CACHE_TTL, TR::t('setup_epg_cache_ttl'),
+                $cache_ttl, $epg_cache_ops, self::CONTROLS_WIDTH, true);
+
+            // Reload XMLTV source
+            Control_Factory::add_image_button($defs, $this, null, self::ACTION_RELOAD_EPG,
+                TR::t('setup_reload_xmltv_epg'), TR::t('refresh'), get_image_path('refresh.png'));
 
             //////////////////////////////////////
             // clear epg cache
@@ -145,14 +158,12 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         $control_id = $user_input->control_id;
         if (isset($user_input->action_type, $user_input->{$control_id})
             && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
-            $new_value = $user_input->{$control_id};
-            hd_debug_print("Setup: changing $control_id value to $new_value");
+            hd_debug_print("Setup: changing $control_id value to " . $user_input->{$control_id});
         }
 
         $post_action = null;
         switch ($control_id) {
             case PARAM_EPG_CACHE_ENGINE:
-            case PARAM_EPG_CACHE_TYPE:
                 $this->plugin->tv->unload_channels();
                 $this->plugin->set_parameter($control_id, $user_input->{$control_id});
                 $this->plugin->init_epg_manager();
@@ -172,10 +183,18 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 );
                 return Action_Factory::open_folder($media_url_str, TR::t('setup_epg_xmltv_cache_caption'));
 
-            case PARAM_EPG_CACHE_TTL:
             case PARAM_EPG_SHIFT:
                 $this->plugin->set_parameter($control_id, $user_input->{$control_id});
-                hd_debug_print("$control_id: " . $user_input->{$control_id}, true);
+                break;
+
+            case PARAM_XMLTV_SOURCE:
+                $this->selected = $user_input->{$control_id};
+                break;
+
+            case PARAM_EPG_CACHE_TTL:
+                $cache_types = $this->plugin->get_parameter(PARAM_EPG_CACHE_PARAMETERS, new Hashed_Array());
+                $cache_types->set($this->selected, $user_input->{$control_id});
+                $this->plugin->set_parameter(PARAM_EPG_CACHE_PARAMETERS, $cache_types);
                 break;
 
             case self::ACTION_CLEAR_EPG_CACHE:
@@ -214,11 +233,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             case self::ACTION_RELOAD_EPG:
                 hd_debug_print(self::ACTION_RELOAD_EPG);
                 $this->plugin->get_epg_manager()->clear_epg_cache();
-                $sources = $this->plugin->get_all_xmltv_sources(false);
-                foreach ($sources as $source) {
-                    $this->plugin->get_epg_manager()->get_indexer()->set_url($source);
-                    $this->plugin->get_epg_manager()->get_indexer()->download_xmltv_source();
-                }
                 $this->plugin->run_bg_epg_indexing();
                 break;
 

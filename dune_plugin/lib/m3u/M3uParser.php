@@ -44,11 +44,6 @@ class M3uParser extends Json_Serializer
     protected $m3u_info;
 
     /**
-     * @var Ordered_Array
-     */
-    protected $xmltv_sources;
-
-    /**
      * @var SplFileObject
      */
     private $m3u_file;
@@ -96,7 +91,7 @@ class M3uParser extends Json_Serializer
         unset($this->m3u_entries, $this->m3u_info);
         $this->m3u_entries = array();
         $this->m3u_info = array();
-        $this->xmltv_sources = null;
+        $this->xmltv_sources = array();
     }
 
     /**
@@ -374,28 +369,26 @@ class M3uParser extends Json_Serializer
     }
 
     /**
-     * @return Ordered_Array
+     * @return array
      */
     public function getXmltvSources()
     {
-        if (is_null($this->xmltv_sources)) {
-            $this->xmltv_sources = new Ordered_Array();
-            if (is_array($this->m3u_info)) {
-                foreach ($this->m3u_info as $entry) {
-                    $arr = $entry->getEpgSources();
-                    foreach ($arr as $value) {
-                        $urls = explode(',', $value);
-                        foreach ($urls as $url) {
-                            if (!empty($url) && preg_match(HTTP_PATTERN, $url)) {
-                                $this->xmltv_sources->add_item($url);
-                            }
+        $xmltv_sources = array();
+        if (is_array($this->m3u_info)) {
+            foreach ($this->m3u_info as $entry) {
+                $arr = $entry->getEpgSources();
+                foreach ($arr as $value) {
+                    $urls = explode(',', $value);
+                    foreach ($urls as $url) {
+                        if (!empty($url) && preg_match(HTTP_PATTERN, $url)) {
+                            $xmltv_sources[] = $url;
                         }
                     }
                 }
             }
         }
 
-        return $this->xmltv_sources;
+        return $xmltv_sources;
     }
 
     public function detectBestChannelId()

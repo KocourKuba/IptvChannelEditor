@@ -44,34 +44,17 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     protected $cache_dir;
 
     /**
-     * url to download XMLTV EPG
-     * @var string
-     */
-    protected $xmltv_url;
-
-    /**
-     * hash of xmtlt_url
-     * @var string
-     */
-    protected $url_hash;
-
-    /**
      * @var string
      */
     protected $index_ext;
 
     /**
-     * @var int
-     */
-    protected $cache_ttl;
-
-    /**
      * @var string
      */
-    protected $cache_type = XMLTV_CACHE_AUTO;
+    protected $current_source;
 
     /**
-     * @var Hashed_Array
+     * @var Hashed_Array<string, Cache_Parameters>
      */
     protected $active_sources;
 
@@ -128,17 +111,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
-     * @param string $url
-     * @return void
-     */
-    public function set_url($url)
-    {
-        $this->xmltv_url = $url;
-        $this->url_hash = Hashed_Array::hash($this->xmltv_url);
-    }
-
-    /**
-     * @param Hashed_Array $urls
+     * @param Hashed_Array<string, Cache_Parameters> $urls
      * @return void
      */
     public function set_active_sources($urls)
@@ -152,7 +125,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
-     * @return Hashed_Array
+     * @return Hashed_Array<string, Cache_Parameters>
      */
     public function get_active_sources()
     {
@@ -160,21 +133,29 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
-     * @param int $cache_ttl
-     * @return void
+     * @return Cache_Parameters|null
      */
-    public function set_cache_ttl($cache_ttl)
+    public function get_active_source()
     {
-        $this->cache_ttl = $cache_ttl;
+        $source = $this->active_sources->get($this->current_source);
+        return ($source !== null) ? $source : null;
     }
 
     /**
-     * @param string $type
+     * @param string $source
      * @return void
      */
-    public function set_cache_type($type)
+    public function set_current_source($source)
     {
-        $this->cache_type = $type;
+        $this->current_source = $source;
+    }
+
+    /**
+     * @return string $source
+     */
+    public function get_current_source($source)
+    {
+        return $this->current_source;
     }
 
     /**
@@ -186,21 +167,6 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
-     * Indexing xmltv file to make channel to display-name map
-     * This function called from script only and plugin not available in this call
-     * Parsing channels is cheap for all Dune variants
-     *
-     * @return void
-     */
-    public function index_all_channels()
-    {
-        foreach ($this->active_sources as $source) {
-            $this->set_url($source);
-            $this->index_only_channels();
-        }
-    }
-
-    /**
      * Indexing xmltv file to make channel to display-name map and collect picons for channels.
      * This function called from script only and plugin not available in this call
      *
@@ -208,11 +174,8 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function index_all()
     {
-        $this->index_all_channels();
-        foreach ($this->active_sources as $source) {
-            $this->set_url($source);
-            $this->index_xmltv_positions();
-        }
+        $this->index_only_channels();
+        $this->index_xmltv_positions();
     }
 
     /**
@@ -223,9 +186,16 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function index_only_channels()
     {
+        /** @var Cache_Parameters $source */
+        $source = $this->get_active_source();
+        if ($source === null || empty($source->url)) {
+            hd_debug_print("Source not found or url not set");
+            return;
+        }
+
         $res = $this->is_xmltv_cache_valid();
         hd_debug_print("cache valid status: $res", true);
-        hd_debug_print("Indexing channels for: $this->xmltv_url", true);
+        hd_debug_print("Indexing channels for: $source->url", true);
         switch ($res) {
             case 1:
                 // downloaded xmltv file not exists or expired
@@ -260,8 +230,10 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     {
         hd_debug_print();
 
-        if (empty($this->xmltv_url)) {
-            $exception_msg = "XMTLV EPG url not set";
+        /** @var Cache_Parameters $source */
+        $source = $this->get_active_source();
+        if ($source === null || empty($source->url)) {
+            $exception_msg = "Source not found or XMTLV EPG url not set";
             hd_debug_print($exception_msg);
             HD::set_last_error("xmltv_last_error", $exception_msg);
             return -1;
@@ -279,15 +251,16 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         hd_debug_print("Xmltv cache last modified: " . date("Y-m-d H:i", $check_time_file));
 
         $expired = true;
-        if ($this->cache_type === XMLTV_CACHE_AUTO) {
-            $this->curl_wrapper->set_url($this->xmltv_url);
+
+        if ($source->ttl === -1) {
+            $this->curl_wrapper->set_url($source->url);
             if ($this->curl_wrapper->check_is_expired()) {
                 $this->curl_wrapper->clear_cached_etag();
             } else {
                 $expired = false;
             }
         } else if (filesize($cached_file) !== 0) {
-            $max_cache_time = 3600 * 24 * $this->cache_ttl;
+            $max_cache_time = 3600 * 24 * $source->ttl;
             if ($check_time_file && $check_time_file + $max_cache_time > time()) {
                 $expired = false;
             }
@@ -299,7 +272,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         }
 
         hd_debug_print("Cached file: $cached_file is not expired");
-        $indexed = $this->get_indexes_info();
+        $indexed = $this->get_indexes_info($this->current_source);
 
         if (isset($indexed[self::INDEX_CHANNELS], $indexed[self::INDEX_PICONS], $indexed[self::INDEX_ENTRIES])
             && $indexed[self::INDEX_CHANNELS] && $indexed[self::INDEX_PICONS] && $indexed[self::INDEX_ENTRIES]) {
@@ -333,7 +306,13 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function get_cache_stem($ext, $hash = null)
     {
-        return $this->cache_dir . DIRECTORY_SEPARATOR . (is_null($hash) ? $this->url_hash : $hash) . $ext;
+        $source = $this->get_active_source();
+        if ($source === null || empty($source->url)) {
+            hd_debug_print("Source not found");
+            return 1;
+        }
+
+        return $this->cache_dir . DIRECTORY_SEPARATOR . $this->current_source . $ext;
     }
 
     /**
@@ -348,7 +327,8 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             return 0;
         }
 
-        if (empty($this->xmltv_url)) {
+        $source = $this->get_active_source();
+        if ($source === null || empty($source->url)) {
             hd_debug_print("Url not set!");
             return 0;
         }
@@ -369,11 +349,11 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             HD::set_last_error("xmltv_last_error", null);
             $this->set_index_locked(true);
 
-            if (preg_match("/jtv.?\.zip$/", basename($this->xmltv_url))) {
+            if (preg_match("/jtv.?\.zip$/", basename($source->url))) {
                 throw new Exception("Unsupported EPG format (JTV)");
             }
 
-            $this->curl_wrapper->set_url($this->xmltv_url);
+            $this->curl_wrapper->set_url($source->url);
             $expired = $this->curl_wrapper->check_is_expired() || !file_exists($tmp_filename);
             if (!$expired) {
                 hd_debug_print("File not changed, using cached file: $cached_file");
@@ -383,11 +363,11 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
             $this->curl_wrapper->clear_cached_etag();
             if (!$this->curl_wrapper->download_file($tmp_filename, true)) {
-                throw new Exception("Ошибка скачивания $this->xmltv_url\n\n" . $this->curl_wrapper->get_raw_response_headers());
+                throw new Exception("Ошибка скачивания $source->url\n\n" . $this->curl_wrapper->get_raw_response_headers());
             }
 
             if ($this->curl_wrapper->get_response_code() !== 200) {
-                throw new Exception("Ошибка скачивания $this->xmltv_url\n\n" . $this->curl_wrapper->get_raw_response_headers());
+                throw new Exception("Ошибка скачивания $source->url\n\n" . $this->curl_wrapper->get_raw_response_headers());
             }
 
             $file_time = filemtime($tmp_filename);
@@ -400,7 +380,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             $speed = sprintf('%1.2f', $bps / pow($base, $class)) . ' ' . $si_prefix[$class];
 
             hd_debug_print("Last changed time of local file: " . date("Y-m-d H:i", $file_time));
-            hd_debug_print("Download $file_size bytes of xmltv source $this->xmltv_url done in: $dl_time secs (speed $speed)");
+            hd_debug_print("Download $file_size bytes of xmltv source $source->url done in: $dl_time secs (speed $speed)");
 
             if (file_exists($cached_file)) {
                 unlink($cached_file);
@@ -538,7 +518,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      *
      * @return void
      */
-    public function clear_epg_files()
+    public function clear_all_epg_files()
     {
         hd_debug_print(null, true);
         $this->curl_wrapper->clear_all_etag_cache();
@@ -612,10 +592,10 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
     /**
      * Get information about indexes
-     * @param string|null $hash
+     * @param string $hash
      * @return array
      */
-    abstract public function get_indexes_info($hash = null);
+    abstract public function get_indexes_info($hash);
 
     /**
      * Clear memory index
@@ -626,10 +606,11 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     abstract protected function clear_memory_index($id = '');
 
     /**
+     * @param string $hash
      * @param Channel $channel
      * @return array
      */
-    abstract protected function load_program_index($channel);
+    abstract protected function load_program_index($hash, $channel);
 
     /**
      * Check is all indexes is valid

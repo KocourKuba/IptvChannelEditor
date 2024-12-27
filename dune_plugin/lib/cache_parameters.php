@@ -3,6 +3,7 @@
  * The MIT License (MIT)
  *
  * @Author: sharky72 (https://github.com/KocourKuba)
+ * Original code from DUNE HD
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -23,27 +24,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-interface Epg_Indexer_Interface
+require_once 'json_serializer.php';
+
+class Cache_Parameters extends Json_Serializer
 {
     /**
-     * Get picon for channel
-     *
-     * @param array $aliases
-     * @return string
+     * @var string
      */
-    public function get_picon($aliases);
+    public $url = '';
 
     /**
-     * indexing xmltv file to make channel to display-name map
-     * and collect picons for channels
-     *
-     * @return void
+     * @var float
      */
-    public function index_xmltv_channels();
-
-    /**
-     * indexing xmltv epg info
-     * @return void
-     */
-    public function index_xmltv_positions();
+    public $ttl = 0;
 }

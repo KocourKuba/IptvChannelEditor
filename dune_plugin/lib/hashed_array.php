@@ -290,11 +290,25 @@ class Hashed_Array extends Json_Serializer implements Iterator
      * @oaram array $values
      * @return Hashed_Array
      */
-    public static function from_array($values)
+    public static function from_array_values($values)
     {
         $result = new self();
         foreach ($values as $value) {
             $result->add($value);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @oaram array $values
+     * @return Hashed_Array
+     */
+    public static function from_array($values)
+    {
+        $result = new self();
+        foreach ($values as $key => $value) {
+            $result->set($key, $value);
         }
 
         return $result;

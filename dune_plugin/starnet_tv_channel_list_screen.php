@@ -73,6 +73,22 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         }
 
         switch ($user_input->control_id) {
+            case GUI_EVENT_TIMER:
+                $epg_manager = $this->plugin->get_epg_manager();
+                if ($epg_manager === null) {
+                    return null;
+                }
+
+                clearstatcache();
+
+                $res = $epg_manager->import_indexing_log();
+                if ($res !== false) {
+                    return null;
+                }
+
+                $actions = $this->get_action_map($parent_media_url, $plugin_cookies);
+                return Action_Factory::change_behaviour($actions, 1000);
+
             case ACTION_PLAY_ITEM:
                 try {
                     $post_action = $this->plugin->tv_player_exec($selected_media_url);
@@ -319,6 +335,14 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
         }
 
         return $items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_timer(MediaURL $media_url, $plugin_cookies)
+    {
+        return Action_Factory::timer(1000);
     }
 
     /**

@@ -10,6 +10,7 @@ require_once 'control_factory.php';
 require_once 'control_factory_ext.php';
 require_once 'plugin_constants.php';
 require_once 'plugin_macros.php';
+require_once 'lib/cache_parameters.php';
 require_once 'lib/epg/epg_manager_xmltv.php';
 require_once 'lib/epg/epg_manager_json.php';
 
@@ -312,29 +313,35 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * get all xmltv source
      *
-     * @param bool $with_separator
-     * @return Hashed_Array const
+     * @return Hashed_Array<string, Cache_Parameters> const
      */
-    public function get_all_xmltv_sources($with_separator = true)
+    public function get_all_xmltv_sources()
     {
         hd_debug_print(null, true);
+
+        /** @var Hashed_Array<string, float> $cache_params */
+        $cache_params = $this->get_parameter(PARAM_EPG_CACHE_PARAMETERS, new Hashed_Array());
 
         /** @var Hashed_Array $sources */
         $xmltv_sources = new Hashed_Array();
         foreach ($this->m3u_parser->getXmltvSources() as $source) {
-            $xmltv_sources->add($source);
+            $hash = Hashed_Array::hash($source);
+            $cached_type = new Cache_Parameters();
+            $cached_type->url = $source;
+            $cached_type->ttl = $cache_params->has($hash) ? $cache_params->get($hash) : -1;
+            $xmltv_sources->set($hash, $cached_type);
         }
 
         $ext_sources = $this->config->get_feature(Plugin_Constants::EPG_CUSTOM_SOURCE);
 
         if (!empty($ext_sources)) {
             hd_debug_print("ext xmltv sources: " . json_encode($ext_sources), true);
-            if ($with_separator && $xmltv_sources->size() !== 0) {
-                $xmltv_sources->add(EPG_SOURCES_SEPARATOR_TAG);
-            }
-
             foreach ($ext_sources as $source) {
-                $xmltv_sources->set(Hashed_Array::hash($source['name']), $source['name']);
+                $cached_type = new Cache_Parameters();
+                $cached_type->url = $source['name'];
+                $hash = Hashed_Array::hash($source['name']);
+                $cached_type->ttl = $cache_params->has($hash) ? $cache_params->get($hash) : -1;
+                $xmltv_sources->set($hash, $cached_type);
             }
         }
 
@@ -1194,43 +1201,6 @@ class Default_Dune_Plugin implements DunePlugin
     }
 
     /**
-     * @param User_Input_Handler $handler
-     * @return array
-     */
-    public function epg_source_menu($handler)
-    {
-        $menu_items = array();
-
-        $sources = $this->get_all_xmltv_sources();
-
-        $idx = 0;
-        foreach ($sources as $key => $item) {
-            if ($idx !== 0 && ($idx % 15) === 0)
-                $menu_items[] = $this->create_menu_item($handler, GuiMenuItemDef::is_separator);
-            $idx++;
-
-            if ($item === EPG_SOURCES_SEPARATOR_TAG) {
-                $menu_items[] = $this->create_menu_item($handler, GuiMenuItemDef::is_separator);
-                continue;
-            }
-
-            $name = $item;
-            $cached_xmltv_file = $this->get_cache_dir() . DIRECTORY_SEPARATOR . "$key.xmltv";
-            if (file_exists($cached_xmltv_file)) {
-                $check_time_file = filemtime($cached_xmltv_file);
-                $name .= " (" . date("d.m H:i", $check_time_file) . ")";
-            }
-
-            $menu_items[] = $this->create_menu_item($handler, null, $name);
-        }
-
-        $menu_items[] = $this->create_menu_item($handler, GuiMenuItemDef::is_separator);
-        $menu_items[] = $this->create_menu_item($handler, ACTION_RELOAD, TR::t('refresh_epg'), "refresh.png", array('reload_action' => 'epg'));
-
-        return $menu_items;
-    }
-
-    /**
      * clear memory cache and entire cache folder
      *
      * @return void
@@ -1238,34 +1208,32 @@ class Default_Dune_Plugin implements DunePlugin
     public function clear_all_epg_cache()
     {
         if (isset($this->epg_manager)) {
-            $this->epg_manager->get_indexer()->clear_epg_files();
+            $this->epg_manager->get_indexer()->clear_all_epg_files();
         }
     }
 
     /**
-     * @param Hashed_Array|null $sources
      * @return void
      */
-    public function run_bg_epg_indexing($sources = null)
+    public function run_bg_epg_indexing()
     {
         hd_debug_print(null, true);
-        if (is_null($sources)) {
-            $sources = $this->get_all_xmltv_sources(false);
-        }
+
+        /** @var Hashed_Array<string, Cache_Parameters> $sources */
+        $sources = $this->get_all_xmltv_sources();
 
         foreach ($sources as $key => $value) {
-            if (empty($value)) continue;
+            if (empty($value->url)) continue;
 
             hd_debug_print("Run background indexing for: ($key) $value");
             $config = array(
                 'debug' => LogSeverity::$is_debug,
                 'cache_dir' => $this->get_cache_dir(),
-                'cache_ttl' => $this->get_parameter(PARAM_EPG_CACHE_TTL, 3),
-                'cache_type' => $this->get_parameter(PARAM_EPG_CACHE_TYPE, XMLTV_CACHE_AUTO),
-                'xmltv_urls' => array($key => $value)
+                'current_xmltv_source' => $key,
+                'active_xmltv_sources' => $sources->to_array()
             );
             $config_file = get_temp_path(sprintf(self::PARSE_CONFIG, $key));
-            hd_debug_print("Config: " . json_encode($config), true);
+            hd_debug_print("Config: " . pretty_json_format($config), true);
             file_put_contents($config_file, pretty_json_format($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
             $cmd = get_install_path('bin/cgi_wrapper.sh') . " index_epg.php $config_file &";
