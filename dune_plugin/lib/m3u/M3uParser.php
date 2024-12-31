@@ -91,7 +91,6 @@ class M3uParser extends Json_Serializer
         unset($this->m3u_entries, $this->m3u_info);
         $this->m3u_entries = array();
         $this->m3u_info = array();
-        $this->xmltv_sources = array();
     }
 
     /**

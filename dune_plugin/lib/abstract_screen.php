@@ -61,10 +61,7 @@ class Abstract_Screen implements Screen
     // Screen interface
 
     /**
-     * @param MediaURL $media_url
-     * @param Object $plugin_cookies
-     * @return mixed|null
-     * @noinspection PhpReturnDocTypeMismatchInspection
+     * @inheritDoc
      */
     public function get_timer(MediaURL $media_url, $plugin_cookies)
     {

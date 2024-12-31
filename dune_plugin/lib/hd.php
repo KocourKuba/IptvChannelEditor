@@ -630,33 +630,6 @@ class HD
         return $url;
     }
 
-    /**
-     * @param string $url
-     * @param bool $to_array
-     * @param array|null $opts
-     * @return false|mixed
-     */
-    public static function DownloadJson($url, $to_array = true, $opts = null)
-    {
-        try {
-            $doc = self::http_get_document($url, $opts);
-            $contents = json_decode($doc, $to_array);
-            if ($contents === null || $contents === false) {
-                $msg = "failed to decode json: $doc";
-                self::set_last_error("pl_last_error", $msg);
-                hd_debug_print($msg);
-                return false;
-            }
-        } catch (Exception $ex) {
-            print_backtrace_exception($ex);
-            $msg = "Unable to load url: " . $ex->getMessage();
-            self::set_last_error("pl_last_error", $msg);
-            return false;
-        }
-
-        return $contents;
-    }
-
     public static function array_unshift_assoc(&$arr, $key, $val)
     {
         $arr = array_reverse($arr, true);
