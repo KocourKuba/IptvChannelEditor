@@ -200,9 +200,10 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
         hd_debug_print("parser params: " . json_encode($parser_params), true);
 
         try {
-            $ch_data = HD::DownloadJson($url);
+            $doc = HD::http_get_document($url);
+            $ch_data = json_decode($doc, true);
             if (empty($ch_data)) {
-                hd_debug_print("Empty document returned.");
+                hd_debug_print("failed to decode json: $doc");
                 return $channel_epg;
             }
         } catch (Exception $ex) {
