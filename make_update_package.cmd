@@ -2,7 +2,7 @@
 setlocal
 
 set SYMSRV_APP="%ProgramFiles(x86)%\Windows Kits\10\Debuggers\x64\symstore.exe"
-set SYMSTORE=\\DISKSTATION2\SymbolStore\
+set SYMSTORE=\\DISKSTATION\SymbolStore\
 set DEV_ENV="%ProgramW6432%\Microsoft Visual Studio\2022\Professional\Common7\IDE\devenv.com"
 
 rem ********************************************************
