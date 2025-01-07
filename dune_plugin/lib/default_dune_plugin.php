@@ -19,7 +19,7 @@ class Default_Dune_Plugin implements DunePlugin
     const SANDWICH_BASE = 'gui_skin://special_icons/sandwich_base.aai';
     const SANDWICH_MASK = 'cut_icon://{name=sandwich_mask}';
     const SANDWICH_COVER = 'cut_icon://{name=sandwich_cover}';
-    const AUTHOR_LOGO = "IPTV Channel Editor by sharky72                     ";
+    const AUTHOR_LOGO = "IPTV Channel Editor by sharky72            ";
 
     /////////////////////////////////////////////////////////////////////////////
     // views variables
