@@ -174,18 +174,6 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function index_all()
     {
-        $this->index_only_channels();
-        $this->index_xmltv_positions();
-    }
-
-    /**
-     * indexing xmltv file to make channel to display-name map
-     * and collect picons for channels
-     *
-     * @return void
-     */
-    public function index_only_channels()
-    {
         /** @var Cache_Parameters $source */
         $source = $this->get_active_source();
         if ($source === null || empty($source->url)) {
@@ -195,21 +183,28 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
         $res = $this->is_xmltv_cache_valid();
         hd_debug_print("cache valid status: $res", true);
-        hd_debug_print("Indexing channels for: $source->url", true);
         switch ($res) {
             case 1:
                 // downloaded xmltv file not exists or expired
-                hd_debug_print("Download and indexing xmltv source");
+                hd_debug_print("Download and indexing xmltv source: $source->url", true);
                 $this->remove_indexes(array(self::INDEX_CHANNELS, self::INDEX_PICONS, self::INDEX_ENTRIES));
-                if ($this->download_xmltv_source() === 1) {
+                if ($this->download_xmltv_source($source) === 1) {
                     $this->index_xmltv_channels();
+                    $this->index_xmltv_positions();
                 }
                 break;
+            case 2:
+                // downloaded xmltv file exists, not expired but indexes for positions not valid
+                hd_debug_print("Indexing xmltv positions: $source->url", true);
+                $this->remove_indexes(array(self::INDEX_ENTRIES));
+                $this->index_xmltv_positions();
+                break;
             case 3:
-                // downloaded xmltv file exists, not expired but indexes for channels, picons and positions not exists
-                hd_debug_print("Indexing xmltv source");
+                // downloaded xmltv file exists, not expired but indexes for channels, picons and positions not valid
+                hd_debug_print("Indexing xmltv source: $source->url", true);
                 $this->remove_indexes(array(self::INDEX_CHANNELS, self::INDEX_PICONS, self::INDEX_ENTRIES));
                 $this->index_xmltv_channels();
+                $this->index_xmltv_positions();
                 break;
             default:
                 break;
@@ -318,18 +313,13 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     /**
      * Download XMLTV source.
      *
+     * @param Cache_Parameters $source
      * @return int
      */
-    public function download_xmltv_source()
+    public function download_xmltv_source($source)
     {
         if ($this->is_current_index_locked()) {
             hd_debug_print("File is indexing or downloading, skipped");
-            return 0;
-        }
-
-        $source = $this->get_active_source();
-        if ($source === null || empty($source->url)) {
-            hd_debug_print("Url not set!");
             return 0;
         }
 
