@@ -43,6 +43,7 @@ enum class PluginType
 	enGlanz,
 	enIptvBest,
 	enIptvOnline,
+	enIptvPlay,
 	enIpstream,
 	enItv,
 	enKineskop,
