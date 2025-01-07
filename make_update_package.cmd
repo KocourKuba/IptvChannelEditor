@@ -67,7 +67,8 @@ copy "%BUILD_PATH%\Updater.exe"							"%build_pkg%" >nul
 copy "%ROOT%%DLL_PATH%\7z.dll"							"%build_pkg%" >nul
 copy "%ROOT%BugTrap\bin\%BUGTRAP%.dll"					"%build_pkg%" >nul
 copy "%ROOT%BugTrap\pkg\dbghelp.dll"					"%build_pkg%" >nul
-copy "%ROOT%\defaults_%MAJOR%.%MINOR%.json"				"%build_pkg%" >nul
+copy "%ROOT%defaults_%MAJOR%.%MINOR%.json"				"%build_pkg%" >nul
+copy "%ROOT%readme.md"									"%build_pkg%" >nul
 copy "%ROOT%dune_plugin\changelog.md"					"%build_pkg%" >nul
 
 copy "%ROOT%dune_plugin\changelog.md" 					"%pkg%\changelog.md" >nul
@@ -101,6 +102,7 @@ call :add_node 7z.dll							>>%outfile%
 call :add_node %BUGTRAP%.dll					>>%outfile%
 call :add_node dbghelp.dll						>>%outfile%
 call :add_node changelog.md						>>%outfile%
+call :add_node Readme.md						>>%outfile%
 call :add_node defaults_%MAJOR%.%MINOR%.json	>>%outfile%
 call :add_node dune_plugin.pkg					>>%outfile%
 call :add_node picons.pkg						>>%outfile%
@@ -115,6 +117,7 @@ echo 7z.dll 						>>packing.lst
 echo %BUGTRAP%.dll					>>packing.lst
 echo dbghelp.dll					>>packing.lst
 echo changelog.md					>>packing.lst
+echo Readme.md						>>packing.lst
 echo defaults_%MAJOR%.%MINOR%.json	>>packing.lst
 echo dune_plugin.pkg				>>packing.lst
 echo picons.pkg						>>packing.lst
