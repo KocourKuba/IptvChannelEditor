@@ -105,9 +105,8 @@ class Epg_Manager_Xmltv
 
         $this->init_indexer($config->cache_dir);
         $this->indexer->set_pid($pid);
-        $this->indexer->set_current_source($config->current_xmltv_source);
         $this->indexer->set_active_sources(Hashed_Array::from_array($config->active_xmltv_sources));
-        $this->indexer->index_all();
+        $this->indexer->index_all($config->current_xmltv_source);
 
         return true;
     }
@@ -159,14 +158,13 @@ class Epg_Manager_Xmltv
         $active_sources = $this->plugin->get_all_xmltv_sources();
         $any_lock = $this->indexer->is_any_index_locked();
         $day_epg = array();
-        foreach($active_sources as $key => $source) {
-            if ($this->indexer->is_index_locked($key)) {
+        foreach($active_sources as $hash => $source) {
+            if ($this->indexer->is_index_locked($hash)) {
                 hd_debug_print("EPG $source->url still indexing, append to delayed queue channel id: " . $channel->get_id());
                 $this->delayed_epg[] = $channel->get_id();
                 continue;
             }
 
-            $this->indexer->set_current_source($key);
             // filter out epg only for selected day
             $day_end_ts = $day_start_ts + 86400;
             $date_start_l = format_datetime("Y-m-d H:i", $day_start_ts);
@@ -174,9 +172,9 @@ class Epg_Manager_Xmltv
             hd_debug_print("Fetch entries for from: $date_start_l ($day_start_ts) to: $date_end_l ($day_end_ts)", true);
 
             try {
-                $positions = $this->indexer->load_program_index($key, $channel);
+                $positions = $this->indexer->load_program_index($hash, $channel);
                 if (!empty($positions)) {
-                    $cached_file = $this->indexer->get_cached_filename();
+                    $cached_file = $this->indexer->get_cache_filename($hash);
                     if (!file_exists($cached_file)) {
                         throw new Exception("cache file $cached_file not exist");
                     }
@@ -249,23 +247,18 @@ class Epg_Manager_Xmltv
     /**
      * Import indexing log to plugin logs
      *
-     * @param array|null $sources
      * @return bool true if import successful and no other active locks, false if any active source is locked
      */
-    public function import_indexing_log($sources = null)
+    public function import_indexing_log()
     {
         $has_locks = false;
-        if (is_null($sources)) {
-            $sources = $this->indexer->get_active_sources()->get_order();
-        }
-
-        foreach ($sources as $source) {
-            if ($this->indexer->is_index_locked($source)) {
+        foreach ($this->indexer->get_active_sources()->get_keys() as $hash) {
+            if ($this->indexer->is_index_locked($hash)) {
                 $has_locks = true;
                 continue;
             }
 
-            $index_log = get_temp_path("{$source}_indexing.log");
+            $index_log = get_temp_path("{$hash}_indexing.log");
             if (file_exists($index_log)) {
                 hd_debug_print("Read epg indexing log $index_log...");
                 hd_debug_print_separator();

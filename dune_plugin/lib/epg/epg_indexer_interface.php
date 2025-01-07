@@ -26,24 +26,19 @@
 interface Epg_Indexer_Interface
 {
     /**
-     * Get picon for channel
-     *
-     * @param array $aliases
-     * @return string
-     */
-    public function get_picon($aliases);
-
-    /**
      * indexing xmltv file to make channel to display-name map
      * and collect picons for channels
      *
+     * @param string $hash
      * @return void
      */
-    public function index_xmltv_channels();
+    public function index_xmltv_channels($hash);
 
     /**
      * indexing xmltv epg info
+     *
+     * @param string $hash
      * @return void
      */
-    public function index_xmltv_positions();
+    public function index_xmltv_positions($hash);
 }

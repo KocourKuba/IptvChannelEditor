@@ -33,7 +33,6 @@ require_once 'lib/perf_collector.php';
 abstract class Epg_Indexer implements Epg_Indexer_Interface
 {
     const STREAM_CHUNK = 131072; // 128Kb
-    const INDEX_PICONS = 'epg_picons';
     const INDEX_CHANNELS = 'epg_channels';
     const INDEX_ENTRIES = 'epg_entries';
 
@@ -47,11 +46,6 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      * @var string
      */
     protected $index_ext;
-
-    /**
-     * @var string
-     */
-    protected $current_source;
 
     /**
      * @var Hashed_Array<string, Cache_Parameters>
@@ -133,32 +127,6 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
-     * @return Cache_Parameters|null
-     */
-    public function get_active_source()
-    {
-        $source = $this->active_sources->get($this->current_source);
-        return ($source !== null) ? $source : null;
-    }
-
-    /**
-     * @param string $source
-     * @return void
-     */
-    public function set_current_source($source)
-    {
-        $this->current_source = $source;
-    }
-
-    /**
-     * @return string $source
-     */
-    public function get_current_source($source)
-    {
-        return $this->current_source;
-    }
-
-    /**
      * @return string
      */
     public function get_cache_dir()
@@ -170,46 +138,42 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      * Indexing xmltv file to make channel to display-name map and collect picons for channels.
      * This function called from script only and plugin not available in this call
      *
+     * @param string $hash
      * @return void
      */
-    public function index_all()
-    {
-        $this->index_only_channels();
-        $this->index_xmltv_positions();
-    }
-
-    /**
-     * indexing xmltv file to make channel to display-name map
-     * and collect picons for channels
-     *
-     * @return void
-     */
-    public function index_only_channels()
+    public function index_all($hash)
     {
         /** @var Cache_Parameters $source */
-        $source = $this->get_active_source();
+        $source = $this->active_sources->get($hash);
         if ($source === null || empty($source->url)) {
-            hd_debug_print("Source not found or url not set");
+            hd_debug_print("Source not found or XMTLV EPG url not set");
             return;
         }
 
-        $res = $this->is_xmltv_cache_valid();
+        $res = $this->is_xmltv_cache_valid($hash, $source);
         hd_debug_print("cache valid status: $res", true);
-        hd_debug_print("Indexing channels for: $source->url", true);
         switch ($res) {
             case 1:
                 // downloaded xmltv file not exists or expired
-                hd_debug_print("Download and indexing xmltv source");
-                $this->remove_indexes(array(self::INDEX_CHANNELS, self::INDEX_PICONS, self::INDEX_ENTRIES));
-                if ($this->download_xmltv_source() === 1) {
-                    $this->index_xmltv_channels();
+                hd_debug_print("Download and indexing xmltv source: $source->url", true);
+                $this->remove_all_indexes($hash);
+                if ($this->download_xmltv_source($hash, $source) === 1) {
+                    $this->index_xmltv_channels($hash);
+                    $this->index_xmltv_positions($hash);
                 }
                 break;
+            case 2:
+                // downloaded xmltv file exists, not expired but indexes for positions not valid
+                hd_debug_print("Indexing xmltv positions: $source->url", true);
+                $this->remove_index(self::INDEX_ENTRIES, $hash);
+                $this->index_xmltv_positions($hash);
+                break;
             case 3:
-                // downloaded xmltv file exists, not expired but indexes for channels, picons and positions not exists
-                hd_debug_print("Indexing xmltv source");
-                $this->remove_indexes(array(self::INDEX_CHANNELS, self::INDEX_PICONS, self::INDEX_ENTRIES));
-                $this->index_xmltv_channels();
+                // downloaded xmltv file exists, not expired but indexes for channels, picons and positions not valid
+                hd_debug_print("Indexing xmltv source: $source->url", true);
+                $this->remove_all_indexes($hash);
+                $this->index_xmltv_channels($hash);
+                $this->index_xmltv_positions($hash);
                 break;
             default:
                 break;
@@ -224,23 +188,16 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      * if downloaded xmltv file exists, not expired and indexes for channels and icons exists return 2
      * if downloaded xmltv file exists, not expired but all indexes not exists return 3
      *
+     * @param string $hash
+     * @param Cache_Parameters $source
      * @return int
      */
-    public function is_xmltv_cache_valid()
+    public function is_xmltv_cache_valid($hash, $source)
     {
         hd_debug_print();
 
-        /** @var Cache_Parameters $source */
-        $source = $this->get_active_source();
-        if ($source === null || empty($source->url)) {
-            $exception_msg = "Source not found or XMTLV EPG url not set";
-            hd_debug_print($exception_msg);
-            HD::set_last_error("xmltv_last_error", $exception_msg);
-            return -1;
-        }
-
         HD::set_last_error("xmltv_last_error", null);
-        $cached_file = $this->get_cached_filename();
+        $cached_file = $this->get_cache_filename($hash);
         hd_debug_print("Checking cached xmltv file: $cached_file");
         if (!file_exists($cached_file)) {
             hd_debug_print("Cached xmltv file not exist");
@@ -272,16 +229,15 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         }
 
         hd_debug_print("Cached file: $cached_file is not expired");
-        $indexed = $this->get_indexes_info($this->current_source);
+        $indexed = $this->get_indexes_info($hash);
 
-        if (isset($indexed[self::INDEX_CHANNELS], $indexed[self::INDEX_PICONS], $indexed[self::INDEX_ENTRIES])
-            && $indexed[self::INDEX_CHANNELS] && $indexed[self::INDEX_PICONS] && $indexed[self::INDEX_ENTRIES]) {
+        if (isset($indexed[self::INDEX_CHANNELS], $indexed[self::INDEX_ENTRIES])
+            && $indexed[self::INDEX_CHANNELS] && $indexed[self::INDEX_ENTRIES]) {
             hd_debug_print("Xmltv cache valid");
             return 0;
         }
 
-        if (isset($indexed[self::INDEX_CHANNELS], $indexed[self::INDEX_PICONS])
-            && $indexed[self::INDEX_CHANNELS] && $indexed[self::INDEX_PICONS]) {
+        if (isset($indexed[self::INDEX_CHANNELS]) && $indexed[self::INDEX_CHANNELS]) {
             hd_debug_print("Xmltv cache channels and picons are valid");
             return 2;
         }
@@ -291,45 +247,26 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
-     * @param string|null $hash
-     * @return string
-     */
-    public function get_cached_filename($hash = null)
-    {
-        return $this->get_cache_stem(".xmltv", $hash);
-    }
-
-    /**
+     * @param string $hash
      * @param string $ext
-     * @param string|null $hash
      * @return string
      */
-    public function get_cache_stem($ext, $hash = null)
+    public function get_cache_filename($hash, $ext = ".xmltv")
     {
-        $source = $this->get_active_source();
-        if ($source === null || empty($source->url)) {
-            hd_debug_print("Source not found");
-            return 1;
-        }
-
-        return $this->cache_dir . DIRECTORY_SEPARATOR . $this->current_source . $ext;
+        return $this->cache_dir . DIRECTORY_SEPARATOR . $hash . $ext;
     }
 
     /**
      * Download XMLTV source.
      *
+     * @param string $hash
+     * @param Cache_Parameters $source
      * @return int
      */
-    public function download_xmltv_source()
+    public function download_xmltv_source($hash, $source)
     {
-        if ($this->is_current_index_locked()) {
+        if ($this->is_index_locked($hash)) {
             hd_debug_print("File is indexing or downloading, skipped");
-            return 0;
-        }
-
-        $source = $this->get_active_source();
-        if ($source === null || empty($source->url)) {
-            hd_debug_print("Url not set!");
             return 0;
         }
 
@@ -339,7 +276,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         $this->perf->reset('start');
 
         hd_debug_print("Storage space in cache dir: " . HD::get_storage_size($this->cache_dir));
-        $cached_file = $this->get_cached_filename();
+        $cached_file = $this->get_cache_filename($hash);
         $tmp_filename = $cached_file . '.tmp';
         if (file_exists($tmp_filename)) {
             unlink($tmp_filename);
@@ -347,7 +284,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
         try {
             HD::set_last_error("xmltv_last_error", null);
-            $this->set_index_locked(true);
+            $this->set_index_locked($hash, true);
 
             if (preg_match("/jtv.?\.zip$/", basename($source->url))) {
                 throw new Exception("Unsupported EPG format (JTV)");
@@ -357,7 +294,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             $expired = $this->curl_wrapper->check_is_expired() || !file_exists($tmp_filename);
             if (!$expired) {
                 hd_debug_print("File not changed, using cached file: $cached_file");
-                $this->set_index_locked(false);
+                $this->set_index_locked($hash, false);
                 return 1;
             }
 
@@ -444,7 +381,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             }
 
             $ret = 1;
-            $this->remove_indexes(array(self::INDEX_CHANNELS, self::INDEX_PICONS, self::INDEX_ENTRIES));
+            $this->remove_all_indexes($hash);
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
             if (!empty($tmp_filename) && file_exists($tmp_filename)) {
@@ -456,7 +393,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             }
         }
 
-        $this->set_index_locked(false);
+        $this->set_index_locked($hash, false);
 
         hd_debug_print_separator();
 
@@ -495,11 +432,12 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
+     * @param string $hash
      * @param bool $lock
      */
-    public function set_index_locked($lock)
+    public function set_index_locked($hash, $lock)
     {
-        $lock_dir = $this->get_cache_stem("_$this->pid.lock");
+        $lock_dir = $this->get_cache_filename($hash, "_$this->pid.lock");
         if ($lock) {
             if (!create_path($lock_dir, 0644)) {
                 hd_debug_print("Directory '$lock_dir' was not created");
@@ -579,16 +517,17 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      * Remove is selected index
      *
      * @param string $name
+     * @param string $hash
      * @return bool
      */
-    abstract public function remove_index($name);
+    abstract public function remove_index($name, $hash);
 
     /**
      * Remove is selected index
      *
-     * @param array $names
+     * @param string $hash
      */
-    abstract public function remove_indexes($names);
+    abstract public function remove_all_indexes($hash);
 
     /**
      * Get information about indexes
@@ -616,29 +555,22 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      * Check is all indexes is valid
      *
      * @param array $names
+     * @param string $hash
      * @return bool
      */
-    abstract protected function is_all_indexes_valid($names);
+    abstract protected function is_all_indexes_valid($names, $hash);
 
     ///////////////////////////////////////////////////////////////////////////////
     /// protected methods
 
     /**
-     * @return bool
-     */
-    protected function is_current_index_locked()
-    {
-        $lock_dir = $this->get_cache_stem('.lock');
-        return is_dir($lock_dir);
-    }
-
-    /**
+     * @param string $hash
      * @return resource
      * @throws Exception
      */
-    protected function open_xmltv_file()
+    protected function open_xmltv_file($hash)
     {
-        $cached_file = $this->get_cached_filename();
+        $cached_file = $this->get_cache_filename($hash);
         if (!file_exists($cached_file)) {
             throw new Exception("cache file $cached_file not exist");
         }
