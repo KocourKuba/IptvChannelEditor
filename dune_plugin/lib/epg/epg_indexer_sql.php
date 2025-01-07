@@ -144,15 +144,15 @@ class Epg_Indexer_Sql extends Epg_Indexer
                 }
             }
 
-            hd_debug_print("Start reindex channels and picons...");
+            hd_debug_print("Start reindex channels...");
 
             $this->perf->reset('reindex');
 
-            $this->set_index_locked($hash, true);
-
             $this->remove_index($table_ch, $hash);
 
-            $db->exec("CREATE TABLE $table_ch(alias STRING PRIMARY KEY not null, channel_id STRING not null, picon_hash STRING);");
+            $this->set_index_locked($hash, true);
+
+            $db->exec("CREATE TABLE $table_ch(alias STRING PRIMARY KEY not null, channel_id STRING not null);");
 
             $db->exec('PRAGMA journal_mode=MEMORY;');
             $db->exec('BEGIN;');

@@ -106,6 +106,7 @@ setup_show_caption = Show channel caption
 setup_epg_cache_type = Cache control
 setup_epg_cache_type_auto = Automatic
 setup_epg_cache_type_manual = Manual
+setup_epg_cache_type_disable = Disable source
 setup_epg_engine = EPG Engine
 setup_xmltv_epg_source = XMLTV EPG source
 setup_xmltv_set_epg_source = Set XMLTV EPG source

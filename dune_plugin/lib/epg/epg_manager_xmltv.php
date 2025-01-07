@@ -165,6 +165,10 @@ class Epg_Manager_Xmltv
                 continue;
             }
 
+            if ($source === null || (int)$source->ttl === -2) {
+                continue;
+            }
+
             // filter out epg only for selected day
             $day_end_ts = $day_start_ts + 86400;
             $date_start_l = format_datetime("Y-m-d H:i", $day_start_ts);

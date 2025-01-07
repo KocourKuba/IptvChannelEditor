@@ -107,6 +107,7 @@ setup_epg_engine = EPG-Motor
 setup_epg_cache_type = Cache-Steuerung
 setup_epg_cache_type_auto = Automatisch
 setup_epg_cache_type_manual = Manuell
+setup_epg_cache_type_disable = Quelle deaktivieren
 setup_xmltv_epg_source = XMLTV EPG-Quelle
 setup_xmltv_set_epg_source = Legen Sie die XMLTV-EPG-Quelle fest
 setup_enter_xmltv_epg_source = Bei der URL wird die Groß- und Kleinschreibung. Wechseln des Registers mit der Select-Taste

@@ -98,6 +98,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             //////////////////////////////////////
             // EPG cache
             $epg_cache_ops = array();
+            $epg_cache_ops[-2] = TR::t('setup_epg_cache_type_disable');
             $epg_cache_ops[-1] = TR::t('setup_epg_cache_type_auto');
             $epg_cache_ops[0.5] = 0.5;
             $epg_cache_ops[1] = 1;

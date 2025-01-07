@@ -150,6 +150,13 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             return;
         }
 
+        if ((int)$source->ttl === -2) {
+            hd_debug_print("Source $hash disabled: $source->url");
+            return;
+        }
+
+        hd_debug_print("Processing source: " . pretty_json_format($source), true);
+
         $res = $this->is_xmltv_cache_valid($hash, $source);
         hd_debug_print("cache valid status: $res", true);
         switch ($res) {
@@ -209,7 +216,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
         $expired = true;
 
-        if ($source->ttl === -1) {
+        if ((int)$source->ttl === -1) {
             $this->curl_wrapper->set_url($source->url);
             if ($this->curl_wrapper->check_is_expired()) {
                 $this->curl_wrapper->clear_cached_etag();
@@ -217,7 +224,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 $expired = false;
             }
         } else if (filesize($cached_file) !== 0) {
-            $max_cache_time = 3600 * 24 * $source->ttl;
+            $max_cache_time = 3600 * 24 * (float)$source->ttl;
             if ($check_time_file && $check_time_file + $max_cache_time > time()) {
                 $expired = false;
             }
@@ -381,6 +388,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             }
 
             $ret = 1;
+            $this->set_index_locked($hash, false);
             $this->remove_all_indexes($hash);
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
@@ -391,9 +399,8 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             if (file_exists($cached_file)) {
                 unlink($cached_file);
             }
+            $this->set_index_locked($hash, false);
         }
-
-        $this->set_index_locked($hash, false);
 
         hd_debug_print_separator();
 
