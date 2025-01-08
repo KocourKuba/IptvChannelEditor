@@ -596,16 +596,24 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 	m_wndAccounts.SetItemText(dispinfo->item.iItem, dispinfo->item.iSubItem, dispinfo->item.pszText);
 	auto& cred = m_all_credentials[dispinfo->item.iItem];
 	bool changed = true;
+
+	std::wstring text;
+	if (dispinfo->item.pszText != nullptr)
+	{
+		text = dispinfo->item.pszText;
+		utils::string_trim(text);
+	}
+
 	switch (m_plugin->get_access_type())
 	{
 		case AccountAccessType::enPin:
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_password(std::wstring(dispinfo->item.pszText));
+					cred.set_password(text);
 					break;
 				case 2:
-					cred.set_comment(std::wstring(dispinfo->item.pszText));
+					cred.set_comment(text);
 					break;
 				default:
 					changed = false;
@@ -617,15 +625,15 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_login(std::wstring(dispinfo->item.pszText));
+					cred.set_login(text);
 					cred.s_token.clear();
 					break;
 				case 2:
-					cred.set_password(std::wstring(dispinfo->item.pszText));
+					cred.set_password(text);
 					cred.s_token.clear();
 					break;
 				case 3:
-					cred.set_comment(std::wstring(dispinfo->item.pszText));
+					cred.set_comment(text);
 					break;
 				default:
 					changed = false;
@@ -637,13 +645,13 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_ott_key(std::wstring(dispinfo->item.pszText));
+					cred.set_ott_key(text);
 					break;
 				case 2:
-					cred.set_portal(std::wstring(dispinfo->item.pszText));
+					cred.set_portal(text);
 					break;
 				case 3:
-					cred.set_comment(std::wstring(dispinfo->item.pszText));
+					cred.set_comment(text);
 					break;
 				default:
 					changed = false;
@@ -655,7 +663,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_comment(std::wstring(dispinfo->item.pszText));
+					cred.set_comment(text);
 					break;
 				default:
 					changed = false;
