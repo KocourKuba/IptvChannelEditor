@@ -6045,7 +6045,8 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 							 entry->get_epg_id(0).c_str(),
 							 entry->get_archive_days(),
 							 load_string_resource(entry->get_adult() ? IDS_STRING_YES : IDS_STRING_NO).c_str(),
-							 entry->get_uri().c_str()
+							 entry->get_scheme().c_str(),
+							 entry->get_path().c_str()
 							 );
 
 		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
