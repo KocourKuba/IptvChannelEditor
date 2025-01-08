@@ -2240,6 +2240,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 	std::stringstream data;
 	if (!m_dl.DownloadFile(data))
 	{
+		LogProtocol(fmt::format(L"Can't download file: {:s}", m_xmltv_sources[m_xmltvEpgSource]));
 		return false;
 	}
 
@@ -2290,11 +2291,13 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 			const auto& names = extractor.GetItemsNames();
 			if (names.empty())
 			{
+				LogProtocol(fmt::format(L"Archive is empty: {:s}", m_xmltv_sources[m_xmltvEpgSource]));
 				return false;
 			}
 
 			if (!extractor.ExtractFile(names[0], utils::CUrlDownload::GetCacheDir()))
 			{
+				LogProtocol(fmt::format(L"Can't extract file: '{:s}' from '{:s}'", names[0], m_xmltv_sources[m_xmltvEpgSource]));
 				return false;
 			}
 
@@ -2328,7 +2331,14 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 		auto node_doc = std::make_unique<rapidxml::xml_document<>>();
 		rapidxml::file<> xmlFileTmp(utils::utf16_to_utf8(cache_file).c_str());
 		node_doc->parse<rapidxml::parse_fastest>(xmlFileTmp.data());
-		auto ch_node = node_doc->first_node("tv")->first_node("channel");
+		auto tv_node = node_doc->first_node("tv");
+		if (!tv_node)
+		{
+			LogProtocol("Incorrect xmltv file");
+			return false;
+		}
+
+		auto ch_node = tv_node->first_node("channel");
 		while (ch_node)
 		{
 			++ch_cnt;
@@ -2336,7 +2346,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 		}
 
 		int prg_cnt = 0;
-		auto prog_node = node_doc->first_node("tv")->first_node("programme");
+		auto prog_node = tv_node->first_node("programme");
 		while (prog_node)
 		{
 			++prg_cnt;
@@ -2360,12 +2370,13 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 		m_wndProgress.SetRange32(0, ch_cnt);
 		m_wndProgress.ShowWindow(SW_SHOW);
 
-		auto channel_node = docParse->first_node("tv")->first_node("channel");
-		while (channel_node)
+		tv_node = docParse->first_node("tv");
+		ch_node = tv_node->first_node("channel");
+		while (ch_node)
 		{
-			const auto channel_id = rapidxml::get_value_wstring(channel_node->first_attribute("id"));
+			const auto channel_id = rapidxml::get_value_wstring(ch_node->first_attribute("id"));
 			m_epg_aliases.emplace(utils::wstring_tolower_l_copy(channel_id), channel_id);
-			auto display_name_node = channel_node->first_node("display-name");
+			auto display_name_node = ch_node->first_node("display-name");
 			while (display_name_node)
 			{
 				std::wstring channel_name = utils::wstring_tolower_l(rapidxml::get_value_wstring(display_name_node));
@@ -2376,7 +2387,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 				display_name_node = display_name_node->next_sibling();
 			}
 
-			channel_node = channel_node->next_sibling();
+			ch_node = ch_node->next_sibling();
 			if ((++i % 100) == 0)
 			{
 				m_wndProgress.SetPos(i);
@@ -2396,7 +2407,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 		auto& epg_map = m_epg_cache.at(epg_idx);
 
 		// Iterate <tv_category> nodes
-		prog_node = docParse->first_node("tv")->first_node("programme");
+		prog_node = tv_node->first_node("programme");
 		while (prog_node)
 		{
 			auto epg_info = std::make_shared<EpgInfo>();
