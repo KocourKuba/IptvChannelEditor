@@ -179,7 +179,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 
 					char szBuf[4096] = { 0 };
 					DWORD dwReaded = dwAvail;
-					if (!ReadFile(hStdoutRd, szBuf, min(4095, dwAvail), &dwReaded, nullptr)) break;
+					if (!ReadFile(hStdoutRd, szBuf, std::min<unsigned int>(4095, dwAvail), &dwReaded, nullptr)) break;
 
 					result.append(szBuf, dwReaded);
 				}
