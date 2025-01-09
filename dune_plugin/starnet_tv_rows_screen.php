@@ -279,12 +279,13 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
     public function get_rows_pane(MediaURL $media_url, $plugin_cookies)
     {
         hd_debug_print(null, true);
-        $rows = array();
+
+        $rows = $this->create_rows(array(), json_encode(array('group_id' => '__dummy__row__')), '', '', null );
 
         $history_rows = $this->get_history_rows($plugin_cookies);
         if (!is_null($history_rows)) {
-            $rows = array_merge($rows, $history_rows);
             hd_debug_print("added history: " . count($history_rows) . " rows", true);
+            $rows = array_merge($rows, $history_rows);
         }
 
         $favorites_rows = $this->get_favorites_rows();
@@ -295,8 +296,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         $all_channels_rows = $this->get_all_channels_row();
         if (!is_null($all_channels_rows)) {
-            $rows = array_merge($rows, $all_channels_rows);
             hd_debug_print("added all channels: " . count($all_channels_rows) . " rows", true);
+            $rows = array_merge($rows, $all_channels_rows);
         }
 
         $category_rows = $this->get_regular_rows();
@@ -470,9 +471,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             }
         }
 
-        $menu_items[] = $this->plugin->create_menu_item($this, GuiMenuItemDef::is_separator);
-        $menu_items[] = $this->plugin->create_menu_item($this, ACTION_REFRESH_SCREEN, TR::t('refresh'), "refresh.png");
-
         return $menu_items;
     }
 
@@ -487,6 +485,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         $group_id = isset($media_url->group_id) ? $media_url->group_id : null;
         $channel_id = isset($media_url->channel_id) ? $media_url->channel_id : null;
+        $archive_tm = isset($media_url->archive_tm) ? $media_url->archive_tm : -1;
 
         if (is_null($channel_id) || empty($group_id)) {
             return null;
@@ -529,7 +528,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         ///////////// start_time, end_time, genre, country, person /////////////////
 
-        if (is_null($epg_data = $this->plugin->get_program_info($channel_id, -1, $plugin_cookies))) {
+        if (is_null($epg_data = $this->plugin->get_program_info($channel_id, $archive_tm, $plugin_cookies))) {
             hd_debug_print("no epg data");
             $channel_desc = $channel->get_desc();
             if (!empty($channel_desc)) {
