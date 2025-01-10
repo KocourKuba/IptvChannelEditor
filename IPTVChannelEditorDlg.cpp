@@ -2249,17 +2249,17 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 	data.read(buf.data(), 8);
 	data.clear();
 
-	auto file_fmt = SevenZip::CompressionFormat::Unknown;
+	auto file_fmt = SevenZip::CompressionFormat::_Format::Unknown;
 
 	const char* str = buf.data();
 
 	if (memcmp(str, "\x1F\x8B\x08", 3) == 0)
 	{
-		file_fmt = SevenZip::CompressionFormat::GZip;
+		file_fmt = SevenZip::CompressionFormat::_Format::GZip;
 	}
 	else if (memcmp(str, "\x50\x4B\x03\x04", 4) == 0)
 	{
-		file_fmt = SevenZip::CompressionFormat::Zip;
+		file_fmt = SevenZip::CompressionFormat::_Format::Zip;
 	}
 	else
 	{
@@ -2270,16 +2270,16 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 
 		if (memcmp(buf.data(), "<?xml", 5) == 0)
 		{
-			file_fmt = SevenZip::CompressionFormat::XZ;
+			file_fmt = SevenZip::CompressionFormat::_Format::XZ;
 		}
 	}
 
-	if (file_fmt == SevenZip::CompressionFormat::Unknown)
+	if (file_fmt == SevenZip::CompressionFormat::_Format::Unknown)
 		return false;
 
 	const auto& real_url = m_dl.GetUrl();
 	auto cache_file = utils::CUrlDownload::GetCachedPath(real_url);
-	if (file_fmt == SevenZip::CompressionFormat::GZip || file_fmt == SevenZip::CompressionFormat::Zip)
+	if (file_fmt == SevenZip::CompressionFormat::_Format::GZip || file_fmt == SevenZip::CompressionFormat::_Format::Zip)
 	{
 		const auto& unpacked_path = utils::CUrlDownload::GetCachedPath(real_url.substr(0, real_url.length() - 3));
 		if (m_dl.CheckIsCacheExpired(unpacked_path))

@@ -1251,7 +1251,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 		std::filesystem::remove(packed_gz, err);
 
 		packed_file = packed_tar;
-		compressor.SetCompressionFormat(CompressionFormat::Tar);
+		compressor.SetCompressionFormat(CompressionFormat::_Format::Tar);
 		res = archiver.CreateArchive(packed_file);
 		if (res)
 		{
@@ -1260,7 +1260,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 			if (res)
 			{
 				packed_file.swap(packed_gz);
-				compressor.SetCompressionFormat(CompressionFormat::GZip);
+				compressor.SetCompressionFormat(CompressionFormat::_Format::GZip);
 				res = archiver.CreateArchive(packed_file);
 				if (res)
 				{
@@ -1276,7 +1276,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 								  plugin->compile_name_template((cred.custom_plugin_name && !cred.get_plugin_name().empty()
 																 ? cred.get_plugin_name() : utils::DUNE_PLUGIN_FILE_NAME), cred));
 
-		compressor.SetCompressionFormat(CompressionFormat::Zip);
+		compressor.SetCompressionFormat(CompressionFormat::_Format::Zip);
 		res = archiver.CreateArchive(packed_file);
 	}
 
