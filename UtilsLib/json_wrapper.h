@@ -33,28 +33,6 @@ DEALINGS IN THE SOFTWARE.
 #define DESERIALIZE_STRUCT(j, c, s) if (j.contains(""#s"")) j.at(""#s"").get_to(c.s);
 #define DESERIALIZE_STRUCT2(j, c, s, f) if (j.contains(""#f"")) j.at(""#f"").get_to(c.s);
 
-#define JSON_ALL_TRY try {
-#define JSON_ALL_CATCH } \
-		catch (const nlohmann::json::parse_error& ex) \
-		{ \
-			/* parse errors are ok, because input may be random bytes*/ \
-			TRACE("\nparse error: %s\n", ex.what()); \
-		} \
-		catch (const nlohmann::json::out_of_range& ex) \
-		{ \
-			/* out of range errors may happen if provided sizes are excessive */ \
-			TRACE("\nout of range error: %s\n", ex.what()); \
-		} \
-		catch (const nlohmann::detail::type_error& ex) \
-		{ \
-			/* type error */ \
-			TRACE("\ntype error: %s\n", ex.what()); \
-		} \
-		catch (...) \
-		{ \
-			TRACE("\nunknown exception\n"); \
-		}
-
 namespace utils
 {
 	inline std::wstring get_json_wstring(const std::string& key, const nlohmann::json& node)

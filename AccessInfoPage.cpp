@@ -1306,22 +1306,22 @@ void CAccessInfoPage::OnBnClickedButtonEditConfig()
 	pSheet->m_CurrentStream = m_CurrentStream;
 	pSheet->m_selected_cred = selected;
 
-	CPluginConfigPage dlgCfg;
-	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
+	auto pDlgCfg = std::make_unique<CPluginConfigPage>();
+	pDlgCfg->m_psp.dwFlags &= ~PSP_HASHELP;
 
-	CPluginConfigPageTV dlgCfgTV;
-	dlgCfgTV.m_psp.dwFlags &= ~PSP_HASHELP;
+	auto pDlgCfgTV = std::make_unique<CPluginConfigPageTV>();
+	pDlgCfgTV->m_psp.dwFlags &= ~PSP_HASHELP;
 
-	CPluginConfigPageEPG dlgCfgEPG;
-	dlgCfgEPG.m_psp.dwFlags &= ~PSP_HASHELP;
+	auto pDlgCfgEPG = std::make_unique<CPluginConfigPageEPG>();
+	pDlgCfgEPG->m_psp.dwFlags &= ~PSP_HASHELP;
 
-	CPluginConfigPageVOD dlgCfgVOD;
-	dlgCfgVOD.m_psp.dwFlags &= ~PSP_HASHELP;
+	auto pDlgCfgVOD = std::make_unique<CPluginConfigPageVOD>();
+	pDlgCfgVOD->m_psp.dwFlags &= ~PSP_HASHELP;
 
-	pSheet->AddPage(&dlgCfg);
-	pSheet->AddPage(&dlgCfgTV);
-	pSheet->AddPage(&dlgCfgEPG);
-	pSheet->AddPage(&dlgCfgVOD);
+	pSheet->AddPage(pDlgCfg.get());
+	pSheet->AddPage(pDlgCfgTV.get());
+	pSheet->AddPage(pDlgCfgEPG.get());
+	pSheet->AddPage(pDlgCfgVOD.get());
 
 	if (pSheet->DoModal() == IDOK)
 	{

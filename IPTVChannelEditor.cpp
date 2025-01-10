@@ -435,9 +435,9 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
 	}
 
-	CIPTVChannelEditorDlg dlg;
-	m_pMainWnd = &dlg;
-	const INT_PTR nResponse = dlg.DoModal();
+	auto pDlg = std::make_unique<CIPTVChannelEditorDlg>();
+	m_pMainWnd = pDlg.get();
+	const INT_PTR nResponse = pDlg->DoModal();
 	if (nResponse == -1)
 	{
 		TRACE(traceAppMsg, 0, "Warning: dialog creation failed, so application is terminating unexpectedly.\n");
@@ -1169,7 +1169,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 	// copy embedded info
 	if (!noEmbed && cred.embed && !make_web_update)
 	{
-		try
+		JSON_ALL_TRY;
 		{
 			nlohmann::json node;
 			switch (plugin->get_access_type())
@@ -1213,23 +1213,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 				out_file.close();
 			}
 		}
-		catch (const nlohmann::json::out_of_range& ex)
-		{
-			// out of range errors may happen if provided sizes are excessive
-			TRACE("out of range error: %s\n", ex.what());
-			LogProtocol(ex.what());
-		}
-		catch (const nlohmann::detail::type_error& ex)
-		{
-			// type error
-			TRACE("type error: %s\n", ex.what());
-			LogProtocol(ex.what());
-		}
-		catch (...)
-		{
-			TRACE("unknown exception\n");
-			LogProtocol("unknown exception");
-		}
+		JSON_ALL_CATCH;
 	}
 
 	// revert back to previous state
@@ -1955,7 +1939,7 @@ void LogProtocol(const std::string& str)
 	}
 
 	std::ofstream file(GetAppPath() + L"IPTVChannelEditor.log", std::ofstream::binary | std::ofstream::app);
-	file << out.str() << std::endl;
+	file << out.str();
 }
 
 void LogProtocol(const std::wstring& str)
@@ -1980,5 +1964,5 @@ void LogProtocol(const std::wstring& str)
 	}
 
 	std::ofstream file(GetAppPath() + L"IPTVChannelEditor.log", std::ofstream::binary | std::ofstream::app);
-	file << out.str() << std::endl;
+	file << out.str();
 }

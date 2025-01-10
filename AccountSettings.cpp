@@ -131,24 +131,11 @@ void AccountSettings::LoadSettings()
 	std::ifstream in_file(GetAppPath() + CONFIG_FILE);
 	if (in_file.good())
 	{
-		try
+		JSON_ALL_TRY;
 		{
 			in_file >> m_config;
 		}
-		catch (const nlohmann::json::out_of_range& ex)
-		{
-			// out of range errors may happen if provided sizes are excessive
-			TRACE("out of range error: %s\n", ex.what());
-		}
-		catch (const nlohmann::detail::type_error& ex)
-		{
-			// type error
-			TRACE("type error: %s\n", ex.what());
-		}
-		catch (...)
-		{
-			TRACE("unknown exception\n");
-		}
+		JSON_ALL_CATCH;
 
 		if (!m_config.empty())
 		{
@@ -555,7 +542,7 @@ void AccountSettings::UpdateSettingsJson(PluginType plugin_type)
 	for (const auto& pair : settings)
 	{
 		const auto& name = utils::utf16_to_utf8(pair.first);
-		try
+		JSON_ALL_TRY;
 		{
 			switch (pair.second.index())
 			{
@@ -584,20 +571,7 @@ void AccountSettings::UpdateSettingsJson(PluginType plugin_type)
 				}
 			}
 		}
-		catch (const nlohmann::json::out_of_range& ex)
-		{
-			// out of range errors may happen if provided sizes are excessive
-			TRACE("out of range error: %s\n", ex.what());
-		}
-		catch (const nlohmann::detail::type_error& ex)
-		{
-			// type error
-			TRACE("type error: %s\n", ex.what());
-		}
-		catch (...)
-		{
-			TRACE("unknown exception\n");
-		}
+		JSON_ALL_CATCH;
 	}
 
 	if (plugin_type == PluginType::enBase)

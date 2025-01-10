@@ -178,7 +178,7 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, const s
 	}
 
 	bool res = false;
-	try
+	JSON_ALL_TRY
 	{
 		nlohmann::json node = *this;
 
@@ -187,20 +187,7 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, const s
 		out_stream << str << std::endl;
 		res = true;
 	}
-	catch (const nlohmann::json::out_of_range& ex)
-	{
-		// out of range errors may happen if provided sizes are excessive
-		TRACE("out of range error: %s\n", ex.what());
-	}
-	catch (const nlohmann::detail::type_error& ex)
-	{
-		// type error
-		TRACE("type error: %s\n", ex.what());
-	}
-	catch (...)
-	{
-		TRACE("unknown exception\n");
-	}
+	JSON_ALL_CATCH;
 
 	return res;
 }

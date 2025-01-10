@@ -416,7 +416,8 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 #ifdef _DEBUG
 	if (!m_error_message.empty())
 	{
-		ATLTRACE(L"\n%s\n", m_error_message.c_str());
+		m_error_message = m_url + L"\n" + m_error_message;
+		ATLTRACE(L"%s\n", m_error_message.c_str());
 	}
 #endif // _DEBUG
 

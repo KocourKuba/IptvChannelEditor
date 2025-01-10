@@ -153,13 +153,13 @@ inline void LogProtocol(const std::string& str)
 		while (line.back() == '\r')
 			line.pop_back();
 
-		out << csTimeStamp << ' ' << line;
+		out << csTimeStamp << ' ' << line << std::endl;
 	}
 
-	std::cout << out.str() << std::endl;
+	std::cout << out.str();
 
 	std::ofstream file(GetAppPath() + L"updater.log", std::ofstream::binary | std::ofstream::app);
-	file << out.str() << std::endl;
+	file << out.str();
 }
 
 inline void LogProtocol(const std::wstring& str)
@@ -180,13 +180,13 @@ inline void LogProtocol(const std::wstring& str)
 		while (line.back() == '\r')
 			line.pop_back();
 
-		out << csTimeStamp << ' ' << line;
+		out << csTimeStamp << ' ' << line << std::endl;
 	}
 
-	std::cout << out.str() << std::endl;
+	std::cout << out.str();
 
 	std::ofstream file(GetAppPath() + L"updater.log", std::ofstream::binary | std::ofstream::app);
-	file << out.str() << std::endl;
+	file << out.str();
 }
 
 

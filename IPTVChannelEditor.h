@@ -126,3 +126,25 @@ void LogProtocol(const std::wstring& str);
 
 extern CIPTVChannelEditorApp theApp;
 extern std::string g_szServerPath;
+
+#define JSON_ALL_TRY try {
+#define JSON_ALL_CATCH } \
+		catch (const nlohmann::json::parse_error& ex) \
+		{ \
+			/* parse errors are ok, because input may be random bytes*/ \
+			LogProtocol(fmt::format("{:s} ({:d}): parse error: {:s}", __FILE__, __LINE__, ex.what())); \
+		} \
+		catch (const nlohmann::json::out_of_range& ex) \
+		{ \
+			/* out of range errors may happen if provided sizes are excessive */ \
+			LogProtocol(fmt::format("{:s} ({:d}): out of range error: {:s}", __FILE__, __LINE__, ex.what())); \
+		} \
+		catch (const nlohmann::detail::type_error& ex) \
+		{ \
+			/* type error */ \
+			LogProtocol(fmt::format("{:s} ({:d}): type error: {:s}", __FILE__, __LINE__, ex.what())); \
+		} \
+		catch (...) \
+		{ \
+			LogProtocol(fmt::format("{:s} ({:d}): unknown exception", __FILE__, __LINE__)); \
+		}

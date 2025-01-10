@@ -342,7 +342,9 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	{
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
-		parsed_json = nlohmann::json::parse(data.str());
+		{
+			parsed_json = nlohmann::json::parse(data.str());
+		}
 		JSON_ALL_CATCH;
 
 		const auto& json_str = parsed_json.dump(2);
