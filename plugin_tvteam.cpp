@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_tvteam.h"
+#include "Constants.h"
 
 #include "UtilsLib\md5.h"
 #include "UtilsLib\utils.h"
@@ -34,7 +35,9 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-static constexpr auto API_COMMAND_AUTH = L"{:s}?userLogin={:s}&userPasswd={:s}";
+constexpr auto API_COMMAND_AUTH    = L"{{API_URL}}?userLogin={{LOGIN}}&userPasswd={:s}";
+constexpr auto API_COMMAND_GET_URL = L"{{API_URL}}/?apiAction={:s},{:s},{:s}&sessionId={:s}";
+constexpr auto API_COMMAND_SET_URL = L"{{API_URL}}/?apiAction={:s}&{:s}={:s}&sessionId={:s}";
 
 std::string plugin_tvteam::get_api_token(TemplateParams& params)
 {
@@ -53,11 +56,9 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 
 	CWaitCursor cur;
 	std::stringstream data;
-	const std::wstring& url = fmt::format(API_COMMAND_AUTH,
-										  get_provider_api_url(),
-										  params.creds.get_login(),
-										  utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
-	if (download_url(url, data))
+	const std::wstring& url = fmt::format(API_COMMAND_AUTH, utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
+
+	if (download_url(replace_params_vars(params, url), data))
 	{
 		JSON_ALL_TRY;
 		{
@@ -74,6 +75,10 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 			}
 		}
 		JSON_ALL_CATCH;
+	}
+	else
+	{
+		LogProtocol(fmt::format(L"plugin_tvteam: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
 	}
 
 	return session_id;
@@ -97,15 +102,15 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 	else
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(L"{:s}/?apiAction={:s},{:s},{:s}&sessionId={:s}",
-									  get_provider_api_url(),
+		const auto& url = fmt::format(API_COMMAND_GET_URL,
 									  L"getUserData",
 									  L"getServersGroups",
 									  L"getUserPackages",
 									  utils::utf8_to_utf16(session_id));
 		std::stringstream data;
-		if (!download_url(url, data))
+		if (!download_url(replace_params_vars(params, url), data))
 		{
+			LogProtocol(fmt::format(L"plugin_tvteam: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 			return;
 		}
 
@@ -184,16 +189,15 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 	if (!servers_list.empty() && !session_id.empty())
 	{
 
-		const auto& url = fmt::format(L"{:s}/?apiAction={:s}&{:s}={:s}&sessionId={:s}",
-									  get_provider_api_url(),
+		const auto& url = fmt::format(API_COMMAND_SET_URL,
 									  L"updateUserData",
 									  L"groupId",
-									  servers_list[params.creds.server_id].get_id(),
+									  REPL_SERVER_ID,
 									  utils::utf8_to_utf16(session_id));
 
 		CWaitCursor cur;
 		std::stringstream data;
-		if (download_url(url, data))
+		if (download_url(replace_params_vars(params, url), data))
 		{
 			JSON_ALL_TRY;
 			{
@@ -206,6 +210,10 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 				params.error_string = utils::get_json_wstring("error", parsed_json);
 			}
 			JSON_ALL_CATCH;
+		}
+		else
+		{
+			LogProtocol(fmt::format(L"plugin_tvteam: Failed to set server: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 

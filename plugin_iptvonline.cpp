@@ -36,17 +36,17 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-static constexpr auto API_COMMAND_AUTH= L"{:s}/auth";
-static constexpr auto API_COMMAND_REFRESH_TOKEN = L"{:s}/oauth2";
-static constexpr auto API_COMMAND_INFO = L"{:s}/profile";
-static constexpr auto API_COMMAND_DEVICE = L"{:s}/device/{:s}";
-static constexpr auto API_COMMAND_PLAYLIST = L"{:s}/playlist/m3u8";
+constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/auth";
+constexpr auto API_COMMAND_REFRESH_TOKEN = L"{{API_URL}}/oauth2";
+constexpr auto API_COMMAND_INFO = L"{{API_URL}}/profile";
+constexpr auto API_COMMAND_DEVICE = L"{{API_URL}}/device/{:s}";
+constexpr auto API_COMMAND_PLAYLIST = L"{{API_URL}}/playlist/m3u8";
 
-static constexpr const char* client_id = "TestAndroidAppV0";
-static constexpr const char* client_secret = "kshdiouehruyiwuresuygr736t4763b7637";
-static constexpr const char* device_id = "IPTV Channel Editor " STRPRODUCTVER;
+constexpr const char* client_id = "TestAndroidAppV0";
+constexpr const char* client_secret = "kshdiouehruyiwuresuygr736t4763b7637";
+constexpr const char* device_id = "IPTV Channel Editor " STRPRODUCTVER;
 
-static constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
+constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
 
 std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 {
@@ -58,13 +58,13 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 	std::wstring url;
 	if (session_token.empty() && !params.creds.token.empty())
 	{
-		url = fmt::format(API_COMMAND_REFRESH_TOKEN, get_provider_api_url());
+		url = API_COMMAND_REFRESH_TOKEN;
 		json_request["grant_type"] = "refresh_token";
 		json_request["refresh_token"] = params.creds.token;
 	}
 	else if (params.creds.token.empty())
 	{
-		url = fmt::format(API_COMMAND_AUTH, get_provider_api_url());
+		url = API_COMMAND_AUTH;
 		json_request["login"] = params.creds.login;
 		json_request["password"] = params.creds.password;
 	}
@@ -86,7 +86,7 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 
 		CWaitCursor cur;
 		std::stringstream data;
-		if (download_url(url, data, 0, &headers, true, post.c_str()))
+		if (download_url(replace_params_vars(params, url), data, 0, &headers, true, post.c_str()))
 		{
 			JSON_ALL_TRY;
 			{
@@ -101,6 +101,7 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 		}
 		else
 		{
+			LogProtocol(fmt::format(L"plugin_iptvonline: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
 			params.creds.token.clear();
 			delete_file_cookie(session_token_file);
 			session_token.clear();
@@ -122,7 +123,7 @@ std::wstring plugin_iptvonline::get_playlist_url(const TemplateParams& params, s
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = server_request(fmt::format(API_COMMAND_PLAYLIST, get_provider_api_url()));
+		const auto& parsed_json = server_request(replace_params_vars(params, API_COMMAND_PLAYLIST));
 		if (utils::get_json_bool("success", parsed_json) == true && parsed_json.contains("data"))
 		{
 			const auto& server_url = utils::get_json_wstring("data", parsed_json);
@@ -144,11 +145,10 @@ void plugin_iptvonline::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
-		const auto& url = fmt::format(API_COMMAND_INFO, get_provider_api_url());
-		const auto& parsed_json = server_request(url);
 
 		JSON_ALL_TRY;
 		{
+			const auto& parsed_json = server_request(replace_params_vars(params, API_COMMAND_INFO));
 			if (utils::get_json_int("status", parsed_json) == 200 && parsed_json.contains("data"))
 			{
 				const auto& js_data = parsed_json["data"];
@@ -189,11 +189,11 @@ void plugin_iptvonline::fill_servers_list(TemplateParams& params)
 
 	std::vector<DynamicParamsInfo> servers;
 
-	const auto& url = fmt::format(API_COMMAND_DEVICE, get_provider_api_url(), L"info");
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = server_request(url);
+		const auto& url = fmt::format(API_COMMAND_DEVICE, L"info");
+		const auto& parsed_json = server_request(replace_params_vars(params, url));
 		if (utils::get_json_int("status", parsed_json) == 200)
 		{
 			if (parsed_json.contains("device")
@@ -240,9 +240,9 @@ bool plugin_iptvonline::set_server(TemplateParams& params)
 	{
 		nlohmann::json json_request;
 		json_request["server_location"] = std::stoi(servers_list[params.creds.server_id].id);
-		const auto& url = fmt::format(API_COMMAND_DEVICE, get_provider_api_url(), L"settings");
 
-		const auto& parsed_json = server_request(url, 0, true, json_request);
+		const auto& url = fmt::format(API_COMMAND_DEVICE, L"settings");
+		const auto& parsed_json = server_request(replace_params_vars(params, url), 0, true, json_request);
 
 		JSON_ALL_TRY;
 		{
@@ -536,6 +536,10 @@ nlohmann::json plugin_iptvonline::server_request(const std::wstring& url, int ca
 				return nlohmann::json::parse(data.str());
 			}
 			JSON_ALL_CATCH;
+		}
+		else
+		{
+			LogProtocol(fmt::format(L"plugin_iptvonline: Failed server request {:s}: {:s}", url, m_dl.GetLastErrorMessage()));
 		}
 	}
 

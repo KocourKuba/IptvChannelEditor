@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_vidok.h"
+#include "Constants.h"
 
 #include "UtilsLib\md5.h"
 #include "UtilsLib\utils.h"
@@ -36,8 +37,8 @@ DEALINGS IN THE SOFTWARE.
 
 // API documentation http://wiki.vidok.tv/index.php?title=SAPI
 
-static constexpr auto API_COMMAND_GET_URL = L"{:s}/{:s}?token={:s}";
-static constexpr auto API_COMMAND_SET_URL = L"{:s}/{:s}?token={:s}&{:s}={:s}";
+constexpr auto API_COMMAND_URL = L"{{API_URL}}/{:s}?token={{S_TOKEN}}";
+constexpr auto PARAM_FMT = L"&{:s}={:s}";
 
 std::string plugin_vidok::get_api_token(TemplateParams& params)
 {
@@ -51,9 +52,9 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"account", params.creds.get_s_token());
+		const auto& url = fmt::format(API_COMMAND_URL, L"account");
 		std::stringstream data;
-		if (download_url(url, data))
+		if (download_url(replace_params_vars(params, url), data))
 		{
 			JSON_ALL_TRY
 			{
@@ -78,6 +79,10 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 			}
 			JSON_ALL_CATCH;
 		}
+		else
+		{
+			LogProtocol(fmt::format(L"plugin_vidok: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+		}
 	}
 }
 
@@ -92,9 +97,9 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 
 	get_api_token(params);
 
-	const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"settings", params.creds.get_s_token());
+	const auto& url = fmt::format(API_COMMAND_URL, L"settings");
 	std::stringstream data;
-	if (download_url(url, data))
+	if (download_url(replace_params_vars(params, url), data))
 	{
 		JSON_ALL_TRY;
 		{
@@ -118,6 +123,10 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 		}
 		JSON_ALL_CATCH;
 	}
+	else
+	{
+		LogProtocol(fmt::format(L"plugin_vidok: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+	}
 
 	set_servers_list(servers);
 }
@@ -133,16 +142,12 @@ bool plugin_vidok::set_server(TemplateParams& params)
 	{
 		get_api_token(params);
 
-		const auto& url = fmt::format(API_COMMAND_SET_URL,
-									  get_provider_api_url(),
-									  L"settings_set",
-									  params.creds.get_s_token(),
-									  L"server",
-									  servers_list[params.creds.server_id].get_id());
+		auto url = fmt::format(API_COMMAND_URL, L"settings_set");
+		url += fmt::format(PARAM_FMT, L"server", REPL_SERVER_ID);
 
 		CWaitCursor cur;
 		std::stringstream data;
-		if (download_url(url, data))
+		if (download_url(replace_params_vars(params, url), data))
 		{
 			JSON_ALL_TRY;
 			{
@@ -154,6 +159,10 @@ bool plugin_vidok::set_server(TemplateParams& params)
 				}
 			}
 			JSON_ALL_CATCH;
+		}
+		else
+		{
+			LogProtocol(fmt::format(L"plugin_vidok: Failed to set server: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 

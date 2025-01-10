@@ -206,7 +206,8 @@ protected:
 	void delete_file_cookie(const std::wstring& name) const;
 
 	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const;
-	std::wstring replace_params_vars(const TemplateParams& params, std::wstring& url) const;
+	std::wstring replace_params_vars(const TemplateParams& params, const std::wstring& url) const;
+	std::wstring replace_uri_stream_vars(const uri_stream* info, const std::wstring& url) const;
 
 protected:
 	PluginType plugin_type = PluginType::enCustom;

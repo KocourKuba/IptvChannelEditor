@@ -35,9 +35,9 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-constexpr const wchar_t* API_URL = L"{:s}/player_api.php?username={:s}&password={:s}";
-constexpr const wchar_t* API_REQUEST = L"{:s}&action={:s}";
-constexpr const wchar_t* API_REQUEST_PARAM = L"{:s}&action={:s}&{:s}={:s}";
+constexpr auto VOD_API_REQUEST = L"{:s}/player_api.php?username={{LOGIN}}&password={{PASSWORD}}";
+constexpr auto VOD_API_ACTION = L"{:s}&action={:s}";
+constexpr auto PARAM_FMT = L"&{:s}={:s}";
 
 void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 {
@@ -50,9 +50,9 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 		all_category->name = all_name;
 		categories->set_back(all_name, all_category);
 
-		const auto& api_url = fmt::format(API_URL, config.m_url, config.m_params.creds.get_password(), config.m_params.creds.get_password());
+		const auto& api_url = replace_params_vars(config.m_params, fmt::format(VOD_API_REQUEST, config.m_url));
 
-		std::wstring request_url = fmt::format(API_REQUEST, api_url, L"get_vod_categories");
+		std::wstring request_url = fmt::format(VOD_API_ACTION, api_url, L"get_vod_categories");
 
 		const auto& category_json = xtream_request(config, request_url);
 		if (category_json.empty()) break;
@@ -68,7 +68,9 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 			const auto& category_id = xtream_parse_category(val, category, categories);
 			if (category_id.empty()) continue;
 
-			request_url = fmt::format(API_REQUEST_PARAM, api_url, L"get_vod_streams", L"category_id", category_id);
+
+			request_url = fmt::format(VOD_API_ACTION, api_url, L"get_vod_streams");
+			request_url += fmt::format(PARAM_FMT, L"category_id", category_id);
 
 			const auto& streams_json = xtream_request(config, request_url);
 			if (streams_json.empty()) continue;
@@ -109,7 +111,7 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 			}
 		}
 
-		request_url = fmt::format(API_REQUEST, api_url, L"get_series_categories");
+		request_url = fmt::format(VOD_API_ACTION, api_url, L"get_series_categories");
 
 		const auto& series_cat_json = xtream_request(config, request_url);
 		if (series_cat_json.empty()) break;
@@ -123,7 +125,8 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 			const auto& category_id = xtream_parse_category(val, category, categories);
 			if (category_id.empty()) continue;
 
-			request_url = fmt::format(API_REQUEST_PARAM, api_url, L"get_series", L"category_id", category_id);
+			request_url = fmt::format(VOD_API_ACTION, api_url, L"get_series");
+			request_url += fmt::format(PARAM_FMT, L"category_id", category_id);
 
 			const auto& series_json = xtream_request(config, request_url);
 			if (series_json.empty()) break;

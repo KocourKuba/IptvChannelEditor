@@ -26,21 +26,21 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_oneott.h"
+#include "Constants.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/PinApi/{{LOGIN}}/{{PASSWORD}}";
+
 void plugin_oneott::parse_account_info(TemplateParams& params)
 {
-	static constexpr auto ACCOUNT_TEMPLATE = L"{:s}/PinApi/{:s}/{:s}";
-
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(ACCOUNT_TEMPLATE, get_provider_api_url(), params.creds.get_login(), params.creds.get_password());
 		std::stringstream data;
-		if (download_url(url, data))
+		if (download_url(replace_params_vars(params, API_COMMAND_AUTH), data))
 		{
 			JSON_ALL_TRY
 			{
@@ -52,6 +52,10 @@ void plugin_oneott::parse_account_info(TemplateParams& params)
 				}
 			}
 			JSON_ALL_CATCH;
+		}
+		else
+		{
+			LogProtocol(fmt::format(L"plugin_oneott: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 }

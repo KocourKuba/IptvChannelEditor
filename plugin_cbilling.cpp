@@ -34,6 +34,9 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
+constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/auth/info";
+constexpr auto ACCOUNT_HEADER_TEMPLATE = "x-public-key: {:s}";
+
 void plugin_cbilling::parse_account_info(TemplateParams& params)
 {
 	/*
@@ -51,9 +54,6 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 	}
 }	*/
 
-	static constexpr auto ACCOUNT_HEADER_TEMPLATE = "x-public-key: {:s}";
-	static constexpr auto ACCOUNT_TEMPLATE = L"/auth/info";
-
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
@@ -61,7 +61,7 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 		headers.emplace_back("accept: */*");
 		headers.emplace_back(fmt::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password));
 		std::stringstream data;
-		if (download_url(get_provider_api_url() + ACCOUNT_TEMPLATE, data, 0, &headers))
+		if (download_url(replace_params_vars(params, API_COMMAND_AUTH), data, 0, &headers))
 		{
 			JSON_ALL_TRY
 			{
@@ -85,6 +85,10 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 			}
 			JSON_ALL_CATCH;
 		}
+	}
+	else
+	{
+		LogProtocol(fmt::format(L"plugin_cbilling: Failed to account info: {:s}", m_dl.GetLastErrorMessage()));
 	}
 }
 

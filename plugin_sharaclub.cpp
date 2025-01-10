@@ -37,8 +37,8 @@ DEALINGS IN THE SOFTWARE.
 
 // API documentation https://list.playtv.pro/api/players.txt
 
-static constexpr auto API_COMMAND_GET_URL = L"{:s}?a={:s}&u={:s}-{:s}&source=dune_editor";
-static constexpr auto API_COMMAND_SET_URL = L"{:s}?a={:s}&{:s}={:s}&u={:s}-{:s}&source=dune_editor";
+constexpr auto API_COMMAND_URL = L"{{API_URL}}?a={:s}&u={{LOGIN}}-{{PASSWORD}}&source=dune_editor";
+constexpr auto PARAM_FMT = L"&{:s}={:s}";
 
 std::wstring plugin_sharaclub::get_playlist_url(const TemplateParams& params, std::wstring url /* = L"" */)
 {
@@ -57,9 +57,9 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(API_COMMAND_GET_URL, get_provider_api_url(), L"subscr_info", params.creds.get_login(), params.creds.get_password());
+		const auto& url = fmt::format(API_COMMAND_URL, L"subscr_info");
 		std::stringstream data;
-		if (download_url(url, data))
+		if (download_url(replace_params_vars(params, url), data))
 		{
 			JSON_ALL_TRY;
 			{
@@ -85,6 +85,10 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 			}
 			JSON_ALL_CATCH;
 		}
+		else
+		{
+			LogProtocol(fmt::format(L"plugin_sharaclub: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+		}
 	}
 }
 
@@ -95,15 +99,11 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 
 	std::vector<DynamicParamsInfo> servers;
 
-	const auto& url = fmt::format(API_COMMAND_GET_URL,
-									get_provider_api_url(),
-									L"ch_cdn",
-									params.creds.get_login(),
-									params.creds.get_password());
+	const auto& url = fmt::format(API_COMMAND_URL, L"ch_cdn");
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (download_url(url, data))
+	if (download_url(replace_params_vars(params, url), data))
 	{
 		JSON_ALL_TRY;
 		{
@@ -135,17 +135,12 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 
 	if (!servers_list.empty())
 	{
-		const auto& url = fmt::format(API_COMMAND_SET_URL,
-									  get_provider_api_url(),
-									  L"ch_cdn",
-									  L"num",
-									  servers_list[params.creds.server_id].get_id(),
-									  params.creds.get_login(),
-									  params.creds.get_password());
+		auto url = fmt::format(API_COMMAND_URL, L"ch_cdn");
+		url += fmt::format(PARAM_FMT, L"num", REPL_SERVER_ID);
 
 		CWaitCursor cur;
 		std::stringstream data;
-		if (download_url(url, data))
+		if (download_url(replace_params_vars(params, url), data))
 		{
 			JSON_ALL_TRY;
 			{
@@ -164,15 +159,11 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 	if (!get_profiles_list().empty() || params.creds.login.empty() || params.creds.password.empty())
 		return;
 
-	const auto& url = fmt::format(API_COMMAND_GET_URL,
-								  get_provider_api_url(),
-								  L"list_profiles",
-								  params.creds.get_login(),
-								  params.creds.get_password());
+	const auto& url = fmt::format(API_COMMAND_URL, L"list_profiles");
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (!download_url(url, data))
+	if (!download_url(replace_params_vars(params, url), data))
 		return;
 
 	JSON_ALL_TRY;
@@ -208,17 +199,12 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 {
 	if (!profiles_list.empty())
 	{
-		const auto& url = fmt::format(API_COMMAND_SET_URL,
-									  get_provider_api_url(),
-									  L"list_profiles",
-									  L"num",
-									  profiles_list[params.creds.profile_id].get_id(),
-									  params.creds.get_login(),
-									  params.creds.get_password());
+		auto url = fmt::format(API_COMMAND_URL, L"list_profiles");
+		url += fmt::format(PARAM_FMT, L"num", REPL_PROFILE_ID);
 
 		CWaitCursor cur;
 		std::stringstream data;
-		if (download_url(url, data))
+		if (download_url(replace_params_vars(params, url), data))
 		{
 			JSON_ALL_TRY;
 			{
@@ -249,7 +235,9 @@ void plugin_sharaclub::parse_vod(const CThreadConfig& config)
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
-		parsed_json = nlohmann::json::parse(data.str());
+		{
+			parsed_json = nlohmann::json::parse(data.str());
+		}
 		JSON_ALL_CATCH;
 
 		if (parsed_json.empty()) break;

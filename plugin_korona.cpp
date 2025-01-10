@@ -36,11 +36,12 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-static constexpr auto API_COMMAND_AUTH= L"{:s}/auth/";
-static constexpr auto API_COMMAND_INFO = L"{:s}/xapi10/accountinfo";
-static constexpr auto API_COMMAND_SERVERS = L"{:s}/xapi10/tv/servers";
+constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/auth/";
+constexpr auto API_COMMAND_INFO = L"{{API_URL}}/xapi10/accountinfo";
+constexpr auto API_COMMAND_SERVERS = L"{{API_URL}}/xapi10/tv/servers";
 
-static constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
+constexpr auto PARAM_FMT = "{:s}={:s}";
+constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
 
 std::string plugin_korona::get_api_token(TemplateParams& params)
 {
@@ -72,17 +73,16 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 		{
 			post += "&";
 		}
-		post += fmt::format("{:s}={:s}", pair.first, utils::encodeURIComponent(pair.second));
+		post += fmt::format(PARAM_FMT, pair.first, utils::encodeURIComponent(pair.second));
 	}
 
-	const auto& url = fmt::format(API_COMMAND_AUTH, get_provider_api_url());
 	std::vector<std::string> headers;
 	headers.emplace_back("accept: */*");
 	headers.emplace_back("Content-Type: application/x-www-form-urlencoded");
 
 	CWaitCursor cur;
 	std::stringstream data;
-	if (download_url(url, data, 0, &headers, true, post.c_str()))
+	if (download_url(replace_params_vars(params, API_COMMAND_AUTH), data, 0, &headers, true, post.c_str()))
 	{
 		JSON_ALL_TRY;
 		{
@@ -104,6 +104,10 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 		}
 		JSON_ALL_CATCH;
 	}
+	else
+	{
+		LogProtocol(fmt::format(L"plugin_korona: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
+	}
 
 	return session_token;
 }
@@ -112,8 +116,7 @@ void plugin_korona::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
-		const auto& url = fmt::format(API_COMMAND_INFO, get_provider_api_url());
-		const auto& js_data = server_request(url);
+		const auto& js_data = server_request(replace_params_vars(params, API_COMMAND_INFO));
 
 		JSON_ALL_TRY;
 		{
@@ -145,11 +148,9 @@ void plugin_korona::fill_servers_list(TemplateParams& params)
 
 	std::vector<DynamicParamsInfo> servers;
 
-	const auto& url = fmt::format(API_COMMAND_SERVERS, get_provider_api_url());
-
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = server_request(url);
+		const auto& parsed_json = server_request(replace_params_vars(params, API_COMMAND_SERVERS));
 		if (parsed_json.contains("data"))
 		{
 			int idx = 0;

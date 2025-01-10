@@ -33,16 +33,15 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-static constexpr auto ACCOUNT_TEMPLATE = L"http://api.itv.live/data/{:s}";
+constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/data/{{PASSWORD}}";
 
 void plugin_itv::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(ACCOUNT_TEMPLATE, params.creds.get_password());
 		std::stringstream data;
-		if (download_url(url, data))
+		if (download_url(replace_params_vars(params, API_COMMAND_AUTH), data))
 		{
 			JSON_ALL_TRY
 			{
@@ -76,6 +75,10 @@ void plugin_itv::parse_account_info(TemplateParams& params)
 				account_info.emplace(L"package_info", subscription);
 			}
 			JSON_ALL_CATCH;
+		}
+		else
+		{
+			LogProtocol(fmt::format(L"plugin_itv: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 }
