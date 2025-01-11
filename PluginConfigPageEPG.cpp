@@ -401,9 +401,12 @@ std::wstring CPluginConfigPageEPG::CompileEpgUrl()
 
 
 	const auto& domains_list = GetPropertySheet()->m_plugin->get_domains_list();
-	size_t domain_id = GetPropertySheet()->m_selected_cred.domain_id;
-	domain_id = ((domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : domain_id);
-	utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN_ID, domains_list[domain_id].get_name());
+	if (!domains_list.empty())
+	{
+		size_t domain_id = GetPropertySheet()->m_selected_cred.domain_id;
+		domain_id = ((domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : domain_id);
+		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN_ID, domains_list[domain_id].get_name());
+	}
 
 	return url;
 }
