@@ -73,39 +73,36 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 		return session_token;
 	}
 
-	if (!url.empty())
+	json_request["client_id"] = client_id;
+	json_request["client_secret"] = client_secret;
+	json_request["device_id"] = device_id;
+	const auto& post = json_request.dump();
+
+	std::vector<std::string> headers;
+	headers.emplace_back("accept: */*");
+	headers.emplace_back("Content-Type: application/json; charset=utf-8");
+
+	CWaitCursor cur;
+	std::stringstream data;
+	if (download_url(replace_params_vars(params, url), data, 0, &headers, true, post.c_str()))
 	{
-		json_request["client_id"] = client_id;
-		json_request["client_secret"] = client_secret;
-		json_request["device_id"] = device_id;
-		const auto& post = json_request.dump();
-
-		std::vector<std::string> headers;
-		headers.emplace_back("accept: */*");
-		headers.emplace_back("Content-Type: application/json; charset=utf-8");
-
-		CWaitCursor cur;
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, url), data, 0, &headers, true, post.c_str()))
+		JSON_ALL_TRY;
 		{
-			JSON_ALL_TRY;
-			{
-				const auto& parsed_json = nlohmann::json::parse(data.str());
-				set_file_cookie(session_token_file,
-								utils::get_json_string("access_token", parsed_json),
-								utils::get_json_int("expires_time", parsed_json));
-				params.creds.token = utils::get_json_string("refresh_token", parsed_json);
+			const auto& parsed_json = nlohmann::json::parse(data.str());
+			set_file_cookie(session_token_file,
+							utils::get_json_string("access_token", parsed_json),
+							utils::get_json_int("expires_time", parsed_json));
+			params.creds.token = utils::get_json_string("refresh_token", parsed_json);
 
-			}
-			JSON_ALL_CATCH;
 		}
-		else
-		{
-			LogProtocol(fmt::format(L"plugin_iptvonline: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
-			params.creds.token.clear();
-			delete_file_cookie(session_token_file);
-			session_token.clear();
-		}
+		JSON_ALL_CATCH;
+	}
+	else
+	{
+		LogProtocol(fmt::format(L"plugin_iptvonline: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
+		params.creds.token.clear();
+		delete_file_cookie(session_token_file);
+		session_token.clear();
 	}
 
 	return session_token;

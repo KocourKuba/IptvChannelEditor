@@ -368,12 +368,9 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	if (!info->get_token().empty())
 	{
 		utils::string_replace_inplace<wchar_t>(epg_template, REPL_TOKEN, info->get_token());
-	}
-
-	if (!info->get_token().empty())
-	{
 		utils::string_replace_inplace<wchar_t>(epg_template, REPL_S_TOKEN, info->get_token());
 	}
+
 
 	if (!epg_param.get_epg_date_format().empty())
 	{
