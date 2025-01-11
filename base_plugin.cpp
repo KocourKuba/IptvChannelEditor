@@ -193,52 +193,52 @@ std::wstring base_plugin::replace_uri_stream_vars(const uri_stream* info, const 
 
 	if (!info->get_scheme().empty())
 	{
-		replaced = utils::string_replace<wchar_t>(url, REPL_SCHEME, info->get_scheme());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_SCHEME, info->get_scheme());
 	}
 
 	if (!info->get_domain().empty())
 	{
-		replaced = utils::string_replace<wchar_t>(url, REPL_DOMAIN, info->get_domain());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_DOMAIN, info->get_domain());
 	}
 
 	if (!info->get_port().empty())
 	{
-		replaced = utils::string_replace<wchar_t>(url, REPL_PORT, info->get_port());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_PORT, info->get_port());
 	}
 
 	if (!info->get_id().empty())
 	{
-		replaced = utils::string_replace<wchar_t>(url, REPL_ID, info->get_id());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_ID, info->get_id());
 	}
 
 	if (!info->get_token().empty())
 	{
-		replaced = utils::string_replace<wchar_t>(url, REPL_TOKEN, info->get_token());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_TOKEN, info->get_token());
 	}
 
 	if (!info->get_int_id().empty())
 	{
-		replaced = utils::string_replace<wchar_t>(url, REPL_INT_ID, info->get_int_id());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_INT_ID, info->get_int_id());
 	}
 
 	if (!info->get_host().empty())
 	{
-		replaced = utils::string_replace<wchar_t>(url, REPL_HOST, info->get_host());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_HOST, info->get_host());
 	}
 
 	if (!info->get_var1().empty())
 	{
-		replaced = utils::string_replace<wchar_t>(url, REPL_VAR1, info->get_var1());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_VAR1, info->get_var1());
 	}
 
 	if (!info->get_var2().empty())
 	{
-		replaced = utils::string_replace<wchar_t>(url, REPL_VAR2, info->get_var2());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_VAR2, info->get_var2());
 	}
 
 	if (!info->get_var3().empty())
 	{
-		replaced = utils::string_replace<wchar_t>(url, REPL_VAR3, info->get_var3());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_VAR3, info->get_var3());
 	}
 
 
