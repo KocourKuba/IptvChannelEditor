@@ -106,7 +106,9 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         hd_debug_print("LANUCH PLUGIN");
                         hd_debug_print_separator();
 
-                        if (toggle_updater_proxy($this->plugin->get_bool_parameter(PARAM_USE_UPDATER_PROXY, false))) {
+                        $value = $this->plugin->get_bool_parameter(PARAM_USE_UPDATER_PROXY, false);
+                        if (toggle_updater_proxy($value)) {
+                            $this->plugin->set_bool_parameter(PARAM_USE_UPDATER_PROXY, true);
                             return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'),
                                 Action_Factory::restart(), TR::t('entry_updater_proxy_enabled'));
                         }

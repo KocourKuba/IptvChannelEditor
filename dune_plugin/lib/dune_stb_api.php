@@ -1678,16 +1678,15 @@ function get_plugin_manifest_info()
 
 function is_updater_proxy_needs()
 {
-    $v = get_platform_info();
+    $pl = get_platform_info();
     $plugin_info = get_plugin_manifest_info();
-    return (strpos($plugin_info['app_update_path'], '.dropbox') !== false
-        || (strpos($v['type'], '86') !== 0 &&  strpos($plugin_info['app_update_path'], 'https://') === 0));
-}
+    $ver = get_parsed_firmware_ver();
+    if ($ver['rev_number'] > 21 && $ver['build_date'] > 250101) {
+        return false;
+    }
 
-function is_updater_proxy_enabled()
-{
-    $plugin_info = get_plugin_manifest_info();
-    return strpos($plugin_info['app_update_path'], get_plugin_cgi_url("updater.sh?")) === 0;
+    return (strpos($plugin_info['app_update_path'], '.dropbox') !== false
+        || (strpos($pl['type'], '86') !== 0 &&  strpos($plugin_info['app_update_path'], 'https://') === 0));
 }
 
 /**
@@ -1705,7 +1704,8 @@ function toggle_updater_proxy($use_proxy)
 
     hd_debug_print("Use updater proxy: " . var_export($use_proxy, true), true);
 
-    $proxy_enabled = is_updater_proxy_enabled();
+    $proxy_enabled = strpos($update_url, get_plugin_cgi_url("updater.sh?")) === 0;
+
     hd_debug_print("Proxy enabled: " . var_export($proxy_enabled, true), true);
 
     if (($use_proxy && $proxy_enabled) || (!$use_proxy && !$proxy_enabled)) {
