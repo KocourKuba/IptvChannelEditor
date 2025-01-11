@@ -36,11 +36,11 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/auth";
-constexpr auto API_COMMAND_REFRESH_TOKEN = L"{{API_URL}}/oauth2";
-constexpr auto API_COMMAND_INFO = L"{{API_URL}}/profile";
+constexpr auto API_COMMAND_AUTH = L"{API_URL}/auth";
+constexpr auto API_COMMAND_REFRESH_TOKEN = L"{API_URL}/oauth2";
+constexpr auto API_COMMAND_INFO = L"{API_URL}/profile";
 constexpr auto API_COMMAND_DEVICE = L"{{API_URL}}/device/{:s}";
-constexpr auto API_COMMAND_PLAYLIST = L"{{API_URL}}/playlist/m3u8";
+constexpr auto API_COMMAND_PLAYLIST = L"{API_URL}/playlist/m3u8";
 
 constexpr const char* client_id = "TestAndroidAppV0";
 constexpr const char* client_secret = "kshdiouehruyiwuresuygr736t4763b7637";

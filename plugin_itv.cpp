@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/data/{{PASSWORD}}";
+constexpr auto API_COMMAND_AUTH = L"{API_URL}/data/{PASSWORD}";
 
 void plugin_itv::parse_account_info(TemplateParams& params)
 {

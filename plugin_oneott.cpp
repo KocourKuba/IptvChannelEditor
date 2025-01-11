@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/PinApi/{{LOGIN}}/{{PASSWORD}}";
+constexpr auto API_COMMAND_AUTH = L"{API_URL}/PinApi/{LOGIN}/{PASSWORD}";
 
 void plugin_oneott::parse_account_info(TemplateParams& params)
 {

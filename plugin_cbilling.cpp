@@ -34,7 +34,7 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/auth/info";
+constexpr auto API_COMMAND_AUTH = L"{API_URL}/auth/info";
 constexpr auto ACCOUNT_HEADER_TEMPLATE = "x-public-key: {:s}";
 
 void plugin_cbilling::parse_account_info(TemplateParams& params)

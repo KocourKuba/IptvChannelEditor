@@ -36,9 +36,9 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/auth/";
-constexpr auto API_COMMAND_INFO = L"{{API_URL}}/xapi10/accountinfo";
-constexpr auto API_COMMAND_SERVERS = L"{{API_URL}}/xapi10/tv/servers";
+constexpr auto API_COMMAND_AUTH = L"{API_URL}/auth/";
+constexpr auto API_COMMAND_INFO = L"{API_URL}/xapi10/accountinfo";
+constexpr auto API_COMMAND_SERVERS = L"{API_URL}/xapi10/tv/servers";
 
 constexpr auto PARAM_FMT = "{:s}={:s}";
 constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
