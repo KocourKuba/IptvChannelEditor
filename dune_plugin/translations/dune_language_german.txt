@@ -276,6 +276,7 @@ warn_msg6 = Leere Anbieter-Playlist!
 epg_not_ready = EPG nicht bereit
 epg_not_ready_desc = EPG wird noch indexiert, bitte warten
 fake_epg_program = Programm
+epg_indexing = Verarbeitung...
 
 err_too_old_player = Dieser DUNE HD-Player ist zu alt und wird nicht unterstützt
 err_load_playlist = Fehler beim Laden der Playlist!

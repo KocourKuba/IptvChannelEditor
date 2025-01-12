@@ -22,6 +22,18 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * @inheritDoc
+     */
+    public function get_action_map(MediaURL $media_url, &$plugin_cookies)
+    {
+        hd_debug_print(null, true);
+
+        return array(
+            GUI_EVENT_TIMER => User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER),
+        );
+    }
+
+    /**
      * EPG dialog defs
      * @return array
      */
@@ -114,8 +126,12 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 $cache_ttl, $epg_cache_ops, self::CONTROLS_WIDTH, true);
 
             // Reload XMLTV source
-            Control_Factory::add_image_button($defs, $this, null, self::ACTION_RELOAD_EPG,
-                TR::t('setup_reload_xmltv_epg'), TR::t('refresh'), get_image_path('refresh.png'));
+            if ((int)$cache_ttl !== -2) {
+                $epg_manager = $this->plugin->get_epg_manager();
+                $locked = $epg_manager !== null && $epg_manager->get_indexer()->is_index_locked($this->selected);
+                Control_Factory::add_image_button($defs, $this, null, self::ACTION_RELOAD_EPG,
+                    TR::t('setup_reload_xmltv_epg'), $locked ? TR::t('epg_indexing') : TR::t('refresh'), get_image_path('refresh.png'));
+            }
 
             //////////////////////////////////////
             // clear epg cache
@@ -164,6 +180,22 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
         $post_action = null;
         switch ($control_id) {
+            case GUI_EVENT_TIMER:
+                $epg_manager = $this->plugin->get_epg_manager();
+                if ($epg_manager === null) {
+                    return null;
+                }
+
+                clearstatcache();
+
+                $res = $epg_manager->import_indexing_log();
+                if ($res === false) {
+                    $post_action = Action_Factory::change_behaviour(
+                        $this->get_action_map(MediaUrl::decode($user_input->parent_media_url), $plugin_cookies),
+                        1000);
+                }
+                break;
+
             case PARAM_EPG_CACHE_ENGINE:
                 $this->plugin->tv->unload_channels();
                 $this->plugin->set_parameter($control_id, $user_input->{$control_id});
@@ -233,8 +265,16 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case self::ACTION_RELOAD_EPG:
                 hd_debug_print(self::ACTION_RELOAD_EPG);
-                $this->plugin->get_epg_manager()->clear_epg_cache();
+                $epg_manager = $this->plugin->get_epg_manager();
+                if ($epg_manager === null || $epg_manager->get_indexer()->is_index_locked($this->selected)) {
+                    return null;
+                }
+
+                $epg_manager->clear_epg_cache();
                 $this->plugin->run_bg_epg_indexing();
+                $post_action = Action_Factory::change_behaviour(
+                    $this->get_action_map(MediaUrl::decode($user_input->parent_media_url), $plugin_cookies),
+                    100);
                 break;
 
             case ACTION_RELOAD:
@@ -245,5 +285,13 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs(), $post_action);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_timer(MediaURL $media_url, $plugin_cookies)
+    {
+        return Action_Factory::timer(500);
     }
 }
