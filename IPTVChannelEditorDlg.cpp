@@ -1237,16 +1237,15 @@ void CIPTVChannelEditorDlg::FillXmlSources()
 {
 	m_wndXmltvEpgSource.ResetContent();
 
-	const auto& internal_source = m_plugin->get_internal_epg_urls();
-	const auto& custom_source = m_plugin->get_custom_epg_urls();
-
-	std::vector<DynamicParamsInfo> all_xmltv_sources;
-	all_xmltv_sources.insert(all_xmltv_sources.end(), internal_source.begin(), internal_source.end());
-	all_xmltv_sources.insert(all_xmltv_sources.end(), custom_source.begin(), custom_source.end());
+	if (m_plugin->get_custom_epg_urls().empty())
+	{
+		m_wndXmltvEpgSource.EnableWindow(FALSE);
+		return;
+	}
 
 	int max_dropdown_size = 80;
 	m_xmltv_sources.clear();
-	for (const auto& source : all_xmltv_sources)
+	for (const auto& source : m_plugin->get_custom_epg_urls())
 	{
 		const auto& text = fmt::format(L"{:s} - {:s}", source.get_id(), source.get_name());
 		m_xmltv_sources.emplace_back(source.get_name());
@@ -1262,7 +1261,9 @@ void CIPTVChannelEditorDlg::FillXmlSources()
 		size.cx += 10;
 
 		if (size.cx > max_dropdown_size)
+		{
 			max_dropdown_size = size.cx;
+		}
 	}
 
 	m_xmltvEpgSource = GetConfig().get_int(false, REG_EPG_SOURCE_IDX, 0);
@@ -1275,7 +1276,7 @@ void CIPTVChannelEditorDlg::FillXmlSources()
 
 	m_wndXmltvEpgSource.SetCurSel(m_xmltvEpgSource);
 	m_wndXmltvEpgSource.SetDroppedWidth(max_dropdown_size);
-	m_wndXmltvEpgSource.EnableWindow(!all_xmltv_sources.empty());
+	m_wndXmltvEpgSource.EnableWindow(TRUE);
 }
 
 LRESULT CIPTVChannelEditorDlg::OnInitProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
@@ -6263,9 +6264,10 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddEpg()
 	}
 
 	CFillParamsInfoDlg dlg;
-	dlg.m_type = DynamicParamsType::enLinks;
+	dlg.m_type = DynamicParamsType::enEpgLinks;
 	dlg.m_paramsList = std::move(info);
 	dlg.m_readonly = false;
+	dlg.m_plugin = m_plugin;
 
 	if (dlg.DoModal() == IDOK)
 	{

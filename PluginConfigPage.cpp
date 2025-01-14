@@ -125,7 +125,6 @@ BOOL CPluginConfigPage::OnInitDialog()
 
 	FillControls();
 
-	RestoreWindowPos(GetSafeHwnd(), REG_CONFIG_WINDOW_POS);
 	AllowSave(false);
 
 	return TRUE;  // return TRUE unless you set the focus to a control

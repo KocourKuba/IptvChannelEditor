@@ -56,7 +56,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             $epg_source_ops[ENGINE_JSON] = TR::t('setup_epg_engine_json');
         }
 
-        /** @var Hashed_Array<string, Cache_Parameters> $cache_parameters */
         $sources = $this->plugin->get_all_xmltv_sources();
         if ($sources->size() !== 0) {
             $epg_source_ops[ENGINE_XMLTV] = TR::t('setup_epg_engine_xmltv');

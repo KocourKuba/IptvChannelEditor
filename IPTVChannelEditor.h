@@ -40,12 +40,6 @@ DEALINGS IN THE SOFTWARE.
 
 class CIPTVChannelEditorApp : public CWinAppEx
 {
-	using LangStruct = struct
-	{
-		HMODULE hLib;
-		CString csLang;
-	};
-
 public:
 	CIPTVChannelEditorApp();
 
@@ -73,7 +67,7 @@ public:
 	bool m_bDev = false;
 	static std::wstring DEV_PATH;
 	static std::wstring PACK_DLL_PATH;
-	std::map<WORD, LangStruct> m_LangMap;
+	std::map<WORD, std::tuple<HMODULE, std::wstring>> m_LangMap;
 	SevenZip::SevenZipWrapper m_archiver;
 };
 

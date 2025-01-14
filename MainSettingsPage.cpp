@@ -128,7 +128,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 	int nCurrent = 0;
 	for (const auto& pair : theApp.m_LangMap)
 	{
-		int nIdx = m_wndLanguage.AddString(pair.second.csLang);
+		int nIdx = m_wndLanguage.AddString(std::get<std::wstring>(pair.second).c_str());
 		m_wndLanguage.SetItemData(nIdx, pair.first);
 		if (pair.first == m_nLang)
 			nCurrent = nIdx;

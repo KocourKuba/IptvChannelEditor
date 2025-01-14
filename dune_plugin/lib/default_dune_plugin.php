@@ -324,30 +324,19 @@ class Default_Dune_Plugin implements DunePlugin
 
         /** @var Hashed_Array $sources */
         $xmltv_sources = new Hashed_Array();
-        foreach ($this->m3u_parser->getXmltvSources() as $source) {
-            $hash = Hashed_Array::hash($source);
-            $cached_type = new Cache_Parameters();
-            $cached_type->url = $source;
-            $cached_type->ttl = $cache_params->has($hash) ? $cache_params->get($hash) : -1;
-            $xmltv_sources->set($hash, $cached_type);
-        }
-
         $ext_sources = $this->config->get_feature(Plugin_Constants::EPG_CUSTOM_SOURCE);
-
         if (!empty($ext_sources)) {
             hd_debug_print("ext xmltv sources: " . json_encode($ext_sources), true);
-            foreach ($ext_sources as $source) {
+            foreach ($ext_sources as $key => $source) {
                 $cached_type = new Cache_Parameters();
                 $cached_type->url = $source['name'];
                 $hash = Hashed_Array::hash($source['name']);
                 $cached_type->ttl = $cache_params->has($hash) ? $cache_params->get($hash) : -1;
                 $xmltv_sources->set($hash, $cached_type);
+                hd_debug_print("$key => $source", true);
             }
         }
 
-        foreach ($xmltv_sources as $key => $source) {
-            hd_debug_print("$key => $source", true);
-        }
         return $xmltv_sources;
     }
 
@@ -1219,7 +1208,6 @@ class Default_Dune_Plugin implements DunePlugin
     {
         hd_debug_print(null, true);
 
-        /** @var Hashed_Array<string, Cache_Parameters> $sources */
         $sources = $this->get_all_xmltv_sources();
 
         foreach ($sources as $key => $value) {

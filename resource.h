@@ -589,6 +589,8 @@
 #define IDC_BUTTON_REMOVE2              1135
 #define IDC_BUTTON_COPY                 1135
 #define IDC_EDIT_PLAYLIST_URL           1136
+#define IDC_BUTTON_COPY2                1136
+#define IDC_BUTTON_PLAYLIST             1136
 #define IDC_MFCLINK_DONATE_YOOMONEY     1137
 #define IDC_PROGRESS_PROGRAM            1138
 #define IDC_STATIC_CUR_TIME             1139

@@ -234,9 +234,10 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	AfxSetResourceHandle(AfxGetInstanceHandle());
 	if (auto pair = m_LangMap.find(nLangCurrent); pair != m_LangMap.cend())
 	{
-		if (nLangCurrent != 1033 && pair->second.hLib != nullptr)
+		auto hLib = std::get<HMODULE>(pair->second);
+		if (nLangCurrent != 1033 && hLib != nullptr)
 		{
-			AfxSetResourceHandle(pair->second.hLib);
+			AfxSetResourceHandle(hLib);
 		}
 	}
 
@@ -446,7 +447,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	for (auto& lang : m_LangMap)
 	{
-		::FreeLibrary(lang.second.hLib);
+		::FreeLibrary(std::get<HMODULE>(lang.second));
 	}
 
 	// Delete the shell manager created above.
@@ -605,14 +606,12 @@ void CIPTVChannelEditorApp::FillLangMap()
 	LANGID nExeTrans = cVer.GetCurLID();
 	cVer.Close();
 
-	LangStruct sLang;
-	sLang.hLib = nullptr;
-	sLang.csLang = _T("English");
-	m_LangMap.emplace(nExeTrans, sLang);
+	m_LangMap.emplace(nExeTrans, std::make_tuple<HMODULE, std::wstring>(nullptr, L"English"));
 
 	std::filesystem::path cFile(fileName.GetString());
 	cFile.replace_filename(cFile.stem().native() + _T("???.dll"));
 
+	CString csLang;
 	CFileFind cFind;
 	BOOL bFound = cFind.FindFile(cFile.c_str());
 	while (bFound)
@@ -627,9 +626,9 @@ void CIPTVChannelEditorApp::FillLangMap()
 		HMODULE hRes = LoadLibrary(file);
 		if (!hRes) continue;
 
-		sLang.hLib = hRes;
-		sLang.csLang.LoadString(hRes, IDS_LANGUAGE);
-		m_LangMap.emplace(nLibTrans, sLang);
+		csLang.LoadString(hRes, IDS_LANGUAGE);
+		std::wstring lang(csLang.GetString());
+		m_LangMap.emplace(nLibTrans, std::make_tuple(hRes, lang));
 	}
 }
 
@@ -1848,7 +1847,7 @@ std::wstring load_string_resource(unsigned int cp, unsigned int id)
 	HMODULE hRes = nullptr;
 	if (auto pair = theApp.m_LangMap.find(cp); pair != theApp.m_LangMap.end())
 	{
-		hRes = pair->second.hLib;
+		hRes = std::get<HMODULE>(pair->second);
 	}
 
 	wchar_t* p = nullptr;

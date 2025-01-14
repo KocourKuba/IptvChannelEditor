@@ -154,7 +154,6 @@ class Epg_Manager_Xmltv
      */
     public function get_day_epg_items(Channel $channel, $day_start_ts)
     {
-        /** @var Hashed_Array<string, Cache_Parameters> $active_sources */
         $active_sources = $this->plugin->get_all_xmltv_sources();
         $any_lock = $this->indexer->is_any_index_locked();
         $day_epg = array();

@@ -31,6 +31,7 @@ DEALINGS IN THE SOFTWARE.
 #include "PlaylistTemplateInfo.h"
 #include "PluginEnums.h"
 #include "EditableListCtrl.h"
+#include "base_plugin.h"
 
 
 // CFillParamsInfo dialog
@@ -64,6 +65,7 @@ protected:
 	afx_msg void OnBnClickedButtonAdd();
 	afx_msg void OnBnClickedButtonRemove();
 	afx_msg void OnBnClickedButtonCopy();
+	afx_msg void OnBnClickedButtonFromPlaylist();
 	afx_msg void OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 
@@ -73,6 +75,7 @@ public:
 	bool m_fixed = false;
 	bool m_isFirstColEditable = true;
 	std::vector<variantInfo> m_paramsList;
+	std::shared_ptr<base_plugin> m_plugin = nullptr;
 
 protected:
 	std::wstring GetParamId(const CFillParamsInfoDlg::variantInfo& info);
@@ -82,4 +85,5 @@ protected:
 	CButton m_wndAdd;
 	CButton m_wndRemove;
 	CButton m_wndCopy;
+	CButton m_wndPlaylist;
 };

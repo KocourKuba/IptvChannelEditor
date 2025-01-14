@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "IPTVChannelEditor.h"
 #include "FillParamsInfoDlg.h"
 #include "Constants.h"
+#include <boost/algorithm/string.hpp>
 
 // CFillParamsInfo dialog
 
@@ -42,6 +43,7 @@ BEGIN_MESSAGE_MAP(CFillParamsInfoDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CFillParamsInfoDlg::OnBnClickedButtonRemove)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_INFO, &CFillParamsInfoDlg::OnLvnItemchangedListInfo)
 	ON_BN_CLICKED(IDC_BUTTON_COPY, &CFillParamsInfoDlg::OnBnClickedButtonCopy)
+	ON_BN_CLICKED(IDC_BUTTON_PLAYLIST, &CFillParamsInfoDlg::OnBnClickedButtonFromPlaylist)
 END_MESSAGE_MAP()
 
 
@@ -58,6 +60,7 @@ void CFillParamsInfoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_ADD, m_wndAdd);
 	DDX_Control(pDX, IDC_BUTTON_REMOVE, m_wndRemove);
 	DDX_Control(pDX, IDC_BUTTON_COPY, m_wndCopy);
+	DDX_Control(pDX, IDC_BUTTON_PLAYLIST, m_wndPlaylist);
 }
 
 // FillParamsInfo message handlers
@@ -73,6 +76,11 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 	CRect rect;
 	m_wndListParams.GetClientRect(&rect);
 	int vWidth = rect.Width() - GetSystemMetrics(SM_CXVSCROLL);
+
+	if (!m_plugin)
+	{
+		m_wndPlaylist.ShowWindow(SW_HIDE);
+	}
 
 	CString csID;
 	CString csName;
@@ -101,6 +109,7 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 			m_fixed = true;
 			break;
 		case DynamicParamsType::enLinks:
+		case DynamicParamsType::enEpgLinks:
 			VERIFY(csID.LoadString(IDS_STRING_NAME));
 			VERIFY(csName.LoadString(IDS_STRING_VALUE));
 			break;
@@ -233,6 +242,12 @@ void CFillParamsInfoDlg::OnBnClickedButtonRemove()
 		m_paramsList.erase(m_paramsList.begin() + idx);
 		m_wndListParams.DeleteItem(idx);
 	}
+
+	int cnt = m_wndListParams.GetItemCount();
+	for (int i = 0; i < cnt; i++)
+	{
+		m_wndListParams.SetItemText(i, 0, std::to_wstring(i).c_str());
+	}
 }
 
 void CFillParamsInfoDlg::OnBnClickedButtonCopy()
@@ -247,6 +262,25 @@ void CFillParamsInfoDlg::OnBnClickedButtonCopy()
 
 		m_wndListParams.InsertItem(cnt, std::to_wstring(cnt).c_str(), 0);
 		m_wndListParams.SetItemText(cnt, 1, GetParamName(item).c_str());
+	}
+}
+
+void CFillParamsInfoDlg::OnBnClickedButtonFromPlaylist()
+{
+	for (const auto& url : m_plugin->get_internal_epg_urls())
+	{
+		if (std::find_if(m_paramsList.begin(), m_paramsList.end(), [url, this](const variantInfo& item)
+						 {
+							 return boost::algorithm::iequals(GetParamName(item), url.get_name());
+						 }) == m_paramsList.end())
+		{
+			int cnt = m_wndListParams.GetItemCount();
+			variantInfo param = DynamicParamsInfo(std::to_wstring(cnt), url.get_name());
+
+			const auto& it = m_paramsList.emplace_back(param);
+			m_wndListParams.InsertItem(cnt, GetParamId(it).c_str(), 0);
+			m_wndListParams.SetItemText(cnt, 1, GetParamName(it).c_str());
+		}
 	}
 }
 

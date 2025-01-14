@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20241013152247" scan="317" scanned="20241013152130">
+<document created="20211012165442" version="4.0.374" date="20250114174515" scan="318" scanned="20250114174407">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20241013132028" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20250114163442" usesmfc="1">
     <headerfiles>
       <header name="..\..\resource.h"/>
       <resource name="..\..\IPTVChannelEditor.rc"/>
@@ -36,12 +36,6 @@
       <keyword name="RadioButton" class="TVisRadioButton"/>
       <keyword name="Panel" class="TVisPanel"/>
     </mappings>
-    <engines>
-      <enabled>
-        <item>Microsoft</item>
-        <item>Embedded</item>
-      </enabled>
-    </engines>
     <node class="TWindowsAcceleratorFolder" name="Accelerators" resid="9">
       <node class="TWindowsAcceleratorNode" name="112" created="20211209210449" resid="112" langid="1033">
         <item name="32774" id="32774">
@@ -110,7 +104,10 @@
           <component class="TVisLabel" name="STATIC_Copyright_©" created="20220331213759" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX" changed="20230330110553">158</row>
             <row id="CY">22</row>
-            <row id="Text" locked="1" changed="20240205101839">Copyright © 2021-2025#lPavel Abakanov (sharky72)</row>
+            <row id="Text" locked="1" state="3" changed="20250114174407">
+              <prev>Copyright © 2021-2025#nPavel Abakanov (sharky72)</prev>
+              <native>Copyright © 2020-2024#lPavel Abakanov (sharky72)</native>
+            </row>
             <row id="X" changed="20230330110553">53</row>
             <row id="Y">15</row>
           </component>
@@ -2838,6 +2835,16 @@
             <row id="X">42</row>
             <row id="Y">99</row>
           </component>
+          <component class="TVisButton" name="1136" state="0" created="20250114174407" type="button">
+            <row id="CX" state="0">73</row>
+            <row id="CY" state="0">14</row>
+            <row id="Text" state="0">
+              <native>From playlist</native>
+              <lang id="ru" date="20250114174417">Из плейлиста</lang>
+            </row>
+            <row id="X" state="0">89</row>
+            <row id="Y" state="0">99</row>
+          </component>
         </form>
       </node>
       <node class="TWindowsDialogNode" name="136" created="20221126021421" resid="136" langid="1033">
@@ -3249,6 +3256,13 @@
               <native>58</native>
             </row>
           </component>
+          <component class="TVisCheckBox" name="1247" state="0" created="20250114174407" type="button" pushlike="1">
+            <row id="CX" state="0">15</row>
+            <row id="CY" state="0">13</row>
+            <row id="Text" locked="1" state="0">&lt;&gt;</row>
+            <row id="X" state="0">256</row>
+            <row id="Y" state="0">68</row>
+          </component>
           <component class="TVisLabel" name="STATIC_DATE" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX" changed="20230531235148">98</row>
             <row id="CY">8</row>
@@ -3499,7 +3513,10 @@
             </row>
           </component>
           <component class="TVisEdit" name="1130" type="edit">
-            <row id="CX">262</row>
+            <row id="CX" state="3" changed="20250114174407">
+              <prev>262</prev>
+              <native>247</native>
+            </row>
             <row id="CY">12</row>
             <row id="X">7</row>
             <row id="Y" state="3" changed="20241013152130">
@@ -4235,8 +4252,8 @@
           <native>Archive:	%d day(s)#lAdult:		%s#lIn categories:	%s</native>
           <lang id="ru" date="20211012225615" savedtotm="1">Архив:		%d дней#nВзрослый:	%s#nВ категории:	%s</lang>
         </row>
-        <row id="IDS_STRING_FMT_PLAYLIST_TOOLTIPS" changed="20230519210347">
-          <native>Name:		%s#lID:		%s#lEPG ID:		%s#lArchive:	%d day(s)#lAdult:		%s#lURL:		%s</native>
+        <row id="IDS_STRING_FMT_PLAYLIST_TOOLTIPS" changed="20250114174407">
+          <native>Name:		%s#lID:		%s#lEPG ID:		%s#lArchive:	%d day(s)#lAdult:		%s#lURL:		%s://%s</native>
           <lang id="ru" date="20230519214334">Название:	%s#n№:		%s#nEPG №:		%s#nАрхив:		%d дней#nВзрослый:	%s#nСсылка:	%s</lang>
         </row>
         <row id="IDS_STRING_NO">
@@ -5194,9 +5211,9 @@
           <native>EPG domain URL. This value used for {EPG_DOMAIN} macros</native>
           <lang id="ru" date="20230601163646">Доменная ссылка EPG. Это значение используется для макроса {EPG_DOMAIN}</lang>
         </row>
-        <row id="IDS_STRING_EDIT_PLAYLIST_DOMAIN" created="20230601163421">
-          <native>Playlist domain URL. This value used for {PL_DOMAIN} macros</native>
-          <lang id="ru" date="20230601163634">Доменная ссылка ТВ плейлиста. Это значение используется для макроса {PL_DOMAIN}</lang>
+        <row id="IDS_STRING_EDIT_PLAYLIST_DOMAIN" created="20230601163421" changed="20250114174407">
+          <native>Playlist domain URL. This value used for {DOMAIN_ID} macros</native>
+          <lang id="ru" date="20250114174459">Доменная ссылка ТВ плейлиста. Это значение используется для макроса {DOMAIN_ID}</lang>
         </row>
         <row id="IDS_STRING_EDIT_VOD_PLAYLIST_DOMAIN" created="20230601163421">
           <native>VOD playlist domain URL. This value used for {VOD_DOMAIN} macros</native>
@@ -5322,34 +5339,34 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20241013152130">
-          <prev>8.5.2140, 23 Sep 2024</prev>
-          <native>8.6.2146, 3 Oct 2024</native>
+        <row id="FileVersion" locked="1" state="3" changed="20250114174407">
+          <prev>8.6.2146, 3 Oct 2024</prev>
+          <native>8.7.2251, 14 Jan 2025</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
-        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20241013152130">
-          <prev>5</prev>
-          <native>6</native>
+        <row id="FileVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20250114174407">
+          <prev>6</prev>
+          <native>7</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20241013152130">
-          <prev>2140</prev>
-          <native>2146</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20250114174407">
+          <prev>2146</prev>
+          <native>2251</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20241013152130">
-          <prev>8.5.2140</prev>
-          <native>8.6.2146</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20250114174407">
+          <prev>8.6.2146</prev>
+          <native>8.7.2251</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" changed="20240312215344">8</row>
-        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20241013152130">
-          <prev>5</prev>
-          <native>6</native>
+        <row id="ProductVersion[2]" class="TIntegerRow" hidden="1" state="3" changed="20250114174407">
+          <prev>6</prev>
+          <native>7</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20241013152130">
-          <prev>2140</prev>
-          <native>2146</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20250114174407">
+          <prev>2146</prev>
+          <native>2251</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>
