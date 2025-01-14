@@ -1997,7 +1997,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 #endif // _DEBUG
 
 	UpdateExtToken(uri_stream);
-	DWORD dwStart = GetTickCount();
+	auto dwStart = utils::ChronoGetTickCount();
 
 	// check end time
 	EpgInfo epg_info{};
@@ -2065,7 +2065,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 		}
 	}
 
-	TRACE("\nLoad time %d\n", GetTickCount() - dwStart);
+	TRACE("\nLoad time %d\n", DWORD(utils::ChronoGetTickCount() - dwStart));
 
 	if (found && epg_info.time_start != 0)
 	{
@@ -2326,7 +2326,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 	bool added = false;
 	try
 	{
-		DWORD dwStart = GetTickCount();
+		auto dwStart = utils::ChronoGetTickCount();
 		int ch_cnt = 0;
 		auto node_doc = std::make_unique<rapidxml::xml_document<>>();
 		rapidxml::file<> xmlFileTmp(utils::utf16_to_utf8(cache_file).c_str());
@@ -2354,7 +2354,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 		}
 		node_doc.release();
 
-		DWORD dwEnd = GetTickCount();
+		auto dwEnd = utils::ChronoGetTickCount();
 		TRACE("\nCount nodes time %f, Total channel nodes %d, programme nodes %d\n", (double)(dwEnd - dwStart) / 1000., ch_cnt, prg_cnt);
 
 		//////////////////////////////////////////////////////////////////////////
@@ -2393,7 +2393,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 				m_wndProgress.SetPos(i);
 			}
 		}
-		dwEnd = GetTickCount();
+		dwEnd = utils::ChronoGetTickCount();
 		TRACE("\nParse channels time %f\n", (double)(dwEnd - dwStart) / 1000.);
 
 		//////////////////////////////////////////////////////////////////////////
@@ -2431,7 +2431,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 				m_wndProgress.SetPos(i);
 			}
 		}
-		dwEnd = GetTickCount();
+		dwEnd = utils::ChronoGetTickCount();
 		TRACE("\nParse programme time %f\n", (double)(dwEnd - dwStart) / 1000.);
 	}
 	catch (...)
@@ -4835,15 +4835,15 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 {
 	CPropertySheet sheet(IDS_STRING_PROGRAM_SETTINGS);
 
-	CMainSettingsPage dlg1;
-	dlg1.m_epg_cache = &m_epg_cache;
-	dlg1.m_epg_aliases = &m_epg_aliases;
+	auto pDlg1 = std::make_unique<CMainSettingsPage>();
+	pDlg1->m_epg_cache = &m_epg_cache;
+	pDlg1->m_epg_aliases = &m_epg_aliases;
 
-	CPathsSettingsPage dlg2;
-	CUpdateSettingsPage dlg3;
-	sheet.AddPage(&dlg1);
-	sheet.AddPage(&dlg2);
-	sheet.AddPage(&dlg3);
+	auto pDlg2 = std::make_unique<CPathsSettingsPage>();
+	auto pDlg3 = std::make_unique<CUpdateSettingsPage>();
+	sheet.AddPage(pDlg1.get());
+	sheet.AddPage(pDlg2.get());
+	sheet.AddPage(pDlg3.get());
 
 	std::wstring old_list = GetConfig().get_string(true, REG_LISTS_PATH);
 	int old_flags = GetConfig().get_int(true, REG_CMP_FLAGS);
@@ -6122,22 +6122,22 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 	pSheet->m_CurrentStream = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 	pSheet->m_configPages = true;
 
-	CPluginConfigPage dlgCfg;
-	dlgCfg.m_psp.dwFlags &= ~PSP_HASHELP;
+	auto pDlgCfg = std::make_unique<CPluginConfigPage>();
+	pDlgCfg->m_psp.dwFlags &= ~PSP_HASHELP;
 
-	CPluginConfigPageTV dlgCfgTV;
-	dlgCfgTV.m_psp.dwFlags &= ~PSP_HASHELP;
+	auto pDlgCfgTV = std::make_unique<CPluginConfigPageTV>();
+	pDlgCfgTV->m_psp.dwFlags &= ~PSP_HASHELP;
 
-	CPluginConfigPageEPG dlgCfgEPG;
-	dlgCfgEPG.m_psp.dwFlags &= ~PSP_HASHELP;
+	auto pDlgCfgEPG = std::make_unique<CPluginConfigPageEPG>();
+	pDlgCfgEPG->m_psp.dwFlags &= ~PSP_HASHELP;
 
-	CPluginConfigPageVOD dlgCfgVOD;
-	dlgCfgVOD.m_psp.dwFlags &= ~PSP_HASHELP;
+	auto pDlgCfgVOD = std::make_unique<CPluginConfigPageVOD>();
+	pDlgCfgVOD->m_psp.dwFlags &= ~PSP_HASHELP;
 
-	pSheet->AddPage(&dlgCfg);
-	pSheet->AddPage(&dlgCfgTV);
-	pSheet->AddPage(&dlgCfgEPG);
-	pSheet->AddPage(&dlgCfgVOD);
+	pSheet->AddPage(pDlgCfg.get());
+	pSheet->AddPage(pDlgCfgTV.get());
+	pSheet->AddPage(pDlgCfgEPG.get());
+	pSheet->AddPage(pDlgCfgVOD.get());
 
 	if (IDOK == pSheet->DoModal())
 	{
