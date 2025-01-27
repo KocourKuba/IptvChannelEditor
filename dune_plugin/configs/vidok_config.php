@@ -145,6 +145,9 @@ class vidok_config extends default_config
      */
     protected function ensure_token_loaded($force = false)
     {
+        hd_debug_print(null, true);
+        hd_debug_print("force request provider token: " . var_export($force, true));
+
         $login = $this->get_login();
         $password = $this->get_password();
 
@@ -157,6 +160,7 @@ class vidok_config extends default_config
         $old_token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
         if (!empty($old_token) || $old_token !== $token) {
             $this->plugin->set_credentials(Ext_Params::M_S_TOKEN, $token);
+            hd_debug_print("s_token: $token", true);
         }
 
         return true;

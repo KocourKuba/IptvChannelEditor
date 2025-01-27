@@ -826,11 +826,13 @@ class default_config extends dynamic_config
         }
 
         // replace all macros
+        hd_debug_print("Replace stream template in url: $play_template_url", true);
         foreach ($replaces as $key => $value) {
             if (isset($ext_params[$key])) {
                 $play_template_url = str_replace($value, $ext_params[$key], $play_template_url);
             }
         }
+        hd_debug_print("Result url: $play_template_url", true);
 
         $play_template_url = $this->replace_account_vars($play_template_url);
 
@@ -891,8 +893,6 @@ class default_config extends dynamic_config
         $parse_pattern = $this->get_tv_parse_pattern();
         if (empty($parse_pattern)) {
             hd_debug_print("Empty tv parsing pattern!");
-        } else {
-            hd_debug_print("Parsing pattern: $parse_pattern", true);
         }
 
         $template = $this->get_current_tv_template();
@@ -1510,6 +1510,8 @@ class default_config extends dynamic_config
             }
         }
 
+        hd_debug_print("Result url: $url", true);
+
         return $url;
     }
 
@@ -1537,9 +1539,10 @@ class default_config extends dynamic_config
     {
         $template = $this->get_current_tv_template();
         $parse_pattern = isset($template[Plugin_Constants::PARSE_REGEX]) ? $template[Plugin_Constants::PARSE_REGEX] : '';
-        if (!empty($parse_pattern))
+        if (!empty($parse_pattern)) {
+            hd_debug_print("Parse pattern $parse_pattern");
             $parse_pattern = "#$parse_pattern#";
-
+        }
         return $parse_pattern;
     }
 

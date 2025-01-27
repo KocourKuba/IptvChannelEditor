@@ -65,9 +65,13 @@ class korona_config extends default_config
         $data = $this->execApiCommand($cmd, null, true, $curl_opt);
         if (isset($data->access_token)) {
             hd_debug_print("token requested", true);
+            $expired = time() + $data->expires_in;
             $this->plugin->set_credentials(Ext_Params::M_S_TOKEN, $data->access_token);
             $this->plugin->set_credentials(Ext_Params::M_R_TOKEN, $data->refresh_token);
-            $this->plugin->set_credentials(Ext_Params::M_EXPIRE_DATA, time() + $data->expires_in);
+            $this->plugin->set_credentials(Ext_Params::M_EXPIRE_DATA, $expired);
+            hd_debug_print("s_token: $data->access_token", true);
+            hd_debug_print("r_token: $data->refresh_token", true);
+            hd_debug_print("expired: $expired", true);
             return true;
         }
 
@@ -75,6 +79,8 @@ class korona_config extends default_config
             hd_debug_print("token not refreshed, make full request: " . json_encode($data), true);
             $this->plugin->set_credentials(Ext_Params::M_S_TOKEN, '');
             $this->plugin->set_credentials(Ext_Params::M_R_TOKEN, '');
+            hd_debug_print("s_token: cleared", true);
+            hd_debug_print("r_token: cleared", true);
             return $this->ensure_token_loaded(true);
         }
 

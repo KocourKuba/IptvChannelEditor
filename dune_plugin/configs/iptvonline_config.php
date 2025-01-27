@@ -446,6 +446,7 @@ class iptvonline_config extends default_config
     protected function ensure_token_loaded($force = false)
     {
         hd_debug_print(null, true);
+        hd_debug_print("force request provider token: " . var_export($force, true));
 
         $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
         $expired = time() > (int)$this->plugin->get_credentials(Ext_Params::M_EXPIRE_DATA);
@@ -500,6 +501,9 @@ class iptvonline_config extends default_config
             $this->plugin->set_credentials(Ext_Params::M_S_TOKEN, $data->access_token);
             $this->plugin->set_credentials(Ext_Params::M_R_TOKEN, $data->refresh_token);
             $this->plugin->set_credentials(Ext_Params::M_EXPIRE_DATA, $data->expires_time);
+            hd_debug_print("s_token: $data->access_token", true);
+            hd_debug_print("r_token: $data->refresh_token", true);
+            hd_debug_print("expired: $data->expires_time", true);
             return true;
         }
 

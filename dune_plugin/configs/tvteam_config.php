@@ -54,7 +54,7 @@ class tvteam_config extends default_config
         hd_debug_print(null, true);
         hd_debug_print("Collect information from account: " . var_export($force, true));
 
-        if (!$this->ensure_token_loaded()) {
+        if (!$this->ensure_token_loaded($force)) {
             hd_debug_print("Token not loaded");
             return null;
         }
@@ -72,6 +72,8 @@ class tvteam_config extends default_config
                 }
                 parent::set_server_id($this->account_data->data->userData->groupId);
             }
+        } else {
+            hd_debug_print("Current account info: " . json_encode($this->account_data), true);
         }
 
         return $this->account_data;
@@ -146,15 +148,17 @@ class tvteam_config extends default_config
         $session_file = get_temp_path(self::SESSION_FILE);
         $expired = true;
         if (file_exists($session_file)) {
-            $this->session_id[CURLOPT_CUSTOMREQUEST] = file_get_contents($session_file);
             $expired = time() > filemtime($session_file);
             if ($expired) {
+                hd_debug_print("session file $session_file expired", true);
                 unlink($session_file);
+            } else {
+                $this->session_id[CURLOPT_CUSTOMREQUEST] = file_get_contents($session_file);
             }
         }
 
         if (!$force && isset($this->session_id[CURLOPT_CUSTOMREQUEST]) && !$expired) {
-            hd_debug_print("request not required", true);
+            hd_debug_print("session id '{$this->session_id[CURLOPT_CUSTOMREQUEST]}' is not expired", true);
             return true;
         }
 
@@ -177,6 +181,7 @@ class tvteam_config extends default_config
                 touch($session_file, time() + 86400);
                 HD::set_last_error("rq_last_error", null);
                 $this->session_id[CURLOPT_CUSTOMREQUEST] = $response->data->sessionId;
+                hd_debug_print("token: {$this->session_id[CURLOPT_CUSTOMREQUEST]}", true);
                 return true;
             }
         }
