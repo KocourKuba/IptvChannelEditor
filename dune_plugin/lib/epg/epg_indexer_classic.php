@@ -55,7 +55,7 @@ class Epg_Indexer_Classic extends Epg_Indexer
 
             if (empty($this->xmltv_indexes[$hash][self::INDEX_ENTRIES])) {
                 $index_file = $this->get_index_name(self::INDEX_ENTRIES, $hash);
-                hd_debug_print("load positions index $$index_file");
+                hd_debug_print("load positions index $index_file");
                 $data = parse_json_file($index_file);
                 if ($data === false) {
                     throw new Exception("load positions index failed '$index_file'");

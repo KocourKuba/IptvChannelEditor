@@ -239,13 +239,13 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         $indexed = $this->get_indexes_info($hash);
 
         if (isset($indexed[self::INDEX_CHANNELS], $indexed[self::INDEX_ENTRIES])
-            && $indexed[self::INDEX_CHANNELS] && $indexed[self::INDEX_ENTRIES]) {
-            hd_debug_print("Xmltv cache valid");
+            && $indexed[self::INDEX_CHANNELS] !== -1 && $indexed[self::INDEX_ENTRIES] !== -1) {
+            hd_debug_print("All Xmltv indexes are valid");
             return 0;
         }
 
-        if (isset($indexed[self::INDEX_CHANNELS]) && $indexed[self::INDEX_CHANNELS]) {
-            hd_debug_print("Xmltv cache channels and picons are valid");
+        if (isset($indexed[self::INDEX_CHANNELS]) && $indexed[self::INDEX_CHANNELS] !== -1) {
+            hd_debug_print("Xmltv channels index are valid");
             return 2;
         }
 

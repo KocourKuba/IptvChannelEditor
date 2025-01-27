@@ -116,7 +116,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
             }
 
             if ($from_cache === false) {
-                hd_debug_print("Fetching EPG ID: '$epg_id' from server");
+                hd_debug_print("Fetching EPG ID: '$epg_id' from server: $epg_url");
                 $all_epg = self::get_epg_json($epg_url, $this->plugin->config->get_epg_params($epg_source));
                 if (!empty($all_epg)) {
                     hd_debug_print("Save EPG ID: '$epg_id' to file cache $epg_cache_file");

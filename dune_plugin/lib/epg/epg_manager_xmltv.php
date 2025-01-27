@@ -89,7 +89,7 @@ class Epg_Manager_Xmltv
 
         $pid = getmypid();
 
-        $LOG_FILE = get_temp_path($config->current_xmltv_source . "_indexing.log");
+        $LOG_FILE = $config->cache_dir . $config->current_xmltv_source . "_indexing.log";
         if (file_exists($LOG_FILE)) {
             @unlink($LOG_FILE);
         }
@@ -261,7 +261,7 @@ class Epg_Manager_Xmltv
                 continue;
             }
 
-            $index_log = get_temp_path("{$hash}_indexing.log");
+            $index_log = $this->indexer->get_cache_dir() . "{$hash}_indexing.log";
             if (file_exists($index_log)) {
                 hd_debug_print("Read epg indexing log $index_log...");
                 hd_debug_print_separator();
