@@ -6040,14 +6040,14 @@ void CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip(NMHDR* pNMHDR, LRESULT* pRes
 	const auto& entry = FindEntry(pGetInfoTip->hItem);
 	if (entry)
 	{
+		const std::wstring link = fmt::format(L"{:s}://{:s}", entry->get_scheme(), entry->get_path());
 		m_toolTipText.Format(IDS_STRING_FMT_PLAYLIST_TOOLTIPS,
 							 entry->get_title().c_str(),
 							 entry->get_id().empty() ? load_string_resource(IDS_STRING_CUSTOM).c_str() : entry->get_id().c_str(),
 							 entry->get_epg_id(0).c_str(),
 							 entry->get_archive_days(),
 							 load_string_resource(entry->get_adult() ? IDS_STRING_YES : IDS_STRING_NO).c_str(),
-							 entry->get_scheme().c_str(),
-							 entry->get_path().c_str()
+							 link.c_str()
 							 );
 
 		pGetInfoTip->pszText = m_toolTipText.GetBuffer();
