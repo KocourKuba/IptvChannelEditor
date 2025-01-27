@@ -1048,8 +1048,26 @@
     "iptvplay": {
       "access_type": "pin",
       "epg_params": [
-        {},
-        {}
+        {
+          "epg_param": "first",
+          "epg_url": "http://epg.iptvx.one/api/id/{EPG_ID}.json",
+          "epg_desc": "description",
+          "epg_name": "title",
+          "epg_root": "ch_programme",
+          "epg_start": "start",
+          "epg_time_format": "{DAY}-{MONTH}-{YEAR} {HOUR}:{MIN}",
+          "epg_timezone": 3
+        },
+        {
+          "epg_param": "second",
+          "epg_url": "http://epg.drm-play.com/only4%2Fepg%2F{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon"
+        }
       ],
       "name": "iptvplay",
       "playlist_templates": [
