@@ -147,7 +147,8 @@ class Starnet_Epfs_Handler
             file_put_contents(self::warmed_up_path(), '');
         }
 
-        if (self::is_folder_view_changed(self::$epf_id, $folder_view)) {
+        $path = self::get_epf_path(self::$epf_id);
+        if (!file_exists($path) || hash('md5', json_encode($folder_view) !== hash_file('md5', $path))) {
             self::write_epf_view(self::$epf_id, $folder_view);
         }
 
@@ -190,51 +191,23 @@ class Starnet_Epfs_Handler
     protected static function write_epf_view($epf_id, $folder_view)
     {
         if ($folder_view) {
-            self::do_write_epf_data(self::get_epf_path($epf_id), json_encode($folder_view));
-        }
-    }
+            $path = self::get_epf_path($epf_id);
+            hd_debug_print(null, true);
+            hd_debug_print("write epf path: $path");
+            $tmp_path = "$path.tmp";
 
-    /**
-     * @param string $path
-     * @param string $data
-     * @return void
-     */
-    private static function do_write_epf_data($path, $data)
-    {
-        hd_debug_print(null, true);
-        hd_debug_print("write epf path: $path");
-        $tmp_path = "$path.tmp";
-
-        if (false === file_put_contents($tmp_path, $data)) {
-            hd_debug_print("Failed to write tmp file: $tmp_path");
-        } else if (!rename($tmp_path, $path)) {
-            hd_debug_print("Failed to rename $tmp_path to $path");
-            unlink($tmp_path);
+            if (false === file_put_contents($tmp_path, json_encode($folder_view))) {
+                hd_debug_print("Failed to write tmp file: $tmp_path");
+            } else if (!rename($tmp_path, $path)) {
+                hd_debug_print("Failed to rename $tmp_path to $path");
+                unlink($tmp_path);
+            }
         }
     }
 
     public static function warmed_up_path()
     {
         return get_temp_path('epfs_warmed_up');
-    }
-
-    /**
-     * @param string $epf_id
-     * @param array|object $folder_view
-     * @return bool
-     */
-    protected static function is_folder_view_changed($epf_id, $folder_view)
-    {
-        return (json_encode($folder_view) !== self::read_epf_data($epf_id));
-    }
-
-    /**
-     * @param string $epf_id
-     * @return object|null
-     */
-    protected static function read_epf_data($epf_id)
-    {
-        return file_exists($path = self::get_epf_path($epf_id)) ? parse_json_file($path, false) : null;
     }
 
     public static function async_worker_warmed_up_path()
