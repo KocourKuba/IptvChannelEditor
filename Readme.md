@@ -55,6 +55,7 @@ Plugins using PHP 5.3! This is a restriction by Dune HD API
 46. [Pik TV](http://pa.piktv.top/)
 47. [Velestore](http://velestore.su/)
 48. [IPTV Play](http://iptv-play.ru/)
+49. [HN Media](https://hnmedia.pro/)
 </details>
 
 ## Donate
