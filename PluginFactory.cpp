@@ -96,6 +96,7 @@ static std::vector<std::pair<PluginType, std::string>> s_all_plugins = {
 	{ PluginType::enPikTV,      "piktv"      },
 	{ PluginType::enVelestore,  "velestore"  },
 	{ PluginType::enIptvPlay,   "iptvplay"   },
+	{ PluginType::enHnMedia,    "hnmedia"    },
 	{ PluginType::enCustom,     "custom"     },
 };
 

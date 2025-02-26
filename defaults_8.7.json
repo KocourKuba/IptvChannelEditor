@@ -860,6 +860,40 @@
         }
       ]
     },
+    "hnmedia": {
+      "access_type": "pin",
+      "epg_params": [
+        {},
+        {}
+      ],
+      "name": "hnmedia",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/.+\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/playlist\\/.+\\/(?<password>.+)\\.m3u$",
+          "pl_template": "https://hnmedia.pro/playlist/hls/{PASSWORD}.m3u"
+        }
+      ],
+      "provider_url": "https://hnmedia.pro/",
+      "streams_config": [
+        {
+          "cu_type": "default",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}"
+        },
+        {
+          "cu_type": "default",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/timeshift_abs-{START}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+        }
+      ],
+      "title": "HN Media"
+    },
     "ipstream": {
       "access_type": "pin",
       "custom_epg_urls": [
@@ -2165,7 +2199,13 @@
           "uri_arc_template": "{LIVE_URL}?utc={START}",
           "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{TOKEN}"
         },
-        {}
+        {
+          "cu_type": "shift",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{LIVE_URL}?utc={START}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{TOKEN}"
+        }
       ],
       "title": "Shara TV"
     },
