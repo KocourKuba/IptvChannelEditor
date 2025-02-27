@@ -2196,14 +2196,14 @@
           "cu_type": "shift",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{LIVE_URL}?utc={START}",
+          "uri_arc_template": "{CH_CATCHUP}",
           "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{TOKEN}"
         },
         {
           "cu_type": "shift",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{LIVE_URL}?utc={START}",
+          "uri_arc_template": "{CH_CATCHUP}",
           "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{TOKEN}"
         }
       ],
