@@ -658,7 +658,7 @@ class Starnet_Tv implements User_Input_Handler
             PluginTvInfo::groups => $groups,
             PluginTvInfo::channels => $all_channels->get_ordered_values(),
 
-            PluginTvInfo::favorites_supported => true,
+            PluginTvInfo::favorites_supported => $this->plugin->get_bool_parameter(PARAM_SHOW_FAVORITES),
             PluginTvInfo::favorites_icon_url => $this->get_special_group(FAVORITES_GROUP_ID)->get_icon_url(),
 
             PluginTvInfo::initial_channel_id => (string)$media_url->channel_id,
