@@ -2353,7 +2353,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 			++prg_cnt;
 			prog_node = prog_node->next_sibling();
 		}
-		node_doc.release();
+		node_doc = nullptr;
 
 		auto dwEnd = utils::ChronoGetTickCount();
 		TRACE("\nCount nodes time %f, Total channel nodes %d, programme nodes %d\n", (double)(dwEnd - dwStart) / 1000., ch_cnt, prg_cnt);

@@ -33,6 +33,8 @@ DEALINGS IN THE SOFTWARE.
 #ifndef PCH_H
 #define PCH_H
 
+//#include "vld.h"
+
 // add headers that you want to pre-compile here
 #include <string>
 #include <vector>
