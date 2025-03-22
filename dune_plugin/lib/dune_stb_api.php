@@ -445,6 +445,11 @@ function is_limited_apk()
     return is_apk() && !is_fw_apk();
 }
 
+function is_full_remote()
+{
+    return !is_limited_apk() || (function_exists('dune_config_with_color_buttons') && dune_config_with_color_buttons());
+}
+
 /**
  * return type of platform: android, apk, 8670, etc.
  * @return array
@@ -1906,6 +1911,7 @@ function get_dune_model()
         'tv288b' => 'Pro One 8K Plus',
         'tv292a' => 'Pro 4K',
         'tv292b' => 'Pro 4K',
+        'tv388a' => 'Solo 8K',
         'tv393a' => 'Pro 4K Plus',
         'tv494b' => 'Real Vision 4K Duo',
         'tv788a' => 'Max 8K',

@@ -55,7 +55,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             if (count($all_vod_lists) > 1) {
                 $change_playlist = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU);
                 $change_playlist['caption'] = TR::t('vod_screen_change_playlist');
-                if (is_limited_apk()) {
+                if (!is_full_remote()) {
                     $actions[GUI_EVENT_KEY_POPUP_MENU] = $change_playlist;
                 } else {
                     $actions[GUI_EVENT_KEY_B_GREEN] = $change_playlist;
