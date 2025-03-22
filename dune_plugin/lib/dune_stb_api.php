@@ -445,11 +445,6 @@ function is_limited_apk()
     return is_apk() && !is_fw_apk();
 }
 
-function is_full_remote()
-{
-    return !is_limited_apk() || (function_exists('dune_config_with_color_buttons') && dune_config_with_color_buttons());
-}
-
 /**
  * return type of platform: android, apk, 8670, etc.
  * @return array
