@@ -2676,17 +2676,7 @@
         },
         {}
       ],
-      "title": "Uspeh TV",
-      "user_agent": "DuneHD/1.0",
-      "vod_engine": "M3U",
-      "vod_templates": [
-        {
-          "name": "Standard",
-          "parse_regex": "^(?<title>[^(]+)\\s\\((?<year>\\d{4})\\)$",
-          "parse_regex_title": "^(?<title>[^(]+)\\s\\((?<year>\\d{4})\\)$",
-          "pl_template": "https://m3u.admuspeh.my/movie/token={PASSWORD}"
-        }
-      ]
+      "title": "Uspeh TV"
     },
     "velestore": {
       "access_type": "login",
