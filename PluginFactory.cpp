@@ -301,5 +301,5 @@ const std::vector<std::pair<PluginType, std::string>>& PluginFactory::get_all_pl
 
 PluginType PluginFactory::get_plugin_type(size_t idx)
 {
-	return idx < s_all_plugins.size() ? s_all_plugins[idx].first : PluginType::enEdem;
+	return idx < s_all_plugins.size() ? s_all_plugins[idx].first : s_all_plugins[0].first;
 }

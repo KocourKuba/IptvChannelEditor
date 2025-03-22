@@ -330,6 +330,7 @@
       ],
       "title": "Antifriz TV",
       "vod_engine": "Json",
+      "vod_season": true,
       "vod_templates": [
         {
           "name": "Standard",
@@ -523,6 +524,7 @@
       ],
       "title": "Cbilling TV",
       "vod_engine": "Json",
+      "vod_season": true,
       "vod_templates": [
         {
           "name": "Standard",

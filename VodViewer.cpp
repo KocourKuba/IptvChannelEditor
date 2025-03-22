@@ -602,7 +602,7 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 	const auto& movie = m_filtered_movies[pNMItemActivate->iItem];
 
 	std::wstring url = movie->url;
-	if (m_plugin->get_plugin_type() == PluginType::enAntifriz || m_plugin->get_plugin_type() == PluginType::enCbilling)
+	if (m_plugin->get_vod_season())
 	{
 		if (movie->url.empty() && m_season_idx != CB_ERR && m_episode_idx != CB_ERR)
 		{

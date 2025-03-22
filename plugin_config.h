@@ -186,6 +186,12 @@ public:
 	void set_vod_engine(VodEngine val) { vod_engine = val; }
 
 	/// <summary>
+	/// property plugin vod support season
+	/// </summary>
+	bool get_vod_season() const { return vod_season; }
+	void set_vod_season(bool val) { vod_season = val; }
+
+	/// <summary>
 	/// property vod filter
 	/// </summary>
 	bool get_vod_filter() const { return vod_filter; }
@@ -435,6 +441,7 @@ public:
 		SERIALIZE_STRUCT(j, c, playlist_templates);
 		SERIALIZE_STRUCT(j, c, playlist_template_index);
 		SERIALIZE_STRUCT(j, c, vod_engine); //-V601
+		SERIALIZE_STRUCT(j, c, vod_season); //-V601
 		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
 		SERIALIZE_STRUCT(j, c, vod_filters);
 		SERIALIZE_STRUCT(j, c, vod_quality); //-V601
@@ -476,6 +483,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, playlist_templates);
 		DESERIALIZE_STRUCT(j, c, playlist_template_index);
 		DESERIALIZE_STRUCT(j, c, vod_engine);
+		DESERIALIZE_STRUCT(j, c, vod_season);
 		DESERIALIZE_STRUCT(j, c, vod_filter);
 		DESERIALIZE_STRUCT(j, c, vod_filters);
 		DESERIALIZE_STRUCT(j, c, vod_quality);
@@ -540,7 +548,7 @@ protected:
 
 	// show balance info in plugin
 	bool balance_support = false;
-	// use channels logo are squared, plugin UI settings
+	bool vod_season = false;
 	bool vod_filter = false;
 	bool vod_quality = false;
 	bool vod_audio = false;
