@@ -126,15 +126,8 @@ class default_config extends dynamic_config
     {
         hd_debug_print(null, true);
         if (empty($this->tv_m3u_entries)) {
-            $this->perf->reset('start');
             if ($this->plugin->get_m3u_parser()->parseInMemory()) {
                 $this->tv_m3u_entries = $this->plugin->get_m3u_parser()->getM3uEntries();
-
-                $this->perf->setLabel('end');
-                $report = $this->perf->getFullReport();
-                hd_debug_print("Total entries loaded from playlist m3u file:" . count($this->tv_m3u_entries));
-                hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
-                hd_debug_print_separator();
             } else {
                 hd_debug_print("Failed to parse M3U file");
                 return array();
