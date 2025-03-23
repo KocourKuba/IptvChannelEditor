@@ -12,6 +12,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
     const SETUP_ACTION_CHANNELS_URL_PATH = 'channels_url_path';
     const SETUP_ACTION_CHANNELS_URL_DLG = 'channels_url_dialog';
     const SETUP_ACTION_CHANNELS_URL_APPLY = 'channels_url_apply';
+    const SETUP_ACTION_CHANNELS_URL_DEFAULT = 'channels_url_default';
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -124,10 +125,14 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         $url_path = '';
         switch ($source) {
             case 2:
-                $url_path = $this->plugin->config->plugin_info['app_channels_url_path'];
+                $url_path = $this->plugin->get_parameter(PARAM_CHANNELS_URL);
+                if (empty($url_path)) {
+                    $url_path = $this->plugin->config->plugin_info['app_channels_url_path'];
+                }
                 break;
             case 3:
-                if (isset($this->plugin->config->plugin_info['app_direct_links'][$channels_list])) {
+                $url_path = $this->plugin->get_parameter(PARAM_CHANNELS_DIRECT_URL);
+                if (empty($url_path) && isset($this->plugin->config->plugin_info['app_direct_links'][$channels_list])) {
                     $url_path = $this->plugin->config->plugin_info['app_direct_links'][$channels_list];
                 }
                 break;
@@ -136,7 +141,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         }
 
         Control_Factory::add_vgap($defs, 20);
-        Control_Factory::add_text_field($defs, $this, null, 'channels_url_path', '',
+        Control_Factory::add_text_field($defs, $this, null, self::SETUP_ACTION_CHANNELS_URL_PATH, '',
             $url_path, false, false, false, true, self::CONTROLS_WIDTH);
 
         Control_Factory::add_vgap($defs, 50);
@@ -144,6 +149,8 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         Control_Factory::add_close_dialog_and_apply_button($defs, $this, null,
             self::SETUP_ACTION_CHANNELS_URL_APPLY, TR::t('ok'), 300);
         Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
+        $push_action = User_Input_Handler_Registry::create_action($this, self::SETUP_ACTION_CHANNELS_URL_DEFAULT);
+        Control_Factory::add_custom_close_dialog_and_apply_buffon($defs, self::SETUP_ACTION_CHANNELS_URL_DEFAULT, TR::t('by_default'), 300, $push_action);
         Control_Factory::add_vgap($defs, 10);
 
         return $defs;
@@ -207,17 +214,37 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 if (!isset($user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH})) break;
 
                 $url_path = $user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH};
-                $source = $this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1);
-                switch ($source) {
+                switch ($this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1)) {
                     case 2:
-                    case 3:
-                        if ($url_path !== $this->plugin->get_parameter($source === 2 ? PARAM_CHANNELS_URL : PARAM_CHANNELS_DIRECT_URL)) {
-                            $this->plugin->set_parameter($source === 2 ? PARAM_CHANNELS_URL : PARAM_CHANNELS_DIRECT_URL, $url_path);
-                        }
+                        $this->plugin->set_parameter(PARAM_CHANNELS_URL, $url_path);
                         break;
+                    case 3:
+                        $this->plugin->set_parameter(PARAM_CHANNELS_DIRECT_URL, $url_path);
+                        break;
+                    default:
+                        return null;
                 }
 
                 hd_debug_print("Selected channels path: $url_path");
+                return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
+
+            case self::SETUP_ACTION_CHANNELS_URL_DEFAULT:
+                switch ($this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1)) {
+                    case 2:
+                        $url_path = $this->plugin->config->plugin_info['app_channels_url_path'];
+                        $this->plugin->set_parameter(PARAM_CHANNELS_URL, $url_path);
+                        break;
+                    case 3:
+                        $this->plugin->config->get_channel_list($channels_list);
+                        if (isset($this->plugin->config->plugin_info['app_direct_links'][$channels_list])) {
+                            $url_path = $this->plugin->config->plugin_info['app_direct_links'][$channels_list];
+                            $this->plugin->set_parameter(PARAM_CHANNELS_DIRECT_URL, $url_path);
+                        }
+                        break;
+                    default:
+                        return null;
+                }
+
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case ACTION_FOLDER_SELECTED:
