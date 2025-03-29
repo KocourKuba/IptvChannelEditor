@@ -56,6 +56,7 @@ Plugins using PHP 5.3! This is a restriction by Dune HD API
 47. [Velestore](http://velestore.su/)
 48. [IPTV Play](http://iptv-play.ru/)
 49. [HN Media](https://hnmedia.pro/)
+50. [Shurik TV](https://schuriktv.nethouse.ru/)
 </details>
 
 ## Donate
