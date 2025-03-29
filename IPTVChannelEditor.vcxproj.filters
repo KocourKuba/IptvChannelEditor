@@ -309,6 +309,9 @@
     <ClInclude Include="plugin_piktv.h">
       <Filter>Header Files\plugin</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_shuriktv.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -516,6 +519,9 @@
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
     <ClCompile Include="plugin_tvizi.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_shurikv.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
   </ItemGroup>

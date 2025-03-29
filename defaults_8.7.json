@@ -2386,6 +2386,51 @@
       ],
       "title": "Shura TV"
     },
+    "shuriktv": {
+      "access_type": "pin",
+      "balance_support": true,
+      "class_name": "shuriktv_config",
+      "epg_params": [
+        {
+          "epg_param": "first",
+          "epg_url": "http://json.is-a-player.com/epg-server/epg_enigma?id={EPG_ID}",
+          "epg_desc": "description",
+          "epg_end": "end",
+          "epg_name": "title",
+          "epg_root": "data",
+          "epg_start": "begin"
+        },
+        {}
+      ],
+      "name": "shuriktv",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/index\\.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/pl\\/m3u8?\\/(?<password>.+)\\/pl\\.m3u8?$",
+          "pl_template": "https://srv4you.net/pl/m3u8/{PASSWORD}/pl.m3u8"
+        }
+      ],
+      "provider_api_url": "https://srv4you.net/api/v1",
+      "provider_url": "https://schuriktv.nethouse.ru/",
+      "streams_config": [
+        {
+          "cu_type": "shift",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
+        },
+        {
+          "cu_type": "shift",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+        }
+      ],
+      "title": "Shurik TV"
+    },
     "smile": {
       "access_type": "login",
       "epg_params": [

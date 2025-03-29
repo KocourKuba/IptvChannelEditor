@@ -38,6 +38,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_piktv.h"
 #include "plugin_sharaclub.h"
 #include "plugin_sharavoz.h"
+#include "plugin_shuriktv.h"
 #include "plugin_tvclub.h"
 #include "plugin_tvizi.h"
 #include "plugin_tvteam.h"
@@ -97,6 +98,7 @@ static std::vector<std::pair<PluginType, std::string>> s_all_plugins = {
 	{ PluginType::enVelestore,  "velestore"  },
 	{ PluginType::enIptvPlay,   "iptvplay"   },
 	{ PluginType::enHnMedia,    "hnmedia"    },
+	{ PluginType::enShurikTV,   "shuriktv"   },
 	{ PluginType::enCustom,     "custom"     },
 };
 
@@ -163,6 +165,10 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(PluginType type)
 
 			case PluginType::enSharavoz:
 				plugin = std::make_shared<plugin_sharavoz>();
+				break;
+
+			case PluginType::enShurikTV:
+				plugin = std::make_shared<plugin_shuriktv>();
 				break;
 
 			case PluginType::enTVClub:
