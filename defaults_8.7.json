@@ -359,11 +359,21 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<token>.+)\\/video\\.m3u8\\?token=(?<password>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlist\\/hls\\/(?<password>.+)\\.m3u8?$",
-          "pl_template": "https://bcumedia.pro/playlist/hls/{PASSWORD}.m3u",
+          "pl_template": "https://{DOMAIN_ID}/playlist/hls/{PASSWORD}.m3u",
           "tag_id_match": "name"
         }
       ],
       "provider_url": "https://bcumedia.pro/",
+      "domains_list": [
+        {
+          "id": "0",
+          "name": "bcumedia.pro"
+        },
+        {
+          "id": "1",
+          "name": "bcumedia.su"
+        }
+      ],
       "streams_config": [
         {
           "cu_type": "flussonic",
