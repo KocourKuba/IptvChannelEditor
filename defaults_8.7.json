@@ -277,6 +277,78 @@
         }
       ]
     },
+    "2tv": {
+      "access_type": "pin",
+      "epg_params": [
+        {
+          "epg_param": "first",
+          "epg_url": "http://epg.drm-play.com/iptv.online%2Fepg%2F{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon"
+        },
+        {}
+      ],
+      "name": "2tv",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\/\/(?<domain>.+)\/play\/(?<id>.+)\/(?<token>.+)\/.*$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/pl\\/(?<password>.+)\\/.*$",
+          "pl_template": "https://pptt.fun/pl/{PASSWORD}/playlist.m3u8"
+        }
+      ],
+      "provider_url": "https://2tv.biz/",
+      "servers_list": [
+        {
+          "id": "ca.seetv.cc",
+          "name": "Canada"
+        },
+        {
+          "id": "de.seetv.cc",
+          "name": "Germany"
+        },
+        {
+          "id": "gr.seetv.cc",
+          "name": "Greece"
+        },
+        {
+          "id": "pl.online24.pm",
+          "name": "Poland"
+        },
+        {
+          "id": "ru.seetv.cc",
+          "name": "Russia"
+        },
+        {
+          "id": "ua.online24.pm",
+          "name": "Ukraine"
+        }
+      ],
+      "static_servers": true,
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/play/{ID}/{TOKEN}/video-{START}-{DURATION}.m3u8",
+          "uri_template": "{SCHEME}://{SERVER_ID}/play/{ID}/{TOKEN}/video.m3u8"
+        },
+        {}
+      ],
+      "title": "2tv",
+      "vod_engine": "M3U",
+      "vod_templates": [
+        {
+          "name": "Standard",
+          "parse_regex_title": "^(?<title>[^|]+)\\s\\|(?<year>\\d+)\\|\\s?IMDB\\:(?<imdb>.+)$",
+          "pl_template": "https://pptt.fun/mk/{PASSWORD}/playlist.m3u8"
+        }
+      ]
+    },
     "antifriz": {
       "access_type": "pin",
       "class_name": "antifriz_config",

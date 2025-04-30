@@ -1150,16 +1150,21 @@ class default_config extends dynamic_config
             hd_debug_print("Movie not found");
         } else {
             $logo = $entry->getEntryAttribute('tvg-logo');
-            $title = $entry->getEntryTitle();
+            $title = $entry->getEntryAttribute('tvg-name');
+            if (empty($title)) {
+                $title = $entry->getEntryTitle();
+            }
             $title_orig = '';
             $country = '';
-            $year = '';
+            $year = $entry->getEntryAttribute('year');
+            $imdb = $entry->getEntryAttribute('rating');
 
             if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match)) {
-                $title = isset($match['title']) ? $match['title'] : $title;
+                $title = empty($title) && isset($match['title']) ? $match['title'] : $title;
                 $title_orig = isset($match['title_orig']) ? $match['title_orig'] : $title_orig;
                 $country = isset($match['country']) ? $match['country'] : $country;
-                $year = isset($match['year']) ? $match['year'] : $year;
+                $year = empty($year) && isset($match['year']) ? $match['year'] : $year;
+                $imdb = empty($imdb) && isset($match['imdb']) ? $match['imdb'] : $imdb;
                 hd_debug_print("title: $title, country: $country, year: $year");
             }
 
@@ -1183,7 +1188,7 @@ class default_config extends dynamic_config
                 '',
                 '',
                 $category,
-                '',
+                $imdb,
                 '',
                 '',
                 $country

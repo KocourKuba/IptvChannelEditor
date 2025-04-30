@@ -31,6 +31,7 @@ enum class PluginType
 	enCustom = -1000,
 	enBase = -1,
 	en101film,
+	en2tv,
 	enAntifriz,
 	enBcuMedia,
 	enBitTV,
