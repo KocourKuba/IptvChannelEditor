@@ -1,6 +1,5 @@
 <?php
 require_once 'lib/epg/ext_epg_program.php';
-
 require_once 'lib/epfs/abstract_rows_screen.php';
 require_once 'lib/epfs/rows_factory.php';
 require_once 'lib/epfs/gcomps_factory.php';
@@ -553,7 +552,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             //$program->age = preg_match('/\s+\((\d{1,2}\+)\)$/', $epg_data[Ext_Epg_Program::main_category], $matches) ? $matches[1] : '';
 
             $title = $epg_data[PluginTvEpgProgram::name];
-            $desc = (!empty($epg_data[Ext_Epg_Program::sub_title]) ? $epg_data[Ext_Epg_Program::sub_title] . "\n" : '') . $epg_data[PluginTvEpgProgram::description];
+            $desc = (!empty($epg_data[PluginTvExtEpgProgram::sub_title]) ? $epg_data[PluginTvExtEpgProgram::sub_title] . "\n" : '')
+                . $epg_data[PluginTvEpgProgram::description];
             if (isset($epg_data[PluginTvEpgProgram::icon_url])) {
                 $fanart_url = $epg_data[PluginTvEpgProgram::icon_url];
             }
