@@ -108,6 +108,7 @@ setup_epg_cache_type_manual = Вручную
 setup_epg_cache_type_auto = Автоматически
 setup_epg_cache_type_disable = Отключить источник
 setup_epg_engine = Движок EPG
+setup_ext_epg = Показывать Расширенный EPG
 setup_xmltv_epg_source = Источник XMLTV EPG
 setup_xmltv_set_epg_source = Задать источник XMLTV EPG
 setup_enter_xmltv_epg_source = Сылка чувствителена к регистру. Переключение регистра кнопкой Select

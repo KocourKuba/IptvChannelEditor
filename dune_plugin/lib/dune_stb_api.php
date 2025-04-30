@@ -150,22 +150,48 @@ class LogSeverity
     public static $is_debug = false;
 }
 
-class SetupControlSwitchDefs
+class SwitchOnOff
 {
-    const switch_on = 'yes';
-    const switch_off = 'no';
+    const on = 'yes';
+    const off = 'no';
 
-    public static $on_off_translated = array
-    (
-        self::switch_on => '%tr%yes',
-        self::switch_off => '%tr%no',
+    public static $translated = array(
+        self::on => '%tr%yes',
+        self::off => '%tr%no',
     );
 
-    public static $on_off_img = array
-    (
-        self::switch_on => 'on.png',
-        self::switch_off => 'off.png',
+    public static $image = array(
+        self::on => 'on.png',
+        self::off => 'off.png',
     );
+
+    public static function to_def($val)
+    {
+        return $val ? self::on : self::off;
+    }
+
+    public static function to_bool($val)
+    {
+        return $val === self::on;
+    }
+
+    public static function to_image($val)
+    {
+        return safe_get_value(self::$image, $val, self::$image[self::off]);
+    }
+
+    public static function translate($val)
+    {
+        return safe_get_value(self::$translated, $val, self::$translated[self::off]);
+    }
+
+    public static function toggle($val)
+    {
+        if ($val === self::on) {
+            return self::off;
+        }
+        return self::on;
+    }
 }
 
 # Video zoom values for media_url string (|||dune_params|||zoom:value)
@@ -1765,6 +1791,11 @@ function is_newer_versions()
     return (isset($versions['rev_number']) && $versions['rev_number'] > 10);
 }
 
+function is_ext_epg_supported()
+{
+    $apk_subst = getenv('FS_PREFIX');
+    return (defined('PluginTvInfo::ext_epg_channel_ids_url') && is_file( "$apk_subst/firmware_ext/plugins/ext_epg/dune_plugin.xml"));
+}
 
 function get_active_skin_path()
 {
@@ -1795,6 +1826,11 @@ function get_slash_trailed_path($path)
     }
 
     return $path;
+}
+
+function get_noslash_trailed_path($path)
+{
+    return rtrim($path, DIRECTORY_SEPARATOR);
 }
 
 function get_filename($path)
@@ -2090,6 +2126,35 @@ function safe_merge_array($ar1, $ar2)
     }
 
     return $ar1;
+}
+
+/**
+ * Safe get value from array by key
+ *
+ * @param array $ar
+ * @param string $param
+ * @param mixed|null $default
+ * @return mixed
+ */
+function safe_get_value($ar, $param, $default = null)
+{
+    if (is_null($param)) {
+        return $default;
+    }
+    return isset($ar[$param]) ? $ar[$param] : $default;
+}
+
+/**
+ * Safe get value from member
+ *
+ * @param object $obj
+ * @param string $param
+ * @param mixed|null $default
+ * @return mixed
+ */
+function safe_get_member($obj, $param, $default = null)
+{
+    return isset($obj->{$param}) ? $obj->{$param} : $default;
 }
 
 /**

@@ -568,6 +568,7 @@ class Starnet_Tv implements User_Input_Handler
         }
 
         $group_all = $this->get_special_group(ALL_CHANNEL_GROUP_ID);
+        $ext_epg_enabled = $this->plugin->get_bool_parameter(PARAM_SHOW_EXT_EPG) && $this->plugin->is_ext_epg_exist();
         $show_all = !$group_all->is_disabled();
         $all_channels = new Hashed_Array();
         $all_groups_ids = array();
@@ -614,6 +615,7 @@ class Starnet_Tv implements User_Input_Handler
                         PluginTvChannel::timeshift_hours => $channel->get_timeshift_hours(),
 
                         PluginTvChannel::playback_url_is_stream_url => $this->playback_url_is_stream_url,
+                        PluginTvChannel::ext_epg_enabled => $ext_epg_enabled,
                     )
                 );
             }
@@ -652,7 +654,7 @@ class Starnet_Tv implements User_Input_Handler
             $initial_is_favorite = 0;
         }
 
-        return array(
+        $tv_info = array(
             PluginTvInfo::show_group_channels_only => true,
 
             PluginTvInfo::groups => $groups,
@@ -674,6 +676,22 @@ class Starnet_Tv implements User_Input_Handler
             PluginTvInfo::actions => $this->get_action_map(),
             PluginTvInfo::timer => Action_Factory::timer(1000),
         );
+
+        if ($ext_epg_enabled) {
+            $app_name = $this->plugin->config->plugin_info['app_type_name'];
+            $content = '';
+            foreach ($all_channels as $k => $v) {
+                $content .= sprintf("%s=%s-%s", $k, $app_name, Hashed_Array::hash($k)) . PHP_EOL;
+            }
+
+            if (!empty($content) && file_put_contents(get_temp_path("channel_ids.txt"), $content) !== false) {
+                $tv_info[PluginTvInfo::ext_epg_enabled] = true;
+                $tv_info[PluginTvInfo::ext_epg_base_url] = get_noslash_trailed_path(get_plugin_cgi_url());
+                $tv_info[PluginTvInfo::ext_epg_channel_ids_url] = get_plugin_cgi_url("channels");
+            }
+        }
+
+        return $tv_info;
     }
 
     public function get_action_map()

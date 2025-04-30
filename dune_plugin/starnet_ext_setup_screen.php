@@ -92,10 +92,10 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
         //////////////////////////////////////
         // https proxy settings
         if (is_updater_proxy_needs()) {
-            $use_proxy = $this->plugin->get_parameter(PARAM_USE_UPDATER_PROXY, SetupControlSwitchDefs::switch_off);
+            $use_proxy = $this->plugin->get_parameter(PARAM_USE_UPDATER_PROXY, SwitchOnOff::off);
             Control_Factory::add_image_button($defs, $this, null, PARAM_USE_UPDATER_PROXY,
-                TR::t('setup_updater_proxy'), SetupControlSwitchDefs::$on_off_translated[$use_proxy],
-                get_image_path(SetupControlSwitchDefs::$on_off_img[$use_proxy]), self::CONTROLS_WIDTH);
+                TR::t('setup_updater_proxy'), SwitchOnOff::$translated[$use_proxy],
+                get_image_path(SwitchOnOff::$image[$use_proxy]), self::CONTROLS_WIDTH);
         }
 
         //////////////////////////////////////
@@ -106,10 +106,10 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
         //////////////////////////////////////
         // debugging
 
-        $debug_state = $this->plugin->get_parameter(PARAM_ENABLE_DEBUG, SetupControlSwitchDefs::switch_off);
+        $debug_state = $this->plugin->get_parameter(PARAM_ENABLE_DEBUG, SwitchOnOff::off);
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_ENABLE_DEBUG, TR::t('setup_debug'), SetupControlSwitchDefs::$on_off_translated[$debug_state],
-            get_image_path(SetupControlSwitchDefs::$on_off_img[$debug_state]), self::CONTROLS_WIDTH);
+            PARAM_ENABLE_DEBUG, TR::t('setup_debug'), SwitchOnOff::$translated[$debug_state],
+            get_image_path(SwitchOnOff::$image[$debug_state]), self::CONTROLS_WIDTH);
 
         return $defs;
     }

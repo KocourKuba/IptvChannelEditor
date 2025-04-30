@@ -116,7 +116,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         $this->plugin->tv->reload_channels();
 
                         if ((int)$user_input->mandatory_playback === 1
-                            || (isset($plugin_cookies->auto_play) && $plugin_cookies->auto_play === SetupControlSwitchDefs::switch_on)) {
+                            || (isset($plugin_cookies->auto_play) && $plugin_cookies->auto_play === SwitchOnOff::on)) {
                             hd_debug_print("launch play");
 
                             $action = Action_Factory::tv_play($this->get_resume_mediaurl());
@@ -135,7 +135,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         $this->plugin->tv->reload_channels();
 
                         if ((int)$user_input->mandatory_playback !== 1
-                            || (isset($plugin_cookies->auto_resume) && $plugin_cookies->auto_resume === SetupControlSwitchDefs::switch_off)) break;
+                            || (isset($plugin_cookies->auto_resume) && $plugin_cookies->auto_resume === SwitchOnOff::off)) break;
 
                         return Action_Factory::tv_play($this->get_resume_mediaurl());
 

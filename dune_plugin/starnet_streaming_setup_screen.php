@@ -46,7 +46,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         //////////////////////////////////////
         // auto play
         if (!isset($plugin_cookies->{self::CONTROL_AUTO_PLAY}))
-            $plugin_cookies->{self::CONTROL_AUTO_PLAY} = SetupControlSwitchDefs::switch_off;
+            $plugin_cookies->{self::CONTROL_AUTO_PLAY} = SwitchOnOff::off;
 
         //////////////////////////////////////
         // ott or token dialog
@@ -72,18 +72,18 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
 
         Control_Factory::add_image_button($defs, $this, null,
             self::CONTROL_AUTO_PLAY, TR::t('setup_autostart'),
-            SetupControlSwitchDefs::$on_off_translated[$plugin_cookies->{self::CONTROL_AUTO_PLAY}],
-            get_image_path(SetupControlSwitchDefs::$on_off_img[$plugin_cookies->{self::CONTROL_AUTO_PLAY}]), self::CONTROLS_WIDTH);
+            SwitchOnOff::$translated[$plugin_cookies->{self::CONTROL_AUTO_PLAY}],
+            get_image_path(SwitchOnOff::$image[$plugin_cookies->{self::CONTROL_AUTO_PLAY}]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // auto resume
         if (!isset($plugin_cookies->{self::CONTROL_AUTO_RESUME}))
-            $plugin_cookies->{self::CONTROL_AUTO_RESUME} = SetupControlSwitchDefs::switch_on;
+            $plugin_cookies->{self::CONTROL_AUTO_RESUME} = SwitchOnOff::on;
 
         Control_Factory::add_image_button($defs, $this, null,
             self::CONTROL_AUTO_RESUME, TR::t('setup_continue_play'),
-            SetupControlSwitchDefs::$on_off_translated[$plugin_cookies->{self::CONTROL_AUTO_RESUME}],
-            get_image_path(SetupControlSwitchDefs::$on_off_img[$plugin_cookies->{self::CONTROL_AUTO_RESUME}]), self::CONTROLS_WIDTH);
+            SwitchOnOff::$translated[$plugin_cookies->{self::CONTROL_AUTO_RESUME}],
+            get_image_path(SwitchOnOff::$image[$plugin_cookies->{self::CONTROL_AUTO_RESUME}]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // select server
@@ -147,10 +147,10 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
 
         //////////////////////////////////////
         // Per channel zoom
-        $per_channel_zoom = $this->plugin->get_parameter(PARAM_PER_CHANNELS_ZOOM, SetupControlSwitchDefs::switch_on);
+        $per_channel_zoom = $this->plugin->get_parameter(PARAM_PER_CHANNELS_ZOOM, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_PER_CHANNELS_ZOOM, TR::t('setup_per_channel_zoom'), SetupControlSwitchDefs::$on_off_translated[$per_channel_zoom],
-            get_image_path(SetupControlSwitchDefs::$on_off_img[$per_channel_zoom]), self::CONTROLS_WIDTH);
+            PARAM_PER_CHANNELS_ZOOM, TR::t('setup_per_channel_zoom'), SwitchOnOff::$translated[$per_channel_zoom],
+            get_image_path(SwitchOnOff::$image[$per_channel_zoom]), self::CONTROLS_WIDTH);
 
 
         //////////////////////////////////////

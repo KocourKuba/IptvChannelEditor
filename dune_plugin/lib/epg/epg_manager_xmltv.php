@@ -157,6 +157,7 @@ class Epg_Manager_Xmltv
         $active_sources = $this->plugin->get_all_xmltv_sources();
         $any_lock = $this->indexer->is_any_index_locked();
         $day_epg = array();
+        $ext_epg = $this->plugin->get_bool_parameter(PARAM_SHOW_EXT_EPG) && $this->plugin->is_ext_epg_exist();
         foreach($active_sources as $hash => $source) {
             if ($this->indexer->is_index_locked($hash)) {
                 hd_debug_print("EPG $source->url still indexing, append to delayed queue channel id: " . $channel->get_id());
@@ -172,7 +173,7 @@ class Epg_Manager_Xmltv
             $day_end_ts = $day_start_ts + 86400;
             $date_start_l = format_datetime("Y-m-d H:i", $day_start_ts);
             $date_end_l = format_datetime("Y-m-d H:i", $day_end_ts);
-            hd_debug_print("Fetch entries for from: $date_start_l ($day_start_ts) to: $date_end_l ($day_end_ts)", true);
+            hd_debug_print("Fetch entries for from: $date_start_l ($day_start_ts) to: $date_end_l ($day_end_ts)");
 
             try {
                 $positions = $this->indexer->load_program_index($hash, $channel);
@@ -199,23 +200,29 @@ class Epg_Manager_Xmltv
 
                             foreach ($xml_node->getElementsByTagName('programme') as $tag) {
                                 $program_start = strtotime($tag->getAttribute('start'));
-                                if ($program_start < $day_start_ts) continue;
+                                $program_end = strtotime($tag->getAttribute('stop'));
+                                if ($program_start < $day_start_ts && $program_end < $day_start_ts) continue;
                                 if ($program_start >= $day_end_ts) break;
 
-                                $day_epg[$program_start][Epg_Params::EPG_END] = strtotime($tag->getAttribute('stop'));
+                                $day_epg[$program_start][Epg_Params::EPG_END] = $program_end;
+                                $day_epg[$program_start][Epg_Params::EPG_NAME] = self::get_node_value($tag, 'title');
+                                $day_epg[$program_start][Epg_Params::EPG_DESC] = HD::unescape_entity_string(self::get_node_value($tag, 'desc'));
+                                $day_epg[$program_start][Epg_Params::EPG_ICON] = self::get_node_attribute($tag, 'icon', 'src');
 
-                                $day_epg[$program_start][Epg_Params::EPG_NAME] = '';
-                                foreach ($tag->getElementsByTagName('title') as $tag_title) {
-                                    $day_epg[$program_start][Epg_Params::EPG_NAME] = $tag_title->nodeValue;
-                                }
+                                if (!$ext_epg) continue;
 
-                                $day_epg[$program_start][Epg_Params::EPG_DESC] = '';
-                                foreach ($tag->getElementsByTagName('desc') as $tag_desc) {
-                                    $day_epg[$program_start][Epg_Params::EPG_DESC] = trim($tag_desc->nodeValue);
-                                }
-
-                                foreach ($tag->getElementsByTagName('icon') as $tag_icon) {
-                                    $day_epg[$program_start][Epg_Params::EPG_ICON] = $tag_icon->getAttribute('src');
+                                $day_epg[$program_start][PluginTvExtEpgProgram::sub_title] = self::get_node_value($tag, 'sub-title');
+                                $day_epg[$program_start][PluginTvExtEpgProgram::main_category] = self::get_node_value($tag, 'category');
+                                $day_epg[$program_start][PluginTvExtEpgProgram::year] = self::get_node_value($tag, 'date');
+                                $day_epg[$program_start][PluginTvExtEpgProgram::country] = self::get_node_value($tag, 'country');
+                                foreach ($tag->getElementsByTagName('credits') as $sub_tag) {
+                                    $day_epg[$program_start][PluginTvExtEpgProgram::director] = self::get_node_value($sub_tag, 'director');
+                                    $day_epg[$program_start][PluginTvExtEpgProgram::producer] = self::get_node_value($sub_tag, 'producer');
+                                    $day_epg[$program_start][PluginTvExtEpgProgram::actor] = self::get_node_value($sub_tag, 'actor');
+                                    $day_epg[$program_start][PluginTvExtEpgProgram::presenter] = self::get_node_value($sub_tag, 'presenter'); //Ведущий
+                                    $day_epg[$program_start][PluginTvExtEpgProgram::writer] = self::get_node_value($sub_tag, 'writer');
+                                    $day_epg[$program_start][PluginTvExtEpgProgram::editor] = self::get_node_value($sub_tag, 'editor');
+                                    $day_epg[$program_start][PluginTvExtEpgProgram::composer] = self::get_node_value($sub_tag, 'composer');
                                 }
                             }
                         }
@@ -327,5 +334,32 @@ class Epg_Manager_Xmltv
         }
 
         return $day_epg;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// static methods
+
+    protected static function get_node_value($node, $name)
+    {
+        $value = '';
+        foreach ($node->getElementsByTagName($name) as $element) {
+            if (!empty($element->nodeValue)) {
+                $value = $element->nodeValue;
+                break;
+            }
+        }
+
+        return $value;
+    }
+
+    protected static function get_node_attribute($node, $name, $attribute)
+    {
+        $value = '';
+        foreach ($node->getElementsByTagName($name) as $element) {
+            $value = $element->getAttribute($attribute);
+            break;
+        }
+
+        return $value;
     }
 }

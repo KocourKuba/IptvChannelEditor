@@ -13,6 +13,7 @@ require_once 'plugin_macros.php';
 require_once 'lib/cache_parameters.php';
 require_once 'lib/epg/epg_manager_xmltv.php';
 require_once 'lib/epg/epg_manager_json.php';
+require_once 'lib/epg/ext_epg_program.php';
 
 class Default_Dune_Plugin implements DunePlugin
 {
@@ -120,6 +121,11 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * @var bool
      */
+    protected $ext_epg_supported = false;
+
+    /**
+     * @var bool
+     */
     protected $need_update_epfs = false;
 
     protected function __construct()
@@ -178,6 +184,7 @@ class Default_Dune_Plugin implements DunePlugin
         hd_print("Icon                 " . $plugin_info['app_logo']);
         hd_print("Background           " . $plugin_info['app_background']);
         hd_print("New UI support       " . ($this->new_ui_support ? "yes" : "no"));
+        hd_print("Ext EPG support:     " . var_export(is_ext_epg_supported(), true));
         hd_print("Max ch. list version " . $plugin_info['app_ch_list_version']);
 
         if (!empty($plugin_info['app_update_path'])) {
@@ -267,6 +274,11 @@ class Default_Dune_Plugin implements DunePlugin
         $epg_url1 = $this->config->get_epg_param(Plugin_Constants::EPG_FIRST, Epg_Params::EPG_URL);
         $epg_url2 = $this->config->get_epg_param(Plugin_Constants::EPG_SECOND, Epg_Params::EPG_URL);
         return !empty($epg_url1) || !empty($epg_url2);
+    }
+
+    public function is_ext_epg_exist()
+    {
+        return $this->ext_epg_supported;
     }
 
     public function init_epg_manager()
@@ -538,6 +550,8 @@ class Default_Dune_Plugin implements DunePlugin
             hd_debug_print("EPG time shift $time_shift", true);
             $day_start_tm_sec += $time_shift;
 
+            $show_ext_epg = $this->get_bool_parameter(PARAM_SHOW_EXT_EPG) && $this->ext_epg_supported;
+
             if (LogSeverity::$is_debug) {
                 hd_debug_print("day_start timestamp: $day_start_tm_sec (" . format_datetime("Y-m-d H:i", $day_start_tm_sec) . ")");
             }
@@ -551,6 +565,71 @@ class Default_Dune_Plugin implements DunePlugin
                     PluginTvEpgProgram::name => $value[Epg_Params::EPG_NAME],
                     PluginTvEpgProgram::description => $value[Epg_Params::EPG_DESC],
                 );
+                if (!$show_ext_epg || in_array($channel_id, $this->epg_manager->get_delayed_epg())) continue;
+
+                $ext_epg[$time]["start_tm"] = $tm_start;
+                $ext_epg[$time]["title"] = $value[Epg_Params::EPG_NAME];
+                $ext_epg[$time]["desc"] = $value[Epg_Params::EPG_DESC];
+
+                if (empty($value[PluginTvEpgProgram::icon_url])) {
+                    $channel_picon = $channel->get_icon_url();
+                    if ($channel_picon !== self::DEFAULT_CHANNEL_ICON_PATH) {
+                        $ext_epg[$time][PluginTvExtEpgProgram::main_icon] = $channel_picon;
+                    }
+                } else {
+                    $ext_epg[$time][PluginTvExtEpgProgram::main_icon] = $value[PluginTvEpgProgram::icon_url];
+                }
+
+                if (!empty($value[PluginTvExtEpgProgram::main_category])) {
+                    $ext_epg[$time][PluginTvExtEpgProgram::main_category] = $value[PluginTvExtEpgProgram::main_category];
+                }
+
+                if (!empty($value[PluginTvExtEpgProgram::icon_urls])) {
+                    $ext_epg[$time][PluginTvExtEpgProgram::icon_urls] = $value[PluginTvExtEpgProgram::icon_urls];
+                }
+
+                if (!empty($value[PluginTvExtEpgProgram::year])) {
+                    $ext_epg[$time][PluginTvExtEpgProgram::year] = $value[PluginTvExtEpgProgram::year];
+                }
+
+                if (!empty($value[PluginTvExtEpgProgram::country])) {
+                    $ext_epg[$time][PluginTvExtEpgProgram::country] = $value[PluginTvExtEpgProgram::country];
+                }
+
+                if (!empty($time[PluginTvExtEpgProgram::director])) {
+                    $ext_epg[$time][PluginTvExtEpgProgram::director] = $value[PluginTvExtEpgProgram::director];
+                }
+
+                if (!empty($value[PluginTvExtEpgProgram::composer])) {
+                    $ext_epg[$time][PluginTvExtEpgProgram::composer] = $value[PluginTvExtEpgProgram::composer];
+                }
+
+                if (!empty($value[PluginTvExtEpgProgram::editor])) {
+                    $ext_epg[$time][PluginTvExtEpgProgram::editor] = $value[PluginTvExtEpgProgram::editor];
+                }
+
+                if (!empty($value[PluginTvExtEpgProgram::writer])) {
+                    $ext_epg[$time][PluginTvExtEpgProgram::writer] = $value[PluginTvExtEpgProgram::writer];
+                }
+
+                if (!empty($value[PluginTvExtEpgProgram::actor]))
+                    $ext_epg[$time][PluginTvExtEpgProgram::actor] = $value[PluginTvExtEpgProgram::actor];
+
+                if (!empty($value[PluginTvExtEpgProgram::presenter]))
+                    $ext_epg[$time][PluginTvExtEpgProgram::presenter] = $value[PluginTvExtEpgProgram::presenter];
+
+                if (!empty($value[PluginTvExtEpgProgram::imdb_rating]))
+                    $ext_epg[$time][PluginTvExtEpgProgram::imdb_rating] = $value[PluginTvExtEpgProgram::imdb_rating];
+            }
+            $apk_subst = getenv('FS_PREFIX');
+            $app_name = $this->config->plugin_info['app_type_name'];
+            $dir = "$apk_subst/tmp/ext_epg";
+            if (!empty($ext_epg) && create_path($dir)) {
+                $filename = sprintf("%s-%s-%s.json", $app_name, Hashed_Array::hash($channel_id), strftime('%Y-%m-%d', $day_start_tm_sec));
+                hd_debug_print("save ext_epg to: $filename");
+                if (file_put_contents(get_temp_path($filename), pretty_json_format($ext_epg))) {
+                    rename(get_temp_path($filename), "$dir/$filename");
+                }
             }
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
@@ -822,8 +901,8 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_bool_parameter($type, $default = true)
     {
-        $val = $this->get_parameter($type, $default ? SetupControlSwitchDefs::switch_on : SetupControlSwitchDefs::switch_off);
-        return $val === SetupControlSwitchDefs::switch_on;
+        $val = $this->get_parameter($type, $default ? SwitchOnOff::on : SwitchOnOff::off);
+        return $val === SwitchOnOff::on;
     }
 
     /**
@@ -834,7 +913,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function set_bool_parameter($type, $val)
     {
-        $this->set_parameter($type, $val ? SetupControlSwitchDefs::switch_on : SetupControlSwitchDefs::switch_off);
+        $this->set_parameter($type, $val ? SwitchOnOff::on : SwitchOnOff::off);
     }
 
     /**

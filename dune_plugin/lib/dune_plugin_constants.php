@@ -93,6 +93,7 @@ const PARAM_BUFFERING_TIME = 'buffering_time';
 const PARAM_ARCHIVE_DELAY_TIME = 'archive_delay_time';
 const PARAM_ENABLE_DEBUG = 'enable_debug';
 const PARAM_PER_CHANNELS_ZOOM = 'per_channels_zoom';
+const PARAM_SHOW_EXT_EPG = 'show_ext_epg';
 const PARAM_FAKE_EPG = 'fake_epg';
 const PARAM_USE_UPDATER_PROXY = 'use_proxy';
 const PARAM_STREAM_FORMAT = 'stream_format';

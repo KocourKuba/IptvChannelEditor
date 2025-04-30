@@ -870,7 +870,9 @@ bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
 		{
 			www_path,
 			{
-				L"updater.sh"
+				L"updater.sh",
+				L"channels",
+				L"epg"
 			}
 		},
 		{

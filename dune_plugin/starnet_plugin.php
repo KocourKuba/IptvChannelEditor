@@ -80,6 +80,8 @@ class Starnet_Plugin extends Default_Dune_Plugin
 
         Starnet_Epfs_Handler::init($this);
 
+        $this->ext_epg_supported = is_ext_epg_supported();
+
         hd_debug_print("Plugin loading complete.");
     }
 }

@@ -81,7 +81,7 @@ abstract class Abstract_Controls_Screen extends Abstract_Screen
     protected static function get_cookie_bool_param($plugin_cookies, $param, $default = true)
     {
         if (!isset($plugin_cookies->{$param}))
-            $plugin_cookies->{$param} = $default ? SetupControlSwitchDefs::switch_on : SetupControlSwitchDefs::switch_off;
+            $plugin_cookies->{$param} = $default ? SwitchOnOff::on : SwitchOnOff::off;
 
         return $plugin_cookies->{$param};
     }
@@ -93,9 +93,9 @@ abstract class Abstract_Controls_Screen extends Abstract_Screen
      */
     protected static function toggle_cookie_param($plugin_cookies, $param)
     {
-        $plugin_cookies->{$param} = $plugin_cookies->{$param} === SetupControlSwitchDefs::switch_off
-            ? SetupControlSwitchDefs::switch_on
-            : SetupControlSwitchDefs::switch_off;
+        $plugin_cookies->{$param} = $plugin_cookies->{$param} === SwitchOnOff::off
+            ? SwitchOnOff::on
+            : SwitchOnOff::off;
 
         hd_debug_print("$param: " . $plugin_cookies->{$param}, true);
     }
