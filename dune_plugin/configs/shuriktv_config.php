@@ -56,7 +56,5 @@ class shuriktv_config extends default_config
         }
 
         Control_Factory::add_vgap($defs, 20);
-
-        return Action_Factory::show_dialog(TR::t('subscription'), $defs, true, 1000, null /*$attrs*/);
     }
 }
