@@ -163,17 +163,15 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
             $file = $this->open_xmltv_file($hash);
             while (!feof($file)) {
-                $line = stream_get_line($file, self::STREAM_CHUNK, "<channel ");
+                $line = stream_get_line($file, 0, "</channel>");
                 if (empty($line)) continue;
+                $pos = strpos($line, "<channel ");
+                if ($pos === false) continue;
+                if ($pos !== 0) {
+                    $line = substr($line, $pos);
+                }
 
-                fseek($file, -9, SEEK_CUR);
-                $str = fread($file, 9);
-                if ($str !== "<channel ") continue;
-
-                $line = stream_get_line($file, self::STREAM_CHUNK, "</channel>");
-                if (empty($line)) continue;
-
-                $line = "<channel $line</channel>";
+                $line = $line . "</channel>";
 
                 $xml_node = new DOMDocument();
                 $xml_node->loadXML($line);
