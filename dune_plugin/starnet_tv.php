@@ -398,7 +398,7 @@ class Starnet_Tv implements User_Input_Handler
             } else {
                 $icon_url = (string)$xml_tv_channel->icon_url;
                 if (strpos($icon_url, 'plugin_file://') === 0) {
-                    $icon_url = str_replace('plugin_file://', 'plugin_file://' . get_plugin_name() . '/', $icon_url);
+                    $icon_url = str_replace('plugin_file://', 'plugin_file://%' . get_plugin_name() . '%/', $icon_url);
                 }
                 $number = $num;
 
