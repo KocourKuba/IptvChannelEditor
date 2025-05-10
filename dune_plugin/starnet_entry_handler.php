@@ -148,11 +148,11 @@ class Starnet_Entry_Handler implements User_Input_Handler
                     case self::ACTION_UPDATE:
                         $this->plugin->upgrade_old_settings($plugin_cookies);
                         toggle_updater_proxy($this->plugin->get_bool_parameter(PARAM_USE_UPDATER_PROXY, false));
-                        break;
+                        return Action_Factory::refresh_entry_points();
 
                     case self::ACTION_UNINSTALL:
                         $this->plugin->clear_all_epg_cache();
-                        break;
+                        return Action_Factory::refresh_entry_points();
 
                     default:
                         break;
