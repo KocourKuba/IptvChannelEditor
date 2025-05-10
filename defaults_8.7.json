@@ -503,40 +503,6 @@
       ],
       "title": "BitTV"
     },
-    "blinktv": {
-      "access_type": "login",
-      "epg_params": [
-        {},
-        {}
-      ],
-      "name": "blinktv",
-      "playlist_templates": [
-        {
-          "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?<var1>.+)?\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\/\\/.+\\/(?<login>.+)\\/(?<password>.+)\\/.+\\/playlist\\.m3u8?$",
-          "pl_template": "https://blinktv.cc/{LOGIN}/{PASSWORD}/hls/playlist.m3u8"
-        }
-      ],
-      "provider_url": "https://blinktv.cc/",
-      "streams_config": [
-        {
-          "cu_type": "flussonic",
-          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
-          "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}?token={TOKEN}"
-        },
-        {
-          "cu_type": "flussonic",
-          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
-          "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}?token={TOKEN}"
-        }
-      ],
-      "title": "Blink TV"
-    },
     "cbilling": {
       "access_type": "pin",
       "balance_support": true,
@@ -2061,6 +2027,40 @@
           "pl_template": "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/vod.m3u"
         }
       ]
+    },
+    "reflextv": {
+      "access_type": "pin",
+      "epg_params": [
+        {},
+        {}
+      ],
+      "name": "reflextv",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?<var1>.+)?\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/playlist\\/hls\\/(?<password>.+)\\.m3u?$",
+          "pl_template": "https://reflextv.ru/playlist/hls/{PASSWORD}.m3u"
+        }
+      ],
+      "provider_url": "https://reflextv.ru/",
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}?token={TOKEN}"
+        },
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}?token={TOKEN}"
+        }
+      ],
+      "title": "Reflex TV"
     },
     "russkoetv": {
       "access_type": "pin",

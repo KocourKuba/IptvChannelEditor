@@ -50,7 +50,7 @@ Plugins using PHP 5.3! This is a restriction by Dune HD API
 41. [Peak TV](https://peaktv.info/)
 42. [Nasharu TV](https://nasharu.tv/)
 43. [Ott Pub](https://ott.pub/)
-44. [Blink TV](https://blinktv.cc/)
+44. [Reflex TV](https://reflextv.ru/)
 45. [Korona](https://korona-tv.top/)
 46. [Pik TV](http://pa.piktv.top/)
 47. [Velestore](http://velestore.su/)
