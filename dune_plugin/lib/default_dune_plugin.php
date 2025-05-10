@@ -36,7 +36,6 @@ class Default_Dune_Plugin implements DunePlugin
     const VOD_CHANNEL_ICON_WIDTH = 190;
     const VOD_CHANNEL_ICON_HEIGHT = 290;
 
-    const DEFAULT_CHANNEL_ICON_PATH = 'plugin_file://icons/channel_unset.png';
     const DEFAULT_MOV_ICON_PATH = 'plugin_file://img/mov_unset.png';
     const VOD_ICON_PATH = 'gui_skin://small_icons/movie.aai';
     const RESOURCE_URL = 'http://iptv.esalecrm.net/res';
@@ -572,10 +571,7 @@ class Default_Dune_Plugin implements DunePlugin
                 $ext_epg[$time]["desc"] = $value[Epg_Params::EPG_DESC];
 
                 if (empty($value[PluginTvEpgProgram::icon_url])) {
-                    $channel_picon = $channel->get_icon_url();
-                    if ($channel_picon !== self::DEFAULT_CHANNEL_ICON_PATH) {
-                        $ext_epg[$time][PluginTvExtEpgProgram::main_icon] = $channel_picon;
-                    }
+                    $ext_epg[$time][PluginTvExtEpgProgram::main_icon] = $channel->get_icon_url();
                 } else {
                     $ext_epg[$time][PluginTvExtEpgProgram::main_icon] = $value[PluginTvEpgProgram::icon_url];
                 }
