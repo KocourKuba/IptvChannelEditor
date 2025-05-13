@@ -821,26 +821,6 @@
       "domains_list": [
         {
           "id": "0",
-          "name": "ottg.cc"
-        },
-        {
-          "id": "1",
-          "name": "ottg.in"
-        },
-        {
-          "id": "2",
-          "name": "ottg.tv"
-        },
-        {
-          "id": "3",
-          "name": "ottg.space"
-        },
-        {
-          "id": "4",
-          "name": "ottg.eu"
-        },
-        {
-          "id": "5",
           "name": "ottg.app"
         }
       ],
