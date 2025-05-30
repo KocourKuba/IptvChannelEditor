@@ -2725,7 +2725,7 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/.+\\/.+\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/pl\\/11\\/(?<password>.+)\\/.*$",
-          "pl_template": "http://troya.one/pl/11/{S_TOKEN}/playlist.m3u8",
+          "pl_template": "http://team.ga/pl/11/{S_TOKEN}/playlist.m3u8",
           "tag_id_match": "tvg-name"
         }
       ],
