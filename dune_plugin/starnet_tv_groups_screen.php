@@ -247,7 +247,9 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                     ViewItemParams::item_caption_color => DEF_LABEL_TEXT_COLOR_WHITE,
                     ViewItemParams::icon_path => $group->get_icon_url(),
                     ViewItemParams::item_detailed_icon_path => $group->get_icon_url(),
-                    ViewItemParams::item_detailed_info => TR::t('tv_screen_group_info__2', $group->get_title(), $group->get_group_channels()->size()),
+                    ViewItemParams::item_detailed_info => TR::t('tv_screen_group_info__2',
+                        str_replace('|', '¦', $group->get_title()),
+                        $group->get_group_channels()->size()),
                 )
             );
         }
