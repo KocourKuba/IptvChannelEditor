@@ -189,34 +189,45 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
 
         $items = array();
 
-        /** @var Group $group */
-        foreach ($this->plugin->tv->get_special_groups() as $group) {
-            if ($group === null || $group->get_id() === VOD_GROUP_ID) continue;
+        /** @var Group $special_group */
+        foreach ($this->plugin->tv->get_special_groups() as $special_group) {
+            if ($special_group === null || $special_group->get_id() === VOD_GROUP_ID) continue;
 
-            hd_debug_print("group: {$group->get_title()} disabled: " . var_export($group->is_disabled(), true), true);
-            if ($group->is_disabled()) continue;
+            hd_debug_print("group: {$special_group->get_title()} disabled: " . var_export($special_group->is_disabled(), true), true);
+            if ($special_group->is_disabled()) continue;
 
-            if ($group->get_id() === HISTORY_GROUP_ID) {
-                $item_detailed_info = TR::t('tv_screen_group_info__2', $group->get_title(), $this->plugin->get_playback_points()->size());
+            if ($special_group->get_id() === HISTORY_GROUP_ID) {
                 $color = DEF_LABEL_TEXT_COLOR_TURQUOISE;
+                $size = $this->plugin->get_playback_points()->size();
             } else {
-                if ($group->get_id() === ALL_CHANNEL_GROUP_ID) {
+                if ($special_group->get_id() === ALL_CHANNEL_GROUP_ID) {
                     $color = DEF_LABEL_TEXT_COLOR_SKYBLUE;
-                } else if ($group->get_id() === FAVORITES_GROUP_ID) {
+                    $size = 0;
+                    foreach($this->plugin->tv->get_groups()->get_order() as $group_id) {
+                        $group = $this->plugin->tv->get_group($group_id);
+                        if (!is_null($group)) {
+                            $size += $group->get_group_channels()->size();
+                        }
+                    }
+
+                } else if ($special_group->get_id() === FAVORITES_GROUP_ID) {
+                    $size = $this->plugin->get_favorites()->size();
                     $color = DEF_LABEL_TEXT_COLOR_GOLD;
                 } else {
+                    $size = $special_group->get_group_channels()->size();
                     $color = DEF_LABEL_TEXT_COLOR_WHITE;
                 }
-                $item_detailed_info = TR::t('tv_screen_group_info__2', $group->get_title(), $group->get_group_channels()->size());
             }
 
+            $item_detailed_info = TR::t('tv_screen_group_info__2', $special_group->get_title(), $size);
+
             $items[] = array(
-                PluginRegularFolderItem::media_url => $group->get_media_url_str(),
-                PluginRegularFolderItem::caption => $group->get_title(),
+                PluginRegularFolderItem::media_url => $special_group->get_media_url_str(),
+                PluginRegularFolderItem::caption => $special_group->get_title(),
                 PluginRegularFolderItem::view_item_params => array(
                     ViewItemParams::item_caption_color => $color,
-                    ViewItemParams::icon_path => $group->get_icon_url(),
-                    ViewItemParams::item_detailed_icon_path => $group->get_icon_url(),
+                    ViewItemParams::icon_path => $special_group->get_icon_url(),
+                    ViewItemParams::item_detailed_icon_path => $special_group->get_icon_url(),
                     ViewItemParams::item_detailed_info => $item_detailed_info,
                 )
             );
