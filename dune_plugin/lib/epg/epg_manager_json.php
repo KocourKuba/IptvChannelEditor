@@ -70,6 +70,8 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
 
             $epg_url = $this->plugin->config->replace_account_vars($epg_url);
 
+            $epg_id = str_replace(array('%28', '%29'), array('(', ')'), rawurlencode($epg_id));
+
             $epg_url = str_replace(
                 array(Plugin_Macros::EPG_DOMAIN,
                     Plugin_Macros::EPG_ID,
@@ -77,7 +79,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
                     Plugin_Macros::DUNE_IP
                 ),
                 array($this->plugin->config->get_epg_param($epg_source, Epg_Params::EPG_DOMAIN),
-                    str_replace(' ', '%20', $epg_id),
+                    $epg_id,
                     $channel_id,
                     $this->dune_ip
                 ),
