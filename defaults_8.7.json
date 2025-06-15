@@ -2493,6 +2493,64 @@
       ],
       "title": "Shurik TV"
     },
+    "skaztv": {
+      "access_type": "pin",
+      "name": "skaztv",
+      "epg_params": [
+        {
+          "epg_param": "first",
+          "epg_url": "http://team.ga/{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_id_source": 1
+        },
+        {
+          "epg_param": "second",
+          "epg_url": "http://epg.drm-play.com/tvteam%2Fepg%2F{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon",
+          "epg_id_source": 2
+        }
+      ],
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/stream\\/(?<id>.+)\\/(?<token>.+)\\/mono.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/play\\(?<password>.+)$",
+          "pl_template": "https://{DOMAIN_ID}/play/{PASSWORD}"
+        }
+      ],
+      "provider_url": "https://skaz.tv/",
+      "domains_list": [
+        {
+          "id": "0",
+          "name": "skaz.tv"
+        },
+        {
+          "id": "1",
+          "name": "skaztv.online"
+        }
+      ],
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/stream/{ID}/{TOKEN}/mono-{START}-{DURATION}.m3u8",
+          "uri_template": "{SCHEME}://{DOMAIN}/stream/{ID}/{TOKEN}/mono.m3u8"
+        },
+        {
+        }
+      ],
+      "title": "Skaz TV"
+    },
     "smile": {
       "access_type": "login",
       "epg_params": [

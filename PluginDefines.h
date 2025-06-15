@@ -71,6 +71,7 @@ enum class PluginType
 	enSharavoz,
 	enShuraTV,
 	enShurikTV,
+	enSkazTV,
 	enSmile,
 	enTopIPTV,
 	enTVClub,
