@@ -58,6 +58,7 @@ Plugins using PHP 5.3! This is a restriction by Dune HD API
 49. [HN Media](https://hnmedia.pro/)
 50. [Shurik TV](https://schuriktv.nethouse.ru/)
 51. [2TV](https://2tv.biz/)
+52. [Skaz TV](https://skaz.tv/)
 </details>
 
 ## Donate
