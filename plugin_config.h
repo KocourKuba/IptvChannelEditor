@@ -119,6 +119,18 @@ public:
 	virtual void configure_provider_plugin() {}
 
 	/// <summary>
+	/// is plugin enabled
+	/// </summary>
+	bool get_enabled() const { return enabled; }
+	void set_enabled(bool val) { enabled = val; }
+
+	/// <summary>
+	/// is plugin enabled
+	/// </summary>
+	bool get_custom() const { return custom; }
+	void set_custom(bool val) { custom = val; }
+
+	/// <summary>
 	/// plugin class name
 	/// </summary>
 	const std::string& get_class_name() const { return class_name; }
@@ -190,6 +202,12 @@ public:
 	/// </summary>
 	bool get_vod_season() const { return vod_season; }
 	void set_vod_season(bool val) { vod_season = val; }
+
+	/// <summary>
+	/// property vod server filter
+	/// </summary>
+	bool get_vod_server_filter() const { return vod_server_filter; }
+	void set_vod_server_filter(bool val) { vod_server_filter = val; }
 
 	/// <summary>
 	/// property vod filter
@@ -430,6 +448,8 @@ public:
 
 	friend void to_json(nlohmann::json& j, const plugin_config& c)
 	{
+		SERIALIZE_STRUCT(j, c, enabled); //-V601
+		SERIALIZE_STRUCT(j, c, custom); //-V601
 		SERIALIZE_STRUCT(j, c, access_type);
 		SERIALIZE_STRUCT(j, c, class_name);
 		SERIALIZE_STRUCT(j, c, name);
@@ -442,6 +462,7 @@ public:
 		SERIALIZE_STRUCT(j, c, playlist_template_index);
 		SERIALIZE_STRUCT(j, c, vod_engine); //-V601
 		SERIALIZE_STRUCT(j, c, vod_season); //-V601
+		SERIALIZE_STRUCT(j, c, vod_server_filter); //-V601
 		SERIALIZE_STRUCT(j, c, vod_filter); //-V601
 		SERIALIZE_STRUCT(j, c, vod_filters);
 		SERIALIZE_STRUCT(j, c, vod_quality); //-V601
@@ -473,6 +494,8 @@ public:
 
 	friend void from_json(const nlohmann::json& j, plugin_config& c)
 	{
+		DESERIALIZE_STRUCT(j, c, enabled);
+		DESERIALIZE_STRUCT(j, c, custom);
 		DESERIALIZE_STRUCT(j, c, access_type);
 		DESERIALIZE_STRUCT(j, c, class_name);
 		DESERIALIZE_STRUCT(j, c, name);
@@ -484,6 +507,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, playlist_template_index);
 		DESERIALIZE_STRUCT(j, c, vod_engine);
 		DESERIALIZE_STRUCT(j, c, vod_season);
+		DESERIALIZE_STRUCT(j, c, vod_server_filter);
 		DESERIALIZE_STRUCT(j, c, vod_filter);
 		DESERIALIZE_STRUCT(j, c, vod_filters);
 		DESERIALIZE_STRUCT(j, c, vod_quality);
@@ -546,9 +570,12 @@ protected:
 	// vod engine
 	VodEngine vod_engine = VodEngine::enNone;
 
+	bool enabled = true;
+	bool custom = false;
 	// show balance info in plugin
 	bool balance_support = false;
 	bool vod_season = false;
+	bool vod_server_filter = false;
 	bool vod_filter = false;
 	bool vod_quality = false;
 	bool vod_audio = false;

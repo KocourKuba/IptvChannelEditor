@@ -76,8 +76,8 @@ public:
 	/// <summary>
 	/// plugin type
 	/// </summary>
-	PluginType get_plugin_type() const { return plugin_type; }
-	void set_plugin_type(const PluginType type) { plugin_type = type; }
+	const std::string& get_plugin_type() const { return plugin_type; }
+	void set_plugin_type(const std::string& type) { plugin_type = type; }
 
 	/// <summary>
 	/// plugin internal name
@@ -210,7 +210,7 @@ protected:
 	std::wstring replace_uri_stream_vars(const uri_stream* info, const std::wstring& url) const;
 
 protected:
-	PluginType plugin_type = PluginType::enCustom;
+	std::string plugin_type;
 	std::string internal_name;
 
 	// compiled regex for uri parse template

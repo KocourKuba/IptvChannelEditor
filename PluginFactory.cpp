@@ -48,162 +48,116 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-static std::vector<std::pair<PluginType, std::string>> s_all_plugins = {
-	{ PluginType::enAntifriz,   "antifriz"   },
-	{ PluginType::enBcuMedia,   "bcumedia"   },
-	{ PluginType::enCbilling,   "cbilling"   },
-	{ PluginType::enEdem,       "edem"       },
-	{ PluginType::enFilmax,     "filmax"     },
-	{ PluginType::enFox,        "fox"        },
-	{ PluginType::enGlanz,      "glanz"      },
-	{ PluginType::enIptvOnline, "iptvonline" },
-	{ PluginType::enItv,        "itv"        },
-	{ PluginType::enKineskop,   "kineskop"   },
-	{ PluginType::enLightIptv,  "lightiptv"  },
-	{ PluginType::enMymagic,    "mymagic"    },
-	{ PluginType::enOneCent,    "onecent"    },
-	{ PluginType::enOneOtt,     "oneott"     },
-	{ PluginType::enOneUsd,     "oneusd"     },
-	{ PluginType::enOttclub,    "ottclub"    },
-	{ PluginType::enPing,       "ping"       },
-	{ PluginType::enRusskoeTV,  "russkoetv"  },
-	{ PluginType::enSharaTV,    "sharatv"    },
-	{ PluginType::enSharaclub,  "sharaclub"  },
-	{ PluginType::enSharavoz,   "sharavoz"   },
-	{ PluginType::enShuraTV,    "shuratv"    },
-	{ PluginType::enSmile,      "smile"      },
-	{ PluginType::enTVClub,     "tvclub"     },
-	{ PluginType::enTvTeam,     "tvteam"     },
-	{ PluginType::enVidok,      "vidok"      },
-	{ PluginType::enVipLime,    "viplime"    },
-	{ PluginType::enYossoTV,    "yosso"      },
-	{ PluginType::en101film,    "101film"    },
-	{ PluginType::enIpstream,   "ipstream"   },
-	{ PluginType::enOnlineOtt,  "onlineott"  },
-	{ PluginType::enTvizi,      "tvizi"      },
-	{ PluginType::enSatq,       "satq"       },
-	{ PluginType::enRuTV,       "rutv"       },
-	{ PluginType::enCRDTV,      "crdtv"      },
-	{ PluginType::enBitTV,      "bittv"      },
-	{ PluginType::enKliMedia,   "klimedia"   },
-	{ PluginType::enTopIPTV,    "topiptv"    },
-	{ PluginType::enIptvBest,   "iptvbest"   },
-	{ PluginType::enUspeh,      "uspeh"      },
-	{ PluginType::enNasharu,    "nasharu"    },
-	{ PluginType::enOttPub,     "ottpub"     },
-	{ PluginType::enReflexTV,   "reflextv"   },
-	{ PluginType::enPeakTV,     "peaktv"     },
-	{ PluginType::enKorona,     "korona"     },
-	{ PluginType::enPikTV,      "piktv"      },
-	{ PluginType::enVelestore,  "velestore"  },
-	{ PluginType::enIptvPlay,   "iptvplay"   },
-	{ PluginType::enHnMedia,    "hnmedia"    },
-	{ PluginType::enShurikTV,   "shuriktv"   },
-	{ PluginType::en2tv,        "2tv"        },
-	{ PluginType::enSkazTV,     "skaztv"     },
-	{ PluginType::enCustom,     "custom"     },
-};
+// special plugin id. all these plugins has own implementation not covered by configuration
+constexpr const char* const antifriz = "antifriz";
+constexpr const char* const cbilling = "cbilling";
+constexpr const char* const edem = "edem";
+constexpr const char* const glanz = "glanz";
+constexpr const char* const iptvonline = "iptvonline";
+constexpr const char* const itv = "itv";
+constexpr const char* const kineskop = "kineskop";
+constexpr const char* const korona = "korona";
+constexpr const char* const oneott = "oneott";
+constexpr const char* const ottclub = "ottclub";
+constexpr const char* const piktv = "piktv";
+constexpr const char* const sharaclub = "sharaclub";
+constexpr const char* const sharavoz = "sharavoz";
+constexpr const char* const shuriktv = "shuriktv";
+constexpr const char* const tvclub = "tvclub";
+constexpr const char* const tvizi = "tvizi";
+constexpr const char* const tvteam = "tvteam";
+constexpr const char* const vidok = "vidok";
+constexpr const char* const custom = "~custom";
 
-std::shared_ptr<base_plugin> PluginFactory::create_plugin(PluginType type)
+
+std::shared_ptr<base_plugin> PluginFactory::create_plugin(const std::string& type)
 {
 	std::shared_ptr<base_plugin> plugin;
 
-	const auto& it = std::find_if(s_all_plugins.begin(), s_all_plugins.end(), [&type](const std::pair<PluginType, std::string>& val)
-								  {
-									  return val.first == type;
-								  });
+	const auto& it_s = m_config_storage.find(type);
 
-	if (it != s_all_plugins.end())
+	if (type == antifriz)
 	{
-		switch (type)
-		{
-			case PluginType::enAntifriz:
-				plugin = std::make_shared<plugin_antifriz>();
-				break;
+		plugin = std::make_shared<plugin_antifriz>();
+	}
+	else if (type == cbilling)
+	{
+		plugin = std::make_shared<plugin_cbilling>();
+	}
+	else if (type == edem)
+	{
+		plugin = std::make_shared<plugin_edem>();
+	}
+	else if (type == glanz)
+	{
+		plugin = std::make_shared<plugin_glanz>();
+	}
+	else if (type == iptvonline)
+	{
+		plugin = std::make_shared<plugin_iptvonline>();
+	}
+	else if (type == itv)
+	{
+		plugin = std::make_shared<plugin_itv>();
+	}
+	else if (type == kineskop)
+	{
+		plugin = std::make_shared<plugin_kineskop>();
+	}
+	else if (type == korona)
+	{
+		plugin = std::make_shared<plugin_korona>();
+	}
+	else if (type == oneott)
+	{
+		plugin = std::make_shared<plugin_oneott>();
+	}
+	else if (type == ottclub)
+	{
+		plugin = std::make_shared<plugin_ottclub>();
+	}
+	else if (type == piktv)
+	{
+		plugin = std::make_shared<plugin_piktv>();
+	}
+	else if (type == sharaclub)
+	{
+		plugin = std::make_shared<plugin_sharaclub>();
+	}
+	else if (type == sharavoz)
+	{
+		plugin = std::make_shared<plugin_sharavoz>();
+	}
+	else if (type == shuriktv)
+	{
+		plugin = std::make_shared<plugin_shuriktv>();
+	}
+	else if (type == tvclub)
+	{
+		plugin = std::make_shared<plugin_tvclub>();
+	}
+	else if (type == tvizi)
+	{
+		plugin = std::make_shared<plugin_tvizi>();
+	}
+	else if (type == tvteam)
+	{
+		plugin = std::make_shared<plugin_tvteam>();
+	}
+	else if (type == vidok)
+	{
+		plugin = std::make_shared<plugin_vidok>();
+	}
+	else if (it_s != m_config_storage.end())
+	{
+		plugin = std::make_shared<base_plugin>();
+	}
 
-			case PluginType::enCbilling:
-				plugin = std::make_shared<plugin_cbilling>();
-				break;
-
-			case PluginType::enEdem:
-				plugin = std::make_shared<plugin_edem>();
-				break;
-
-			case PluginType::enGlanz:
-				plugin = std::make_shared<plugin_glanz>();
-				break;
-
-			case PluginType::enIptvOnline:
-				plugin = std::make_shared<plugin_iptvonline>();
-				break;
-
-			case PluginType::enItv:
-				plugin = std::make_shared<plugin_itv>();
-				break;
-
-			case PluginType::enKineskop:
-				plugin = std::make_shared<plugin_kineskop>();
-				break;
-
-			case PluginType::enKorona:
-				plugin = std::make_shared<plugin_korona>();
-				break;
-
-			case PluginType::enOneOtt:
-				plugin = std::make_shared<plugin_oneott>();
-				break;
-
-			case PluginType::enOttclub:
-				plugin = std::make_shared<plugin_ottclub>();
-				break;
-
-			case PluginType::enPikTV:
-				plugin = std::make_shared<plugin_piktv>();
-				break;
-
-			case PluginType::enSharaclub:
-				plugin = std::make_shared<plugin_sharaclub>();
-				break;
-
-			case PluginType::enSharavoz:
-				plugin = std::make_shared<plugin_sharavoz>();
-				break;
-
-			case PluginType::enShurikTV:
-				plugin = std::make_shared<plugin_shuriktv>();
-				break;
-
-			case PluginType::enTVClub:
-				plugin = std::make_shared<plugin_tvclub>();
-				break;
-
-			case PluginType::enTvizi:
-				plugin = std::make_shared<plugin_tvizi>();
-				break;
-
-			case PluginType::enTvTeam:
-				plugin = std::make_shared<plugin_tvteam>();
-				break;
-
-			case PluginType::enVidok:
-				plugin = std::make_shared<plugin_vidok>();
-				break;
-
-			default:
-				plugin = std::make_shared<base_plugin>();
-				break;
-		}
-
-		if (plugin)
-		{
-			plugin->set_plugin_type(type);
-			plugin->set_internal_name(it->second);
-			const auto& it_s = m_config_storage.find(it->second);
-			if (it_s != m_config_storage.end())
-			{
-				plugin->copy_config(it_s->second);
-			}
-		}
+	if (plugin)
+	{
+		plugin->set_plugin_type(type);
+		plugin->set_internal_name(type);
+		plugin->copy_config(it_s->second);
 	}
 
 	return plugin;
@@ -273,19 +227,12 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 	JSON_ALL_TRY
 	{
 		nlohmann::json config = nlohmann::json::parse(data.str());
+
 		for (const auto& item : config["epg_presets"].items())
 		{
 			EpgParameters preset;
 			EpgParameters::from_json_wrapper(item.value(), preset);
 			m_known_presets.emplace(item.key(), preset);
-		}
-
-		for (const auto& item : config["plugins"].items())
-		{
-			plugin_config cfg;
-			cfg.clear();
-			plugin_config::from_json_wrapper(item.value(), cfg);
-			m_config_storage.emplace(item.key(), cfg);
 		}
 
 		for (const auto& item : config["image_libs"].items())
@@ -295,19 +242,31 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 			m_image_libs.emplace_back(preset);
 		}
 
-		res = true;
+		for (const auto& item : config["plugins"].items())
+		{
+			plugin_config cfg;
+			cfg.clear();
+			plugin_config::from_json_wrapper(item.value(), cfg);
+			if (cfg.get_enabled())
+			{
+				m_config_storage.emplace(item.key(), cfg);
+			}
+		}
+
+		res = !m_config_storage.empty();
 	}
 	JSON_ALL_CATCH;
 
 	return res;
 }
 
-const std::vector<std::pair<PluginType, std::string>>& PluginFactory::get_all_plugins() const
+const std::map<std::string, plugin_config>& PluginFactory::get_all_configs() const
 {
-	return s_all_plugins;
+	return m_config_storage;
 }
 
-PluginType PluginFactory::get_plugin_type(size_t idx)
+const plugin_config PluginFactory::get_config(const std::string& type) const
 {
-	return idx < s_all_plugins.size() ? s_all_plugins[idx].first : s_all_plugins[0].first;
+	const auto it = m_config_storage.find(type);
+	return it != m_config_storage.end() ? it->second : plugin_config();
 }

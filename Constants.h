@@ -79,6 +79,7 @@ constexpr auto REG_COLOR_DUPLICATED    = _T("ColorDuplicated");
 
 // main dialog
 constexpr auto REG_PLUGIN              = _T("PluginType");
+constexpr auto REG_SEL_PLUGIN          = _T("SelectedPlugin");
 constexpr auto REG_ICON_SOURCE         = _T("IconSource");
 constexpr auto REG_DAYS_BACK           = _T("DaysBack");
 constexpr auto REG_HOURS_BACK          = _T("HoursBack");

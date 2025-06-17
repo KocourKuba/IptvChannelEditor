@@ -40,7 +40,7 @@ public:
 		return _instance;
 	}
 
-	std::shared_ptr<base_plugin> create_plugin(PluginType type);
+	std::shared_ptr<base_plugin> create_plugin(const std::string& type);
 
 	bool load_configs(bool dev = false);
 
@@ -50,8 +50,8 @@ public:
 	IconPackInfo get_icon_pack_info(const size_t idx) const;
 	const std::vector<IconPackInfo>& get_icon_packs() const;
 
-	const std::vector<std::pair<PluginType, std::string>>& get_all_plugins() const;
-	PluginType get_plugin_type(size_t idx);
+	const std::map<std::string, plugin_config>& get_all_configs() const;
+	const plugin_config get_config(const std::string& type) const;
 
 protected:
 	PluginFactory() = default;

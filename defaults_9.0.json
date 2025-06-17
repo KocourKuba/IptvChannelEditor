@@ -665,6 +665,7 @@
       ],
       "title": "iEdem/iLook TV",
       "vod_engine": "Json",
+      "vod_server_filter": true,
       "vod_filter": true,
       "vod_filters": [ "years", "genre" ],
       "vod_quality": true,
@@ -3032,7 +3033,8 @@
       ],
       "title": "Yosso TV"
     },
-    "custom": {
+    "~custom": {
+      "custom": true,
       "title": "Custom",
       "streams_config": [
         {

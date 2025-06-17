@@ -41,7 +41,6 @@ DEALINGS IN THE SOFTWARE.
 #include "vod_movie.h"
 #include "IconCache.h"
 #include "Credentials.h"
-#include "PluginDefines.h"
 #include "base_plugin.h"
 #include "PlaylistTemplateInfo.h"
 
@@ -396,7 +395,7 @@ protected:
 private:
 	utils::CUrlDownload m_dl;
 
-	PluginType m_plugin_type = PluginType::enCustom;
+	std::string m_plugin_type;
 	std::shared_ptr<base_plugin> m_plugin;
 
 	HACCEL m_hAccel = nullptr;
@@ -515,5 +514,5 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// vod
-	std::map<PluginType, std::map<std::wstring, vod_category_storage>> m_vod_categories;
+	std::map<std::string, std::map<std::wstring, vod_category_storage>> m_vod_categories;
 };

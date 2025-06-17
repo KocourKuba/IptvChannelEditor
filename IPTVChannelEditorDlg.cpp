@@ -537,9 +537,10 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 	m_wndToolTipCtrl.SetMaxTipWidth(500);
 	m_wndToolTipCtrl.Activate(TRUE);
-
+	const auto& selected = GetConfig().get_selected_plugin();
+	int selected_idx = 0;
 	// Fill available plugins
-	for (const auto& pair : GetPluginFactory().get_all_plugins())
+	for (const auto& pair : GetPluginFactory().get_all_configs())
 	{
 		auto plugin = GetPluginFactory().create_plugin(pair.first);
 		if (!plugin) continue;
@@ -552,8 +553,13 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		}
 
 		int idx = m_wndPluginType.AddString(title.c_str());
-		m_wndPluginType.SetItemData(idx, (DWORD_PTR)pair.first);
+		m_wndPluginType.SetItemData(idx, (DWORD_PTR)pair.first.c_str());
+		if (pair.first == selected)
+		{
+			selected_idx = idx;
+		}
 	}
+	m_wndPluginType.SetCurSel(selected_idx);
 
 	for (const auto& lib : GetPluginFactory().get_icon_packs())
 	{
@@ -617,7 +623,6 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	// Toggle controls state
 	m_wndShowUrl.SetCheck(GetConfig().get_int(true, REG_SHOW_URL));
 	m_wndShowEPG.SetCheck(GetConfig().get_int(true, REG_SHOW_EPG, 1));
-	m_wndPluginType.SetCurSel(GetConfig().get_plugin_idx());
 	m_wndIconSource.SetCurSel(GetConfig().get_int(true, REG_ICON_SOURCE));
 	m_wndEpg1.SetCheck(TRUE);
 
@@ -749,7 +754,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	// Set selected playlist
 	m_playlist_info = m_plugin->get_playlist_infos();
-	if (m_plugin->get_plugin_type() == PluginType::enCustom)
+	if (m_plugin->get_custom())
 	{
 		UINT ID = IDS_STRING_CUSTOM_PLAYLIST;
 		if (std::find_if(m_playlist_info.begin(), m_playlist_info.end(), [&ID](const auto& val)
@@ -4440,10 +4445,10 @@ void CIPTVChannelEditorDlg::OnMakeAll()
 	int i = 0;
 	m_wndProgress.ShowWindow(SW_SHOW);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
-	m_wndProgress.SetRange32(0, (int)GetPluginFactory().get_all_plugins().size());
+	m_wndProgress.SetRange32(0, (int)GetPluginFactory().get_all_configs().size());
 	m_wndProgress.SetPos(i);
 
-	for (const auto& pair : GetPluginFactory().get_all_plugins())
+	for (const auto& pair : GetPluginFactory().get_all_configs())
 	{
 		auto plugin = GetPluginFactory().create_plugin(pair.first);
 		if (!plugin) continue;
@@ -5465,13 +5470,20 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 {
 	if (!CheckForSave())
 	{
-		m_wndPluginType.SetCurSel(GetConfig().get_plugin_idx());
+		const auto& selected = GetConfig().get_selected_plugin();
+		for (int i = 0; i < m_wndPluginType.GetCount(); i++)
+		{
+			if (selected == (const char*)m_wndPluginType.GetItemData(i))
+			{
+				m_wndPluginType.SetCurSel(i);
+			}
+		}
 		return;
 	}
 
 	GetConfig().UpdatePluginSettings();
 
-	GetConfig().set_plugin_idx(m_wndPluginType.GetCurSel());
+	GetConfig().set_selected_plugin((const char*)m_wndPluginType.GetItemData(m_wndPluginType.GetCurSel()));
 
 	set_allow_save(false);
 	PostMessage(WM_SWITCH_PLUGIN);

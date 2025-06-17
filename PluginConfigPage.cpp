@@ -143,42 +143,41 @@ BOOL CPluginConfigPage::OnSetActive()
 void CPluginConfigPage::UpdateControls()
 {
 	const auto& plugin = GetPropertySheet()->m_plugin;
-	bool custom = plugin->get_plugin_type() == PluginType::enCustom;
-	bool readOnly = GetPropertySheet()->GetSelectedConfig().empty();
+	bool isReadOnly = GetPropertySheet()->GetSelectedConfig().empty();
 
 	// common
-	m_wndName.SetReadOnly(readOnly);
-	m_wndTitle.SetReadOnly(readOnly);
-	m_wndUserAgent.SetReadOnly(readOnly);
-	m_wndProviderUrl.SetReadOnly(readOnly);
-	m_wndProviderApiUrl.SetReadOnly(readOnly);
-	m_wndClassName.SetReadOnly(readOnly);
-	m_wndChkEnableBalance.EnableWindow(!readOnly);
-	m_wndAccessType.EnableWindow(custom);
+	m_wndName.SetReadOnly(isReadOnly);
+	m_wndTitle.SetReadOnly(isReadOnly);
+	m_wndUserAgent.SetReadOnly(isReadOnly);
+	m_wndProviderUrl.SetReadOnly(isReadOnly);
+	m_wndProviderApiUrl.SetReadOnly(isReadOnly);
+	m_wndClassName.SetReadOnly(isReadOnly);
+	m_wndChkEnableBalance.EnableWindow(!isReadOnly);
+	m_wndAccessType.EnableWindow(plugin->get_custom());
 
 	// servers
 	m_wndChkStaticServers.SetCheck(plugin->get_static_servers());
-	m_wndChkStaticServers.EnableWindow(!readOnly);
+	m_wndChkStaticServers.EnableWindow(!isReadOnly);
 	m_wndBtnServers.EnableWindow(plugin->get_static_servers());
 
 	// devices
 	m_wndChkStaticDevices.SetCheck(plugin->get_static_devices());
-	m_wndChkStaticDevices.EnableWindow(!readOnly);
+	m_wndChkStaticDevices.EnableWindow(!isReadOnly);
 	m_wndBtnDevices.EnableWindow(plugin->get_static_devices());
 
 	// qualities
 	m_wndChkStaticQualities.SetCheck(plugin->get_static_qualities());
-	m_wndChkStaticQualities.EnableWindow(!readOnly);
+	m_wndChkStaticQualities.EnableWindow(!isReadOnly);
 	m_wndBtnQualities.EnableWindow(plugin->get_static_qualities());
 
 	// profiles
 	m_wndChkStaticProfiles.SetCheck(plugin->get_static_profiles());
-	m_wndChkStaticProfiles.EnableWindow(!readOnly);
+	m_wndChkStaticProfiles.EnableWindow(!isReadOnly);
 	m_wndBtnProfiles.EnableWindow(plugin->get_static_profiles());
 
 	// domains
 	m_wndChkStaticDomains.SetCheck(plugin->get_static_domains());
-	m_wndChkStaticDomains.EnableWindow(!readOnly);
+	m_wndChkStaticDomains.EnableWindow(!isReadOnly);
 	m_wndBtnDomains.EnableWindow(plugin->get_static_domains());
 }
 

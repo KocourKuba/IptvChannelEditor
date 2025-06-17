@@ -84,7 +84,7 @@ STDAPI_( HRESULT ) DllGetVersion( IN HMODULE hModule, OUT DLLVERSIONINFO* lpDVI 
 
 /////////////////////////////////////////////////////////////////////////////
 
-typedef enum _VI_CP {
+using VI_CP = enum _VI_CP {
 	VI_CP_ASCII				= 0,	// 7-bit ASCII
 	VI_CP_JAPAN				= 932,	// Japan (Shift - JIS X-0208)
 	VI_CP_KOREA				= 949,	// Korea (Shift - KSC 5601)
@@ -97,9 +97,9 @@ typedef enum _VI_CP {
 	VI_CP_TURKISH			= 1254,	// Turkish
 	VI_CP_HEBREW			= 1255,	// Hebrew
 	VI_CP_ARABIC			= 1256	// Arabic
-} VI_CP;
+};
 
-typedef enum _VI_STR {
+using VI_STR = enum _VI_STR {
 	VI_STR_COMMENTS			= 0,	// Comments
 	VI_STR_COMPANYNAME		= 1,	// CompanyName
 	VI_STR_FILEDESCRIPTION	= 2,	// FileDescription
@@ -113,7 +113,7 @@ typedef enum _VI_STR {
 	VI_STR_PRODUCTVERSION	= 10,	// ProductVersion
 	VI_STR_SPECIALBUILD		= 11,	// SpecialBuild
 	VI_STR_OLESELFREGISTER	= 12	// OLESelfRegister
-} VI_STR;
+};
 
 /*
 HIWORD( m_vsffi.dwFileVersionMS )

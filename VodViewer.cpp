@@ -702,7 +702,7 @@ void CVodViewer::FillCategories()
 	for (const auto& pair : m_current_vod.vec())
 	{
 		m_wndCategories.AddString(pair.second->name.c_str());
-		if (m_plugin->get_plugin_type() == PluginType::enEdem)
+		if (m_plugin->get_vod_server_filter())
 		{
 			for (const auto& filter : pair.second->filters.vec())
 			{
@@ -757,7 +757,7 @@ void CVodViewer::FillGenres()
 
 	if (m_wndGenres.GetCount())
 	{
-		m_wndGenres.InsertString(0, load_string_resource(m_plugin->get_plugin_type() == PluginType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
+		m_wndGenres.InsertString(0, load_string_resource(m_plugin->get_vod_server_filter() ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
 	}
 
 	m_genre_idx = m_genres.empty() ? -1 : 0;
@@ -788,7 +788,7 @@ void CVodViewer::FillYears()
 
 	if (m_wndYears.GetCount())
 	{
-		m_wndYears.InsertString(0, load_string_resource(m_plugin->get_plugin_type() == PluginType::enEdem ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
+		m_wndYears.InsertString(0, load_string_resource(m_plugin->get_vod_server_filter() ? IDS_STRING_NONE : IDS_STRING_ALL).c_str());
 	}
 
 	m_year_idx = sortedYears.empty() ? -1 : 0;
@@ -1024,7 +1024,7 @@ void CVodViewer::FilterList()
 
 	vod_movie_storage filtered_movies;
 
-	if (m_plugin->get_plugin_type() == PluginType::enEdem)
+	if (m_plugin->get_vod_server_filter())
 	{
 		do
 		{

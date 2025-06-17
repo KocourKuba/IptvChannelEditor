@@ -42,6 +42,7 @@ constexpr auto MAX_REGVAL_SIZE = 1024 * 256; // real max size - 2 Mb;
 constexpr auto REGISTRY_APP_ROOT = LR"(SOFTWARE\Dune IPTV Channel Editor)";
 constexpr auto REGISTRY_APP_SETTINGS = LR"(SOFTWARE\Dune IPTV Channel Editor\Editor\Settings)";
 constexpr auto CONFIG_FILE = L"settings.cfg";
+constexpr const char* const common_settings = "common_settings";
 
 static std::set<std::wstring> all_settings_keys = {
 	REG_WINDOW_POS,
@@ -76,6 +77,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_COLOR_HEVC,
 	REG_COLOR_DUPLICATED,
 	REG_PLUGIN,
+	REG_SEL_PLUGIN,
 	REG_ICON_SOURCE,
 	REG_DAYS_BACK,
 	REG_HOURS_BACK,
@@ -140,8 +142,8 @@ void AccountSettings::LoadSettings()
 
 		if (!m_config.empty())
 		{
-			ReadSettingsJson(PluginType::enBase);
-			for (const auto& pair : GetPluginFactory().get_all_plugins())
+			ReadSettingsJson(common_settings);
+			for (const auto& pair : GetPluginFactory().get_all_configs())
 			{
 				ReadSettingsJson(pair.first);
 			}
@@ -154,22 +156,26 @@ void AccountSettings::LoadSettings()
 	if (!m_bPortable)
 	{
 		m_settings.clear();
-		ReadSettingsRegistry(PluginType::enBase);
-		for (const auto& pair : GetPluginFactory().get_all_plugins())
+		ReadSettingsRegistry(common_settings);
+		for (const auto& pair : GetPluginFactory().get_all_configs())
 		{
 			m_pluginType = pair.first;
 			ReadSettingsRegistry(m_pluginType);
 		}
 	}
 
-	m_pluginType = GetPluginFactory().get_plugin_type(get_plugin_idx());
+	m_pluginType = get_selected_plugin();
+	if (m_pluginType.empty())
+	{
+		m_pluginType = GetPluginFactory().get_all_configs().begin()->first;
+	}
 }
 
 void AccountSettings::SaveSettingsToJson()
 {
-	UpdateSettingsJson(PluginType::enBase);
+	UpdateSettingsJson(common_settings);
 
-	for (const auto& pair : GetPluginFactory().get_all_plugins())
+	for (const auto& pair : GetPluginFactory().get_all_configs())
 	{
 		UpdateSettingsJson(pair.first);
 	}
@@ -180,9 +186,9 @@ void AccountSettings::SaveSettingsToJson()
 
 void AccountSettings::SaveSettingsToRegistry()
 {
-	SaveSectionRegistry(PluginType::enBase);
+	SaveSectionRegistry(common_settings);
 
-	for (const auto& pair : GetPluginFactory().get_all_plugins())
+	for (const auto& pair : GetPluginFactory().get_all_configs())
 	{
 		SaveSectionRegistry(pair.first);
 	}
@@ -202,23 +208,23 @@ void AccountSettings::RemovePortableSettings()
 	std::filesystem::remove(GetAppPath() + CONFIG_FILE, ec);
 }
 
-int AccountSettings::get_plugin_idx() const
+std::string AccountSettings::get_selected_plugin() const
 {
-	return get_int(true, REG_PLUGIN);
+	return utils::utf16_to_utf8(get_string(true, REG_SEL_PLUGIN));
 }
 
-void AccountSettings::set_plugin_idx(int val)
+void AccountSettings::set_selected_plugin(const std::string& val)
 {
-	set_int(true, REG_PLUGIN, val);
-	m_pluginType = GetPluginFactory().get_plugin_type(get_plugin_idx());
+	set_string(true, REG_SEL_PLUGIN, utils::utf8_to_utf16(val));
+	set_plugin_type(val);
 }
 
-PluginType AccountSettings::get_plugin_type() const
+const std::string& AccountSettings::get_plugin_type() const
 {
 	return m_pluginType;
 }
 
-void AccountSettings::set_plugin_type(PluginType val)
+void AccountSettings::set_plugin_type(const std::string& val)
 {
 	m_pluginType = val;
 }
@@ -229,7 +235,11 @@ std::vector<Credentials> AccountSettings::LoadCredentials() const
 	nlohmann::json creds;
 	JSON_ALL_TRY;
 	{
-		creds = nlohmann::json::parse(GetConfig().get_string(false, REG_ACCOUNT_DATA));
+		const auto& data = GetConfig().get_string(false, REG_ACCOUNT_DATA);
+		if (!data.empty())
+		{
+			creds = nlohmann::json::parse(data);
+		}
 	}
 	JSON_ALL_CATCH;
 	for (const auto& item : creds.items())
@@ -241,7 +251,9 @@ std::vector<Credentials> AccountSettings::LoadCredentials() const
 		JSON_ALL_TRY;
 		{
 			cred = val.get<Credentials>();
-			if (get_plugin_type() == PluginType::enEdem && (cred.ott_key.empty())) {
+			// only edem has special cred type and only edem has server filters
+			// it's not correctly but using this method
+			if (GetPluginFactory().get_config(m_pluginType).get_vod_server_filter() && (cred.ott_key.empty())) {
 				std::swap(cred.ott_key, cred.token);
 				std::swap(cred.subdomain, cred.domain);
 			}
@@ -255,7 +267,7 @@ std::vector<Credentials> AccountSettings::LoadCredentials() const
 
 std::wstring AccountSettings::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const
 {
-	const auto& section = isApp ? PluginType::enBase : m_pluginType;
+	const auto& section = isApp ? common_settings : m_pluginType;
 
 	if (m_settings.find(section) == m_settings.end())
 		return def;
@@ -272,14 +284,14 @@ std::wstring AccountSettings::get_string(bool isApp, const std::wstring& key, co
 
 void AccountSettings::set_string(bool isApp, const std::wstring& key, const std::wstring& value)
 {
-	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
+	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
 int AccountSettings::get_int(bool isApp, const std::wstring& key, const int def /*= 0*/) const
 {
-	const auto& section = isApp ? PluginType::enBase : m_pluginType;
+	const auto& section = isApp ? common_settings : m_pluginType;
 	if (m_settings.find(section) == m_settings.end())
 		return def;
 
@@ -295,14 +307,14 @@ int AccountSettings::get_int(bool isApp, const std::wstring& key, const int def 
 
 void AccountSettings::set_int(bool isApp, const std::wstring& key, const int value)
 {
-	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
+	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
 __int64 AccountSettings::get_int64(bool isApp, const std::wstring& key, const __int64 def /*= 0*/) const
 {
-	const auto& section = isApp ? PluginType::enBase : m_pluginType;
+	const auto& section = isApp ? common_settings : m_pluginType;
 	if (m_settings.find(section) == m_settings.end())
 		return def;
 
@@ -318,14 +330,14 @@ __int64 AccountSettings::get_int64(bool isApp, const std::wstring& key, const __
 
 void AccountSettings::set_int64(bool isApp, const std::wstring& key, const __int64 value)
 {
-	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
+	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
 std::vector<BYTE> AccountSettings::get_binary(bool isApp, const std::wstring& key) const
 {
-	const auto& section = isApp ? PluginType::enBase : m_pluginType;
+	const auto& section = isApp ? common_settings : m_pluginType;
 	if (m_settings.find(section) != m_settings.end())
 	{
 		const auto& settings = m_settings.at(section);
@@ -341,7 +353,7 @@ std::vector<BYTE> AccountSettings::get_binary(bool isApp, const std::wstring& ke
 
 bool AccountSettings::get_binary(bool isApp, const std::wstring& key, LPBYTE* pbData, size_t& dwSize) const
 {
-	const auto& section = isApp ? PluginType::enBase : m_pluginType;
+	const auto& section = isApp ? common_settings : m_pluginType;
 	if (m_settings.find(section) == m_settings.end())
 		return false;
 
@@ -361,25 +373,25 @@ bool AccountSettings::get_binary(bool isApp, const std::wstring& key, LPBYTE* pb
 
 void AccountSettings::set_binary(bool isApp, const std::wstring& key, const std::vector<BYTE>& value)
 {
-	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
+	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
 void AccountSettings::set_binary(bool isApp, const std::wstring& key, const BYTE* value, const size_t value_size)
 {
-	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
+	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 
 	settings[key] = std::move(std::vector<BYTE>(value, value + value_size));
 }
 
 void AccountSettings::delete_setting(bool isApp, const std::wstring& key)
 {
-	auto& settings = isApp ? m_settings[PluginType::enBase] : m_settings[m_pluginType];
+	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 	settings.erase(key);
 }
 
-void AccountSettings::ReadSettingsRegistry(PluginType plugin_type)
+void AccountSettings::ReadSettingsRegistry(const std::string& plugin_type)
 {
 	HKEY hkHive = nullptr;
 	if (::RegOpenCurrentUser(KEY_READ, &hkHive) != ERROR_SUCCESS)
@@ -412,13 +424,13 @@ void AccountSettings::ReadSettingsRegistry(PluginType plugin_type)
 			switch (dwType)
 			{
 				case REG_DWORD:
-					settings[name] = *(int*)lpData.data();
+					settings[name] = *reinterpret_cast<int*>(lpData.data());
 					break;
 				case REG_QWORD:
-					settings[name] = *(__int64*)lpData.data();
+					settings[name] = *reinterpret_cast<__int64*>(lpData.data());
 					break;
 				case REG_SZ:
-					settings[name] = (wchar_t*)lpData.data();
+					settings[name] = reinterpret_cast<wchar_t*>(lpData.data());
 					break;
 				case REG_BINARY:
 					lpData.resize(cbData);
@@ -435,7 +447,7 @@ void AccountSettings::ReadSettingsRegistry(PluginType plugin_type)
 	::RegCloseKey(hkHive);
 }
 
-void AccountSettings::SaveSectionRegistry(PluginType plugin_type)
+void AccountSettings::SaveSectionRegistry(const std::string& plugin_type)
 {
 	HKEY hkHive = nullptr;
 	if (::RegOpenCurrentUser(KEY_WRITE, &hkHive) != ERROR_SUCCESS)
@@ -455,13 +467,13 @@ void AccountSettings::SaveSectionRegistry(PluginType plugin_type)
 			{
 				case 0: // int
 				{
-					auto pbData = (BYTE*)&std::get<int>(pair.second);
+					const auto pbData = reinterpret_cast<const BYTE*>(&std::get<int>(pair.second));
 					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_DWORD, pbData, sizeof(int));
 					break;
 				}
 				case 1: // __int64
 				{
-					auto pbData = (BYTE*)&std::get<__int64>(pair.second);
+					const auto pbData = reinterpret_cast<const BYTE*>(&std::get<__int64>(pair.second));
 					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_QWORD, pbData, sizeof(__int64));
 					break;
 				}
@@ -486,10 +498,10 @@ void AccountSettings::SaveSectionRegistry(PluginType plugin_type)
 	::RegCloseKey(hkHive);
 }
 
-bool AccountSettings::ReadSettingsJson(PluginType plugin_type)
+bool AccountSettings::ReadSettingsJson(const std::string& plugin_type)
 {
 	std::string j_section;
-	if (plugin_type == PluginType::enBase)
+	if (plugin_type == common_settings)
 		j_section = utils::utf16_to_utf8(std::wstring_view(APP_SETTINGS));
 	else
 		j_section = GetPluginTypeNameA(plugin_type, false);
@@ -536,7 +548,7 @@ bool AccountSettings::ReadSettingsJson(PluginType plugin_type)
 	return true;
 }
 
-void AccountSettings::UpdateSettingsJson(PluginType plugin_type)
+void AccountSettings::UpdateSettingsJson(const std::string& plugin_type)
 {
 	auto& settings = m_settings[plugin_type];
 	nlohmann::json node;
@@ -575,7 +587,7 @@ void AccountSettings::UpdateSettingsJson(PluginType plugin_type)
 		JSON_ALL_CATCH;
 	}
 
-	if (plugin_type == PluginType::enBase)
+	if (plugin_type == common_settings)
 		m_config[utils::utf16_to_utf8(std::wstring_view(APP_SETTINGS))] = node;
 	else
 		m_config[GetPluginTypeNameA(plugin_type, false)] = node;

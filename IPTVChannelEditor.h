@@ -30,8 +30,6 @@ DEALINGS IN THE SOFTWARE.
 #error "include 'StdAfx.h' before including this file for PCH"
 #endif
 
-#include "PluginDefines.h"
-
 #include "7zpp\SevenZipWrapper.h"
 
 // CEdemChannelEditorApp:
@@ -53,7 +51,7 @@ public:
 
 	void FillLangMap();
 
-	bool PackPlugin(const PluginType plugin_type,
+	bool PackPlugin(const std::string& plugin_type,
 					bool showMessage,
 					bool make_web_update = false,
 					std::wstring output_path = L"",
@@ -112,8 +110,8 @@ std::string load_string_resource_a(unsigned int cp, unsigned int id);
 
 uintmax_t calc_folder_size(const std::wstring& path);
 
-std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel = false);
-std::string  GetPluginTypeNameA(const PluginType plugin_type, bool bCamel = false);
+std::wstring GetPluginTypeNameW(const std::string& plugin_type, bool bCamel = false);
+std::string  GetPluginTypeNameA(const std::string& plugin_type, bool bCamel = false);
 
 void LogProtocol(const std::string& str);
 void LogProtocol(const std::wstring& str);

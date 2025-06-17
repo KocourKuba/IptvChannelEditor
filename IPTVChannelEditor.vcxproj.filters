@@ -201,9 +201,6 @@
     <ClInclude Include="Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PluginDefines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AccountSettings.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
@@ -538,6 +535,7 @@
     <None Include="Readme.md" />
     <None Include="defaults_8.7.json" />
     <None Include="PropertySheet.props" />
+    <None Include="defaults_9.0.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\IPTVChannelEditor.ico">

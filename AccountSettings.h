@@ -27,7 +27,6 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include <map>
 #include <variant>
-#include "PluginDefines.h"
 
 #include "nlohmann\json.hpp"
 
@@ -60,11 +59,11 @@ public:
 
 	void RemovePortableSettings();
 
-	int get_plugin_idx() const;
-	void set_plugin_idx(int val);
+	std::string get_selected_plugin() const;
+	void set_selected_plugin(const std::string& val);
 
-	PluginType get_plugin_type() const;
-	void set_plugin_type(PluginType val);
+	const std::string& get_plugin_type() const;
+	void set_plugin_type(const std::string& val);
 
 	BOOL IsPortable() const { return m_bPortable; }
 	void SetPortable(BOOL val) { m_bPortable = val; }
@@ -90,16 +89,16 @@ public:
 	void delete_setting(bool isApp, const std::wstring& key);
 
 protected:
-	void ReadSettingsRegistry(PluginType plugin_type);
-	void SaveSectionRegistry(PluginType plugin_type);
+	void ReadSettingsRegistry(const std::string& plugin_type);
+	void SaveSectionRegistry(const std::string& plugin_type);
 
-	bool ReadSettingsJson(PluginType plugin_type);
-	void UpdateSettingsJson(PluginType plugin_type);
+	bool ReadSettingsJson(const std::string& plugin_type);
+	void UpdateSettingsJson(const std::string& plugin_type);
 
 private:
 	BOOL m_bPortable = FALSE;
-	std::map<PluginType, map_variant> m_settings;
-	PluginType m_pluginType = PluginType::enEdem;
+	std::map<std::string, map_variant> m_settings;
+	std::string m_pluginType;
 	nlohmann::json m_config;
 };
 

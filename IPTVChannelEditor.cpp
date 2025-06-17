@@ -304,7 +304,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		}
 	}
 
-	ConvertAccounts();
+	//ConvertAccounts();
 
 	if (cmdInfo.m_bCleanupReg)
 	{
@@ -344,7 +344,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		else
 			output_path = cmdInfo.m_strFileName.GetString();
 
-		auto plugin_type = GetConfig().get_plugin_type();
+		const auto& plugin_type = GetConfig().get_plugin_type();
 		if (!PackPlugin(plugin_type, true, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 		{
 			auto plugin = GetPluginFactory().create_plugin(plugin_type);
@@ -370,9 +370,9 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 			output_path = cmdInfo.m_strFileName.GetString();
 		}
 
-		for (const auto& pair : GetPluginFactory().get_all_plugins())
+		for (const auto& pair : GetPluginFactory().get_all_configs())
 		{
-			if (pair.first == PluginType::enCustom) continue;
+			if (pair.second.get_custom()) continue;
 
 			if (!PackPlugin(pair.first, false, false, output_path, cmdInfo.m_bNoEmbed, cmdInfo.m_bNoCustom))
 			{
@@ -632,7 +632,7 @@ void CIPTVChannelEditorApp::FillLangMap()
 	}
 }
 
-bool CIPTVChannelEditorApp::PackPlugin(const PluginType plugin_type,
+bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 									   bool showMessage,
 									   bool make_web_update /*= false*/,
 									   std::wstring output_path /*= L""*/,
@@ -1464,7 +1464,7 @@ std::string get_array_value(std::vector<std::wstring>& creds, size_t& last)
 void ConvertAccounts()
 {
 	const auto& old_plugin_type = GetConfig().get_plugin_type();
-	for (const auto& pair : GetPluginFactory().get_all_plugins())
+	for (const auto& pair : GetPluginFactory().get_all_configs())
 	{
 		GetConfig().set_plugin_type(pair.first);
 
@@ -1884,7 +1884,7 @@ uintmax_t calc_folder_size(const std::wstring& path)
 	return total_size;
 }
 
-std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel /*= false*/)
+std::wstring GetPluginTypeNameW(const std::string& plugin_type, bool bCamel /*= false*/)
 {
 	std::wstring plugin_name;
 	auto plugin = GetPluginFactory().create_plugin(plugin_type);
@@ -1901,7 +1901,7 @@ std::wstring GetPluginTypeNameW(const PluginType plugin_type, bool bCamel /*= fa
 	return plugin_name;
 }
 
-std::string GetPluginTypeNameA(const PluginType plugin_type, bool bCamel /*= false*/)
+std::string GetPluginTypeNameA(const std::string& plugin_type, bool bCamel /*= false*/)
 {
 	std::string plugin_name;
 	auto plugin = GetPluginFactory().create_plugin(plugin_type);
