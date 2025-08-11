@@ -1246,14 +1246,14 @@
       "title": "Kineskop.Club"
     },
     "klimedia": {
-      "access_type": "login",
+      "access_type": "pin",
       "name": "klimedia",
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/lb\\/(?<id>.+)\\/index.m3u8\\?token=(?<token>.+)$",
-          "pl_parse_regex": "^https?:\\/\\/.+\\/.+\\/(?<login>.+)\\/(?<password>.+)\\/.+$",
-          "pl_template": "https://klimedia.space/hls/{LOGIN}/{PASSWORD}/playlist.m3u8"
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/video.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/playlist\\/.+\\/(?<password>.+)\\.m3u$",
+          "pl_template": "https://klimedia.space/playlist/hls/{PASSWORD}.m3u"
         }
       ],
       "provider_url": "https://klimedia.space/",
@@ -1262,15 +1262,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/lb/{ID}/index.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/lb/{ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/timeshift_abs-{START}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "KLI Media"
@@ -2267,7 +2267,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://api.program.spr24.net/api/program?epg={EPG_ID}&date={DATE}",
+          "epg_url": "http://api.program.spr24.net/api/program?epg={EPG_ID}&date=",
           "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
           "epg_desc": "descr",
           "epg_end": "time_to",
@@ -2318,6 +2318,10 @@
         {
           "id": "4",
           "name": "sh24.one"
+        },
+        {
+          "id": "5",
+          "name": "sh365.cc"
         }
       ],
       "servers_list": [
