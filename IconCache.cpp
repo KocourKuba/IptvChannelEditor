@@ -48,7 +48,7 @@ const CImage& CIconCache::get_icon(const std::wstring& path, bool force /*= fals
 	}
 
 	// not found in cache, try to load
-	const auto& unset_url = fmt::format(L"{:s}{:s}{:s}", GetConfig().get_string(true, REG_SAVE_IMAGE_PATH), utils::CHANNELS_LOGO_PATH, L"channel_unset.png");
+	const auto& unset_url = std::format(L"{:s}{:s}{:s}", GetConfig().get_string(true, REG_SAVE_IMAGE_PATH), utils::CHANNELS_LOGO_PATH, L"channel_unset.png");
 	auto container = std::make_unique<ImageContainer>();
 	if (!LoadImageFromUrl(path, container->get_image()))
 	{

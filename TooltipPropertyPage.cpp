@@ -64,7 +64,7 @@ BOOL CTooltipPropertyPage::PreTranslateMessage(MSG* pMsg)
 
 		for (auto& pair : m_tooltips_info)
 		{
-			auto& wnd = pair.first;
+			auto wnd = pair.first;
 			if (!wnd->IsWindowVisible() || wnd->IsWindowEnabled()) continue;
 
 			CRect rect;

@@ -126,12 +126,14 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_bCmpEpg2    = (flags & CMP_FLAG_EPG2) ? TRUE : FALSE;
 
 	int nCurrent = 0;
-	for (const auto& pair : theApp.m_LangMap)
+	for (const auto& [key, value] : theApp.m_LangMap)
 	{
-		int nIdx = m_wndLanguage.AddString(std::get<std::wstring>(pair.second).c_str());
-		m_wndLanguage.SetItemData(nIdx, pair.first);
-		if (pair.first == m_nLang)
+		int nIdx = m_wndLanguage.AddString(std::get<std::wstring>(value).c_str());
+		m_wndLanguage.SetItemData(nIdx, key);
+		if (key == m_nLang)
+		{
 			nCurrent = nIdx;
+		}
 	}
 
 	if (m_wndLanguage.GetCount())

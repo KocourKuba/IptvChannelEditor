@@ -34,7 +34,6 @@ DEALINGS IN THE SOFTWARE.
 #include <fstream>
 #include "xxhash.hpp"
 #include "utils.h"
-#include "SmartHandle.h"
 
 #pragma comment(lib, "Winhttp.lib")
 
@@ -64,20 +63,6 @@ std::string encodeURIComponent(const std::string& value)
 
 	return escaped.str();
 }
-
-template <typename T>
-class CCloseHInternet
-{
-public:
-	~CCloseHInternet() = default;
-
-	static bool Close(T handle)
-	{
-		return FALSE != ::WinHttpCloseHandle(handle);
-	}
-};
-
-using CAutoHinternet = CSmartHandle<HINTERNET, CCloseHInternet>;
 
 template <typename T>
 std::time_t to_time_t(T tp)
@@ -123,6 +108,24 @@ bool CrackedUrl::CrackUrl(const std::wstring& url)
 
 	return false;
 }
+
+
+#ifndef defer
+
+template <typename T>
+struct deferrer
+{
+	T f;
+	deferrer(T f) : f(f) {};
+	deferrer(const deferrer&) = delete;
+	~deferrer() { f(); }
+};
+
+#define TOKEN_CONCAT_NX(a, b) a ## b
+#define TOKEN_CONCAT(a, b) TOKEN_CONCAT_NX(a, b)
+#define defer deferrer TOKEN_CONCAT(__deferred, __COUNTER__) =
+
+#endif
 
 bool CUrlDownload::DownloadFile(std::stringstream& vData,
 								std::vector<std::string>* pHeaders /*= nullptr*/,
@@ -171,44 +174,46 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 
 		// Use WinHttpOpen to obtain a session handle.
 		ATLTRACE(L"\nUserAgent: %s\n", m_user_agent.c_str());
-		CAutoHinternet hSession = WinHttpOpen(m_user_agent.c_str(),
-											  WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-											  WINHTTP_NO_PROXY_NAME,
-											  WINHTTP_NO_PROXY_BYPASS, 0);
-
-		if (hSession.IsNotValid())
+		auto hSession = WinHttpOpen(m_user_agent.c_str(),
+									 WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+									 WINHTTP_NO_PROXY_NAME,
+									 WINHTTP_NO_PROXY_BYPASS, 0);
+		if (!hSession)
 		{
 			m_error_message = L"Error: Failed to open connection";
 			break;
 		}
+		defer[&]{ WinHttpCloseHandle(hSession); };
 
 		WinHttpSetTimeouts(hSession, 0, 10000, 10000, 60000);
 
 		// Specify an HTTP server.
-		CAutoHinternet hConnect = WinHttpConnect(hSession, cracked.host.c_str(), cracked.port, 0);
-		if (hConnect.IsNotValid())
+		auto hConnect = WinHttpConnect(hSession, cracked.host.c_str(), cracked.port, 0);
+		if (!hConnect)
 		{
 			m_error_message = L"Error: Failed to connect";
 			break;
 		}
+		defer[&]{ WinHttpCloseHandle(hConnect); };
 
 		DWORD dwFlags = WINHTTP_FLAG_BYPASS_PROXY_CACHE;
 		if (cracked.nScheme == 2 /*INTERNET_SCHEME_HTTPS*/)
 			dwFlags |= 0x00800000; // INTERNET_FLAG_SECURE
 		// Create an HTTP request handle.
-		CAutoHinternet hRequest = WinHttpOpenRequest(hConnect,
-													 verb_post ? L"POST" : L"GET",
-													 (cracked.path + cracked.extra_info).c_str(),
-													 nullptr,
-													 WINHTTP_NO_REFERER,
-													 WINHTTP_DEFAULT_ACCEPT_TYPES,
-													 dwFlags);
+		auto hRequest = WinHttpOpenRequest(hConnect,
+										   verb_post ? L"POST" : L"GET",
+										   (cracked.path + cracked.extra_info).c_str(),
+										   nullptr,
+										   WINHTTP_NO_REFERER,
+										   WINHTTP_DEFAULT_ACCEPT_TYPES,
+										   dwFlags);
 
-		if (hRequest.IsNotValid())
+		if (!hRequest)
 		{
 			m_error_message = L"Error: Failed to open request";
 			break;
 		}
+		defer[&]{ WinHttpCloseHandle(hRequest); };
 
 		if (pHeaders && !pHeaders->empty())
 		{
@@ -248,7 +253,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 			// End the request.
 			if (!WinHttpReceiveResponse(hRequest, nullptr))
 			{
-				m_error_message = fmt::format(L"Error: Failed to receive response: error code {:d}", GetLastError());
+				m_error_message = std::format(L"Error: Failed to receive response: error code {:d}", GetLastError());
 				break;
 			}
 
@@ -260,7 +265,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 									 WINHTTP_HEADER_NAME_BY_INDEX,
 									 &dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
 			{
-				m_error_message = fmt::format(L"Error: Failed to query headers: error code {:d}", GetLastError());
+				m_error_message = std::format(L"Error: Failed to query headers: error code {:d}", GetLastError());
 				break;
 			}
 
@@ -300,7 +305,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 											   cracked.password.c_str(),
 											   nullptr))
 					{
-						m_error_message = fmt::format(L"Error: Failed to set credentials: error code {:d}", GetLastError());
+						m_error_message = std::format(L"Error: Failed to set credentials: error code {:d}", GetLastError());
 						break;
 					}
 
@@ -351,7 +356,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 					break;
 
 				default:
-					m_error_message = fmt::format(L"Response returns error code: {:d}", dwStatusCode);
+					m_error_message = std::format(L"Response returns error code: {:d}", dwStatusCode);
 					break;
 			}
 
@@ -364,13 +369,13 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 		{
 			if (!bResults)
 			{
-				m_error_message += fmt::format(L"\nError code: {:d}", GetLastError());
+				m_error_message += std::format(L"\nError code: {:d}", GetLastError());
 				break;
 			}
 			// Check for available data.
 			if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
 			{
-				m_error_message += fmt::format(L"\nError: WinHttpQueryDataAvailable error code {:d}", GetLastError());
+				m_error_message += std::format(L"\nError: WinHttpQueryDataAvailable error code {:d}", GetLastError());
 				break;
 			}
 
@@ -385,7 +390,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 			}
 			else
 			{
-				m_error_message = fmt::format(L"\nError: WinHttpReadData error code {:d}", GetLastError());
+				m_error_message = std::format(L"\nError: WinHttpReadData error code {:d}", GetLastError());
 				break;
 			}
 		}
@@ -426,7 +431,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 
 std::filesystem::path CUrlDownload::GetCachedPath(const std::wstring& url)
 {
-	return GetCacheDir() / fmt::format(L"{:08x}", xxh::xxhash<32>(url));
+	return GetCacheDir() / std::format(L"{:08x}", xxh::xxhash<32>(url));
 }
 
 std::filesystem::path CUrlDownload::GetCacheDir()
@@ -485,10 +490,8 @@ std::string entityDecrypt(const std::string& text)
 	for (size_t i = 0; i < text.size(); ++i)
 	{
 		bool flag = false;
-		for (const auto& it : convert)
+		for (const auto& [key, value] : convert)
 		{
-			const auto& key = it.first;
-			const auto& value = it.second;
 			if (i + key.size() - 1 < text.size()
 				&& text.substr(i, key.size()) == key)
 			{

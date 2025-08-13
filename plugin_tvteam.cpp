@@ -46,7 +46,7 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 		return {};
 	}
 
-	session_id_name = utils::utf8_to_utf16(fmt::format("session_{:s}", utils::md5_hash_hex(params.creds.login)));
+	session_id_name = utils::utf8_to_utf16(std::format("session_{:s}", utils::md5_hash_hex(params.creds.login)));
 
 	auto session_id = get_file_cookie(session_id_name);
 	if (!session_id.empty())
@@ -56,7 +56,7 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 
 	CWaitCursor cur;
 	std::stringstream data;
-	const std::wstring& url = fmt::format(API_COMMAND_AUTH, utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
+	const std::wstring& url = std::format(API_COMMAND_AUTH, utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
 
 	if (download_url(replace_params_vars(params, url), data))
 	{
@@ -78,7 +78,7 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(fmt::format(L"plugin_tvteam: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
+		LogProtocol(std::format(L"plugin_tvteam: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
 	}
 
 	return session_id;
@@ -102,7 +102,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 	else
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(API_COMMAND_GET_URL,
+		const auto& url = std::format(API_COMMAND_GET_URL,
 									  L"getUserData",
 									  L"getServersGroups",
 									  L"getUserPackages",
@@ -110,7 +110,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 		std::stringstream data;
 		if (!download_url(replace_params_vars(params, url), data))
 		{
-			LogProtocol(fmt::format(L"plugin_tvteam: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_tvteam: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 			return;
 		}
 
@@ -157,7 +157,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 						const auto& server = item.value();
 						const auto& status = utils::get_json_string("showStatus", server);
 						const auto& server_id = utils::get_json_string("groupId", server);
-						const auto& server_name = fmt::format("{:s} ({:s})",
+						const auto& server_name = std::format("{:s} ({:s})",
 															  utils::get_json_string("groupCountry", server),
 															  utils::get_json_string("streamDomainName", server));
 
@@ -189,7 +189,7 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 	if (!servers_list.empty() && !session_id.empty())
 	{
 
-		const auto& url = fmt::format(API_COMMAND_SET_URL,
+		const auto& url = std::format(API_COMMAND_SET_URL,
 									  L"updateUserData",
 									  L"groupId",
 									  REPL_SERVER_ID,
@@ -213,7 +213,7 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(fmt::format(L"plugin_tvteam: Failed to set server: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_tvteam: Failed to set server: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 

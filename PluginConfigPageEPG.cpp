@@ -151,11 +151,10 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	plugin->get_api_token(params);
 	m_Token = GetPropertySheet()->m_selected_cred.s_token.c_str();
 
-	const auto& presets = GetPluginFactory().get_epg_presets();
-	for(const auto& preset : presets)
+	for(const auto& [key, value] : GetPluginFactory().get_epg_presets())
 	{
-		int idx = m_wndEpgPreset.AddString(utils::utf8_to_utf16(preset.first).c_str());
-		m_wndEpgPreset.SetItemData(idx, (DWORD_PTR)preset.first.c_str());
+		int idx = m_wndEpgPreset.AddString(utils::utf8_to_utf16(key).c_str());
+		m_wndEpgPreset.SetItemData(idx, (DWORD_PTR)key.c_str());
 	}
 	m_wndEpgPreset.SetCurSel((int)plugin->get_epg_preset_idx(0));
 
@@ -279,12 +278,12 @@ void CPluginConfigPageEPG::UpdateControls()
 void CPluginConfigPageEPG::UpdateDateTimestamp(bool dateToUtc)
 {
 	UpdateData(TRUE);
+	std::tm lt{};
 	if (dateToUtc)
 	{
 		CTime nt(m_Date.GetYear(), m_Date.GetMonth(), m_Date.GetDay(), m_Date.GetHour(), m_Date.GetMinute(), m_Date.GetSecond());
 
 		time_t selTime = nt.GetTime();
-		std::tm lt{};
 		localtime_s(&lt, &selTime);
 		lt.tm_hour = 0;
 		lt.tm_min = 0;
@@ -294,7 +293,7 @@ void CPluginConfigPageEPG::UpdateDateTimestamp(bool dateToUtc)
 	}
 	else
 	{
-		std::tm lt = fmt::localtime(m_UTC);
+		localtime_s(&lt, &m_UTC);
 		m_Date.SetDate(lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday);
 	}
 

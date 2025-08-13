@@ -228,7 +228,7 @@ void CPluginConfigPageTV::FillControls()
 		if (idx == plugin->get_playlist_idx())
 		{
 			current = idx;
-			name += fmt::format(L" ({:s})", load_string_resource(IDS_STRING_CURRENT));
+			name += std::format(L" ({:s})", load_string_resource(IDS_STRING_CURRENT));
 		}
 
 		m_wndPlaylistTemplates.AddString(name.c_str());
@@ -415,7 +415,7 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 
 void CPluginConfigPageTV::OnBnClickedButtonStreamRegexTest()
 {
-	const auto& url = fmt::format(L"https://regex101.com/?regex={:s}", utils::string_replace<wchar_t>(m_ParseStream.GetString(), L"+", L"%2B"));
+	const auto& url = std::format(L"https://regex101.com/?regex={:s}", utils::string_replace<wchar_t>(m_ParseStream.GetString(), L"+", L"%2B"));
 	ShellExecute(nullptr, _T("open"), url.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
 }
 

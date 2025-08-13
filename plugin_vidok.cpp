@@ -52,7 +52,7 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(API_COMMAND_URL, L"account");
+		const auto& url = std::format(API_COMMAND_URL, L"account");
 		std::stringstream data;
 		if (download_url(replace_params_vars(params, url), data))
 		{
@@ -72,7 +72,7 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 						{
 							COleDateTime dt(utils::char_to_int64(item.value().value("expire", "")));
 							account_info.emplace(utils::utf8_to_utf16(item.value().value("name", "")),
-												 utils::utf8_to_utf16(fmt::format("expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear())));
+												 utils::utf8_to_utf16(std::format("expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear())));
 						}
 					}
 				}
@@ -81,7 +81,7 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(fmt::format(L"plugin_vidok: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_vidok: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 }
@@ -97,7 +97,7 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 
 	get_api_token(params);
 
-	const auto& url = fmt::format(API_COMMAND_URL, L"settings");
+	const auto& url = std::format(API_COMMAND_URL, L"settings");
 	std::stringstream data;
 	if (download_url(replace_params_vars(params, url), data))
 	{
@@ -125,7 +125,7 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(fmt::format(L"plugin_vidok: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+		LogProtocol(std::format(L"plugin_vidok: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 	}
 
 	set_servers_list(servers);
@@ -142,8 +142,8 @@ bool plugin_vidok::set_server(TemplateParams& params)
 	{
 		get_api_token(params);
 
-		auto url = fmt::format(API_COMMAND_URL, L"settings_set");
-		url += fmt::format(PARAM_FMT, L"server", REPL_SERVER_ID);
+		auto url = std::format(API_COMMAND_URL, L"settings_set");
+		url += std::format(PARAM_FMT, L"server", REPL_SERVER_ID);
 
 		CWaitCursor cur;
 		std::stringstream data;
@@ -162,7 +162,7 @@ bool plugin_vidok::set_server(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(fmt::format(L"plugin_vidok: Failed to set server: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_vidok: Failed to set server: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 

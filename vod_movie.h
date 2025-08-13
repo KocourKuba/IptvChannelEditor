@@ -128,7 +128,7 @@ public:
 		return *this;
 	}
 
-	std::map<std::wstring, std::wstring*> parser_mapper = {
+	std::map<std::wstring, std::wstring*, std::less<>> parser_mapper = {
 		{L"id"          , &id},
 		{L"title"       , &title},
 		{L"title_orig"  , &title_orig},

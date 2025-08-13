@@ -178,7 +178,8 @@ void m3u_entry::parse(const std::string_view& str)
 				if (!boost::regex_match(value._Unchecked_begin(), value._Unchecked_end(), m, re_info)) break;
 
 				duration = utils::char_to_int(m[1].str());
-				dir_title = utils::string_trim(m[3].str());
+				dir_title = m[3].str();
+				utils::string_trim(dir_title);
 				// put title to directive for tvg parsing
 				tags_map.emplace(info_tags::tag_directive_title, dir_title);
 

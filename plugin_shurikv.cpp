@@ -60,7 +60,7 @@ void plugin_shuriktv::parse_account_info(TemplateParams& params)
 					{
 						const auto str_time = utils::get_json_string("expired", parsed_json[0]);
 						COleDateTime dt((time_t)std::stoi(str_time.substr(0, str_time.length() - 3)));
-						account_info.emplace(L"expired", fmt::format(L"{:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear()));
+						account_info.emplace(L"expired", std::format(L"{:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear()));
 					}
 				}
 			}
@@ -68,7 +68,7 @@ void plugin_shuriktv::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(fmt::format(L"plugin_shuriktv: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_shuriktv: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 }

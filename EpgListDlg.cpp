@@ -152,7 +152,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 			}
 		}
 
-		if (auto& it = m_epg_cache->at(m_epg_idx).find(alias); it != m_epg_cache->at(m_epg_idx).end())
+		if (const auto& it = m_epg_cache->at(m_epg_idx).find(alias); it != m_epg_cache->at(m_epg_idx).end())
 		{
 			m_pEpgChannelMap = &(m_epg_cache->at(m_epg_idx)[alias]);
 			for (auto& epg_pair : it->second)
@@ -168,23 +168,23 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 	if (!found_id.empty())
 	{
-		for (const auto& epg : m_epg_cache->at(m_epg_idx)[found_id])
+		for (const auto& [key, value] : m_epg_cache->at(m_epg_idx)[found_id])
 		{
-			time_t shifted_start = epg.first - time_shift;
-			time_t shifted_end = epg.second->time_end - time_shift;
+			time_t shifted_start = key - time_shift;
+			time_t shifted_end = value->time_end - time_shift;
 
 			if (shifted_start < start_time || shifted_start > end_time) continue;
 
-			bool isArchive = (_time32(nullptr) - epg.second->time_end) > 0 && epg.second->time_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
+			bool isArchive = (_time32(nullptr) - value->time_end) > 0 && value->time_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
 			COleDateTime start(shifted_start);
 			COleDateTime end(shifted_end);
 			int idx = m_wndEpgList.InsertItem(i++, isArchive ? L"R" : L"");
 			m_wndEpgList.SetItemText(idx, 1, start.Format(_T("%d.%m.%Y %H:%M:%S")));
 			m_wndEpgList.SetItemText(idx, 2, end.Format(_T("%d.%m.%Y %H:%M:%S")));
-			m_wndEpgList.SetItemText(idx, 3, utils::utf8_to_utf16(epg.second->name).c_str());
-			m_idx_map.emplace(idx, std::pair<time_t, time_t>(epg.second->time_start, epg.second->time_end));
+			m_wndEpgList.SetItemText(idx, 3, utils::utf8_to_utf16(value->name).c_str());
+			m_idx_map.emplace(idx, std::pair<time_t, time_t>(value->time_start, value->time_end));
 
-			if (now >= epg.first && now <= epg.second->time_end)
+			if (now >= key && now <= value->time_end)
 			{
 				current_idx = idx;
 			}
@@ -231,13 +231,13 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 
 		m_wndEpg.SetWindowText(L"");
 
-		auto& start_pair = m_idx_map.find(pNMItemActivate->iItem);
+		const auto& start_pair = m_idx_map.find(pNMItemActivate->iItem);
 		if (start_pair == m_idx_map.end()) break;
 
-		auto& epg_pair = m_pEpgChannelMap->find(start_pair->second.first);
+		const auto& epg_pair = m_pEpgChannelMap->find(start_pair->second.first);
 		if (epg_pair == m_pEpgChannelMap->end()) break;
 
-		const auto& text = fmt::format(R"({{\rtf1 {:s}}})", epg_pair->second->desc);
+		const auto& text = std::format(R"({{\rtf1 {:s}}})", epg_pair->second->desc);
 
 		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
 		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());

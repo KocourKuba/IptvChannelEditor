@@ -59,7 +59,7 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 		CWaitCursor cur;
 		std::vector<std::string> headers;
 		headers.emplace_back("accept: */*");
-		headers.emplace_back(fmt::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password));
+		headers.emplace_back(std::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password));
 		std::stringstream data;
 		if (download_url(replace_params_vars(params, API_COMMAND_AUTH), data, 0, &headers))
 		{
@@ -88,7 +88,7 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(fmt::format(L"plugin_cbilling: Failed to account info: {:s}", m_dl.GetLastErrorMessage()));
+		LogProtocol(std::format(L"plugin_cbilling: Failed to account info: {:s}", m_dl.GetLastErrorMessage()));
 	}
 }
 
@@ -140,7 +140,7 @@ void plugin_cbilling::parse_vod(const CThreadConfig& config)
 				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0 || retry > 2) break;
 
 				std::stringstream data;
-				const auto& cat_url = fmt::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", config.m_url, category->id, page);
+				const auto& cat_url = std::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", config.m_url, category->id, page);
 				if (!download_url(cat_url, data, cache_ttl) || data.bad())
 				{
 					retry++;
@@ -298,5 +298,5 @@ std::wstring plugin_cbilling::get_movie_url(const Credentials& creds, const movi
 		url = movie.url;
 	}
 
-	return fmt::format(L"http://{:s}{:s}?token={:s}", creds.get_subdomain(), url, creds.get_s_token());
+	return std::format(L"http://{:s}{:s}?token={:s}", creds.get_subdomain(), url, creds.get_s_token());
 }

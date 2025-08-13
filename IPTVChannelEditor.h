@@ -105,8 +105,23 @@ int RequestToUpdateServer(const std::wstring& command, bool isThread = true);
 
 std::wstring load_string_resource(unsigned int id);
 std::wstring load_string_resource(unsigned int cp, unsigned int id);
+
+template <typename ... Args>
+auto load_string_resource_fmt(unsigned int id, Args&&... args)
+{
+	auto str = load_string_resource(id);
+	return std::vformat(std::wstring_view(str), std::make_wformat_args(args...));
+}
+
 std::string load_string_resource_a(unsigned int id);
 std::string load_string_resource_a(unsigned int cp, unsigned int id);
+
+template <typename ... Args>
+auto load_string_resource_fmt_a(unsigned int id, Args&&... args)
+{
+	auto str = load_string_resource_a(id);
+	return std::vformat(std::string_view(str), std::make_format_args(args...));
+}
 
 uintmax_t calc_folder_size(const std::wstring& path);
 
@@ -124,19 +139,19 @@ extern std::string g_szServerPath;
 		catch (const nlohmann::json::parse_error& ex) \
 		{ \
 			/* parse errors are ok, because input may be random bytes*/ \
-			LogProtocol(fmt::format("{:s} ({:d}): parse error: {:s}", __FILE__, __LINE__, ex.what())); \
+			LogProtocol(std::format("{:s} ({:d}): parse error: {:s}", __FILE__, __LINE__, ex.what())); \
 		} \
 		catch (const nlohmann::json::out_of_range& ex) \
 		{ \
 			/* out of range errors may happen if provided sizes are excessive */ \
-			LogProtocol(fmt::format("{:s} ({:d}): out of range error: {:s}", __FILE__, __LINE__, ex.what())); \
+			LogProtocol(std::format("{:s} ({:d}): out of range error: {:s}", __FILE__, __LINE__, ex.what())); \
 		} \
 		catch (const nlohmann::detail::type_error& ex) \
 		{ \
 			/* type error */ \
-			LogProtocol(fmt::format("{:s} ({:d}): type error: {:s}", __FILE__, __LINE__, ex.what())); \
+			LogProtocol(std::format("{:s} ({:d}): type error: {:s}", __FILE__, __LINE__, ex.what())); \
 		} \
 		catch (...) \
 		{ \
-			LogProtocol(fmt::format("{:s} ({:d}): unknown exception", __FILE__, __LINE__)); \
+			LogProtocol(std::format("{:s} ({:d}): unknown exception", __FILE__, __LINE__)); \
 		}

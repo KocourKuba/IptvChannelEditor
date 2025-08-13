@@ -121,7 +121,7 @@ public:
 
 protected:
 	//Member variables
-	std::vector<unsigned char> m_buf;
+	std::vector<unsigned char> m_buf{};
 	int m_nSize = 0;
 };
 

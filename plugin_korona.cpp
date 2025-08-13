@@ -45,7 +45,7 @@ constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
 
 std::string plugin_korona::get_api_token(TemplateParams& params)
 {
-	session_token_file = utils::utf8_to_utf16(fmt::format(SESSION_TOKEN_TEMPLATE,
+	session_token_file = utils::utf8_to_utf16(std::format(SESSION_TOKEN_TEMPLATE,
 														  utils::md5_hash_hex(params.creds.login + utils::md5_hash_hex(params.creds.password))));
 
 	auto session_token = get_file_cookie(session_token_file);
@@ -67,13 +67,13 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 	}
 
 	std::string post;
-	for (const auto& pair : post_request)
+	for (const auto& [key, value] : post_request)
 	{
 		if (!post.empty())
 		{
 			post += "&";
 		}
-		post += fmt::format(PARAM_FMT, pair.first, utils::encodeURIComponent(pair.second));
+		post += std::format(PARAM_FMT, key, utils::encodeURIComponent(value));
 	}
 
 	std::vector<std::string> headers;
@@ -106,7 +106,7 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(fmt::format(L"plugin_korona: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
+		LogProtocol(std::format(L"plugin_korona: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
 	}
 
 	return session_token;
@@ -186,7 +186,7 @@ void plugin_korona::parse_vod(const CThreadConfig& config)
 	{
 		const auto& api_url = get_vod_url(config.m_params);
 
-		const auto& url = fmt::format(L"{:s}/cat", api_url);
+		const auto& url = std::format(L"{:s}/cat", api_url);
 		int total = 0;
 		JSON_ALL_TRY;
 		{
@@ -215,7 +215,7 @@ void plugin_korona::parse_vod(const CThreadConfig& config)
 
 			for (;;)
 			{
-				const auto& cat_url = fmt::format(L"{:s}/cat/{:s}?page=1&per_page=99999999", api_url, category->id);
+				const auto& cat_url = std::format(L"{:s}/cat/{:s}?page=1&per_page=99999999", api_url, category->id);
 				nlohmann::json genres_json = server_request(cat_url, cache_ttl);
 				if (!genres_json.contains("data")) break;
 
@@ -280,7 +280,7 @@ void plugin_korona::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 
 	CWaitCursor cur;
 
-	const auto& url = fmt::format(L"{:s}/video/{:s}", get_vod_url(params),  movie.id);
+	const auto& url = std::format(L"{:s}/video/{:s}", get_vod_url(params),  movie.id);
 
 	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
 	nlohmann::json movies_json = server_request(url, cache_ttl);
@@ -314,7 +314,7 @@ void plugin_korona::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 				season.title = utils::get_json_wstring("name", season_item);
 				if (season.title.empty())
 				{
-					season.title = fmt::format(L"Season {:s}", season.season_id);
+					season.title = std::format(L"Season {:s}", season.season_id);
 				}
 
 				for (const auto& episode_it : season_item["series"].items())
@@ -327,7 +327,7 @@ void plugin_korona::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 					episode.title = utils::get_json_wstring("name", episode_item);
 					if (episode.title.empty())
 					{
-						episode.title = fmt::format(L"Episode {:s}", episode.episode_id);
+						episode.title = std::format(L"Episode {:s}", episode.episode_id);
 					}
 
 					episode.url = utils::get_json_wstring("url", episode_item["files"][0]);
@@ -378,7 +378,7 @@ nlohmann::json plugin_korona::server_request(const std::wstring& url, int cache_
 		std::vector<std::string> headers;
 		headers.emplace_back("accept: */*");
 		headers.emplace_back("Content-Type: application/x-www-form-urlencoded");
-		headers.emplace_back(fmt::format("Authorization: Bearer {:s}", session_token));
+		headers.emplace_back(std::format("Authorization: Bearer {:s}", session_token));
 
 		CWaitCursor cur;
 		std::stringstream data;

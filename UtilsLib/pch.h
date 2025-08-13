@@ -34,8 +34,7 @@ DEALINGS IN THE SOFTWARE.
 #include <fstream>
 #include <chrono>
 #include <optional>
-
-#include <fmt/xchar.h>
+#include <format>
 #include <rapidxml/rapidxml.hpp>
 #include <boost/regex.hpp>
 

@@ -30,42 +30,9 @@ class ImageContainer
 {
 public:
 	ImageContainer() = default;
-	ImageContainer(const ImageContainer& src)
-	{
-		*this = src;
-	}
-
-	ImageContainer(const ImageContainer* src)
-	{
-		*this = src;
-	}
-
-	ImageContainer(ImageContainer&& src) noexcept
-	{
-		*this = std::move(src);
-	}
+	ImageContainer(ImageContainer&& src) noexcept;
 
 public:
-	ImageContainer& operator=(const ImageContainer& src)
-	{
-		if (this != &src)
-		{
-			set_image(src.get_image());
-		}
-
-		return *this;
-	}
-
-	ImageContainer& operator=(const ImageContainer* src)
-	{
-		if (this != src)
-		{
-			set_image(src->get_image());
-		}
-
-		return *this;
-	}
-
 	ImageContainer& operator=(ImageContainer&& src) noexcept
 	{
 		if (this != &src)
@@ -80,9 +47,6 @@ public:
 
 	// move source image
 	void set_image(CImage& val);
-
-	// copy source image
-	void set_image(const CImage& src);
 
 private:
 	CImage icon;

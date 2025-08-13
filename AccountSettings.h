@@ -40,7 +40,7 @@ public:
 		static AccountSettings _instance;
 		return _instance;
 	}
-	using map_variant = std::map<std::wstring, std::variant<int, __int64, std::wstring, std::vector<BYTE>>>;
+	using map_variant = std::map<std::wstring, std::variant<int, __int64, std::wstring, std::vector<unsigned char>>>;
 
 private:
 	AccountSettings() = default;
@@ -80,11 +80,9 @@ public:
 	__int64 get_int64(bool isApp, const std::wstring& key, const __int64 def = 0) const;
 	void set_int64(bool isApp, const std::wstring& key, const __int64 value);
 
-	std::vector<BYTE> get_binary(bool isApp, const std::wstring& key) const;
-	bool get_binary(bool isApp, const std::wstring& key, LPBYTE* pbData, size_t& dwSize) const;
+	std::vector<unsigned char> get_binary(bool isApp, const std::wstring& key) const;
 
-	void set_binary(bool isApp, const std::wstring& key, const std::vector<BYTE>& value);
-	void set_binary(bool isApp, const std::wstring& key, const BYTE* value, const size_t value_size);
+	void set_binary(bool isApp, const std::wstring& key, const std::span<unsigned char>& value);
 
 	void delete_setting(bool isApp, const std::wstring& key);
 
@@ -97,9 +95,9 @@ protected:
 
 private:
 	BOOL m_bPortable = FALSE;
-	std::map<std::string, map_variant> m_settings;
+	std::map<std::string, map_variant> m_settings{};
 	std::string m_pluginType;
-	nlohmann::json m_config;
+	nlohmann::json m_config{};
 };
 
 inline AccountSettings& GetConfig() { return AccountSettings::Instance(); }

@@ -56,8 +56,8 @@ void ChannelInfo::ParseNode(rapidxml::xml_node<>* node)
 	set_epg_id(0, rapidxml::get_value_wstring(node->first_node(utils::EPG1_ID)));
 	set_epg_id(1, rapidxml::get_value_wstring(node->first_node(utils::EPG2_ID)));
 	set_icon_uri(rapidxml::get_value_wstring(node->first_node(utils::ICON_URL)));
-	set_disabled(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::DISABLED))) == "true");
-	set_favorite(utils::string_tolower(rapidxml::get_value_string(node->first_node(utils::FAVORITE))) == "true");
+	set_disabled(utils::string_tolower_copy(rapidxml::get_value_string(node->first_node(utils::DISABLED))) == "true");
+	set_favorite(utils::string_tolower_copy(rapidxml::get_value_string(node->first_node(utils::FAVORITE))) == "true");
 	set_time_shift_hours(rapidxml::get_value_int(node->first_node(utils::TIME_SHIFT_HOURS)));
 
 	auto cnode = node->first_node(utils::TV_CATEGORIES);

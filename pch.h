@@ -42,11 +42,9 @@ DEALINGS IN THE SOFTWARE.
 #include <map>
 #include <set>
 #include <sstream>
+#include <format>
 #include <fstream>
 #include <filesystem>
-
-#include <fmt/xchar.h>
-#include <fmt/chrono.h>
 
 #include <boost/regex.hpp>
 

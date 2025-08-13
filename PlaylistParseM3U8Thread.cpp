@@ -88,7 +88,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 						auto& epg_param = m_parent_plugin->get_epg_parameter(i);
 						if (epg_param.epg_url.empty()) continue;
 
-						switch (epg_param.get_epg_id_source())
+						switch (static_cast<epg_id_sources>(epg_param.get_epg_id_source()))
 						{
 							case epg_id_sources::enChannelId:
 								entry->set_epg_id(i, entry->get_id());

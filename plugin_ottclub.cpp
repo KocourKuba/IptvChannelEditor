@@ -33,5 +33,5 @@ DEALINGS IN THE SOFTWARE.
 
 void plugin_ottclub::update_entry(PlaylistEntry& entry)
 {
-	entry.set_icon_uri(fmt::format(L"http://{:s}/images/{:s}.png", entry.get_domain(), entry.get_id()));
+	entry.set_icon_uri(std::format(L"http://{:s}/images/{:s}.png", entry.get_domain(), entry.get_id()));
 }

@@ -370,7 +370,7 @@ void CTrayIcon::OnTimer(UINT_PTR nIDEvent)
 		if (m_timerIdx < m_aniTrayIcons.size())
 		{
 			const auto& ti = m_aniTrayIcons[m_timerIdx];
-			SetShellTooltip(ti.strToolTip.IsEmpty() ? m_toolTip.GetString() : ti.strToolTip);
+			SetShellTooltip(ti.strToolTip.IsEmpty() ? m_toolTip.GetString() : ti.strToolTip.GetString());
 
 			if (ti.hIcon)
 			{

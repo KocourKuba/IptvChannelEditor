@@ -247,7 +247,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	m_plugin->get_api_token(params);
 	m_plugin->update_provider_params(params);
 
-	auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
+	const auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
 
 	auto pThread = (CPlaylistParseJsonThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseJsonThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
@@ -260,7 +260,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	CThreadConfig cfg;
 	cfg.m_parent = this;
 	cfg.m_hStop = m_evtStop;
-	cfg.m_url = std::move(url);
+	cfg.m_url = url;
 	cfg.m_params = params;
 
 	pThread->SetData(cfg);
@@ -477,7 +477,7 @@ LRESULT CVodViewer::OnInitProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 
 LRESULT CVodViewer::OnUpdateProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
-	m_wndTotal.SetWindowText(fmt::format(L"{:d}", (int)wParam).c_str());
+	m_wndTotal.SetWindowText(std::format(L"{:d}", (int)wParam).c_str());
 	m_wndProgress.SetPos((int)lParam);
 
 	return 0;
@@ -609,7 +609,7 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 			const auto& season = movie->seasons[m_season_idx];
 			url = season.episodes[m_episode_idx].url;
 		}
-		url = fmt::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_s_token());
+		url = std::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_s_token());
 	}
 	else
 	{
@@ -680,7 +680,7 @@ void CVodViewer::OnBnClickedButtonSearch()
 	}
 
 	std::swap(m_filtered_movies, searchMovies);
-	m_wndTotal.SetWindowText(fmt::format(L"{:d}", m_filtered_movies.size()).c_str());
+	m_wndTotal.SetWindowText(std::format(L"{:d}", m_filtered_movies.size()).c_str());
 	m_wndMoviesList.SetItemCount((int)m_filtered_movies.size());
 	m_wndMoviesList.Invalidate();
 	m_wndMoviesList.SetItemState(-1, 0, LVIS_SELECTED);
@@ -704,19 +704,19 @@ void CVodViewer::FillCategories()
 		m_wndCategories.AddString(pair.second->name.c_str());
 		if (m_plugin->get_vod_server_filter())
 		{
-			for (const auto& filter : pair.second->filters.vec())
+			for (const auto& [key, value] : pair.second->filters.vec())
 			{
-				if (filter.first == L"genre")
+				if (key == L"genre")
 				{
-					for (const auto& filter_item : filter.second.vec())
+					for (const auto& filter_item : value.vec())
 					{
 						vod_genre_def genre({ filter_item.second.id, filter_item.second.title });
 						m_genres.set_back(filter_item.second.id, genre);
 					}
 				}
-				else if (filter.first == L"years")
+				else if (key == L"years")
 				{
-					for (const auto& filter_item : filter.second.vec())
+					for (const auto& filter_item : value.vec())
 					{
 						m_years.set_back(filter_item.second.title, filter_item.second.title);
 					}
@@ -729,9 +729,9 @@ void CVodViewer::FillCategories()
 			{
 				for (const auto& movie_pair : pair.second->movies.vec())
 				{
-					for (const auto& genre : movie_pair.second->genres.vec())
+					for (const auto& [key, value] : movie_pair.second->genres.vec())
 					{
-						m_genres.set_back(genre.first, genre.second);
+						m_genres.set_back(key, value);
 					}
 					m_years.set_back(movie_pair.second->year, movie_pair.second->year);
 				}
@@ -810,7 +810,7 @@ void CVodViewer::FillSeasons(const std::shared_ptr<vod_movie>& movie)
 		const auto& season = season_it.second;
 		if (season.title.empty())
 		{
-			m_wndSeason.AddString(fmt::format(L"{:s} {:s}", str, season.season_id).c_str());
+			m_wndSeason.AddString(std::format(L"{:s} {:s}", str, season.season_id).c_str());
 		}
 		else
 		{
@@ -844,7 +844,7 @@ void CVodViewer::FillEpisodes(const std::shared_ptr<vod_movie>& movie)
 		const auto& episode = episode_it.second;
 		if (episode.title.empty())
 		{
-			m_wndEpisode.AddString(fmt::format(L"{:s} {:s}", str, episode.episode_id).c_str());
+			m_wndEpisode.AddString(std::format(L"{:s} {:s}", str, episode.episode_id).c_str());
 		}
 		else
 		{
@@ -935,31 +935,31 @@ void CVodViewer::LoadMovieInfo(int idx)
 
 	SetImageControl(GetIconCache().get_icon(movie->poster_url.get_uri()), m_wndPoster);
 
-	std::string text = fmt::format(R"({{\rtf1 \b {:s}\b0\par )", utils::utf16_to_utf8(movie->title));
+	std::string text = std::format(R"({{\rtf1 \b {:s}\b0\par )", utils::utf16_to_utf8(movie->title));
 
 	if (!movie->title_orig.empty())
-		text += fmt::format(R"({:s}\par )", utils::utf16_to_utf8(movie->title_orig));
+		text += std::format(R"({:s}\par )", utils::utf16_to_utf8(movie->title_orig));
 
 	if (!movie->description.empty())
-		text += fmt::format(R"({:s}\par )", utils::utf16_to_utf8(movie->description));
+		text += std::format(R"({:s}\par )", utils::utf16_to_utf8(movie->description));
 
 	utils::string_rtrim(text);
 	text += R"(\par )";
 
 	if (!movie->year.empty())
-		text += fmt::format((load_string_resource_a(IDS_STRING_VOD_YEAR)), utils::utf16_to_utf8(movie->year));
+		text += load_string_resource_fmt_a(IDS_STRING_VOD_YEAR, utils::utf16_to_utf8(movie->year));
 
 	if (!movie->country.empty())
-		text += fmt::format(load_string_resource_a(IDS_STRING_VOD_COUNTRY), utils::utf16_to_utf8(movie->country));
+		text += load_string_resource_fmt_a(IDS_STRING_VOD_COUNTRY, utils::utf16_to_utf8(movie->country));
 
 	if (!movie->director.empty())
-		text += fmt::format(load_string_resource_a(IDS_STRING_VOD_DIRECTOR), utils::utf16_to_utf8(movie->director));
+		text += load_string_resource_fmt_a(IDS_STRING_VOD_DIRECTOR, utils::utf16_to_utf8(movie->director));
 
 	if (!movie->casting.empty())
-		text += fmt::format(load_string_resource_a(IDS_STRING_VOD_ACTORS), utils::utf16_to_utf8(movie->casting));
+		text += load_string_resource_fmt_a(IDS_STRING_VOD_ACTORS, utils::utf16_to_utf8(movie->casting));
 
 	if (!movie->age.empty())
-		text += fmt::format(load_string_resource_a(IDS_STRING_VOD_AGE), utils::utf16_to_utf8(movie->age));
+		text += load_string_resource_fmt_a(IDS_STRING_VOD_AGE, utils::utf16_to_utf8(movie->age));
 
 	if (movie->movie_time != 0)
 	{
@@ -967,12 +967,11 @@ void CVodViewer::LoadMovieInfo(int idx)
 		int hours = movie->movie_time / 60;
 		if (hours)
 		{
-			mins %= 60;
-			text += fmt::format(load_string_resource_a(IDS_STRING_VOD_HOUR_MIN), hours, mins);
+			text += load_string_resource_fmt_a(IDS_STRING_VOD_HOUR_MIN, hours, mins % 60);
 		}
 		else
 		{
-			text += fmt::format(load_string_resource_a(IDS_STRING_VOD_MIN), mins);
+			text += load_string_resource_fmt_a(IDS_STRING_VOD_MIN, mins);
 		}
 	}
 
@@ -997,7 +996,7 @@ void CVodViewer::FilterList()
 		m_filtered_movies.clear();
 		m_wndProgress.ShowWindow(SW_HIDE);
 		m_wndStop.ShowWindow(SW_HIDE);
-		m_wndTotal.SetWindowText(fmt::format(L"{:d} / {:d}", m_filtered_movies.size(), m_total).c_str());
+		m_wndTotal.SetWindowText(std::format(L"{:d} / {:d}", m_filtered_movies.size(), m_total).c_str());
 		m_wndMoviesList.SetItemCount(0);
 		m_wndMoviesList.Invalidate();
 		m_wndPoster.SetBitmap(nullptr);
@@ -1030,9 +1029,9 @@ void CVodViewer::FilterList()
 		{
 			if (m_genre_idx <= 0 && m_year_idx <= 0)
 			{
-				for (const auto& movie_pair : m_current_vod.getAt(m_category_idx)->movies.vec())
+				for (const auto& [key, value] : m_current_vod.getAt(m_category_idx)->movies.vec())
 				{
-					filtered_movies.set_back(movie_pair.first, movie_pair.second);
+					filtered_movies.set_back(key, value);
 				}
 
 				break;
@@ -1055,14 +1054,14 @@ void CVodViewer::FilterList()
 			json_request["app"] = "IPTV ChannelEditor";
 			if (m_genre_idx > 0)
 			{
-				int id = utils::char_to_int(m_genres[m_genre_idx - 1].id);
+				int id = utils::char_to_int(m_genres[static_cast<size_t>(m_genre_idx) - 1].id);
 				json_request["genre"] = id;
 				ATLTRACE("\ngenre id: %d\n", id);
 			}
 
 			if (m_year_idx > 0)
 			{
-				const auto& years = utils::utf16_to_utf8(m_years[m_year_idx - 1]);
+				const auto& years = utils::utf16_to_utf8(m_years[static_cast<size_t>(m_year_idx) - 1]);
 				json_request["years"] = years;
 				ATLTRACE("\nyears: %s\n", years.c_str());
 			}
@@ -1150,12 +1149,11 @@ void CVodViewer::FilterList()
 	}
 	else
 	{
-		for (const auto& movie_pair : m_current_vod.getAt(m_category_idx)->movies.vec())
+		for (const auto& [key, movie] : m_current_vod.getAt(m_category_idx)->movies.vec())
 		{
 			bool genre = true;
 			bool year = true;
 
-			const auto& movie = movie_pair.second;
 			if (filterByGenre && m_genre_idx != 0)
 			{
 				const auto& genres = movie->genres.vec();
@@ -1172,7 +1170,7 @@ void CVodViewer::FilterList()
 
 			if (genre && year)
 			{
-				filtered_movies.set_back(movie_pair.first, movie_pair.second);
+				filtered_movies.set_back(key, movie);
 			}
 		}
 	}
@@ -1182,7 +1180,7 @@ void CVodViewer::FilterList()
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndStop.ShowWindow(SW_HIDE);
 	m_wndBtnReload.EnableWindow(TRUE);
-	m_wndTotal.SetWindowText(fmt::format(L"{:d} / {:d}", m_filtered_movies.size(), m_total).c_str());
+	m_wndTotal.SetWindowText(std::format(L"{:d} / {:d}", m_filtered_movies.size(), m_total).c_str());
 	m_wndMoviesList.SetItemCount((int)m_filtered_movies.size());
 	m_wndMoviesList.Invalidate();
 

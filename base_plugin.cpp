@@ -93,9 +93,9 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 		utils::string_replace_inplace<wchar_t>(url, REPL_CH_CATCHUP, utils::utf8_to_utf16(info->get_catchup_source()));
 		if (url.find(L"${") != std::string::npos)
 		{
-			for (const auto& pair : template_mapper)
+			for (const auto& [key, value] : template_mapper)
 			{
-				utils::string_replace_inplace<wchar_t>(url, pair.first, pair.second);
+				utils::string_replace_inplace<wchar_t>(url, key, value);
 			}
 		}
 
@@ -107,7 +107,7 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 		utils::string_replace_inplace<wchar_t>(url, REPL_STOP, std::to_wstring(params.shift_back + streams_config[subtype].cu_duration));
 	}
 
-	utils::string_replace_inplace<wchar_t>(url, REPL_CGI_BIN, fmt::format(L"http://127.0.0.1/cgi-bin/plugins/{:s}/", utils::utf8_to_utf16(get_name())));
+	utils::string_replace_inplace<wchar_t>(url, REPL_CGI_BIN, std::format(L"http://127.0.0.1/cgi-bin/plugins/{:s}/", utils::utf8_to_utf16(get_name())));
 
 	return replace_params_vars(params, replace_uri_stream_vars(info, url));
 }
@@ -161,8 +161,10 @@ std::wstring base_plugin::replace_params_vars(const TemplateParams& params, cons
 	if (!servers_list.empty())
 	{
 		size_t server = (params.creds.server_id >= (int)servers_list.size()) ? servers_list.size() - 1 : params.creds.server_id;
-		replaced = utils::string_replace<wchar_t>(replaced, REPL_SERVER, utils::wstring_tolower(servers_list[server].get_name()));
-		replaced = utils::string_replace<wchar_t>(replaced, REPL_SERVER_ID, utils::string_trim(servers_list[server].get_id()));
+		auto srv_name = servers_list[server].get_name();
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_SERVER, utils::wstring_tolower(srv_name));
+		auto id = servers_list[server].get_id();
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_SERVER_ID, utils::string_trim(id));
 	}
 
 	if (!devices_list.empty())
@@ -337,9 +339,10 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 {
 	const auto& epg_param = epg_params[epg_idx];
 
-	COleDateTime dt(for_time ? for_time : COleDateTime::GetCurrentTime());
+	COleDateTime dt(for_time ? for_time : static_cast<time_t>(COleDateTime::GetCurrentTime()));
 	// set to begin of the day
-	std::tm lt =  fmt::localtime(for_time);
+	std::tm lt{};
+	localtime_s(&lt, &for_time);
 	lt.tm_hour = 0;
 	lt.tm_min = 0;
 	lt.tm_sec = 0;
@@ -380,7 +383,7 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_YEAR, std::to_wstring(dt.GetYear()));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_MONTH, std::to_wstring(dt.GetMonth()));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DAY, std::to_wstring(dt.GetDay()));
-	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TIMESTAMP, fmt::format(L"{:d}", std::mktime(&lt)));
+	utils::string_replace_inplace<wchar_t>(epg_template, REPL_TIMESTAMP, std::format(L"{:d}", std::mktime(&lt)));
 	utils::string_replace_inplace<wchar_t>(epg_template, REPL_DUNE_IP, GetConfig().get_string(true, REG_DUNE_IP).c_str());
 
 	return replace_params_vars(params, epg_template);
@@ -388,7 +391,7 @@ std::wstring base_plugin::compile_epg_url(int epg_idx, const std::wstring& epg_i
 
 std::string base_plugin::get_file_cookie(const std::wstring& name) const
 {
-	const auto& cookie_name = fmt::format(FILE_COOKIE,
+	const auto& cookie_name = std::format(FILE_COOKIE,
 										  std::filesystem::temp_directory_path().append(L"iptv_cache").wstring(),
 										  get_internal_name(),
 										  name);
@@ -414,7 +417,7 @@ std::string base_plugin::get_file_cookie(const std::wstring& name) const
 
 void base_plugin::set_file_cookie(const std::wstring& name, const std::string& session, time_t expire_time) const
 {
-	const auto& cookie_name = fmt::format(FILE_COOKIE,
+	const auto& cookie_name = std::format(FILE_COOKIE,
 											  std::filesystem::temp_directory_path().append(L"iptv_cache").wstring(),
 											  get_internal_name(),
 											  name);
@@ -432,7 +435,7 @@ void base_plugin::set_file_cookie(const std::wstring& name, const std::string& s
 
 void base_plugin::delete_file_cookie(const std::wstring& name) const
 {
-	const auto& cookie_name = fmt::format(FILE_COOKIE,
+	const auto& cookie_name = std::format(FILE_COOKIE,
 										  std::filesystem::temp_directory_path().append(L"iptv_cache").wstring(),
 										  get_internal_name(),
 										  name);
@@ -481,11 +484,13 @@ std::wstring base_plugin::compile_name_template(std::wstring packed_name, const 
 	}
 	else
 	{
-		version_index = fmt::format(L"{:d}{:02d}{:02d}{:02d}", cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour());
+		version_index = std::format(L"{:d}{:02d}{:02d}{:02d}", cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour());
 	}
 
 	CTime st(cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour(), cur_dt.GetMinute(), cur_dt.GetSecond());
-	std::tm lt = fmt::localtime(st.GetTime());
+	time_t time = st.GetTime();
+	std::tm lt{};
+	localtime_s(&lt, &time);
 
 	utils::string_replace_inplace<wchar_t>(packed_name, REPL_TYPE, get_internal_name());
 	utils::string_replace_inplace<wchar_t>(packed_name, REPL_NAME, utils::utf8_to_utf16(name));

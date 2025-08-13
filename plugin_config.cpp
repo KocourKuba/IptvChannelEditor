@@ -265,8 +265,8 @@ nlohmann::json plugin_config::get_epg_root(int epg_idx, const nlohmann::json& ep
 
 	JSON_ALL_TRY;
 	{
-		auto& tokens = utils::regex_split(epg_root, "\\|");
-		for (auto& token : tokens)
+		const auto& tokens = utils::regex_split(epg_root, "\\|");
+		for (auto token : tokens)
 		{
 			if (token.front() != '[')
 			{
@@ -281,7 +281,7 @@ nlohmann::json plugin_config::get_epg_root(int epg_idx, const nlohmann::json& ep
 				int idx = utils::char_to_int(utils::string_trim(token, "[]"));
 				if (idx < (int)ch_data.size() && !ch_data[idx].empty())
 				{
-					epg_root = token;
+					epg_root = std::move(token);
 					ch_data = ch_data[idx];
 				}
 			}

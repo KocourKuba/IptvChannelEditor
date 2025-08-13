@@ -278,7 +278,7 @@ BOOL CFileVersionInfo::QueryStringValue(IN LPCTSTR lpszItem, OUT LPTSTR lpszValu
 
 	SecureZeroMemory( lpszValue, nBuf * sizeof( TCHAR ) );
 
-	const auto& csSFI = fmt::format(L"\\StringFileInfo\\{:04x}{:04x}\\{:s}", GetCurLID(), GetCurCP(), lpszItem);
+	const auto& csSFI = std::format(L"\\StringFileInfo\\{:04x}{:04x}\\{:s}", GetCurLID(), GetCurCP(), lpszItem);
 
 	BOOL   bRes    = FALSE;
 	UINT   uLen    = 0;

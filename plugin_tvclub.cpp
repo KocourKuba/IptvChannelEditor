@@ -49,7 +49,7 @@ void plugin_tvclub::parse_account_info(TemplateParams& params)
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(API_COMMAND_URL, L"account");
+		const auto& url = std::format(API_COMMAND_URL, L"account");
 		std::stringstream data;
 		if (download_url(replace_params_vars(params, url), data))
 		{
@@ -80,8 +80,8 @@ void plugin_tvclub::parse_account_info(TemplateParams& params)
 						{
 							const auto& val = item.value();
 							COleDateTime dt((time_t)val.value("expire", 0));
-							const auto& value = fmt::format(L"expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
-							const auto& name = utils::utf8_to_utf16(fmt::format("{:s} {:s}", val.value("name", ""), val.value("type", "")));
+							const auto& value = std::format(L"expired {:d}.{:d}.{:d}", dt.GetDay(), dt.GetMonth(), dt.GetYear());
+							const auto& name = utils::utf8_to_utf16(std::format("{:s} {:s}", val.value("name", ""), val.value("type", "")));
 							account_info.emplace(name, value);
 						}
 					}
@@ -91,7 +91,7 @@ void plugin_tvclub::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(fmt::format(L"plugin_tvclub: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_tvclub: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 }
@@ -105,7 +105,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 
 	get_api_token(params);
 
-	const auto& url = fmt::format(API_COMMAND_URL, L"settings");
+	const auto& url = std::format(API_COMMAND_URL, L"settings");
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -147,8 +147,8 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 	{
 		get_api_token(params);
 
-		auto url = fmt::format(API_COMMAND_URL, L"set");
-		url += fmt::format(PARAM_FMT, L"server", REPL_SERVER_ID);
+		auto url = std::format(API_COMMAND_URL, L"set");
+		url += std::format(PARAM_FMT, L"server", REPL_SERVER_ID);
 
 		CWaitCursor cur;
 		std::stringstream data;

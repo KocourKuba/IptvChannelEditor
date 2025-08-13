@@ -57,7 +57,7 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = fmt::format(API_COMMAND_URL, L"subscr_info");
+		const auto& url = std::format(API_COMMAND_URL, L"subscr_info");
 		std::stringstream data;
 		if (download_url(replace_params_vars(params, url), data))
 		{
@@ -87,7 +87,7 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(fmt::format(L"plugin_sharaclub: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_sharaclub: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 }
@@ -99,7 +99,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 
 	std::vector<DynamicParamsInfo> servers;
 
-	const auto& url = fmt::format(API_COMMAND_URL, L"ch_cdn");
+	const auto& url = std::format(API_COMMAND_URL, L"ch_cdn");
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -135,8 +135,8 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 
 	if (!servers_list.empty())
 	{
-		auto url = fmt::format(API_COMMAND_URL, L"ch_cdn");
-		url += fmt::format(PARAM_FMT, L"num", REPL_SERVER_ID);
+		auto url = std::format(API_COMMAND_URL, L"ch_cdn");
+		url += std::format(PARAM_FMT, L"num", REPL_SERVER_ID);
 
 		CWaitCursor cur;
 		std::stringstream data;
@@ -159,7 +159,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 	if (!get_profiles_list().empty() || params.creds.login.empty() || params.creds.password.empty())
 		return;
 
-	const auto& url = fmt::format(API_COMMAND_URL, L"list_profiles");
+	const auto& url = std::format(API_COMMAND_URL, L"list_profiles");
 
 	CWaitCursor cur;
 	std::stringstream data;
@@ -199,8 +199,8 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 {
 	if (!profiles_list.empty())
 	{
-		auto url = fmt::format(API_COMMAND_URL, L"list_profiles");
-		url += fmt::format(PARAM_FMT, L"num", REPL_PROFILE_ID);
+		auto url = std::format(API_COMMAND_URL, L"list_profiles");
+		url += std::format(PARAM_FMT, L"num", REPL_PROFILE_ID);
 
 		CWaitCursor cur;
 		std::stringstream data;

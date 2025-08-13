@@ -335,7 +335,7 @@ void AccountSettings::set_int64(bool isApp, const std::wstring& key, const __int
 	settings[key] = value;
 }
 
-std::vector<BYTE> AccountSettings::get_binary(bool isApp, const std::wstring& key) const
+std::vector<unsigned char> AccountSettings::get_binary(bool isApp, const std::wstring& key) const
 {
 	const auto& section = isApp ? common_settings : m_pluginType;
 	if (m_settings.find(section) != m_settings.end())
@@ -343,46 +343,19 @@ std::vector<BYTE> AccountSettings::get_binary(bool isApp, const std::wstring& ke
 		const auto& settings = m_settings.at(section);
 		if (const auto& pair = settings.find(key); pair != settings.end())
 		{
-			const auto var = std::get_if<std::vector<BYTE>>(&pair->second);
-			return var ? *var : std::vector<BYTE>();
+			const auto var = std::get_if<std::vector<unsigned char>>(&pair->second);
+			return var ? *var : std::vector<unsigned char>();
 		}
 	}
 
 	return {};
 }
 
-bool AccountSettings::get_binary(bool isApp, const std::wstring& key, LPBYTE* pbData, size_t& dwSize) const
-{
-	const auto& section = isApp ? common_settings : m_pluginType;
-	if (m_settings.find(section) == m_settings.end())
-		return false;
-
-	const auto& settings = m_settings.at(section);
-	if (const auto& pair = settings.find(key); pair != settings.end())
-	{
-		const auto var = std::get_if<std::vector<BYTE>>(&pair->second);
-		if (var)
-		{
-			memcpy(pbData, var->data(), dwSize);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void AccountSettings::set_binary(bool isApp, const std::wstring& key, const std::vector<BYTE>& value)
+void AccountSettings::set_binary(bool isApp, const std::wstring& key, const std::span<unsigned char>& value)
 {
 	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 
-	settings[key] = value;
-}
-
-void AccountSettings::set_binary(bool isApp, const std::wstring& key, const BYTE* value, const size_t value_size)
-{
-	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
-
-	settings[key] = std::move(std::vector<BYTE>(value, value + value_size));
+	settings[key] = std::move(std::vector<unsigned char>(value.begin(), value.end()));
 }
 
 void AccountSettings::delete_setting(bool isApp, const std::wstring& key)
@@ -397,7 +370,7 @@ void AccountSettings::ReadSettingsRegistry(const std::string& plugin_type)
 	if (::RegOpenCurrentUser(KEY_READ, &hkHive) != ERROR_SUCCESS)
 		return;
 
-	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginTypeNameW(plugin_type));
+	const auto& reg_key = std::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginTypeNameW(plugin_type));
 	HKEY hKey = nullptr;
 	if (::RegOpenKeyExW(hkHive, reg_key.c_str(), 0, KEY_READ, &hKey) == ERROR_SUCCESS)
 	{
@@ -410,9 +383,18 @@ void AccountSettings::ReadSettingsRegistry(const std::string& plugin_type)
 			DWORD dwNameSize = MAX_REGNAME_SIZE / sizeof(wchar_t);
 
 			std::vector<wchar_t> szName(dwNameSize);
-			std::vector<BYTE> lpData(cbData);
+			std::vector<unsigned char> lpData(cbData);
 
-			if (::RegEnumValueW(hKey, dwIdx++, (LPWSTR)szName.data(), &dwNameSize, nullptr, &dwType, (BYTE*)lpData.data(), &cbData) != ERROR_SUCCESS) break;
+			auto res = ::RegEnumValueW(hKey,
+									   dwIdx++,
+									   szName.data(),
+									   &dwNameSize,
+									   nullptr,
+									   &dwType,
+									   lpData.data(),
+									   &cbData);
+
+			if (res != ERROR_SUCCESS) break;
 
 			std::wstring name(szName.data(), dwNameSize);
 			if (all_settings_keys.find(name) == all_settings_keys.end()) // ignore unknown keys
@@ -453,40 +435,43 @@ void AccountSettings::SaveSectionRegistry(const std::string& plugin_type)
 	if (::RegOpenCurrentUser(KEY_WRITE, &hkHive) != ERROR_SUCCESS)
 		return;
 
-	const auto& reg_key = fmt::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginTypeNameW(plugin_type));
+	const auto& reg_key = std::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginTypeNameW(plugin_type));
 	HKEY hKey = nullptr;
 	DWORD dwDesp;
 
 	if (::RegCreateKeyExW(hkHive, reg_key.c_str(), 0, REG_NONE, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDesp) == ERROR_SUCCESS)
 	{
-		auto& settings = m_settings[plugin_type];
-		for (const auto& pair : settings)
+		for (const auto& [key, value] : m_settings[plugin_type])
 		{
 			DWORD dwSize = 0;
-			switch (pair.second.index())
+			switch (value.index())
 			{
 				case 0: // int
 				{
-					const auto pbData = reinterpret_cast<const BYTE*>(&std::get<int>(pair.second));
-					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_DWORD, pbData, sizeof(int));
+					const auto pbData = reinterpret_cast<const unsigned char*>(&std::get<int>(value));
+					::RegSetValueExW(hKey, key.c_str(), 0, REG_DWORD, pbData, sizeof(int));
 					break;
 				}
 				case 1: // __int64
 				{
-					const auto pbData = reinterpret_cast<const BYTE*>(&std::get<__int64>(pair.second));
-					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_QWORD, pbData, sizeof(__int64));
+					const auto pbData = reinterpret_cast<const unsigned char*>(&std::get<__int64>(value));
+					::RegSetValueExW(hKey, key.c_str(), 0, REG_QWORD, pbData, sizeof(__int64));
 					break;
 				}
 				case 2: // std::wstring
 				{
-					const auto& szData = std::get<std::wstring>(pair.second);
-					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_SZ, (LPBYTE)szData.c_str(), (DWORD)(szData.size() * sizeof(wchar_t)));
+					const auto& szData = std::get<std::wstring>(value);
+					::RegSetValueExW(hKey, key.c_str(),
+									 0,
+									 REG_SZ,
+									 reinterpret_cast<const unsigned char*>(szData.c_str()),
+									 static_cast<DWORD>(szData.size() * sizeof(wchar_t)));
 					break;
 				}
-				case 3: // std::vector<BYTE>
+				case 3: // std::vector<unsigned char>
 				{
-					const auto& vData = std::get<std::vector<BYTE>>(pair.second);
-					::RegSetValueExW(hKey, pair.first.c_str(), 0, REG_BINARY, vData.data(), (DWORD)vData.size());
+					const auto& vData = std::get<std::vector<unsigned char>>(value);
+					::RegSetValueExW(hKey, key.c_str(), 0, REG_BINARY, vData.data(), (DWORD)vData.size());
 					break;
 				}
 			}
@@ -538,7 +523,7 @@ bool AccountSettings::ReadSettingsJson(const std::string& plugin_type)
 				break;
 			case nlohmann::detail::value_t::array:
 			case nlohmann::detail::value_t::binary:
-				settings[name] = item.value().get<std::vector<BYTE>>();
+				settings[name] = item.value().get<std::vector<unsigned char>>();
 				break;
 			default:
 				break;
@@ -550,23 +535,22 @@ bool AccountSettings::ReadSettingsJson(const std::string& plugin_type)
 
 void AccountSettings::UpdateSettingsJson(const std::string& plugin_type)
 {
-	auto& settings = m_settings[plugin_type];
 	nlohmann::json node;
-	for (const auto& pair : settings)
+	for (const auto& [key, value] : m_settings[plugin_type])
 	{
-		const auto& name = utils::utf16_to_utf8(pair.first);
+		const auto& name = utils::utf16_to_utf8(key);
 		JSON_ALL_TRY;
 		{
-			switch (pair.second.index())
+			switch (value.index())
 			{
 				case 0: // int
 				{
-					node[name] = std::get<int>(pair.second);
+					node[name] = std::get<int>(value);
 					break;
 				}
 				case 1: // __int64
 				{
-					__int64 val = std::get<__int64>(pair.second);
+					__int64 val = std::get<__int64>(value);
 					nlohmann::json qw;
 					qw["qw"] = nlohmann::json::object({ { "ldw", LODWORD(val) }, { "hdw", HIDWORD(val) } });
 					node[name] = qw;
@@ -574,12 +558,12 @@ void AccountSettings::UpdateSettingsJson(const std::string& plugin_type)
 				}
 				case 2: // std::wstring
 				{
-					node[name] = utils::utf16_to_utf8(std::get<std::wstring>(pair.second));
+					node[name] = utils::utf16_to_utf8(std::get<std::wstring>(value));
 					break;
 				}
-				case 3: // std::vector<BYTE>
+				case 3: // std::vector<unsigned char>
 				{
-					node[name] = std::get<std::vector<BYTE>>(pair.second);
+					node[name] = std::get<std::vector<unsigned char>>(value);
 					break;
 				}
 			}

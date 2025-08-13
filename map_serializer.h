@@ -75,10 +75,10 @@ public:
 	std::vector<char> serialize()
 	{
 		std::stringstream ss;
-		for (const auto& i : *this)
+		for (const auto& [key, value] : *this)
 		{
-			write(ss, i.first);
-			write(ss, i.second);
+			write(ss, key);
+			write(ss, value);
 		}
 
 		std::vector<char> buffer((std::istreambuf_iterator<char>(ss)), std::istreambuf_iterator<char>());

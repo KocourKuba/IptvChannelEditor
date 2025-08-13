@@ -182,9 +182,9 @@ namespace utils
 
 		void append(const vectormap& source)
 		{
-			for (const auto& item : source.vec())
+			for (const auto& [key, value] : source.vec())
 			{
-				set_back(item.first, item.second);
+				set_back(key, value);
 			}
 		}
 

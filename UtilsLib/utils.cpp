@@ -31,7 +31,6 @@ DEALINGS IN THE SOFTWARE.
 #include "utils.h"
 
 #include <boost/regex.hpp>
-#include <fmt/chrono.h>
 
 namespace utils
 {
@@ -179,6 +178,40 @@ inline size_t count_utf8_to_utf16(const char* sData, size_t sSize)
 	}
 
 	return destSize;
+}
+
+std::vector<std::string> regex_split(const std::string& str, const char* token /*= "\\s+"*/)
+{
+	std::vector<std::string> elems;
+
+	boost::regex rgx(token);
+	boost::sregex_token_iterator iter(str.begin(), str.end(), rgx, -1);
+	boost::sregex_token_iterator end;
+
+	while (iter != end)
+	{
+		elems.emplace_back(*iter);
+		++iter;
+	}
+
+	return elems;
+}
+
+std::vector<std::wstring> regex_split(const std::wstring& str, const wchar_t* token /*= L"\\s+"*/)
+{
+	std::vector<std::wstring> elems;
+
+	boost::wregex rgx(token);
+	boost::wsregex_token_iterator iter(str.begin(), str.end(), rgx, -1);
+	boost::wsregex_token_iterator end;
+
+	while (iter != end)
+	{
+		elems.emplace_back(*iter);
+		++iter;
+	}
+
+	return elems;
 }
 
 inline size_t count_utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
@@ -448,7 +481,9 @@ time_t parse_xmltv_date(const char* sz_date, size_t full_len)
 	  * argument given to mktime().
 	  */
 
-	std::tm pTm = fmt::localtime(time(nullptr));
+	std::tm pTm{};
+	time_t now = time(nullptr);
+	localtime_s(&pTm, &now);
 	long tmz = 0;
 	_get_timezone(&tmz);
 	long gmtoff = 60 * 60 * pTm.tm_isdst - tmz;

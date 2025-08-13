@@ -219,11 +219,11 @@ void CFillParamsInfoDlg::OnBnClickedButtonAdd()
 		case DynamicParamsType::enProfiles:
 		case DynamicParamsType::enFiles:
 		case DynamicParamsType::enDomains:
-			param = DynamicParamsInfo(std::to_string(cnt), fmt::format("name{:d}", cnt));
+			param = DynamicParamsInfo(std::to_string(cnt), std::format("name{:d}", cnt));
 			break;
 		case DynamicParamsType::enPlaylistTV:
 		case DynamicParamsType::enPlaylistVOD:
-			param = PlaylistTemplateInfo(fmt::format("name{:d}", cnt));
+			param = PlaylistTemplateInfo(std::format("name{:d}", cnt));
 			break;
 		default:
 			break;

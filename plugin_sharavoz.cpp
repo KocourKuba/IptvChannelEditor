@@ -50,9 +50,9 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 		all_category->name = all_name;
 		categories->set_back(all_name, all_category);
 
-		const auto& api_url = replace_params_vars(config.m_params, fmt::format(VOD_API_REQUEST, config.m_url));
+		const auto& api_url = replace_params_vars(config.m_params, std::format(VOD_API_REQUEST, config.m_url));
 
-		std::wstring request_url = fmt::format(VOD_API_ACTION, api_url, L"get_vod_categories");
+		std::wstring request_url = std::format(VOD_API_ACTION, api_url, L"get_vod_categories");
 
 		const auto& category_json = xtream_request(config, request_url);
 		if (category_json.empty()) break;
@@ -69,8 +69,8 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 			if (category_id.empty()) continue;
 
 
-			request_url = fmt::format(VOD_API_ACTION, api_url, L"get_vod_streams");
-			request_url += fmt::format(PARAM_FMT, L"category_id", category_id);
+			request_url = std::format(VOD_API_ACTION, api_url, L"get_vod_streams");
+			request_url += std::format(PARAM_FMT, L"category_id", category_id);
 
 			const auto& streams_json = xtream_request(config, request_url);
 			if (streams_json.empty()) continue;
@@ -111,7 +111,7 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 			}
 		}
 
-		request_url = fmt::format(VOD_API_ACTION, api_url, L"get_series_categories");
+		request_url = std::format(VOD_API_ACTION, api_url, L"get_series_categories");
 
 		const auto& series_cat_json = xtream_request(config, request_url);
 		if (series_cat_json.empty()) break;
@@ -125,8 +125,8 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 			const auto& category_id = xtream_parse_category(val, category, categories);
 			if (category_id.empty()) continue;
 
-			request_url = fmt::format(VOD_API_ACTION, api_url, L"get_series");
-			request_url += fmt::format(PARAM_FMT, L"category_id", category_id);
+			request_url = std::format(VOD_API_ACTION, api_url, L"get_series");
+			request_url += std::format(PARAM_FMT, L"category_id", category_id);
 
 			const auto& series_json = xtream_request(config, request_url);
 			if (series_json.empty()) break;
@@ -183,15 +183,15 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 
 	const auto& api_url = get_vod_url(params);
 	const auto& token = creds.get_password();
-	const auto& base_url = fmt::format(L"{:s}/player_api.php?username={:s}&password={:s}", api_url, token, token);
+	const auto& base_url = std::format(L"{:s}/player_api.php?username={:s}&password={:s}", api_url, token, token);
 	std::wstring url;
 	if (movie.is_series)
 	{
-		url = fmt::format(L"&action=get_series_info&series_id={:s}", movie.id);
+		url = std::format(L"&action=get_series_info&series_id={:s}", movie.id);
 	}
 	else
 	{
-		url = fmt::format(L"&action=get_vod_info&vod_id={:s}", movie.id);
+		url = std::format(L"&action=get_vod_info&vod_id={:s}", movie.id);
 	}
 
 	url = base_url + url;
@@ -231,13 +231,13 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 						episode.id = utils::get_json_wstring("id", episode_item);
 						episode.title = utils::get_json_wstring("title", episode_item);
 						episode.episode_id = utils::get_json_wstring("episode_num", episode_item);
-						auto& ext = utils::get_json_wstring("container_extension", episode_item);
+						auto ext = utils::get_json_wstring("container_extension", episode_item);
 						if (!ext.empty())
 						{
 							ext = L"." + ext;
 						}
 
-						episode.url = fmt::format(L"{:s}/movie/{:s}/{:s}/{:s}", api_url, token, token, episode.id + ext);
+						episode.url = std::format(L"{:s}/movie/{:s}/{:s}/{:s}", api_url, token, token, episode.id + ext);
 
 						season.episodes.set_back(episode.id, episode);
 						movie.seasons.set_back(season.id, season);
@@ -252,12 +252,12 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 			movie.age = utils::get_json_wstring("age", value);
 			movie.movie_time = utils::get_json_int("duration", value);
 			movie.year = utils::get_json_wstring("releasedate", value);
-			auto& ext = utils::get_json_wstring("container_extension", value);
+			auto ext = utils::get_json_wstring("container_extension", value);
 			if (!ext.empty())
 			{
 				ext = L"." + ext;
 			}
-			movie.url = fmt::format(L"{:s}/movie/{:s}/{:s}/{:s}", api_url, token, token, movie.id + ext);
+			movie.url = std::format(L"{:s}/movie/{:s}/{:s}/{:s}", api_url, token, token, movie.id + ext);
 		}
 
 		movie.description = utils::get_json_wstring("plot", value);
@@ -295,9 +295,8 @@ std::wstring plugin_sharavoz::xtream_parse_category(const nlohmann::json& val,
 			throw std::exception("empty category_id");
 		}
 
-		auto& pair = utils::string_split(title, L'|');
+		auto pair = utils::string_split(title, L'|');
 		utils::string_trim(pair[0]);
-
 		utils::string_trim(pair[1]);
 		vod_genre_def genre({ category_id, pair[1] });
 

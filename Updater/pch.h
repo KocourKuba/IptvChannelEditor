@@ -39,15 +39,11 @@ DEALINGS IN THE SOFTWARE.
 #include <array>
 #include <map>
 #include <sstream>
+#include <format>
 #include <fstream>
 #include <filesystem>
-
-#include <fmt/xchar.h>
-
 #include <windows.h>
-
 #include "Version.h"
-
 #include "UtilsLib\rapidxml_value.hpp"
 
 #endif //PCH_H

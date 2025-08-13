@@ -184,7 +184,7 @@ public:
 
 	uri_stream& operator=(const uri_stream& src);
 
-	std::map<std::wstring, pointer_to_setter> parser_mapper = {
+	std::map<std::wstring, pointer_to_setter, std::less<>> parser_mapper = {
 		{L"scheme"   , &uri_stream::set_scheme},
 		{L"domain"   , &uri_stream::set_domain},
 		{L"port"     , &uri_stream::set_port},
@@ -203,8 +203,8 @@ public:
 	};
 
 protected:
-	static std::string uri_stream::stream_type_to_str(int type);
-	static int uri_stream::str_to_stream_type(const std::string& str_type);
+	static std::string stream_type_to_str(int type);
+	static int str_to_stream_type(const std::string& str_type);
 
 	InfoType base_type = InfoType::enUndefined;
 

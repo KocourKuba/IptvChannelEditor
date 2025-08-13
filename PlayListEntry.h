@@ -35,9 +35,8 @@ using m3u_tags = std::map<m3u_entry::info_tags, std::string>;
 class PlaylistEntry;
 class base_plugin;
 
-class Playlist
+struct Playlist
 {
-public:
 	std::string catchup_source;
 	int catchup_days = 0;
 	CatchupType catchup = CatchupType::cu_not_set;

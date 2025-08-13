@@ -93,7 +93,7 @@ void CListCtrlEx::SaveColumnWidths()
 	std::wstring strValue;
 	for (int i = 0; i < pHeaderCtrl->GetItemCount(); ++i)
 	{
-		strValue += fmt::format(L"{:d},", GetColumnWidth(Header_OrderToIndex(pHeaderCtrl->m_hWnd, i)));;
+		strValue += std::format(L"{:d},", GetColumnWidth(Header_OrderToIndex(pHeaderCtrl->m_hWnd, i)));;
 	}
 
 	GetConfig().set_string(true, m_strSection, strValue);

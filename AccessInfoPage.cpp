@@ -879,13 +879,13 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	if (m_pluginNameTemplate.IsEmpty())
 		m_pluginNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
 
-	m_pluginName = fmt::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
+	m_pluginName = std::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
 
 	m_wndCustomLogo.SetCheck(selected.custom_logo);
 	m_wndLogo.EnableWindow(selected.custom_logo && enable);
 
 	if (!selected.get_logo().empty() && std::filesystem::path(selected.get_logo()).parent_path().empty())
-		m_logo = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_logo()).c_str();
+		m_logo = std::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_logo()).c_str();
 	else
 		m_logo = selected.get_logo().c_str();
 
@@ -893,7 +893,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	m_wndBackground.EnableWindow(selected.custom_background && enable);
 
 	if (!selected.get_background().empty() && std::filesystem::path(selected.get_background()).parent_path().empty())
-		m_background = fmt::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_background()).c_str();
+		m_background = std::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_background()).c_str();
 	else
 		m_background = selected.get_background().c_str();
 
@@ -918,7 +918,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	else
 	{
 		COleDateTime date = COleDateTime::GetCurrentTime();
-		m_versionIdx = fmt::format(L"{:d}{:02d}{:02d}{:02d}", date.GetYear(), date.GetMonth(), date.GetDay(), date.GetHour()).c_str();
+		m_versionIdx = std::format(L"{:d}{:02d}{:02d}{:02d}", date.GetYear(), date.GetMonth(), date.GetDay(), date.GetHour()).c_str();
 	}
 
 	m_wndUpdatePackageUrl.SetWindowText(selected.get_update_package_url().c_str());
@@ -1007,7 +1007,7 @@ void CAccessInfoPage::GetAccountInfo()
 		selected_cred = params.creds;
 	}
 
-	auto& pl_url = m_plugin->get_playlist_url(params);
+	auto pl_url = m_plugin->get_playlist_url(params);
 
 	const auto& account_info = m_plugin->get_account_info();
 	if (const auto& it = account_info.find(L"url"); it != account_info.end())
@@ -1045,10 +1045,10 @@ void CAccessInfoPage::GetAccountInfo()
 	int idx = 0;
 	m_wndInfo.InsertItem(idx, load_string_resource(IDS_STRING_STATUS).c_str());
 	m_wndInfo.SetItemText(idx, 1, m_status);
-	for (const auto& item : account_info)
+	for (const auto& [key, value] : account_info)
 	{
-		m_wndInfo.InsertItem(++idx, item.first.c_str());
-		m_wndInfo.SetItemText(idx, 1, item.second.c_str());
+		m_wndInfo.InsertItem(++idx, key.c_str());
+		m_wndInfo.SetItemText(idx, 1, value.c_str());
 	}
 
 	UpdateData(FALSE);
@@ -1181,7 +1181,7 @@ void CAccessInfoPage::OnEnChangeEditPluginNameTemplate()
 		m_pluginNameTemplate = selected.get_plugin_name().c_str();
 	}
 
-	m_pluginName = fmt::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
+	m_pluginName = std::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
 
 	UpdateData(FALSE);
 }
@@ -1441,7 +1441,7 @@ bool CAccessInfoPage::TransformDropboxPath(std::wstring& dropbox_link, const std
 
 		utils::string_replace_inplace<wchar_t>(cracked.extra_info, L"&dl=0", L"");
 		utils::string_replace_inplace<wchar_t>(cracked.extra_info, L"?dl=0", L"");
-		dropbox_link = fmt::format(L"{:s}://{:s}{:s}{:s}", cracked.scheme, cracked.host, file_path.wstring(), cracked.extra_info);
+		dropbox_link = std::format(L"{:s}://{:s}{:s}{:s}", cracked.scheme, cracked.host, file_path.wstring(), cracked.extra_info);
 	}
 
 	return true;
@@ -1453,7 +1453,7 @@ void CAccessInfoPage::UpdateTemplatedFields(const Credentials& selected)
 	if (m_pluginNameTemplate.IsEmpty())
 		m_pluginNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
 
-	m_pluginName = fmt::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
+	m_pluginName = std::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
 
 	m_updateNameTemplate = (selected.custom_update_name ? selected.get_update_name().c_str() : utils::DUNE_UPDATE_INFO_NAME);
 	if (m_updateNameTemplate.IsEmpty())

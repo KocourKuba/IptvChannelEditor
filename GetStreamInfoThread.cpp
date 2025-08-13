@@ -241,11 +241,11 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 	{
 		if (stream["codec_type"] == "audio")
 		{
-			audio += fmt::format("#{:d} {:s}, {:s}, {:s} ", a++, stream["codec_long_name"], stream["sample_rate"], stream["channel_layout"]);
+			audio += std::format("#{:d} {:s}, {:s}, {:s} ", a++, stream["codec_long_name"], stream["sample_rate"], stream["channel_layout"]);
 		}
 		else if (stream["codec_type"] == "video")
 		{
-			video = fmt::format("{:s}x{:s}", stream["width"], stream["height"]);
+			video = std::format("{:s}x{:s}", stream["width"], stream["height"]);
 			double fps = 0.0F;
 			try
 			{
@@ -257,15 +257,15 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 				double integer;
 				double fractional = modf(fps, &integer);
 				if (fractional > 0)
-					video += fmt::format(", {:.3f}fps", fps);
+					video += std::format(", {:.3f}fps", fps);
 				else
-					video += fmt::format(", {:d}fps", (int)integer);
+					video += std::format(", {:d}fps", (int)integer);
 			}
 			catch (...)
 			{
 			}
 
-			video += fmt::format(", {:s}", stream["codec_long_name"]);
+			video += std::format(", {:s}", stream["codec_long_name"]);
 		}
 	}
 

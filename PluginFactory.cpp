@@ -202,8 +202,8 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 	if (!dev)
 	{
 		utils::CUrlDownload dl;
-		dl.SetUrl(fmt::format(L"{:s}/editor/configs?ver={:d}.{:d}.{:d}", utils::utf8_to_utf16(g_szServerPath), MAJOR, MINOR, BUILD));
-		dl.SetUserAgent(fmt::format(L"IPTV Channel Editor/{:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
+		dl.SetUrl(std::format(L"{:s}/editor/configs?ver={:d}.{:d}.{:d}", utils::utf8_to_utf16(g_szServerPath), MAJOR, MINOR, BUILD));
+		dl.SetUserAgent(std::format(L"IPTV Channel Editor/{:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
 		dl.SetCacheTtl(0);
 
 		if (!dl.DownloadFile(data))
@@ -215,7 +215,7 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 	if (data.tellp() == std::streampos(0))
 	{
 		std::wstring path;
-		path = fmt::format(L"{:s}defaults_{:d}.{:d}.json", GetAppPath(), MAJOR, MINOR);
+		path = std::format(L"{:s}defaults_{:d}.{:d}.json", GetAppPath(), MAJOR, MINOR);
 		std::ifstream in_file(path);
 		if (in_file.good())
 		{

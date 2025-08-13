@@ -114,7 +114,7 @@ BOOL CPathsSettingsPage::OnApply()
 								  std::filesystem::copy_options::overwrite_existing| std::filesystem::copy_options::recursive, err);
 			if (err.value() != 0)
 			{
-				const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value(), list_path, m_lists_path.GetString());
+				const auto& msg = load_string_resource_fmt(IDS_STRING_ERR_COPY, err.value(), list_path, m_lists_path.GetString());
 				AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
 			}
 		}
@@ -155,7 +155,7 @@ BOOL CPathsSettingsPage::OnApply()
 								  std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive, err);
 			if (err.value() != 0)
 			{
-				const auto& msg = fmt::format(load_string_resource(IDS_STRING_ERR_COPY), err.value(), settings_path, m_plugins_settings_path.GetString());
+				const auto& msg = load_string_resource_fmt(IDS_STRING_ERR_COPY, err.value(), settings_path, m_plugins_settings_path.GetString());
 				AfxMessageBox(msg.c_str(), MB_ICONERROR | MB_OK);
 			}
 		}

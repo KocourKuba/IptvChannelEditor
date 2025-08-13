@@ -68,7 +68,7 @@ void plugin_itv::parse_account_info(TemplateParams& params)
 						if (!subscription.empty())
 							subscription += L", ";
 
-						subscription += fmt::format(L"{:s}", utils::utf8_to_utf16(item.value("name", "")));
+						subscription += std::format(L"{:s}", utils::utf8_to_utf16(item.value("name", "")));
 					}
 				}
 
@@ -78,7 +78,7 @@ void plugin_itv::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(fmt::format(L"plugin_itv: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_itv: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 }

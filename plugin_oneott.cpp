@@ -55,7 +55,7 @@ void plugin_oneott::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(fmt::format(L"plugin_oneott: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_oneott: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
 		}
 	}
 }
