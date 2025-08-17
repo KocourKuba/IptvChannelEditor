@@ -245,17 +245,14 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 
 	CWaitCursor cur;
 
-	m_dl.SetUrl(plugin->get_vod_url(params));
-	m_dl.SetUserAgent(plugin->get_user_agent());
-
-	std::stringstream data;
-	if (m_dl.DownloadFile(data))
+	utils::http_request req{ plugin->get_vod_url(params) };
+	req.user_agent = plugin->get_user_agent();
+	if (utils::DownloadFile(req))
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"vod.m3u8";
 
 		std::ofstream out_stream(out_file, std::ofstream::binary);
-		data.seekg(0);
-		out_stream << data.rdbuf();
+		out_stream << req.body.rdbuf();
 		out_stream.close();
 
 		STARTUPINFO			si;
@@ -269,7 +266,7 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	}
 	else
 	{
-		AfxMessageBox(m_dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+		AfxMessageBox(req.error_message.c_str(), MB_ICONERROR | MB_OK);
 	}
 }
 

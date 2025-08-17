@@ -174,12 +174,8 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 
 void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 {
-	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
-
 	TemplateParams params;
 	update_provider_params(params);
-
-	CWaitCursor cur;
 
 	const auto& api_url = get_vod_url(params);
 	const auto& token = creds.get_password();
@@ -196,15 +192,17 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 
 	url = base_url + url;
 
-	std::stringstream data;
-	if (!download_url(url, data, cache_ttl))
+	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+	utils::http_request req{ url, cache_ttl };
+	CWaitCursor cur;
+	if (!utils::DownloadFile(req))
 	{
 		return;
 	}
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = nlohmann::json::parse(data.str());
+		const auto& parsed_json = nlohmann::json::parse(req.body.str());
 
 		if (!parsed_json.contains("info"))
 		{
@@ -318,12 +316,14 @@ std::wstring plugin_sharavoz::xtream_parse_category(const nlohmann::json& val,
 nlohmann::json plugin_sharavoz::xtream_request(const CThreadConfig& config, const std::wstring& url)
 {
 	nlohmann::json category_json;
-	std::stringstream cat_data;
-	if (download_url(url, cat_data, GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600))
+
+	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+	utils::http_request req{ url, cache_ttl };
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY;
 		{
-			category_json = nlohmann::json::parse(cat_data.str());
+			category_json = nlohmann::json::parse(req.body.str());
 		}
 		JSON_ALL_CATCH;
 	}

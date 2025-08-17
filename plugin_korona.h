@@ -39,7 +39,7 @@ public:
 	void clear_account_info() override;
 
 private:
-	nlohmann::json server_request(const std::wstring& url, int cache_ttl = 0);
+	nlohmann::json server_request(const std::wstring& url, const bool use_cache_ttl = false);
 
 	std::wstring session_token_file;
 };

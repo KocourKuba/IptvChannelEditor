@@ -71,5 +71,6 @@ DEALINGS IN THE SOFTWARE.
 
 #define ON_WM_CUSTOM_MFC_BROWSE(id, memberFxn) ON_CONTROL(WM_CUSTOM_MFC_BROWSE, id, memberFxn)
 
+using namespace std::chrono_literals;
 
 #endif //PCH_H

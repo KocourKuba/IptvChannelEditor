@@ -54,15 +54,15 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 		return session_id;
 	}
 
-	CWaitCursor cur;
-	std::stringstream data;
-	const std::wstring& url = std::format(API_COMMAND_AUTH, utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
+	const auto& url = std::format(API_COMMAND_AUTH, utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
+	utils::http_request req{ replace_params_vars(params, url) };
 
-	if (download_url(replace_params_vars(params, url), data))
+	CWaitCursor cur;
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY;
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
+			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (parsed_json.contains("status") && parsed_json["status"] == 1)
 			{
 				session_id = utils::get_json_string("sessionId", parsed_json["data"]);
@@ -78,7 +78,7 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(std::format(L"plugin_tvteam: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
+		LogProtocol(std::format(L"plugin_tvteam: Failed to get token: {:s}", req.error_message));
 	}
 
 	return session_id;
@@ -107,17 +107,17 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 									  L"getServersGroups",
 									  L"getUserPackages",
 									  utils::utf8_to_utf16(session_id));
-		std::stringstream data;
-		if (!download_url(replace_params_vars(params, url), data))
+		utils::http_request req{replace_params_vars(params, url)};
+		if (!utils::DownloadFile(req))
 		{
-			LogProtocol(std::format(L"plugin_tvteam: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_tvteam: Failed to get account info: {:s}", req.error_message));
 			return;
 		}
 
 		bool success = false;
 		JSON_ALL_TRY;
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
+			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (parsed_json.contains("status") && parsed_json["status"] == 0)
 			{
 				set_json_info("error", parsed_json, account_info);
@@ -195,13 +195,13 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 									  REPL_SERVER_ID,
 									  utils::utf8_to_utf16(session_id));
 
+		utils::http_request req{replace_params_vars(params, url)};
 		CWaitCursor cur;
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, url), data))
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data.str());
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				if (utils::get_json_int("status", parsed_json) == 1)
 				{
 					return true;
@@ -213,7 +213,7 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_tvteam: Failed to set server: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_tvteam: Failed to set server: {:s}", req.error_message));
 		}
 	}
 

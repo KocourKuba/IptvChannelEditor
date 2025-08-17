@@ -69,8 +69,6 @@ private:
 	EpgParameters& GetEpgParameters();
 
 protected:
-	utils::CUrlDownload m_dl;
-
 	CDateTimeCtrl m_wndDate;
 
 	CEdit m_wndEpgDomain;

@@ -53,12 +53,12 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 	{
 		CWaitCursor cur;
 		const auto& url = std::format(API_COMMAND_URL, L"account");
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, url), data))
+		utils::http_request req{ replace_params_vars(params, url) };
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
 			{
-				const auto & parsed_json = nlohmann::json::parse(data.str());
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				if (parsed_json.contains("account"))
 				{
 					const auto& js_account = parsed_json["account"];
@@ -81,7 +81,7 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_vidok: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_vidok: Failed to get account info: {:s}", req.error_message));
 		}
 	}
 }
@@ -98,12 +98,12 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 	get_api_token(params);
 
 	const auto& url = std::format(API_COMMAND_URL, L"settings");
-	std::stringstream data;
-	if (download_url(replace_params_vars(params, url), data))
+	utils::http_request req{ replace_params_vars(params, url) };
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY;
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
+			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (parsed_json.contains("settings"))
 			{
 				const auto& settings = parsed_json["settings"];
@@ -125,7 +125,7 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(std::format(L"plugin_vidok: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+		LogProtocol(std::format(L"plugin_vidok: Failed to get account info: {:s}", req.error_message));
 	}
 
 	set_servers_list(servers);
@@ -146,12 +146,12 @@ bool plugin_vidok::set_server(TemplateParams& params)
 		url += std::format(PARAM_FMT, L"server", REPL_SERVER_ID);
 
 		CWaitCursor cur;
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, url), data))
+		utils::http_request req{ replace_params_vars(params, url) };
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data.str());
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				for (const auto& item : parsed_json["settings"].items())
 				{
 					const auto& server = item.value();
@@ -162,7 +162,7 @@ bool plugin_vidok::set_server(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_vidok: Failed to set server: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_vidok: Failed to set server: {:s}", req.error_message));
 		}
 	}
 

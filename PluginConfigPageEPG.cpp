@@ -314,9 +314,9 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 {
 	UpdateData(TRUE);
 
-	const auto& url = CompileEpgUrl();
+	utils::http_request req{ CompileEpgUrl() };
+	req.user_agent = GetPropertySheet()->m_plugin->get_user_agent();
 
-	std::vector<std::string> headers;
 	if (!m_EpgAuth.IsEmpty())
 	{
 		TemplateParams params;
@@ -326,23 +326,19 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 		{
 			std::wstring header = m_EpgAuth.GetString();
 			utils::string_replace_inplace<wchar_t>(header, REPL_TOKEN, token);
-			headers.emplace_back("accept: */*");
-			headers.emplace_back(utils::utf16_to_utf8(header));
+			req.headers.emplace_back("accept: */*");
+			req.headers.emplace_back(utils::utf16_to_utf8(header));
 		}
 	}
 
-	m_dl.SetUrl(url);
-	m_dl.SetCacheTtl(0);
-	m_dl.SetUserAgent(GetPropertySheet()->m_plugin->get_user_agent());
 
 	CWaitCursor cur;
-	std::stringstream data;
-	if (m_dl.DownloadFile(data, &headers))
+	if (utils::DownloadFile(req))
 	{
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
 		{
-			parsed_json = nlohmann::json::parse(data.str());
+			parsed_json = nlohmann::json::parse(req.body.str());
 		}
 		JSON_ALL_CATCH;
 
@@ -365,7 +361,7 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	}
 	else
 	{
-		AfxMessageBox(m_dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+		AfxMessageBox(req.error_message.c_str(), MB_ICONERROR | MB_OK);
 	}
 }
 

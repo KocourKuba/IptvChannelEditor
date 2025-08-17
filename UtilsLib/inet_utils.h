@@ -35,12 +35,8 @@ namespace utils
 
 constexpr auto pc_user_agent = L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.48";
 
-class CrackedUrl
+struct CrackedUrl
 {
-public:
-	bool CrackUrl(const std::wstring& url);
-
-public:
 	std::wstring scheme;
 	std::wstring user;
 	std::wstring password;
@@ -51,51 +47,27 @@ public:
 	unsigned short nScheme = 1; // INTERNET_SCHEME_HTTP
 };
 
-class CUrlDownload
+struct http_request
 {
-
-public:
-	bool DownloadFile(std::stringstream& vData,
-					  std::vector<std::string>* pHeaders = nullptr,
-					  bool verb_post = false,
-					  const char* post_data = nullptr);
-
-
-	/**
-	* Set URL
-	*/
-	void SetUrl(const std::wstring& url) { m_url = url; }
-
-	/**
-	* Get URL
-	*/
-	const std::wstring& GetUrl() const { return m_url; }
-
-	/**
-	* Set user agent
-	*/
-	void SetUserAgent(const std::wstring& userAgent) { m_user_agent = userAgent; }
-
-	/**
-	* Set cache time in seconds
-	*/
-	void SetCacheTtl(int cache_ttl) { m_cache_ttl_sec = cache_ttl; }
-	const std::wstring& GetLastErrorMessage() { return m_error_message; };
-	bool CheckIsCacheExpired(const std::wstring& cache_file) const;
-
-	static void ClearCache();
-	static void ClearCachedUrl(const std::wstring& url);
-	static std::filesystem::path GetCacheDir();
-	static std::filesystem::path GetCachedPath(const std::wstring& url);
-
-private:
-	std::wstring m_url;
-	int m_cache_ttl_sec = 0;
-	int m_max_redirect = 5;
-	mutable std::wstring m_error_message;
-	std::wstring m_user_agent = pc_user_agent;
+	std::wstring url;
+	std::chrono::seconds cache_ttl = std::chrono::seconds::zero();
+	int max_redirect = 5;
+	std::vector<std::string> headers;
+	std::wstring user_agent{pc_user_agent};
+	std::string post_data;
+	std::wstring error_message;
+	bool verb_post = false;
+	std::stringstream body;
 };
 
+bool DownloadFile(http_request& request);
+bool CheckIsCacheExpired(const std::wstring& cache_file, const std::chrono::seconds& cache_ttl);
+void ClearCache();
+void ClearCachedUrl(const std::wstring& url);
+std::filesystem::path GetCacheDir();
+std::filesystem::path GetCachedPath(const std::wstring& url);
+bool CrackUrl(const std::wstring& url, CrackedUrl* st = nullptr);
+std::string encodeURIComponent(const std::string& url);
 std::string entityDecrypt(const std::string& text);
 
 class CBase64Coder
@@ -111,7 +83,7 @@ public:
 	bool Decode(const char* szMessage);
 
 	// Reinterpret internal buffer to type
-	std::string GetResultString() const { return std::string((char*)m_buf.data(), m_nSize); };
+	std::string GetResultAsString() const { return { m_buf.begin(), m_buf.end() }; };
 	const unsigned char* GetResultBytes() const { return m_buf.data(); };
 
 	// size of encoded/decoded buffer
@@ -124,46 +96,4 @@ protected:
 	std::vector<unsigned char> m_buf{};
 	int m_nSize = 0;
 };
-
-class CRC4Coder
-{
-public:
-	//Constructors / Destructors
-	CRC4Coder(const unsigned char* pKey, size_t nKeyLen);
-	CRC4Coder(const char* pKey, size_t nKeyLen);
-
-	~CRC4Coder() = default;
-
-	//Methods
-
-public:
-	// Set key and init state
-	void SetKey(const unsigned char* pKey, size_t nKeyLen);
-	void SetKey(const char* szKey, size_t nKeyLen);
-	// Perform RC4 coding
-	bool Encode(const unsigned char* pBuf, size_t nBufLen);
-	bool Encode(const char* szBuf, size_t nBufLen);
-
-	// Reinterpret internal buffer to type
-	std::string GetResultString() const { return std::string(m_buf.begin(), m_buf.end()); };
-	const unsigned char* GetResultBytes() const { return m_buf.data(); };
-
-	// size of encoded/decoded buffer
-	size_t GetResultSize() const { return m_nSize; };
-
-protected:
-	void Init();
-
-protected:
-	//Member variables
-	std::vector<unsigned char> m_buf;
-	size_t m_nSize = 0;
-
-	bool m_bKeySet = false;
-	unsigned char m_state[256] { 0 };
-	unsigned char m_x = 0;
-	unsigned char m_y = 0;
-};
-
-std::string encodeURIComponent(const std::string& url);
 }

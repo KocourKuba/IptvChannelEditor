@@ -37,7 +37,6 @@ DEALINGS IN THE SOFTWARE.
 
 void plugin_glanz::parse_vod(const CThreadConfig& config)
 {
-	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
 	auto categories = std::make_unique<vod_category_storage>();
 
 	do
@@ -47,13 +46,14 @@ void plugin_glanz::parse_vod(const CThreadConfig& config)
 		all_category->name = all_name;
 		categories->set_back(all_name, all_category);
 
-		std::stringstream data;
-		if (!download_url(config.m_url, data, cache_ttl)) break;
+		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+		utils::http_request req{ config.m_url, cache_ttl };
+		if (!utils::DownloadFile(req)) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
 		{
-			parsed_json = nlohmann::json::parse(data.str());
+			parsed_json = nlohmann::json::parse(req.body.str());
 		}
 		JSON_ALL_CATCH;
 

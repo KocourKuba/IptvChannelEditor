@@ -332,13 +332,11 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 
 	m_plugin->update_provider_params(params);
 
-	m_dl.SetUrl(m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params));
-	m_dl.SetCacheTtl(0);
-	m_dl.SetUserAgent(m_plugin->get_user_agent());
+	utils::http_request req{ m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params) };
+	req.user_agent = m_plugin->get_user_agent();
 
 	CWaitCursor cur;
-	std::stringstream data;
-	if (!m_dl.DownloadFile(data))
+	if (!utils::DownloadFile(req))
 	{
 		AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 		OnEndLoadM3U8Playlist(0);
@@ -355,7 +353,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 
 	CThreadConfig cfg;
 	cfg.m_parent = this;
-	cfg.m_data = std::move(data);
+	cfg.m_data = std::move(req.body);
 	cfg.m_hStop = m_evtStop;
 
 	pThread->SetData(cfg);
@@ -1066,80 +1064,81 @@ void CVodViewer::FilterList()
 				ATLTRACE("\nyears: %s\n", years.c_str());
 			}
 
-			std::vector<std::string> headers;
-			headers.emplace_back("accept: */*");
-			headers.emplace_back("Content-Type: application/json");
 
-			const auto& post = json_request.dump();
-			ATLTRACE("\n%s\n", post.c_str());
 
-			m_dl.SetUrl(url);
-			m_dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL));
-			m_dl.SetUserAgent(m_plugin->get_user_agent());
+			auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+			utils::http_request req{ url, cache_ttl };
+			req.verb_post = true;
+			req.user_agent = m_plugin->get_user_agent();
+			req.headers.emplace_back("accept: */*");
+			req.headers.emplace_back("Content-Type: application/json");
+			req.post_data = json_request.dump();
+			ATLTRACE("\n%s\n", req.post_data.c_str());
 
 			CWaitCursor cur;
-			std::stringstream data;
-			if (!m_dl.DownloadFile(data, &headers, true, post.c_str())) break;
+			if (!utils::DownloadFile(req)) break;
 
 			JSON_ALL_TRY;
-			nlohmann::json parsed_json = nlohmann::json::parse(data.str());
-			int total = utils::get_json_int("count", parsed_json);
-			OnInitProgress(total, 0);
-			ATLTRACE("\nfiltered movies: %d\n", total);
-
-			int cnt = 0;
-			int offset = 0;
-			int prev_offset = -1;
-			for (;;)
 			{
-				for (const auto& item_it : parsed_json["items"].items())
+				nlohmann::json parsed_json = nlohmann::json::parse(req.body.str());
+				int total = utils::get_json_int("count", parsed_json);
+				OnInitProgress(total, 0);
+				ATLTRACE("\nfiltered movies: %d\n", total);
+
+				int cnt = 0;
+				int offset = 0;
+				int prev_offset = -1;
+				for (;;)
 				{
-					const auto& movie_item = item_it.value();
-
-					auto movie = std::make_shared<vod_movie>();
-
-					if (utils::get_json_wstring("type", movie_item) == L"next")
+					for (const auto& item_it : parsed_json["items"].items())
 					{
-						offset = utils::get_json_int("offset", movie_item["request"]);
-						continue;
+						const auto& movie_item = item_it.value();
+
+						auto movie = std::make_shared<vod_movie>();
+
+						if (utils::get_json_wstring("type", movie_item) == L"next")
+						{
+							offset = utils::get_json_int("offset", movie_item["request"]);
+							continue;
+						}
+
+						movie->id = utils::get_json_wstring("fid", movie_item["request"]);
+						movie->title = utils::get_json_wstring("title", movie_item);
+						movie->description = utils::get_json_wstring("description", movie_item);
+						movie->poster_url.set_uri(utils::get_json_wstring("img", movie_item));
+						movie->poster_url.set_scheme(L"http://");
+						movie->rating = utils::get_json_wstring("rating", movie_item);
+						movie->country = utils::get_json_wstring("country", movie_item);
+						movie->year = utils::get_json_wstring("year", movie_item);
+						movie->age = utils::get_json_wstring("agelimit", movie_item);
+						movie->movie_time = utils::get_json_int("duration", movie_item);
+
+						filtered_movies.set_back(movie->id, movie);
+						cnt++;
+
+						if (cnt % 100 == 0)
+						{
+							OnUpdateProgress(cnt);
+							if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0) break;
+						}
 					}
 
-					movie->id = utils::get_json_wstring("fid", movie_item["request"]);
-					movie->title = utils::get_json_wstring("title", movie_item);
-					movie->description = utils::get_json_wstring("description", movie_item);
-					movie->poster_url.set_uri(utils::get_json_wstring("img", movie_item));
-					movie->poster_url.set_scheme(L"http://");
-					movie->rating = utils::get_json_wstring("rating", movie_item);
-					movie->country = utils::get_json_wstring("country", movie_item);
-					movie->year = utils::get_json_wstring("year", movie_item);
-					movie->age = utils::get_json_wstring("agelimit", movie_item);
-					movie->movie_time = utils::get_json_int("duration", movie_item);
+					ATLTRACE("\nreaded: %d\n", cnt);
 
-					filtered_movies.set_back(movie->id, movie);
-					cnt++;
+					if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0) break;
+					if (offset == prev_offset) break;
 
-					if (cnt % 100 == 0)
-					{
-						OnUpdateProgress(cnt);
-						if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0) break;
-					}
+					prev_offset = offset;
+					json_request["offset"] = offset;
+					ATLTRACE("\noffset: %d\n", offset);
+
+					req.post_data = json_request.dump();
+					ATLTRACE("\n%s\n", req.post_data.c_str());
+
+					if (!utils::DownloadFile(req)) break;
+
+					parsed_json = nlohmann::json::parse(req.body.str());
 				}
-
-				ATLTRACE("\nreaded: %d\n", cnt);
-
-				if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0) break;
-				if (offset == prev_offset) break;
-
-				prev_offset = offset;
-				json_request["offset"] = offset;
-				ATLTRACE("\noffset: %d\n", offset);
-
-				std::stringstream next_data;
-				const auto& next_post = json_request.dump();
-				ATLTRACE("\n%s\n", post.c_str());
-				if (!m_dl.DownloadFile(next_data, &headers, true, next_post.c_str())) break;
-
-				parsed_json = nlohmann::json::parse(data.str());
 			}
 			JSON_ALL_CATCH;
 		} while (false);

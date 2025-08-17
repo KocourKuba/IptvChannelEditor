@@ -46,10 +46,7 @@ private:
 						const CThreadConfig & config,
 						std::unique_ptr<vod_category_storage>& categories,
 						bool is_serial = false);
-	nlohmann::json server_request(const std::wstring& url,
-								  int cache_ttl = 0,
-								  bool web_post = false,
-								  const nlohmann::json& post_data = {});
+	nlohmann::json server_request(utils::http_request& request, const bool use_cache_ttl = false);
 
 	std::wstring session_token_file;
 };

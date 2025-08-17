@@ -40,12 +40,12 @@ void plugin_itv::parse_account_info(TemplateParams& params)
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, API_COMMAND_AUTH), data))
+		utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
 			{
-				const auto & parsed_json = nlohmann::json::parse(data.str());
+				const auto & parsed_json = nlohmann::json::parse(req.body.str());
 				if (parsed_json.contains("user_info"))
 				{
 					const auto& js_data = parsed_json["user_info"];
@@ -78,7 +78,7 @@ void plugin_itv::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_itv: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_itv: Failed to get account info: {:s}", req.error_message));
 		}
 	}
 }

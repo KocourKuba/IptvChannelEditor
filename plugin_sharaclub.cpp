@@ -56,14 +56,15 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
-		CWaitCursor cur;
 		const auto& url = std::format(API_COMMAND_URL, L"subscr_info");
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, url), data))
+		utils::http_request req{ replace_params_vars(params, url) };
+
+		CWaitCursor cur;
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data.str());
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				if (parsed_json.contains("status"))
 				{
 					account_info.emplace(L"state", utils::utf8_to_utf16(parsed_json.value("status", "")));
@@ -87,7 +88,7 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_sharaclub: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_sharaclub: Failed to get account info: {:s}", req.error_message));
 		}
 	}
 }
@@ -101,13 +102,14 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 
 	const auto& url = std::format(API_COMMAND_URL, L"ch_cdn");
 
+	utils::http_request req{ replace_params_vars(params, url) };
+
 	CWaitCursor cur;
-	std::stringstream data;
-	if (download_url(replace_params_vars(params, url), data))
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY;
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
+			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (utils::get_json_int("status", parsed_json) == 1)
 			{
 				params.creds.server_id = utils::get_json_int("current", parsed_json);
@@ -138,13 +140,13 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 		auto url = std::format(API_COMMAND_URL, L"ch_cdn");
 		url += std::format(PARAM_FMT, L"num", REPL_SERVER_ID);
 
+		utils::http_request req{ replace_params_vars(params, url) };
 		CWaitCursor cur;
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, url), data))
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data.str());
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				return utils::get_json_wstring("status", parsed_json) == L"1";
 			}
 			JSON_ALL_CATCH;
@@ -159,16 +161,17 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 	if (!get_profiles_list().empty() || params.creds.login.empty() || params.creds.password.empty())
 		return;
 
-	const auto& url = std::format(API_COMMAND_URL, L"list_profiles");
+	utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"list_profiles")) };
 
 	CWaitCursor cur;
-	std::stringstream data;
-	if (!download_url(replace_params_vars(params, url), data))
+	if (!utils::DownloadFile(req))
+	{
 		return;
+	}
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = nlohmann::json::parse(data.str());
+		const auto& parsed_json = nlohmann::json::parse(req.body.str());
 		if (utils::get_json_int("status", parsed_json) == 1)
 		{
 			const auto& current = utils::get_json_wstring("current", parsed_json);
@@ -202,13 +205,13 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 		auto url = std::format(API_COMMAND_URL, L"list_profiles");
 		url += std::format(PARAM_FMT, L"num", REPL_PROFILE_ID);
 
+		utils::http_request req{ replace_params_vars(params, url) };
 		CWaitCursor cur;
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, url), data))
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data.str());
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				return utils::get_json_wstring("status", parsed_json) == L"1";
 			}
 			JSON_ALL_CATCH;
@@ -220,7 +223,6 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 
 void plugin_sharaclub::parse_vod(const CThreadConfig& config)
 {
-	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
 	auto categories = std::make_unique<vod_category_storage>();
 
 	do
@@ -230,13 +232,15 @@ void plugin_sharaclub::parse_vod(const CThreadConfig& config)
 		all_category->name = all_name;
 		categories->set_back(all_name, all_category);
 
-		std::stringstream data;
-		if (!download_url(config.m_url, data, cache_ttl)) break;
+		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+		utils::http_request req{ config.m_url, cache_ttl };
+		CWaitCursor cur;
+		if (!utils::DownloadFile(req)) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;
 		{
-			parsed_json = nlohmann::json::parse(data.str());
+			parsed_json = nlohmann::json::parse(req.body.str());
 		}
 		JSON_ALL_CATCH;
 

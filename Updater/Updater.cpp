@@ -249,14 +249,14 @@ static int parse_info(UpdateInfo& info)
 static int check_for_update(UpdateInfo& info)
 {
 	LogProtocol("Try to download update info...");
-	utils::CUrlDownload dl;
-	dl.SetUrl(std::format(L"{:s}/{:s}", info.server, utils::UPDATE_NAME));
-	if (!dl.DownloadFile(info.update_info))
+	utils::http_request req{ std::format(L"{:s}/{:s}", info.server, utils::UPDATE_NAME) };
+	if (!utils::DownloadFile(req))
 	{
-		LogProtocol(std::format(L"{:s}", dl.GetLastErrorMessage()));
+		LogProtocol(req.error_message);
 		return err_download_info; // Unable to download update info!
 	}
 
+	std::swap(info.update_info, req.body);
 	return parse_info(info);
 }
 
@@ -281,7 +281,6 @@ static int download_update(UpdateInfo& info)
 		LogProtocol(std::format(L"saved to: {:s}", update_file));
 		os.close();
 
-		utils::CUrlDownload dl;
 		for (const auto& item : info.update_files)
 		{
 			const auto& loaded_file = std::format(L"{:s}{:s}", info.update_path, item.name);
@@ -292,19 +291,18 @@ static int download_update(UpdateInfo& info)
 				continue;
 			}
 
-			std::stringstream file_data;
-			dl.SetUrl(std::format(L"{:s}/{:s}/{:s}", info.server, info.version, item.name));
-			LogProtocol(dl.GetUrl());
-			if (!dl.DownloadFile(file_data))
+			utils::http_request req{ std::format(L"{:s}/{:s}/{:s}", info.server, info.version, item.name)};
+			LogProtocol(req.url);
+			if (!utils::DownloadFile(req))
 			{
 				ret = err_download_pkg; // Unable to download update package!
-				LogProtocol(std::format(L"{:s}", dl.GetLastErrorMessage()));
+				LogProtocol(req.error_message);
 				break;
 			}
 
 			std::ofstream os_file(loaded_file, std::ofstream::binary);
-			file_data.seekg(0);
-			os_file << file_data.rdbuf();
+			req.body.seekg(0);
+			os_file << req.body.rdbuf();
 			if (os_file.fail())
 			{
 				ret = err_save_pkg; // Unable to save update package!

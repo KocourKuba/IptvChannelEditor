@@ -86,6 +86,18 @@ public:
 
 	void delete_setting(bool isApp, const std::wstring& key);
 
+	template <class T = std::chrono::hours>
+	T get_chrono(bool isApp, const std::wstring& key, const T& def = T::zero()) const
+	{
+		return T(get_int(isApp, key, def.count()));
+	}
+
+	template <class T = std::chrono::hours>
+	void set_chrono(bool isApp, const std::wstring& key, const T& val)
+	{
+		set_int(isApp, key, val.count());
+	}
+
 protected:
 	void ReadSettingsRegistry(const std::string& plugin_type);
 	void SaveSectionRegistry(const std::string& plugin_type);

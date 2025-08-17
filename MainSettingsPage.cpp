@@ -239,7 +239,7 @@ void CMainSettingsPage::OnBnClickedButtonReset()
 
 void CMainSettingsPage::OnBnClickedButtonClearCache()
 {
-	utils::CUrlDownload::ClearCache();
+	utils::ClearCache();
 	if (m_epg_cache)
 	{
 		for(auto& item : *m_epg_cache)

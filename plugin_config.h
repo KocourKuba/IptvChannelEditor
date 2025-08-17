@@ -533,16 +533,6 @@ public:
 	}
 
 protected:
-
-	bool download_url(const std::wstring& url,
-					  std::stringstream& vData,
-					  int cache_ttl = 0,
-					  std::vector<std::string>* pHeaders = nullptr,
-					  bool verb_post = false,
-					  const char* post_data = nullptr);
-
-	utils::CUrlDownload m_dl;
-
 	// non configurable parameters
 	std::vector<DynamicParamsInfo> internal_epg_urls;
 

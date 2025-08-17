@@ -34,6 +34,8 @@ DEALINGS IN THE SOFTWARE.
 #include <fstream>
 #include "xxhash.hpp"
 #include "utils.h"
+#include <coroutine>
+#include <future>
 
 #pragma comment(lib, "Winhttp.lib")
 
@@ -50,28 +52,21 @@ std::string encodeURIComponent(const std::string& value)
 
 	for (char c : value) {
 		// Keep alphanumeric and other accepted characters intact
-		if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+		if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
 			escaped << c;
 			continue;
 		}
 
 		// Any other characters are percent-encoded
 		escaped << std::uppercase;
-		escaped << '%' << std::setw(2) << int((unsigned char)c);
+		escaped << '%' << std::setw(2) << static_cast<int>((static_cast<unsigned char>(c)));
 		escaped << std::nouppercase;
 	}
 
 	return escaped.str();
 }
 
-template <typename T>
-std::time_t to_time_t(T tp)
-{
-	auto systp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(tp - T::clock::now() + std::chrono::system_clock::now());
-	return std::chrono::system_clock::to_time_t(systp);
-}
-
-bool CrackedUrl::CrackUrl(const std::wstring& url)
+bool CrackUrl(const std::wstring& url, CrackedUrl* st /*= nullptr*/)
 {
 	URL_COMPONENTS urlComp{};
 	SecureZeroMemory(&urlComp, sizeof(urlComp));
@@ -85,28 +80,31 @@ bool CrackedUrl::CrackUrl(const std::wstring& url)
 	urlComp.dwUrlPathLength = (DWORD)-1;
 	urlComp.dwExtraInfoLength = (DWORD)-1;
 
-	if (WinHttpCrackUrl(url.c_str(), (DWORD)url.size(), 0, &urlComp))
+	if (!WinHttpCrackUrl(url.c_str(), static_cast<DWORD>(url.size()), 0, &urlComp))
 	{
-		if (urlComp.dwSchemeLength)
-			scheme.assign(urlComp.lpszScheme, urlComp.dwSchemeLength);
-		if (urlComp.dwUserNameLength)
-			user.assign(urlComp.lpszUserName, urlComp.dwUserNameLength);
-		if (urlComp.dwPasswordLength)
-			password.assign(urlComp.lpszPassword, urlComp.dwPasswordLength);
-		if (urlComp.dwHostNameLength)
-			host.assign(urlComp.lpszHostName, urlComp.dwHostNameLength);
-		if (urlComp.dwUrlPathLength)
-			path.assign(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
-		if (urlComp.dwExtraInfoLength)
-			extra_info.assign(urlComp.lpszExtraInfo, urlComp.dwExtraInfoLength);
-
-		port = urlComp.nPort;
-		nScheme = urlComp.nScheme;
-
-		return true;
+		return false;
 	}
 
-	return false;
+	if (st != nullptr)
+	{
+		if (urlComp.dwSchemeLength)
+			st->scheme.assign(urlComp.lpszScheme, urlComp.dwSchemeLength);
+		if (urlComp.dwUserNameLength)
+			st->user.assign(urlComp.lpszUserName, urlComp.dwUserNameLength);
+		if (urlComp.dwPasswordLength)
+			st->password.assign(urlComp.lpszPassword, urlComp.dwPasswordLength);
+		if (urlComp.dwHostNameLength)
+			st->host.assign(urlComp.lpszHostName, urlComp.dwHostNameLength);
+		if (urlComp.dwUrlPathLength)
+			st->path.assign(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
+		if (urlComp.dwExtraInfoLength)
+			st->extra_info.assign(urlComp.lpszExtraInfo, urlComp.dwExtraInfoLength);
+
+		st->port = urlComp.nPort;
+		st->nScheme = urlComp.nScheme;
+	}
+
+	return true;
 }
 
 
@@ -127,33 +125,35 @@ struct deferrer
 
 #endif
 
-bool CUrlDownload::DownloadFile(std::stringstream& vData,
-								std::vector<std::string>* pHeaders /*= nullptr*/,
-								bool verb_post /*= false*/,
-								const char* post_data /*= nullptr*/)
+bool DownloadFile(http_request& request)
 {
-	m_error_message.clear();
-	if (m_url.empty())
+	request.error_message.clear();
+	if (request.url.empty())
+	{
 		return false;
+	}
 
-	std::wstring hash_str = m_url;
-	if (post_data)
-		hash_str += utf8_to_utf16(std::string(post_data));
+	std::wstring hash_str = request.url;
+	if (!request.post_data.empty())
+	{
+		hash_str += utf8_to_utf16(std::string(request.post_data));
+	}
 
-	ATLTRACE(L"\ndownload url: %s\n", m_url.c_str());
+	ATLTRACE(L"\ndownload url: %s\n", request.url.c_str());
 
 	const auto& cache_file = GetCachedPath(hash_str);
-	if (!CheckIsCacheExpired(cache_file))
+	if (!CheckIsCacheExpired(cache_file, request.cache_ttl))
 	{
 		std::ifstream in_file(cache_file.c_str());
 		if (in_file.good())
 		{
-			vData << in_file.rdbuf();
+			request.body << in_file.rdbuf();
 			in_file.close();
-			size_t data_size = vData.rdbuf()->_Get_buffer_view()._Size;
+			size_t data_size = request.body.rdbuf()->_Get_buffer_view()._Size;
 			ATLTRACE(L"\nloaded: %d bytes from cache %s\n", data_size, cache_file.c_str());
 			if (data_size != 0)
 			{
+				request.body.seekg(0);
 				return true;
 			}
 		}
@@ -166,21 +166,21 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 	do
 	{
 		CrackedUrl cracked;
-		if (!cracked.CrackUrl(m_url))
+		if (!utils::CrackUrl(request.url, &cracked))
 		{
-			m_error_message += L"Error: Failed to parse url";
+			request.error_message += L"Error: Failed to parse url";
 			break;
 		}
 
 		// Use WinHttpOpen to obtain a session handle.
-		ATLTRACE(L"\nUserAgent: %s\n", m_user_agent.c_str());
-		auto hSession = WinHttpOpen(m_user_agent.c_str(),
+		ATLTRACE(L"\nUserAgent: %s\n", request.user_agent.c_str());
+		auto hSession = WinHttpOpen(request.user_agent.c_str(),
 									 WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
 									 WINHTTP_NO_PROXY_NAME,
 									 WINHTTP_NO_PROXY_BYPASS, 0);
 		if (!hSession)
 		{
-			m_error_message = L"Error: Failed to open connection";
+			request.error_message = L"Error: Failed to open connection";
 			break;
 		}
 		defer[&]{ WinHttpCloseHandle(hSession); };
@@ -191,17 +191,17 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 		auto hConnect = WinHttpConnect(hSession, cracked.host.c_str(), cracked.port, 0);
 		if (!hConnect)
 		{
-			m_error_message = L"Error: Failed to connect";
+			request.error_message = L"Error: Failed to connect";
 			break;
 		}
 		defer[&]{ WinHttpCloseHandle(hConnect); };
 
 		DWORD dwFlags = WINHTTP_FLAG_BYPASS_PROXY_CACHE;
-		if (cracked.nScheme == 2 /*INTERNET_SCHEME_HTTPS*/)
+		if (cracked.nScheme == 2) /*INTERNET_SCHEME_HTTPS*/
 			dwFlags |= 0x00800000; // INTERNET_FLAG_SECURE
 		// Create an HTTP request handle.
 		auto hRequest = WinHttpOpenRequest(hConnect,
-										   verb_post ? L"POST" : L"GET",
+										   request.verb_post ? L"POST" : L"GET",
 										   (cracked.path + cracked.extra_info).c_str(),
 										   nullptr,
 										   WINHTTP_NO_REFERER,
@@ -210,25 +210,25 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 
 		if (!hRequest)
 		{
-			m_error_message = L"Error: Failed to open request";
+			request.error_message = L"Error: Failed to open request";
 			break;
 		}
 		defer[&]{ WinHttpCloseHandle(hRequest); };
 
-		if (pHeaders && !pHeaders->empty())
+		if (!request.headers.empty())
 		{
 			std::wstring all_headers;
-			for (const auto& str : *pHeaders)
+			for (const auto& str : request.headers)
 			{
 				all_headers += utils::utf8_to_utf16(str) + L"\n";
 			}
 
-			BOOL result = WinHttpAddRequestHeaders(hRequest, all_headers.c_str(), (DWORD)all_headers.size(), WINHTTP_ADDREQ_FLAG_ADD);
+			BOOL result = WinHttpAddRequestHeaders(hRequest, all_headers.c_str(), static_cast<DWORD>(all_headers.size()), WINHTTP_ADDREQ_FLAG_ADD);
 			ATLTRACE("\nheader added: %d\n", result);
 		}
 
 		DWORD options = SECURITY_FLAG_IGNORE_ALL_CERT_ERRORS;
-		WinHttpSetOption(hRequest, WINHTTP_OPTION_SECURITY_FLAGS, (LPVOID)&options, sizeof(DWORD));
+		WinHttpSetOption(hRequest, WINHTTP_OPTION_SECURITY_FLAGS, &options, sizeof(DWORD));
 
 		// Send a request.
 		bool bResults = false;
@@ -236,16 +236,16 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 		bool bSaveBadCache = false;
 		for (;;)
 		{
-			DWORD post_size = post_data ? (DWORD)strlen(post_data) : 0;
+			DWORD post_size = request.post_data.empty() ? 0 : static_cast<DWORD>(request.post_data.length());
 			if (!WinHttpSendRequest(hRequest,
 								   WINHTTP_NO_ADDITIONAL_HEADERS,
 								   0,
-								   post_data ? (LPVOID)post_data : WINHTTP_NO_REQUEST_DATA,
-								   post_size,
+									request.post_data.empty() ? WINHTTP_NO_REQUEST_DATA : reinterpret_cast<void*>(request.post_data.data()),
+									post_size,
 								   post_size,
 								   0))
 			{
-				m_error_message = L"Error: Failed to send request";
+				request.error_message = L"Error: Failed to send request";
 				break;
 			}
 
@@ -253,7 +253,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 			// End the request.
 			if (!WinHttpReceiveResponse(hRequest, nullptr))
 			{
-				m_error_message = std::format(L"Error: Failed to receive response: error code {:d}", GetLastError());
+				request.error_message = std::format(L"Error: Failed to receive response: error code {:d}", GetLastError());
 				break;
 			}
 
@@ -265,7 +265,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 									 WINHTTP_HEADER_NAME_BY_INDEX,
 									 &dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
 			{
-				m_error_message = std::format(L"Error: Failed to query headers: error code {:d}", GetLastError());
+				request.error_message = std::format(L"Error: Failed to query headers: error code {:d}", GetLastError());
 				break;
 			}
 
@@ -279,7 +279,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 
 					if (!WinHttpQueryAuthSchemes(hRequest, &dwSupportedSchemes, &dwFirstScheme, &dwAuthTarget))
 					{
-						m_error_message = L"Error: Failed to query authentication schemes";
+						request.error_message = L"Error: Failed to query authentication schemes";
 						break;
 					}
 
@@ -305,7 +305,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 											   cracked.password.c_str(),
 											   nullptr))
 					{
-						m_error_message = std::format(L"Error: Failed to set credentials: error code {:d}", GetLastError());
+						request.error_message = std::format(L"Error: Failed to set credentials: error code {:d}", GetLastError());
 						break;
 					}
 
@@ -315,7 +315,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 				}
 
 				case 200:
-					m_max_redirect = 5;
+					request.max_redirect = 5;
 					bResults = true;
 					bRepeat = false;
 					break;
@@ -323,18 +323,18 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 				case 301:
 				case 302:
 				{
-					--m_max_redirect;
-					if (m_max_redirect <= 0)
+					--request.max_redirect;
+					if (request.max_redirect <= 0)
 					{
 						return false;
 					}
 
 					DWORD dwBuffer = 0;
 					WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_RAW_HEADERS_CRLF, nullptr, nullptr, &dwBuffer, nullptr);
-					std::basic_string<wchar_t> chData;
+					std::wstring chData;
 					chData.resize(dwBuffer / 2);
 					wchar_t* chBuf = &chData[0];
-					WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_RAW_HEADERS_CRLF, nullptr, (LPVOID)chBuf, &dwBuffer, nullptr);
+					WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_RAW_HEADERS_CRLF, nullptr, chBuf, &dwBuffer, nullptr);
 					const auto& lines = utils::regex_split(chData, L"\r\n");
 					boost::wregex re(LR"(^Location:\s(.+)$)");
 					boost::wsmatch m;
@@ -342,8 +342,8 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 					{
 						if (boost::regex_match(line, m, re))
 						{
-							m_url = m[1].str();
-							return DownloadFile(vData, pHeaders, verb_post, post_data);
+							request.url = m[1].str();
+							return DownloadFile(request);
 						}
 					}
 					break;
@@ -356,7 +356,7 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 					break;
 
 				default:
-					m_error_message = std::format(L"Response returns error code: {:d}", dwStatusCode);
+					request.error_message = std::format(L"Response returns error code: {:d}", dwStatusCode);
 					break;
 			}
 
@@ -369,72 +369,73 @@ bool CUrlDownload::DownloadFile(std::stringstream& vData,
 		{
 			if (!bResults)
 			{
-				m_error_message += std::format(L"\nError code: {:d}", GetLastError());
+				request.error_message += std::format(L"\nError code: {:d}", GetLastError());
 				break;
 			}
 			// Check for available data.
 			if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
 			{
-				m_error_message += std::format(L"\nError: WinHttpQueryDataAvailable error code {:d}", GetLastError());
+				request.error_message += std::format(L"\nError: WinHttpQueryDataAvailable error code {:d}", GetLastError());
 				break;
 			}
 
 			// Allocate space for the buffer.
 			if (!dwSize) break;
-			std::vector<BYTE> chunk(dwSize);
+			std::vector<unsigned char> chunk(dwSize);
 
 			DWORD dwDownloaded = 0;
-			if (WinHttpReadData(hRequest, (LPVOID)chunk.data(), dwSize, &dwDownloaded))
+			if (WinHttpReadData(hRequest, chunk.data(), dwSize, &dwDownloaded))
 			{
-				vData.write((const char*)chunk.data(), dwDownloaded);
+				request.body.write(reinterpret_cast<const char*>(chunk.data()), dwDownloaded);
 			}
 			else
 			{
-				m_error_message = std::format(L"\nError: WinHttpReadData error code {:d}", GetLastError());
+				request.error_message = std::format(L"\nError: WinHttpReadData error code {:d}", GetLastError());
 				break;
 			}
 		}
 
 		if (!bResults && !bSaveBadCache) break;
 
-		if (!vData.fail() || bSaveBadCache)
+		if (!request.body.fail() || bSaveBadCache)
 		{
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
-			vData.seekg(0);
-			out_stream << vData.rdbuf();
-			ATLTRACE("\nSave to cache for %d seconds\n", m_cache_ttl_sec);
+			request.body.seekg(0);
+			out_stream << request.body.rdbuf();
+			ATLTRACE("\nSave to cache for %d seconds\n", request.cache_ttl);
 		}
 
-		bool res = vData.tellp() != std::streampos(0);
+		bool res = request.body.tellp() != std::streampos(0);
 		if (!res)
 		{
-			if (m_error_message.empty())
+			if (request.error_message.empty())
 			{
-				m_error_message = L"Error: Empty response";
+				request.error_message = L"Error: Empty response";
 			}
 			break;
 		}
 
+		request.body.seekg(0);
 		return true;
 	} while (false);
 
 #ifdef _DEBUG
-	if (!m_error_message.empty())
+	if (!request.error_message.empty())
 	{
-		m_error_message = m_url + L"\n" + m_error_message;
-		ATLTRACE(L"%s\n", m_error_message.c_str());
+		request.error_message = request.url + L"\n" + request.error_message;
+		ATLTRACE(L"%s\n", request.error_message.c_str());
 	}
 #endif // _DEBUG
 
 	return false;
 }
 
-std::filesystem::path CUrlDownload::GetCachedPath(const std::wstring& url)
+std::filesystem::path GetCachedPath(const std::wstring& url)
 {
 	return GetCacheDir() / std::format(L"{:08x}", xxh::xxhash<32>(url));
 }
 
-std::filesystem::path CUrlDownload::GetCacheDir()
+std::filesystem::path GetCacheDir()
 {
 	std::filesystem::path dir = std::filesystem::temp_directory_path().append(L"iptv_cache");
 	std::error_code err;
@@ -442,13 +443,13 @@ std::filesystem::path CUrlDownload::GetCacheDir()
 	return dir;
 }
 
-void CUrlDownload::ClearCache()
+void ClearCache()
 {
 	std::error_code err;
 	std::filesystem::remove_all(GetCacheDir(), err);
 }
 
-void CUrlDownload::ClearCachedUrl(const std::wstring& url)
+void ClearCachedUrl(const std::wstring& url)
 {
 	const auto& cache_file = GetCachedPath(url);
 	if (std::filesystem::exists(cache_file))
@@ -458,15 +459,16 @@ void CUrlDownload::ClearCachedUrl(const std::wstring& url)
 	}
 }
 
-bool CUrlDownload::CheckIsCacheExpired(const std::wstring& cache_file) const
+bool CheckIsCacheExpired(const std::wstring& cache_file, const std::chrono::seconds& cache_ttl)
 {
-	if (m_cache_ttl_sec && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
+	if (cache_ttl != std::chrono::seconds::zero() && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
 	{
-		std::time_t file_time = to_time_t(std::filesystem::last_write_time(cache_file));
-		std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-		int diff = int(now - file_time);
-		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n", diff / 3600, (diff - (diff / 3600 * 3600)) / 60, diff - diff / 60 * 60);
-		return (diff > m_cache_ttl_sec);
+		auto diff = std::chrono::duration_cast<std::chrono::seconds>(std::filesystem::file_time_type::clock::now() - std::filesystem::last_write_time(cache_file));
+		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n",
+				 std::chrono::duration_cast<std::chrono::hours>(diff),
+				 std::chrono::duration_cast<std::chrono::minutes>(diff) % 60,
+				 diff % 60);
+		return (diff > cache_ttl);
 	}
 
 	return true;
@@ -492,8 +494,7 @@ std::string entityDecrypt(const std::string& text)
 		bool flag = false;
 		for (const auto& [key, value] : convert)
 		{
-			if (i + key.size() - 1 < text.size()
-				&& text.substr(i, key.size()) == key)
+			if ((i + key.size() - 1 < text.size()) && (text.substr(i, key.size()) == key))
 			{
 				res += value;
 				i += key.size() - 1;
@@ -522,7 +523,7 @@ bool CBase64Coder::Encode(const unsigned char* pData, int nSize, unsigned long d
 	m_buf.resize(m_nSize);
 
 	//Finally do the encoding
-	if (!ATL::Base64Encode(pData, nSize, (char*)m_buf.data(), &m_nSize, dwFlags)) return false;
+	if (!ATL::Base64Encode(pData, nSize, reinterpret_cast<char*>(m_buf.data()), &m_nSize, dwFlags)) return false;
 
 	//Null terminate the data
 	m_buf[m_nSize] = 0;
@@ -533,7 +534,7 @@ bool CBase64Coder::Encode(const unsigned char* pData, int nSize, unsigned long d
 bool CBase64Coder::Encode(const char* szMessage, int nSize /*= 0*/, unsigned long dwFlags /*= ATL_BASE64_FLAG_NOCRLF*/)
 {
 	if (!nSize)
-		nSize = (int)strlen(szMessage);
+		nSize = static_cast<int>(std::strlen(szMessage));
 
 	return Encode(reinterpret_cast<const BYTE*>(szMessage), nSize, dwFlags);
 }
@@ -558,92 +559,7 @@ bool CBase64Coder::Decode(const char* pData, int nSize)
 
 bool CBase64Coder::Decode(const char* szMessage)
 {
-	return Decode(szMessage, static_cast<int>(strlen(szMessage)));
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-CRC4Coder::CRC4Coder(const unsigned char* pKey, size_t nKeyLen)
-{
-	SetKey(pKey, nKeyLen);
-}
-
-CRC4Coder::CRC4Coder(const char* szKey, size_t nKeyLen)
-{
-	SetKey(szKey, nKeyLen);
-}
-
-void CRC4Coder::Init()
-{
-	SecureZeroMemory(m_state, 256);
-	m_nSize = 0;
-	m_x = 0;
-	m_y = 0;
-	m_bKeySet = false;
-}
-
-void CRC4Coder::SetKey(const char* szKey, size_t nKeyLen)
-{
-	SetKey((const BYTE*)szKey, nKeyLen);
-}
-
-void CRC4Coder::SetKey(const unsigned char* pKey, size_t nKeyLen)
-{
-	m_x = 0;
-	m_y = 0;
-	for (int i = 0; i < sizeof(m_state); i++)
-		m_state[i] = LOBYTE(i);
-
-	unsigned char idx1 = 0;
-	unsigned char idx2 = 0;
-	unsigned char nDataLen = LOBYTE(nKeyLen);
-	for (unsigned char& i : m_state)
-	{
-		idx2 = (pKey[idx1] + i + idx2) % 256;
-
-		unsigned char t = i;
-		i = m_state[idx2];
-		m_state[idx2] = t;
-
-		idx1 = (idx1 + 1) % nDataLen;
-	}
-
-	m_bKeySet = true;
-}
-
-bool CRC4Coder::Encode(const char* szBuf, size_t nBufLen)
-{
-	return Encode((const unsigned char*)szBuf, nBufLen);
-}
-
-bool CRC4Coder::Encode(const unsigned char* pBuf, size_t nBufLen)
-{
-	ATLASSERT(m_bKeySet);
-	if (!m_bKeySet)
-		return false;
-
-	m_nSize = nBufLen;
-	m_buf.assign(pBuf, pBuf + nBufLen);
-
-	unsigned char x = m_x;
-	unsigned char y = m_y;
-	for (size_t i = 0; i < m_nSize; i++)
-	{
-		x = (x + 1) % 256;
-		y = (m_state[x] + y) % 256; //-V537
-
-		unsigned char t = m_state[x];
-		m_state[x] = m_state[y];
-		m_state[y] = t;
-
-		unsigned char xorIndex = (m_state[x] + m_state[y]) % 256;
-		m_buf[i] ^= m_state[xorIndex];
-	}
-
-	m_x = x;
-	m_y = y;
-
-	return true;
+	return Decode(szMessage, static_cast<int>(std::strlen(szMessage)));
 }
 
 }

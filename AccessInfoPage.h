@@ -145,8 +145,6 @@ protected:
 	CMenuEdit m_wndUpdateNameTemplate;
 
 private:
-	utils::CUrlDownload m_dl;
-
 	int m_initial_config = 0;
 
 	CString m_logo;

@@ -49,13 +49,12 @@ void plugin_tvclub::parse_account_info(TemplateParams& params)
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		const auto& url = std::format(API_COMMAND_URL, L"account");
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, url), data))
+		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"account")) };
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data.str());
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				if (parsed_json.contains("account"))
 				{
 					const auto& js_account = parsed_json["account"];
@@ -91,7 +90,7 @@ void plugin_tvclub::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_tvclub: Failed to get account info: {:s}", m_dl.GetLastErrorMessage()));
+			LogProtocol(std::format(L"plugin_tvclub: Failed to get account info: {:s}", req.error_message));
 		}
 	}
 }
@@ -105,15 +104,13 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 
 	get_api_token(params);
 
-	const auto& url = std::format(API_COMMAND_URL, L"settings");
-
 	CWaitCursor cur;
-	std::stringstream data;
-	if (download_url(replace_params_vars(params, url), data))
+	utils::http_request req{replace_params_vars(params, std::format(API_COMMAND_URL, L"settings"))};
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY;
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
+			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (parsed_json.contains("settings"))
 			{
 				const auto& settings = parsed_json["settings"];
@@ -151,12 +148,12 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 		url += std::format(PARAM_FMT, L"server", REPL_SERVER_ID);
 
 		CWaitCursor cur;
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, url), data))
+		utils::http_request req{ replace_params_vars(params, url) };
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY;
 			{
-				const auto& parsed_json = nlohmann::json::parse(data.str());
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				return utils::get_json_int("updated", parsed_json["settings"]) == 1;
 			}
 			JSON_ALL_CATCH;

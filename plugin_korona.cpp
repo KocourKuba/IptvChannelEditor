@@ -66,27 +66,27 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 		return session_token;
 	}
 
-	std::string post;
+	utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
+	req.verb_post = true;
+
 	for (const auto& [key, value] : post_request)
 	{
-		if (!post.empty())
+		if (!req.post_data.empty())
 		{
-			post += "&";
+			req.post_data += "&";
 		}
-		post += std::format(PARAM_FMT, key, utils::encodeURIComponent(value));
+		req.post_data += std::format(PARAM_FMT, key, utils::encodeURIComponent(value));
 	}
 
-	std::vector<std::string> headers;
-	headers.emplace_back("accept: */*");
-	headers.emplace_back("Content-Type: application/x-www-form-urlencoded");
+	req.headers.emplace_back("accept: */*");
+	req.headers.emplace_back("Content-Type: application/x-www-form-urlencoded");
 
 	CWaitCursor cur;
-	std::stringstream data;
-	if (download_url(replace_params_vars(params, API_COMMAND_AUTH), data, 0, &headers, true, post.c_str()))
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY;
 		{
-			const auto& parsed_json = nlohmann::json::parse(data.str());
+			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (utils::get_json_string("error", parsed_json).empty())
 			{
 				session_token = utils::get_json_string("access_token", parsed_json);
@@ -106,7 +106,7 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(std::format(L"plugin_korona: Failed to get token: {:s}", m_dl.GetLastErrorMessage()));
+		LogProtocol(std::format(L"plugin_korona: Failed to get token: {:s}", req.error_message));
 	}
 
 	return session_token;
@@ -180,8 +180,6 @@ void plugin_korona::parse_vod(const CThreadConfig& config)
 	all_category->name = all_name;
 	categories->set_back(all_name, all_category);
 
-	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
-
 	do
 	{
 		const auto& api_url = get_vod_url(config.m_params);
@@ -190,7 +188,7 @@ void plugin_korona::parse_vod(const CThreadConfig& config)
 		int total = 0;
 		JSON_ALL_TRY;
 		{
-			nlohmann::json parsed_json = server_request(url, cache_ttl);
+			nlohmann::json parsed_json = server_request(url, true);
 			for (const auto& item_it : parsed_json["data"].items())
 			{
 				if (item_it.value().empty()) continue;
@@ -216,7 +214,7 @@ void plugin_korona::parse_vod(const CThreadConfig& config)
 			for (;;)
 			{
 				const auto& cat_url = std::format(L"{:s}/cat/{:s}?page=1&per_page=99999999", api_url, category->id);
-				nlohmann::json genres_json = server_request(cat_url, cache_ttl);
+				nlohmann::json genres_json = server_request(cat_url, true);
 				if (!genres_json.contains("data")) break;
 
 				for (const auto& movie_it : genres_json["data"].items())
@@ -282,8 +280,7 @@ void plugin_korona::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 
 	const auto& url = std::format(L"{:s}/video/{:s}", get_vod_url(params),  movie.id);
 
-	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
-	nlohmann::json movies_json = server_request(url, cache_ttl);
+	nlohmann::json movies_json = server_request(url, true);
 	if (movies_json.empty() || !movies_json.contains("data"))
 	{
 		return;
@@ -370,24 +367,27 @@ void plugin_korona::clear_account_info()
 	return account_info.clear();
 }
 
-nlohmann::json plugin_korona::server_request(const std::wstring& url, int cache_ttl /*= 0*/)
+nlohmann::json plugin_korona::server_request(const std::wstring& url, const bool use_cache_ttl /*= false*/)
 {
 	const auto& session_token = get_file_cookie(session_token_file);
 	if (!session_token.empty())
 	{
-		std::vector<std::string> headers;
-		headers.emplace_back("accept: */*");
-		headers.emplace_back("Content-Type: application/x-www-form-urlencoded");
-		headers.emplace_back(std::format("Authorization: Bearer {:s}", session_token));
+		utils::http_request req{ url };
+		if (use_cache_ttl)
+		{
+			req.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+		}
+
+		req.headers.emplace_back("accept: */*");
+		req.headers.emplace_back("Content-Type: application/x-www-form-urlencoded");
+		req.headers.emplace_back(std::format("Authorization: Bearer {:s}", session_token));
 
 		CWaitCursor cur;
-		std::stringstream data;
-
-		if (download_url(url, data, cache_ttl, &headers))
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY;
 			{
-				return nlohmann::json::parse(data.str());
+				return nlohmann::json::parse(req.body.str());
 			}
 			JSON_ALL_CATCH;
 		}

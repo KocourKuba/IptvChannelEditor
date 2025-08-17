@@ -1022,25 +1022,22 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 	}
 
 	std::stringstream data;
-	utils::CrackedUrl cracked;
 	WORD port = 0;
 	if (is_file)
 	{
 		std::ifstream stream(m_playlist_url);
 		data << stream.rdbuf();
 	}
-	else if (cracked.CrackUrl(m_playlist_url))
+	else if (utils::CrackUrl(m_playlist_url))
 	{
-		int cache_ttl = force ? 0 : GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
 		CWaitCursor cur;
-		m_dl.SetUrl(m_playlist_url);
-		m_dl.SetUserAgent(m_plugin->get_user_agent());
-		m_dl.SetCacheTtl(cache_ttl);
+		utils::http_request req{ m_playlist_url, force ? std::chrono::hours::zero() : GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) };
+		req.user_agent = m_plugin->get_user_agent();
 
-		if (!m_dl.DownloadFile(data))
+		if (!utils::DownloadFile(req))
 		{
 			CString msg;
-			msg.Format(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, m_dl.GetLastErrorMessage().c_str());
+			msg.Format(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, req.error_message.c_str());
 			AfxMessageBox(msg, MB_OK | MB_ICONERROR);
 			OnEndLoadPlaylist(0);
 			return;
@@ -1049,10 +1046,11 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 		if (saveToFile)
 		{
 			std::ofstream os(m_plFileName, std::ofstream::binary);
-			data.seekg(0);
-			os << data.rdbuf();
+			os << req.body.rdbuf();
 			return;
 		}
+
+		std::swap(data, req.body);
 	}
 
 	if (data.tellp() == std::streampos(0))
@@ -1164,7 +1162,6 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 			"url-tvg", "x-tvg-url"
 		};
 
-		utils::CrackedUrl check_url;
 		const auto& hdr_tags = m_playlistEntries->m3u_header.get_ext_tags();
 		for (const auto& tag : hdr_tags)
 		{
@@ -1176,7 +1173,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 				int i = 0;
 				for(const auto& url : urls)
 				{
-					if (check_url.CrackUrl(url))
+					if (utils::CrackUrl(url))
 					{
 						const auto& epg_name = utils::utf8_to_utf16(tag.first) + (i == 0 ? L"" : L"-" + std::to_wstring(i));
 						playlist_xmltv_sources.emplace_back(epg_name, url);
@@ -1214,7 +1211,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 		if (m_playlistMap.empty())
 		{
 			AfxMessageBox(IDS_STRING_ERR_EMPTY_PLAYLIST, MB_OK | MB_ICONERROR);
-			utils::CUrlDownload::ClearCachedUrl(m_playlist_url);
+			utils::ClearCachedUrl(m_playlist_url);
 		}
 	}
 
@@ -2100,31 +2097,29 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_tim
 	bool added = false;
 
 	CWaitCursor cur;
-	std::stringstream data;
 
 	TemplateParams params;
 	params.creds = GetCurrentAccount();
 
-	const auto& url = m_plugin->compile_epg_url(epg_idx, epg_id, for_time, info, params);
-	const auto& epg_param = m_plugin->get_epg_parameter(epg_idx);
 
-	std::vector<std::string> headers;
+	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+	const auto& url = m_plugin->compile_epg_url(epg_idx, epg_id, for_time, info, params);
+	utils::http_request req{ url, cache_ttl };
+	req.user_agent = m_plugin->get_user_agent();
+
+	const auto& epg_param = m_plugin->get_epg_parameter(epg_idx);
 	if (!epg_param.epg_auth.empty())
 	{
 		const auto& token = utils::utf8_to_utf16(m_plugin->get_api_token(params));
 		if (!token.empty())
 		{
 			std::wstring header = utils::string_replace<wchar_t>(epg_param.get_epg_auth(), REPL_TOKEN, token);
-			headers.emplace_back("accept: */*");
-			headers.emplace_back(utils::utf16_to_utf8(header));
+			req.headers.emplace_back("accept: */*");
+			req.headers.emplace_back(utils::utf16_to_utf8(header));
 		}
 	}
 
-	m_dl.SetUrl(url);
-	m_dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600);
-	m_dl.SetUserAgent(m_plugin->get_user_agent());
-
-	if (!m_dl.DownloadFile(data, &headers))
+	if (!utils::DownloadFile(req))
 	{
 		return false;
 	}
@@ -2142,7 +2137,7 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_tim
 
 	JSON_ALL_TRY;
 	{
-		const auto& parsed_json = nlohmann::json::parse(data.str());
+		const auto& parsed_json = nlohmann::json::parse(req.body.str());
 
 		auto& epg_map = m_epg_cache[epg_idx][epg_id];
 
@@ -2231,22 +2226,20 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 		return false;
 	}
 
-	m_dl.SetUrl(m_xmltv_sources[m_xmltvEpgSource]);
-	m_dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600);
-	m_dl.SetUserAgent(m_plugin->get_user_agent());
+	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+	utils::http_request req{ m_xmltv_sources[m_xmltvEpgSource], cache_ttl };
+	req.user_agent = m_plugin->get_user_agent();
 
 	CWaitCursor cur;
-	std::stringstream data;
-	if (!m_dl.DownloadFile(data))
+	if (!utils::DownloadFile(req))
 	{
 		LogProtocol(std::format(L"Can't download file: {:s}", m_xmltv_sources[m_xmltvEpgSource]));
 		return false;
 	}
 
 	std::vector<char> buf(8);
-	data.seekg(0);
-	data.read(buf.data(), 8);
-	data.clear();
+	req.body.read(buf.data(), 8);
+	req.body.clear();
 
 	auto file_fmt = SevenZip::CompressionFormat::_Format::Unknown;
 
@@ -2276,12 +2269,11 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 	if (file_fmt == SevenZip::CompressionFormat::_Format::Unknown)
 		return false;
 
-	const auto& real_url = m_dl.GetUrl();
-	auto cache_file = utils::CUrlDownload::GetCachedPath(real_url);
+	auto cache_file = utils::GetCachedPath(req.url);
 	if (file_fmt == SevenZip::CompressionFormat::_Format::GZip || file_fmt == SevenZip::CompressionFormat::_Format::Zip)
 	{
-		const auto& unpacked_path = utils::CUrlDownload::GetCachedPath(real_url.substr(0, real_url.length() - 3));
-		if (m_dl.CheckIsCacheExpired(unpacked_path))
+		const auto& unpacked_path = utils::GetCachedPath(req.url.substr(0, req.url.length() - 3));
+		if (utils::CheckIsCacheExpired(unpacked_path, req.cache_ttl))
 		{
 			auto& extractor = theApp.m_archiver.GetExtractor();
 			extractor.SetArchivePath(cache_file);
@@ -2294,7 +2286,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 				return false;
 			}
 
-			if (!extractor.ExtractFile(names[0], utils::CUrlDownload::GetCacheDir()))
+			if (!extractor.ExtractFile(names[0], utils::GetCacheDir()))
 			{
 				LogProtocol(std::format(L"Can't extract file: '{:s}' from '{:s}'", names[0], m_xmltv_sources[m_xmltvEpgSource]));
 				return false;
@@ -2304,11 +2296,11 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 			std::filesystem::path extractedPath;
 			if (names[0].empty())
 			{
-				extractedPath = utils::CUrlDownload::GetCacheDir().append(L"[Content]");
+				extractedPath = utils::GetCacheDir().append(L"[Content]");
 			}
 			else
 			{
-				extractedPath = utils::CUrlDownload::GetCacheDir().append(names[0]);
+				extractedPath = utils::GetCacheDir().append(names[0]);
 
 			}
 
@@ -4234,18 +4226,17 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 			const std::filesystem::path image_cache = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
 			const auto& dir_path = image_cache / std::filesystem::path(image_lib.get_package_name()).stem() / L"";
 			CWaitCursor cur;
-			std::stringstream file_data;
-			const auto& file_path = utils::CUrlDownload::GetCachedPath(image_lib.get_url());
+			const auto& file_path = utils::GetCachedPath(image_lib.get_url());
 			if (!std::filesystem::exists(file_path) || std::filesystem::file_size(file_path) == 0)
 			{
 				std::error_code err;
 				std::filesystem::remove_all(dir_path, err);
 
-				m_dl.SetUrl(image_lib.get_url());
-				m_dl.SetCacheTtl(GetConfig().get_int(true, REG_MAX_CACHE_TTL, 24));
-				if (!m_dl.DownloadFile(file_data))
+				auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL, 24h);
+				utils::http_request req{ image_lib.get_url(), cache_ttl };
+				if (!utils::DownloadFile(req))
 				{
-					AfxMessageBox(m_dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+					AfxMessageBox(req.error_message.c_str(), MB_ICONERROR | MB_OK);
 					break;
 				}
 			}
@@ -4908,14 +4899,13 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		icon_uri.set_uri(utils::ICON_TEMPLATE);
 		icon_uri.set_path(utils::CHANNELS_LOGO_URL + fname.substr(pos + 1));
 
+		utils::http_request req{ channel->get_icon_uri().get_uri() };
+		req.user_agent = m_plugin->get_user_agent();
+
 		CWaitCursor cur;
-		std::stringstream image;
-		m_dl.SetUrl(channel->get_icon_uri().get_uri());
-		m_dl.SetUserAgent(m_plugin->get_user_agent());
-		m_dl.SetCacheTtl(0);
-		if (!m_dl.DownloadFile(image))
+		if (!utils::DownloadFile(req))
 		{
-			AfxMessageBox(m_dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+			AfxMessageBox(req.error_message.c_str(), MB_ICONERROR | MB_OK);
 			continue;
 		}
 
@@ -4923,8 +4913,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 
 		const auto& fullPath = icon_uri.get_filesystem_path(GetAppPath(utils::PLUGIN_ROOT));
 		std::ofstream os(fullPath.c_str(), std::ios::out | std::ios::binary);
-		image.seekg(0);
-		os << image.rdbuf();
+		os << req.body.rdbuf();
 
 		LoadChannelInfo(FindChannel(hItem));
 		set_allow_save();

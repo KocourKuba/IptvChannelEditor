@@ -150,19 +150,6 @@ void plugin_config::clear()
 	epg_params[1].epg_param = "second";
 }
 
-bool plugin_config::download_url(const std::wstring& url,
-								 std::stringstream& vData,
-								 int cache_ttl /*= 0*/,
-								 std::vector<std::string>* pHeaders /*= nullptr*/,
-								 bool verb_post /*= false*/,
-								 const char* post_data /*= nullptr*/)
-{
-	m_dl.SetUserAgent(get_user_agent());
-	m_dl.SetCacheTtl(cache_ttl);
-	m_dl.SetUrl(url);
-	return m_dl.DownloadFile(vData, pHeaders, verb_post, post_data);
-}
-
 bool plugin_config::save_plugin_parameters(const std::wstring& filename, const std::wstring& parent_name, bool use_full_path/* = false*/)
 {
 	std::filesystem::path full_path;

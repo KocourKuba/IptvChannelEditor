@@ -263,9 +263,9 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	m_archiver.SetLibPath(pack_dll);
 
 	// set default value
-	if (GetConfig().get_int(true, REG_MAX_CACHE_TTL) < 1)
+	if (GetConfig().get_chrono(true, REG_MAX_CACHE_TTL).count() < 1)
 	{
-		GetConfig().set_int(true, REG_MAX_CACHE_TTL, 24);
+		GetConfig().set_chrono(true, REG_MAX_CACHE_TTL, 24h);
 	}
 
 	// check and create required directories
@@ -982,7 +982,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 
 	int idx = GetConfig().get_int(false, REG_PLAYLIST_TYPE);
 	plugin->set_playlist_idx(idx);
-	plugin->set_dev_path(enc.GetResultString());
+	plugin->set_dev_path(enc.GetResultAsString());
 	plugin->save_plugin_parameters(std::format(L"{:s}config.json", packFolder.wstring()), plugin->get_internal_name(), true);
 
 	// create plugin manifest
@@ -1209,7 +1209,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 				enc.Encode(js.c_str(), (int)js.size(), ATL_BASE64_FLAG_NOCRLF | ATL_BASE64_FLAG_NOPAD);
 
 				std::ofstream out_file(packFolder / L"account.dat", std::ofstream::binary);
-				const auto& str = utils::generateRandomId(5) + enc.GetResultString();
+				const auto& str = utils::generateRandomId(5) + enc.GetResultAsString();
 				out_file.write(str.c_str(), str.size());
 				out_file.close();
 			}
@@ -1676,17 +1676,14 @@ bool LoadPngImage(UINT id, CImage& img)
 BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 {
 	HRESULT hr = E_FAIL;
-	utils::CrackedUrl cracked;
-	if (cracked.CrackUrl(fullPath))
+	if (utils::CrackUrl(fullPath))
 	{
 		CWaitCursor cur;
-		std::stringstream data;
-		utils::CUrlDownload dl;
-		dl.SetUrl(fullPath);
-		if (dl.DownloadFile(data))
+		utils::http_request req{ fullPath };
+		if (utils::DownloadFile(req))
 		{
 			// Still not clear if this is making a copy internally
-			auto view = data.rdbuf()->_Get_buffer_view();
+			auto view = req.body.rdbuf()->_Get_buffer_view();
 			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)view._Ptr, (unsigned int)view._Size));
 			hr = image.Load(stream);
 		}

@@ -45,7 +45,7 @@ DEALINGS IN THE SOFTWARE.
 #define LVS_ITEM_CHECKED 8192
 #define LVS_ITEM_UNCHECKED 4096
 
-constexpr int min_cache_ttl = 5;
+constexpr std::chrono::seconds min_cache_ttl{30};
 
 static std::string get_utf8(const std::wstring& value)
 {
@@ -428,7 +428,7 @@ BOOL CAccessInfoPage::OnApply()
 
 	m_selected_cred = selected;
 
-	utils::CUrlDownload::ClearCachedUrl(m_plugin->get_playlist_url(params));
+	utils::ClearCachedUrl(m_plugin->get_playlist_url(params));
 
 	return TRUE;
 }
@@ -487,17 +487,15 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 		{
 			case AccountAccessType::enOtt:
 			{
-				m_dl.SetUrl(dlg.m_url.GetString());
-				m_dl.SetUserAgent(m_plugin->get_user_agent());
-
-				std::stringstream data;
-				if (m_dl.DownloadFile(data))
+				utils::http_request req{ url };
+				req.user_agent = m_plugin->get_user_agent();
+				if (utils::DownloadFile(req))
 				{
 					std::ifstream instream(url);
-					data << instream.rdbuf();
+					req.body << instream.rdbuf();
 				}
 
-				std::istringstream stream(data.str());
+				std::istringstream stream(req.body.str());
 				if (!stream.good()) return;
 
 				Credentials cred;
@@ -1015,16 +1013,14 @@ void CAccessInfoPage::GetAccountInfo()
 		pl_url = it->second;
 	}
 
-	std::stringstream data;
+
 	if (!pl_url.empty())
 	{
-		m_dl.SetUrl(pl_url);
-		m_dl.SetUserAgent(m_plugin->get_user_agent());
-		m_dl.SetCacheTtl(min_cache_ttl);
-
-		if (m_dl.DownloadFile(data))
+		utils::http_request req{ pl_url, min_cache_ttl };
+		req.user_agent = m_plugin->get_user_agent();
+		if (utils::DownloadFile(req))
 		{
-			std::istringstream stream(data.str());
+			std::istringstream stream(req.body.str());
 			if (stream.good())
 			{
 				int step = 0;
@@ -1423,7 +1419,7 @@ void CAccessInfoPage::OnBnClickedButtonBrowseUpdateFile()
 bool CAccessInfoPage::TransformDropboxPath(std::wstring& dropbox_link, const std::wstring& file)
 {
 	utils::CrackedUrl cracked;
-	if (!dropbox_link.empty() && !cracked.CrackUrl(dropbox_link))
+	if (!dropbox_link.empty() && !CrackUrl(dropbox_link, &cracked))
 	{
 		AfxMessageBox(IDS_STRING_ERR_WRONG_URL, MB_ICONERROR | MB_OK);
 		return false;

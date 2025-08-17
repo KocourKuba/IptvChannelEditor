@@ -38,7 +38,6 @@ DEALINGS IN THE SOFTWARE.
 
 void plugin_edem::parse_vod(const CThreadConfig& config)
 {
-	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
 	auto categories = std::make_unique<vod_category_storage>();
 
 	do
@@ -56,22 +55,24 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 		const auto& key = m[1].str();
 		const auto& url = m[2].str();
 
-		std::vector<std::string> headers;
-		headers.emplace_back("accept: */*");
-		headers.emplace_back("Content-Type: application/json");
-
 		nlohmann::json json_request;
 		json_request["key"] = utils::utf16_to_utf8(key);
 		json_request["mac"] = "000000000000";
 		json_request["app"] = "IPTV ChannelEditor";
-		const auto& post = json_request.dump();
 
-		std::stringstream data;
-		if (!download_url(url, data, cache_ttl, &headers, true, post.c_str())) break;
+		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+
+		utils::http_request req{ url, cache_ttl };
+		req.verb_post = true;
+		req.headers.emplace_back("accept: */*");
+		req.headers.emplace_back("Content-Type: application/json");
+		req.post_data = json_request.dump();
+
+		if (!utils::DownloadFile(req)) break;
 
 		JSON_ALL_TRY;
 		{
-			nlohmann::json parsed_json = nlohmann::json::parse(data.str());
+			nlohmann::json parsed_json = nlohmann::json::parse(req.body.str());
 			for (const auto& item_it : parsed_json["items"].items())
 			{
 				if (item_it.value().empty()) continue;
@@ -124,12 +125,15 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 			{
 				json_request["fid"] = utils::char_to_int(category.second->id);
 				json_request["offset"] = 0;
-				const auto& cat_post = json_request.dump();
 
-				std::stringstream cat_data;
-				if (!download_url(url, cat_data, cache_ttl, &headers, true, cat_post.c_str())) break;
+				utils::http_request cat_req{ url, cache_ttl };
+				cat_req.verb_post = true;
+				cat_req.headers = req.headers;
+				cat_req.post_data = json_request.dump();
 
-				const auto& data_str = cat_data.str();
+				if (!utils::DownloadFile(cat_req)) break;
+
+				const auto& data_str = cat_req.body.str();
 				nlohmann::json movie_json = nlohmann::json::parse(data_str);
 				total += utils::get_json_int("count", movie_json);
 				config.SendNotifyParent(WM_INIT_PROGRESS, total, cnt);
@@ -182,10 +186,13 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 					json_request["offset"] = offset;
 					ATLTRACE("\noffset: %d\n", offset);
 
-					std::stringstream mov_data;
-					if (!download_url(url, mov_data, cache_ttl, &headers, true, json_request.dump().c_str())) break;
+					utils::http_request mov_req{ url, cache_ttl };
+					mov_req.verb_post = true;
+					mov_req.headers = req.headers;
+					mov_req.post_data = json_request.dump();
+					if (!utils::DownloadFile(mov_req)) break;
 
-					movie_json = nlohmann::json::parse(mov_data.str());
+					movie_json = nlohmann::json::parse(mov_req.body.str());
 				}
 
 				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
@@ -204,7 +211,6 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 
 void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 {
-	CWaitCursor cur;
 	do
 	{
 		boost::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
@@ -224,19 +230,19 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 		json_request["app"] = "IPTV ChannelEditor";
 		json_request["fid"] = utils::char_to_int(movie.id);
 
-		const auto& post = json_request.dump();
-		ATLTRACE("\n%s\n", post.c_str());
+		utils::http_request req{url};
+		req.verb_post = true;
+		req.post_data = json_request.dump();
+		ATLTRACE("\n%s\n", req.post_data.c_str());
+		req.headers.emplace_back("accept: */*");
+		req.headers.emplace_back("Content-Type: application/json");
 
-		std::vector<std::string> headers;
-		headers.emplace_back("accept: */*");
-		headers.emplace_back("Content-Type: application/json");
-
-		std::stringstream data;
-		if (!download_url(url, data, 0, &headers, true, post.c_str())) break;
+		CWaitCursor cur;
+		if (!utils::DownloadFile(req)) break;
 
 		JSON_ALL_TRY;
 
-		const auto& json_data = nlohmann::json::parse(data.str());
+		const auto& json_data = nlohmann::json::parse(req.body.str());
 		const auto& type = json_data["type"];
 		if (type == "multistream")
 		{
@@ -260,13 +266,16 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 				}
 
 				json_request["fid"] = utils::char_to_int(episode.id);
-				const auto& item_post = json_request.dump();
-				ATLTRACE("\n%s\n", post.c_str());
 
-				std::stringstream var_data;
-				if (download_url(url, var_data, 0, &headers, true, item_post.c_str()))
+				utils::http_request var_req{ url };
+				var_req.verb_post = true;
+				var_req.post_data = json_request.dump();
+				var_req.headers = req.headers;
+				ATLTRACE("\n%s\n", var_req.post_data.c_str());
+
+				if (utils::DownloadFile(req))
 				{
-					const auto& variants_data = nlohmann::json::parse(var_data.str());
+					const auto& variants_data = nlohmann::json::parse(var_req.body.str());
 					if (variants_data.contains("variants"))
 					{
 						for (const auto& variant_it : variants_data["variants"].items())

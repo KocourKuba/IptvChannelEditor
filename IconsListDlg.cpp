@@ -118,17 +118,15 @@ BOOL CIconsListDlg::OnInitDialog()
 	else
 	{
 		CWaitCursor cur;
-		std::unique_ptr<std::istream> pl_stream;
-		std::stringstream data;
-		m_dl.SetUrl(m_iconSource);
-		if (m_dl.DownloadFile(data))
+		utils::http_request req{ m_iconSource };
+		if (utils::DownloadFile(req))
 		{
-			const auto& str = data.str();
+			const auto& str = req.body.str();
 			int lines = (int)std::count(str.begin(), str.end(), '\n');
 
 			CThreadConfig cfg;
 			cfg.m_parent = this;
-			cfg.m_data = std::move(data);
+			cfg.m_data = std::move(req.body);
 			cfg.m_hStop = m_evtStop;
 
 			CBaseThread* pThread = nullptr;
@@ -161,7 +159,7 @@ BOOL CIconsListDlg::OnInitDialog()
 		}
 		else
 		{
-			AfxMessageBox(m_dl.GetLastErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+			AfxMessageBox(req.error_message.c_str(), MB_ICONERROR | MB_OK);
 		}
 	}
 

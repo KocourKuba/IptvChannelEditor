@@ -57,15 +57,14 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 	if (account_info.empty())
 	{
 		CWaitCursor cur;
-		std::vector<std::string> headers;
-		headers.emplace_back("accept: */*");
-		headers.emplace_back(std::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password));
-		std::stringstream data;
-		if (download_url(replace_params_vars(params, API_COMMAND_AUTH), data, 0, &headers))
+		utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
+		req.headers.emplace_back("accept: */*");
+		req.headers.emplace_back(std::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password));
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
 			{
-				const auto & parsed_json = nlohmann::json::parse(data.str());
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				if (parsed_json.contains("data"))
 				{
 					const auto& js_data = parsed_json["data"];
@@ -88,7 +87,7 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(std::format(L"plugin_cbilling: Failed to account info: {:s}", m_dl.GetLastErrorMessage()));
+		LogProtocol(L"plugin_cbilling: Failed to account info: account info is empty");
 	}
 }
 
@@ -96,7 +95,6 @@ void plugin_cbilling::parse_vod(const CThreadConfig& config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 
-	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
 
 	do
 	{
@@ -105,13 +103,14 @@ void plugin_cbilling::parse_vod(const CThreadConfig& config)
 		all_category->name = all_name;
 		categories->set_back(all_name, all_category);
 
-		std::stringstream info;
-		if (!download_url(config.m_url, info, cache_ttl)) break;
+		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+		utils::http_request req{ config.m_url, cache_ttl };
+		if (!utils::DownloadFile(req)) break;
 
 		int total = 0;
 		JSON_ALL_TRY;
 		{
-			const auto& parsed_json = nlohmann::json::parse(info.str());
+			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			for (const auto& item_it : parsed_json["data"].items())
 			{
 				if (item_it.value().empty()) continue;
@@ -139,9 +138,8 @@ void plugin_cbilling::parse_vod(const CThreadConfig& config)
 			{
 				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0 || retry > 2) break;
 
-				std::stringstream data;
-				const auto& cat_url = std::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", config.m_url, category->id, page);
-				if (!download_url(cat_url, data, cache_ttl) || data.bad())
+				utils::http_request jreq{ std::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", config.m_url, category->id, page), cache_ttl };
+				if (!utils::DownloadFile(jreq) || req.body.bad())
 				{
 					retry++;
 					continue;
@@ -150,7 +148,7 @@ void plugin_cbilling::parse_vod(const CThreadConfig& config)
 				nlohmann::json movies_json;
 				JSON_ALL_TRY;
 				{
-					movies_json = nlohmann::json::parse(data.str());
+					movies_json = nlohmann::json::parse(req.body.str());
 				}
 				JSON_ALL_CATCH;
 
@@ -219,22 +217,21 @@ void plugin_cbilling::parse_vod(const CThreadConfig& config)
 
 void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 {
-	int cache_ttl = GetConfig().get_int(true, REG_MAX_CACHE_TTL) * 3600;
-
 	TemplateParams params;
 	update_provider_params(params);
 
-	CWaitCursor cur;
+	const auto& url = std::format(L"{:s}/video/{:s}", get_vod_url(params), movie.id);
+	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+	utils::http_request req{ url, cache_ttl };
 
-	const auto& url = get_vod_url(params) + L"/video/" + movie.id;
-	std::stringstream data;
-	if (url.empty() || !download_url(url, data, cache_ttl))
+	CWaitCursor cur;
+	if (!utils::DownloadFile(req))
 	{
 		return;
 	}
 
 	JSON_ALL_TRY;
-	const auto& parsed_json = nlohmann::json::parse(data.str());
+	const auto& parsed_json = nlohmann::json::parse(req.body.str());
 
 	if (parsed_json.contains("data"))
 	{

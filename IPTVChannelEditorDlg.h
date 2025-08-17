@@ -393,8 +393,6 @@ protected:
 	int m_xmltvEpgSource = 0;
 
 private:
-	utils::CUrlDownload m_dl;
-
 	std::string m_plugin_type;
 	std::shared_ptr<base_plugin> m_plugin;
 
