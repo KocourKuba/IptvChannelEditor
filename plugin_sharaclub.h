@@ -37,4 +37,5 @@ public:
 	void fill_profiles_list(TemplateParams& params) override;
 	bool set_profile(TemplateParams& params) override;
 	void parse_vod(const CThreadConfig& config) override;
+	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie) override;
 };

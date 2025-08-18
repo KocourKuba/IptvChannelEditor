@@ -2210,6 +2210,7 @@
       "title": "Sharaclub TV",
       "vod_engine": "Json",
       "vod_filter": true,
+      "vod_season": true,
       "vod_filters": [ "genre", "from", "to" ],
       "vod_templates": [
         {

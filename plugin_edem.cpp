@@ -272,7 +272,7 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 					var_req.headers = req.headers;
 					ATLTRACE("\n%s\n", var_req.post_data.c_str());
 
-					if (utils::AsyncDownloadFile(req).get())
+					if (utils::AsyncDownloadFile(var_req).get())
 					{
 						const auto& variants_data = nlohmann::json::parse(var_req.body.str());
 						if (variants_data.contains("variants"))

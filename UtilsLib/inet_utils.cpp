@@ -383,6 +383,7 @@ bool DownloadFile(http_request& request)
 			if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
 			{
 				request.error_message += std::format(L"\nError: WinHttpQueryDataAvailable error code {:d}", GetLastError());
+				bResults = false;
 				break;
 			}
 
@@ -398,6 +399,7 @@ bool DownloadFile(http_request& request)
 			else
 			{
 				request.error_message = std::format(L"\nError: WinHttpReadData error code {:d}", GetLastError());
+				bResults = false;
 				break;
 			}
 		}

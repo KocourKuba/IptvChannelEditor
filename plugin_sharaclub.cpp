@@ -245,15 +245,15 @@ void plugin_sharaclub::parse_vod(const CThreadConfig& config)
 		int cnt = 0;
 		for (const auto& item : parsed_json.items())
 		{
-			const auto& val = item.value();
-			if (val.empty()) continue;
+			const auto& value = item.value();
+			if (value.empty()) continue;
 
 			std::shared_ptr<vod_category> category;
 			std::wstring category_name;
 			auto movie = std::make_shared<vod_movie>();
 
 			JSON_ALL_TRY;
-			category_name = utils::get_json_wstring("category", val);
+			category_name = utils::get_json_wstring("category", value);
 
 			if (!categories->tryGet(category_name, category))
 			{
@@ -262,11 +262,16 @@ void plugin_sharaclub::parse_vod(const CThreadConfig& config)
 				categories->set_back(category_name, category);
 			}
 
-			movie->title = utils::get_json_wstring("name", val);
-			movie->id = utils::get_json_wstring("id", val);
-			movie->url = utils::get_json_wstring("video", val);
+			movie->title = utils::get_json_wstring("name", value);
+			movie->id = utils::get_json_wstring("id", value);
+			if (movie->id.empty())
+			{
+				movie->id = utils::get_json_wstring("series_id", value) + L"_serial";
+				movie->is_series = true;
+			}
+			movie->url = utils::get_json_wstring("video", value);
 
-			const auto& info = val["info"];
+			const auto& info = value["info"];
 			if (!info.empty())
 			{
 				movie->poster_url.set_uri(utils::get_json_wstring("poster", info));
@@ -298,6 +303,44 @@ void plugin_sharaclub::parse_vod(const CThreadConfig& config)
 				movie->country = utils::utf8_to_utf16(country);
 			}
 
+			if (value.contains("seasons"))
+			{
+				for (const auto& season_it : value["seasons"].items())
+				{
+					const auto& season_item = season_it.value();
+					vod_season_def season;
+					season.id = utils::get_json_wstring("season", season_item);
+
+					const auto& season_info = season_item["info"];
+					season.season_id = utils::get_json_wstring("season", season_info);
+					season.title = utils::get_json_wstring("name", season_info);
+					if (season.title.empty())
+					{
+						season.title = load_string_resource(IDS_STRING_SEASON) + L" " + season.season_id;
+					}
+
+					season.year = utils::get_json_wstring("year", season_info);
+					if (!season.year.empty())
+					{
+						season.title += std::format(L" ({:s})", season.year);
+					}
+
+
+					for (const auto& episode_it : season_item["episodes"].items())
+					{
+						const auto& episode_item = episode_it.value();
+
+						vod_episode_def episode;
+						episode.id = utils::get_json_wstring("id", episode_item);
+						episode.episode_id = utils::get_json_wstring("episode", episode_item);
+						episode.url = utils::get_json_wstring("video", episode_item);
+
+						season.episodes.set_back(episode.id, episode);
+					}
+					movie->seasons.set_back(season.id, season);
+				}
+			}
+
 			category->movies.set_back(movie->id, movie);
 			JSON_ALL_CATCH;
 
@@ -316,3 +359,20 @@ void plugin_sharaclub::parse_vod(const CThreadConfig& config)
 
 	config.SendNotifyParent(WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
+
+std::wstring plugin_sharaclub::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie)
+{
+	std::wstring url = movie.url;
+
+	if (!movie.seasons.empty())
+	{
+		const auto& episodes = movie.seasons.front().episodes;
+		if (!episodes.empty() && request.episode_idx != CB_ERR)
+		{
+			url = episodes[request.episode_idx].url;
+		}
+	}
+
+	return url;
+}
+

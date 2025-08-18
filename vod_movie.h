@@ -74,6 +74,7 @@ public:
 	std::wstring id;
 	std::wstring season_id;
 	std::wstring title;
+	std::wstring year;
 	vod_episode_episode episodes;
 };
 

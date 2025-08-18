@@ -263,9 +263,9 @@ class sharaclub_config extends default_config
             if (isset($item->seasons)) {
                 foreach ($item->seasons as $season) {
                     $movie->add_season_data($season->season,
-                        empty($season->info->overview)
+                        empty($season->info->name)
                             ? TR::t('vod_screen_season__1', $season->season)
-                            : $season->info->overview
+                            : $season->info->name
                         ,'');
 
                     foreach ($season->episodes as $episode) {

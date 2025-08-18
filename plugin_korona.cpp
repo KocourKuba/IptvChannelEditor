@@ -308,7 +308,7 @@ void plugin_korona::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 				season.title = utils::get_json_wstring("name", season_item);
 				if (season.title.empty())
 				{
-					season.title = std::format(L"Season {:s}", season.season_id);
+					season.title = load_string_resource(IDS_STRING_SEASON) + L" " + season.season_id;
 				}
 
 				for (const auto& episode_it : season_item["series"].items())

@@ -321,8 +321,13 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 				const auto& season_item = season_it.value();
 				vod_season_def season;
 				season.id = utils::get_json_wstring("season", season_item);
-				season.title = utils::get_json_wstring("title", season_item);
 				season.season_id = utils::get_json_wstring("season", season_item);
+				season.title = utils::get_json_wstring("title", season_item);
+				if (season.title.empty())
+				{
+					season.title = load_string_resource(IDS_STRING_SEASON) + L" " + season.season_id;
+				}
+
 
 				for (const auto& episode_it : season_item["episodes"].items())
 				{
