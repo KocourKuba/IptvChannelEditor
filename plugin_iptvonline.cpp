@@ -114,8 +114,6 @@ void plugin_iptvonline::clear_account_info()
 
 std::wstring plugin_iptvonline::get_playlist_url(const TemplateParams& params, std::wstring url /* = L"" */)
 {
-	url = get_playlist_info(params.playlist_idx).get_pl_template(); //-V763
-
 	JSON_ALL_TRY;
 	{
 		utils::http_request req{ replace_params_vars(params, API_COMMAND_PLAYLIST) };
@@ -123,14 +121,7 @@ std::wstring plugin_iptvonline::get_playlist_url(const TemplateParams& params, s
 
 		if (utils::get_json_bool("success", parsed_json) == true && parsed_json.contains("data"))
 		{
-			const auto& server_url = utils::get_json_wstring("data", parsed_json);
-			boost::wregex re(LR"(^.+\/(.+)\/m3u8)");
-			boost::wsmatch m;
-			if (boost::regex_match(server_url, m, re))
-			{
-				utils::string_replace_inplace<wchar_t>(url, REPL_PASSWORD, m[1]);
-			}
-
+			url = utils::get_json_wstring("data", parsed_json);
 		}
 	}
 	JSON_ALL_CATCH;
