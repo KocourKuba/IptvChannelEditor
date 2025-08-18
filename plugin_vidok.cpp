@@ -51,7 +51,6 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
-		CWaitCursor cur;
 		const auto& url = std::format(API_COMMAND_URL, L"account");
 		utils::http_request req{ replace_params_vars(params, url) };
 		if (utils::DownloadFile(req))
@@ -91,15 +90,13 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 	if (params.creds.login.empty() || params.creds.password.empty() || !get_servers_list().empty())
 		return;
 
-	CWaitCursor cur;
-
 	std::vector<DynamicParamsInfo> servers;
 
 	get_api_token(params);
 
 	const auto& url = std::format(API_COMMAND_URL, L"settings");
 	utils::http_request req{ replace_params_vars(params, url) };
-	if (utils::DownloadFile(req))
+	if (utils::AsyncDownloadFile(req).get())
 	{
 		JSON_ALL_TRY;
 		{
@@ -145,9 +142,8 @@ bool plugin_vidok::set_server(TemplateParams& params)
 		auto url = std::format(API_COMMAND_URL, L"settings_set");
 		url += std::format(PARAM_FMT, L"server", REPL_SERVER_ID);
 
-		CWaitCursor cur;
 		utils::http_request req{ replace_params_vars(params, url) };
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY;
 			{

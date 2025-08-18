@@ -68,7 +68,7 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 		req.headers.emplace_back("Content-Type: application/json");
 		req.post_data = json_request.dump();
 
-		if (!utils::DownloadFile(req)) break;
+		if (!utils::AsyncDownloadFile(req).get()) break;
 
 		JSON_ALL_TRY;
 		{
@@ -131,7 +131,7 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 				cat_req.headers = req.headers;
 				cat_req.post_data = json_request.dump();
 
-				if (!utils::DownloadFile(cat_req)) break;
+				if (!utils::AsyncDownloadFile(cat_req).get()) break;
 
 				const auto& data_str = cat_req.body.str();
 				nlohmann::json movie_json = nlohmann::json::parse(data_str);
@@ -190,7 +190,7 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 					mov_req.verb_post = true;
 					mov_req.headers = req.headers;
 					mov_req.post_data = json_request.dump();
-					if (!utils::DownloadFile(mov_req)) break;
+					if (!utils::AsyncDownloadFile(mov_req).get()) break;
 
 					movie_json = nlohmann::json::parse(mov_req.body.str());
 				}
@@ -237,71 +237,71 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 		req.headers.emplace_back("accept: */*");
 		req.headers.emplace_back("Content-Type: application/json");
 
-		CWaitCursor cur;
-		if (!utils::DownloadFile(req)) break;
+		if (!utils::AsyncDownloadFile(req).get()) break;
 
 		JSON_ALL_TRY;
-
-		const auto& json_data = nlohmann::json::parse(req.body.str());
-		const auto& type = json_data["type"];
-		if (type == "multistream")
 		{
-			if (movie.seasons.empty())
+			const auto& json_data = nlohmann::json::parse(req.body.str());
+			const auto& type = json_data["type"];
+			if (type == "multistream")
 			{
-				movie.seasons.set_back(L"season", vod_season_def());
-			}
-			auto& season = movie.seasons.get(L"season");
-
-			for (const auto& items_it : json_data["items"].items())
-			{
-
-				const auto& item = items_it.value();
-				vod_episode_def episode;
-				episode.title = utils::get_json_wstring("title", item);
-				episode.url = utils::get_json_wstring("url", item);
-				episode.id = utils::get_json_wstring("fid", item);
-				if (episode.id.empty())
+				if (movie.seasons.empty())
 				{
-					episode.id = utils::get_json_wstring("fid", item["request"]);
+					movie.seasons.set_back(L"season", vod_season_def());
 				}
+				auto& season = movie.seasons.get(L"season");
 
-				json_request["fid"] = utils::char_to_int(episode.id);
-
-				utils::http_request var_req{ url };
-				var_req.verb_post = true;
-				var_req.post_data = json_request.dump();
-				var_req.headers = req.headers;
-				ATLTRACE("\n%s\n", var_req.post_data.c_str());
-
-				if (utils::DownloadFile(req))
+				for (const auto& items_it : json_data["items"].items())
 				{
-					const auto& variants_data = nlohmann::json::parse(var_req.body.str());
-					if (variants_data.contains("variants"))
-					{
-						for (const auto& variant_it : variants_data["variants"].items())
-						{
-							const auto& vod_title = utils::utf8_to_utf16(variant_it.key());
-							const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
 
-							episode.qualities.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
+					const auto& item = items_it.value();
+					vod_episode_def episode;
+					episode.title = utils::get_json_wstring("title", item);
+					episode.url = utils::get_json_wstring("url", item);
+					episode.id = utils::get_json_wstring("fid", item);
+					if (episode.id.empty())
+					{
+						episode.id = utils::get_json_wstring("fid", item["request"]);
+					}
+
+					json_request["fid"] = utils::char_to_int(episode.id);
+
+					utils::http_request var_req{ url };
+					var_req.verb_post = true;
+					var_req.post_data = json_request.dump();
+					var_req.headers = req.headers;
+					ATLTRACE("\n%s\n", var_req.post_data.c_str());
+
+					if (utils::AsyncDownloadFile(req).get())
+					{
+						const auto& variants_data = nlohmann::json::parse(var_req.body.str());
+						if (variants_data.contains("variants"))
+						{
+							for (const auto& variant_it : variants_data["variants"].items())
+							{
+								const auto& vod_title = utils::utf8_to_utf16(variant_it.key());
+								const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
+
+								episode.qualities.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
+							}
 						}
 					}
+
+					season.episodes.set_back(episode.id, episode);
 				}
-
-				season.episodes.set_back(episode.id, episode);
 			}
-		}
-		else
-		{
-			movie.url = utils::get_json_wstring("url", json_data);
-			if (json_data.contains("variants"))
+			else
 			{
-				for (const auto& variant_it : json_data["variants"].items())
+				movie.url = utils::get_json_wstring("url", json_data);
+				if (json_data.contains("variants"))
 				{
-					const auto& vod_title = utils::utf8_to_utf16(variant_it.key());
-					const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
+					for (const auto& variant_it : json_data["variants"].items())
+					{
+						const auto& vod_title = utils::utf8_to_utf16(variant_it.key());
+						const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
 
-					movie.quality.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
+						movie.quality.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
+					}
 				}
 			}
 		}

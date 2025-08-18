@@ -196,6 +196,8 @@ BOOL CVodViewer::DestroyWindow()
 
 void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 {
+	CWaitCursor cur;
+
 	m_wndCategories.EnableWindow(FALSE);
 	m_wndGenres.EnableWindow(FALSE);
 	m_wndYears.EnableWindow(FALSE);
@@ -223,7 +225,6 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 
 void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 {
-	CWaitCursor cur;
 	m_total = 0;
 
 	if (!m_current_vod.empty())
@@ -335,8 +336,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	utils::http_request req{ m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params) };
 	req.user_agent = m_plugin->get_user_agent();
 
-	CWaitCursor cur;
-	if (!utils::DownloadFile(req))
+	if (!utils::AsyncDownloadFile(req).get())
 	{
 		AfxMessageBox(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, MB_OK | MB_ICONERROR);
 		OnEndLoadM3U8Playlist(0);
@@ -987,7 +987,6 @@ void CVodViewer::LoadMovieInfo(int idx)
 void CVodViewer::FilterList()
 {
 	UpdateData(TRUE);
-	CWaitCursor cur;
 
 	if (m_category_idx == LB_ERR || m_category_idx >= (int)m_current_vod.size())
 	{
@@ -1075,8 +1074,7 @@ void CVodViewer::FilterList()
 			req.post_data = json_request.dump();
 			ATLTRACE("\n%s\n", req.post_data.c_str());
 
-			CWaitCursor cur;
-			if (!utils::DownloadFile(req)) break;
+			if (!utils::AsyncDownloadFile(req).get()) break;
 
 			JSON_ALL_TRY;
 			{
@@ -1135,7 +1133,7 @@ void CVodViewer::FilterList()
 					req.post_data = json_request.dump();
 					ATLTRACE("\n%s\n", req.post_data.c_str());
 
-					if (!utils::DownloadFile(req)) break;
+					if (!utils::AsyncDownloadFile(req).get()) break;
 
 					parsed_json = nlohmann::json::parse(req.body.str());
 				}

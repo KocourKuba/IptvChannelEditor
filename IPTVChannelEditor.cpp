@@ -1678,9 +1678,8 @@ BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 	HRESULT hr = E_FAIL;
 	if (utils::CrackUrl(fullPath))
 	{
-		CWaitCursor cur;
-		utils::http_request req{ fullPath };
-		if (utils::DownloadFile(req))
+		utils::http_request req{ fullPath, 1h };
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			// Still not clear if this is making a copy internally
 			auto view = req.body.rdbuf()->_Get_buffer_view();
@@ -1800,7 +1799,7 @@ int RequestToUpdateServer(const std::wstring& command, bool isThread /*= true*/)
 
 		int nErrorCount = 0;
 		DWORD dwExitCode = STILL_ACTIVE;
-		uint64_t dwStart = utils::ChronoGetTickCount();
+		const auto dwStart = utils::ChronoGetTickCount();
 		for (;;)
 		{
 			if (dwExitCode != STILL_ACTIVE)
@@ -1808,7 +1807,7 @@ int RequestToUpdateServer(const std::wstring& command, bool isThread /*= true*/)
 				break;
 			}
 
-			if (utils::CheckForTimeOut(dwStart, 60 * 1000))
+			if (utils::CheckForTimeOut(dwStart, 60s))
 			{
 				::TerminateProcess(pi.hProcess, 0);
 				dwExitCode = STATUS_TIMEOUT;

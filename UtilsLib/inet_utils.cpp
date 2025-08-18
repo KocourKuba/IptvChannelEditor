@@ -125,6 +125,13 @@ struct deferrer
 
 #endif
 
+std::future<bool> AsyncDownloadFile(http_request& request)
+{
+	return std::async(std::launch::async, [&request]() {
+		return DownloadFile(request);
+	});
+}
+
 bool DownloadFile(http_request& request)
 {
 	request.error_message.clear();
@@ -144,7 +151,7 @@ bool DownloadFile(http_request& request)
 	const auto& cache_file = GetCachedPath(hash_str);
 	if (!CheckIsCacheExpired(cache_file, request.cache_ttl))
 	{
-		std::ifstream in_file(cache_file.c_str());
+		std::ifstream in_file(cache_file.c_str(), std::ifstream::binary);
 		if (in_file.good())
 		{
 			request.body << in_file.rdbuf();
@@ -175,9 +182,9 @@ bool DownloadFile(http_request& request)
 		// Use WinHttpOpen to obtain a session handle.
 		ATLTRACE(L"\nUserAgent: %s\n", request.user_agent.c_str());
 		auto hSession = WinHttpOpen(request.user_agent.c_str(),
-									 WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-									 WINHTTP_NO_PROXY_NAME,
-									 WINHTTP_NO_PROXY_BYPASS, 0);
+									WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+									WINHTTP_NO_PROXY_NAME,
+									WINHTTP_NO_PROXY_BYPASS, 0);
 		if (!hSession)
 		{
 			request.error_message = L"Error: Failed to open connection";
@@ -201,12 +208,12 @@ bool DownloadFile(http_request& request)
 			dwFlags |= 0x00800000; // INTERNET_FLAG_SECURE
 		// Create an HTTP request handle.
 		auto hRequest = WinHttpOpenRequest(hConnect,
-										   request.verb_post ? L"POST" : L"GET",
-										   (cracked.path + cracked.extra_info).c_str(),
-										   nullptr,
-										   WINHTTP_NO_REFERER,
-										   WINHTTP_DEFAULT_ACCEPT_TYPES,
-										   dwFlags);
+											request.verb_post ? L"POST" : L"GET",
+											(cracked.path + cracked.extra_info).c_str(),
+											nullptr,
+											WINHTTP_NO_REFERER,
+											WINHTTP_DEFAULT_ACCEPT_TYPES,
+											dwFlags);
 
 		if (!hRequest)
 		{
@@ -238,12 +245,12 @@ bool DownloadFile(http_request& request)
 		{
 			DWORD post_size = request.post_data.empty() ? 0 : static_cast<DWORD>(request.post_data.length());
 			if (!WinHttpSendRequest(hRequest,
-								   WINHTTP_NO_ADDITIONAL_HEADERS,
-								   0,
+									WINHTTP_NO_ADDITIONAL_HEADERS,
+									0,
 									request.post_data.empty() ? WINHTTP_NO_REQUEST_DATA : reinterpret_cast<void*>(request.post_data.data()),
 									post_size,
-								   post_size,
-								   0))
+									post_size,
+									0))
 			{
 				request.error_message = L"Error: Failed to send request";
 				break;
@@ -261,9 +268,9 @@ bool DownloadFile(http_request& request)
 			DWORD dwSize = sizeof(dwStatusCode);
 
 			if (!WinHttpQueryHeaders(hRequest,
-									 WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-									 WINHTTP_HEADER_NAME_BY_INDEX,
-									 &dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
+										WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+										WINHTTP_HEADER_NAME_BY_INDEX,
+										&dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
 			{
 				request.error_message = std::format(L"Error: Failed to query headers: error code {:d}", GetLastError());
 				break;
@@ -299,11 +306,11 @@ bool DownloadFile(http_request& request)
 						dwAuthScheme = WINHTTP_AUTH_SCHEME_BASIC;
 
 					if (!WinHttpSetCredentials(hRequest,
-											   WINHTTP_AUTH_TARGET_SERVER,
-											   dwAuthScheme,
-											   cracked.user.empty() ? nullptr : cracked.user.c_str(),
-											   cracked.password.c_str(),
-											   nullptr))
+												WINHTTP_AUTH_TARGET_SERVER,
+												dwAuthScheme,
+												cracked.user.empty() ? nullptr : cracked.user.c_str(),
+												cracked.password.c_str(),
+												nullptr))
 					{
 						request.error_message = std::format(L"Error: Failed to set credentials: error code {:d}", GetLastError());
 						break;
@@ -397,7 +404,7 @@ bool DownloadFile(http_request& request)
 
 		if (!bResults && !bSaveBadCache) break;
 
-		if (!request.body.fail() || bSaveBadCache)
+		if (request.cache_ttl.count() > 0 && (!request.body.fail() || bSaveBadCache))
 		{
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
 			request.body.seekg(0);

@@ -250,7 +250,7 @@ static int check_for_update(UpdateInfo& info)
 {
 	LogProtocol("Try to download update info...");
 	utils::http_request req{ std::format(L"{:s}/{:s}", info.server, utils::UPDATE_NAME) };
-	if (!utils::DownloadFile(req))
+	if (!utils::AsyncDownloadFile(req).get())
 	{
 		LogProtocol(req.error_message);
 		return err_download_info; // Unable to download update info!
@@ -293,7 +293,7 @@ static int download_update(UpdateInfo& info)
 
 			utils::http_request req{ std::format(L"{:s}/{:s}/{:s}", info.server, info.version, item.name)};
 			LogProtocol(req.url);
-			if (!utils::DownloadFile(req))
+			if (!utils::AsyncDownloadFile(req).get())
 			{
 				ret = err_download_pkg; // Unable to download update package!
 				LogProtocol(req.error_message);

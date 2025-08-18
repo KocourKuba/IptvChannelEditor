@@ -59,7 +59,6 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 		const auto& url = std::format(API_COMMAND_URL, L"subscr_info");
 		utils::http_request req{ replace_params_vars(params, url) };
 
-		CWaitCursor cur;
 		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY;
@@ -104,8 +103,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 
 	utils::http_request req{ replace_params_vars(params, url) };
 
-	CWaitCursor cur;
-	if (utils::DownloadFile(req))
+	if (utils::AsyncDownloadFile(req).get())
 	{
 		JSON_ALL_TRY;
 		{
@@ -141,8 +139,7 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 		url += std::format(PARAM_FMT, L"num", REPL_SERVER_ID);
 
 		utils::http_request req{ replace_params_vars(params, url) };
-		CWaitCursor cur;
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY;
 			{
@@ -163,8 +160,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 
 	utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"list_profiles")) };
 
-	CWaitCursor cur;
-	if (!utils::DownloadFile(req))
+	if (!utils::AsyncDownloadFile(req).get())
 	{
 		return;
 	}
@@ -206,8 +202,7 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 		url += std::format(PARAM_FMT, L"num", REPL_PROFILE_ID);
 
 		utils::http_request req{ replace_params_vars(params, url) };
-		CWaitCursor cur;
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY;
 			{
@@ -234,8 +229,7 @@ void plugin_sharaclub::parse_vod(const CThreadConfig& config)
 
 		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 		utils::http_request req{ config.m_url, cache_ttl };
-		CWaitCursor cur;
-		if (!utils::DownloadFile(req)) break;
+		if (!utils::AsyncDownloadFile(req).get()) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;

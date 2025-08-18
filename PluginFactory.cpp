@@ -204,7 +204,7 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 		const auto& url = std::format(L"{:s}/editor/configs?ver={:d}.{:d}.{:d}", utils::utf8_to_utf16(g_szServerPath), MAJOR, MINOR, BUILD);
 		utils::http_request req{ url };
 		req.user_agent = std::format(L"IPTV Channel Editor/{:d}.{:d}.{:d}", MAJOR, MINOR, BUILD);
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			std::swap(data, req.body);
 		}

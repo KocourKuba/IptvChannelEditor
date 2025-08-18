@@ -145,11 +145,11 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 	{
 		::ResumeThread(pi.hThread);
 
-		long nTimeout = 20;
+		std::chrono::seconds nTimeout(20s);
 
 		int nErrorCount = 0;
 		DWORD dwExitCode = STILL_ACTIVE;
-		uint64_t dwStart = utils::ChronoGetTickCount();
+		const auto dwStart = utils::ChronoGetTickCount();
 		BOOL bTimeout = FALSE;
 		for (;;)
 		{
@@ -159,7 +159,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 				break;
 			}
 
-			if (utils::CheckForTimeOut(dwStart, nTimeout * 1000))
+			if (utils::CheckForTimeOut(dwStart, nTimeout))
 			{
 				bTimeout = TRUE;
 				::TerminateProcess(pi.hProcess, 0);
@@ -171,7 +171,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 			{
 				for (;;)
 				{
-					if (utils::CheckForTimeOut(dwStart, nTimeout * 1000)) break;
+					if (utils::CheckForTimeOut(dwStart, nTimeout)) break;
 
 					// Peek data from stdout pipe
 					DWORD dwAvail = 0;

@@ -48,7 +48,7 @@ void plugin_glanz::parse_vod(const CThreadConfig& config)
 
 		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 		utils::http_request req{ config.m_url, cache_ttl };
-		if (!utils::DownloadFile(req)) break;
+		if (!utils::AsyncDownloadFile(req).get()) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;

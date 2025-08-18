@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include <vector>
 #include <atlenc.h>
 #include <sstream>
+#include <future>
 
 namespace utils
 {
@@ -60,7 +61,9 @@ struct http_request
 	std::stringstream body;
 };
 
+std::future<bool> AsyncDownloadFile(http_request& request);
 bool DownloadFile(http_request& request);
+
 bool CheckIsCacheExpired(const std::wstring& cache_file, const std::chrono::seconds& cache_ttl);
 void ClearCache();
 void ClearCachedUrl(const std::wstring& url);

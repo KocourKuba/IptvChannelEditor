@@ -81,8 +81,7 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 	req.headers.emplace_back("accept: */*");
 	req.headers.emplace_back("Content-Type: application/x-www-form-urlencoded");
 
-	CWaitCursor cur;
-	if (utils::DownloadFile(req))
+	if (utils::AsyncDownloadFile(req).get())
 	{
 		JSON_ALL_TRY;
 		{
@@ -276,8 +275,6 @@ void plugin_korona::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 	params.creds = creds;
 	update_provider_params(params);
 
-	CWaitCursor cur;
-
 	const auto& url = std::format(L"{:s}/video/{:s}", get_vod_url(params),  movie.id);
 
 	nlohmann::json movies_json = server_request(url, true);
@@ -382,8 +379,7 @@ nlohmann::json plugin_korona::server_request(const std::wstring& url, const bool
 		req.headers.emplace_back("Content-Type: application/x-www-form-urlencoded");
 		req.headers.emplace_back(std::format("Authorization: Bearer {:s}", session_token));
 
-		CWaitCursor cur;
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY;
 			{

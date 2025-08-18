@@ -194,8 +194,7 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 
 	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 	utils::http_request req{ url, cache_ttl };
-	CWaitCursor cur;
-	if (!utils::DownloadFile(req))
+	if (!utils::AsyncDownloadFile(req).get())
 	{
 		return;
 	}
@@ -319,7 +318,7 @@ nlohmann::json plugin_sharavoz::xtream_request(const CThreadConfig& config, cons
 
 	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 	utils::http_request req{ url, cache_ttl };
-	if (utils::DownloadFile(req))
+	if (utils::AsyncDownloadFile(req).get())
 	{
 		JSON_ALL_TRY;
 		{

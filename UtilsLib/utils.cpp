@@ -68,25 +68,20 @@ inline int atoi_4(const char* s)
 	return atoi_2(s) * 100 + atoi_2(s + 2);
 }
 
-// simulation of Windows GetTickCount()
-uint64_t ChronoGetTickCount()
+
+std::chrono::milliseconds ChronoGetTickCount()
 {
-	return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+	return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch());
 }
 
-uint64_t GetTimeDiff(uint64_t dwStartTime)
+std::chrono::milliseconds GetTimeDiff(const std::chrono::milliseconds& startTime)
 {
-	uint64_t dwCurrent = ChronoGetTickCount();
-
-	if (dwStartTime > dwCurrent)
-		return (unsigned long long) - 1 - dwCurrent - dwStartTime;
-
-	return (dwCurrent - dwStartTime);
+	return ChronoGetTickCount() - startTime;
 }
 
-bool CheckForTimeOut(uint64_t dwStartTime, uint32_t dwTimeOut)
+bool CheckForTimeOut(const std::chrono::milliseconds& startTime, const std::chrono::seconds& timeOut)
 {
-	return (GetTimeDiff(dwStartTime) > dwTimeOut);
+	return (GetTimeDiff(startTime) > timeOut);
 }
 
 inline size_t count_utf8_to_utf16(const char* sData, size_t sSize)

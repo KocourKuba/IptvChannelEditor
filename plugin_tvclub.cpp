@@ -48,7 +48,6 @@ void plugin_tvclub::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
-		CWaitCursor cur;
 		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"account")) };
 		if (utils::DownloadFile(req))
 		{
@@ -104,9 +103,8 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 
 	get_api_token(params);
 
-	CWaitCursor cur;
 	utils::http_request req{replace_params_vars(params, std::format(API_COMMAND_URL, L"settings"))};
-	if (utils::DownloadFile(req))
+	if (utils::AsyncDownloadFile(req).get())
 	{
 		JSON_ALL_TRY;
 		{
@@ -147,9 +145,8 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 		auto url = std::format(API_COMMAND_URL, L"set");
 		url += std::format(PARAM_FMT, L"server", REPL_SERVER_ID);
 
-		CWaitCursor cur;
 		utils::http_request req{ replace_params_vars(params, url) };
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY;
 			{

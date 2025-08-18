@@ -39,7 +39,6 @@ void plugin_itv::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
-		CWaitCursor cur;
 		utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
 		if (utils::DownloadFile(req))
 		{

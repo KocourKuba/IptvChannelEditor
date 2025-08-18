@@ -56,11 +56,10 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 
 	if (account_info.empty())
 	{
-		CWaitCursor cur;
 		utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
 		req.headers.emplace_back("accept: */*");
 		req.headers.emplace_back(std::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password));
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY
 			{
@@ -105,7 +104,7 @@ void plugin_cbilling::parse_vod(const CThreadConfig& config)
 
 		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 		utils::http_request req{ config.m_url, cache_ttl };
-		if (!utils::DownloadFile(req)) break;
+		if (!utils::AsyncDownloadFile(req).get()) break;
 
 		int total = 0;
 		JSON_ALL_TRY;
@@ -139,7 +138,13 @@ void plugin_cbilling::parse_vod(const CThreadConfig& config)
 				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0 || retry > 2) break;
 
 				utils::http_request jreq{ std::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", config.m_url, category->id, page), cache_ttl };
-				if (!utils::DownloadFile(jreq) || req.body.bad())
+				if (!utils::AsyncDownloadFile(jreq).get())
+				{
+					retry++;
+					continue;
+				}
+
+				if (req.body.bad())
 				{
 					retry++;
 					continue;
@@ -224,8 +229,7 @@ void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie& movi
 	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 	utils::http_request req{ url, cache_ttl };
 
-	CWaitCursor cur;
-	if (!utils::DownloadFile(req))
+	if (!utils::AsyncDownloadFile(req).get())
 	{
 		return;
 	}

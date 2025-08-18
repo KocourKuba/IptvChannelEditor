@@ -118,11 +118,11 @@ BOOL CIconsListDlg::OnInitDialog()
 	else
 	{
 		CWaitCursor cur;
-		utils::http_request req{ m_iconSource };
+		utils::http_request req{ m_iconSource, 1h };
 		if (utils::DownloadFile(req))
 		{
 			const auto& str = req.body.str();
-			int lines = (int)std::count(str.begin(), str.end(), '\n');
+			int lines = static_cast<int>(std::count(str.begin(), str.end(), '\n'));
 
 			CThreadConfig cfg;
 			cfg.m_parent = this;

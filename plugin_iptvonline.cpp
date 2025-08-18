@@ -77,13 +77,12 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 	json_request["client_secret"] = client_secret;
 	json_request["device_id"] = device_id;
 
-	CWaitCursor cur;
 	utils::http_request req{ replace_params_vars(params, url) };
 	req.headers.emplace_back("accept: */*");
 	req.headers.emplace_back("Content-Type: application/json; charset=utf-8");
 	req.post_data = json_request.dump();
 	req.verb_post = true;
-	if (utils::DownloadFile(req))
+	if (utils::AsyncDownloadFile(req).get())
 	{
 		JSON_ALL_TRY;
 		{
@@ -522,8 +521,7 @@ nlohmann::json plugin_iptvonline::server_request(utils::http_request& request, c
 		request.headers.emplace_back("Content-Type: application/json; charset=utf-8");
 		request.headers.emplace_back(std::format("Authorization: Bearer {:s}", session_token));
 
-		CWaitCursor cur;
-		if (utils::DownloadFile(request))
+		if (utils::AsyncDownloadFile(request).get())
 		{
 			JSON_ALL_TRY;
 			{

@@ -97,9 +97,10 @@ static constexpr auto UPDATE_SERVER1 = L"http://igores.ru/sharky72";
 static constexpr auto UPDATE_SERVER2 = L"http://iptv.esalecrm.net/update_editor";
 
 
-uint64_t ChronoGetTickCount();
-uint64_t GetTimeDiff(uint64_t dwStartTime);
-bool CheckForTimeOut(uint64_t dwStartTime, uint32_t dwTimeOut);
+// simulation of Windows GetTickCount()
+std::chrono::milliseconds ChronoGetTickCount();
+std::chrono::milliseconds GetTimeDiff(const std::chrono::milliseconds& startTime);
+bool CheckForTimeOut(const std::chrono::milliseconds& startTime, const std::chrono::seconds& timeOut);
 
 template <typename T> class EMSLiterals;
 

@@ -923,7 +923,7 @@ void CIPTVChannelEditorDlg::CollectCredentials()
 
 	if (m_all_credentials.size() > 1)
 	{
-		int i = 0;
+		size_t i = 0;
 		pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SEPARATOR);
 		for (const auto& cred : m_all_credentials)
 		{
@@ -1030,11 +1030,10 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 	}
 	else if (utils::CrackUrl(m_playlist_url))
 	{
-		CWaitCursor cur;
 		utils::http_request req{ m_playlist_url, force ? std::chrono::hours::zero() : GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) };
 		req.user_agent = m_plugin->get_user_agent();
 
-		if (!utils::DownloadFile(req))
+		if (!utils::AsyncDownloadFile(req).get())
 		{
 			CString msg;
 			msg.Format(IDS_STRING_ERR_CANT_DOWNLOAD_PLAYLIST, req.error_message.c_str());
@@ -1993,7 +1992,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 #endif // _DEBUG
 
 	UpdateExtToken(uri_stream);
-	auto dwStart = utils::ChronoGetTickCount();
+	const auto dwStart = utils::ChronoGetTickCount();
 
 	// check end time
 	EpgInfo epg_info{};
@@ -2036,7 +2035,8 @@ void CIPTVChannelEditorDlg::FillEPG()
 
 	for(const auto& epg_id : ids)
 	{
-		if (found || epg_id.empty()) continue;
+		if (found) break;
+		if (epg_id.empty()) continue;
 
 		std::wstring alias = epg_id;
 		if (!m_epg_aliases.empty())
@@ -2061,7 +2061,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 		}
 	}
 
-	TRACE("\nLoad time %d\n", DWORD(utils::ChronoGetTickCount() - dwStart));
+	ATLTRACE("\nEPG load time %.3f s\n", utils::GetTimeDiff(dwStart).count() / 1000.);
 
 	if (found && epg_info.time_start != 0)
 	{
@@ -2096,7 +2096,6 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_tim
 
 	bool added = false;
 
-	CWaitCursor cur;
 
 	TemplateParams params;
 	params.creds = GetCurrentAccount();
@@ -2119,7 +2118,7 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_tim
 		}
 	}
 
-	if (!utils::DownloadFile(req))
+	if (!utils::AsyncDownloadFile(req).get())
 	{
 		return false;
 	}
@@ -2230,8 +2229,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 	utils::http_request req{ m_xmltv_sources[m_xmltvEpgSource], cache_ttl };
 	req.user_agent = m_plugin->get_user_agent();
 
-	CWaitCursor cur;
-	if (!utils::DownloadFile(req))
+	if (!utils::AsyncDownloadFile(req).get())
 	{
 		LogProtocol(std::format(L"Can't download file: {:s}", m_xmltv_sources[m_xmltvEpgSource]));
 		return false;
@@ -2345,8 +2343,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 		}
 		node_doc = nullptr;
 
-		auto dwEnd = utils::ChronoGetTickCount();
-		TRACE("\nCount nodes time %f, Total channel nodes %d, programme nodes %d\n", (double)(dwEnd - dwStart) / 1000., ch_cnt, prg_cnt);
+		ATLTRACE("\nCount nodes time %.3f s, Total channel nodes %d, programme nodes %d\n", utils::GetTimeDiff(dwStart).count() / 1000., ch_cnt, prg_cnt);
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -2385,12 +2382,12 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 				m_wndProgress.SetPos(i);
 			}
 		}
-		dwEnd = utils::ChronoGetTickCount();
-		TRACE("\nParse channels time %f\n", (double)(dwEnd - dwStart) / 1000.);
+
+		ATLTRACE("\nParse channels time %.3f s\n", utils::GetTimeDiff(dwStart).count() / 1000.);
 
 		//////////////////////////////////////////////////////////////////////////
 		// begin parsing programme nodes
-		dwStart = dwEnd;
+		dwStart = utils::ChronoGetTickCount();
 		i = 0;
 
 		m_wndProgress.SetRange32(0, prg_cnt);
@@ -2423,8 +2420,8 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 				m_wndProgress.SetPos(i);
 			}
 		}
-		dwEnd = utils::ChronoGetTickCount();
-		TRACE("\nParse programme time %f\n", (double)(dwEnd - dwStart) / 1000.);
+
+		ATLTRACE("\nParse programme time %.3f s\n", utils::GetTimeDiff(dwStart).count() / 1000.);
 	}
 	catch (...)
 	{
@@ -2755,8 +2752,6 @@ HCURSOR CIPTVChannelEditorDlg::OnQueryDragIcon()
 
 void CIPTVChannelEditorDlg::OnAddCategory()
 {
-	CWaitCursor cur;
-
 	// disable autosync when add channels
 	BOOL autoSyncOld = GetConfig().get_int(true, REG_AUTO_SYNC);
 	GetConfig().set_int(true, REG_AUTO_SYNC, FALSE);
@@ -3356,8 +3351,8 @@ void CIPTVChannelEditorDlg::OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResul
 			{
 				if (itemCategory->get_key() == key || value.category->is_not_movable()) continue;
 
-				subMenuCopy.AppendMenu(MF_STRING | MF_ENABLED, ID_COPY_TO_START + key, value.category->get_title().c_str());
-				subMenuMove.AppendMenu(MF_STRING | MF_ENABLED, ID_MOVE_TO_START + key, value.category->get_title().c_str());
+				subMenuCopy.AppendMenu(MF_STRING | MF_ENABLED, ID_COPY_TO_START + static_cast<size_t>(key), value.category->get_title().c_str());
+				subMenuMove.AppendMenu(MF_STRING | MF_ENABLED, ID_MOVE_TO_START + static_cast<size_t>(key), value.category->get_title().c_str());
 			}
 
 			pMenu->InsertMenu(ID_EDIT_RENAME, MF_BYCOMMAND | MF_POPUP, (UINT_PTR)subMenuCopy.Detach(), _T("Copy To"));
@@ -3431,7 +3426,7 @@ void CIPTVChannelEditorDlg::OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResu
 
 		for (const auto& category : m_categoriesMap)
 		{
-			subMenuCopy.AppendMenu(MF_STRING | MF_ENABLED, ID_ADD_TO_START + category.first, category.second.category->get_title().c_str());
+			subMenuCopy.AppendMenu(MF_STRING | MF_ENABLED, ID_ADD_TO_START + static_cast<size_t>(category.first), category.second.category->get_title().c_str());
 		}
 
 		pMenu->InsertMenu(ID_PLAYLISTMENU_SUBMENU, MF_BYCOMMAND | MF_POPUP, (UINT_PTR)subMenuCopy.Detach(), _T("Add To"));
@@ -5310,7 +5305,6 @@ void CIPTVChannelEditorDlg::OnSyncTreeItem()
 
 	m_inSync = true;
 
-	CWaitCursor cur;
 	SearchParams params;
 
 	auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
@@ -6286,5 +6280,6 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomXmltvEpg()
 
 	GetConfig().set_int(false, REG_EPG_SOURCE_IDX, m_xmltvEpgSource);
 
+	CWaitCursor cur;
 	FillEPG();
 }
