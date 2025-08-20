@@ -62,7 +62,7 @@ BOOL CUpdateSettingsPage::OnInitDialog()
 	__super::OnInitDialog();
 
 	m_wndUpdateServer.AddString(utils::UPDATE_SERVER1);
-	m_wndUpdateServer.AddString(utils::UPDATE_SERVER2);
+	//m_wndUpdateServer.AddString(utils::UPDATE_SERVER2);
 
 	m_UpdateFreq = GetConfig().get_int(true, REG_UPDATE_FREQ, 3);
 	m_bUpdateChannels = GetConfig().get_int(true, REG_UPDATE_PL);

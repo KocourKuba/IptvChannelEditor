@@ -495,7 +495,7 @@ int main(int argc, char* argv[])
 
 	if (debug) //-V547
 	{
-		info.server = utils::UPDATE_SERVER2;
+		info.server = utils::UPDATE_SERVER1;
 	}
 
 	LogProtocol(std::format(L"Update server url: {:s}", info.server));

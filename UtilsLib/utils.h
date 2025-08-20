@@ -93,8 +93,8 @@ static constexpr auto CHANNELS_LIST_PATH = L"ChannelsLists\\";
 
 static constexpr auto UPDATES_FOLDER = L"Updates\\";
 static constexpr auto UPDATE_NAME = L"update.xml";
-static constexpr auto UPDATE_SERVER1 = L"http://igores.ru/sharky72";
-static constexpr auto UPDATE_SERVER2 = L"http://iptv.esalecrm.net/update_editor";
+static constexpr auto UPDATE_SERVER1 = L"http://iptv.esalecrm.net/update_editor";
+//static constexpr auto UPDATE_SERVER2 = L"http://igores.ru/sharky72";
 
 
 // simulation of Windows GetTickCount()

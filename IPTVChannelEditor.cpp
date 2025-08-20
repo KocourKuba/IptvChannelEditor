@@ -1758,8 +1758,8 @@ int RequestToUpdateServer(const std::wstring& command, bool isThread /*= true*/)
 #endif // _DEBUG
 
 		std::wstring newCmd(command);
-		const auto& url = GetConfig().get_int(true, REG_UPDATE_SERVER, 0) == 0 ? utils::UPDATE_SERVER1 : utils::UPDATE_SERVER2;
-		newCmd += std::format(L" --server={:s}", url);
+		//const auto& url = GetConfig().get_int(true, REG_UPDATE_SERVER, 0) == 0 ? utils::UPDATE_SERVER1 : utils::UPDATE_SERVER1;
+		newCmd += std::format(L" --server={:s}", utils::UPDATE_SERVER1);
 
 		if (!isThread)
 		{
