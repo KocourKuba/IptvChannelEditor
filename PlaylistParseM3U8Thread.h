@@ -29,4 +29,4 @@ DEALINGS IN THE SOFTWARE.
 #include "base_plugin.h"
 
 
-void PlaylistParseM3U8Thread(ThreadConfig config, std::shared_ptr<base_plugin> parent_plugin, std::wstring rootPath);
+void PlaylistParseM3U8Thread(const std::shared_ptr<ThreadConfig> config, const std::shared_ptr<base_plugin> parent_plugin, const std::wstring& rootPath);

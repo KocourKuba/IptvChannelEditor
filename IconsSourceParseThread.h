@@ -27,4 +27,4 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "ThreadConfig.h"
 
-void IconsSourceParseThread(ThreadConfig config);
+void IconsSourceParseThread(const std::shared_ptr<ThreadConfig> config);

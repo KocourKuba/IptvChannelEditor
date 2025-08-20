@@ -172,7 +172,7 @@ void plugin_korona::fill_servers_list(TemplateParams& params)
 	set_servers_list(servers);
 }
 
-void plugin_korona::parse_vod(ThreadConfig config)
+void plugin_korona::parse_vod(const ThreadConfig& config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 	const auto& all_name = load_string_resource(IDS_STRING_ALL);

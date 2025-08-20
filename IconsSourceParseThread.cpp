@@ -34,18 +34,18 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-void IconsSourceParseThread(ThreadConfig config)
+void IconsSourceParseThread(const std::shared_ptr<ThreadConfig> config)
 {
 	auto entries = std::make_unique<std::vector<CIconSourceData>>();
 
-	if (config.m_data)
+	if (config->m_data)
 	{
-		const auto& wbuf = config.m_data->str();
-		boost::regex re(config.nparam);
+		const auto& wbuf = config->m_data->str();
+		boost::regex re(config->nparam);
 		std::istringstream stream(wbuf);
 		if (stream.good())
 		{
-			SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
+			SendNotifyParent(config->m_parent, WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
 
 			int num = 0;
 			int step = 0;
@@ -68,8 +68,8 @@ void IconsSourceParseThread(ThreadConfig config)
 				num++;
 				if (num % 100 == 0)
 				{
-					SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, num, step);
-					if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
+					SendNotifyParent(config->m_parent, WM_UPDATE_PROGRESS, num, step);
+					if (::WaitForSingleObject(config->m_hStop, 0) == WAIT_OBJECT_0)
 					{
 						entries.release();
 						break;
@@ -79,5 +79,5 @@ void IconsSourceParseThread(ThreadConfig config)
 		}
 	}
 
-	SendNotifyParent(config.m_parent, WM_END_LOAD_PLAYLIST, (WPARAM)entries.release());
+	SendNotifyParent(config->m_parent, WM_END_LOAD_PLAYLIST, (WPARAM)entries.release());
 }

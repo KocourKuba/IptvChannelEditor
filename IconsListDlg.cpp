@@ -132,19 +132,19 @@ BOOL CIconsListDlg::OnInitDialog()
 			m_wndProgress.SetPos(0);
 			m_wndProgress.ShowWindow(SW_SHOW);
 
-			ThreadConfig cfg;
-			cfg.m_parent = this;
-			cfg.m_data = std::make_shared<std::stringstream>(std::move(req.body));
-			cfg.m_hStop = m_evtStop;
+			auto cfg = std::make_shared<ThreadConfig>();
+			cfg->m_parent = this;
+			cfg->m_data = std::make_shared<std::stringstream>(std::move(req.body));
+			cfg->m_hStop = m_evtStop;
 
 			if (m_isHtmlParser)
 			{
-				cfg.nparam = R"(^<tr><td><img src='(?<link>[^']+)'.+><\/td><td>(?<name>[^<].+)<\/td><td>(?<id>[^<].+)<\/td><td>.*$)";
+				cfg->nparam = R"(^<tr><td><img src='(?<link>[^']+)'.+><\/td><td>(?<name>[^<].+)<\/td><td>(?<id>[^<].+)<\/td><td>.*$)";
 				std::jthread(&IconsSourceParseThread, cfg).detach();
 			}
 			else
 			{
-				std::jthread(&PlaylistParseM3U8Thread, cfg, m_parent_plugin, GetAppPath(utils::PLUGIN_ROOT)).detach();
+				std::jthread(&PlaylistParseM3U8Thread, cfg, m_parent_plugin, std::move(GetAppPath(utils::PLUGIN_ROOT))).detach();
 			}
 		}
 		else

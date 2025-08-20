@@ -30,6 +30,6 @@ DEALINGS IN THE SOFTWARE.
 class plugin_glanz : public base_plugin
 {
 public:
-	void parse_vod(ThreadConfig config) override;
+	void parse_vod(const ThreadConfig& config) override;
 	void update_entry(PlaylistEntry& entry) override;
 };

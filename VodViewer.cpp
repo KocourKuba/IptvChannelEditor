@@ -240,22 +240,16 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	m_evtStop.ResetEvent();
 	m_evtFinished.ResetEvent();
 
-	TemplateParams params;
-	params.creds = m_account;
-
-	m_plugin->get_api_token(params);
-	m_plugin->update_provider_params(params);
-
-	const auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
-
 	m_wndProgress.ShowWindow(SW_HIDE);
 	m_wndStop.ShowWindow(SW_HIDE);
 
-	ThreadConfig cfg;
-	cfg.m_parent = this;
-	cfg.m_hStop = m_evtStop;
-	cfg.m_url = url;
-	cfg.m_params = params;
+	auto cfg = std::make_shared<ThreadConfig>();
+	cfg->m_parent = this;
+	cfg->m_hStop = m_evtStop;
+	cfg->m_params.creds = m_account;
+	m_plugin->get_api_token(cfg->m_params);
+	m_plugin->update_provider_params(cfg->m_params);
+	cfg->m_url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), cfg->m_params);
 
 	std::jthread(&PlaylistParseJsonThread, cfg, m_plugin).detach();
 }
@@ -331,12 +325,12 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 		return;
 	}
 
-	ThreadConfig cfg;
-	cfg.m_parent = this;
-	cfg.m_data = std::make_shared<std::stringstream>(std::move(req.body));
-	cfg.m_hStop = m_evtStop;
+	auto cfg = std::make_shared<ThreadConfig>();
+	cfg->m_parent = this;
+	cfg->m_data = std::make_shared<std::stringstream>(std::move(req.body));
+	cfg->m_hStop = m_evtStop;
 
-	std::jthread(&PlaylistParseM3U8Thread, cfg, m_plugin, GetAppPath(utils::PLUGIN_ROOT)).detach();
+	std::jthread(&PlaylistParseM3U8Thread, cfg, m_plugin, std::move(GetAppPath(utils::PLUGIN_ROOT))).detach();
 }
 
 LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)

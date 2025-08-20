@@ -40,7 +40,7 @@ constexpr auto VOD_API_REQUEST = L"{:s}/player_api.php?username={{LOGIN}}&passwo
 constexpr auto VOD_API_ACTION = L"{:s}&action={:s}";
 constexpr auto PARAM_FMT = L"&{:s}={:s}";
 
-void plugin_sharavoz::parse_vod(ThreadConfig config)
+void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 

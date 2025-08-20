@@ -404,7 +404,7 @@ bool DownloadFile(http_request& request)
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
 			request.body.seekg(0);
 			out_stream << request.body.rdbuf();
-			ATLTRACE("\nSave to cache for %d seconds\n", request.cache_ttl);
+			ATLTRACE("\nSave to cache for %d seconds\n", request.cache_ttl.count());
 		}
 
 		bool res = request.body.tellp() != std::streampos(0);
@@ -475,9 +475,9 @@ bool CheckIsCacheExpired(const std::wstring& cache_file, const std::chrono::seco
 	{
 		auto diff = std::chrono::duration_cast<std::chrono::seconds>(std::filesystem::file_time_type::clock::now() - std::filesystem::last_write_time(cache_file));
 		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n",
-				 std::chrono::duration_cast<std::chrono::hours>(diff),
-				 std::chrono::duration_cast<std::chrono::minutes>(diff) % 60,
-				 diff % 60);
+				 std::chrono::duration_cast<std::chrono::hours>(diff).count(),
+				 std::chrono::duration_cast<std::chrono::minutes>(diff).count() % 60,
+				 diff.count() % 60);
 		return (diff > cache_ttl);
 	}
 

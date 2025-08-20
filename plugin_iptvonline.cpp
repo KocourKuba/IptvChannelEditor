@@ -264,7 +264,7 @@ bool plugin_iptvonline::set_server(TemplateParams& params)
 	return false;
 }
 
-void plugin_iptvonline::parse_vod(ThreadConfig config)
+void plugin_iptvonline::parse_vod(const ThreadConfig& config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 

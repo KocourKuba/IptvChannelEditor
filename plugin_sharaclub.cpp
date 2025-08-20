@@ -217,7 +217,7 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 	return false;
 }
 
-void plugin_sharaclub::parse_vod(ThreadConfig config)
+void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 

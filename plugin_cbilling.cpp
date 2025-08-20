@@ -91,7 +91,7 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 	}
 }
 
-void plugin_cbilling::parse_vod(ThreadConfig config)
+void plugin_cbilling::parse_vod(const ThreadConfig& config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 

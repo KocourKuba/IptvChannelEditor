@@ -35,16 +35,16 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-void PlaylistParseM3U8Thread(ThreadConfig config, std::shared_ptr<base_plugin> parent_plugin, std::wstring rootPath)
+void PlaylistParseM3U8Thread(const std::shared_ptr<ThreadConfig> config, const std::shared_ptr<base_plugin> parent_plugin, const std::wstring& rootPath)
 {
 	auto playlist = std::make_unique<Playlist>();
-	if (config.m_data && parent_plugin)
+	if (config->m_data && parent_plugin)
 	{
-		const auto& wbuf = config.m_data->str();
+		const auto& wbuf = config->m_data->str();
 		std::istringstream stream(wbuf);
 		if (stream.good())
 		{
-			SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
+			SendNotifyParent(config->m_parent, WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
 
 			auto entry = std::make_shared<PlaylistEntry>(playlist, rootPath);
 			const auto& pl_info = parent_plugin->get_current_playlist_info();
@@ -103,8 +103,8 @@ void PlaylistParseM3U8Thread(ThreadConfig config, std::shared_ptr<base_plugin> p
 					channels++;
 					if (channels % 100 == 0)
 					{
-						SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, channels, step);
-						if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
+						SendNotifyParent(config->m_parent, WM_UPDATE_PROGRESS, channels, step);
+						if (::WaitForSingleObject(config->m_hStop, 0) == WAIT_OBJECT_0)
 						{
 							playlist.reset();
 							break;
@@ -120,7 +120,7 @@ void PlaylistParseM3U8Thread(ThreadConfig config, std::shared_ptr<base_plugin> p
 		}
 	}
 
-	SendNotifyParent(config.m_parent, WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release());
+	SendNotifyParent(config->m_parent, WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release());
 
-	::SetEvent(config.m_hExit);
+	::SetEvent(config->m_hExit);
 }

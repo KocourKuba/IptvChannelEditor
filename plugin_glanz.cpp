@@ -36,7 +36,7 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-void plugin_glanz::parse_vod(ThreadConfig config)
+void plugin_glanz::parse_vod(const ThreadConfig& config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 

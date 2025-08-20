@@ -31,7 +31,7 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-void PlaylistParseJsonThread(ThreadConfig config, std::shared_ptr<base_plugin> parent_plugin)
+void PlaylistParseJsonThread(const std::shared_ptr<ThreadConfig> config, const std::shared_ptr<base_plugin> parent_plugin)
 {
-	parent_plugin->parse_vod(config);
+	parent_plugin->parse_vod(*config);
 }

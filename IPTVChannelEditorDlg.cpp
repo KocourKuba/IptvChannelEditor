@@ -1083,13 +1083,13 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 	m_evtStop.ResetEvent();
 	m_evtThreadExit.ResetEvent();
 
-	ThreadConfig cfg;
-	cfg.m_parent = this;
-	cfg.m_data = std::make_shared<std::stringstream>(std::move(data));
-	cfg.m_hStop = m_evtStop;
-	cfg.m_hExit = m_evtThreadExit;
+	auto cfg = std::make_shared<ThreadConfig>();
+	cfg->m_parent = this;
+	cfg->m_data = std::make_shared<std::stringstream>(std::move(data));
+	cfg->m_hStop = m_evtStop;
+	cfg->m_hExit = m_evtThreadExit;
 
-	std::jthread(&PlaylistParseM3U8Thread, cfg, m_plugin, GetAppPath(utils::PLUGIN_ROOT)).detach();
+	std::jthread(&PlaylistParseM3U8Thread, cfg, m_plugin, std::move(GetAppPath(utils::PLUGIN_ROOT))).detach();
 }
 
 void CIPTVChannelEditorDlg::OnTimer(UINT_PTR nIDEvent)
@@ -2220,7 +2220,7 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_tim
 			epg_map[prev_start]->time_end = epg_map[prev_start]->time_start + 3600; // fake end
 		}
 
-		m_epg_cache[epg_idx][epg_id] = epg_map;
+		m_epg_cache[epg_idx][epg_id] = std::move(epg_map);
 		return added;
 	}
 	JSON_ALL_CATCH;

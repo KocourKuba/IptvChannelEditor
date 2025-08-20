@@ -188,7 +188,7 @@ public:
 	/// <summary>
 	/// parse vod
 	/// </summary>
-	virtual void parse_vod(ThreadConfig config) {}
+	virtual void parse_vod(const ThreadConfig& config) {}
 
 	/// <summary>
 	/// parse movie
