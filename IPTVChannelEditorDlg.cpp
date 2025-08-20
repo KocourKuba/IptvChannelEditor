@@ -244,6 +244,8 @@ CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_EDEMCHANNELEDITOR_DIALOG, pParent)
 	, m_evtStop(FALSE, TRUE)
 	, m_evtThreadExit(TRUE, TRUE)
+	, m_evtUpdateEpg(FALSE, TRUE)
+	, m_evtThreadEpgStop(FALSE, TRUE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_gray = ::GetSysColor(COLOR_GRAYTEXT);
@@ -452,6 +454,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 		TRACE("Failed to create tray icon\n");
 		AfxMessageBox(IDS_STRING_ERR_TRAY_ICON, MB_ICONERROR);
 	}
+
 
 	m_colorAdded = GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 200, 0));
 	m_colorNotAdded = GetConfig().get_int(true, REG_COLOR_NOT_ADDED, RGB(200, 0, 0));
@@ -947,9 +950,12 @@ void CIPTVChannelEditorDlg::CollectCredentials()
 	m_wndPack.SetDropDownMenu(pMenu);
 }
 
-void CIPTVChannelEditorDlg::LoadTimerEPG()
+void CIPTVChannelEditorDlg::TriggerEpg()
 {
-	m_load_epg_timer = SetTimer(ID_LOAD_EPG_TIMER, 50, nullptr);
+	if (m_lastTree && m_wndShowEPG.GetCheck())
+	{
+		m_evtUpdateEpg.SetEvent();
+	}
 }
 
 void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force /*= false*/)
@@ -1061,14 +1067,6 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 	m_wndBtnStop.EnableWindow(TRUE);
 	m_wndProgressInfo.ShowWindow(SW_SHOW);
 
-	auto pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
-	if (!pThread)
-	{
-		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
-		OnEndLoadPlaylist(0);
-		return;
-	}
-
 	m_loading = true;
 
 	m_wndPluginType.EnableWindow(FALSE);
@@ -1082,21 +1080,16 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 
 	std::unique_ptr<Playlist> playlistEntriesOld = std::move(m_playlistEntries);
 
-	FillTreePlaylist();
-
 	m_evtStop.ResetEvent();
 	m_evtThreadExit.ResetEvent();
 
-	CThreadConfig cfg;
+	ThreadConfig cfg;
 	cfg.m_parent = this;
-	cfg.m_data = std::move(data);
+	cfg.m_data = std::make_shared<std::stringstream>(std::move(data));
 	cfg.m_hStop = m_evtStop;
 	cfg.m_hExit = m_evtThreadExit;
-	cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
 
-	pThread->SetData(cfg);
-	pThread->SetPlugin(m_plugin);
-	pThread->ResumeThread();
+	std::jthread(&PlaylistParseM3U8Thread, cfg, m_plugin, GetAppPath(utils::PLUGIN_ROOT)).detach();
 }
 
 void CIPTVChannelEditorDlg::OnTimer(UINT_PTR nIDEvent)
@@ -1109,17 +1102,9 @@ void CIPTVChannelEditorDlg::OnTimer(UINT_PTR nIDEvent)
 		GetDlgItem(IDC_STATIC_CUR_TIME)->SetWindowText(now.Format(_T("%H:%M:%S")));
 		if (now.GetSecond() == 0)
 		{
-			FillEPG();
+			TriggerEpg();
 		}
 		m_update_epg_timer = SetTimer(ID_UPDATE_EPG_TIMER, 1000, nullptr);
-		return;
-	}
-
-	if (nIDEvent == m_load_epg_timer)
-	{
-		KillTimer(m_load_epg_timer);
-		m_load_epg_timer = 0;
-		FillEPG();
 		return;
 	}
 
@@ -1216,6 +1201,12 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 
 	m_plugin->set_internal_epg_urls(playlist_xmltv_sources);
 	FillXmlSources();
+
+	if (!m_threadEPG.joinable())
+	{
+		m_threadEPG = std::jthread(&CIPTVChannelEditorDlg::FillEPG, this);
+	}
+
 
 	UpdateChannelsTreeColors();
 	FillTreePlaylist();
@@ -1316,6 +1307,8 @@ LRESULT CIPTVChannelEditorDlg::OnLoadChannelImage(WPARAM wParam /*= 0*/, LPARAM 
 		return 0;
 
 	UpdateIconInfo(channel);
+
+	UpdateData(FALSE);
 
 	return 0;
 }
@@ -1423,6 +1416,8 @@ void CIPTVChannelEditorDlg::OnCancel()
 	}
 
 	m_evtStop.SetEvent();
+	m_evtThreadEpgStop.SetEvent();
+	m_evtUpdateEpg.SetEvent();
 
 	PostMessage(WM_ON_EXIT);
 }
@@ -1915,7 +1910,8 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 		UpdateData(FALSE);
 	}
 
-	LoadTimerEPG();
+	TriggerEpg();
+	UpdateData(FALSE);
 }
 
 void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
@@ -1953,7 +1949,7 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 		}
 
 		PostMessage(WM_LOAD_PLAYLIST_IMAGE, (WPARAM)entry.get());
-		LoadTimerEPG();
+		TriggerEpg();
 	}
 	else
 	{
@@ -1965,124 +1961,142 @@ void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 
 void CIPTVChannelEditorDlg::FillEPG()
 {
-	m_wndEpg.SetWindowText(L"");
-	if (!m_lastTree || !m_wndShowEPG.GetCheck())
-		return;
-
-	const auto uri_stream = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
-	if (!uri_stream)
-		return;
-
-	int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3) - IDC_RADIO_EPG1;
-	if (epg_idx < 0 || epg_idx > 2)
-		epg_idx = 0;
-
-	int time_shift = m_timeShiftHours * 3600;
-
-	time_t now = time(nullptr);
-	if (m_lastTree == &m_wndChannelsTree)
+	while (true)
 	{
-		now += time_shift;
-	}
+		DWORD state = ::WaitForSingleObject(m_evtUpdateEpg, INFINITE);
+		if (state != WAIT_OBJECT_0) break;
 
-#ifdef _DEBUG
-	COleDateTime tnow(now);
-	std::wstring snow = std::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", tnow.GetYear(), tnow.GetMonth(), tnow.GetDay(), tnow.GetHour(), tnow.GetMinute());
-	ATLTRACE(L"\n%s\n", snow.c_str());
-#endif // _DEBUG
+		DWORD stop = ::WaitForSingleObject(m_evtThreadEpgStop, 0);
 
-	UpdateExtToken(uri_stream);
-	const auto dwStart = utils::ChronoGetTickCount();
+		if (stop == WAIT_OBJECT_0 || stop == WAIT_FAILED) break;
 
-	// check end time
-	EpgInfo epg_info{};
-	bool need_load = true;
-	while(need_load)
-	{
-		if (epg_idx != 2)
+		m_evtUpdateEpg.ResetEvent();
+
+		m_wndEpg.SetWindowText(L"");
+		const auto uri_stream = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
+		if (!uri_stream)
 		{
-			if (!ParseJsonEpg(epg_idx, now, uri_stream))
+			continue;
+		}
+
+		int epg_idx = GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3) - IDC_RADIO_EPG1;
+		if (epg_idx < 0 || epg_idx > 2)
+			epg_idx = 0;
+
+		int time_shift = m_timeShiftHours * 3600;
+
+		time_t now = time(nullptr);
+		if (m_lastTree == &m_wndChannelsTree)
+		{
+			now += time_shift;
+		}
+
+	#ifdef _DEBUG
+		COleDateTime tnow(now);
+		std::wstring show = std::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", tnow.GetYear(), tnow.GetMonth(), tnow.GetDay(), tnow.GetHour(), tnow.GetMinute());
+		ATLTRACE(L"\n%s\n", show.c_str());
+	#endif // _DEBUG
+
+		UpdateExtToken(uri_stream);
+		const auto dwStart = utils::ChronoGetTickCount();
+
+		// check end time
+		EpgInfo epg_info{};
+		bool need_load = true;
+		while(need_load)
+		{
+			if (epg_idx != 2)
 			{
+				need_load = ParseJsonEpg(epg_idx, now, uri_stream);
+			}
+			else
+			{
+				if (m_xmltv_sources.empty()
+					|| m_xmltv_sources[m_xmltvEpgSource].empty()
+					|| m_epg_cache.at(epg_idx).find(L"file already parsed") == m_epg_cache.at(epg_idx).end())
+				{
+					ParseXmEpg(epg_idx);
+				}
+
 				need_load = false;
 			}
 		}
+
+		bool found = false;
+		std::vector<std::wstring> ids;
+		if (epg_idx != 2)
+		{
+			ids.emplace_back(uri_stream->get_epg_id(epg_idx));
+		}
 		else
 		{
-			ParseXmEpg(epg_idx);
-			need_load = false;
-		}
-	}
-
-	bool found = false;
-	std::vector<std::wstring> ids;
-	if (epg_idx != 2)
-	{
-		ids.emplace_back(uri_stream->get_epg_id(epg_idx));
-	}
-	else
-	{
-		const auto& epg_ids = uri_stream->get_epg_ids();
-		for (const auto& val : epg_ids)
-		{
-			if (!val.empty())
+			const auto& epg_ids = uri_stream->get_epg_ids();
+			for (const auto& val : epg_ids)
 			{
-				ids.emplace_back(utils::wstring_tolower_l_copy(val));
-			}
-		}
-		ids.emplace_back(utils::wstring_tolower_l_copy(uri_stream->get_title()));
-		ids.emplace_back(utils::wstring_tolower_l_copy(uri_stream->get_id()));
-	}
-
-	for(const auto& epg_id : ids)
-	{
-		if (found) break;
-		if (epg_id.empty()) continue;
-
-		std::wstring alias = epg_id;
-		if (!m_epg_aliases.empty())
-		{
-			if (const auto& pair = m_epg_aliases.find(alias); pair != m_epg_aliases.end())
-			{
-				alias = pair->second;
-			}
-		}
-
-		if (const auto& it = m_epg_cache[epg_idx].find(alias); it != m_epg_cache[epg_idx].end())
-		{
-			for (auto& epg_pair : it->second)
-			{
-				if (epg_pair.second->time_start <= now && now <= epg_pair.second->time_end)
+				if (!val.empty())
 				{
-					epg_info = *epg_pair.second;
-					found = true;
-					break;
+					ids.emplace_back(utils::wstring_tolower_l_copy(val));
 				}
 			}
+			ids.emplace_back(utils::wstring_tolower_l_copy(uri_stream->get_title()));
+			ids.emplace_back(utils::wstring_tolower_l_copy(uri_stream->get_id()));
 		}
-	}
 
-	ATLTRACE("\nEPG load time %.3f s\n", utils::GetTimeDiff(dwStart).count() / 1000.);
+		for(const auto& epg_id : ids)
+		{
+			if (epg_id.empty()) continue;
 
-	if (found && epg_info.time_start != 0)
-	{
-		COleDateTime time_n(now);
-		COleDateTime time_s(epg_info.time_start - time_shift);
-		COleDateTime time_e(epg_info.time_end - time_shift);
-		CStringA text;
-		text.Format(R"({\rtf1 %ls - %ls\par\b %s\b0\par %s})",
-					time_s.Format(_T("%d.%m.%Y %H:%M:%S")).GetString(),
-					time_e.Format(_T("%d.%m.%Y %H:%M:%S")).GetString(),
-					epg_info.name.c_str(),
-					epg_info.desc.c_str()
-		);
+			std::wstring alias(epg_id);
+			if (!m_epg_aliases.empty())
+			{
+				if (const auto& pair = m_epg_aliases.find(alias); pair != m_epg_aliases.end())
+				{
+					alias = pair->second;
+				}
+			}
 
-		COleDateTimeSpan time_left = time_e - time_n;
-		m_wndProgressTime.SetRange32(0, int(epg_info.time_end - epg_info.time_start));
-		m_wndProgressTime.SetPos(int(now - epg_info.time_start));
-		GetDlgItem(IDC_STATIC_TIME_LEFT)->SetWindowText(time_left.Format(_T("%H:%M")));
+			if (const auto& it = m_epg_cache[epg_idx].find(alias); it != m_epg_cache[epg_idx].end())
+			{
+				for (auto& epg_pair : it->second)
+				{
+					if (epg_pair.second->time_start <= now && now <= epg_pair.second->time_end)
+					{
+						epg_info = *epg_pair.second;
+						found = true;
+						break;
+					}
+				}
+			}
+			if (found) break;
+		}
 
-		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
-		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.GetString());
+		ATLTRACE("\nEPG load time %.3f s\n", utils::GetTimeDiff(dwStart).count() / 1000.);
+
+		if (found && epg_info.time_start != 0 && IsWindow(m_hWnd))
+		{
+			COleDateTime time_n(now);
+			COleDateTime time_s(epg_info.time_start - time_shift);
+			COleDateTime time_e(epg_info.time_end - time_shift);
+			CStringA text;
+			text.Format(R"({\rtf1 %ls - %ls\par\b %s\b0\par %s})",
+						time_s.Format(_T("%d.%m.%Y %H:%M:%S")).GetString(),
+						time_e.Format(_T("%d.%m.%Y %H:%M:%S")).GetString(),
+						epg_info.name.c_str(),
+						epg_info.desc.c_str()
+			);
+
+			COleDateTimeSpan time_left = time_e - time_n;
+			m_wndProgressTime.SetRange32(0, int(epg_info.time_end - epg_info.time_start));
+			m_wndProgressTime.SetPos(int(now - epg_info.time_start));
+			CWnd* staticText = GetDlgItem(IDC_STATIC_TIME_LEFT);
+			if (staticText)
+			{
+				staticText->SetWindowText(time_left.Format(_T("%H:%M")));
+			}
+
+			SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
+			m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.GetString());
+		}
 	}
 }
 
@@ -2138,7 +2152,7 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_tim
 	{
 		const auto& parsed_json = nlohmann::json::parse(req.body.str());
 
-		auto& epg_map = m_epg_cache[epg_idx][epg_id];
+		auto epg_map = m_epg_cache[epg_idx][epg_id];
 
 		time_t prev_start = 0;
 		const auto& root = m_plugin->get_epg_root(epg_idx, parsed_json);
@@ -2206,6 +2220,7 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_tim
 			epg_map[prev_start]->time_end = epg_map[prev_start]->time_start + 3600; // fake end
 		}
 
+		m_epg_cache[epg_idx][epg_id] = epg_map;
 		return added;
 	}
 	JSON_ALL_CATCH;
@@ -2213,18 +2228,8 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx, const time_t for_tim
 	return false;
 }
 
-bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
+void CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 {
-	if (m_epg_cache.at(epg_idx).find(L"file already parsed") != m_epg_cache.at(epg_idx).end())
-	{
-		return true;
-	}
-
-	if (m_xmltv_sources.empty() || m_xmltv_sources[m_xmltvEpgSource].empty())
-	{
-		return false;
-	}
-
 	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 	utils::http_request req{ m_xmltv_sources[m_xmltvEpgSource], cache_ttl };
 	req.user_agent = m_plugin->get_user_agent();
@@ -2232,10 +2237,10 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 	if (!utils::AsyncDownloadFile(req).get())
 	{
 		LogProtocol(std::format(L"Can't download file: {:s}", m_xmltv_sources[m_xmltvEpgSource]));
-		return false;
+		return;
 	}
 
-	std::vector<char> buf(8);
+	std::array<char, 8> buf{};
 	req.body.read(buf.data(), 8);
 	req.body.clear();
 
@@ -2265,7 +2270,9 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 	}
 
 	if (file_fmt == SevenZip::CompressionFormat::_Format::Unknown)
-		return false;
+	{
+		return;
+	}
 
 	auto cache_file = utils::GetCachedPath(req.url);
 	if (file_fmt == SevenZip::CompressionFormat::_Format::GZip || file_fmt == SevenZip::CompressionFormat::_Format::Zip)
@@ -2281,13 +2288,13 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 			if (names.empty())
 			{
 				LogProtocol(std::format(L"Archive is empty: {:s}", m_xmltv_sources[m_xmltvEpgSource]));
-				return false;
+				return;
 			}
 
 			if (!extractor.ExtractFile(names[0], utils::GetCacheDir()))
 			{
 				LogProtocol(std::format(L"Can't extract file: '{:s}' from '{:s}'", names[0], m_xmltv_sources[m_xmltvEpgSource]));
-				return false;
+				return;
 			}
 
 			// Special case for unpacking gz
@@ -2324,7 +2331,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 		if (!tv_node)
 		{
 			LogProtocol("Incorrect xmltv file");
-			return false;
+			return;
 		}
 
 		auto ch_node = tv_node->first_node("channel");
@@ -2415,6 +2422,7 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 			epg_map[channel_id].emplace(epg_info->time_start, epg_info);
 			prog_node = prog_node->next_sibling();
 			added = true;
+
 			if ((++i % 100) == 0)
 			{
 				m_wndProgress.SetPos(i);
@@ -2425,17 +2433,13 @@ bool CIPTVChannelEditorDlg::ParseXmEpg(const int epg_idx)
 	}
 	catch (...)
 	{
-		return false;
 	}
-
-	m_wndProgress.ShowWindow(SW_HIDE);
 
 	if (added)
 	{
 		m_epg_cache.at(epg_idx)[L"file already parsed"] = std::map<time_t, std::shared_ptr<EpgInfo>>();
 	}
-
-	return added;
+	m_wndProgress.ShowWindow(SW_HIDE);
 }
 
 std::shared_ptr<ChannelInfo> CIPTVChannelEditorDlg::FindChannel(HTREEITEM hItem) const
@@ -3673,7 +3677,7 @@ void CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours()
 
 	set_allow_save();
 
-	LoadTimerEPG();
+	TriggerEpg();
 }
 
 void CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult)
@@ -3721,7 +3725,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEpg()
 {
 	GetConfig().set_int(false, REG_EPG_ID_IDX, GetCheckedRadioButton(IDC_RADIO_EPG1, IDC_RADIO_EPG3) - IDC_RADIO_EPG1);
 
-	LoadTimerEPG();
+	TriggerEpg();
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
@@ -4220,7 +4224,6 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 		{
 			const std::filesystem::path image_cache = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
 			const auto& dir_path = image_cache / std::filesystem::path(image_lib.get_package_name()).stem() / L"";
-			CWaitCursor cur;
 			const auto& file_path = utils::GetCachedPath(image_lib.get_url());
 			if (!std::filesystem::exists(file_path) || std::filesystem::file_size(file_path) == 0)
 			{
@@ -4229,7 +4232,7 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 
 				auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL, 24h);
 				utils::http_request req{ image_lib.get_url(), cache_ttl };
-				if (!utils::DownloadFile(req))
+				if (!utils::AsyncDownloadFile(req).get())
 				{
 					AfxMessageBox(req.error_message.c_str(), MB_ICONERROR | MB_OK);
 					break;
@@ -4897,8 +4900,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		utils::http_request req{ channel->get_icon_uri().get_uri() };
 		req.user_agent = m_plugin->get_user_agent();
 
-		CWaitCursor cur;
-		if (!utils::DownloadFile(req))
+		if (!utils::AsyncDownloadFile(req).get())
 		{
 			AfxMessageBox(req.error_message.c_str(), MB_ICONERROR | MB_OK);
 			continue;
@@ -5108,7 +5110,8 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_params.creds = GetCurrentAccount();
 	cfg.m_params.shift_back = 0;
 
-	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread),
+														  THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
 	if (!pThread)
 	{
 		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
@@ -6137,7 +6140,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonEditConfig()
 void CIPTVChannelEditorDlg::OnBnClickedCheckShowEpg()
 {
 	GetConfig().set_int(true, REG_SHOW_EPG, m_wndShowEPG.GetCheck());
-	LoadTimerEPG();
+	TriggerEpg();
 }
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon()
@@ -6160,6 +6163,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonReloadIcon()
 	}
 
 	UpdateIconInfo(uri);
+	UpdateData(FALSE);
 }
 
 void CIPTVChannelEditorDlg::UpdateIconInfo(uri_stream* info)
@@ -6172,7 +6176,6 @@ void CIPTVChannelEditorDlg::UpdateIconInfo(uri_stream* info)
 	{
 		m_wndChannelIcon.SetBitmap(nullptr);
 		GetDlgItem(IDC_STATIC_ICON_SIZE)->SetWindowText(L"");
-		UpdateData(FALSE);
 		return;
 	}
 
@@ -6184,7 +6187,6 @@ void CIPTVChannelEditorDlg::UpdateIconInfo(uri_stream* info)
 	}
 
 	SetImageControl(img, m_wndChannelIcon);
-	UpdateData(FALSE);
 }
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomStreamType()
@@ -6281,5 +6283,5 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomXmltvEpg()
 	GetConfig().set_int(false, REG_EPG_SOURCE_IDX, m_xmltvEpgSource);
 
 	CWaitCursor cur;
-	FillEPG();
+	TriggerEpg();
 }

@@ -26,8 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_itv.h"
-
-#include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -40,7 +39,7 @@ void plugin_itv::parse_account_info(TemplateParams& params)
 	if (account_info.empty())
 	{
 		utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY
 			{

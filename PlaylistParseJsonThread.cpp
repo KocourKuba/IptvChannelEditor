@@ -26,21 +26,12 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "PlaylistParseJsonThread.h"
-#include "base_plugin.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CPlaylistParseJsonThread, CWinThread)
-
-BOOL CPlaylistParseJsonThread::InitInstance()
+void PlaylistParseJsonThread(ThreadConfig config, std::shared_ptr<base_plugin> parent_plugin)
 {
-	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-
-	m_parent_plugin->parse_vod(m_config);
-
-	CoUninitialize();
-
-	return FALSE;
+	parent_plugin->parse_vod(config);
 }

@@ -30,12 +30,13 @@ DEALINGS IN THE SOFTWARE.
 #include "Constants.h"
 
 #include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-void plugin_glanz::parse_vod(const CThreadConfig& config)
+void plugin_glanz::parse_vod(ThreadConfig config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 
@@ -59,7 +60,7 @@ void plugin_glanz::parse_vod(const CThreadConfig& config)
 
 		if (parsed_json.empty()) break;
 
-		config.SendNotifyParent(WM_INIT_PROGRESS, (int)parsed_json.size(), 0);
+		SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, (int)parsed_json.size(), 0);
 
 		int cnt = 0;
 		for (const auto& item : parsed_json.items())
@@ -116,7 +117,7 @@ void plugin_glanz::parse_vod(const CThreadConfig& config)
 
 			if (++cnt % 100 == 0)
 			{
-				config.SendNotifyParent(WM_UPDATE_PROGRESS, cnt, cnt);
+				SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
 				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 			}
 		}
@@ -127,7 +128,7 @@ void plugin_glanz::parse_vod(const CThreadConfig& config)
 		categories.reset();
 	}
 
-	config.SendNotifyParent(WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
+	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
 void plugin_glanz::update_entry(PlaylistEntry& entry)

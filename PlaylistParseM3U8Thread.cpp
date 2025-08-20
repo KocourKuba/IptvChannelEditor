@@ -35,24 +35,20 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CPlaylistParseM3U8Thread, CWinThread)
-
-BOOL CPlaylistParseM3U8Thread::InitInstance()
+void PlaylistParseM3U8Thread(ThreadConfig config, std::shared_ptr<base_plugin> parent_plugin, std::wstring rootPath)
 {
-	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-
 	auto playlist = std::make_unique<Playlist>();
-	if (m_config.m_data)
+	if (config.m_data && parent_plugin)
 	{
-		const auto& wbuf = m_config.m_data.str();
+		const auto& wbuf = config.m_data->str();
 		std::istringstream stream(wbuf);
 		if (stream.good())
 		{
-			m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
+			SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
 
-			auto entry = std::make_shared<PlaylistEntry>(playlist, m_config.m_rootPath);
-			const auto& pl_info = m_parent_plugin->get_current_playlist_info();
-			const auto& epg_info = m_parent_plugin->get_epg_parameters();
+			auto entry = std::make_shared<PlaylistEntry>(playlist, rootPath);
+			const auto& pl_info = parent_plugin->get_current_playlist_info();
+			const auto& epg_info = parent_plugin->get_epg_parameters();
 			int channels = 0;
 			int step = 0;
 
@@ -64,7 +60,7 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 
 				if (entry->Parse(line))
 				{
-					m_parent_plugin->parse_stream_uri(utils::utf8_to_utf16(line), *entry);
+					parent_plugin->parse_stream_uri(utils::utf8_to_utf16(line), *entry);
 					if (entry->is_valid() && entry->get_category().empty())
 					{
 						entry->set_category(load_string_resource(IDS_STRING_UNSET));
@@ -80,12 +76,12 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 						}
 					}
 
-					m_parent_plugin->update_entry(*entry);
+					parent_plugin->update_entry(*entry);
 
 					// special cases after parsing
-					for (int i = 0; i < m_parent_plugin->get_epg_parameters().size(); ++i)
+					for (int i = 0; i < parent_plugin->get_epg_parameters().size(); ++i)
 					{
-						auto& epg_param = m_parent_plugin->get_epg_parameter(i);
+						auto& epg_param = parent_plugin->get_epg_parameter(i);
 						if (epg_param.epg_url.empty()) continue;
 
 						switch (static_cast<epg_id_sources>(epg_param.get_epg_id_source()))
@@ -102,13 +98,13 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 					}
 
 					playlist->m_entries.emplace_back(entry);
-					entry = std::make_shared<PlaylistEntry>(playlist, m_config.m_rootPath);
+					entry = std::make_shared<PlaylistEntry>(playlist, rootPath);
 
 					channels++;
 					if (channels % 100 == 0)
 					{
-						m_config.SendNotifyParent(WM_UPDATE_PROGRESS, channels, step);
-						if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
+						SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, channels, step);
+						if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
 						{
 							playlist.reset();
 							break;
@@ -118,18 +114,13 @@ BOOL CPlaylistParseM3U8Thread::InitInstance()
 
 				if (entry->get_m3u_entry().get_directive() == m3u_entry::directives::ext_header)
 				{
-					entry = std::make_shared<PlaylistEntry>(playlist, m_config.m_rootPath);
+					entry = std::make_shared<PlaylistEntry>(playlist, rootPath);
 				}
 			}
 		}
 	}
 
-	m_config.SendNotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release());
+	SendNotifyParent(config.m_parent, WM_END_LOAD_PLAYLIST, (WPARAM)playlist.release());
 
-	::SetEvent(m_config.m_hExit);
-	ATLTRACE("\nThread exit\n");
-
-	CoUninitialize();
-
-	return FALSE;
+	::SetEvent(config.m_hExit);
 }

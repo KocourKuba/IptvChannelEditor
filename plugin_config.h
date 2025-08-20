@@ -31,7 +31,6 @@ DEALINGS IN THE SOFTWARE.
 #include "StreamParameters.h"
 #include "EpgParameters.h"
 
-#include "UtilsLib\inet_utils.h"
 #include "UtilsLib\json_wrapper.h"
 
 class plugin_config

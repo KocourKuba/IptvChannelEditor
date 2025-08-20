@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\md5.h"
 #include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -106,7 +107,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 									  L"getUserPackages",
 									  utils::utf8_to_utf16(session_id));
 		utils::http_request req{replace_params_vars(params, url)};
-		if (!utils::DownloadFile(req))
+		if (!utils::AsyncDownloadFile(req).get())
 		{
 			LogProtocol(std::format(L"plugin_tvteam: Failed to get account info: {:s}", req.error_message));
 			return;

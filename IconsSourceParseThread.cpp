@@ -34,22 +34,18 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CIconsSourceParseThread, CWinThread)
-
-BOOL CIconsSourceParseThread::InitInstance()
+void IconsSourceParseThread(ThreadConfig config)
 {
-	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-
 	auto entries = std::make_unique<std::vector<CIconSourceData>>();
 
-	if (m_config.m_data)
+	if (config.m_data)
 	{
-		const auto& wbuf = m_config.m_data.str();
-		boost::regex re(m_config.nparam);
+		const auto& wbuf = config.m_data->str();
+		boost::regex re(config.nparam);
 		std::istringstream stream(wbuf);
 		if (stream.good())
 		{
-			m_config.SendNotifyParent(WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
+			SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
 
 			int num = 0;
 			int step = 0;
@@ -61,8 +57,7 @@ BOOL CIconsSourceParseThread::InitInstance()
 				step++;
 
 				boost::smatch m;
-				if (!boost::regex_match(line, m, re))
-					continue;
+				if (!boost::regex_match(line, m, re))	continue;
 
 				CIconSourceData entry;
 				entry.logo_path = utils::utf8_to_utf16(utils::string_replace<char>(m[1].str(), "https://", "http://"));
@@ -73,8 +68,8 @@ BOOL CIconsSourceParseThread::InitInstance()
 				num++;
 				if (num % 100 == 0)
 				{
-					m_config.SendNotifyParent(WM_UPDATE_PROGRESS, num, step);
-					if (::WaitForSingleObject(m_config.m_hStop, 0) == WAIT_OBJECT_0)
+					SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, num, step);
+					if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
 					{
 						entries.release();
 						break;
@@ -84,12 +79,5 @@ BOOL CIconsSourceParseThread::InitInstance()
 		}
 	}
 
-	m_config.SendNotifyParent(WM_END_LOAD_PLAYLIST, (WPARAM)entries.release());
-
-	::SetEvent(m_config.m_hExit);
-	ATLTRACE("\nThread exit\n");
-
-	CoUninitialize();
-
-	return FALSE;
+	SendNotifyParent(config.m_parent, WM_END_LOAD_PLAYLIST, (WPARAM)entries.release());
 }

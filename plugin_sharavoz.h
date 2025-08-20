@@ -31,11 +31,11 @@ DEALINGS IN THE SOFTWARE.
 class plugin_sharavoz : public base_plugin
 {
 public:
-	void parse_vod(const CThreadConfig& config) override;
+	void parse_vod(ThreadConfig config) override;
 	void fetch_movie_info(const Credentials& creds, vod_movie& movie) override;
 	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie) override;
 
 private:
 	std::wstring xtream_parse_category(const nlohmann::json& val, std::shared_ptr<vod_category>& category, std::unique_ptr<vod_category_storage>& categories);
-	nlohmann::json xtream_request(const CThreadConfig& config, const std::wstring& url);
+	nlohmann::json xtream_request(const ThreadConfig& config, const std::wstring& url);
 };

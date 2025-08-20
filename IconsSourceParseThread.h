@@ -25,13 +25,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+#include "ThreadConfig.h"
 
-#include "BaseThread.h"
-
-class CIconsSourceParseThread : public CBaseThread
-{
-	DECLARE_DYNCREATE(CIconsSourceParseThread)
-
-public:
-	BOOL InitInstance() override;
-};
+void IconsSourceParseThread(ThreadConfig config);

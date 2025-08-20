@@ -384,8 +384,7 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 
 	utils::http_request req{ GetPropertySheet()->m_plugin->get_playlist_url(params) };
 	req.user_agent = GetPropertySheet()->m_plugin->get_user_agent();
-	CWaitCursor cur;
-	if (utils::DownloadFile(req))
+	if (utils::AsyncDownloadFile(req).get())
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.m3u8";
 

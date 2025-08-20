@@ -33,7 +33,7 @@ public:
 	std::string get_api_token(TemplateParams& params) override;
 	void parse_account_info(TemplateParams& params) override;
 	void fill_servers_list(TemplateParams& params) override;
-	void parse_vod(const CThreadConfig& config) override;
+	void parse_vod(ThreadConfig config) override;
 	void fetch_movie_info(const Credentials& creds, vod_movie& movie) override;
 	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie) override;
 	void clear_account_info() override;

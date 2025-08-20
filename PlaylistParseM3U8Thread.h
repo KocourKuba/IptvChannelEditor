@@ -25,13 +25,8 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+#include "ThreadConfig.h"
+#include "base_plugin.h"
 
-#include "BaseThread.h"
 
-class CPlaylistParseM3U8Thread : public CBaseThread
-{
-	DECLARE_DYNCREATE(CPlaylistParseM3U8Thread)
-
-public:
-	BOOL InitInstance() override;
-};
+void PlaylistParseM3U8Thread(ThreadConfig config, std::shared_ptr<base_plugin> parent_plugin, std::wstring rootPath);

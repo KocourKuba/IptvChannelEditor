@@ -281,10 +281,10 @@ private:
 	void SwitchPlugin();
 	void CollectCredentials();
 
-	void LoadTimerEPG();
+	void TriggerEpg();
 	void FillEPG();
 	bool ParseJsonEpg(const int epg_idx, const time_t for_time, const uri_stream* info);
-	bool ParseXmEpg(const int epg_idx);
+	void ParseXmEpg(const int epg_idx);
 
 	void UpdateExtToken(uri_stream* uri) const;
 	void UpdateVars(uri_stream* uri) const;
@@ -417,7 +417,6 @@ private:
 	// Last icon id selected in the icons resource editor
 	int m_lastIconSelected = 0;
 	UINT_PTR m_update_epg_timer = 0;
-	UINT_PTR m_load_epg_timer = 0;
 	UINT_PTR m_switch_plugin_timer = 0;
 	std::map<std::wstring, int> m_changedChannels;
 	std::set<std::wstring> m_unknownChannels;
@@ -425,6 +424,9 @@ private:
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
 	CEvent m_evtThreadExit;
+
+	CEvent m_evtUpdateEpg;
+	CEvent m_evtThreadEpgStop;
 
 	COLORREF m_normal; // Normal color for category
 	COLORREF m_gray; // channel disabled
@@ -442,6 +444,12 @@ private:
 	// Icons entries
 	// loaded when used icon resource list
 	std::array<std::shared_ptr<std::vector<CIconSourceData>>, 6> m_Icons;
+
+	// map epg to channel id
+	std::array<EpgStorage, 3> m_epg_cache;
+
+	// map channel names to channel id
+	EpgAliases m_epg_aliases;
 
 	// Accounts
 	std::vector<Credentials> m_all_credentials;
@@ -504,13 +512,9 @@ private:
 	// Loaded when fill playlist tree
 	std::unordered_map<HTREEITEM, std::wstring> m_pl_categoriesMap;
 
-	// map epg to channel id
-	std::array<EpgStorage, 3> m_epg_cache;
-
-	// map channel names to channel id
-	EpgAliases m_epg_aliases;
-
 	//////////////////////////////////////////////////////////////////////////
 	// vod
 	std::map<std::string, std::map<std::wstring, vod_category_storage>> m_vod_categories;
+
+	std::jthread m_threadEPG;
 };

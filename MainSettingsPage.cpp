@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "MainSettingsPage.h"
 #include "AccountSettings.h"
 #include "Constants.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

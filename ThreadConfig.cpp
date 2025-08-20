@@ -31,17 +31,15 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-void CThreadConfig::SendNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/) const
+void SendNotifyParent(CWnd* parent, UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
-	CWnd* parent = (CWnd*)m_parent;
 	if (parent->GetSafeHwnd())
 		parent->SendMessage(message, wParam, lParam);
 
 }
 
-void CThreadConfig::PostNotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/) const
+void PostNotifyParent(CWnd* parent, UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
-	CWnd* parent = (CWnd*)m_parent;
 	if (parent->GetSafeHwnd())
 		parent->PostMessage(message, wParam, lParam);
 }

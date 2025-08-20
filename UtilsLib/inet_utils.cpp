@@ -125,13 +125,6 @@ struct deferrer
 
 #endif
 
-std::future<bool> AsyncDownloadFile(http_request& request)
-{
-	return std::async(std::launch::async, [&request]() {
-		return DownloadFile(request);
-	});
-}
-
 bool DownloadFile(http_request& request)
 {
 	request.error_message.clear();
@@ -438,6 +431,14 @@ bool DownloadFile(http_request& request)
 
 	return false;
 }
+
+std::future<bool> AsyncDownloadFile(http_request& request)
+{
+	return std::async(std::launch::async, [&request]() {
+		return DownloadFile(request);
+	});
+}
+
 
 std::filesystem::path GetCachedPath(const std::wstring& url)
 {

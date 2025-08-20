@@ -243,11 +243,9 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	plugin->get_api_token(params);
 	plugin->update_provider_params(params);
 
-	CWaitCursor cur;
-
 	utils::http_request req{ plugin->get_vod_url(params) };
 	req.user_agent = plugin->get_user_agent();
-	if (utils::DownloadFile(req))
+	if (utils::AsyncDownloadFile(req).get())
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"vod.m3u8";
 

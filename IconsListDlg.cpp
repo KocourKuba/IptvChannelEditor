@@ -117,44 +117,34 @@ BOOL CIconsListDlg::OnInitDialog()
 	}
 	else
 	{
-		CWaitCursor cur;
 		utils::http_request req{ m_iconSource, 1h };
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			const auto& str = req.body.str();
 			int lines = static_cast<int>(std::count(str.begin(), str.end(), '\n'));
 
-			CThreadConfig cfg;
+			m_evtStop.ResetEvent();
+
+			GetDlgItem(IDOK)->EnableWindow(FALSE);
+			GetDlgItem(IDC_EDIT_SEARCH)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_BUTTON_SEARCH_NEXT)->ShowWindow(SW_HIDE);
+			m_wndProgress.SetRange32(0, m_isHtmlParser ? lines : lines / 2);
+			m_wndProgress.SetPos(0);
+			m_wndProgress.ShowWindow(SW_SHOW);
+
+			ThreadConfig cfg;
 			cfg.m_parent = this;
-			cfg.m_data = std::move(req.body);
+			cfg.m_data = std::make_shared<std::stringstream>(std::move(req.body));
 			cfg.m_hStop = m_evtStop;
 
-			CBaseThread* pThread = nullptr;
 			if (m_isHtmlParser)
 			{
 				cfg.nparam = R"(^<tr><td><img src='(?<link>[^']+)'.+><\/td><td>(?<name>[^<].+)<\/td><td>(?<id>[^<].+)<\/td><td>.*$)";
-				pThread = (CBaseThread*)AfxBeginThread(RUNTIME_CLASS(CIconsSourceParseThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
+				std::jthread(&IconsSourceParseThread, cfg).detach();
 			}
 			else
 			{
-				cfg.m_rootPath = GetAppPath(utils::PLUGIN_ROOT);
-				pThread = (CBaseThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
-				lines /= 2;
-			}
-
-			if (pThread)
-			{
-				m_evtStop.ResetEvent();
-
-				GetDlgItem(IDOK)->EnableWindow(FALSE);
-				GetDlgItem(IDC_EDIT_SEARCH)->ShowWindow(SW_HIDE);
-				GetDlgItem(IDC_BUTTON_SEARCH_NEXT)->ShowWindow(SW_HIDE);
-				m_wndProgress.SetRange32(0, lines);
-				m_wndProgress.SetPos(0);
-				m_wndProgress.ShowWindow(SW_SHOW);
-				pThread->SetData(cfg);
-				pThread->SetPlugin(m_parent_plugin);
-				pThread->ResumeThread();
+				std::jthread(&PlaylistParseM3U8Thread, cfg, m_parent_plugin, GetAppPath(utils::PLUGIN_ROOT)).detach();
 			}
 		}
 		else

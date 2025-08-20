@@ -177,7 +177,6 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="StreamParameters.h" />
     <ClInclude Include="ThreadConfig.h" />
     <ClInclude Include="TooltipPropertyPage.h" />
-    <ClInclude Include="BaseThread.h" />
     <ClInclude Include="uri_stream.h" />
     <ClInclude Include="ChannelInfo.h" />
     <ClInclude Include="ChannelCategory.h" />

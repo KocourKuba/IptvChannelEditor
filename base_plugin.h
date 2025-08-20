@@ -27,8 +27,9 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "PlayListEntry.h"
 #include "Credentials.h"
-#include "ThreadConfig.h"
 #include "vod_movie.h"
+#include "plugin_config.h"
+#include "ThreadConfig.h"
 
 class uri_stream;
 
@@ -187,7 +188,7 @@ public:
 	/// <summary>
 	/// parse vod
 	/// </summary>
-	virtual void parse_vod(const CThreadConfig& config) {}
+	virtual void parse_vod(ThreadConfig config) {}
 
 	/// <summary>
 	/// parse movie
@@ -214,9 +215,9 @@ protected:
 	std::string internal_name;
 
 	// compiled regex for uri parse template
-	boost::wregex regex_uri_template;
+	boost::wregex regex_uri_template{};
 
 	// extracted named groups from uri parse template
-	std::vector<std::wstring> regex_named_groups;
-	std::map<std::wstring, std::wstring, std::less<>> account_info;
+	std::vector<std::wstring> regex_named_groups{};
+	std::map<std::wstring, std::wstring, std::less<>> account_info{};
 };

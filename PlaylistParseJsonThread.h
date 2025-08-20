@@ -25,13 +25,8 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+#include "ThreadConfig.h"
+#include "base_plugin.h"
 
-#include "BaseThread.h"
 
-class CPlaylistParseJsonThread : public CBaseThread
-{
-	DECLARE_DYNCREATE(CPlaylistParseJsonThread)
-
-public:
-	BOOL InitInstance() override;
-};
+void PlaylistParseJsonThread(ThreadConfig config, std::shared_ptr<base_plugin> parent_plugin);

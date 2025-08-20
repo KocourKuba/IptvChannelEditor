@@ -196,8 +196,6 @@ BOOL CVodViewer::DestroyWindow()
 
 void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 {
-	CWaitCursor cur;
-
 	m_wndCategories.EnableWindow(FALSE);
 	m_wndGenres.EnableWindow(FALSE);
 	m_wndYears.EnableWindow(FALSE);
@@ -250,26 +248,16 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 
 	const auto& url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params);
 
-	auto pThread = (CPlaylistParseJsonThread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseJsonThread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
-	if (!pThread)
-	{
-		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
-		OnEndLoadJsonPlaylist(0);
-		return;
-	}
+	m_wndProgress.ShowWindow(SW_HIDE);
+	m_wndStop.ShowWindow(SW_HIDE);
 
-	CThreadConfig cfg;
+	ThreadConfig cfg;
 	cfg.m_parent = this;
 	cfg.m_hStop = m_evtStop;
 	cfg.m_url = url;
 	cfg.m_params = params;
 
-	pThread->SetData(cfg);
-	pThread->SetPlugin(m_plugin);
-	pThread->ResumeThread();
-
-	m_wndProgress.ShowWindow(SW_HIDE);
-	m_wndStop.ShowWindow(SW_HIDE);
+	std::jthread(&PlaylistParseJsonThread, cfg, m_plugin).detach();
 }
 
 LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
@@ -343,22 +331,12 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 		return;
 	}
 
-	auto pThread = (CPlaylistParseM3U8Thread*)AfxBeginThread(RUNTIME_CLASS(CPlaylistParseM3U8Thread), THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);
-	if (!pThread)
-	{
-		AfxMessageBox(IDS_STRING_ERR_THREAD_NOT_START, MB_OK | MB_ICONERROR);
-		OnEndLoadM3U8Playlist(0);
-		return;
-	}
-
-	CThreadConfig cfg;
+	ThreadConfig cfg;
 	cfg.m_parent = this;
-	cfg.m_data = std::move(req.body);
+	cfg.m_data = std::make_shared<std::stringstream>(std::move(req.body));
 	cfg.m_hStop = m_evtStop;
 
-	pThread->SetData(cfg);
-	pThread->SetPlugin(m_plugin);
-	pThread->ResumeThread();
+	std::jthread(&PlaylistParseM3U8Thread, cfg, m_plugin, GetAppPath(utils::PLUGIN_ROOT)).detach();
 }
 
 LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)

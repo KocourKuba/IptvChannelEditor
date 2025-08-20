@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE.
 #include "AccountSettings.h"
 
 #include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -39,7 +40,7 @@ constexpr auto VOD_API_REQUEST = L"{:s}/player_api.php?username={{LOGIN}}&passwo
 constexpr auto VOD_API_ACTION = L"{:s}&action={:s}";
 constexpr auto PARAM_FMT = L"&{:s}={:s}";
 
-void plugin_sharavoz::parse_vod(const CThreadConfig& config)
+void plugin_sharavoz::parse_vod(ThreadConfig config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 
@@ -76,7 +77,7 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 			if (streams_json.empty()) continue;
 
 			total += streams_json.size();
-			config.SendNotifyParent(WM_INIT_PROGRESS, cnt, total);
+			SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, cnt, total);
 
 			for (const auto& item : streams_json.items())
 			{
@@ -105,7 +106,7 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 
 				if (++cnt % 100 == 0)
 				{
-					config.SendNotifyParent(WM_UPDATE_PROGRESS, cnt, cnt);
+					SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
 					if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 				}
 			}
@@ -156,7 +157,7 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 
 				if (++cnt % 100 == 0)
 				{
-					config.SendNotifyParent(WM_UPDATE_PROGRESS, cnt, cnt);
+					SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
 					if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 				}
 			}
@@ -169,7 +170,7 @@ void plugin_sharavoz::parse_vod(const CThreadConfig& config)
 		categories.reset();
 	}
 
-	config.SendNotifyParent(WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
+	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
 void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movie)
@@ -312,7 +313,7 @@ std::wstring plugin_sharavoz::xtream_parse_category(const nlohmann::json& val,
 	return category_id;
 }
 
-nlohmann::json plugin_sharavoz::xtream_request(const CThreadConfig& config, const std::wstring& url)
+nlohmann::json plugin_sharavoz::xtream_request(const ThreadConfig& config, const std::wstring& url)
 {
 	nlohmann::json category_json;
 

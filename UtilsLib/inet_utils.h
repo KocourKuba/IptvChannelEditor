@@ -62,7 +62,6 @@ struct http_request
 };
 
 std::future<bool> AsyncDownloadFile(http_request& request);
-bool DownloadFile(http_request& request);
 
 bool CheckIsCacheExpired(const std::wstring& cache_file, const std::chrono::seconds& cache_ttl);
 void ClearCache();

@@ -37,6 +37,7 @@ DEALINGS IN THE SOFTWARE.
 #include "PluginConfigPageTV.h"
 #include "PluginConfigPageEPG.h"
 #include "PluginConfigPageVOD.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -475,7 +476,6 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 
 	if (dlg.DoModal() == IDOK)
 	{
-		CWaitCursor cur;
 		m_status.Empty();
 
 		const auto& info = m_plugin->get_playlist_info(0);
@@ -489,7 +489,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			{
 				utils::http_request req{ url };
 				req.user_agent = m_plugin->get_user_agent();
-				if (utils::DownloadFile(req))
+				if (utils::AsyncDownloadFile(req).get())
 				{
 					std::ifstream instream(url);
 					req.body << instream.rdbuf();
@@ -1018,7 +1018,7 @@ void CAccessInfoPage::GetAccountInfo()
 	{
 		utils::http_request req{ pl_url, min_cache_ttl };
 		req.user_agent = m_plugin->get_user_agent();
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			std::istringstream stream(req.body.str());
 			if (stream.good())

@@ -332,8 +332,7 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	}
 
 
-	CWaitCursor cur;
-	if (utils::DownloadFile(req))
+	if (utils::AsyncDownloadFile(req).get())
 	{
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY;

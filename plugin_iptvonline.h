@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "base_plugin.h"
+#include "UtilsLib/inet_utils.h"
 
 class plugin_iptvonline : public base_plugin
 {
@@ -36,14 +37,14 @@ public:
 	void parse_account_info(TemplateParams& params) override;
 	void fill_servers_list(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;
-	void parse_vod(const CThreadConfig& config) override;
+	void parse_vod(ThreadConfig config) override;
 	void fetch_movie_info(const Credentials& creds, vod_movie& movie) override;
 	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie) override;
 
 private:
 	void collect_movies(const std::wstring& id,
 						const std::wstring& category_name,
-						const CThreadConfig & config,
+						const ThreadConfig & config,
 						std::unique_ptr<vod_category_storage>& categories,
 						bool is_serial = false);
 	nlohmann::json server_request(utils::http_request& request, const bool use_cache_ttl = false);

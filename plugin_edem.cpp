@@ -30,13 +30,14 @@ DEALINGS IN THE SOFTWARE.
 #include "Constants.h"
 
 #include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 #include "UtilsLib\json_wrapper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-void plugin_edem::parse_vod(const CThreadConfig& config)
+void plugin_edem::parse_vod(ThreadConfig config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 
@@ -136,7 +137,7 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 				const auto& data_str = cat_req.body.str();
 				nlohmann::json movie_json = nlohmann::json::parse(data_str);
 				total += utils::get_json_int("count", movie_json);
-				config.SendNotifyParent(WM_INIT_PROGRESS, total, cnt);
+				SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, total, cnt);
 				ATLTRACE("\ntotal movies: %d\n", total);
 
 				int readed = 0;
@@ -173,7 +174,7 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 						readed++;
 						if (++cnt % 100 == 0)
 						{
-							config.SendNotifyParent(WM_UPDATE_PROGRESS, cnt, cnt);
+							SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
 							if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 						}
 					}
@@ -206,7 +207,7 @@ void plugin_edem::parse_vod(const CThreadConfig& config)
 		categories.reset();
 	}
 
-	config.SendNotifyParent(WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
+	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
 void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)

@@ -222,9 +222,6 @@
     <ClInclude Include="IconsSourceParseThread.h">
       <Filter>Header Files\Threads</Filter>
     </ClInclude>
-    <ClInclude Include="BaseThread.h">
-      <Filter>Header Files\Threads</Filter>
-    </ClInclude>
     <ClInclude Include="ListCtrlEx.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>

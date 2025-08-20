@@ -31,6 +31,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\utils.h"
 #include "UtilsLib\md5.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -171,7 +172,7 @@ void plugin_korona::fill_servers_list(TemplateParams& params)
 	set_servers_list(servers);
 }
 
-void plugin_korona::parse_vod(const CThreadConfig& config)
+void plugin_korona::parse_vod(ThreadConfig config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
 	const auto& all_name = load_string_resource(IDS_STRING_ALL);
@@ -203,7 +204,7 @@ void plugin_korona::parse_vod(const CThreadConfig& config)
 		}
 		JSON_ALL_CATCH;
 
-		config.SendNotifyParent(WM_INIT_PROGRESS, total, 0);
+		SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, total, 0);
 
 		int cnt = 0;
 		for (const auto& pair : categories->vec())
@@ -250,7 +251,7 @@ void plugin_korona::parse_vod(const CThreadConfig& config)
 
 					if (++cnt % 100 == 0)
 					{
-						config.SendNotifyParent(WM_UPDATE_PROGRESS, cnt, cnt);
+						SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
 						if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 					}
 				}
@@ -266,7 +267,7 @@ void plugin_korona::parse_vod(const CThreadConfig& config)
 		categories.reset();
 	}
 
-	config.SendNotifyParent(WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
+	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
 void plugin_korona::fetch_movie_info(const Credentials& creds, vod_movie& movie)

@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "UtilsLib\md5.h"
 #include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -53,7 +54,7 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 	{
 		const auto& url = std::format(API_COMMAND_URL, L"account");
 		utils::http_request req{ replace_params_vars(params, url) };
-		if (utils::DownloadFile(req))
+		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY
 			{
