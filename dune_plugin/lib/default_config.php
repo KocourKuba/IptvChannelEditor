@@ -634,6 +634,7 @@ class default_config extends dynamic_config
             if (!empty($user_filter)) {
                 $pairs = explode(",", $user_filter);
                 foreach ($pairs as $pair) {
+                    /** @var array $m */
                     if (strpos($pair, $name . ":") !== false && preg_match("/^$name:(.+)/", $pair, $m)) {
                         $user_value = $m[1];
                         break;
@@ -865,8 +866,9 @@ class default_config extends dynamic_config
         $this->ClearPlaylistCache(true);
         $this->plugin->get_m3u_parser()->setupParser($this->FetchM3U(true));
         foreach ($this->get_tv_m3u_entries() as $entry) {
-            if (preg_match($parse_pattern, $entry->getPath(), $matches)) {
-                $this->account_data = $matches;
+            /** @var array $m */
+            if (preg_match($parse_pattern, $entry->getPath(), $m)) {
+                $this->account_data = $m;
                 return $this->account_data;
             }
         }
@@ -911,9 +913,10 @@ class default_config extends dynamic_config
             }
 
             // http://some_domain/some_token/index.m3u8
-            if (!empty($parse_pattern) && preg_match($parse_pattern, $entry->getPath(), $matches)) {
-                $id = !empty($tag_id) ? $id : $matches['id'];
-                $pl_entries[$id] = $matches;
+            /** @var array $m */
+            if (!empty($parse_pattern) && preg_match($parse_pattern, $entry->getPath(), $m)) {
+                $id = !empty($tag_id) ? $id : $m['id'];
+                $pl_entries[$id] = $m;
                 $mapped++;
             } else {
                 // threat as custom url
@@ -1064,8 +1067,9 @@ class default_config extends dynamic_config
             $search_in = utf8_encode(mb_strtolower($title, 'UTF-8'));
             if (strpos($search_in, $keyword) === false) continue;
 
-            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match)) {
-                $title = isset($match['title']) ? $match['title'] : $title;
+            /** @var array $m */
+            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $m)) {
+                $title = isset($m['title']) ? $m['title'] : $title;
             }
 
             $entry = $this->plugin->get_m3u_parser()->getEntryByIdx($index);
@@ -1121,8 +1125,9 @@ class default_config extends dynamic_config
             if ($entry === null || $entry->isM3U_Header()) continue;
 
             $title = $entry->getEntryTitle();
-            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match)) {
-                $title = isset($match['title']) ? $match['title'] : $title;
+            /** @var array $m */
+            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $m)) {
+                $title = isset($m['title']) ? $m['title'] : $title;
             }
             $title = trim($title);
 
@@ -1159,12 +1164,13 @@ class default_config extends dynamic_config
             $year = $entry->getEntryAttribute('year');
             $imdb = $entry->getEntryAttribute('rating');
 
-            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $match)) {
-                $title = empty($title) && isset($match['title']) ? $match['title'] : $title;
-                $title_orig = isset($match['title_orig']) ? $match['title_orig'] : $title_orig;
-                $country = isset($match['country']) ? $match['country'] : $country;
-                $year = empty($year) && isset($match['year']) ? $match['year'] : $year;
-                $imdb = empty($imdb) && isset($match['imdb']) ? $match['imdb'] : $imdb;
+            /** @var array $m */
+            if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $m)) {
+                $title = empty($title) && isset($m['title']) ? $m['title'] : $title;
+                $title_orig = isset($m['title_orig']) ? $m['title_orig'] : $title_orig;
+                $country = isset($m['country']) ? $m['country'] : $country;
+                $year = empty($year) && isset($m['year']) ? $m['year'] : $year;
+                $imdb = empty($imdb) && isset($m['imdb']) ? $m['imdb'] : $imdb;
                 hd_debug_print("title: $title, country: $country, year: $year");
             }
 
@@ -1194,7 +1200,7 @@ class default_config extends dynamic_config
                 $country
             );
 
-            $movie->add_series_data($movie_id, $title, '', $entry->getPath());
+            $movie->add_series_data(new Movie_Series($movie_id, $title, $entry->getPath()));
         }
 
         return $movie;

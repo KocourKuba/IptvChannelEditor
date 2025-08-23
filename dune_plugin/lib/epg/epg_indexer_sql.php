@@ -158,6 +158,8 @@ class Epg_Indexer_Sql extends Epg_Indexer
             $db->exec('BEGIN;');
 
             $stm_channels = $db->prepare("INSERT OR REPLACE INTO $table_ch (alias, channel_id) VALUES(:alias, :channel_id);");
+            /** @var string $alias */
+            /** @var string $channel_id */
             $stm_channels->bindParam(":alias", $alias);
             $stm_channels->bindParam(":channel_id", $channel_id);
 
@@ -181,10 +183,12 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
                 if (empty($channel_id)) continue;
 
+                /** @noinspection PhpUnusedLocalVariableInspection */
                 $alias = $channel_id;
                 $stm_channels->execute();
 
                 foreach ($xml_node->getElementsByTagName('display-name') as $tag) {
+                    /** @noinspection PhpUnusedLocalVariableInspection */
                     $alias = mb_convert_case($tag->nodeValue, MB_CASE_LOWER, "UTF-8");
                     $stm_channels->execute();
                 }
@@ -255,6 +259,9 @@ class Epg_Indexer_Sql extends Epg_Indexer
             hd_debug_print("Begin transactions...");
 
             $stm = $db->prepare("INSERT INTO $table_pos (channel_id, start, end) VALUES(:channel_id, :start, :end);");
+            /** @var string $prev_channel */
+            /** @var int $start_program_block */
+            /** @var int $tag_end_pos */
             $stm->bindParam(":channel_id", $prev_channel);
             $stm->bindParam(":start", $start_program_block);
             $stm->bindParam(":end", $tag_end_pos);
@@ -278,6 +285,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
                     // check if end
                     $end_tv = strpos($line, "</tv>");
                     if ($end_tv !== false) {
+                        /** @noinspection PhpUnusedLocalVariableInspection */
                         $tag_end_pos = $end_tv + $tag_start_pos;
                         $stm->execute();
                         break;
@@ -288,6 +296,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
                 }
 
                 // end position include closing tag!
+                /** @noinspection PhpUnusedLocalVariableInspection */
                 $tag_end_pos = ftell($file);
                 // append position of open tag to file position of chunk
                 $tag_start_pos += $offset;

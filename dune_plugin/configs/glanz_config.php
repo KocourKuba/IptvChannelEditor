@@ -55,7 +55,7 @@ class glanz_config extends default_config
             );
 
             hd_debug_print("movie playback_url: $item->url");
-            $movie->add_series_data($movie_id, $item->name, '', $item->url);
+            $movie->add_series_data(new Movie_Series($movie_id, $item->name, $item->url));
             break;
         }
 
@@ -85,7 +85,7 @@ class glanz_config extends default_config
             $movie = (object)$movie;
             $category = (string)$movie->category;
             if (empty($category)) {
-                $category = TR::load_string('no_category');
+                $category = TR::load('no_category');
             }
 
             if (!array_key_exists($category, $cat_info)) {
@@ -185,7 +185,7 @@ class glanz_config extends default_config
             $movie = (object)$movie;
             $category = $movie->category;
             if (empty($category)) {
-                $category = TR::load_string('no_category');
+                $category = TR::load('no_category');
             }
 
             if ($category_id === Vod_Category::FLAG_ALL_MOVIES || $category_id === $category) {
@@ -216,6 +216,7 @@ class glanz_config extends default_config
         $pairs = explode(",", $params);
         $post_params = array();
         foreach ($pairs as $pair) {
+            /** @var array $m */
             if (preg_match("/^(.+):(.+)$/", $pair, $m)) {
                 $filter = $this->get_filter($m[1]);
                 if ($filter !== null && !empty($filter['values'])) {

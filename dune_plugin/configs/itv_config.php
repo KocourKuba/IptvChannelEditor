@@ -58,7 +58,7 @@ class itv_config extends default_config
             $list[] = $item->name;
         }
 
-        $emptyTitle = str_repeat(' ', strlen(TR::load_string('package')));
+        $emptyTitle = str_repeat(' ', strlen(TR::load('package')));
         $list_collected = array();
         $isFirstLabel = true;
         foreach($list as $item) {

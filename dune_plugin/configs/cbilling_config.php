@@ -77,15 +77,15 @@ class cbilling_config extends default_config
      */
     public function TryLoadMovie($movie_id)
     {
+        hd_debug_print(null, true);
         hd_debug_print($movie_id);
-        $movie = new Movie($movie_id, $this->plugin);
-
         $params[CURLOPT_CUSTOMREQUEST] = "/video/$movie_id";
         $response = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
         if (!isset($response->data)) {
-            return $movie;
+            return null;
         }
 
+        $movie = new Movie($movie_id, $this->plugin);
         $movieData = $response->data;
 
         $genresArray = array();
@@ -115,16 +115,32 @@ class cbilling_config extends default_config
         $vod_url = 'http://%s%s?token=%s';
         if (isset($movieData->seasons)) {
             foreach ($movieData->seasons as $season) {
-                $movie->add_season_data($season->number, !empty($season->name) ? $season->name : TR::t('vod_screen_season__1', $season->number), '');
-                foreach ($season->series as $episode) {
-                    $name = TR::t('vod_screen_series__2', $episode->number, (empty($episode->name) ? "" : $episode->name));
-                    $playback_url = sprintf($vod_url, $domain, $episode->files[0]->url, $token);
-                    $movie->add_series_data($episode->id, $name, '', $playback_url, $season->number);
+                $movie_season = new Movie_Season($season->number);
+                if (!empty($season->name)) {
+                    $movie_season->description = $season->name;
+                }
+                if (!empty($season->original_name)) {
+                    $movie_season->description .= empty($season->name) ? $season->original_name : " ($season->original_name)";
+                }
+                $movie->add_season_data($movie_season);
+
+                foreach ($season->series as $serie) {
+                    $playback_url = sprintf($vod_url, $domain, $serie->files[0]->url, $token);
+                    $movie_serie = new Movie_Series($serie->id, TR::t('vod_screen_series__1', $serie->number), $playback_url, $season->number);
+
+                    if (!empty($serie->name)) {
+                        $movie_serie->description = $serie->name;
+                    }
+                    if (!empty($movie_serie->original_name)) {
+                        $movie_serie->description .= empty($serie->name) ? $serie->original_name : " ($serie->original_name)";
+                    }
+
+                    $movie->add_series_data($movie_serie);
                 }
             }
         } else {
             $playback_url = sprintf($vod_url, $domain, $movieData->files[0]->url, $token);
-            $movie->add_series_data($movie_id, $movieData->name, '', $playback_url);
+            $movie->add_series_data(new Movie_Series($movie_id, $movieData->name, $playback_url));
         }
 
         return $movie;

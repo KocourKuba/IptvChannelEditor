@@ -235,7 +235,7 @@ class sharaclub_config extends default_config
                 $duration = (int)$item->info->episode_run_time;
             }
 
-            $age = isset($item->info->adult) && !empty($item->info->adult)  ? "{$item->info->adult}+" : '';
+            $age = isset($item->info->adult) && !empty($item->info->adult) ? "{$item->info->adult}+" : '';
             $age_limit = empty($age) ? array() : array(TR::t('vod_screen_age_limit') => $age);
 
             $movie = new Movie($movie_id, $this->plugin);
@@ -262,20 +262,31 @@ class sharaclub_config extends default_config
             // case for serials
             if (isset($item->seasons)) {
                 foreach ($item->seasons as $season) {
-                    $movie->add_season_data($season->season,
-                        empty($season->info->name)
-                            ? TR::t('vod_screen_season__1', $season->season)
-                            : $season->info->name
-                        ,'');
+                    $movie_season = new Movie_Season($season->season);
+
+                    if (!empty($season->info->overview)) {
+                        $movie_season->description = $season->info->overview;
+                    }
+
+                    if (!empty($season->info->air_date)) {
+                        $title = empty($movie_season->description) ? $movie_season->name : $movie_season->description;
+                        $movie_season->description = TR::t('vod_screen_air_date__2', $title, $season->info->air_date);
+                    }
+
+                    if (!empty($season->info->poster)) {
+                        $movie_season->poster = $season->info->poster;
+                    }
+
+                    $movie->add_season_data($movie_season);
 
                     foreach ($season->episodes as $episode) {
-                        hd_debug_print("movie playback_url: $episode->video");
-                        $movie->add_series_data($episode->id, TR::t('vod_screen_series__1', $episode->episode), '', $episode->video, $season->season);
+                        $movie_serie = new Movie_Series($episode->id, TR::t('vod_screen_series__1', $episode->episode), $episode->video, $season->season);
+                        $movie->add_series_data($movie_serie);
                     }
                 }
             } else {
                 hd_debug_print("movie playback_url: $item->video");
-                $movie->add_series_data($movie_id, $item->name, '', $item->video);
+                $movie->add_series_data(new Movie_Series($movie_id, $item->name, $item->video));
             }
 
             break;
@@ -306,7 +317,7 @@ class sharaclub_config extends default_config
             $movie = (object)$movie;
             $category = (string)$movie->category;
             if (empty($category)) {
-                $category = TR::load_string('no_category');
+                $category = TR::load('no_category');
             }
 
             if (!array_key_exists($category, $cat_info)) {
@@ -404,7 +415,7 @@ class sharaclub_config extends default_config
             $movie = (object)$movie;
             $category = $movie->category;
             if (empty($category)) {
-                $category = TR::load_string('no_category');
+                $category = TR::load('no_category');
             }
 
             if ($category_id === Vod_Category::FLAG_ALL_MOVIES || $category_id === $category) {
@@ -435,6 +446,7 @@ class sharaclub_config extends default_config
         $pairs = explode(",", $params);
         $post_params = array();
         foreach ($pairs as $pair) {
+            /** @var array $m */
             if (preg_match("/^(.+):(.+)$/", $pair, $m)) {
                 $filter = $this->get_filter($m[1]);
                 if ($filter !== null && !empty($filter['values'])) {

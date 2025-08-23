@@ -43,7 +43,10 @@ class Starnet_Vod extends Abstract_Vod
      */
     public function try_load_movie($movie_id)
     {
-        $this->set_cached_movie($this->plugin->config->TryLoadMovie($movie_id));
+        $movie = $this->plugin->config->TryLoadMovie($movie_id);
+        if (!is_null($movie)) {
+            $this->set_cached_movie($movie);
+        }
     }
 
     /**

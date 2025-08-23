@@ -139,7 +139,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen implements User_Inpu
                     get_image_path('page_plus_btn.png'),
                     get_image_path('page_minus_btn.png'),
                     DEF_LABEL_TEXT_COLOR_SILVER,
-                    TR::load_string('scroll_page')
+                    TR::load('scroll_page')
                 );
                 Control_Factory::add_smart_label($defs, null, $text);
                 Control_Factory::add_vgap($defs, -80);

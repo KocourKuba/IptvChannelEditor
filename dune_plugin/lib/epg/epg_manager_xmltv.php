@@ -242,8 +242,8 @@ class Epg_Manager_Xmltv
                 $this->delayed_epg = array_unique($this->delayed_epg);
                 return array($day_start_ts => array(
                     Epg_Params::EPG_END => $day_start_ts + 86400,
-                    Epg_Params::EPG_NAME => TR::load_string('epg_not_ready'),
-                    Epg_Params::EPG_DESC => TR::load_string('epg_not_ready_desc'),
+                    Epg_Params::EPG_NAME => TR::load('epg_not_ready'),
+                    Epg_Params::EPG_DESC => TR::load('epg_not_ready_desc'),
                 ));
             }
             return $this->getFakeEpg($channel, $day_start_ts, $day_epg);
@@ -326,7 +326,7 @@ class Epg_Manager_Xmltv
             hd_debug_print("Create fake data for non existing EPG data");
             for ($start = $day_start_ts, $n = 1; $start <= $day_start_ts + 86400; $start += 3600, $n++) {
                 $day_epg[$start][Epg_Params::EPG_END] = $start + 3600;
-                $day_epg[$start][Epg_Params::EPG_NAME] = TR::load_string('fake_epg_program') . " $n";
+                $day_epg[$start][Epg_Params::EPG_NAME] = TR::load('fake_epg_program') . " $n";
                 $day_epg[$start][Epg_Params::EPG_DESC] = '';
             }
         } else {

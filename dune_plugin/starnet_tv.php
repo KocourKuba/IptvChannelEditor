@@ -142,7 +142,7 @@ class Starnet_Tv implements User_Input_Handler
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @return Group
      */
     public function get_special_group($id)
@@ -254,7 +254,7 @@ class Starnet_Tv implements User_Input_Handler
 
         $max_support_ch_list_ver = $this->plugin->config->plugin_info['app_ch_list_version'];
         if ($max_support_ch_list_ver < (int)$xml->vesion_info->list_version) {
-            $message = TR::load_string('warn_msg1');
+            $message = TR::load('warn_msg1');
             hd_debug_print($message);
             $this->plugin->config->set_last_error($message);
         }
@@ -263,28 +263,28 @@ class Starnet_Tv implements User_Input_Handler
         $all_channels = new Default_Group(
             $this->plugin,
             ALL_CHANNEL_GROUP_ID,
-            TR::load_string(Default_Group::ALL_CHANNEL_GROUP_CAPTION),
+            TR::load(Default_Group::ALL_CHANNEL_GROUP_CAPTION),
             Default_Group::ALL_CHANNEL_GROUP_ICON);
 
         // Favorites group
         $fav_group = new Default_Group(
             $this->plugin,
             FAVORITES_GROUP_ID,
-            TR::load_string(Default_Group::FAV_CHANNEL_GROUP_CAPTION),
+            TR::load(Default_Group::FAV_CHANNEL_GROUP_CAPTION),
             Default_Group::FAV_CHANNEL_GROUP_ICON);
 
         // History channels category
         $history_channels = new Default_Group(
             $this->plugin,
             HISTORY_GROUP_ID,
-            TR::load_string(Default_Group::HISTORY_GROUP_CAPTION),
+            TR::load(Default_Group::HISTORY_GROUP_CAPTION),
             Default_Group::HISTORY_GROUP_ICON);
 
         // Vod group
         $vod_group = new Default_Group(
             $this->plugin,
             VOD_GROUP_ID,
-            TR::load_string(Default_Group::VOD_GROUP_CAPTION),
+            TR::load(Default_Group::VOD_GROUP_CAPTION),
             Default_Group::VOD_GROUP_ICON);
 
         // read category
@@ -465,7 +465,7 @@ class Starnet_Tv implements User_Input_Handler
         if (empty($pl_entries)
             && $this->plugin->config->plugin_info['app_type_name'] !== 'custom'
             && $this->channels->size()) {
-            $message = TR::load_string('warn_msg6');
+            $message = TR::load('warn_msg6');
             $this->plugin->config->set_last_error($message);
             hd_debug_print($message);
             $this->plugin->config->ClearPlaylistCache(true);

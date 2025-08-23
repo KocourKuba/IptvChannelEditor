@@ -36,15 +36,16 @@ class Conf
 
         hd_debug_print("Reading configuration from '$conf_file_path'...");
 
+        /** @var array $m */
         foreach ($lines as $i => $iValue) {
-            if (preg_match('/^ *(\S+) *= *(\S+)$/', $iValue, $matches) !== 1) {
+            if (preg_match('/^ *(\S+) *= *(\S+)$/', $iValue, $m) !== 1) {
                 hd_print(
                     "Warning: line " . ($i + 1) . ": unknown format. " .
                     "Data: '" . $iValue . "'.");
                 continue;
             }
 
-            $this->data[$matches[1]] = $matches[2];
+            $this->data[$m[1]] = $m[2];
         }
 
         return true;

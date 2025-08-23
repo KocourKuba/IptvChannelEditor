@@ -1139,6 +1139,7 @@ class Default_Dune_Plugin implements DunePlugin
         $url =  $param_pos!== false ? substr($url, 0, $param_pos) : $url;
         $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
         hd_debug_print("play movie in the external player: $cmd");
+        /** @var array $output */
         exec($cmd, $output);
         hd_debug_print("external player exec result code" . HD::ArrayToStr($output));
         return null;
@@ -1167,6 +1168,7 @@ class Default_Dune_Plugin implements DunePlugin
         $url = $param_pos !== false ? substr($url, 0, $param_pos) : $url;
         $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';
         hd_debug_print("play movie in the external player: $cmd");
+        /** @var array $output */
         exec($cmd, $output);
         hd_debug_print("external player exec result code" . HD::ArrayToStr($output));
         return $post_action;
@@ -1360,6 +1362,7 @@ class Default_Dune_Plugin implements DunePlugin
             );
 
             hd_debug_print("Get media info for: $live_url");
+            /** @var array $pipes */
             $process = proc_open(
                 get_install_path("bin/media_check.sh $live_url"),
                 $descriptors,
@@ -1391,7 +1394,7 @@ class Default_Dune_Plugin implements DunePlugin
             get_image_path('page_plus_btn.png'),
             get_image_path('page_minus_btn.png'),
             DEF_LABEL_TEXT_COLOR_SILVER,
-            TR::load_string('scroll_page')
+            TR::load('scroll_page')
         );
         Control_Factory::add_smart_label($defs, '', $text);
         Control_Factory::add_vgap($defs, -80);
@@ -1473,7 +1476,7 @@ class Default_Dune_Plugin implements DunePlugin
                 ),
             ),
 
-            'list_1x11_info' => array(
+            'list_1x11_normal_info' => array(
                 PluginRegularFolderView::async_icon_loading => true,
                 PluginRegularFolderView::view_params => array
                 (

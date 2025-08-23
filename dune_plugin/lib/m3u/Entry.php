@@ -199,7 +199,7 @@ class Entry extends Json_Serializer
                 $exgGrp = $this->getEntryTag(self::TAG_EXTGRP);
                 $this->group_title = is_null($exgGrp) ? null : $exgGrp->getTagValue();
                 if (empty($this->group_title)) {
-                    $this->group_title = TR::load_string('no_category');
+                    $this->group_title = TR::load('no_category');
                 }
             }
         }

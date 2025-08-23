@@ -69,7 +69,7 @@ class TR
      * @param $string_key
      * @return string constant in the system language by key
      */
-    public static function load_string($string_key)
+    public static function load($string_key)
     {
         $lang = 'english';
         if (file_exists('/config/settings.properties')) {
@@ -84,6 +84,7 @@ class TR
             return '';
         }
 
+        /** @var array $m */
         if (($lang_txt = file_get_contents($lang_file)) && preg_match("/^$string_key\\s*=(.*)$/m", $lang_txt, $m)) {
             return trim($m[1]);
         }

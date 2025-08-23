@@ -116,10 +116,10 @@ class tvteam_config extends default_config
         $this->packages = $this->account_data->data->userPackagesList;
         $packages = '';
         foreach ($this->packages as $package) {
-            $packages .= TR::load_string('package') . " " . $package->packageName . PHP_EOL;
-            $packages .= TR::load_string('start_date') . " " . $package->fromDate . PHP_EOL;
-            $packages .= TR::load_string('end_date') . " " . $package->toDate . PHP_EOL;
-            $packages .= TR::load_string('money_need') . " " . $package->salePrice . "$" . PHP_EOL;
+            $packages .= TR::load('package') . " " . $package->packageName . PHP_EOL;
+            $packages .= TR::load('start_date') . " " . $package->fromDate . PHP_EOL;
+            $packages .= TR::load('end_date') . " " . $package->toDate . PHP_EOL;
+            $packages .= TR::load('money_need') . " " . $package->salePrice . "$" . PHP_EOL;
         }
 
         Control_Factory::add_multiline_label($defs, TR::t('packages'), $packages, 10);
@@ -164,7 +164,7 @@ class tvteam_config extends default_config
 
         $error_msg = HD::check_last_error('rq_last_error');
         if (!$force && !empty($error_msg)) {
-            $info_msg = str_replace('|', PHP_EOL, TR::load_string('err_auth_no_spam'));
+            $info_msg = str_replace('|', PHP_EOL, TR::load('err_auth_no_spam'));
             hd_debug_print($info_msg);
             HD::set_last_error("pl_last_error", "$info_msg\n\n$error_msg");
         } else {

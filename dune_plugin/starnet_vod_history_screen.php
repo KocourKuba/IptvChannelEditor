@@ -136,7 +136,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen imple
 
         return array(
             $this->plugin->get_screen_view('list_1x11_small_info'),
-            $this->plugin->get_screen_view('list_1x11_info'),
+            $this->plugin->get_screen_view('list_1x11_normal_info'),
         );
     }
 }

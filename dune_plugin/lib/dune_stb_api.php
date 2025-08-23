@@ -623,9 +623,10 @@ function get_parsed_firmware_ver()
     static $result = null;
 
     if (is_null($result)) {
-        preg_match_all('/^(\d*)_(\d*)_(\D*)(\d*)(.*)?$/', get_raw_firmware_version(), $matches, PREG_SET_ORDER);
-        $matches[0][5] = ltrim($matches[0][5], '_');
-        $result = array_combine(array('string', 'build_date', 'build_number', 'rev_literal', 'rev_number', 'features'), $matches[0]);
+        /** @var array $m */
+        preg_match_all('/^(\d*)_(\d*)_(\D*)(\d*)(.*)?$/', get_raw_firmware_version(), $m, PREG_SET_ORDER);
+        $m[0][5] = ltrim($m[0][5], '_');
+        $result = array_combine(array('string', 'build_date', 'build_number', 'rev_literal', 'rev_number', 'features'), $m[0]);
     }
 
     return is_array($result) ? $result : array();
@@ -681,6 +682,7 @@ function get_dns_address()
     }
 
     $addr = '';
+    /** @var array $m */
     foreach ($dns as $key => $server) {
         if (preg_match("|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|", $server, $m)) {
             $addr .= "nameserver" . ($key + 1) . ": " . $m[1] . ", ";
@@ -714,6 +716,8 @@ function get_mac_address()
  */
 function get_local_tz()
 {
+    /** @var array $tz */
+    /** @var int $rc */
     exec((file_exists('/etc/TZ') ? 'TZ=`cat /etc/TZ` ' : '') . 'date +%z', $tz, $rc);
     return (($rc !== 0) || (count($tz) !== 1) || !is_numeric($tz[0])) ? '' : $tz[0];
 }
@@ -1156,8 +1160,9 @@ function get_playback_url()
 
     $url = rtrim(shell_exec('cat /tmp/run/ext_command.state | grep -w "playback_url" | sed -n "s/^.*playback_url = /\1/p"'), "\n");
 
-    if (preg_match_all('/\/\/(127\.0\.0\.1|localhost).*((htt|rt|rtc|rts|ud)p:\/\/.*$)/i', $url, $matches) && !empty($matches[2][0])) {
-        return $matches[2][0];
+    /** @var array $m */
+    if (preg_match_all('/\/\/(127\.0\.0\.1|localhost).*((htt|rt|rtc|rts|ud)p:\/\/.*$)/i', $url, $m) && !empty($m[2][0])) {
+        return $m[2][0];
     }
 
     return $url;
@@ -1216,12 +1221,13 @@ function get_audio_tracks_description()
     #          'codec' => [value],
     #          'type' => [value]),...)
 
-    preg_match_all('/audio_track\.(\d)\.(.*)\s=\s(.*$)/mx', file_get_contents('/tmp/run/ext_command.state'), $matches);
+    /** @var array $m */
+    preg_match_all('/audio_track\.(\d)\.(.*)\s=\s(.*$)/mx', file_get_contents('/tmp/run/ext_command.state'), $m);
 
     $result = array();
 
-    foreach ($matches[1] as $key => $value) {
-        $result[$value][$matches[2][$key]] = $matches[3][$key];
+    foreach ($m[1] as $key => $value) {
+        $result[$value][$m[2][$key]] = $m[3][$key];
     }
 
     return $result;
@@ -2014,6 +2020,7 @@ function get_system_language_string_value($string_key)
     if ($sys_settings = parse_ini_file('/config/settings.properties', false, INI_SCANNER_RAW)) {
         $sys_lang = file_exists('/firmware/translations/dune_language_' . $sys_settings['interface_language'] . '.txt')
             ? $sys_settings['interface_language'] : 'english';
+        /** @var array $m */
         if (($lang_txt = file_get_contents("/firmware/translations/dune_language_$sys_lang.txt")) &&
             preg_match("/^$string_key\\s*=(.*)$/m", $lang_txt, $m)) {
             return trim($m[1]);
@@ -2442,6 +2449,8 @@ function send_process_signal($pid, $sig_num) {
     if (function_exists("posix_kill")) {
         return posix_kill($pid, $sig_num);
     }
+    /** @var array $junk */
+    /** @var int $return_code */
     exec("kill -s $sig_num $pid 2>&1", $junk, $return_code);
     return !$return_code;
 }

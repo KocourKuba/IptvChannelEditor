@@ -343,6 +343,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 hd_debug_print("ungzip $tmp_filename to $cached_file");
                 $cmd = "gzip -d $tmp_filename 2>&1";
                 system($cmd, $ret);
+                /** @noinspection PhpConditionAlreadyCheckedInspection */
                 if ($ret !== 0) {
                     throw new Exception("Failed to unpack $tmp_filename (error code: $ret)");
                 }
@@ -366,6 +367,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 $cmd = "unzip -oq $tmp_filename -d $this->cache_dir 2>&1";
                 system($cmd, $ret);
                 unlink($tmp_filename);
+                /** @noinspection PhpConditionAlreadyCheckedInspection */
                 if ($ret !== 0) {
                     throw new Exception("Failed to unpack $tmp_filename (error code: $ret)");
                 }
@@ -384,7 +386,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 hd_debug_print("$size bytes stored to $cached_file in " . $this->perf->getReportItemCurrent(Perf_Collector::TIME, 'unpack') . " secs");
             } else {
                 hd_debug_print("Unknown signature: " . bin2hex($hdr), true);
-                throw new Exception(TR::load_string('err_unknown_file_type'));
+                throw new Exception(TR::load('err_unknown_file_type'));
             }
 
             $ret = 1;

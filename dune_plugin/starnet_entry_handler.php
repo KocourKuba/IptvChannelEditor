@@ -93,7 +93,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                     hd_debug_print("Too old Dune HD firmware! " . get_raw_firmware_version());
                     return  Action_Factory::show_error(true, TR::t('err_too_old_player'),
                         array(
-                            TR::load_string('err_too_old_player'),
+                            TR::load('err_too_old_player'),
                             "Dune Product ID: " .get_product_id(),
                             "Dune Firmware: " . get_raw_firmware_version(),
                             "Dune Serial: " . get_serial_number(),
