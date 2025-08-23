@@ -67,6 +67,10 @@ BOOL CUpdateSettingsPage::OnInitDialog()
 	m_UpdateFreq = GetConfig().get_int(true, REG_UPDATE_FREQ, 3);
 	m_bUpdateChannels = GetConfig().get_int(true, REG_UPDATE_PL);
 	m_UpdateServer = GetConfig().get_int(true, REG_UPDATE_SERVER, 0);
+	if (m_UpdateServer >= m_wndUpdateServer.GetCount())
+	{
+		m_UpdateServer = 0;
+	}
 
 	UpdateData(FALSE);
 
