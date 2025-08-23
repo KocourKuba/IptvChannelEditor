@@ -2189,7 +2189,7 @@
           "pl_template": "http://{DOMAIN_ID}/tv_live-m3u8/{LOGIN}-{PASSWORD}"
         }
       ],
-      "provider_api_url": "https://list.playtv.pro/api/players.php",
+      "provider_api_url": "http://list.playtv.pro/api/players.php",
       "provider_url": "https://shara.club/",
       "streams_config": [
         {
