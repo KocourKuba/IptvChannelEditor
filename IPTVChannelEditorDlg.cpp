@@ -140,10 +140,10 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_EPG1_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg1ID)
 	ON_EN_CHANGE(IDC_EDIT_EPG2_ID, &CIPTVChannelEditorDlg::OnEnChangeEditEpg2ID)
 	ON_EN_CHANGE(IDC_EDIT_TIME_SHIFT, &CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours)
+	ON_EN_CHANGE(IDC_EDIT_TIME_SHIFT_MINS, &CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftMins)
 	ON_EN_CHANGE(IDC_EDIT_STREAM_URL, &CIPTVChannelEditorDlg::OnEnChangeEditStreamUrl)
 	ON_EN_CHANGE(IDC_EDIT_ARCHIVE_DAYS, &CIPTVChannelEditorDlg::OnEnChangeEditArchiveDays)
 	ON_EN_CHANGE(IDC_EDIT_URL_ID, &CIPTVChannelEditorDlg::OnEnChangeEditUrlID)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TIME_SHIFT, &CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours)
 	ON_STN_CLICKED(IDC_STATIC_ICON, &CIPTVChannelEditorDlg::OnStnClickedStaticIcon)
 
 	ON_CBN_SELCHANGE(IDC_COMBO_PLUGIN_TYPE, &CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType)
@@ -168,6 +168,9 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE_PLAYLIST, &CIPTVChannelEditorDlg::OnNMRclickTreePlaylist)
 	ON_NOTIFY(NM_SETFOCUS, IDC_TREE_PLAYLIST, &CIPTVChannelEditorDlg::OnNMSetfocusTree)
 	ON_NOTIFY(TVN_GETINFOTIP, IDC_TREE_PLAYLIST, &CIPTVChannelEditorDlg::OnTvnPlaylistGetInfoTip)
+
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TIME_SHIFT, &CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TIME_SHIFT_MINS, &CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftMins)
 
 	ON_COMMAND(ID_SAVE, &CIPTVChannelEditorDlg::OnSave)
 	ON_UPDATE_COMMAND_UI(ID_SAVE, &CIPTVChannelEditorDlg::OnUpdateSave)
@@ -293,6 +296,9 @@ void CIPTVChannelEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_TIME_SHIFT, m_timeShiftHours);
 	DDX_Control(pDX, IDC_EDIT_TIME_SHIFT, m_wndTimeShift);
 	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT, m_wndSpinTimeShift);
+	DDX_Text(pDX, IDC_EDIT_TIME_SHIFT_MINS, m_timeShiftMins);
+	DDX_Control(pDX, IDC_EDIT_TIME_SHIFT_MINS, m_wndTimeShiftMins);
+	DDX_Control(pDX, IDC_SPIN_TIME_SHIFT_MINS, m_wndSpinTimeShiftMins);
 	DDX_Control(pDX, IDC_STATIC_ICON, m_wndChannelIcon);
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, m_wndSearch);
@@ -540,6 +546,12 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndToolTipCtrl.SetDelayTime(TTDT_INITIAL, 500);
 	m_wndToolTipCtrl.SetMaxTipWidth(500);
 	m_wndToolTipCtrl.Activate(TRUE);
+	m_wndSpinTimeShift.SetRange(-23, 23);
+	m_wndSpinTimeShiftMins.SetRange(0, 55);
+	// Set the step increment for the spin control
+	UDACCEL accel = { 0, 5 }; // Step size of 5
+	m_wndSpinTimeShiftMins.SetAccel(1, &accel);
+
 	const auto& selected = GetConfig().get_selected_plugin();
 	int selected_idx = 0;
 	// Fill available plugins
@@ -1832,6 +1844,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	m_epgID1.Empty();
 	m_epgID2.Empty();
 	m_timeShiftHours = 0;
+	m_timeShiftMins = 0;
 	m_infoAudio.Empty();
 	m_infoVideo.Empty();
 	m_iconUrl.Empty();
@@ -1895,6 +1908,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 
 	// set archive parameters
 	m_timeShiftHours = channel->get_time_shift_hours();
+	m_timeShiftMins = channel->get_time_shift_mins();
 	m_isArchive = !!channel->is_archive();
 	m_wndArchiveDays.EnableWindow(m_isArchive);
 	m_archiveDays = channel->get_archive_days();
@@ -1983,7 +1997,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 		if (epg_idx < 0 || epg_idx > 2)
 			epg_idx = 0;
 
-		int time_shift = m_timeShiftHours * 3600;
+		int time_shift = m_timeShiftHours * 3600 + m_timeShiftMins * 60;
 
 		time_t now = time(nullptr);
 		if (m_lastTree == &m_wndChannelsTree)
@@ -3220,6 +3234,8 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 	m_wndStreamID.EnableWindow(single && !m_streamID.IsEmpty());
 	m_wndTimeShift.EnableWindow(state);
 	m_wndSpinTimeShift.EnableWindow(state);
+	m_wndTimeShiftMins.EnableWindow(state);
+	m_wndSpinTimeShiftMins.EnableWindow(state);
 	m_wndSearch.EnableWindow(TRUE);
 	m_wndEpg1.EnableWindow(single);
 	m_wndEpg2.EnableWindow(single && !m_plugin->get_epg_parameter(1).epg_url.empty());
@@ -3658,11 +3674,11 @@ void CIPTVChannelEditorDlg::OnEnChangeEditUrlID()
 
 void CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours()
 {
-	if (m_timeShiftHours < -12)
-		m_timeShiftHours = -12;
+	if (m_timeShiftHours < -24)
+		m_timeShiftHours = -24;
 
-	if (m_timeShiftHours > 12)
-		m_timeShiftHours = 12;
+	if (m_timeShiftHours > 24)
+		m_timeShiftHours = 24;
 
 	UpdateData(FALSE);
 
@@ -3683,9 +3699,42 @@ void CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftHours()
 void CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	UpdateData(TRUE);
-	m_timeShiftHours -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
+	m_timeShiftHours += reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
 	UpdateData(FALSE);
 	OnEnChangeEditTimeShiftHours();
+	*pResult = 0;
+}
+
+void CIPTVChannelEditorDlg::OnEnChangeEditTimeShiftMins()
+{
+	if (m_timeShiftMins < 0)
+		m_timeShiftMins = 0;
+
+	if (m_timeShiftMins > 55)
+		m_timeShiftMins = 55;
+
+	UpdateData(FALSE);
+
+	for (const auto& hItem : m_wndChannelsTree.GetSelectedItems())
+	{
+		const auto& channel = FindChannel(hItem);
+		if (channel)
+		{
+			channel->set_time_shift_mins(m_timeShiftMins);
+		}
+	}
+
+	set_allow_save();
+
+	TriggerEpg();
+}
+
+void CIPTVChannelEditorDlg::OnDeltaposSpinTimeShiftMins(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	UpdateData(TRUE);
+	m_timeShiftMins += reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
+	UpdateData(FALSE);
+	OnEnChangeEditTimeShiftMins();
 	*pResult = 0;
 }
 

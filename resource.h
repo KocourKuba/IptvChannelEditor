@@ -730,6 +730,8 @@
 #define IDC_COMBO_VOD_ENGINE            1245
 #define IDC_COMBO_SERVER                1246
 #define IDC_CHECK_EPG_SHOW_LINK         1247
+#define IDC_EDIT_TIME_SHIFT_MINS        1248
+#define IDC_SPIN_TIME_SHIFT_MINS        1249
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773

@@ -85,6 +85,11 @@ class Default_Channel extends Json_Serializer implements Channel
     protected $_timeshift_hours;
 
     /**
+     * @var int
+     */
+    protected $_timeshift_mins;
+
+    /**
      * @var array|null
      */
     protected $_ext_params;
@@ -109,7 +114,7 @@ class Default_Channel extends Json_Serializer implements Channel
                                 $streaming_url, $custom_arc_template,
                                 $streaming_url_type, $custom_arc_url_type,
                                 $archive, $number, $epg_ids,
-                                $protected, $timeshift_hours, $ext_params)
+                                $protected, $timeshift_hours, $timeshift_mins, $ext_params)
     {
         $this->_disabled = false;
 
@@ -127,6 +132,7 @@ class Default_Channel extends Json_Serializer implements Channel
         $this->_epg_ids = $epg_ids;
         $this->_protected = $protected;
         $this->_timeshift_hours = $timeshift_hours;
+        $this->_timeshift_mins = $timeshift_mins;
         $this->_ext_params = $ext_params;
     }
 
@@ -233,6 +239,14 @@ class Default_Channel extends Json_Serializer implements Channel
     public function get_timeshift_hours()
     {
         return $this->_timeshift_hours;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get_timeshift_mins()
+    {
+        return $this->_timeshift_mins;
     }
 
     /**

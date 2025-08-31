@@ -95,7 +95,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 	m_wndEpgList.DeleteAllItems();
 	m_idx_map.clear();
 
-	int time_shift = m_info->get_time_shift_hours() * 3600;
+	int time_shift = m_info->get_time_shift_hours() * 3600 + m_info->get_time_shift_mins() * 60;
 
 	CTime nt(sel_time.GetYear(), sel_time.GetMonth(), sel_time.GetDay(), sel_time.GetHour(), sel_time.GetMinute(), sel_time.GetSecond());
 	time_t now = nt.GetTime() + time_shift;
@@ -175,7 +175,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 			if (shifted_start < start_time || shifted_start > end_time) continue;
 
-			bool isArchive = (_time32(nullptr) - value->time_end) > 0 && value->time_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
+			bool isArchive = (_time32(nullptr) - shifted_end) > 0 && shifted_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
 			COleDateTime start(shifted_start);
 			COleDateTime end(shifted_end);
 			int idx = m_wndEpgList.InsertItem(i++, isArchive ? L"R" : L"");
@@ -273,10 +273,14 @@ void CEpgListDlg::OnNMDblclkListEpg(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	*pResult = 0;
 
+	int time_shift = m_info->get_time_shift_hours() * 3600 + m_info->get_time_shift_mins() * 60;
 	if (const auto& start_pair = m_idx_map.find(pNMItemActivate->iItem); start_pair != m_idx_map.end())
 	{
-		m_params.shift_back = (int)start_pair->second.first;
-		bool isArchive = (_time32(nullptr) - start_pair->second.first) > 0 && start_pair->second.second > (_time32(nullptr) - m_info->get_archive_days() * 84600);
+		const time_t shifted_start = start_pair->second.first - time_shift;
+		const time_t shifted_end = start_pair->second.second - time_shift;
+
+		m_params.shift_back = (int)shifted_start;
+		bool isArchive = (_time32(nullptr) - shifted_end) > 0 && shifted_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
 		if (isArchive)
 		{
 			const auto& url = m_plugin->get_play_stream(m_params, m_info);

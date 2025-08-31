@@ -426,6 +426,7 @@ class Starnet_Tv implements User_Input_Handler
                     $epg_ids,
                     $protected,
                     (int)$xml_tv_channel->timeshift_hours,
+                    (int)$xml_tv_channel->timeshift_mins,
                     $ext_params
                 );
 
@@ -615,7 +616,7 @@ class Starnet_Tv implements User_Input_Handler
 
                         // Buffering time
                         PluginTvChannel::buffering_ms => $this->plugin->get_parameter(PARAM_BUFFERING_TIME, 1000),
-                        PluginTvChannel::timeshift_hours => $channel->get_timeshift_hours(),
+                        PluginTvChannel::timeshift_hours => $channel->get_timeshift_hours() + $channel->get_timeshift_mins() / 60,
 
                         PluginTvChannel::playback_url_is_stream_url => $this->playback_url_is_stream_url,
                         PluginTvChannel::ext_epg_enabled => $ext_epg_enabled,

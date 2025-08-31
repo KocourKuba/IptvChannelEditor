@@ -151,6 +151,9 @@ public:
 	int get_time_shift_hours() const { return time_shift_hours; }
 	void set_time_shift_hours(int val) { time_shift_hours = val; }
 
+	int get_time_shift_mins() const { return time_shift_mins; }
+	void set_time_shift_mins(int val) { time_shift_mins = val; }
+
 	CatchupType get_catchup() const { return catchup; }
 	void set_catchup(const CatchupType& val) { catchup = val; }
 
@@ -236,6 +239,7 @@ protected:
 	std::string catchup_source;
 	std::array<std::wstring, 2> epg_id; // epg id
 	int time_shift_hours = 0;
+	int time_shift_mins = 0;
 	int adult = 0;
 	int archive_days = 0;
 

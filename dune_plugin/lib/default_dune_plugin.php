@@ -545,7 +545,7 @@ class Default_Dune_Plugin implements DunePlugin
             $day_start_tm_sec -= get_local_time_zone_offset();
 
             // get personal time shift for channel
-            $time_shift = 3600 * ($channel->get_timeshift_hours() + $this->get_parameter(PARAM_EPG_SHIFT, 0));
+            $time_shift = 3600 * ($channel->get_timeshift_hours() + $this->get_parameter(PARAM_EPG_SHIFT, 0)) + $channel->get_timeshift_hours() * 60;
             hd_debug_print("EPG time shift $time_shift", true);
             $day_start_tm_sec += $time_shift;
 
@@ -1323,8 +1323,8 @@ class Default_Dune_Plugin implements DunePlugin
         $info .= "Archive: " . var_export($channel->get_archive(), true) . " day's" . PHP_EOL;
         $info .= "Protected: " . var_export($channel->is_protected(), true) . PHP_EOL;
         $info .= "EPG IDs: " . implode(', ', $channel->get_epg_ids()) . PHP_EOL;
-        if ($channel->get_timeshift_hours() !== 0) {
-            $info .= "Timeshift hours: " . $channel->get_timeshift_hours() . PHP_EOL;
+        if ($channel->get_timeshift_hours() !== 0 || $channel->get_timeshift_mins() !== 0) {
+            $info .= sprintf("Timeshift hours: %d:%02d", $channel->get_timeshift_hours(),$channel->get_timeshift_mins()) . PHP_EOL;
         }
         $groups = array();
         foreach ($channel->get_groups() as $group) {

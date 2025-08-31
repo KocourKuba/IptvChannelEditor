@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 
 constexpr auto APP_SETTINGS = L"Application";
-constexpr auto CHANNELS_LIST_VERSION = 8;
+constexpr auto CHANNELS_LIST_VERSION = 9;
 constexpr auto PACK_DLL = L"7z.dll";
 
 constexpr auto CMP_FLAG_TITLE          = 0x01;

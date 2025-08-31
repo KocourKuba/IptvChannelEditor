@@ -63,6 +63,7 @@ static constexpr auto EPG1_ID = "epg_id";
 static constexpr auto EPG2_ID = "tvg_id";
 static constexpr auto CAPTION = "caption";
 static constexpr auto TIME_SHIFT_HOURS = "timeshift_hours";
+static constexpr auto TIME_SHIFT_MINS = "timeshift_mins";
 static constexpr auto NUM_PAST_EPG_DAYS = "num_past_epg_days";
 static constexpr auto NUM_FUTURE_EPG_DAYS = "num_future_epg_days";
 static constexpr auto TV_CATEGORY_ID = "tv_category_id";

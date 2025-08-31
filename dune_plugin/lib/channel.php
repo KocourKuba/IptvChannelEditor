@@ -106,6 +106,12 @@ interface Channel
     public function get_timeshift_hours();
 
     /**
+     * timeshift for epg to this channel in minutes
+     * @return int
+     */
+    public function get_timeshift_mins();
+
+    /**
      * custom streaming url
      * @return string
      */

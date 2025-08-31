@@ -165,6 +165,8 @@ protected:
 	afx_msg void OnEnChangeEditUrlID();
 	afx_msg void OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditTimeShiftHours();
+	afx_msg void OnDeltaposSpinTimeShiftMins(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnChangeEditTimeShiftMins();
 	afx_msg void OnTvnSelchangedTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResult);
@@ -326,9 +328,11 @@ protected:
 	CEdit m_wndInfoVideo;
 	CEdit m_wndInfoAudio;
 	CEdit m_wndTimeShift;
+	CEdit m_wndTimeShiftMins;
 	CEdit m_wndSearch;
 	CEdit m_wndPlSearch;
 	CSpinButtonCtrl m_wndSpinTimeShift;
+	CSpinButtonCtrl m_wndSpinTimeShiftMins;
 	CButton m_wndBtnChangelog;
 	CButton m_wndBtnCheckUpdate;
 	CButton m_wndBtnSearchNext;
@@ -389,6 +393,7 @@ protected:
 	CString m_epgID2; // Secondary EPG source m_wndEpg2ID
 	int m_archiveDays = 0; // m_wndArchiveDays
 	int m_timeShiftHours = 0; // m_wndTimeShift
+	int m_timeShiftMins = 0; // m_wndTimeShiftMins
 	int m_archivePlDays = 0; // always read only field
 	int m_xmltvEpgSource = 0;
 
