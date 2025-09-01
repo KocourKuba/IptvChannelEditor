@@ -29,6 +29,8 @@ DEALINGS IN THE SOFTWARE.
 //
 
 #pragma once
+#include <variant>
+#include <shared_mutex>
 #include "PlayListEntry.h"
 #include "TreeCtrlEx.h"
 #include "ChannelCategory.h"
@@ -43,6 +45,8 @@ DEALINGS IN THE SOFTWARE.
 #include "Credentials.h"
 #include "base_plugin.h"
 #include "PlaylistTemplateInfo.h"
+
+using variantBaseInfo = std::variant<std::shared_ptr<ChannelInfo>, std::shared_ptr<ChannelCategory>, std::shared_ptr<PlaylistEntry>, std::nullptr_t>;
 
 // CEdemChannelEditorDlg dialog
 class CIPTVChannelEditorDlg : public CDialogEx
@@ -240,6 +244,7 @@ private:
 	void FillTreeChannels(LPCWSTR select = nullptr);
 	void FillTreePlaylist();
 	std::vector<std::wstring> FilterPlaylist();
+	void DownloadEPG();
 	void FillXmlSources();
 
 	void LoadChannelInfo(std::shared_ptr<ChannelInfo> channel = nullptr);
@@ -262,7 +267,8 @@ private:
 	std::shared_ptr<ChannelInfo> FindChannel(HTREEITEM hItem) const;
 	std::shared_ptr<ChannelCategory> FindCategory(HTREEITEM hItem) const;
 	std::shared_ptr<PlaylistEntry> FindEntry(HTREEITEM item) const;
-	uri_stream* GetBaseInfo(const CTreeCtrlEx* pCtl, HTREEITEM item) const;
+	variantBaseInfo GetBaseInfo(const CTreeCtrlEx* pCtl, HTREEITEM item) const;
+	uri_stream* GetUriStream(const variantBaseInfo& var);
 
 	bool IsSelectedTheSameType(const CTreeCtrlEx* pTreeCtl) const;
 	bool IsSelectedChannelsOrEntries(bool onlyChannel = false) const;
@@ -285,7 +291,7 @@ private:
 
 	void TriggerEpg();
 	void FillEPG();
-	bool ParseJsonEpg(const int epg_idx, const time_t for_time, const uri_stream* info);
+	bool ParseJsonEpg(const int epg_idx);
 	void ParseXmEpg(const int epg_idx);
 
 	void UpdateExtToken(uri_stream* uri) const;
@@ -426,12 +432,14 @@ private:
 	std::map<std::wstring, int> m_changedChannels;
 	std::set<std::wstring> m_unknownChannels;
 
+	std::shared_mutex m_mxEpgCache;
+	std::mutex m_mxUpdateEpg;
+	std::condition_variable m_cvUpdateEpg;
+	bool m_allowUpdateEpg = false;
+
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
 	CEvent m_evtThreadExit;
-
-	CEvent m_evtUpdateEpg;
-	CEvent m_evtThreadEpgStop;
 
 	COLORREF m_normal; // Normal color for category
 	COLORREF m_gray; // channel disabled
@@ -521,5 +529,6 @@ private:
 	// vod
 	std::map<std::string, std::map<std::wstring, vod_category_storage>> m_vod_categories;
 
+	std::jthread m_threadDownload;
 	std::jthread m_threadEPG;
 };

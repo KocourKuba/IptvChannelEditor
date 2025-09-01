@@ -45,7 +45,8 @@ struct EpgInfo
 #endif // _DEBUG
 };
 
-using EpgStorage = std::unordered_map<std::wstring, std::map<time_t, std::shared_ptr<EpgInfo>>>;
+using EpgStorageItem = std::map<time_t, std::shared_ptr<EpgInfo>>;
+using EpgStorage = std::unordered_map<std::wstring, EpgStorageItem>;
 using EpgAliases = std::unordered_map<std::wstring, std::wstring>;
 
 /// <summary>
