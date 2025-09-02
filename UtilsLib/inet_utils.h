@@ -59,6 +59,7 @@ struct http_request
 	std::wstring error_message;
 	bool verb_post = false;
 	std::stringstream body;
+	std::stop_token stop_token;
 };
 
 std::future<bool> AsyncDownloadFile(http_request& request);

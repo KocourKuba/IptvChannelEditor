@@ -244,7 +244,6 @@ private:
 	void FillTreeChannels(LPCWSTR select = nullptr);
 	void FillTreePlaylist();
 	std::vector<std::wstring> FilterPlaylist();
-	void DownloadEPG();
 	void FillXmlSources();
 
 	void LoadChannelInfo(std::shared_ptr<ChannelInfo> channel = nullptr);
@@ -291,8 +290,9 @@ private:
 
 	void TriggerEpg();
 	void FillEPG();
-	bool ParseJsonEpg(const int epg_idx);
-	void ParseXmEpg(const int epg_idx);
+	void ParseJsonEpg(const int epg_idx);
+	void DownloadAndParseXmltvEpg();
+	int GetEpgIdx();
 
 	void UpdateExtToken(uri_stream* uri) const;
 	void UpdateVars(uri_stream* uri) const;

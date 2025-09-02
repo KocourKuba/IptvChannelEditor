@@ -35,6 +35,8 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
+constexpr int XMLTV_EPG = 2;
+
 // CIconsList dialog
 
 IMPLEMENT_DYNAMIC(CEpgListDlg, CDialogEx)
@@ -108,7 +110,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 	int i = 0;
 	int current_idx = -1;
-	if (m_epg_idx == 2)
+	if (m_epg_idx == XMLTV_EPG)
 	{
 		m_csEpgUrl = m_xmltv_source.c_str();
 	}
@@ -119,7 +121,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 	bool found = false;
 	std::vector<std::wstring> ids;
-	if (m_epg_idx != 2)
+	if (m_epg_idx != XMLTV_EPG)
 	{
 		ids.emplace_back(m_info->get_epg_id(m_epg_idx));
 	}

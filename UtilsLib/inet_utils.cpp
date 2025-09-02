@@ -236,6 +236,12 @@ bool DownloadFile(http_request& request)
 		bool bSaveBadCache = false;
 		for (;;)
 		{
+			if (request.stop_token.stop_requested())
+			{
+				bResults = false;
+				break;
+			}
+
 			DWORD post_size = request.post_data.empty() ? 0 : static_cast<DWORD>(request.post_data.length());
 			if (!WinHttpSendRequest(hRequest,
 									WINHTTP_NO_ADDITIONAL_HEADERS,
@@ -367,6 +373,12 @@ bool DownloadFile(http_request& request)
 		DWORD dwSize = 0;
 		for (;;)
 		{
+			if (request.stop_token.stop_requested())
+			{
+				bResults = false;
+				break;
+			}
+
 			if (!bResults)
 			{
 				request.error_message += std::format(L"\nError code: {:d}", GetLastError());
@@ -429,6 +441,7 @@ bool DownloadFile(http_request& request)
 	}
 #endif // _DEBUG
 
+	request.body.clear();
 	return false;
 }
 
