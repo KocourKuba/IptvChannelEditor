@@ -36,12 +36,6 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-void CGetStreamInfoThread::ThreadConfig::NotifyParent(UINT message, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/) const
-{
-	if (m_parent->GetSafeHwnd())
-		m_parent->SendMessage(message, wParam, lParam);
-}
-
 IMPLEMENT_DYNCREATE(CGetStreamInfoThread, CWinThread)
 
 BOOL CGetStreamInfoThread::InitInstance()
@@ -52,10 +46,10 @@ BOOL CGetStreamInfoThread::InitInstance()
 
 	if (m_config.m_container)
 	{
-		m_config.NotifyParent(WM_INIT_PROGRESS, (WPARAM)m_config.m_container->size(), 0);
+		SendNotifyParent(m_config.m_parent, WM_INIT_PROGRESS, (WPARAM)m_config.m_container->size(), 0);
 
 		ULARGE_INTEGER ul = { 0, (DWORD)m_config.m_container->size() };
-		m_config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul);
+		SendNotifyParent(m_config.m_parent, WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul);
 
 		BS::thread_pool pool(m_config.m_max_threads);
 		std::atomic<int> count { 0 };
@@ -68,7 +62,7 @@ BOOL CGetStreamInfoThread::InitInstance()
 											 });
 	}
 
-	m_config.NotifyParent(WM_END_GET_STREAM_INFO);
+	SendNotifyParent(m_config.m_parent, WM_END_GET_STREAM_INFO);
 
 	::SetEvent(m_config.m_hExit);
 	ATLTRACE("\nThread exit\n");
@@ -78,7 +72,7 @@ BOOL CGetStreamInfoThread::InitInstance()
 	return FALSE;
 }
 
-void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomic<int>& count, int index)
+void CGetStreamInfoThread::GetChannelStreamInfo(CThreadConfig& config, std::atomic<int>& count, int index)
 {
 	TRACE("GetChannelStreamInfo: thread %d start\n", index);
 	if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
@@ -214,7 +208,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 		if (item == "[STREAM]")
 		{
 			skip = false;
-			streams.emplace_back(std::map<std::string, std::string>());
+			streams.emplace_back();
 			idx = streams.size() - 1;
 			continue;
 		}
@@ -280,5 +274,5 @@ void CGetStreamInfoThread::GetChannelStreamInfo(ThreadConfig& config, std::atomi
 	ULARGE_INTEGER ul = { (DWORD)++count, (DWORD)config.m_container->size() };
 	std::tuple<int, std::string, std::string> tuple = { uri->get_hash(), audio, video };
 
-	config.NotifyParent(WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul, (LPARAM)&tuple);
+	SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul, (LPARAM)&tuple);
 }

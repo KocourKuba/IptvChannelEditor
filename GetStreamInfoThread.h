@@ -32,19 +32,13 @@ class CGetStreamInfoThread : public CWinThread
 {
 	DECLARE_DYNCREATE(CGetStreamInfoThread)
 public:
-	class ThreadConfig
+	class CThreadConfig : public ThreadConfig
 	{
 	public:
-		void NotifyParent(UINT message, WPARAM wParam = 0, LPARAM lParam = 0) const;
-
-		std::vector<uri_stream*>* m_container = nullptr;
-		CWnd* m_parent = nullptr;
-		HANDLE m_hStop = nullptr;
-		HANDLE m_hExit = nullptr;
 		std::wstring m_probe;
 		int m_max_threads = 1;
+		std::vector<uri_stream*>* m_container = nullptr;
 		std::shared_ptr<base_plugin> m_plugin;
-		TemplateParams m_params;
 	};
 
 protected:
@@ -56,12 +50,12 @@ public:
 public:
 	BOOL InitInstance() override;
 
-	void SetData(const ThreadConfig& config) { m_config = config; };
+	void SetData(const CThreadConfig& config) { m_config = config; };
 
 protected:
-	static void GetChannelStreamInfo(ThreadConfig& config, std::atomic<int>& count, int index);
+	static void GetChannelStreamInfo(CThreadConfig& config, std::atomic<int>& count, int index);
 
 protected:
-	ThreadConfig m_config;
+	CThreadConfig m_config;
 	boost::wregex m_re{};
 };
