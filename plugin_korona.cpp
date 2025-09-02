@@ -84,7 +84,7 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 
 	if (utils::AsyncDownloadFile(req).get())
 	{
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (utils::get_json_string("error", parsed_json).empty())
@@ -102,7 +102,7 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 				session_token.clear();
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 	else
 	{
@@ -118,7 +118,7 @@ void plugin_korona::parse_account_info(TemplateParams& params)
 	{
 		const auto& js_data = server_request(replace_params_vars(params, API_COMMAND_INFO));
 
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			set_json_info("balance", js_data, account_info);
 			set_json_info("expiry_data", js_data, account_info);
@@ -137,7 +137,7 @@ void plugin_korona::parse_account_info(TemplateParams& params)
 				set_json_info("full_price", tariff, account_info);
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 }
 
@@ -148,7 +148,7 @@ void plugin_korona::fill_servers_list(TemplateParams& params)
 
 	std::vector<DynamicParamsInfo> servers;
 
-	JSON_ALL_TRY;
+	JSON_ALL_TRY
 	{
 		const auto& parsed_json = server_request(replace_params_vars(params, API_COMMAND_SERVERS));
 		if (parsed_json.contains("data"))
@@ -167,7 +167,7 @@ void plugin_korona::fill_servers_list(TemplateParams& params)
 			}
 		}
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 
 	set_servers_list(servers);
 }
@@ -186,7 +186,7 @@ void plugin_korona::parse_vod(const ThreadConfig& config)
 
 		const auto& url = std::format(L"{:s}/cat", api_url);
 		int total = 0;
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			nlohmann::json parsed_json = server_request(url, true);
 			for (const auto& item_it : parsed_json["data"].items())
@@ -202,7 +202,7 @@ void plugin_korona::parse_vod(const ThreadConfig& config)
 				categories->set_back(category->id, category);
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 
 		SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, total, 0);
 
@@ -221,7 +221,7 @@ void plugin_korona::parse_vod(const ThreadConfig& config)
 				{
 					const auto& movie_item = movie_it.value();
 
-					JSON_ALL_TRY;
+					JSON_ALL_TRY
 					{
 						auto movie = std::make_shared<vod_movie>();
 
@@ -247,7 +247,7 @@ void plugin_korona::parse_vod(const ThreadConfig& config)
 
 						category->movies.set_back(movie->id, movie);
 					}
-					JSON_ALL_CATCH;
+					JSON_ALL_CATCH
 
 					if (++cnt % 100 == 0)
 					{
@@ -284,7 +284,7 @@ void plugin_korona::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 		return;
 	}
 
-	JSON_ALL_TRY;
+	JSON_ALL_TRY
 	{
 		const auto& value = movies_json["data"];
 
@@ -336,7 +336,7 @@ void plugin_korona::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 			movie.url = utils::get_json_wstring("url", value["files"][0]);
 		}
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 }
 
 std::wstring plugin_korona::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie)
@@ -382,11 +382,11 @@ nlohmann::json plugin_korona::server_request(const std::wstring& url, const bool
 
 		if (utils::AsyncDownloadFile(req).get())
 		{
-			JSON_ALL_TRY;
+			JSON_ALL_TRY
 			{
 				return nlohmann::json::parse(req.body.str());
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 	}
 

@@ -52,11 +52,11 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 		if (!utils::AsyncDownloadFile(req).get()) break;
 
 		nlohmann::json parsed_json;
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			parsed_json = nlohmann::json::parse(req.body.str());
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 
 		if (parsed_json.empty()) break;
 
@@ -72,7 +72,7 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 			std::wstring category_name;
 			auto movie = std::make_shared<vod_movie>();
 
-			JSON_ALL_TRY;
+			JSON_ALL_TRY
 			{
 				category_name = utils::get_json_wstring("category", val);
 				if (category_name.empty())
@@ -113,7 +113,7 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 
 				category->movies.set_back(movie->id, movie);
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 
 			if (++cnt % 100 == 0)
 			{

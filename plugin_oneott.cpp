@@ -51,7 +51,7 @@ void plugin_oneott::parse_account_info(TemplateParams& params)
 					account_info.emplace(L"token", params.creds.get_s_token());
 				}
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 		else
 		{

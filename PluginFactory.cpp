@@ -253,7 +253,7 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 
 		res = !m_config_storage.empty();
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 
 	return res;
 }

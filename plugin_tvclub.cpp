@@ -52,7 +52,7 @@ void plugin_tvclub::parse_account_info(TemplateParams& params)
 		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"account")) };
 		if (utils::AsyncDownloadFile(req).get())
 		{
-			JSON_ALL_TRY;
+			JSON_ALL_TRY
 			{
 				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				if (parsed_json.contains("account"))
@@ -86,7 +86,7 @@ void plugin_tvclub::parse_account_info(TemplateParams& params)
 					}
 				}
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 		else
 		{
@@ -107,7 +107,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 	utils::http_request req{replace_params_vars(params, std::format(API_COMMAND_URL, L"settings"))};
 	if (utils::AsyncDownloadFile(req).get())
 	{
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (parsed_json.contains("settings"))
@@ -126,7 +126,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 				}
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 
 	set_servers_list(servers);
@@ -149,12 +149,12 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 		utils::http_request req{ replace_params_vars(params, url) };
 		if (utils::AsyncDownloadFile(req).get())
 		{
-			JSON_ALL_TRY;
+			JSON_ALL_TRY
 			{
 				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				return utils::get_json_int("updated", parsed_json["settings"]) == 1;
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 	}
 

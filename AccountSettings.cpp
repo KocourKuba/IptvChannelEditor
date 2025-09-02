@@ -134,11 +134,11 @@ void AccountSettings::LoadSettings()
 	std::ifstream in_file(GetAppPath() + CONFIG_FILE);
 	if (in_file.good())
 	{
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			in_file >> m_config;
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 
 		if (!m_config.empty())
 		{
@@ -233,7 +233,7 @@ std::vector<Credentials> AccountSettings::LoadCredentials() const
 {
 	std::vector<Credentials> credentials;
 	nlohmann::json creds;
-	JSON_ALL_TRY;
+	JSON_ALL_TRY
 	{
 		const auto& data = GetConfig().get_string(false, REG_ACCOUNT_DATA);
 		if (!data.empty())
@@ -241,14 +241,14 @@ std::vector<Credentials> AccountSettings::LoadCredentials() const
 			creds = nlohmann::json::parse(data);
 		}
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 	for (const auto& item : creds.items())
 	{
 		const auto& val = item.value();
 		if (val.empty()) continue;
 
 		Credentials cred;
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			cred = val.get<Credentials>();
 			// only edem has special cred type and only edem has server filters
@@ -258,7 +258,7 @@ std::vector<Credentials> AccountSettings::LoadCredentials() const
 				std::swap(cred.subdomain, cred.domain);
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 		credentials.emplace_back(cred);
 	}
 
@@ -539,7 +539,7 @@ void AccountSettings::UpdateSettingsJson(const std::string& plugin_type)
 	for (const auto& [key, value] : m_settings[plugin_type])
 	{
 		const auto& name = utils::utf16_to_utf8(key);
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			switch (value.index())
 			{
@@ -568,7 +568,7 @@ void AccountSettings::UpdateSettingsJson(const std::string& plugin_type)
 				}
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 
 	if (plugin_type == common_settings)

@@ -62,7 +62,7 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 
 		if (utils::AsyncDownloadFile(req).get())
 		{
-			JSON_ALL_TRY;
+			JSON_ALL_TRY
 			{
 				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				if (parsed_json.contains("status"))
@@ -84,7 +84,7 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 					epg_params[0].epg_domain = js_data["jsonEpgDomain"].get<std::string>();
 				}
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 		else
 		{
@@ -106,7 +106,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 
 	if (utils::AsyncDownloadFile(req).get())
 	{
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (utils::get_json_int("status", parsed_json) == 1)
@@ -121,7 +121,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 				}
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 
 	set_servers_list(servers);
@@ -142,12 +142,12 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 		utils::http_request req{ replace_params_vars(params, url) };
 		if (utils::AsyncDownloadFile(req).get())
 		{
-			JSON_ALL_TRY;
+			JSON_ALL_TRY
 			{
 				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				return utils::get_json_wstring("status", parsed_json) == L"1";
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 	}
 
@@ -166,7 +166,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 		return;
 	}
 
-	JSON_ALL_TRY;
+	JSON_ALL_TRY
 	{
 		const auto& parsed_json = nlohmann::json::parse(req.body.str());
 		if (utils::get_json_int("status", parsed_json) == 1)
@@ -192,7 +192,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 			}
 		}
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 }
 
 bool plugin_sharaclub::set_profile(TemplateParams& params)
@@ -205,12 +205,12 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 		utils::http_request req{ replace_params_vars(params, url) };
 		if (utils::AsyncDownloadFile(req).get())
 		{
-			JSON_ALL_TRY;
+			JSON_ALL_TRY
 			{
 				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				return utils::get_json_wstring("status", parsed_json) == L"1";
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 	}
 
@@ -233,11 +233,11 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 		if (!utils::AsyncDownloadFile(req).get()) break;
 
 		nlohmann::json parsed_json;
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			parsed_json = nlohmann::json::parse(req.body.str());
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 
 		if (parsed_json.empty()) break;
 
@@ -253,97 +253,99 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 			std::wstring category_name;
 			auto movie = std::make_shared<vod_movie>();
 
-			JSON_ALL_TRY;
-			category_name = utils::get_json_wstring("category", value);
-
-			if (!categories->tryGet(category_name, category))
+			JSON_ALL_TRY
 			{
-				category = std::make_shared<vod_category>(category_name);
-				category->name = category_name;
-				categories->set_back(category_name, category);
-			}
+				category_name = utils::get_json_wstring("category", value);
 
-			movie->title = utils::get_json_wstring("name", value);
-			movie->id = utils::get_json_wstring("id", value);
-			if (movie->id.empty())
-			{
-				movie->id = utils::get_json_wstring("series_id", value) + L"_serial";
-				movie->is_series = true;
-			}
-			movie->url = utils::get_json_wstring("video", value);
-
-			const auto& info = value["info"];
-			if (!info.empty())
-			{
-				movie->poster_url.set_uri(utils::get_json_wstring("poster", info));
-				movie->description = utils::get_json_wstring("plot", info);
-				movie->rating = utils::get_json_wstring("rating", info);
-				movie->year = utils::get_json_wstring("year", info);
-				movie->director = utils::get_json_wstring("director", info);
-				movie->casting = utils::get_json_wstring("cast", info);
-				movie->age = utils::get_json_wstring("adult", info);
-				movie->movie_time = info.value("duration_secs", 0) / 60;
-
-				for (const auto& genre_item : info["genre"].items())
+				if (!categories->tryGet(category_name, category))
 				{
-					const auto& vod_title = utils::utf8_to_utf16(genre_item.value().get<std::string>());
-					vod_genre_def genre({ vod_title, vod_title });
-
-					movie->genres.set_back(vod_title, genre);
+					category = std::make_shared<vod_category>(category_name);
+					category->name = category_name;
+					categories->set_back(category_name, category);
 				}
 
-				std::string country;
-				for (const auto& country_item : info["country"].items())
+				movie->title = utils::get_json_wstring("name", value);
+				movie->id = utils::get_json_wstring("id", value);
+				if (movie->id.empty())
 				{
-					if (!country.empty())
-					{
-						country += ", ";
-					}
-					country += country_item.value().get<std::string>();
+					movie->id = utils::get_json_wstring("series_id", value) + L"_serial";
+					movie->is_series = true;
 				}
-				movie->country = utils::utf8_to_utf16(country);
-			}
+				movie->url = utils::get_json_wstring("video", value);
 
-			if (value.contains("seasons"))
-			{
-				for (const auto& season_it : value["seasons"].items())
+				const auto& info = value["info"];
+				if (!info.empty())
 				{
-					const auto& season_item = season_it.value();
-					vod_season_def season;
-					season.id = utils::get_json_wstring("season", season_item);
+					movie->poster_url.set_uri(utils::get_json_wstring("poster", info));
+					movie->description = utils::get_json_wstring("plot", info);
+					movie->rating = utils::get_json_wstring("rating", info);
+					movie->year = utils::get_json_wstring("year", info);
+					movie->director = utils::get_json_wstring("director", info);
+					movie->casting = utils::get_json_wstring("cast", info);
+					movie->age = utils::get_json_wstring("adult", info);
+					movie->movie_time = info.value("duration_secs", 0) / 60;
 
-					const auto& season_info = season_item["info"];
-					season.season_id = utils::get_json_wstring("season", season_info);
-					season.title = utils::get_json_wstring("name", season_info);
-					if (season.title.empty())
+					for (const auto& genre_item : info["genre"].items())
 					{
-						season.title = load_string_resource(IDS_STRING_SEASON) + L" " + season.season_id;
+						const auto& vod_title = utils::utf8_to_utf16(genre_item.value().get<std::string>());
+						vod_genre_def genre({ vod_title, vod_title });
+
+						movie->genres.set_back(vod_title, genre);
 					}
 
-					season.year = utils::get_json_wstring("year", season_info);
-					if (!season.year.empty())
+					std::string country;
+					for (const auto& country_item : info["country"].items())
 					{
-						season.title += std::format(L" ({:s})", season.year);
+						if (!country.empty())
+						{
+							country += ", ";
+						}
+						country += country_item.value().get<std::string>();
 					}
-
-
-					for (const auto& episode_it : season_item["episodes"].items())
-					{
-						const auto& episode_item = episode_it.value();
-
-						vod_episode_def episode;
-						episode.id = utils::get_json_wstring("id", episode_item);
-						episode.episode_id = utils::get_json_wstring("episode", episode_item);
-						episode.url = utils::get_json_wstring("video", episode_item);
-
-						season.episodes.set_back(episode.id, episode);
-					}
-					movie->seasons.set_back(season.id, season);
+					movie->country = utils::utf8_to_utf16(country);
 				}
-			}
 
-			category->movies.set_back(movie->id, movie);
-			JSON_ALL_CATCH;
+				if (value.contains("seasons"))
+				{
+					for (const auto& season_it : value["seasons"].items())
+					{
+						const auto& season_item = season_it.value();
+						vod_season_def season;
+						season.id = utils::get_json_wstring("season", season_item);
+
+						const auto& season_info = season_item["info"];
+						season.season_id = utils::get_json_wstring("season", season_info);
+						season.title = utils::get_json_wstring("name", season_info);
+						if (season.title.empty())
+						{
+							season.title = load_string_resource(IDS_STRING_SEASON) + L" " + season.season_id;
+						}
+
+						season.year = utils::get_json_wstring("year", season_info);
+						if (!season.year.empty())
+						{
+							season.title += std::format(L" ({:s})", season.year);
+						}
+
+
+						for (const auto& episode_it : season_item["episodes"].items())
+						{
+							const auto& episode_item = episode_it.value();
+
+							vod_episode_def episode;
+							episode.id = utils::get_json_wstring("id", episode_item);
+							episode.episode_id = utils::get_json_wstring("episode", episode_item);
+							episode.url = utils::get_json_wstring("video", episode_item);
+
+							season.episodes.set_back(episode.id, episode);
+						}
+						movie->seasons.set_back(season.id, season);
+					}
+				}
+
+				category->movies.set_back(movie->id, movie);
+			}
+			JSON_ALL_CATCH
 
 			if (++cnt % 100 == 0)
 			{

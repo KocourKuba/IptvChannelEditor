@@ -60,7 +60,7 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 
 	if (utils::AsyncDownloadFile(req).get())
 	{
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (parsed_json.contains("status") && parsed_json["status"] == 1)
@@ -74,7 +74,7 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 				delete_file_cookie(session_id_name);
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 	else
 	{
@@ -114,7 +114,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 		}
 
 		bool success = false;
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (parsed_json.contains("status") && parsed_json["status"] == 0)
@@ -178,7 +178,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 				success = true;
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 }
 
@@ -197,7 +197,7 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 		utils::http_request req{replace_params_vars(params, url)};
 		if (utils::AsyncDownloadFile(req).get())
 		{
-			JSON_ALL_TRY;
+			JSON_ALL_TRY
 			{
 				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				if (utils::get_json_int("status", parsed_json) == 1)
@@ -207,7 +207,7 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 
 				params.error_string = utils::get_json_wstring("error", parsed_json);
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 		else
 		{

@@ -77,7 +77,7 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 					}
 				}
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 		else
 		{
@@ -99,7 +99,7 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 	utils::http_request req{ replace_params_vars(params, url) };
 	if (utils::AsyncDownloadFile(req).get())
 	{
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (parsed_json.contains("settings"))
@@ -119,7 +119,7 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 				}
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 	else
 	{
@@ -146,7 +146,7 @@ bool plugin_vidok::set_server(TemplateParams& params)
 		utils::http_request req{ replace_params_vars(params, url) };
 		if (utils::AsyncDownloadFile(req).get())
 		{
-			JSON_ALL_TRY;
+			JSON_ALL_TRY
 			{
 				const auto& parsed_json = nlohmann::json::parse(req.body.str());
 				for (const auto& item : parsed_json["settings"].items())
@@ -155,7 +155,7 @@ bool plugin_vidok::set_server(TemplateParams& params)
 					return (utils::get_json_wstring("value", server) == servers_list[params.creds.server_id].get_id()); //-V612
 				}
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 		else
 		{

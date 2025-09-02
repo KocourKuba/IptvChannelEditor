@@ -37,7 +37,7 @@ plugin_config::plugin_config()
 
 void plugin_config::configure_plugin()
 {
-	JSON_ALL_TRY;
+	JSON_ALL_TRY
 	{
 		const auto& custom_sources = GetConfig().get_string(false, REG_CUSTOM_XMLTV_SOURCE);
 		if (!custom_sources.empty())
@@ -46,7 +46,7 @@ void plugin_config::configure_plugin()
 			set_custom_epg_urls(sources.get<std::vector<DynamicParamsInfo>>());
 		}
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 }
 
 const PlaylistTemplateInfo& plugin_config::get_playlist_info(size_t idx) const
@@ -174,7 +174,7 @@ bool plugin_config::save_plugin_parameters(const std::wstring& filename, const s
 		out_stream << str << std::endl;
 		res = true;
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 
 	return res;
 }
@@ -193,7 +193,7 @@ void plugin_config::load_plugin_parameters(const std::wstring& filename, const s
 			in_stream >> node;
 			from_json(node, *this);
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 }
 
@@ -250,7 +250,7 @@ nlohmann::json plugin_config::get_epg_root(int epg_idx, const nlohmann::json& ep
 		return ch_data.contains(epg_root) ? ch_data[epg_root] : nlohmann::json();
 	}
 
-	JSON_ALL_TRY;
+	JSON_ALL_TRY
 	{
 		const auto& tokens = utils::regex_split(epg_root, "\\|");
 		for (auto token : tokens)
@@ -275,7 +275,7 @@ nlohmann::json plugin_config::get_epg_root(int epg_idx, const nlohmann::json& ep
 		}
 		return ch_data;
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 
 	return {};
 }

@@ -72,7 +72,7 @@ void plugin_itv::parse_account_info(TemplateParams& params)
 
 				account_info.emplace(L"package_info", subscription);
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 		else
 		{

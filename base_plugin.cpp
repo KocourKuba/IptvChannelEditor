@@ -471,7 +471,7 @@ void base_plugin::set_json_info(const std::string& name, const nlohmann::json& j
 			}
 		}
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 }
 
 std::wstring base_plugin::compile_name_template(std::wstring packed_name, const Credentials& cred) const

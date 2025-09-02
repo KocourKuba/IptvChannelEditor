@@ -82,7 +82,7 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 					params.creds.set_s_token(account_info[L"private_token"]);
 				}
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 	}
 	else
@@ -108,7 +108,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 		if (!utils::AsyncDownloadFile(req).get()) break;
 
 		int total = 0;
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			for (const auto& item_it : parsed_json["data"].items())
@@ -123,7 +123,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 				categories->set_back(category->id, category);
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 
 		SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, total, 0);
 
@@ -152,11 +152,11 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 				}
 
 				nlohmann::json movies_json;
-				JSON_ALL_TRY;
+				JSON_ALL_TRY
 				{
 					movies_json = nlohmann::json::parse(req.body.str());
 				}
-				JSON_ALL_CATCH;
+				JSON_ALL_CATCH
 
 				if (movies_json.empty() || !movies_json.contains("data"))
 				{
@@ -168,7 +168,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 				{
 					const auto& movie_item = movie_it.value();
 
-					JSON_ALL_TRY;
+					JSON_ALL_TRY
 					{
 						auto movie = std::make_shared<vod_movie>();
 
@@ -188,7 +188,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 
 						category->movies.set_back(movie->id, movie);
 					}
-					JSON_ALL_CATCH;
+					JSON_ALL_CATCH
 
 					if (++cnt % 100 == 0)
 					{
@@ -199,12 +199,12 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 
 				nlohmann::json meta;
 				int last = 0;
-				JSON_ALL_TRY;
+				JSON_ALL_TRY
 				{
 					meta = movies_json["meta"];
 					last = utils::get_json_int("last_page", meta);
 				}
-				JSON_ALL_CATCH;
+				JSON_ALL_CATCH
 
 				if (page >= last) break;
 				page++;
@@ -235,56 +235,58 @@ void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie& movi
 		return;
 	}
 
-	JSON_ALL_TRY;
-	const auto& parsed_json = nlohmann::json::parse(req.body.str());
-
-	if (parsed_json.contains("data"))
+	JSON_ALL_TRY
 	{
-		const auto& value = parsed_json["data"];
+		const auto& parsed_json = nlohmann::json::parse(req.body.str());
 
-		movie.description = utils::get_json_wstring("description", value);
-		movie.director = utils::get_json_wstring("director", value);
-		movie.casting = utils::get_json_wstring("actors", value);
-		movie.movie_time = utils::get_json_int("time", value);
-		const auto& adult = utils::get_json_wstring("adult", value);
-		if (adult == L"1")
-			movie.age += L" 18+";
-
-		if (value.contains("seasons"))
+		if (parsed_json.contains("data"))
 		{
-			for (const auto& season_it : value["seasons"].items())
+			const auto& value = parsed_json["data"];
+
+			movie.description = utils::get_json_wstring("description", value);
+			movie.director = utils::get_json_wstring("director", value);
+			movie.casting = utils::get_json_wstring("actors", value);
+			movie.movie_time = utils::get_json_int("time", value);
+			const auto& adult = utils::get_json_wstring("adult", value);
+			if (adult == L"1")
+				movie.age += L" 18+";
+
+			if (value.contains("seasons"))
 			{
-				const auto& season_item = season_it.value();
-				vod_season_def season;
-				season.id = utils::get_json_wstring("id", season_item);
-				season.title = utils::get_json_wstring("name", season_item);
-				season.season_id = utils::get_json_wstring("number", season_item);
-
-				for (const auto& episode_it : season_item["series"].items())
+				for (const auto& season_it : value["seasons"].items())
 				{
-					const auto& episode_item = episode_it.value();
+					const auto& season_item = season_it.value();
+					vod_season_def season;
+					season.id = utils::get_json_wstring("id", season_item);
+					season.title = utils::get_json_wstring("name", season_item);
+					season.season_id = utils::get_json_wstring("number", season_item);
 
-					vod_episode_def episode;
-					episode.id = utils::get_json_wstring("id", episode_item);
-					episode.title = utils::get_json_wstring("name", episode_item);
-					episode.episode_id = utils::get_json_wstring("number", episode_item);
-
-					if (episode_item["files"].is_array())
+					for (const auto& episode_it : season_item["series"].items())
 					{
-						episode.url = utils::get_json_wstring("url", episode_item["files"].front());
-					}
+						const auto& episode_item = episode_it.value();
 
-					season.episodes.set_back(episode.id, episode);
+						vod_episode_def episode;
+						episode.id = utils::get_json_wstring("id", episode_item);
+						episode.title = utils::get_json_wstring("name", episode_item);
+						episode.episode_id = utils::get_json_wstring("number", episode_item);
+
+						if (episode_item["files"].is_array())
+						{
+							episode.url = utils::get_json_wstring("url", episode_item["files"].front());
+						}
+
+						season.episodes.set_back(episode.id, episode);
+					}
+					movie.seasons.set_back(season.id, season);
 				}
-				movie.seasons.set_back(season.id, season);
+			}
+			else
+			{
+				movie.url = utils::get_json_wstring("url", value["files"][0]);
 			}
 		}
-		else
-		{
-			movie.url = utils::get_json_wstring("url", value["files"][0]);
-		}
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 }
 
 std::wstring plugin_cbilling::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie)

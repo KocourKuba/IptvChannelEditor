@@ -1170,7 +1170,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	// copy embedded info
 	if (!noEmbed && cred.embed && !make_web_update)
 	{
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			nlohmann::json node;
 			switch (plugin->get_access_type())
@@ -1214,7 +1214,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 				out_file.close();
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 
 	// revert back to previous state

@@ -63,7 +63,7 @@ void plugin_shuriktv::parse_account_info(TemplateParams& params)
 					}
 				}
 			}
-			JSON_ALL_CATCH;
+			JSON_ALL_CATCH
 		}
 		else
 		{

@@ -71,7 +71,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 
 		if (!utils::AsyncDownloadFile(req).get()) break;
 
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			nlohmann::json parsed_json = nlohmann::json::parse(req.body.str());
 			for (const auto& item_it : parsed_json["items"].items())
@@ -199,7 +199,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	} while (false);
 
 	if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
@@ -240,7 +240,7 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 
 		if (!utils::AsyncDownloadFile(req).get()) break;
 
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			const auto& json_data = nlohmann::json::parse(req.body.str());
 			const auto& type = json_data["type"];
@@ -306,7 +306,7 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 				}
 			}
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	} while (false);
 }
 

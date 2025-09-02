@@ -134,8 +134,8 @@ void LogProtocol(const std::wstring& str);
 extern CIPTVChannelEditorApp theApp;
 extern std::string g_szServerPath;
 
-#define JSON_ALL_TRY try {
-#define JSON_ALL_CATCH } \
+#define JSON_ALL_TRY try
+#define JSON_ALL_CATCH \
 		catch (const nlohmann::json::parse_error& ex) \
 		{ \
 			/* parse errors are ok, because input may be random bytes*/ \

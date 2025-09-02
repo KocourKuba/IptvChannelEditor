@@ -40,6 +40,10 @@ DEALINGS IN THE SOFTWARE.
 
 // CVodViewer dialog
 
+class stop_exception : public std::exception
+{;
+};
+
 IMPLEMENT_DYNAMIC(CVodViewer, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CVodViewer, CDialogEx)
@@ -1048,7 +1052,7 @@ void CVodViewer::FilterList()
 
 			if (!utils::AsyncDownloadFile(req).get()) break;
 
-			JSON_ALL_TRY;
+			JSON_ALL_TRY
 			{
 				nlohmann::json parsed_json = nlohmann::json::parse(req.body.str());
 				int total = utils::get_json_int("count", parsed_json);
@@ -1089,13 +1093,20 @@ void CVodViewer::FilterList()
 						if (cnt % 100 == 0)
 						{
 							OnUpdateProgress(cnt);
-							if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0) break;
+							if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0)
+							{
+								throw stop_exception();
+							}
 						}
 					}
 
 					ATLTRACE("\nreaded: %d\n", cnt);
 
-					if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0) break;
+					if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0)
+					{
+						throw stop_exception();
+					}
+
 					if (offset == prev_offset) break;
 
 					prev_offset = offset;
@@ -1110,7 +1121,11 @@ void CVodViewer::FilterList()
 					parsed_json = nlohmann::json::parse(req.body.str());
 				}
 			}
-			JSON_ALL_CATCH;
+			catch (const stop_exception& ex)
+			{
+				LogProtocol(std::format("{:s} ({:d}): {:s}", __FILE__, __LINE__, ex.what())); \
+			}
+			JSON_ALL_CATCH
 		} while (false);
 
 		if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0)

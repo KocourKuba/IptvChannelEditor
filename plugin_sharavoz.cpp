@@ -86,7 +86,7 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 
 
 				std::shared_ptr<vod_movie> movie;
-				JSON_ALL_TRY;
+				JSON_ALL_TRY
 				{
 					const auto& movie_id = utils::get_json_wstring("stream_id", val);
 					if (!category->movies.tryGet(movie_id, movie))
@@ -100,7 +100,7 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 						category->movies.set_back(movie_id, movie);
 					}
 				}
-				JSON_ALL_CATCH;
+				JSON_ALL_CATCH
 
 				movie->genres.set_back(category_id, category->genres.get(category_id));
 
@@ -138,7 +138,7 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 				if (val.empty()) continue;
 
 				std::shared_ptr<vod_movie> movie;
-				JSON_ALL_TRY;
+				JSON_ALL_TRY
 				{
 					const auto& movie_id = utils::get_json_wstring("series_id", val);
 					if (!category->movies.tryGet(movie_id, movie))
@@ -151,7 +151,7 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 						category->movies.set_back(movie_id, movie);
 					}
 				}
-				JSON_ALL_CATCH;
+				JSON_ALL_CATCH
 
 				movie->genres.set_back(category_id, category->genres.get(category_id));
 
@@ -200,7 +200,7 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 		return;
 	}
 
-	JSON_ALL_TRY;
+	JSON_ALL_TRY
 	{
 		const auto& parsed_json = nlohmann::json::parse(req.body.str());
 
@@ -261,7 +261,7 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 		movie.description = utils::get_json_wstring("plot", value);
 		movie.director = utils::get_json_wstring("director", value);
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 }
 
 std::wstring plugin_sharavoz::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie)
@@ -283,7 +283,7 @@ std::wstring plugin_sharavoz::xtream_parse_category(const nlohmann::json& val,
 													std::unique_ptr<vod_category_storage>& categories)
 {
 	std::wstring category_id;
-	JSON_ALL_TRY;
+	JSON_ALL_TRY
 	{
 		const auto& title = utils::get_json_wstring("category_name", val);
 		category_id = utils::get_json_wstring("category_id", val);
@@ -307,7 +307,7 @@ std::wstring plugin_sharavoz::xtream_parse_category(const nlohmann::json& val,
 
 		category->genres.set_back(category_id, genre);
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 
 
 	return category_id;
@@ -321,11 +321,11 @@ nlohmann::json plugin_sharavoz::xtream_request(const ThreadConfig& config, const
 	utils::http_request req{ url, cache_ttl };
 	if (utils::AsyncDownloadFile(req).get())
 	{
-		JSON_ALL_TRY;
+		JSON_ALL_TRY
 		{
 			category_json = nlohmann::json::parse(req.body.str());
 		}
-		JSON_ALL_CATCH;
+		JSON_ALL_CATCH
 	}
 
 	return category_json;

@@ -896,7 +896,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 void CIPTVChannelEditorDlg::LoadCustomXmltvSources()
 {
-	JSON_ALL_TRY;
+	JSON_ALL_TRY
 	{
 		const auto& custom_source = GetConfig().get_string(false, REG_CUSTOM_XMLTV_SOURCE);
 		if (!custom_source.empty())
@@ -905,7 +905,7 @@ void CIPTVChannelEditorDlg::LoadCustomXmltvSources()
 			m_plugin->set_custom_epg_urls(sources.get<std::vector<DynamicParamsInfo>>());
 		}
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 }
 
 void CIPTVChannelEditorDlg::ReloadConfigs()
@@ -1256,7 +1256,6 @@ void CIPTVChannelEditorDlg::DownloadEPG()
 	if (epg_idx != 2)
 	{
 		ParseJsonEpg(epg_idx);
-		TriggerEpg();
 	}
 	else if (m_xmltvEpgSource != -1 && !m_xmltv_sources.empty())
 	{
@@ -1264,9 +1263,9 @@ void CIPTVChannelEditorDlg::DownloadEPG()
 			|| m_epg_cache.at(epg_idx).find(L"file already parsed") == m_epg_cache.at(epg_idx).end())
 		{
 			ParseXmEpg(epg_idx);
-			TriggerEpg();
 		}
 	}
+	TriggerEpg();
 }
 
 void CIPTVChannelEditorDlg::FillXmlSources()
@@ -2191,7 +2190,7 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 		utils::string_replace_inplace<wchar_t>(time_format, REPL_MIN, L"%M");
 	}
 
-	JSON_ALL_TRY;
+	JSON_ALL_TRY
 	{
 		const auto& parsed_json = nlohmann::json::parse(req.body.str());
 
@@ -2269,7 +2268,7 @@ bool CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 		m_epg_cache[epg_idx][epg_id] = std::move(epg_map);
 		return added;
 	}
-	JSON_ALL_CATCH;
+	JSON_ALL_CATCH
 
 	return false;
 }
@@ -5216,7 +5215,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 
 	m_inStreamInfo = true;
 
-	CGetStreamInfoThread::ThreadConfig cfg;
+	CGetStreamInfoThread::CThreadConfig cfg;
 	cfg.m_parent = this;
 	cfg.m_plugin = m_plugin;
 	cfg.m_container = container.release();
