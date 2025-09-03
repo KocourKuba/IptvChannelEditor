@@ -4554,6 +4554,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonPack()
 {
 	if (CheckForSave())
 	{
+		CWaitCursor cur;
 		theApp.PackPlugin(m_plugin_type, true, m_wndMakeWebUpdate.GetCheck());
 	}
 }
