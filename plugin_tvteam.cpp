@@ -78,7 +78,7 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(std::format(L"plugin_tvteam: Failed to get token: {:s}", req.error_message));
+		LOG_PROTOCOL(std::format(L"plugin_tvteam: Failed to get token: {:s}", req.error_message));
 	}
 
 	return session_id;
@@ -109,7 +109,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 		utils::http_request req{replace_params_vars(params, url)};
 		if (!utils::AsyncDownloadFile(req).get())
 		{
-			LogProtocol(std::format(L"plugin_tvteam: Failed to get account info: {:s}", req.error_message));
+			LOG_PROTOCOL(std::format(L"plugin_tvteam: Failed to get account info: {:s}", req.error_message));
 			return;
 		}
 
@@ -211,7 +211,7 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_tvteam: Failed to set server: {:s}", req.error_message));
+			LOG_PROTOCOL(std::format(L"plugin_tvteam: Failed to set server: {:s}", req.error_message));
 		}
 	}
 

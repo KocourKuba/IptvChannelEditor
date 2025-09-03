@@ -26,16 +26,14 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "inet_utils.h"
-
+#include "Logger.h"
 #include <winhttp.h>
-#include <atltrace.h>
 #include <unordered_map>
 #include <filesystem>
 #include <fstream>
+#include <future>
 #include "xxhash.hpp"
 #include "utils.h"
-#include <coroutine>
-#include <future>
 
 #pragma comment(lib, "Winhttp.lib")
 
@@ -139,7 +137,7 @@ bool DownloadFile(http_request& request)
 		hash_str += utf8_to_utf16(std::string(request.post_data));
 	}
 
-	ATLTRACE(L"\ndownload url: %s\n", request.url.c_str());
+	LOG_PROTOCOL(std::format(L"download url: {:s}", request.url));
 
 	const auto& cache_file = GetCachedPath(hash_str);
 	if (!CheckIsCacheExpired(cache_file, request.cache_ttl))
@@ -150,7 +148,7 @@ bool DownloadFile(http_request& request)
 			request.body << in_file.rdbuf();
 			in_file.close();
 			size_t data_size = request.body.rdbuf()->_Get_buffer_view()._Size;
-			ATLTRACE(L"\nloaded: %d bytes from cache %s\n", data_size, cache_file.c_str());
+			LOG_PROTOCOL(std::format(L"loaded: {:d} bytes from cache {:s}", data_size, cache_file.c_str()));
 			if (data_size != 0)
 			{
 				request.body.seekg(0);
@@ -160,7 +158,7 @@ bool DownloadFile(http_request& request)
 	}
 	else
 	{
-		ATLTRACE("\nCache expired. Download again.\n");
+		LOG_PROTOCOL("Cache expired. Download again.");
 	}
 
 	do
@@ -173,7 +171,7 @@ bool DownloadFile(http_request& request)
 		}
 
 		// Use WinHttpOpen to obtain a session handle.
-		ATLTRACE(L"\nUserAgent: %s\n", request.user_agent.c_str());
+		LOG_PROTOCOL(std::format(L"UserAgent: {:s}", request.user_agent));
 		auto hSession = WinHttpOpen(request.user_agent.c_str(),
 									WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
 									WINHTTP_NO_PROXY_NAME,
@@ -224,7 +222,7 @@ bool DownloadFile(http_request& request)
 			}
 
 			BOOL result = WinHttpAddRequestHeaders(hRequest, all_headers.c_str(), static_cast<DWORD>(all_headers.size()), WINHTTP_ADDREQ_FLAG_ADD);
-			ATLTRACE("\nheader added: %d\n", result);
+			LOG_PROTOCOL(std::format("header added: {:d}", result));
 		}
 
 		DWORD options = SECURITY_FLAG_IGNORE_ALL_CERT_ERRORS;
@@ -416,7 +414,7 @@ bool DownloadFile(http_request& request)
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
 			request.body.seekg(0);
 			out_stream << request.body.rdbuf();
-			ATLTRACE("\nSave to cache for %d seconds\n", request.cache_ttl.count());
+			LOG_PROTOCOL(std::format("Save to cache for {:d} seconds", request.cache_ttl.count()));
 		}
 
 		bool res = request.body.tellp() != std::streampos(0);
@@ -437,7 +435,7 @@ bool DownloadFile(http_request& request)
 	if (!request.error_message.empty())
 	{
 		request.error_message = request.url + L"\n" + request.error_message;
-		ATLTRACE(L"%s\n", request.error_message.c_str());
+		LOG_PROTOCOL(request.error_message);
 	}
 #endif // _DEBUG
 
@@ -487,10 +485,10 @@ bool CheckIsCacheExpired(const std::wstring& cache_file, const std::chrono::seco
 	if (cache_ttl != std::chrono::seconds::zero() && std::filesystem::exists(cache_file) && std::filesystem::file_size(cache_file) != 0)
 	{
 		auto diff = std::chrono::duration_cast<std::chrono::seconds>(std::filesystem::file_time_type::clock::now() - std::filesystem::last_write_time(cache_file));
-		ATLTRACE(L"\nttl: %d hours %d minutes %d seconds\n",
+		LOG_PROTOCOL(std::format(L"ttl: {:d} hours {:d} minutes {:d} seconds",
 				 std::chrono::duration_cast<std::chrono::hours>(diff).count(),
 				 std::chrono::duration_cast<std::chrono::minutes>(diff).count() % 60,
-				 diff.count() % 60);
+				 diff.count() % 60));
 		return (diff > cache_ttl);
 	}
 
@@ -557,7 +555,9 @@ bool CBase64Coder::Encode(const unsigned char* pData, int nSize, unsigned long d
 bool CBase64Coder::Encode(const char* szMessage, int nSize /*= 0*/, unsigned long dwFlags /*= ATL_BASE64_FLAG_NOCRLF*/)
 {
 	if (!nSize)
+	{
 		nSize = static_cast<int>(std::strlen(szMessage));
+	}
 
 	return Encode(reinterpret_cast<const BYTE*>(szMessage), nSize, dwFlags);
 }

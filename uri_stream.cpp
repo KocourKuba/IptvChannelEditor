@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "uri_stream.h"
 
-#include "UtilsLib/Crc32.h"
+#include "UtilsLib\Crc32.h"
 
 void uri_stream::clear()
 {

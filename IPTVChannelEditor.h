@@ -128,30 +128,34 @@ uintmax_t calc_folder_size(const std::wstring& path);
 std::wstring GetPluginTypeNameW(const std::string& plugin_type, bool bCamel = false);
 std::string  GetPluginTypeNameA(const std::string& plugin_type, bool bCamel = false);
 
-void LogProtocol(const std::string& str);
-void LogProtocol(const std::wstring& str);
-
 extern CIPTVChannelEditorApp theApp;
 extern std::string g_szServerPath;
 
 #define JSON_ALL_TRY try
-#define JSON_ALL_CATCH \
+
+#define JSON_STD_CATCH \
 		catch (const nlohmann::json::parse_error& ex) \
 		{ \
 			/* parse errors are ok, because input may be random bytes*/ \
-			LogProtocol(std::format("{:s} ({:d}): parse error: {:s}", __FILE__, __LINE__, ex.what())); \
+			LOG_PROTOCOL(std::format("{:s} ({:d}): parse error: {:s}", __FILE__, __LINE__, ex.what())); \
 		} \
 		catch (const nlohmann::json::out_of_range& ex) \
 		{ \
 			/* out of range errors may happen if provided sizes are excessive */ \
-			LogProtocol(std::format("{:s} ({:d}): out of range error: {:s}", __FILE__, __LINE__, ex.what())); \
+			LOG_PROTOCOL(std::format("{:s} ({:d}): out of range error: {:s}", __FILE__, __LINE__, ex.what())); \
 		} \
 		catch (const nlohmann::detail::type_error& ex) \
 		{ \
 			/* type error */ \
-			LogProtocol(std::format("{:s} ({:d}): type error: {:s}", __FILE__, __LINE__, ex.what())); \
-		} \
+			LOG_PROTOCOL(std::format("{:s} ({:d}): type error: {:s}", __FILE__, __LINE__, ex.what())); \
+		}
+
+#define JSON_FINAL_CATCH \
 		catch (...) \
 		{ \
-			LogProtocol(std::format("{:s} ({:d}): unknown exception", __FILE__, __LINE__)); \
+			LOG_PROTOCOL(std::format("{:s} ({:d}): unknown exception", __FILE__, __LINE__)); \
 		}
+
+#define JSON_ALL_CATCH \
+		JSON_STD_CATCH \
+		JSON_FINAL_CATCH

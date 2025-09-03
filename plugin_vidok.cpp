@@ -81,7 +81,7 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_vidok: Failed to get account info: {:s}", req.error_message));
+			LOG_PROTOCOL(std::format(L"plugin_vidok: Failed to get account info: {:s}", req.error_message));
 		}
 	}
 }
@@ -123,7 +123,7 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(std::format(L"plugin_vidok: Failed to get account info: {:s}", req.error_message));
+		LOG_PROTOCOL(std::format(L"plugin_vidok: Failed to get account info: {:s}", req.error_message));
 	}
 
 	set_servers_list(servers);
@@ -159,7 +159,7 @@ bool plugin_vidok::set_server(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_vidok: Failed to set server: {:s}", req.error_message));
+			LOG_PROTOCOL(std::format(L"plugin_vidok: Failed to set server: {:s}", req.error_message));
 		}
 	}
 

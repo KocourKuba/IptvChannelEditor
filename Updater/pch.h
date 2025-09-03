@@ -44,6 +44,7 @@ DEALINGS IN THE SOFTWARE.
 #include <filesystem>
 #include <windows.h>
 #include "Version.h"
+#include "UtilsLib\Logger.h"
 #include "UtilsLib\rapidxml_value.hpp"
 
 #endif //PCH_H

@@ -1196,7 +1196,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 											  it->second->get_category_w()
 				);
 				TRACE(msg.c_str());
-				LogProtocol(msg);
+				LOG_PROTOCOL(msg);
 
 				if (!bConvertDupes) continue;
 
@@ -2120,13 +2120,14 @@ void CIPTVChannelEditorDlg::FillEPG()
 
 void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 {
+	if (epg_idx == XMLTV_EPG)
+	{
+		// it's not a json, but xmltv
+		return;
+	}
+
 	JSON_ALL_TRY
 	{
-		if (epg_idx == XMLTV_EPG)
-		{
-			// it's not a json, but xmltv
-			throw std::exception("Not valid EPG index");
-		}
 		const auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
 		const auto uri_stream = GetUriStream(info);
 		if (!uri_stream)
@@ -2217,7 +2218,8 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 					epg_map[prev_start]->time_end = epg_info->time_start;
 #ifdef _DEBUG
 					COleDateTime te(epg_info->time_start);
-					epg_map[prev_start]->end = std::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
+					epg_map[prev_start]->end = std::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}",
+														   te.GetYear(), te.GetMonth(), te.GetDay(), te.GetHour(), te.GetMinute());
 #endif // _DEBUG
 				}
 				prev_start = epg_info->time_start;
@@ -2257,7 +2259,12 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 			m_epg_cache[epg_idx][epg_id] = std::move(epg_map);
 		}
 	}
-	JSON_ALL_CATCH
+	JSON_STD_CATCH
+	catch (std::exception& ex)
+	{
+		LOG_PROTOCOL(ex.what());
+	}
+	JSON_FINAL_CATCH
 }
 
 void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
@@ -2399,7 +2406,9 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 		}
 		node_doc = nullptr;
 
-		ATLTRACE("\nCount nodes time %.3f s, Total channel nodes %d, programme nodes %d\n", utils::GetTimeDiff(dwStart).count() / 1000., ch_cnt, prg_cnt);
+		LOG_PROTOCOL(std::format("Count nodes time {:.3f} s, Total channel nodes {:d}, programme nodes {:d}",
+								 utils::GetTimeDiff(dwStart).count() / 1000., ch_cnt, prg_cnt)
+		);
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -2433,7 +2442,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 			}
 
 			ch_node = ch_node->next_sibling();
-			if ((++i % 100) == 0 && !stop.stop_requested())
+			if ((++i % 100) == 0 && !stop.stop_requested() && IsWindow(m_wndProgress))
 			{
 				m_wndProgress.SetPos(i);
 			}
@@ -2444,7 +2453,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 			}
 		}
 
-		ATLTRACE("\nParse channels time %.3f s\n", utils::GetTimeDiff(dwStart).count() / 1000.);
+		LOG_PROTOCOL(std::format("Parse channels time {:.3f} s", utils::GetTimeDiff(dwStart).count() / 1000.));
 
 		//////////////////////////////////////////////////////////////////////////
 		// begin parsing programme nodes
@@ -2488,7 +2497,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 			}
 		}
 
-		ATLTRACE("\nParse programme time %.3f s\n", utils::GetTimeDiff(dwStart).count() / 1000.);
+		LOG_PROTOCOL(std::format("Parse programme time {:.3f} s", utils::GetTimeDiff(dwStart).count() / 1000.));
 
 		if (added)
 		{
@@ -2496,19 +2505,20 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 			epg_map[L"file already parsed"] = std::map<time_t, std::shared_ptr<EpgInfo>>();
 			m_epg_cache[2] = std::move(epg_map);
 			TriggerEpg();
+			m_wndProgress.ShowWindow(SW_HIDE);
 		}
 	}
 	catch (rapidxml::parse_error& ex)
 	{
-		LogProtocol(ex.what());
+		LOG_PROTOCOL(ex.what());
 	}
 	catch (std::exception& ex)
 	{
-		LogProtocol(ex.what());
+		LOG_PROTOCOL(ex.what());
 	}
 	catch (...)
 	{
-		LogProtocol("Unknown exception");
+		LOG_PROTOCOL("Unknown exception");
 	}
 }
 

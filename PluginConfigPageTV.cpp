@@ -31,7 +31,7 @@ DEALINGS IN THE SOFTWARE.
 #include "FillParamsInfoDlg.h"
 #include "Constants.h"
 
-#include "UtilsLib/inet_utils.h"
+#include "UtilsLib\inet_utils.h"
 
 // CPluginConfigPageTV dialog
 

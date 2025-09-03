@@ -88,7 +88,7 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_sharaclub: Failed to get account info: {:s}", req.error_message));
+			LOG_PROTOCOL(std::format(L"plugin_sharaclub: Failed to get account info: {:s}", req.error_message));
 		}
 	}
 }

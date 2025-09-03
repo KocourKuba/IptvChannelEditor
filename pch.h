@@ -52,6 +52,7 @@ DEALINGS IN THE SOFTWARE.
 #include <rapidxml/rapidxml_utils.hpp>
 #include <rapidxml/rapidxml_print.hpp>
 
+#include "UtilsLib\Logger.h"
 #include "UtilsLib\rapidxml_value.hpp"
 
 #include "Version.h"

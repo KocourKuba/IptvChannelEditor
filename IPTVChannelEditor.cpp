@@ -220,6 +220,8 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	ParseCommandLine(cmdInfo);
 	m_bDev = cmdInfo.m_bDev;
 
+	utils::Logger::getInstance().setLogName(GetAppPath() + L"IPTVChannelEditor.log");
+
 	if (!GetPluginFactory().load_configs(m_bDev))
 	{
 		AfxMessageBox(IDS_STRING_ERR_CANT_LOAD_CONFIG, MB_OK | MB_ICONEXCLAMATION);
@@ -476,7 +478,7 @@ std::wstring CIPTVChannelEditorApp::CheckAndCreateDirs(const std::wstring& setti
 	}
 	if (std::filesystem::create_directories(dir, err) == false && err.value() != 0)
 	{
-		LogProtocol(L"Error create directory: " + dir);
+		LOG_PROTOCOL(L"Error create directory: " + dir);
 	}
 
 	return dir;
@@ -496,8 +498,8 @@ int CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 		std::error_code err;
 		std::filesystem::rename(plugin_root, plugin_root + L".del", err);
 		if (err.value() != 0) {
-			LogProtocol(std::format(L"Unable to rename {:s} Error code: {:d}", plugin_root, err.value()));
-			LogProtocol(err.message());
+			LOG_PROTOCOL(std::format(L"Unable to rename {:s} Error code: {:d}", plugin_root, err.value()));
+			LOG_PROTOCOL(err.message());
 		}
 	}
 
@@ -648,7 +650,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		}
 		else
 		{
-			LogProtocol(load_string_resource(IDS_STRING_ERR_DLL_MISSING));
+			LOG_PROTOCOL(load_string_resource(IDS_STRING_ERR_DLL_MISSING));
 		}
 
 		return false;
@@ -676,7 +678,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	{
 		// revert back to previous state
 		GetConfig().set_plugin_type(old_plugin_type);
-		LogProtocol("No active account selected");
+		LOG_PROTOCOL("No active account selected");
 		return false;
 	}
 
@@ -688,7 +690,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	{
 		// revert back to previous state
 		GetConfig().set_plugin_type(old_plugin_type);
-		LogProtocol("Incorrect credentials selected");
+		LOG_PROTOCOL("Incorrect credentials selected");
 		return false;
 	}
 
@@ -720,7 +722,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		}
 		else
 		{
-			LogProtocol(load_string_resource(IDS_STRING_ERR_SETTINGS_MISSING));
+			LOG_PROTOCOL(load_string_resource(IDS_STRING_ERR_SETTINGS_MISSING));
 		}
 		return false;
 	}
@@ -753,7 +755,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		}
 		else
 		{
-			LogProtocol(load_string_resource(IDS_STRING_ERR_NO_CHANNELS_SEL));
+			LOG_PROTOCOL(load_string_resource(IDS_STRING_ERR_NO_CHANNELS_SEL));
 		}
 		return false;
 	}
@@ -783,7 +785,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 			}
 			else
 			{
-				LogProtocol(msg);
+				LOG_PROTOCOL(msg);
 			}
 			return false;
 		}
@@ -803,7 +805,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 			}
 			else
 			{
-				LogProtocol(msg);
+				LOG_PROTOCOL(msg);
 			}
 			return false;
 		}
@@ -840,7 +842,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 			std::filesystem::copy(image_cache_path / url, packFolder / url, skip, err);
 			if (err.value() != 0)
 			{
-				LogProtocol(std::format(L"error copy {:s}", (image_cache_path / url).native()));
+				LOG_PROTOCOL(std::format(L"error copy {:s}", (image_cache_path / url).native()));
 			}
 		}
 	}
@@ -903,7 +905,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 				}
 				else
 				{
-					LogProtocol(msg);
+					LOG_PROTOCOL(msg);
 				}
 				return false;
 			}
@@ -926,7 +928,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 			}
 			else
 			{
-				LogProtocol(msg);
+				LOG_PROTOCOL(msg);
 			}
 			return false;
 		}
@@ -1129,7 +1131,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		}
 		else
 		{
-			LogProtocol(ex.what());
+			LOG_PROTOCOL(ex.what());
 		}
 		return false;
 	}
@@ -1142,7 +1144,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		}
 		else
 		{
-			LogProtocol(ex.what());
+			LOG_PROTOCOL(ex.what());
 		}
 		return false;
 	}
@@ -1234,7 +1236,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		}
 		else
 		{
-			LogProtocol(load_string_resource(IDS_STRING_ERR_FILES_MISSING));
+			LOG_PROTOCOL(load_string_resource(IDS_STRING_ERR_FILES_MISSING));
 		}
 
 		return false;
@@ -1293,7 +1295,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		}
 		else
 		{
-			LogProtocol(msg);
+			LOG_PROTOCOL(msg);
 		}
 
 		return false;
@@ -1381,7 +1383,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 			}
 			else
 			{
-				LogProtocol(ex.what());
+				LOG_PROTOCOL(ex.what());
 			}
 			return false;
 		}
@@ -1396,7 +1398,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	}
 	else
 	{
-		LogProtocol(msg.GetString());
+		LOG_PROTOCOL(msg.GetString());
 	}
 
 	return true;
@@ -1912,54 +1914,4 @@ std::string GetPluginTypeNameA(const std::string& plugin_type, bool bCamel /*= f
 	}
 
 	return plugin_name;
-}
-
-void LogProtocol(const std::string& str)
-{
-	SYSTEMTIME sTime;
-	GetLocalTime(&sTime);
-
-	const auto& csTimeStamp = std::format("[{:04d}:{:02d}:{:02d}][{:02d}:{:02d}:{:02d}.{:03d}]",
-										  sTime.wYear, sTime.wMonth, sTime.wDay,
-										  sTime.wHour, sTime.wMinute, sTime.wSecond, sTime.wMilliseconds);
-
-	std::stringstream out;
-	std::stringstream ss(str);
-	std::string line;
-
-	while (std::getline(ss, line))
-	{
-		while (line.back() == '\r')
-			line.pop_back();
-
-		out << csTimeStamp << ' ' << line << std::endl;
-	}
-
-	std::ofstream file(GetAppPath() + L"IPTVChannelEditor.log", std::ofstream::binary | std::ofstream::app);
-	file << out.str();
-}
-
-void LogProtocol(const std::wstring& str)
-{
-	SYSTEMTIME sTime;
-	GetLocalTime(&sTime);
-
-	const auto& csTimeStamp = std::format("[{:04d}:{:02d}:{:02d}][{:02d}:{:02d}:{:02d}.{:03d}]",
-										  sTime.wYear, sTime.wMonth, sTime.wDay,
-										  sTime.wHour, sTime.wMinute, sTime.wSecond, sTime.wMilliseconds);
-
-	std::stringstream out;
-	std::stringstream ss(utils::utf16_to_utf8(str));
-	std::string line;
-
-	while (std::getline(ss, line))
-	{
-		while (line.back() == '\r')
-			line.pop_back();
-
-		out << csTimeStamp << ' ' << line << std::endl;
-	}
-
-	std::ofstream file(GetAppPath() + L"IPTVChannelEditor.log", std::ofstream::binary | std::ofstream::app);
-	file << out.str();
 }

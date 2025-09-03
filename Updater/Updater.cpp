@@ -135,61 +135,6 @@ static void SetupExceptionHandler()
 	BT_InstallSehFilter();
 }
 
-inline void LogProtocol(const std::string& str)
-{
-	SYSTEMTIME sTime;
-	GetLocalTime(&sTime);
-
-	const auto& csTimeStamp = std::format("[{:04d}:{:02d}:{:02d}][{:02d}:{:02d}:{:02d}.{:03d}]",
-										  sTime.wYear, sTime.wMonth, sTime.wDay,
-										  sTime.wHour, sTime.wMinute, sTime.wSecond, sTime.wMilliseconds);
-
-	std::stringstream out;
-	std::stringstream ss(str);
-	std::string line;
-
-	while (std::getline(ss, line))
-	{
-		while (line.back() == '\r')
-			line.pop_back();
-
-		out << csTimeStamp << ' ' << line << std::endl;
-	}
-
-	std::cout << out.str();
-
-	std::ofstream file(GetAppPath() + L"updater.log", std::ofstream::binary | std::ofstream::app);
-	file << out.str();
-}
-
-inline void LogProtocol(const std::wstring& str)
-{
-	SYSTEMTIME sTime;
-	GetLocalTime(&sTime);
-
-	const auto& csTimeStamp = std::format("[{:04d}:{:02d}:{:02d}][{:02d}:{:02d}:{:02d}.{:03d}]",
-										  sTime.wYear, sTime.wMonth, sTime.wDay,
-										  sTime.wHour, sTime.wMinute, sTime.wSecond, sTime.wMilliseconds);
-
-	std::stringstream out;
-	std::stringstream ss(utils::utf16_to_utf8(str));
-	std::string line;
-
-	while (std::getline(ss, line))
-	{
-		while (line.back() == '\r')
-			line.pop_back();
-
-		out << csTimeStamp << ' ' << line << std::endl;
-	}
-
-	std::cout << out.str();
-
-	std::ofstream file(GetAppPath() + L"updater.log", std::ofstream::binary | std::ofstream::app);
-	file << out.str();
-}
-
-
 static int parse_info(UpdateInfo& info)
 {
 	// Parse the buffer using the xml file parsing library into doc
@@ -208,17 +153,17 @@ static int parse_info(UpdateInfo& info)
 	auto info_node = doc->first_node("update_info");
 	if (!info_node)
 	{
-		LogProtocol("Incorrect update info: update_info node missing");
+		LOG_PROTOCOL("Incorrect update info: update_info node missing");
 		return err_parse; // Incorrect update info!
 	}
 
 	info.version = rapidxml::get_value_wstring(info_node->first_attribute("version"));
-	LogProtocol(std::format(L"Version on server: {:s}", info.version));
+	LOG_PROTOCOL(std::format(L"Version on server: {:s}", info.version));
 
 	auto pkg_node = doc->first_node("package");
 	if (!pkg_node)
 	{
-		LogProtocol("Incorrect update info: package node missing");
+		LOG_PROTOCOL("Incorrect update info: package node missing");
 		return err_parse; // Incorrect update info!
 	}
 
@@ -229,7 +174,7 @@ static int parse_info(UpdateInfo& info)
 		node.name = rapidxml::get_value_wstring(file_node->first_attribute("name"));
 		node.crc = rapidxml::get_value_int(file_node->first_attribute("hash"));
 		node.opt = rapidxml::get_value_string(file_node->first_attribute("opt")) == "true";
-		LogProtocol(std::format(L"Name: {:s} ({:d}) opt={:d}", node.name, node.crc, node.opt));
+		LOG_PROTOCOL(std::format(L"Name: {:s} ({:d}) opt={:d}", node.name, node.crc, node.opt));
 		info.update_files.emplace_back(std::move(node));
 	}
 
@@ -239,7 +184,7 @@ static int parse_info(UpdateInfo& info)
 	const auto& cur_ver = std::format(L"{:d}.{:d}.{:d}", cVer.GetFileVersionMajor(), cVer.GetFileVersionMinor(), cVer.GetFileVersionBuild());
 	if (cur_ver >= info.version)
 	{
-		LogProtocol(std::format("No updates. Current version is up to date or newer. {:d}", err_no_updates));
+		LOG_PROTOCOL(std::format("No updates. Current version is up to date or newer. {:d}", err_no_updates));
 		return err_no_updates;
 	}
 
@@ -248,11 +193,11 @@ static int parse_info(UpdateInfo& info)
 
 static int check_for_update(UpdateInfo& info)
 {
-	LogProtocol("Try to download update info...");
+	LOG_PROTOCOL("Try to download update info...");
 	utils::http_request req{ std::format(L"{:s}/{:s}", info.server, utils::UPDATE_NAME) };
 	if (!utils::AsyncDownloadFile(req).get())
 	{
-		LogProtocol(req.error_message);
+		LOG_PROTOCOL(req.error_message);
 		return err_download_info; // Unable to download update info!
 	}
 
@@ -275,28 +220,28 @@ static int download_update(UpdateInfo& info)
 		if (os.fail())
 		{
 			ret = err_save_pkg; // Unable to save update package!
-			LogProtocol(std::format(L"error save: {:s} Error code: {:d}", update_file, GetLastError()));
+			LOG_PROTOCOL(std::format(L"error save: {:s} Error code: {:d}", update_file, GetLastError()));
 			break;
 		}
-		LogProtocol(std::format(L"saved to: {:s}", update_file));
+		LOG_PROTOCOL(std::format(L"saved to: {:s}", update_file));
 		os.close();
 
 		for (const auto& item : info.update_files)
 		{
 			const auto& loaded_file = std::format(L"{:s}{:s}", info.update_path, item.name);
-			LogProtocol(std::format(L"Check: {:s}", loaded_file));
+			LOG_PROTOCOL(std::format(L"Check: {:s}", loaded_file));
 			if (std::filesystem::exists(loaded_file) && item.crc == file_crc32(loaded_file))
 			{
-				LogProtocol(std::format(L"file: {:s} already downloaded, skip download", item.name));
+				LOG_PROTOCOL(std::format(L"file: {:s} already downloaded, skip download", item.name));
 				continue;
 			}
 
 			utils::http_request req{ std::format(L"{:s}/{:s}/{:s}", info.server, info.version, item.name)};
-			LogProtocol(req.url);
+			LOG_PROTOCOL(req.url);
 			if (!utils::AsyncDownloadFile(req).get())
 			{
 				ret = err_download_pkg; // Unable to download update package!
-				LogProtocol(req.error_message);
+				LOG_PROTOCOL(req.error_message);
 				break;
 			}
 
@@ -306,10 +251,10 @@ static int download_update(UpdateInfo& info)
 			if (os_file.fail())
 			{
 				ret = err_save_pkg; // Unable to save update package!
-				LogProtocol(std::format(L"error save: {:s} Error code: {:d}", update_file, GetLastError()));
+				LOG_PROTOCOL(std::format(L"error save: {:s} Error code: {:d}", update_file, GetLastError()));
 				break;
 			}
-			LogProtocol(std::format(L"saved to: {:s}", loaded_file));
+			LOG_PROTOCOL(std::format(L"saved to: {:s}", loaded_file));
 		}
 	} while (false);
 
@@ -318,18 +263,18 @@ static int download_update(UpdateInfo& info)
 
 static int update_app(UpdateInfo& info, bool force)
 {
-	LogProtocol("Checking for an application present in memory.");
+	LOG_PROTOCOL("Checking for an application present in memory.");
 	int i = 0;
 	HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
 	while(hAppRunningMutex != nullptr)
 	{
-		LogProtocol("Try to close app...");
+		LOG_PROTOCOL("Try to close app...");
 		CloseHandle(hAppRunningMutex);
 		hAppRunningMutex = nullptr;
 
 		if (i > 20)
 		{
-			LogProtocol("Unable to close IPTV Channel Editor. Aborting update.");
+			LOG_PROTOCOL("Unable to close IPTV Channel Editor. Aborting update.");
 			return err_no_updates;
 		}
 
@@ -337,7 +282,7 @@ static int update_app(UpdateInfo& info, bool force)
 		if (hwnd)
 			::PostMessage(hwnd, WM_CLOSE, 0, 0);
 
-		LogProtocol("Waiting for closing IPTV Channel Editor.");
+		LOG_PROTOCOL("Waiting for closing IPTV Channel Editor.");
 		hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
 		Sleep(500);
 		i++;
@@ -349,7 +294,7 @@ static int update_app(UpdateInfo& info, bool force)
 	{
 		if (ret != err_no_updates)
 		{
-			LogProtocol("Unable to download update!");
+			LOG_PROTOCOL("Unable to download update!");
 			return ret;
 		}
 		if (!force)
@@ -358,7 +303,7 @@ static int update_app(UpdateInfo& info, bool force)
 		}
 	}
 
-	LogProtocol("Unpack and replace files...");
+	LOG_PROTOCOL("Unpack and replace files...");
 	const auto& pack_dll = GetAppPath((DEV_PATH + PACK_DLL_PATH).c_str()) + PACK_DLL;
 
 	const auto& target_path = GetAppPath();
@@ -366,7 +311,7 @@ static int update_app(UpdateInfo& info, bool force)
 	{
 		if (item.opt && !info.install_option_files)
 		{
-			LogProtocol(std::format(L"skipping optional package: {:s}", item.name));
+			LOG_PROTOCOL(std::format(L"skipping optional package: {:s}", item.name));
 			continue;
 		}
 
@@ -386,33 +331,33 @@ static int update_app(UpdateInfo& info, bool force)
 				// if file already the same skip it
 				if (crc == item.crc)
 				{
-					LogProtocol(std::format(L"{:s} is up to date", item.name));
+					LOG_PROTOCOL(std::format(L"{:s} is up to date", item.name));
 					continue;
 				}
 
 				if (std::filesystem::exists(bak_file))
 				{
-					LogProtocol(std::format(L"remove old backup file: {:s}", bak_file));
+					LOG_PROTOCOL(std::format(L"remove old backup file: {:s}", bak_file));
 					if (!std::filesystem::remove(bak_file, err) && err.value() != 0)
 					{
-						LogProtocol(std::format(L"Error with delete old backup file {:s} Error code: {:d}", bak_file, err.value()));
+						LOG_PROTOCOL(std::format(L"Error with delete old backup file {:s} Error code: {:d}", bak_file, err.value()));
 						err.clear();
 					}
 				}
 
-				LogProtocol(std::format(L"rename: {:s} to {:s}", target_file, bak_file));
+				LOG_PROTOCOL(std::format(L"rename: {:s} to {:s}", target_file, bak_file));
 				std::filesystem::rename(target_file, bak_file, err);
 				if (err.value() != 0)
 				{
-					LogProtocol(std::format(L"Unable to rename {:s} Error code: {:d}", target_file, err.value()));
-					LogProtocol(err.message());
+					LOG_PROTOCOL(std::format(L"Unable to rename {:s} Error code: {:d}", target_file, err.value()));
+					LOG_PROTOCOL(err.message());
 					success = false;
 					continue;
 				}
 			}
 		}
 
-		LogProtocol(std::format(L"copy file: {:s} to {:s}", item.name, target_file));
+		LOG_PROTOCOL(std::format(L"copy file: {:s} to {:s}", item.name, target_file));
 		std::filesystem::copy(source_file, target_file, std::filesystem::copy_options::overwrite_existing, err);
 		if (err.value() == 0)
 		{
@@ -421,7 +366,7 @@ static int update_app(UpdateInfo& info, bool force)
 		}
 	}
 
-	LogProtocol("Replace files done.");
+	LOG_PROTOCOL("Replace files done.");
 	return no_error;
 }
 
@@ -442,6 +387,8 @@ int main(int argc, char* argv[])
 	bool debug = false;
 	bool force = false;
 
+	utils::Logger::getInstance().setLogName(GetAppPath() + L"Updater.log");
+
 	// First configure all possible command line options.
 	CommandLine args("IPTV Channel Editor Updater 1.4\n(c) Pavel Abakanov (aka sharky72 at forum.hdtv.ru)\n");
 
@@ -459,8 +406,8 @@ int main(int argc, char* argv[])
 	cVer.Open(editor.c_str());
 	const auto& cur_ver = std::format(L"{:d}.{:d}.{:d}", cVer.GetFileVersionMajor(), cVer.GetFileVersionMinor(), cVer.GetFileVersionBuild());
 
-	LogProtocol(std::format("Updater version: {:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
-	LogProtocol(std::format(L"Current app version: {:s}", cur_ver));
+	LOG_PROTOCOL(std::format("Updater version: {:d}.{:d}.{:d}", MAJOR, MINOR, BUILD));
+	LOG_PROTOCOL(std::format(L"Current app version: {:s}", cur_ver));
 
 	std::error_code err;
 	// std::filesystem::remove(GetAppPath() + L"updater.log", err);
@@ -471,7 +418,7 @@ int main(int argc, char* argv[])
 	}
 	catch (std::runtime_error const& e)
 	{
-		LogProtocol(std::format("xml parse error: {:s}", e.what()));
+		LOG_PROTOCOL(std::format("xml parse error: {:s}", e.what()));
 		return err_parse;
 	}
 
@@ -480,14 +427,14 @@ int main(int argc, char* argv[])
 	info.info_file = utils::UPDATE_NAME;
 	info.server = utils::UPDATE_SERVER1;
 
-	LogProtocol(std::format(L"Updates folder: {:s}", info.update_path));
+	LOG_PROTOCOL(std::format(L"Updates folder: {:s}", info.update_path));
 
 	if (!std::filesystem::create_directories(info.update_path, err) && err.value())
 	{
 		return err_create_dir; // Unable to create update directory!
 	}
 
-	LogProtocol(std::format("server param: {:s}", server));
+	LOG_PROTOCOL(std::format("server param: {:s}", server));
 	if (!server.empty())
 	{
 		info.server = utils::utf8_to_utf16(server);
@@ -498,23 +445,23 @@ int main(int argc, char* argv[])
 		info.server = utils::UPDATE_SERVER1;
 	}
 
-	LogProtocol(std::format(L"Update server url: {:s}", info.server));
+	LOG_PROTOCOL(std::format(L"Update server url: {:s}", info.server));
 
 	if (check) //-V547
 	{
-		LogProtocol("Checking for update.");
+		LOG_PROTOCOL("Checking for update.");
 		return check_for_update(info);
 	}
 
 	if (download) //-V547
 	{
-		LogProtocol("Downloading update package.");
+		LOG_PROTOCOL("Downloading update package.");
 		return download_update(info);
 	}
 
 	if (update) //-V547
 	{
-		LogProtocol("Performing update application.");
+		LOG_PROTOCOL("Performing update application.");
 		return update_app(info, force);
 	}
 

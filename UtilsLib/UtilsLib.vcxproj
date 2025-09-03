@@ -109,6 +109,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="inet_utils.h" />
     <ClInclude Include="json_wrapper.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="md5.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="utils.h" />
@@ -119,6 +120,7 @@
     <ClCompile Include="Crc32.cpp" />
     <ClCompile Include="FileVersionInfo.cpp" />
     <ClCompile Include="inet_utils.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">Create</PrecompiledHeader>

@@ -31,7 +31,7 @@ DEALINGS IN THE SOFTWARE.
 #include "Constants.h"
 #include "PluginFactory.h"
 
-#include "UtilsLib/inet_utils.h"
+#include "UtilsLib\inet_utils.h"
 
 // CPluginConfigPageEPG dialog
 

@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "IPTVChannelEditor.h"
-#include "UtilsLib/json_wrapper.h"
+#include "UtilsLib\json_wrapper.h"
 
 /// <summary>
 /// Playlist template parameter

@@ -1121,11 +1121,12 @@ void CVodViewer::FilterList()
 					parsed_json = nlohmann::json::parse(req.body.str());
 				}
 			}
+			JSON_STD_CATCH
 			catch (const stop_exception& ex)
 			{
-				LogProtocol(std::format("{:s} ({:d}): {:s}", __FILE__, __LINE__, ex.what())); \
+				LOG_PROTOCOL(std::format("{:s} ({:d}): {:s}", __FILE__, __LINE__, ex.what())); \
 			}
-			JSON_ALL_CATCH
+			JSON_FINAL_CATCH
 		} while (false);
 
 		if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0)

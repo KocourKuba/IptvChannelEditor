@@ -90,7 +90,7 @@ void plugin_tvclub::parse_account_info(TemplateParams& params)
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_tvclub: Failed to get account info: {:s}", req.error_message));
+			LOG_PROTOCOL(std::format(L"plugin_tvclub: Failed to get account info: {:s}", req.error_message));
 		}
 	}
 }

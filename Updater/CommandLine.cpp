@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include <iomanip>
 #include <sstream>
 
-#include "UtilsLib/utils.h"
+#include "UtilsLib\utils.h"
 
 CommandLine::CommandLine(std::string description)
     : mDescription(std::move(description)) {

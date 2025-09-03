@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 #include "PluginEnums.h"
 #include "Constants.h"
 
-#include "UtilsLib/inet_utils.h"
+#include "UtilsLib\inet_utils.h"
 
 // CPluginConfigPageVOD dialog
 

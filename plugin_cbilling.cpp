@@ -55,7 +55,11 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 	}
 }	*/
 
-	if (account_info.empty())
+	if (!account_info.empty())
+	{
+		LOG_PROTOCOL("plugin_cbilling: Failed to account info: account info is empty");
+	}
+	else
 	{
 		utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
 		req.headers.emplace_back("accept: */*");
@@ -84,10 +88,6 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 			}
 			JSON_ALL_CATCH
 		}
-	}
-	else
-	{
-		LogProtocol(L"plugin_cbilling: Failed to account info: account info is empty");
 	}
 }
 

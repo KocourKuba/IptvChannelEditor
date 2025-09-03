@@ -98,7 +98,7 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(std::format(L"plugin_iptvonline: Failed to get token: {:s}", req.error_message));
+		LOG_PROTOCOL(std::format(L"plugin_iptvonline: Failed to get token: {:s}", req.error_message));
 		params.creds.token.clear();
 		delete_file_cookie(session_token_file);
 		session_token.clear();
@@ -528,7 +528,7 @@ nlohmann::json plugin_iptvonline::server_request(utils::http_request& request, c
 		}
 		else
 		{
-			LogProtocol(std::format(L"plugin_iptvonline: Failed server request {:s}: {:s}", request.url, request.error_message));
+			LOG_PROTOCOL(std::format(L"plugin_iptvonline: Failed server request {:s}: {:s}", request.url, request.error_message));
 		}
 	}
 

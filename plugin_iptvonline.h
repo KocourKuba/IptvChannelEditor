@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "base_plugin.h"
-#include "UtilsLib/inet_utils.h"
+#include "UtilsLib\inet_utils.h"
 
 class plugin_iptvonline : public base_plugin
 {

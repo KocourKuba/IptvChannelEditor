@@ -106,7 +106,7 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		LogProtocol(std::format(L"plugin_korona: Failed to get token: {:s}", req.error_message));
+		LOG_PROTOCOL(std::format(L"plugin_korona: Failed to get token: {:s}", req.error_message));
 	}
 
 	return session_token;

@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-#include "UtilsLib/json_wrapper.h"
+#include "UtilsLib\json_wrapper.h"
 
 enum class epg_id_sources
 {
