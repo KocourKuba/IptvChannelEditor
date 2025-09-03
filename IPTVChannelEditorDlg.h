@@ -216,6 +216,7 @@ protected:
 	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnSwitchPlugin(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnEndProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnUpdateProgressStream(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndGetStreamInfo(WPARAM wParam = 0, LPARAM lParam = 0);
@@ -291,7 +292,7 @@ private:
 	void TriggerEpg();
 	void FillEPG();
 	void ParseJsonEpg(const int epg_idx);
-	void DownloadAndParseXmltvEpg();
+	void DownloadAndParseXmltvEpg(const std::wstring url);
 	int GetEpgIdx();
 
 	void UpdateExtToken(uri_stream* uri) const;

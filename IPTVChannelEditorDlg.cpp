@@ -222,8 +222,10 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_MESSAGE(WM_SWITCH_PLUGIN, &CIPTVChannelEditorDlg::OnSwitchPlugin)
 	ON_MESSAGE(WM_ON_EXIT, &CIPTVChannelEditorDlg::OnExit)
 	ON_MESSAGE(WM_UPDATE_PROGRESS, &CIPTVChannelEditorDlg::OnUpdateProgress)
+	ON_MESSAGE(WM_END_PROGRESS, &CIPTVChannelEditorDlg::OnEndProgress)
 	ON_MESSAGE(WM_END_LOAD_PLAYLIST, &CIPTVChannelEditorDlg::OnEndLoadPlaylist)
 	ON_MESSAGE(WM_UPDATE_PROGRESS_STREAM, &CIPTVChannelEditorDlg::OnUpdateProgressStream)
+	ON_MESSAGE(WM_END_PROGRESS, &CIPTVChannelEditorDlg::OnUpdateProgressStream)
 	ON_MESSAGE(WM_END_GET_STREAM_INFO, &CIPTVChannelEditorDlg::OnEndGetStreamInfo)
 	ON_MESSAGE(WM_TRAYICON_NOTIFY, &CIPTVChannelEditorDlg::OnTrayIconNotify)
 	ON_MESSAGE(WM_LOAD_CHANNEL_IMAGE, &CIPTVChannelEditorDlg::OnLoadChannelImage)
@@ -1222,19 +1224,20 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	FillTreePlaylist();
 	UpdateControlsForItem();
 
-	if (m_threadDownload.joinable())
-	{
-		m_threadDownload.request_stop();
-		m_threadDownload.join();
-	}
-
 	int epg_idx = GetEpgIdx();
 	if (epg_idx == XMLTV_EPG && m_xmltvEpgSource != -1 && !m_xmltv_sources.empty())
 	{
 		if (m_xmltv_sources[m_xmltvEpgSource].empty() || m_epg_cache.at(epg_idx).find(L"file already parsed") == m_epg_cache.at(epg_idx).end())
 		{
 			m_wndBtnStop.EnableWindow(TRUE);
-			m_threadDownload = std::jthread(&CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg, this);
+
+			if (m_threadDownload.joinable())
+			{
+				m_threadDownload.request_stop();
+				m_threadDownload.detach();
+			}
+
+			m_threadDownload = std::jthread(std::bind_front(&CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg, this), m_xmltv_sources.at(m_xmltvEpgSource));
 		}
 	}
 
@@ -1362,6 +1365,13 @@ LRESULT CIPTVChannelEditorDlg::OnUpdateProgress(WPARAM wParam /*= 0*/, LPARAM lP
 	str.Format(IDS_STRING_FMT_CHANNELS_READED, wParam);
 	m_wndProgressInfo.SetWindowText(str);
 	m_wndProgress.SetPos((int)lParam);
+
+	return 0;
+}
+
+LRESULT CIPTVChannelEditorDlg::OnEndProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+{
+	m_wndProgress.ShowWindow(FALSE);
 
 	return 0;
 }
@@ -2035,6 +2045,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 		const auto dwStart = utils::ChronoGetTickCount();
 
 		auto uri_stream = GetUriStream(v);
+		if (uri_stream == nullptr) continue;
 
 		bool found = false;
 		std::vector<std::wstring> ids;
@@ -2267,12 +2278,13 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 	JSON_FINAL_CATCH
 }
 
-void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
+void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(const std::wstring url)
 {
 	auto stop = m_threadDownload.get_stop_token();
 
 	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-	utils::http_request req{ m_xmltv_sources.at(m_xmltvEpgSource), cache_ttl};
+	auto url_n = utils::utf16_to_utf8(url);
+	utils::http_request req{ url, cache_ttl};
 	req.user_agent = m_plugin->get_user_agent();
 	req.stop_token = stop;
 
@@ -2280,7 +2292,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 	{
 		if (!utils::AsyncDownloadFile(req).get())
 		{
-			throw std::exception(std::format("Can't download file: {:s}", utils::utf16_to_utf8(m_xmltv_sources[m_xmltvEpgSource])).c_str());
+			throw std::exception(std::format("Can't download file: {:s}", url_n).c_str());
 		}
 
 		if (stop.stop_requested())
@@ -2319,7 +2331,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 
 		if (file_fmt == SevenZip::CompressionFormat::_Format::Unknown)
 		{
-			throw std::exception(std::format("Unknown compression format: {:s}", utils::utf16_to_utf8(m_xmltv_sources[m_xmltvEpgSource])).c_str());
+			throw std::exception(std::format("Unknown compression format: {:s}", url_n).c_str());
 		}
 
 		auto cache_file = utils::GetCachedPath(req.url);
@@ -2335,15 +2347,12 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 				const auto& names = extractor.GetItemsNames();
 				if (names.empty())
 				{
-					throw std::exception(std::format("Archive is empty: {:s}", utils::utf16_to_utf8(m_xmltv_sources[m_xmltvEpgSource])).c_str());
+					throw std::exception(std::format("Archive is empty: {:s}", url_n).c_str());
 				}
 
 				if (!extractor.ExtractFile(names[0], utils::GetCacheDir()))
 				{
-					throw std::exception(std::format("Can't extract file: '{:s}' from '{:s}'",
-													 utils::utf16_to_utf8(names[0]),
-													 utils::utf16_to_utf8(m_xmltv_sources[m_xmltvEpgSource])).c_str()
-					);
+			throw std::exception(std::format("Can't extract file: '{:s}' from '{:s}'", utils::utf16_to_utf8(names[0]), url_n).c_str());
 				}
 
 				// Special case for unpacking gz
@@ -2371,13 +2380,14 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 		bool added = false;
 		auto dwStart = utils::ChronoGetTickCount();
 		int ch_cnt = 0;
+		auto xmltv_file = utils::utf16_to_utf8(cache_file);
 		auto node_doc = std::make_unique<rapidxml::xml_document<>>();
-		rapidxml::file<> xmlFileTmp(utils::utf16_to_utf8(cache_file).c_str());
+		rapidxml::file<> xmlFileTmp(xmltv_file.c_str());
 		node_doc->parse<rapidxml::parse_fastest>(xmlFileTmp.data());
 		auto tv_node = node_doc->first_node("tv");
 		if (!tv_node)
 		{
-			throw std::exception(std::format("Incorrect xmltv file: {:s}", utils::utf16_to_utf8(m_xmltv_sources[m_xmltvEpgSource])).c_str());
+			throw std::exception(std::format("Incorrect xmltv file: {:s}", xmltv_file).c_str());
 		}
 
 		auto ch_node = tv_node->first_node("channel");
@@ -2413,15 +2423,13 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 		//////////////////////////////////////////////////////////////////////////
 
 		auto docParse = std::make_unique<rapidxml::xml_document<>>();
-		rapidxml::file<> xmlFile(utils::utf16_to_utf8(cache_file).c_str());
+		rapidxml::file<> xmlFile(xmltv_file.c_str());
 		docParse->parse<rapidxml::parse_default>(xmlFile.data());
 
 		//////////////////////////////////////////////////////////////////////////
 		// begin parsing channels nodes
 		int i = 0;
-
-		m_wndProgress.SetRange32(0, ch_cnt);
-		m_wndProgress.ShowWindow(SW_SHOW);
+		SendMessage(WM_INIT_PROGRESS, ch_cnt);
 
 		tv_node = docParse->first_node("tv");
 		ch_node = tv_node->first_node("channel");
@@ -2442,9 +2450,9 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 			}
 
 			ch_node = ch_node->next_sibling();
-			if ((++i % 100) == 0 && !stop.stop_requested() && IsWindow(m_wndProgress))
+			if ((++i % 100) == 0 && !stop.stop_requested())
 			{
-				m_wndProgress.SetPos(i);
+				SendMessage(WM_UPDATE_PROGRESS, i, i);
 			}
 
 			if (stop.stop_requested())
@@ -2460,8 +2468,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 		dwStart = utils::ChronoGetTickCount();
 		i = 0;
 
-		m_wndProgress.SetRange32(0, prg_cnt);
-		m_wndProgress.ShowWindow(SW_SHOW);
+		SendMessage(WM_INIT_PROGRESS, prg_cnt);
 
 		EpgStorage epg_map;
 
@@ -2469,11 +2476,6 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 		prog_node = tv_node->first_node("programme");
 		while (prog_node)
 		{
-			if (stop.stop_requested())
-			{
-				throw std::exception("Stop requested");
-			}
-
 			auto epg_info = std::make_shared<EpgInfo>();
 
 			const auto& channel_id = rapidxml::get_value_wstring(prog_node->first_attribute("channel"));
@@ -2491,9 +2493,14 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 			prog_node = prog_node->next_sibling();
 			added = true;
 
-			if ((++i % 100) == 0 && !stop.stop_requested())
+			if (stop.stop_requested())
 			{
-				m_wndProgress.SetPos(i);
+				throw std::exception("Stop requested");
+			}
+
+			if ((++i % 100) == 0)
+			{
+				SendMessage(WM_UPDATE_PROGRESS, i, i);
 			}
 		}
 
@@ -2505,7 +2512,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg()
 			epg_map[L"file already parsed"] = std::map<time_t, std::shared_ptr<EpgInfo>>();
 			m_epg_cache[2] = std::move(epg_map);
 			TriggerEpg();
-			m_wndProgress.ShowWindow(SW_HIDE);
+			SendMessage(WM_END_PROGRESS);
 		}
 	}
 	catch (rapidxml::parse_error& ex)
@@ -3929,7 +3936,8 @@ void CIPTVChannelEditorDlg::OnRemoveUnknownChannels()
 void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, int archive_day /*= 0*/)
 {
 	auto info = GetBaseInfo(m_lastTree, hItem);
-	if (!std::holds_alternative<std::nullptr_t>(info))
+	auto uri_stream = GetUriStream(info);
+	if (uri_stream)
 	{
 		TemplateParams params;
 		params.creds = GetCurrentAccount();
@@ -3938,7 +3946,6 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
 		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
 
-		auto uri_stream = GetUriStream(info);
 		UpdateExtToken(uri_stream);
 		UpdateVars(uri_stream);
 		const auto& url = m_plugin->get_play_stream(params, uri_stream);
@@ -3946,11 +3953,11 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 		TRACE(L"\nTest URL: %s\n", url.c_str());
 
 		ShellExecuteW(nullptr,
-					  L"open",
-					  GetConfig().get_string(true, REG_PLAYER).c_str(),
-					  url.c_str(),
-					  nullptr,
-					  SW_SHOWNORMAL);
+						L"open",
+						GetConfig().get_string(true, REG_PLAYER).c_str(),
+						url.c_str(),
+						nullptr,
+						SW_SHOWNORMAL);
 	}
 }
 
