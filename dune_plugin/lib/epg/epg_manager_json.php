@@ -122,7 +122,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
                 $all_epg = self::get_epg_json($epg_url, $this->plugin->config->get_epg_parameters($epg_source));
                 if (!empty($all_epg)) {
                     hd_debug_print("Save EPG ID: '$epg_id' to file cache $epg_cache_file");
-                    file_put_contents($epg_cache_file, serialize($all_epg));
+                    store_to_json_file($epg_cache_file, $all_epg);
                 }
             }
 
