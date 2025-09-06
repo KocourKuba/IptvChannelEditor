@@ -59,6 +59,8 @@ storage = Lagerung
 internal = intern
 image_libs = Symbol-Bibliotheken
 select_folder = Ordner auswählen
+time = Zeit:
+live = Live:
 
 plugin_all_channels = Alle Kanäle
 plugin_favorites = Favoriten
@@ -263,6 +265,7 @@ warn_msg3 = Die technischen Informationen zum Film enthalten falsche oder fehlen
 warn_msg4 = Abonnementdetails können nicht angezeigt werden.
 warn_msg5 = Falscher Benutzername oder Passwort.
 warn_msg6 = Leere Anbieter-Playlist!
+epg_not_exist = EPG existiert nicht
 epg_not_ready = EPG nicht bereit
 epg_not_ready_desc = EPG wird noch indexiert, bitte warten
 fake_epg_program = Programm

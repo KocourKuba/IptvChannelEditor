@@ -22,6 +22,9 @@ class Default_Dune_Plugin implements DunePlugin
     const SANDWICH_COVER = 'cut_icon://{name=sandwich_cover}';
     const AUTHOR_LOGO = "IPTV Channel Editor by sharky72            ";
 
+    const EPG_DIALOG_WIDTH = 1600;
+    const EPG_PROGRESS_WIDTH = 750;
+
     /////////////////////////////////////////////////////////////////////////////
     // views variables
     const TV_SANDWICH_WIDTH = 245;
@@ -1403,6 +1406,115 @@ class Default_Dune_Plugin implements DunePlugin
         Control_Factory::add_vgap($defs, 10);
 
         return Action_Factory::show_dialog(TR::t('channel_info_dlg'), $defs, true, 1750);
+    }
+
+    /**
+     * @param string $channel_id
+     * @param int $program_ts
+     * @param object $plugin_cookies
+     * @return array|null
+     */
+    public function do_show_channel_epg($channel_id, $program_ts, $plugin_cookies)
+    {
+        hd_debug_print(null, true);
+
+        $prog_info = $this->get_epg_info($channel_id, $program_ts, $plugin_cookies);
+
+        if (!isset($prog_info[PluginTvEpgProgram::ext_id])) {
+            hd_debug_print("Unknown channel ID", true);
+            return null;
+        }
+
+        if (!isset($prog_info[PluginTvEpgProgram::name])) {
+            $title = TR::load('epg_not_exist');
+        } else {
+            // program epg available
+            $title = $prog_info[PluginTvEpgProgram::name];
+            $diff = time() - $prog_info[PluginTvEpgProgram::start_tm_sec];
+
+            // begin and end of program, elapsed time
+            $elapsed_text = sprintf("<gap width=0/><text color=%s size=normal>%s %s - %s</text><gap width=50/><text color=%s size=normal>%s %s</text>",
+                DEF_LABEL_TEXT_COLOR_GOLD,
+                TR::load('time'),
+                format_datetime('H:i', $prog_info[PluginTvEpgProgram::start_tm_sec]),
+                format_datetime('H:i', $prog_info[PluginTvEpgProgram::end_tm_sec]),
+                DEF_LABEL_TEXT_COLOR_TURQUOISE,
+                TR::load('live'),
+                format_duration_seconds($diff)
+            );
+            Control_Factory::add_smart_label($defs, null, $elapsed_text);
+
+            // Progress bar placed after elapsed time on the same line
+            Control_Factory::add_vgap($defs, -64);
+            $pos_percent = round(100 * $diff / ($prog_info[PluginTvEpgProgram::end_tm_sec] - $prog_info[PluginTvEpgProgram::start_tm_sec]));
+            Control_Factory_Ext::add_progressbar($defs,
+                self::EPG_DIALOG_WIDTH - self::EPG_PROGRESS_WIDTH - 150,
+                self::EPG_PROGRESS_WIDTH, $pos_percent);
+
+            // Elapsed percent placed after elapsed time on the same line
+            $percent_text = sprintf("<gap width=%s/><text color=%s size=normal>%s%%</text>",
+                self::EPG_DIALOG_WIDTH - 100,
+                DEF_LABEL_TEXT_COLOR_TURQUOISE,
+                $pos_percent);
+            Control_Factory::add_vgap($defs, -74);
+            Control_Factory::add_smart_label($defs, null, $percent_text);
+
+            // EPG description
+            Control_Factory::add_multiline_label($defs, null, $prog_info[PluginTvEpgProgram::description], 18);
+            Control_Factory::add_vgap($defs, 30);
+
+            // help line if description more than dialog height
+            $help_text = sprintf("<gap width=%s/><icon>%s</icon><gap width=10/><icon>%s</icon><text color=%s size=small>  %s</text>",
+                self::EPG_DIALOG_WIDTH - 1050,
+                get_image_path('page_plus_btn.png'),
+                get_image_path('page_minus_btn.png'),
+                DEF_LABEL_TEXT_COLOR_SILVER,
+                TR::load('scroll_page')
+            );
+            Control_Factory::add_smart_label($defs, '', $help_text);
+            Control_Factory::add_vgap($defs, -80);
+        }
+
+        Control_Factory::add_close_dialog_button($defs, TR::t('ok'), 250, true);
+
+        Control_Factory::add_vgap($defs, 10);
+
+        return Action_Factory::show_dialog($title, $defs, true, self::EPG_DIALOG_WIDTH);
+    }
+
+    /**
+     * @param string $channel_id
+     * @param int $program_ts
+     * @param object $plugin_cookies
+     * @return mixed|null
+     */
+    public function get_epg_info($channel_id, $program_ts, $plugin_cookies)
+    {
+        hd_debug_print(null, true);
+
+        $program_ts = ($program_ts > 0 ? $program_ts : time());
+        $day_start_ts = strtotime(format_datetime("Y-m-d", $program_ts) . " UTC");
+        $program_ts_str = format_datetime("Y-m-d H:i", $day_start_ts);
+        hd_debug_print("channel ID: $channel_id at time $program_ts_str ($day_start_ts)", true);
+        $day_epg = $this->get_day_epg($channel_id, $day_start_ts, $plugin_cookies);
+        if (empty($day_epg)) {
+            hd_debug_print("No entries found for channel $channel_id");
+        } else {
+            $not_found = true;
+            foreach ($day_epg as $item) {
+                if ($program_ts >= $item[PluginTvEpgProgram::start_tm_sec] && $program_ts < $item[PluginTvEpgProgram::end_tm_sec]) {
+                    $not_found = false;
+                    break;
+                }
+            }
+
+            if ($not_found) {
+                hd_debug_print("No entries in range for selected time in " . count($day_epg) . " entries");
+            }
+        }
+
+        $item[PluginTvEpgProgram::ext_id] = $channel_id;
+        return $item;
     }
 
     ///////////////////////////////////////////////////////////////////////

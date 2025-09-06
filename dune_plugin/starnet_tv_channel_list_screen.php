@@ -39,6 +39,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
             GUI_EVENT_KEY_INFO       => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_INFO),
             GUI_EVENT_KEY_SETUP      => User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS),
+            GUI_EVENT_KEY_SUBTITLE   => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_SUBTITLE),
             GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
         );
 
@@ -194,6 +195,9 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
             case GUI_EVENT_KEY_INFO:
                 return $this->plugin->do_show_channel_info($channel_id);
+
+            case GUI_EVENT_KEY_SUBTITLE:
+                return $this->plugin->do_show_channel_epg($channel_id, -1, $plugin_cookies);
         }
 
         return null;

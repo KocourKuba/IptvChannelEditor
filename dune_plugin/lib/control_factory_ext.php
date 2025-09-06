@@ -247,21 +247,44 @@ class Control_Factory_Ext extends Control_Factory
     }
 
     /**
-     * @throws Exception
+     * Show progress bar
      */
     public static function add_progressbar(&$defs, $dx, $width, $pos_percent, $max_percent = 100)
     {
         if (is_null(self::$instance)) {
-            self::init();
+            try
+            {
+                self::init();
+            } catch (Exception $e) {
+                hd_debug_print("Failed to add progressbar: " . $e->getMessage());
+                return;
+            }
         }
 
-        self::add_smart_label($defs, null, '<gap width=' . ($dx + self::$instance->progressbar_outer_manifest['left_extent']) . '/><icon>' . self::progressbar_outer_left . '</icon><icon width=' . ($width - self::$instance->progressbar_outer_manifest['left'] - self::$instance->progressbar_outer_manifest['right']) . ' height=' . self::$instance->progressbar_outer_manifest['height'] . '>' . self::progressbar_outer_center . '</icon><icon>' . self::progressbar_outer_right . '</icon>');
+        self::add_smart_label($defs, null,
+            sprintf("<gap width=%s/><icon>%s</icon><icon width=%s height=%s>%s</icon><icon>%s</icon>",
+                $dx + self::$instance->progressbar_outer_manifest['left_extent'],
+                self::progressbar_outer_left,
+                $width - self::$instance->progressbar_outer_manifest['left'] - self::$instance->progressbar_outer_manifest['right'],
+                self::$instance->progressbar_outer_manifest['height'],
+                self::progressbar_outer_center,
+                self::progressbar_outer_right)
+        );
         $pos_percent = min($max_percent, max(0, $pos_percent));
-        $inner_width = round(($pos_percent * ($width + self::$instance->progressbar_inner_manifest['left_extent'] + self::$instance->progressbar_inner_manifest['right_extent']) / $max_percent));
+        $inner_width = round(($pos_percent * ($width + self::$instance->progressbar_inner_manifest['left_extent']
+                + self::$instance->progressbar_inner_manifest['right_extent']) / $max_percent));
 
         if ($inner_width > 0) {
             self::add_vgap($defs, -69 - self::$instance->progressbar_inner_manifest['top_extent']);
-            self::add_smart_label($defs, null, '<gap width=' . ($dx - self::$instance->progressbar_outer_manifest['left_extent'] - self::$instance->progressbar_inner_manifest['left_extent']) . '/><icon>' . self::progressbar_inner_left . '</icon><icon width=' . ($inner_width - self::$instance->progressbar_inner_manifest['left'] - self::$instance->progressbar_inner_manifest['right']) . ' height=' . self::$instance->progressbar_inner_manifest['height'] . '>' . self::progressbar_inner_center . '</icon><icon>' . self::progressbar_inner_right . '</icon>');
+            self::add_smart_label($defs, null,
+                sprintf("<gap width=%s/><icon>%s</icon><icon width=%s height=%s>%s</icon><icon>%s</icon>",
+                    $dx - self::$instance->progressbar_outer_manifest['left_extent'] - self::$instance->progressbar_inner_manifest['left_extent'],
+                    self::progressbar_inner_left,
+                    $inner_width - self::$instance->progressbar_inner_manifest['left'] - self::$instance->progressbar_inner_manifest['right'],
+                    self::$instance->progressbar_inner_manifest['height'],
+                    self::progressbar_inner_center,
+                    self::progressbar_inner_right)
+            );
             self::add_vgap($defs, self::$instance->progressbar_inner_manifest['bottom_extent']);
         }
     }
