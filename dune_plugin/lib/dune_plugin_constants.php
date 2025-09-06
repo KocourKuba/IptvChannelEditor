@@ -90,6 +90,7 @@ const PARAM_CHANNELS_ZOOM = 'channels_zoom';
 const PARAM_CHANNEL_PLAYER = 'channel_player';
 const PARAM_USER_CATCHUP = 'user_catchup';
 const PARAM_TV_HISTORY_ITEMS = '_tv_history_items';
+const PARAM_PLAYLIST_CACHE_TIME = 'playlist_cache_time';
 const PARAM_BUFFERING_TIME = 'buffering_time';
 const PARAM_ARCHIVE_DELAY_TIME = 'archive_delay_time';
 const PARAM_ENABLE_DEBUG = 'enable_debug';

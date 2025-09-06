@@ -1341,12 +1341,14 @@ class default_config extends dynamic_config
         hd_debug_print($m3u_file, true);
         if ($force === false) {
             if (file_exists($m3u_file)) {
+                $now = time();
                 $mtime = filemtime($m3u_file);
-                if (time() - $mtime > 3600) {
+                $cache_expired = $mtime + $this->plugin->get_parameter(PARAM_PLAYLIST_CACHE_TIME, 1) * 3600;
+                if ($cache_expired > $now) {
+                    hd_debug_print("$type playlist cache not expired");
+                } else {
                     hd_debug_print("$type playlist cache expired. Forcing reload");
                     $force = true;
-                } else {
-                    hd_debug_print("$type playlist cache not expired");
                 }
             } else {
                 hd_debug_print("$type playlist not exist. Forcing reload");

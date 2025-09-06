@@ -173,6 +173,19 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         }
 
         //////////////////////////////////////
+        // playlist caching
+        foreach (array(1, 6, 12) as $hour) {
+            $caching_range[$hour] = TR::t('setup_cache_time_h__1', $hour);
+        }
+        foreach (array(24, 48, 96, 168) as $hour) {
+            $caching_range[$hour] = TR::t('setup_cache_time_d__1', $hour / 24);
+        }
+        $cache_time = $this->plugin->get_parameter(PARAM_PLAYLIST_CACHE_TIME, 1);
+        Control_Factory::add_combobox($defs, $this, null,
+            PARAM_PLAYLIST_CACHE_TIME, TR::t('setup_cache_time'),
+            $cache_time, $caching_range, self::CONTROLS_WIDTH, true);
+
+        //////////////////////////////////////
         // buffering time
         $show_buf_time_ops = array();
         $show_buf_time_ops[1000] = TR::t('setup_buffer_sec_default__1', "1");
@@ -345,6 +358,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
             case PARAM_STREAM_FORMAT:
             case PARAM_BUFFERING_TIME:
             case PARAM_ARCHIVE_DELAY_TIME:
+            case PARAM_PLAYLIST_CACHE_TIME:
                 if ($control_id === PARAM_STREAM_FORMAT) {
                     $need_reload = true;
                 }
