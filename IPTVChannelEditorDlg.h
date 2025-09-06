@@ -292,7 +292,7 @@ private:
 	void TriggerEpg();
 	void FillEPG();
 	void ParseJsonEpg(const int epg_idx);
-	void DownloadAndParseXmltvEpg(const std::wstring url);
+	void DownloadAndParseXmltvEpg(std::wstring url);
 	int GetEpgIdx();
 
 	void UpdateExtToken(uri_stream* uri) const;

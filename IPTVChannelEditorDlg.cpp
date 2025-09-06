@@ -2278,7 +2278,7 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 	JSON_FINAL_CATCH
 }
 
-void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(const std::wstring url)
+void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 {
 	auto stop = m_threadDownload.get_stop_token();
 
@@ -4983,7 +4983,6 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 	sheet.AddPage(pDlg2.get());
 	sheet.AddPage(pDlg3.get());
 
-	std::wstring old_list = GetConfig().get_string(true, REG_LISTS_PATH);
 	int old_flags = GetConfig().get_int(true, REG_CMP_FLAGS);
 	int old_update = GetConfig().get_int(true, REG_UPDATE_FREQ);
 	int old_convert = GetConfig().get_int(true, REG_CONVERT_DUPES);
@@ -5485,13 +5484,15 @@ void CIPTVChannelEditorDlg::OnSyncTreeItem()
 
 void CIPTVChannelEditorDlg::OnUpdateSyncTreeItem(CCmdUI* pCmdUI)
 {
-	auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
-	auto uri_stream = GetUriStream(info);
-	BOOL enable = (!m_loading
-				   && m_lastTree
-				   && m_lastTree->GetSelectedCount() == 1
-				   &&  uri_stream != nullptr
-				   && !GetConfig().get_int(true, REG_AUTO_SYNC));
+	BOOL enable = FALSE;
+	if (!m_loading
+		&& m_lastTree
+		&& m_lastTree->GetSelectedCount() == 1
+		&& !GetConfig().get_int(true, REG_AUTO_SYNC))
+	{
+		enable = (GetUriStream(GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem())) != nullptr);
+	}
+
 
 	pCmdUI->Enable(enable);
 }
