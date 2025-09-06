@@ -1839,7 +1839,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/yosso%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.drm-play.com/peaktv%2Fepg%2F{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
