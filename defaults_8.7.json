@@ -2266,24 +2266,16 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://api.program.spr24.net/api/program?epg={EPG_ID}&date={DATE}",
-          "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_id_source": 1
-        },
-        {
-          "epg_param": "first",
           "epg_url": "http://epg.drm-play.com/sharavoz%2Fepg%2F{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_icon": "icon"
+          "epg_icon": "icon",
+          "epg_id_source": 1
+        },
+        {
         }
       ],
       "name": "sharavoz.tv",

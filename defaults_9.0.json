@@ -2278,15 +2278,6 @@
           "epg_id_source": 1
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://api.program.spr24.net/api/program?epg={EPG_ID}&date=",
-          "epg_date_format": "{YEAR}-{MONTH}-{DAY}",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_id_source": 1
         }
       ],
       "name": "sharavoz.tv",
