@@ -813,7 +813,7 @@ class Default_Dune_Plugin implements DunePlugin
     // Parameters storage methods
 
     /**
-     * load plugin/playlist settings
+     * load plugin parameters
      *
      * @param bool $force
      * @return void
@@ -834,7 +834,7 @@ class Default_Dune_Plugin implements DunePlugin
     }
 
     /**
-     * save plugin/playlist settings
+     * save plugin parameters
      *
      * @return void
      */
@@ -843,7 +843,7 @@ class Default_Dune_Plugin implements DunePlugin
         hd_debug_print(null, true);
 
         if (is_null($this->parameters)) {
-            hd_debug_print("this->parameters is not set!", true);
+            hd_debug_print("parameters is not set!", true);
         } else if (!$this->postpone_save) {
             $this->is_durty = false;
             hd_debug_print("Save: common.settings", true);

@@ -146,6 +146,14 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             Control_Factory::add_image_button($defs, $this, null,
                 self::ACTION_CLEAR_EPG_CACHE, TR::t('entry_epg_cache_clear'), TR::t('clear'),
                 $remove_icon, self::CONTROLS_WIDTH);
+        } else {
+            foreach (array(1, 2, 3, 6, 12) as $hour) {
+                $caching_range[$hour] = TR::t('setup_cache_time_h__1', $hour);
+            }
+            $cache_time = $this->plugin->get_parameter(PARAM_EPG_CACHE_TIME, 1);
+            Control_Factory::add_combobox($defs, $this, null,
+                PARAM_EPG_CACHE_TIME, TR::t('setup_cache_time'),
+                $cache_time, $caching_range, self::CONTROLS_WIDTH, true);
         }
 
         //////////////////////////////////////
@@ -225,6 +233,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 return Action_Factory::open_folder($media_url_str, TR::t('setup_epg_xmltv_cache_caption'));
 
             case PARAM_EPG_SHIFT:
+            case PARAM_EPG_CACHE_TIME:
                 $this->plugin->set_parameter($control_id, $user_input->{$control_id});
                 break;
 

@@ -80,6 +80,7 @@ const PARAM_EPG_CACHE_ENGINE = 'epg_cache_engine';
 const PARAM_EPG_CACHE_PARAMETERS = 'epg_cache_parameters';
 const PARAM_EPG_CACHE_TTL = 'epg_cache_ttl';
 const PARAM_EPG_SHIFT = 'epg_shift';
+const PARAM_EPG_CACHE_TIME = 'epg_cache_time';
 const PARAM_EPG_FONT_SIZE = 'epg_font_size';
 const PARAM_CACHE_PATH = 'xmltv_cache_path';
 const PARAM_XMLTV_CUR_SOURCE_KEY = 'cur_xmltv_key';
