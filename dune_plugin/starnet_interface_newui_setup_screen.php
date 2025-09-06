@@ -59,7 +59,7 @@ class Starnet_Interface_NewUI_Setup_Screen extends Abstract_Controls_Screen impl
 
         //////////////////////////////////////
         // Square icons
-        $square_icon = $this->plugin->get_parameter(PARAM_SQUARE_ICONS, SwitchOnOff::on);
+        $square_icon = $this->plugin->get_setting(PARAM_SQUARE_ICONS, SwitchOnOff::on);
         hd_debug_print(PARAM_SQUARE_ICONS . ": $square_icon", true);
         $square_icon_translated[SwitchOnOff::on] = TR::t('yes');
         $square_icon_translated[SwitchOnOff::off] = TR::t('no');
@@ -74,7 +74,7 @@ class Starnet_Interface_NewUI_Setup_Screen extends Abstract_Controls_Screen impl
         $channel_position[1] = TR::t('setup_channel_top_left');
         $channel_position[2] = TR::t('setup_channel_top_right');
         $channel_position[3] = TR::t('setup_channel_bottom_right');
-        $ch_pos = $this->plugin->get_parameter(PARAM_CHANNEL_POSITION, 0);
+        $ch_pos = $this->plugin->get_setting(PARAM_CHANNEL_POSITION, 0);
         Control_Factory::add_combobox($defs, $this, null,
             PARAM_CHANNEL_POSITION, TR::t('setup_channel_position'),
             $ch_pos, $channel_position, self::CONTROLS_WIDTH, true);
@@ -84,14 +84,14 @@ class Starnet_Interface_NewUI_Setup_Screen extends Abstract_Controls_Screen impl
         $icons_in_row[5] = '5';
         $icons_in_row[6] = '6';
         $icons_in_row[7] = '7';
-        $icon_idx = $this->plugin->get_parameter(PARAM_ICONS_IN_ROW, 7);
+        $icon_idx = $this->plugin->get_setting(PARAM_ICONS_IN_ROW, 7);
         Control_Factory::add_combobox($defs, $this, null,
             PARAM_ICONS_IN_ROW, TR::t('setup_icons_in_row'),
             $icon_idx, $icons_in_row, self::CONTROLS_WIDTH, true);
 
         //////////////////////////////////////
         // Show caption
-        $show_caption = $this->plugin->get_parameter(PARAM_SHOW_CHANNEL_CAPTION, SwitchOnOff::on);
+        $show_caption = $this->plugin->get_setting(PARAM_SHOW_CHANNEL_CAPTION, SwitchOnOff::on);
         hd_debug_print(PARAM_SHOW_CHANNEL_CAPTION . ": $show_caption", true);
         $show_caption_translated[SwitchOnOff::on] = TR::t('yes');
         $show_caption_translated[SwitchOnOff::off] = TR::t('no');
@@ -122,13 +122,13 @@ class Starnet_Interface_NewUI_Setup_Screen extends Abstract_Controls_Screen impl
         switch ($control_id) {
             case PARAM_CHANNEL_POSITION:
             case PARAM_ICONS_IN_ROW:
-                $this->plugin->set_parameter($control_id, $user_input->{$control_id});
+                $this->plugin->set_setting($control_id, $user_input->{$control_id});
                 $post_action = Starnet_Epfs_Handler::epfs_invalidate_folders();
                 break;
 
             case PARAM_SQUARE_ICONS:
             case PARAM_SHOW_CHANNEL_CAPTION:
-                $this->plugin->toggle_parameter($control_id, false);
+                $this->plugin->toggle_setting($control_id, false);
                 $post_action = Starnet_Epfs_Handler::epfs_invalidate_folders();
                 break;
         }

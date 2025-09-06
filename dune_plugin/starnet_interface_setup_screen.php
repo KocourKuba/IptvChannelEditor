@@ -36,28 +36,28 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
 
         //////////////////////////////////////
         // ask exit parameter
-        $ask_exit = $this->plugin->get_parameter(PARAM_ASK_EXIT, SwitchOnOff::on);
+        $ask_exit = $this->plugin->get_setting(PARAM_ASK_EXIT, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
             PARAM_ASK_EXIT, TR::t('setup_ask_exit'), SwitchOnOff::$translated[$ask_exit],
             get_image_path(SwitchOnOff::$image[$ask_exit]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // show all channels category
-        $show_all = $this->plugin->get_parameter(PARAM_SHOW_ALL, SwitchOnOff::on);
+        $show_all = $this->plugin->get_setting(PARAM_SHOW_ALL, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
             PARAM_SHOW_ALL, TR::t('setup_show_all_channels'), SwitchOnOff::$translated[$show_all],
             get_image_path(SwitchOnOff::$image[$show_all]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // show favorites category
-        $show_fav = $this->plugin->get_parameter(PARAM_SHOW_FAVORITES, SwitchOnOff::on);
+        $show_fav = $this->plugin->get_setting(PARAM_SHOW_FAVORITES, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
             PARAM_SHOW_FAVORITES, TR::t('setup_show_favorites'), SwitchOnOff::$translated[$show_fav],
             get_image_path(SwitchOnOff::$image[$show_fav]), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // show history category
-        $show_history = $this->plugin->get_parameter(PARAM_SHOW_HISTORY, SwitchOnOff::on);
+        $show_history = $this->plugin->get_setting(PARAM_SHOW_HISTORY, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
             PARAM_SHOW_HISTORY, TR::t('setup_show_history'), SwitchOnOff::$translated[$show_history],
             get_image_path(SwitchOnOff::$image[$show_history]), self::CONTROLS_WIDTH);
@@ -65,14 +65,14 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) !== "None") {
             //////////////////////////////////////
             // show history category
-            $show_vod = $this->plugin->get_parameter(PARAM_SHOW_VOD, SwitchOnOff::on);
+            $show_vod = $this->plugin->get_setting(PARAM_SHOW_VOD, SwitchOnOff::on);
             Control_Factory::add_image_button($defs, $this, null,
                 PARAM_SHOW_VOD, TR::t('setup_show_vod'), SwitchOnOff::$translated[$show_vod],
                 get_image_path(SwitchOnOff::$image[$show_vod]), self::CONTROLS_WIDTH);
 
             if ($show_vod) {            //////////////////////////////////////
                 // show vod at the end of categories
-                $vod_last = $this->plugin->get_parameter(PARAM_VOD_LAST, SwitchOnOff::off);
+                $vod_last = $this->plugin->get_setting(PARAM_VOD_LAST, SwitchOnOff::off);
                 Control_Factory::add_image_button($defs, $this, null,
                     PARAM_VOD_LAST, TR::t('setup_vod_last'), SwitchOnOff::$translated[$vod_last],
                     get_image_path(SwitchOnOff::$image[$vod_last]), self::CONTROLS_WIDTH);
@@ -81,7 +81,7 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
 
         //////////////////////////////////////
         // epg font size
-        $font_size = $this->plugin->get_parameter(PARAM_EPG_FONT_SIZE, SwitchOnOff::on);
+        $font_size = $this->plugin->get_setting(PARAM_EPG_FONT_SIZE, SwitchOnOff::on);
         $font_ops_translated[SwitchOnOff::on] = TR::t('setup_small');
         $font_ops_translated[SwitchOnOff::off] = TR::t('setup_normal');
 
@@ -129,14 +129,14 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
             case PARAM_SHOW_HISTORY:
             case PARAM_SHOW_VOD:
             case PARAM_VOD_LAST:
-                $this->plugin->toggle_parameter($control_id);
+                $this->plugin->toggle_setting($control_id);
                 $this->plugin->tv->reload_channels();
                 $this->plugin->set_need_update_epfs();
                 return Action_Factory::invalidate_all_folders($plugin_cookies, Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies)));
 
             case PARAM_ASK_EXIT:
             case PARAM_EPG_FONT_SIZE:
-                $this->plugin->toggle_parameter($control_id, false);
+                $this->plugin->toggle_setting($control_id, false);
                 break;
         }
 

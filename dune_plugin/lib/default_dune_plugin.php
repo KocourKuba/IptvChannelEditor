@@ -85,7 +85,7 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * @var array
      */
-    protected $parameters;
+    protected $settings;
 
     /**
      * @var bool
@@ -162,7 +162,7 @@ class Default_Dune_Plugin implements DunePlugin
         $this->config->plugin_info = $plugin_info;
         $this->config->set_plugin($this);
         $this->config->init_defaults();
-        $this->config->load_config();
+        $this->config->load_config_parameters();
         $this->config->load_embedded_account();
         $this->config->init_custom_config();
 
@@ -217,7 +217,7 @@ class Default_Dune_Plugin implements DunePlugin
         hd_debug_print_separator();
         // small hack to show parameters in log
         set_debug_log(true);
-        $this->load(true);
+        $this->load_settings(true);
         $this->update_log_level();
 
         $this->playback_points = new Playback_Points($this);
@@ -270,8 +270,8 @@ class Default_Dune_Plugin implements DunePlugin
 
     public function is_json_capable()
     {
-        $epg_url1 = $this->config->get_epg_param(Plugin_Constants::EPG_FIRST, Epg_Params::EPG_URL);
-        $epg_url2 = $this->config->get_epg_param(Plugin_Constants::EPG_SECOND, Epg_Params::EPG_URL);
+        $epg_url1 = $this->config->get_epg_parameter(Plugin_Constants::EPG_FIRST, Epg_Params::EPG_URL);
+        $epg_url2 = $this->config->get_epg_parameter(Plugin_Constants::EPG_SECOND, Epg_Params::EPG_URL);
         return !empty($epg_url1) || !empty($epg_url2);
     }
 
@@ -283,14 +283,14 @@ class Default_Dune_Plugin implements DunePlugin
     public function init_epg_manager()
     {
         $this->epg_manager = null;
-        $engine = $this->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
+        $engine = $this->get_setting(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
         hd_debug_print("Selected Epg_Manager: $engine");
         if ($engine === ENGINE_JSON) {
             if ($this->is_json_capable()) {
                 hd_debug_print("Using 'Epg_Manager_Json' cache engine");
                 $this->epg_manager = new Epg_Manager_Json($this);
             } else {
-                $this->set_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_XMLTV);
+                $this->set_setting(PARAM_EPG_CACHE_ENGINE, ENGINE_XMLTV);
             }
         }
 
@@ -308,9 +308,9 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_cache_dir()
     {
-        $cache_dir = smb_tree::get_folder_info($this->get_parameter(PARAM_CACHE_PATH));
+        $cache_dir = smb_tree::get_folder_info($this->get_setting(PARAM_CACHE_PATH));
         if (!is_null($cache_dir) && rtrim($cache_dir, DIRECTORY_SEPARATOR) === get_data_path(EPG_CACHE_SUBDIR)) {
-            $this->remove_parameter(PARAM_CACHE_PATH);
+            $this->remove_setting(PARAM_CACHE_PATH);
             $cache_dir = null;
         }
 
@@ -331,7 +331,7 @@ class Default_Dune_Plugin implements DunePlugin
         hd_debug_print(null, true);
 
         /** @var Hashed_Array<string, float> $cache_params */
-        $cache_params = $this->get_parameter(PARAM_EPG_CACHE_PARAMETERS, new Hashed_Array());
+        $cache_params = $this->get_setting(PARAM_EPG_CACHE_PARAMETERS, new Hashed_Array());
 
         /** @var Hashed_Array $sources */
         $xmltv_sources = new Hashed_Array();
@@ -545,11 +545,11 @@ class Default_Dune_Plugin implements DunePlugin
             $day_start_tm_sec -= get_local_time_zone_offset();
 
             // get personal time shift for channel
-            $time_shift = 3600 * ($channel->get_timeshift_hours() + $this->get_parameter(PARAM_EPG_SHIFT, 0)) + $channel->get_timeshift_hours() * 60;
+            $time_shift = 3600 * ($channel->get_timeshift_hours() + $this->get_setting(PARAM_EPG_SHIFT, 0)) + $channel->get_timeshift_hours() * 60;
             hd_debug_print("EPG time shift $time_shift", true);
             $day_start_tm_sec += $time_shift;
 
-            $show_ext_epg = $this->get_bool_parameter(PARAM_SHOW_EXT_EPG) && $this->ext_epg_supported;
+            $show_ext_epg = $this->get_bool_setting(PARAM_SHOW_EXT_EPG) && $this->ext_epg_supported;
 
             if (LogSeverity::$is_debug) {
                 hd_debug_print("day_start timestamp: $day_start_tm_sec (" . format_datetime("Y-m-d H:i", $day_start_tm_sec) . ")");
@@ -810,25 +810,25 @@ class Default_Dune_Plugin implements DunePlugin
     }
 
     ///////////////////////////////////////////////////////////////////////
-    // Parameters storage methods
+    // Setting storage methods
 
     /**
-     * load plugin parameters
+     * load plugin setting
      *
      * @param bool $force
      * @return void
      */
-    public function load($force = false)
+    public function load_settings($force = false)
     {
         if ($force) {
-            $this->parameters = null;
+            $this->settings = null;
         }
 
-        if (is_null($this->parameters)) {
+        if (is_null($this->settings)) {
             hd_debug_print("Load: common.settings", true);
-            $this->parameters = HD::get_data_items("common.settings", true, false);
+            $this->settings = HD::get_data_items("common.settings", true, false);
             if (LogSeverity::$is_debug) {
-                foreach ($this->parameters as $key => $param) hd_debug_print("$key => $param");
+                foreach ($this->settings as $key => $param) hd_debug_print("$key => $param");
             }
         }
     }
@@ -838,17 +838,17 @@ class Default_Dune_Plugin implements DunePlugin
      *
      * @return void
      */
-    public function save()
+    public function save_settings()
     {
         hd_debug_print(null, true);
 
-        if (is_null($this->parameters)) {
+        if (is_null($this->settings)) {
             hd_debug_print("parameters is not set!", true);
         } else if (!$this->postpone_save) {
             $this->is_durty = false;
             hd_debug_print("Save: common.settings", true);
-            foreach ($this->parameters as $key => $param) hd_debug_print("$key => $param", true);
-            HD::put_data_items("common.settings", $this->parameters, false);
+            foreach ($this->settings as $key => $param) hd_debug_print("$key => $param", true);
+            HD::put_data_items("common.settings", $this->settings, false);
         }
     }
 
@@ -860,18 +860,18 @@ class Default_Dune_Plugin implements DunePlugin
      * @param mixed|null $default
      * @return mixed
      */
-    public function get_parameter($type, $default = null)
+    public function get_setting($type, $default = null)
     {
-        $this->load();
+        $this->load_settings();
 
-        if (!isset($this->parameters[$type])) {
+        if (!isset($this->settings[$type])) {
             if ($default === null) {
                 return null;
             }
-            $this->parameters[$type] = $default;
+            $this->settings[$type] = $default;
         }
 
-        return $this->parameters[$type];
+        return $this->settings[$type];
     }
 
     /**
@@ -880,12 +880,12 @@ class Default_Dune_Plugin implements DunePlugin
      * @param string $type
      * @param mixed $val
      */
-    public function set_parameter($type, $val)
+    public function set_setting($type, $val)
     {
         hd_debug_print(null, true);
-        $this->parameters[$type] = $val;
+        $this->settings[$type] = $val;
         $this->is_durty = true;
-        $this->save();
+        $this->save_settings();
     }
 
     /**
@@ -895,9 +895,9 @@ class Default_Dune_Plugin implements DunePlugin
      * @param bool $default
      * @return bool
      */
-    public function get_bool_parameter($type, $default = true)
+    public function get_bool_setting($type, $default = true)
     {
-        $val = $this->get_parameter($type, $default ? SwitchOnOff::on : SwitchOnOff::off);
+        $val = $this->get_setting($type, $default ? SwitchOnOff::on : SwitchOnOff::off);
         return $val === SwitchOnOff::on;
     }
 
@@ -907,19 +907,19 @@ class Default_Dune_Plugin implements DunePlugin
      * @param string $type
      * @param bool $val
      */
-    public function set_bool_parameter($type, $val)
+    public function set_bool_setting($type, $val)
     {
-        $this->set_parameter($type, $val ? SwitchOnOff::on : SwitchOnOff::off);
+        $this->set_setting($type, $val ? SwitchOnOff::on : SwitchOnOff::off);
     }
 
     /**
-     * Remove parameter
+     * Remove setting
      * @param string $type
      */
-    public function remove_parameter($type)
+    public function remove_setting($type)
     {
-        unset($this->parameters[$type]);
-        $this->save();
+        unset($this->settings[$type]);
+        $this->save_settings();
     }
 
     /**
@@ -927,15 +927,15 @@ class Default_Dune_Plugin implements DunePlugin
      * @param bool $default
      * @return bool
      */
-    public function toggle_parameter($param, $default = true)
+    public function toggle_setting($param, $default = true)
     {
-        $new_val = !$this->get_bool_parameter($param, $default);
-        $this->set_bool_parameter($param, $new_val);
+        $new_val = !$this->get_bool_setting($param, $default);
+        $this->set_bool_setting($param, $new_val);
         return $new_val;
     }
 
     /**
-     * Get plugin parameters
+     * Get plugin setting
      * Parameters does not depend on playlists and used globally
      *
      * @param string $type
@@ -1020,12 +1020,12 @@ class Default_Dune_Plugin implements DunePlugin
         foreach ($params as $key => $value) {
             if (isset($plugin_cookies->{$key})) {
                 hd_debug_print("$key to $value");
-                $this->set_parameter($value, $plugin_cookies->{$key});
+                $this->set_setting($value, $plugin_cookies->{$key});
                 unset($plugin_cookies->{$key});
             }
         }
 
-        $channel_list = $this->get_parameter(PARAM_CHANNELS_LIST_NAME);
+        $channel_list = $this->get_setting(PARAM_CHANNELS_LIST_NAME);
         $channel_list = empty($channel_list) ? 'default' : $channel_list;
         $favorites = 'favorite_channels_' . hash('crc32', $channel_list);
         if (isset($plugin_cookies->{$favorites})) {
@@ -1041,7 +1041,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function update_log_level()
     {
-        set_debug_log($this->get_bool_parameter(PARAM_ENABLE_DEBUG, false));
+        set_debug_log($this->get_bool_setting(PARAM_ENABLE_DEBUG, false));
     }
 
     /**
@@ -1049,7 +1049,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_channels_zoom()
     {
-        return $this->get_parameter(PARAM_CHANNELS_ZOOM, new Hashed_Array());
+        return $this->get_setting(PARAM_CHANNELS_ZOOM, new Hashed_Array());
     }
 
     /**
@@ -1082,7 +1082,7 @@ class Default_Dune_Plugin implements DunePlugin
                 $channels_zoom->set($channel_id, $preset);
             }
         }
-        $this->set_parameter(PARAM_CHANNELS_ZOOM, $channels_zoom);
+        $this->set_setting(PARAM_CHANNELS_ZOOM, $channels_zoom);
     }
 
     /**
@@ -1101,7 +1101,7 @@ class Default_Dune_Plugin implements DunePlugin
                 $ext_player->remove_item($channel_id);
             }
         }
-        $this->set_parameter(PARAM_CHANNEL_PLAYER, $ext_player);
+        $this->set_setting(PARAM_CHANNEL_PLAYER, $ext_player);
     }
 
     /**
@@ -1109,7 +1109,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_channels_for_ext_player()
     {
-        return $this->get_parameter(PARAM_CHANNEL_PLAYER, new Ordered_Array());
+        return $this->get_setting(PARAM_CHANNEL_PLAYER, new Ordered_Array());
     }
 
     /**
@@ -1180,7 +1180,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_history_path($filename = null)
     {
-        $param = $this->get_parameter(PARAM_HISTORY_PATH);
+        $param = $this->get_setting(PARAM_HISTORY_PATH);
         if (empty($param)) {
             $path = get_data_path(self::HISTORY_FOLDER);
         } else {
@@ -1188,7 +1188,7 @@ class Default_Dune_Plugin implements DunePlugin
             $path = get_slash_trailed_path($path);
             if ($path === get_data_path() || $path === get_data_path(self::HISTORY_FOLDER)) {
                 // reset old settings to new
-                $this->remove_parameter(PARAM_HISTORY_PATH);
+                $this->remove_setting(PARAM_HISTORY_PATH);
                 $path = get_data_path(self::HISTORY_FOLDER);
             }
         }
@@ -1206,7 +1206,7 @@ class Default_Dune_Plugin implements DunePlugin
     public function &get_favorites()
     {
         if ($this->favorite_ids === null) {
-            $channel_list = $this->get_parameter(PARAM_CHANNELS_LIST_NAME);
+            $channel_list = $this->get_setting(PARAM_CHANNELS_LIST_NAME);
             $channel_list = empty($channel_list) ? 'default' : $channel_list;
             $ids = HD::get_data_items('favorite_channels_' . hash('crc32', $channel_list));
 
@@ -1240,7 +1240,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function save_favorites()
     {
-        $channel_list = $this->get_parameter(PARAM_CHANNELS_LIST_NAME);
+        $channel_list = $this->get_setting(PARAM_CHANNELS_LIST_NAME);
         $channel_list = empty($channel_list) ? 'default' : $channel_list;
         if (LogSeverity::$is_debug) {
             hd_debug_print("Save favorites: " . $this->favorite_ids);

@@ -9,7 +9,7 @@ class tvclub_config extends default_config
      */
     public function get_format()
     {
-        return $this->plugin->get_parameter(PARAM_STREAM_FORMAT, Plugin_Constants::MPEG);
+        return $this->plugin->get_setting(PARAM_STREAM_FORMAT, Plugin_Constants::MPEG);
     }
 
     /**
@@ -121,7 +121,7 @@ class tvclub_config extends default_config
 
         try {
             $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
-            $param_set = $this->plugin->get_parameter($param, '');
+            $param_set = $this->plugin->get_setting($param, '');
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/set?token=$token&$param=$param_set";
             HD::http_get_document($url);
             $this->load_settings();

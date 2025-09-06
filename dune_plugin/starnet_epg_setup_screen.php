@@ -61,7 +61,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             $epg_source_ops[ENGINE_XMLTV] = TR::t('setup_epg_engine_xmltv');
         }
 
-        $cache_engine = $this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
+        $cache_engine = $this->plugin->get_setting(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
 
         $source_ops_cnt = count($epg_source_ops);
         if ($source_ops_cnt > 1) {
@@ -76,7 +76,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         //////////////////////////////////////
         // ext epg
         if (is_ext_epg_supported() && $this->plugin->is_ext_epg_exist()) {
-            $ext_epg = $this->plugin->get_parameter(PARAM_SHOW_EXT_EPG, SwitchOnOff::off);
+            $ext_epg = $this->plugin->get_setting(PARAM_SHOW_EXT_EPG, SwitchOnOff::off);
             Control_Factory::add_image_button($defs, $this, null,
                 PARAM_SHOW_EXT_EPG, TR::t('setup_ext_epg'), SwitchOnOff::$translated[$ext_epg],
                 get_image_path(SwitchOnOff::$image[$ext_epg]), self::CONTROLS_WIDTH);
@@ -84,7 +84,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
         //////////////////////////////////////
         // Fake EPG
-        $fake_epg = $this->plugin->get_parameter(PARAM_FAKE_EPG, SwitchOnOff::off);
+        $fake_epg = $this->plugin->get_setting(PARAM_FAKE_EPG, SwitchOnOff::off);
         Control_Factory::add_image_button($defs, $this, null,
             PARAM_FAKE_EPG, TR::t('entry_epg_fake'), SwitchOnOff::$translated[$fake_epg],
             get_image_path(SwitchOnOff::$image[$fake_epg]), self::CONTROLS_WIDTH);
@@ -150,7 +150,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             foreach (array(1, 2, 3, 6, 12) as $hour) {
                 $caching_range[$hour] = TR::t('setup_cache_time_h__1', $hour);
             }
-            $cache_time = $this->plugin->get_parameter(PARAM_EPG_CACHE_TIME, 1);
+            $cache_time = $this->plugin->get_setting(PARAM_EPG_CACHE_TIME, 1);
             Control_Factory::add_combobox($defs, $this, null,
                 PARAM_EPG_CACHE_TIME, TR::t('setup_cache_time'),
                 $cache_time, $caching_range, self::CONTROLS_WIDTH, true);
@@ -164,7 +164,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         }
         $show_epg_shift_ops[0] = TR::t('setup_epg_shift_default__1', "00");
 
-        $epg_shift = $this->plugin->get_parameter(PARAM_EPG_SHIFT, 0);
+        $epg_shift = $this->plugin->get_setting(PARAM_EPG_SHIFT, 0);
         Control_Factory::add_combobox($defs, $this, null,
             PARAM_EPG_SHIFT, TR::t('setup_epg_shift'),
             $epg_shift, $show_epg_shift_ops, self::CONTROLS_WIDTH, true);
@@ -214,7 +214,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case PARAM_EPG_CACHE_ENGINE:
                 $this->plugin->tv->unload_channels();
-                $this->plugin->set_parameter($control_id, $user_input->{$control_id});
+                $this->plugin->set_setting($control_id, $user_input->{$control_id});
                 $this->plugin->init_epg_manager();
                 break;
 
@@ -234,7 +234,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case PARAM_EPG_SHIFT:
             case PARAM_EPG_CACHE_TIME:
-                $this->plugin->set_parameter($control_id, $user_input->{$control_id});
+                $this->plugin->set_setting($control_id, $user_input->{$control_id});
                 break;
 
             case PARAM_XMLTV_SOURCE:
@@ -242,9 +242,9 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 break;
 
             case PARAM_EPG_CACHE_TTL:
-                $cache_types = $this->plugin->get_parameter(PARAM_EPG_CACHE_PARAMETERS, new Hashed_Array());
+                $cache_types = $this->plugin->get_setting(PARAM_EPG_CACHE_PARAMETERS, new Hashed_Array());
                 $cache_types->set($this->selected, $user_input->{$control_id});
-                $this->plugin->set_parameter(PARAM_EPG_CACHE_PARAMETERS, $cache_types);
+                $this->plugin->set_setting(PARAM_EPG_CACHE_PARAMETERS, $cache_types);
                 break;
 
             case self::ACTION_CLEAR_EPG_CACHE:
@@ -255,7 +255,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
             case ACTION_RESET_DEFAULT:
                 hd_debug_print(ACTION_RESET_DEFAULT);
                 $this->plugin->clear_all_epg_cache();
-                $this->plugin->remove_parameter(PARAM_CACHE_PATH);
+                $this->plugin->remove_setting(PARAM_CACHE_PATH);
                 $this->plugin->init_epg_manager();
                 $default_path = $this->plugin->get_cache_dir();
                 $post_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $default_path),
@@ -268,7 +268,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 if ($this->plugin->get_cache_dir() === $data->filepath) break;
 
                 $this->plugin->clear_all_epg_cache();
-                $this->plugin->set_parameter(PARAM_CACHE_PATH, $data->filepath);
+                $this->plugin->set_setting(PARAM_CACHE_PATH, $data->filepath);
                 $this->plugin->init_epg_manager();
 
                 $post_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
@@ -277,7 +277,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case PARAM_FAKE_EPG:
             case PARAM_SHOW_EXT_EPG:
-                $this->plugin->toggle_parameter($control_id, false);
+                $this->plugin->toggle_setting($control_id, false);
                 $this->plugin->init_epg_manager();
                 break;
 

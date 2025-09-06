@@ -147,7 +147,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
 
         //////////////////////////////////////
         // Per channel zoom
-        $per_channel_zoom = $this->plugin->get_parameter(PARAM_PER_CHANNELS_ZOOM, SwitchOnOff::on);
+        $per_channel_zoom = $this->plugin->get_setting(PARAM_PER_CHANNELS_ZOOM, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
             PARAM_PER_CHANNELS_ZOOM, TR::t('setup_per_channel_zoom'), SwitchOnOff::$translated[$per_channel_zoom],
             get_image_path(SwitchOnOff::$image[$per_channel_zoom]), self::CONTROLS_WIDTH);
@@ -156,11 +156,11 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         //////////////////////////////////////
         // select stream type
         $format_ops = array();
-        if ($this->plugin->config->get_stream_param(Plugin_Constants::HLS, Stream_Params::URL_TEMPLATE) !== '') {
+        if ($this->plugin->config->get_stream_parameter(Plugin_Constants::HLS, Stream_Params::URL_TEMPLATE) !== '') {
             $format_ops[Plugin_Constants::HLS] = 'HLS';
         }
 
-        if ($this->plugin->config->get_stream_param(Plugin_Constants::MPEG, Stream_Params::URL_TEMPLATE) !== '') {
+        if ($this->plugin->config->get_stream_parameter(Plugin_Constants::MPEG, Stream_Params::URL_TEMPLATE) !== '') {
             $format_ops[Plugin_Constants::MPEG] = 'MPEG-TS';
         }
 
@@ -180,7 +180,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         foreach (array(24, 48, 96, 168) as $hour) {
             $caching_range[$hour] = TR::t('setup_cache_time_d__1', $hour / 24);
         }
-        $cache_time = $this->plugin->get_parameter(PARAM_PLAYLIST_CACHE_TIME, 1);
+        $cache_time = $this->plugin->get_setting(PARAM_PLAYLIST_CACHE_TIME, 1);
         Control_Factory::add_combobox($defs, $this, null,
             PARAM_PLAYLIST_CACHE_TIME, TR::t('setup_cache_time'),
             $cache_time, $caching_range, self::CONTROLS_WIDTH, true);
@@ -196,7 +196,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         $show_buf_time_ops[5000] = TR::t('setup_buffer_sec__1', "5");
         $show_buf_time_ops[10000] = TR::t('setup_buffer_sec__1', "10");
 
-        $buf_time = (int)$this->plugin->get_parameter(PARAM_BUFFERING_TIME,1000);
+        $buf_time = (int)$this->plugin->get_setting(PARAM_BUFFERING_TIME,1000);
         Control_Factory::add_combobox($defs, $this, null,
             PARAM_BUFFERING_TIME, TR::t('setup_buffer_time'),
             $buf_time, $show_buf_time_ops, self::CONTROLS_WIDTH, true);
@@ -212,7 +212,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         $show_delay_time_ops[3*60] = TR::t('setup_buffer_sec__1', "180");
         $show_delay_time_ops[5*60] = TR::t('setup_buffer_sec__1', "300");
 
-        $delay_time = (int)$this->plugin->get_parameter(PARAM_ARCHIVE_DELAY_TIME,60);
+        $delay_time = (int)$this->plugin->get_setting(PARAM_ARCHIVE_DELAY_TIME,60);
         Control_Factory::add_combobox($defs, $this, null,
             PARAM_ARCHIVE_DELAY_TIME, TR::t('setup_delay_time'),
             $delay_time, $show_delay_time_ops, self::CONTROLS_WIDTH, true);
@@ -362,12 +362,12 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
                 if ($control_id === PARAM_STREAM_FORMAT) {
                     $need_reload = true;
                 }
-                $this->plugin->set_parameter($control_id, $user_input->{$control_id});
+                $this->plugin->set_setting($control_id, $user_input->{$control_id});
                 hd_debug_print("$control_id: " . $user_input->{$control_id}, true);
                 break;
 
             case PARAM_PER_CHANNELS_ZOOM:
-                $this->plugin->toggle_parameter(PARAM_PER_CHANNELS_ZOOM);
+                $this->plugin->toggle_setting(PARAM_PER_CHANNELS_ZOOM);
                 break;
 
             case self::SETUP_ACTION_OTTKEY_DLG: // show ott key dialog

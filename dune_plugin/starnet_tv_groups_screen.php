@@ -61,7 +61,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
         switch ($user_input->control_id) {
             case GUI_EVENT_KEY_TOP_MENU:
             case GUI_EVENT_KEY_RETURN:
-                if ($this->plugin->get_bool_parameter(PARAM_ASK_EXIT, false)) {
+                if ($this->plugin->get_bool_setting(PARAM_ASK_EXIT, false)) {
                     return Action_Factory::show_confirmation_dialog(TR::t('yes_no_confirm_msg'), $this, self::ACTION_CONFIRM_DLG_APPLY);
                 }
 
@@ -126,7 +126,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
                 return Action_Factory::show_dialog(TR::t('tv_screen_information'), $defs);
 
             case GUI_EVENT_KEY_POPUP_MENU:
-                $cache_engine = $this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
+                $cache_engine = $this->plugin->get_setting(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
                 $menu_items = array();
                 if ($cache_engine === ENGINE_XMLTV) {
                     $menu_items[] = $this->plugin->create_menu_item($this,
@@ -233,7 +233,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             );
         }
 
-        $vod_last = $this->plugin->get_parameter(PARAM_VOD_LAST,SwitchOnOff::off) === SwitchOnOff::on;
+        $vod_last = $this->plugin->get_setting(PARAM_VOD_LAST,SwitchOnOff::off) === SwitchOnOff::on;
         if (isset($vod_item) && !$vod_last) {
             $items[] = $vod_item;
         }

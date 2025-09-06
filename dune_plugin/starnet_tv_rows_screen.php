@@ -451,7 +451,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 $menu_items[] = $this->plugin->create_menu_item($this, GuiMenuItemDef::is_separator);
             }
 
-            if ($this->plugin->get_bool_parameter(PARAM_PER_CHANNELS_ZOOM)) {
+            if ($this->plugin->get_bool_setting(PARAM_PER_CHANNELS_ZOOM)) {
                 $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ZOOM_POPUP_MENU, TR::t('video_aspect_ratio'), "aspect.png");
             }
 
@@ -501,7 +501,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         ///////////// Channel number /////////////////
 
-        $pos = PaneParams::$ch_num_pos[$this->plugin->get_parameter(PARAM_CHANNEL_POSITION, 0)];
+        $pos = PaneParams::$ch_num_pos[$this->plugin->get_setting(PARAM_CHANNEL_POSITION, 0)];
         $defs[] = GComps_Factory::label(
             GComp_Geom::place_top_left(130, 50, $pos['x'], $pos['y']),
             null,
@@ -744,7 +744,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
     private function get_history_rows($plugin_cookies)
     {
         hd_debug_print(null, true);
-        if (!$this->plugin->get_bool_parameter(PARAM_SHOW_HISTORY)) {
+        if (!$this->plugin->get_bool_setting(PARAM_SHOW_HISTORY)) {
             hd_debug_print("History group disabled");
             return null;
         }
@@ -1076,8 +1076,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
     private function GetRowsItemsParamsClass()
     {
-        $suff = $this->plugin->get_bool_parameter(PARAM_SHOW_CHANNEL_CAPTION) ? "" : "n";
-        return 'RowsItemsParams' . $this->plugin->get_parameter(PARAM_ICONS_IN_ROW, 7) . $suff;
+        $suff = $this->plugin->get_bool_setting(PARAM_SHOW_CHANNEL_CAPTION) ? "" : "n";
+        return 'RowsItemsParams' . $this->plugin->get_setting(PARAM_ICONS_IN_ROW, 7) . $suff;
     }
 
     private function GetRowsItemsParams($param_name)
@@ -1085,7 +1085,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         $rClass = new ReflectionClass('RowsItemsParams');
         $array = $rClass->getConstants();
 
-        $sq_param = $param_name . ($this->plugin->get_bool_parameter(PARAM_SQUARE_ICONS, false) ? '_sq' : '');
+        $sq_param = $param_name . ($this->plugin->get_bool_setting(PARAM_SQUARE_ICONS, false) ? '_sq' : '');
 
         return (isset($array[$sq_param])) ? $array[$sq_param] : $array[$param_name];
     }

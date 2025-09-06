@@ -87,12 +87,12 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                 return Action_Factory::update_regular_folder($range, true, -1);
 
             case ACTION_CHANGE_PLAYLIST:
-                $current_idx = $this->plugin->get_parameter(PARAM_VOD_IDX, 0);
+                $current_idx = $this->plugin->get_setting(PARAM_VOD_IDX, 0);
 
                 if (isset($user_input->{PARAM_PLAYLIST})
                     && $user_input->{PARAM_PLAYLIST} !== false
                     && $user_input->{PARAM_PLAYLIST} !== $current_idx) {
-                    $this->plugin->set_parameter(PARAM_VOD_IDX, $user_input->{PARAM_PLAYLIST});
+                    $this->plugin->set_setting(PARAM_VOD_IDX, $user_input->{PARAM_PLAYLIST});
                     hd_debug_print("change VOD playlist to: " . $user_input->{PARAM_PLAYLIST});
                     return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
                 }

@@ -54,7 +54,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
         $day_epg = array();
         $first = reset($epg_ids);
         foreach (array(Plugin_Constants::EPG_FIRST, Plugin_Constants::EPG_SECOND) as $key => $epg_source) {
-            $epg_url = $this->plugin->config->get_epg_param($epg_source, Epg_Params::EPG_URL);
+            $epg_url = $this->plugin->config->get_epg_parameter($epg_source, Epg_Params::EPG_URL);
             if (empty($epg_url)) continue;
 
             $epg_id = isset($epg_ids[$key]) ? $epg_ids[$key] : $first;
@@ -78,7 +78,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
                     Plugin_Macros::ID,
                     Plugin_Macros::DUNE_IP
                 ),
-                array($this->plugin->config->get_epg_param($epg_source, Epg_Params::EPG_DOMAIN),
+                array($this->plugin->config->get_epg_parameter($epg_source, Epg_Params::EPG_DOMAIN),
                     $epg_id,
                     $channel_id,
                     $this->dune_ip
@@ -89,7 +89,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
                 $date_format = str_replace(
                     array(Plugin_Macros::YEAR, Plugin_Macros::MONTH, Plugin_Macros::DAY),
                     array('Y', 'm', 'd'),
-                    $this->plugin->config->get_epg_param($epg_source, Epg_Params::EPG_DATE_FORMAT));
+                    $this->plugin->config->get_epg_parameter($epg_source, Epg_Params::EPG_DATE_FORMAT));
 
                 $epg_date = gmdate($date_format, $day_start_ts + get_local_time_zone_offset());
                 $epg_url = str_replace(Plugin_Macros::DATE, $epg_date, $epg_url);
@@ -106,7 +106,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
             if (file_exists($epg_cache_file)) {
                 $now = time();
                 $mtime = filemtime($epg_cache_file);
-                $cache_expired = $mtime + $this->plugin->get_parameter(PARAM_EPG_CACHE_TIME, 1) * 3600;
+                $cache_expired = $mtime + $this->plugin->get_setting(PARAM_EPG_CACHE_TIME, 1) * 3600;
                 if ($cache_expired > time()) {
                     $all_epg = parse_json_file($epg_cache_file);
                     $from_cache = true;
@@ -119,7 +119,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
 
             if ($from_cache === false) {
                 hd_debug_print("Fetching EPG ID: '$epg_id' from server: $epg_url");
-                $all_epg = self::get_epg_json($epg_url, $this->plugin->config->get_epg_params($epg_source));
+                $all_epg = self::get_epg_json($epg_url, $this->plugin->config->get_epg_parameters($epg_source));
                 if (!empty($all_epg)) {
                     hd_debug_print("Save EPG ID: '$epg_id' to file cache $epg_cache_file");
                     file_put_contents($epg_cache_file, serialize($all_epg));

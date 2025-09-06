@@ -72,7 +72,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
         Control_Factory::add_image_button($defs, $this, null,
             self::CONTROL_HISTORY_CHANGE_FOLDER, TR::t('setup_history_folder_path'), $display_path, $folder_icon, self::CONTROLS_WIDTH);
 
-        $path = $this->plugin->get_parameter(PARAM_HISTORY_PATH);
+        $path = $this->plugin->get_setting(PARAM_HISTORY_PATH);
         if (!is_null($path) && $history_path !== get_data_path(Default_Dune_Plugin::HISTORY_FOLDER)) {
             Control_Factory::add_image_button($defs, $this, null,
                 self::CONTROL_COPY_TO_DATA, TR::t('setup_copy_to_data'), TR::t('apply'), $refresh_icon, self::CONTROLS_WIDTH);
@@ -92,7 +92,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
         //////////////////////////////////////
         // https proxy settings
         if (is_updater_proxy_needs()) {
-            $use_proxy = $this->plugin->get_parameter(PARAM_USE_UPDATER_PROXY, SwitchOnOff::off);
+            $use_proxy = $this->plugin->get_setting(PARAM_USE_UPDATER_PROXY, SwitchOnOff::off);
             Control_Factory::add_image_button($defs, $this, null, PARAM_USE_UPDATER_PROXY,
                 TR::t('setup_updater_proxy'), SwitchOnOff::$translated[$use_proxy],
                 get_image_path(SwitchOnOff::$image[$use_proxy]), self::CONTROLS_WIDTH);
@@ -106,7 +106,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
         //////////////////////////////////////
         // debugging
 
-        $debug_state = $this->plugin->get_parameter(PARAM_ENABLE_DEBUG, SwitchOnOff::off);
+        $debug_state = $this->plugin->get_setting(PARAM_ENABLE_DEBUG, SwitchOnOff::off);
         Control_Factory::add_image_button($defs, $this, null,
             PARAM_ENABLE_DEBUG, TR::t('setup_debug'), SwitchOnOff::$translated[$debug_state],
             get_image_path(SwitchOnOff::$image[$debug_state]), self::CONTROLS_WIDTH);
@@ -183,13 +183,13 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
             case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
                 hd_debug_print(ACTION_FOLDER_SELECTED . " $data->filepath");
-                $this->plugin->set_parameter(PARAM_HISTORY_PATH, smb_tree::set_folder_info($user_input->selected_data));
+                $this->plugin->set_setting(PARAM_HISTORY_PATH, smb_tree::set_folder_info($user_input->selected_data));
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
                     $action_reload, $data->filepath, self::CONTROLS_WIDTH);
 
             case ACTION_RESET_DEFAULT:
                 hd_debug_print("do set history folder to default");
-                $this->plugin->remove_parameter(PARAM_HISTORY_PATH);
+                $this->plugin->remove_setting(PARAM_HISTORY_PATH);
                 return $action_reload;
 
             case self::CONTROL_COPY_TO_DATA:
@@ -213,10 +213,10 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
                 return Action_Factory::show_title_dialog(TR::t('setup_copy_done'), $action_reload);
 
             case PARAM_USE_UPDATER_PROXY:
-                $old_val = $this->plugin->get_bool_parameter(PARAM_USE_UPDATER_PROXY, false);
-                $use_proxy = $this->plugin->toggle_parameter(PARAM_USE_UPDATER_PROXY, false);
+                $old_val = $this->plugin->get_bool_setting(PARAM_USE_UPDATER_PROXY, false);
+                $use_proxy = $this->plugin->toggle_setting(PARAM_USE_UPDATER_PROXY, false);
                 if (!toggle_updater_proxy($use_proxy)) {
-                    $this->plugin->set_bool_parameter(PARAM_USE_UPDATER_PROXY, $old_val);
+                    $this->plugin->set_bool_setting(PARAM_USE_UPDATER_PROXY, $old_val);
                     return Action_Factory::show_title_dialog(TR::t('err_changes_failed'));
                 }
 
@@ -244,15 +244,15 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
                 return Action_Factory::show_dialog(TR::t('setup_adult_password'), $defs, true);
 
             case self::SETUP_ACTION_PASS_APPLY: // handle pass dialog result
-                $pass = $this->plugin->get_parameter(PARAM_ADULT_PASSWORD);
+                $pass = $this->plugin->get_setting(PARAM_ADULT_PASSWORD);
                 $need_reload = true;
                 if ($user_input->pass1 !== $pass) {
                     $msg = TR::t('err_wrong_old_password');
                 } else if (empty($user_input->pass2)) {
-                    $this->plugin->set_parameter(PARAM_ADULT_PASSWORD, '');
+                    $this->plugin->set_setting(PARAM_ADULT_PASSWORD, '');
                     $msg = TR::t('setup_pass_disabled');
                 } else if ($user_input->pass1 !== $user_input->pass2) {
-                    $this->plugin->set_parameter(PARAM_ADULT_PASSWORD, $user_input->pass2);
+                    $this->plugin->set_setting(PARAM_ADULT_PASSWORD, $user_input->pass2);
                     $msg = TR::t('setup_pass_changed');
                 } else {
                     $msg = TR::t('setup_pass_not_changed');
@@ -267,7 +267,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
                     Action_Factory::reset_controls($this->do_get_control_defs()));
 
             case PARAM_ENABLE_DEBUG:
-                $debug = $this->plugin->toggle_parameter(PARAM_ENABLE_DEBUG, false);
+                $debug = $this->plugin->toggle_setting(PARAM_ENABLE_DEBUG, false);
                 hd_debug_print("Debug logging: " . var_export($debug, true));
                 set_debug_log($debug);
                 break;

@@ -38,14 +38,14 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         $source_ops[1] = TR::t('setup_channels_src_folder');
         $source_ops[2] = TR::t('setup_channels_src_internet');
         $source_ops[3] = TR::t('setup_channels_src_direct');
-        $channels_source = $this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1);
+        $channels_source = $this->plugin->get_setting(PARAM_CHANNELS_SOURCE, 1);
         Control_Factory::add_combobox($defs, $this, null, PARAM_CHANNELS_SOURCE,
             TR::t('setup_channels_src_combo'), $channels_source, $source_ops, self::CONTROLS_WIDTH, true);
 
         switch ($channels_source)
         {
             case 1: // channels path
-                $channels_list = smb_tree::get_folder_info($this->plugin->get_parameter(PARAM_CHANNELS_LIST_PATH, get_install_path()));
+                $channels_list = smb_tree::get_folder_info($this->plugin->get_setting(PARAM_CHANNELS_LIST_PATH, get_install_path()));
 
                 $max_size = is_limited_apk() ? 45 : 36;
                 if (strlen($channels_list) > $max_size) {
@@ -121,17 +121,17 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         $defs = array();
 
         $this->plugin->config->get_channel_list($channels_list);
-        $source = $this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1);
+        $source = $this->plugin->get_setting(PARAM_CHANNELS_SOURCE, 1);
         $url_path = '';
         switch ($source) {
             case 2:
-                $url_path = $this->plugin->get_parameter(PARAM_CHANNELS_URL);
+                $url_path = $this->plugin->get_setting(PARAM_CHANNELS_URL);
                 if (empty($url_path)) {
                     $url_path = $this->plugin->config->plugin_info['app_channels_url_path'];
                 }
                 break;
             case 3:
-                $url_path = $this->plugin->get_parameter(PARAM_CHANNELS_DIRECT_URL);
+                $url_path = $this->plugin->get_setting(PARAM_CHANNELS_DIRECT_URL);
                 if (empty($url_path) && isset($this->plugin->config->plugin_info['app_direct_links'][$channels_list])) {
                     $url_path = $this->plugin->config->plugin_info['app_direct_links'][$channels_list];
                 }
@@ -190,12 +190,12 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
             case PARAM_PLAYLIST_IDX:
             case PARAM_CHANNELS_SOURCE:
                 hd_debug_print("$control_id: " . $new_value);
-                $this->plugin->set_parameter($control_id, $new_value);
+                $this->plugin->set_setting($control_id, $new_value);
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case PARAM_CHANNELS_LIST_NAME:
                 hd_debug_print("$control_id: " . $new_value);
-                $this->plugin->set_parameter($control_id, $new_value);
+                $this->plugin->set_setting($control_id, $new_value);
                 $channel_list = empty($new_value) ? 'default' : $new_value;
                 $favorites = 'favorite_channels_' . hash('crc32', $channel_list);
 
@@ -214,12 +214,12 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 if (!isset($user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH})) break;
 
                 $url_path = $user_input->{self::SETUP_ACTION_CHANNELS_URL_PATH};
-                switch ($this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1)) {
+                switch ($this->plugin->get_setting(PARAM_CHANNELS_SOURCE, 1)) {
                     case 2:
-                        $this->plugin->set_parameter(PARAM_CHANNELS_URL, $url_path);
+                        $this->plugin->set_setting(PARAM_CHANNELS_URL, $url_path);
                         break;
                     case 3:
-                        $this->plugin->set_parameter(PARAM_CHANNELS_DIRECT_URL, $url_path);
+                        $this->plugin->set_setting(PARAM_CHANNELS_DIRECT_URL, $url_path);
                         break;
                     default:
                         return null;
@@ -229,16 +229,16 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case self::SETUP_ACTION_CHANNELS_URL_DEFAULT:
-                switch ($this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1)) {
+                switch ($this->plugin->get_setting(PARAM_CHANNELS_SOURCE, 1)) {
                     case 2:
                         $url_path = $this->plugin->config->plugin_info['app_channels_url_path'];
-                        $this->plugin->set_parameter(PARAM_CHANNELS_URL, $url_path);
+                        $this->plugin->set_setting(PARAM_CHANNELS_URL, $url_path);
                         break;
                     case 3:
                         $this->plugin->config->get_channel_list($channels_list);
                         if (isset($this->plugin->config->plugin_info['app_direct_links'][$channels_list])) {
                             $url_path = $this->plugin->config->plugin_info['app_direct_links'][$channels_list];
-                            $this->plugin->set_parameter(PARAM_CHANNELS_DIRECT_URL, $url_path);
+                            $this->plugin->set_setting(PARAM_CHANNELS_DIRECT_URL, $url_path);
                         }
                         break;
                     default:
@@ -250,13 +250,13 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
             case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
                 hd_debug_print(ACTION_FOLDER_SELECTED . " $data->filepath");
-                $this->plugin->set_parameter(PARAM_CHANNELS_LIST_PATH, smb_tree::set_folder_info($user_input->selected_data));
+                $this->plugin->set_setting(PARAM_CHANNELS_LIST_PATH, smb_tree::set_folder_info($user_input->selected_data));
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
                     User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, self::CONTROLS_WIDTH);
 
             case ACTION_RESET_DEFAULT:
                 hd_debug_print(ACTION_RESET_DEFAULT);
-                $this->plugin->remove_parameter(PARAM_CHANNELS_LIST_PATH);
+                $this->plugin->remove_setting(PARAM_CHANNELS_LIST_PATH);
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case ACTION_RELOAD:

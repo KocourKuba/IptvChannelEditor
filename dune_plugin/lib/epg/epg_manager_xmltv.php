@@ -125,7 +125,7 @@ class Epg_Manager_Xmltv
         $this->indexer->init($cache_dir);
         if ($this->plugin) {
             $flags = 0;
-            $flags |= $this->plugin->get_bool_parameter(PARAM_FAKE_EPG, false) ? EPG_FAKE_EPG : 0;
+            $flags |= $this->plugin->get_bool_setting(PARAM_FAKE_EPG, false) ? EPG_FAKE_EPG : 0;
             $this->set_flags($flags);
             $this->indexer->set_active_sources($this->plugin->get_all_xmltv_sources());
         }
@@ -157,7 +157,7 @@ class Epg_Manager_Xmltv
         $active_sources = $this->plugin->get_all_xmltv_sources();
         $any_lock = $this->indexer->is_any_index_locked();
         $day_epg = array();
-        $ext_epg = $this->plugin->get_bool_parameter(PARAM_SHOW_EXT_EPG) && $this->plugin->is_ext_epg_exist();
+        $ext_epg = $this->plugin->get_bool_setting(PARAM_SHOW_EXT_EPG) && $this->plugin->is_ext_epg_exist();
         foreach($active_sources as $hash => $source) {
             if ($this->indexer->is_index_locked($hash)) {
                 hd_debug_print("EPG $source->url still indexing, append to delayed queue channel id: " . $channel->get_id());

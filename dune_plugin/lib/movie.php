@@ -431,7 +431,7 @@ class Movie implements User_Input_Handler
         $sel_id = isset($media_url->episode_id) ? $media_url->episode_id : null;
         $series_array = array();
         $initial_series_ndx = 0;
-        $variant = $this->plugin->get_parameter(PARAM_VOD_DEFAULT_QUALITY, 'auto');
+        $variant = $this->plugin->get_setting(PARAM_VOD_DEFAULT_QUALITY, 'auto');
         $counter = 0; // series index. Not the same as the key of series list
         $initial_start_array = array();
         foreach ($list as $series) {
@@ -504,7 +504,7 @@ class Movie implements User_Input_Handler
             PluginVodInfo::poster_url => $this->poster_url,
             PluginVodInfo::series => $series_array,
             PluginVodInfo::initial_series_ndx => $initial_series_ndx,
-            PluginVodInfo::buffering_ms => (int)$this->plugin->get_parameter(PARAM_BUFFERING_TIME,1000),
+            PluginVodInfo::buffering_ms => (int)$this->plugin->get_setting(PARAM_BUFFERING_TIME,1000),
             PluginVodInfo::actions => $this->get_action_map(),
             PluginVodInfo::initial_position_ms => $initial_start,
         );

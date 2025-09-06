@@ -175,19 +175,19 @@ class Default_Group extends Json_Serializer implements Group
     public function is_disabled()
     {
         if ($this->_id === ALL_CHANNEL_GROUP_ID) {
-            return !$this->plugin->get_bool_parameter(PARAM_SHOW_ALL);
+            return !$this->plugin->get_bool_setting(PARAM_SHOW_ALL);
         }
 
         if ($this->_id === FAVORITES_GROUP_ID) {
-            return !$this->plugin->get_bool_parameter(PARAM_SHOW_FAVORITES);
+            return !$this->plugin->get_bool_setting(PARAM_SHOW_FAVORITES);
         }
 
         if ($this->_id === HISTORY_GROUP_ID) {
-            return !$this->plugin->get_bool_parameter(PARAM_SHOW_HISTORY);
+            return !$this->plugin->get_bool_setting(PARAM_SHOW_HISTORY);
         }
 
         if ($this->_id === VOD_GROUP_ID) {
-            return !$this->plugin->get_bool_parameter(PARAM_SHOW_VOD) || $this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) === "None";
+            return !$this->plugin->get_bool_setting(PARAM_SHOW_VOD) || $this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) === "None";
         }
 
         return $this->_disabled;
@@ -218,7 +218,7 @@ class Default_Group extends Json_Serializer implements Group
             return new Ordered_Array();
         }
 
-        return $this->plugin->get_parameter($this->_order_settings, new Ordered_Array());
+        return $this->plugin->get_setting($this->_order_settings, new Ordered_Array());
     }
 
     /**
@@ -227,7 +227,7 @@ class Default_Group extends Json_Serializer implements Group
     public function set_items_order($order)
     {
         if ($this->_order_settings !== null) {
-            $this->plugin->set_parameter($this->_order_settings, $order);
+            $this->plugin->set_setting($this->_order_settings, $order);
         }
     }
 

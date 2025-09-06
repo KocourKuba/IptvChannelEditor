@@ -191,10 +191,10 @@ class default_config extends dynamic_config
      */
     public function get_server_id()
     {
-        $server = $this->plugin->get_parameter(Ext_Params::M_SERVER_ID);
+        $server = $this->plugin->get_setting(Ext_Params::M_SERVER_ID);
         $embedded_acc = $this->get_embedded_account();
         if (!is_null($embedded_acc) && isset($embedded_acc->server_id) && is_null($server)) {
-            $this->plugin->set_parameter(Ext_Params::M_SERVER_ID, $embedded_acc->server_id);
+            $this->plugin->set_setting(Ext_Params::M_SERVER_ID, $embedded_acc->server_id);
             $server = $embedded_acc->server_id;
         }
 
@@ -208,7 +208,7 @@ class default_config extends dynamic_config
      */
     public function set_server_id($server)
     {
-        $this->plugin->set_parameter(Ext_Params::M_SERVER_ID, $server);
+        $this->plugin->set_setting(Ext_Params::M_SERVER_ID, $server);
     }
 
     /**
@@ -226,9 +226,9 @@ class default_config extends dynamic_config
     public function get_device_id()
     {
         $embedded_acc = $this->get_embedded_account();
-        $device = $this->plugin->get_parameter(Ext_Params::M_DEVICE_ID);
+        $device = $this->plugin->get_setting(Ext_Params::M_DEVICE_ID);
         if (!is_null($embedded_acc) && isset($embedded_acc->device_id) && empty($device)) {
-            $this->plugin->set_parameter(Ext_Params::M_DEVICE_ID, $embedded_acc->device_id);
+            $this->plugin->set_setting(Ext_Params::M_DEVICE_ID, $embedded_acc->device_id);
             $device = $embedded_acc->device_id;
         }
 
@@ -241,7 +241,7 @@ class default_config extends dynamic_config
      */
     public function set_device_id($device_id)
     {
-        $this->plugin->set_parameter(Ext_Params::M_DEVICE_ID, $device_id);
+        $this->plugin->set_setting(Ext_Params::M_DEVICE_ID, $device_id);
     }
 
     /**
@@ -259,9 +259,9 @@ class default_config extends dynamic_config
     public function get_quality_id()
     {
         $embedded_acc = $this->get_embedded_account();
-        $quality = $this->plugin->get_parameter(Ext_Params::M_QUALITY_ID);
+        $quality = $this->plugin->get_setting(Ext_Params::M_QUALITY_ID);
         if (!is_null($embedded_acc) && isset($embedded_acc->quality_id) && empty($quality)) {
-            $this->plugin->set_parameter(Ext_Params::M_QUALITY_ID, $embedded_acc->quality_id);
+            $this->plugin->set_setting(Ext_Params::M_QUALITY_ID, $embedded_acc->quality_id);
             $quality = $embedded_acc->quality_id;
         }
 
@@ -275,7 +275,7 @@ class default_config extends dynamic_config
      */
     public function set_quality_id($quality_id)
     {
-        $this->plugin->set_parameter(Ext_Params::M_QUALITY_ID, $quality_id);
+        $this->plugin->set_setting(Ext_Params::M_QUALITY_ID, $quality_id);
     }
 
     /**
@@ -293,9 +293,9 @@ class default_config extends dynamic_config
     public function get_profile_id()
     {
         $embedded_acc = $this->get_embedded_account();
-        $profile = $this->plugin->get_parameter(Ext_Params::M_PROFILE_ID);
+        $profile = $this->plugin->get_setting(Ext_Params::M_PROFILE_ID);
         if (!is_null($embedded_acc) && isset($embedded_acc->device_id) && empty($profile)) {
-            $this->plugin->set_parameter(Ext_Params::M_PROFILE_ID, $embedded_acc->profile_id);
+            $this->plugin->set_setting(Ext_Params::M_PROFILE_ID, $embedded_acc->profile_id);
             $profile = $embedded_acc->profile_id;
         }
 
@@ -309,7 +309,7 @@ class default_config extends dynamic_config
      */
     public function set_profile_id($profile_id)
     {
-        $this->plugin->set_parameter(Ext_Params::M_PROFILE_ID, $profile_id);
+        $this->plugin->set_setting(Ext_Params::M_PROFILE_ID, $profile_id);
     }
 
     /**
@@ -327,10 +327,10 @@ class default_config extends dynamic_config
     public function get_domain_id()
     {
         $embedded_acc = $this->get_embedded_account();
-        $domain_id = $this->plugin->get_parameter(Ext_Params::M_DOMAIN_ID);
+        $domain_id = $this->plugin->get_setting(Ext_Params::M_DOMAIN_ID);
         hd_debug_print("get_domain_id: $domain_id");
         if (is_null($domain_id) && !is_null($embedded_acc) && isset($embedded_acc->domain_id)) {
-            $this->plugin->set_parameter(Ext_Params::M_DOMAIN_ID, $embedded_acc->domain_id);
+            $this->plugin->set_setting(Ext_Params::M_DOMAIN_ID, $embedded_acc->domain_id);
             $domain_id = $embedded_acc->domain_id;
             hd_debug_print("get_domain_id default: $domain_id");
         }
@@ -344,7 +344,7 @@ class default_config extends dynamic_config
      */
     public function set_domain_id($domain_id)
     {
-        $this->plugin->set_parameter(Ext_Params::M_DOMAIN_ID, $domain_id);
+        $this->plugin->set_setting(Ext_Params::M_DOMAIN_ID, $domain_id);
     }
 
     /**
@@ -353,19 +353,19 @@ class default_config extends dynamic_config
      */
     public function get_channel_list(&$used_list)
     {
-        $channels_list_name = $this->plugin->get_parameter(PARAM_CHANNELS_LIST_NAME);
+        $channels_list_name = $this->plugin->get_setting(PARAM_CHANNELS_LIST_NAME);
         if (empty($channels_list_name)) {
             $used_list = sprintf('%s_channel_list.xml', $this->plugin_info['app_type_name']);
         } else {
             $used_list = $channels_list_name;
         }
 
-        $channels_source = $this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1);
+        $channels_source = $this->plugin->get_setting(PARAM_CHANNELS_SOURCE, 1);
 
         switch ($channels_source) {
             case 1: // folder
                 hd_debug_print("Channels source: folder");
-                $channels_list_path = smb_tree::get_folder_info($this->plugin->get_parameter(PARAM_CHANNELS_LIST_PATH, get_install_path()));
+                $channels_list_path = smb_tree::get_folder_info($this->plugin->get_setting(PARAM_CHANNELS_LIST_PATH, get_install_path()));
                 break;
             case 2: // url
                 hd_debug_print("Channels source: url");
@@ -409,7 +409,7 @@ class default_config extends dynamic_config
      */
     public function get_tv_list_idx()
     {
-        $playlist_idx = $this->plugin->get_parameter(PARAM_PLAYLIST_IDX);
+        $playlist_idx = $this->plugin->get_setting(PARAM_PLAYLIST_IDX);
         return $playlist_idx === null ? $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATE_INDEX) : $playlist_idx;
     }
 
@@ -441,7 +441,7 @@ class default_config extends dynamic_config
      */
     public function get_vod_list_idx()
     {
-        $vod_idx = $this->plugin->get_parameter(PARAM_VOD_IDX);
+        $vod_idx = $this->plugin->get_setting(PARAM_VOD_IDX);
         return empty($vod_idx) ? 0 : $vod_idx;
     }
 
@@ -742,9 +742,9 @@ class default_config extends dynamic_config
         $ext_params[Stream_Params::CU_START] = $archive_ts;
         $ext_params[Stream_Params::CU_NOW] = $now;
         $ext_params[Stream_Params::CU_OFFSET] = $now - $archive_ts;
-        $ext_params[Stream_Params::CU_STOP] = $archive_ts + $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
-        $ext_params[Stream_Params::CU_DURATION] = $this->get_stream_param($stream_type, Stream_Params::CU_DURATION);
-        $ext_params[Stream_Params::CU_DURMIN] = $this->get_stream_param($stream_type, Stream_Params::CU_DURATION) / 60;
+        $ext_params[Stream_Params::CU_STOP] = $archive_ts + $this->get_stream_parameter($stream_type, Stream_Params::CU_DURATION);
+        $ext_params[Stream_Params::CU_DURATION] = $this->get_stream_parameter($stream_type, Stream_Params::CU_DURATION);
+        $ext_params[Stream_Params::CU_DURMIN] = $this->get_stream_parameter($stream_type, Stream_Params::CU_DURATION) / 60;
 
         $replaces = array(
             Plugin_Constants::CGI_BIN    => Plugin_Macros::CGI_BIN,
@@ -781,11 +781,11 @@ class default_config extends dynamic_config
         $channel_custom_arc_url = $channel->get_custom_archive_template();
         if (empty($channel_custom_url)) {
             // url template, live or archive
-            $live_url = $this->get_stream_param($stream_type, Stream_Params::URL_TEMPLATE);
+            $live_url = $this->get_stream_parameter($stream_type, Stream_Params::URL_TEMPLATE);
 
             if (empty($channel_custom_arc_url)) {
                 // global url archive template
-                $archive_url = $this->get_stream_param($stream_type, Stream_Params::URL_ARC_TEMPLATE);
+                $archive_url = $this->get_stream_parameter($stream_type, Stream_Params::URL_ARC_TEMPLATE);
             } else {
                 // custom archive url template
                 $archive_url = $channel_custom_arc_url;
@@ -796,7 +796,7 @@ class default_config extends dynamic_config
 
             if (empty($channel_custom_arc_url)) {
                 // global custom url archive template
-                $archive_url = $this->get_stream_param($stream_type, Stream_Params::URL_CUSTOM_ARC_TEMPLATE);
+                $archive_url = $this->get_stream_parameter($stream_type, Stream_Params::URL_CUSTOM_ARC_TEMPLATE);
             } else {
                 // custom url archive or template
                 $archive_url = $channel_custom_arc_url;
@@ -980,7 +980,7 @@ class default_config extends dynamic_config
      */
     public function ClearChannelsCache()
     {
-        $name = $this->plugin->get_parameter(PARAM_CHANNELS_LIST_NAME);
+        $name = $this->plugin->get_setting(PARAM_CHANNELS_LIST_NAME);
         if (empty($name)) {
             return;
         }
@@ -1237,9 +1237,9 @@ class default_config extends dynamic_config
     {
         $type = empty($custom_type) ? $this->get_format() : $custom_type;
 
-        $dune_params = $this->get_stream_param($type, Stream_Params::DUNE_PARAMS);
+        $dune_params = $this->get_stream_parameter($type, Stream_Params::DUNE_PARAMS);
         if (!empty($dune_params)) {
-            $buf_time = $this->plugin->get_parameter(PARAM_BUFFERING_TIME, 1000);
+            $buf_time = $this->plugin->get_setting(PARAM_BUFFERING_TIME, 1000);
             $dune_params = trim($dune_params, '|');
             $dune_params = str_replace(Plugin_Macros::BUFFERING, $buf_time, $dune_params);
             $url .= HD::DUNE_PARAMS_MAGIC . $dune_params;
@@ -1253,7 +1253,7 @@ class default_config extends dynamic_config
      */
     public function get_format()
     {
-        return $this->plugin->get_parameter(PARAM_STREAM_FORMAT, Plugin_Constants::HLS);
+        return $this->plugin->get_setting(PARAM_STREAM_FORMAT, Plugin_Constants::HLS);
     }
 
     /**
@@ -1343,7 +1343,7 @@ class default_config extends dynamic_config
             if (file_exists($m3u_file)) {
                 $now = time();
                 $mtime = filemtime($m3u_file);
-                $cache_expired = $mtime + $this->plugin->get_parameter(PARAM_PLAYLIST_CACHE_TIME, 1) * 3600;
+                $cache_expired = $mtime + $this->plugin->get_setting(PARAM_PLAYLIST_CACHE_TIME, 1) * 3600;
                 if ($cache_expired > $now) {
                     hd_debug_print("$type playlist cache not expired");
                 } else {

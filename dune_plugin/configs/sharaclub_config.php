@@ -33,7 +33,7 @@ class sharaclub_config extends default_config
                     foreach ($content['allow_nums'] as $server) {
                         $this->servers[$server['id']] = $server['name'];
                     }
-                    $this->plugin->set_parameter(Ext_Params::M_SERVER_ID, $content['current']);
+                    $this->plugin->set_setting(Ext_Params::M_SERVER_ID, $content['current']);
                     hd_debug_print("Current server: {$content['current']}");
                 } else {
                     hd_debug_print("Unable to download servers information");
@@ -87,7 +87,7 @@ class sharaclub_config extends default_config
                         $profiles[$profile['id']] = $profile['name'];
                     }
                     $profile = isset($content['current']) ? $content['current'] : "0";
-                    $this->plugin->set_parameter(Ext_Params::M_PROFILE_ID, $profile);
+                    $this->plugin->set_setting(Ext_Params::M_PROFILE_ID, $profile);
                     $this->set_profiles($profiles);
                 } else {
                     hd_debug_print("Unable to download profiles information");
@@ -163,7 +163,7 @@ class sharaclub_config extends default_config
 
                 $this->set_domains(array(0 => $this->account_data->data->listdomain));
                 $this->set_domain_id(0);
-                $this->set_epg_param(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_DOMAIN, $this->account_data->data->jsonEpgDomain);
+                $this->set_epg_parameter(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_DOMAIN, $this->account_data->data->jsonEpgDomain);
             }
         } catch (Exception $ex) {
             print_backtrace_exception($ex);

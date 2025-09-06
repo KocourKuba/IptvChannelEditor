@@ -61,7 +61,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED)) {
             $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id);
-            $current_quality = $this->plugin->get_parameter(PARAM_VOD_DEFAULT_QUALITY, 'auto');
+            $current_quality = $this->plugin->get_setting(PARAM_VOD_DEFAULT_QUALITY, 'auto');
             if (!is_null($movie) && isset($movie->qualities_list) && count($movie->qualities_list) > 1) {
                 $q_exist = (in_array($current_quality, $movie->qualities_list) ? "" : "? ");
                 $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this,
@@ -126,7 +126,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                 $menu_items = array();
                 if (!isset($this->qualities) || count($this->qualities) < 2) break;
 
-                $current_quality = $this->plugin->get_parameter(PARAM_VOD_DEFAULT_QUALITY, 'auto');
+                $current_quality = $this->plugin->get_setting(PARAM_VOD_DEFAULT_QUALITY, 'auto');
 
                 $menu_items[] = $this->plugin->create_menu_item($this,
                     self::ACTION_QUALITY_SELECTED,
@@ -159,7 +159,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen i
                     }
                 }
 
-                $this->plugin->set_parameter(PARAM_VOD_DEFAULT_QUALITY, $quality);
+                $this->plugin->set_setting(PARAM_VOD_DEFAULT_QUALITY, $quality);
                 $parent_url = MediaURL::decode($user_input->parent_media_url);
                 return Action_Factory::change_behaviour($this->get_action_map($parent_url, $plugin_cookies));
 

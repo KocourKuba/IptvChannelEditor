@@ -194,7 +194,7 @@ class Playback_Points
             return '';
         }
 
-        $channel_list = $this->plugin->get_parameter(PARAM_CHANNELS_LIST_NAME, 'default');
+        $channel_list = $this->plugin->get_setting(PARAM_CHANNELS_LIST_NAME, 'default');
         $channel_list = empty($channel_list) ? 'default' : $channel_list;
         return $this->plugin->get_history_path(Hashed_Array::hash($channel_list));
     }

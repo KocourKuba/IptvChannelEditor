@@ -180,7 +180,7 @@ class Starnet_Tv implements User_Input_Handler
 
         $this->perf->reset('start');
 
-        $pass_sex = $this->plugin->get_parameter(PARAM_ADULT_PASSWORD, '0000');
+        $pass_sex = $this->plugin->get_setting(PARAM_ADULT_PASSWORD, '0000');
         $enable_protected = !empty($pass_sex);
 
         $this->plugin->config->GetAccountInfo();
@@ -191,16 +191,16 @@ class Starnet_Tv implements User_Input_Handler
         $channels_list_path = '';
         try {
             $this->plugin->config->get_channel_list($channels_list);
-            $source = $this->plugin->get_parameter(PARAM_CHANNELS_SOURCE, 1);
+            $source = $this->plugin->get_setting(PARAM_CHANNELS_SOURCE, 1);
             hd_debug_print("Load channels list using source: $source");
             switch ($source) {
                 case 1:
-                    $channels_list_path = smb_tree::get_folder_info($this->plugin->get_parameter(PARAM_CHANNELS_LIST_PATH, get_install_path()));
+                    $channels_list_path = smb_tree::get_folder_info($this->plugin->get_setting(PARAM_CHANNELS_LIST_PATH, get_install_path()));
                     $channels_list_path .= $channels_list;
                     hd_debug_print("load from: $channels_list_path");
                     break;
                 case 2:
-                    $url_path = $this->plugin->get_parameter(PARAM_CHANNELS_URL);
+                    $url_path = $this->plugin->get_setting(PARAM_CHANNELS_URL);
                     if (empty($url_path)) {
                         $url_path = $this->plugin->config->plugin_info['app_channels_url_path'];
                     }
@@ -209,7 +209,7 @@ class Starnet_Tv implements User_Input_Handler
                     hd_debug_print("load folder link: $url_path");
                     break;
                 case 3:
-                    $url_path = $this->plugin->get_parameter(PARAM_CHANNELS_DIRECT_URL);
+                    $url_path = $this->plugin->get_setting(PARAM_CHANNELS_DIRECT_URL);
                     if (empty($url_path)) {
                         if (!isset($this->plugin->config->plugin_info['app_direct_links'][$channels_list])) {
                             throw new Exception(__METHOD__ . ": Direct link not set!");
@@ -479,7 +479,7 @@ class Starnet_Tv implements User_Input_Handler
         hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
         hd_debug_print_separator();
 
-        if ($this->plugin->get_parameter(PARAM_EPG_CACHE_ENGINE) === ENGINE_XMLTV) {
+        if ($this->plugin->get_setting(PARAM_EPG_CACHE_ENGINE) === ENGINE_XMLTV) {
             $this->plugin->run_bg_epg_indexing();
         }
 
@@ -514,7 +514,7 @@ class Starnet_Tv implements User_Input_Handler
                 throw new Exception("Channels not loaded!");
             }
 
-            $pass_sex = ($this->plugin->get_parameter(PARAM_ADULT_PASSWORD, '0000'));
+            $pass_sex = ($this->plugin->get_setting(PARAM_ADULT_PASSWORD, '0000'));
             // get channel by hash
             $channel = $this->get_channel($channel_id);
             if ($channel === null) {
@@ -533,7 +533,7 @@ class Starnet_Tv implements User_Input_Handler
             // update url if play archive or different type of the stream
             $url = $this->plugin->config->GenerateStreamUrl($channel, $archive_ts);
 
-            if ($this->plugin->get_bool_parameter(PARAM_PER_CHANNELS_ZOOM)) {
+            if ($this->plugin->get_bool_setting(PARAM_PER_CHANNELS_ZOOM)) {
                 $zoom_preset = $this->plugin->get_channel_zoom($channel_id);
                 if (!is_null($zoom_preset)) {
                     if (!is_android()) {
@@ -572,7 +572,7 @@ class Starnet_Tv implements User_Input_Handler
         }
 
         $group_all = $this->get_special_group(ALL_CHANNEL_GROUP_ID);
-        $ext_epg_enabled = $this->plugin->get_bool_parameter(PARAM_SHOW_EXT_EPG) && $this->plugin->is_ext_epg_exist();
+        $ext_epg_enabled = $this->plugin->get_bool_setting(PARAM_SHOW_EXT_EPG) && $this->plugin->is_ext_epg_exist();
         $show_all = !$group_all->is_disabled();
         $all_channels = new Hashed_Array();
         $all_groups_ids = array();
@@ -612,10 +612,10 @@ class Starnet_Tv implements User_Input_Handler
                         PluginTvChannel::future_epg_days => $channel->get_future_epg_days(),
 
                         PluginTvChannel::archive_past_sec => $channel->get_archive_past_sec(),
-                        PluginTvChannel::archive_delay_sec => $this->plugin->get_parameter(PARAM_ARCHIVE_DELAY_TIME, 60),
+                        PluginTvChannel::archive_delay_sec => $this->plugin->get_setting(PARAM_ARCHIVE_DELAY_TIME, 60),
 
                         // Buffering time
-                        PluginTvChannel::buffering_ms => $this->plugin->get_parameter(PARAM_BUFFERING_TIME, 1000),
+                        PluginTvChannel::buffering_ms => $this->plugin->get_setting(PARAM_BUFFERING_TIME, 1000),
                         PluginTvChannel::timeshift_hours => $channel->get_timeshift_hours() + $channel->get_timeshift_mins() / 60,
 
                         PluginTvChannel::playback_url_is_stream_url => $this->playback_url_is_stream_url,
@@ -664,7 +664,7 @@ class Starnet_Tv implements User_Input_Handler
             PluginTvInfo::groups => $groups,
             PluginTvInfo::channels => $all_channels->get_ordered_values(),
 
-            PluginTvInfo::favorites_supported => $this->plugin->get_bool_parameter(PARAM_SHOW_FAVORITES),
+            PluginTvInfo::favorites_supported => $this->plugin->get_bool_setting(PARAM_SHOW_FAVORITES),
             PluginTvInfo::favorites_icon_url => $this->get_special_group(FAVORITES_GROUP_ID)->get_icon_url(),
 
             PluginTvInfo::initial_channel_id => (string)$media_url->channel_id,
@@ -675,7 +675,7 @@ class Starnet_Tv implements User_Input_Handler
 
             PluginTvInfo::initial_archive_tm => isset($media_url->archive_tm) ? (int)$media_url->archive_tm : -1,
 
-            PluginTvInfo::epg_font_size => $this->plugin->get_bool_parameter(PARAM_EPG_FONT_SIZE) ? PLUGIN_FONT_SMALL : PLUGIN_FONT_NORMAL,
+            PluginTvInfo::epg_font_size => $this->plugin->get_bool_setting(PARAM_EPG_FONT_SIZE) ? PLUGIN_FONT_SMALL : PLUGIN_FONT_NORMAL,
 
             PluginTvInfo::actions => $this->get_action_map(),
             PluginTvInfo::timer => Action_Factory::timer(1000),
