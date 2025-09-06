@@ -165,7 +165,14 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
 
                 $menu_items[] = $this->plugin->create_menu_item($this, GuiMenuItemDef::is_separator);
 
-                $menu_items[] = $this->plugin->create_menu_item($this, GUI_EVENT_KEY_INFO, TR::t('channel_info_dlg'), "info.png");
+                $menu_items[] = $this->plugin->create_menu_item($this,
+                    GUI_EVENT_KEY_SUBTITLE,
+                    TR::t('channel_epg_dlg'),
+                    "epg.png");
+                $menu_items[] = $this->plugin->create_menu_item($this,
+                    GUI_EVENT_KEY_INFO,
+                    TR::t('channel_info_dlg'),
+                    "info.png");
 
                 return Action_Factory::show_popup_menu($menu_items);
 

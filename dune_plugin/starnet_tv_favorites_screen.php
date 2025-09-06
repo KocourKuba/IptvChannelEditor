@@ -29,6 +29,8 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
         (
             GUI_EVENT_KEY_ENTER      => $action_play,
             GUI_EVENT_KEY_PLAY       => $action_play,
+            GUI_EVENT_KEY_INFO       => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_INFO),
+            GUI_EVENT_KEY_SUBTITLE   => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_SUBTITLE),
             GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('left')),
             GUI_EVENT_KEY_C_YELLOW   => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('right')),
             GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete')),
@@ -50,6 +52,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
         }
 
         $selected_media_url = MediaURL::decode($user_input->selected_media_url);
+        $channel_id = $selected_media_url->channel_id;
 
         switch ($user_input->control_id) {
             case ACTION_PLAY_ITEM:
@@ -71,21 +74,21 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                 if ($user_input->sel_ndx < 0) {
                     $user_input->sel_ndx = 0;
                 }
-                return $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_MOVE_UP, $selected_media_url->channel_id);
+                return $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_MOVE_UP, $channel_id);
 
             case ACTION_ITEM_DOWN:
                 $user_input->sel_ndx++;
                 if ($user_input->sel_ndx >= $this->plugin->get_favorites()->size()) {
                     $user_input->sel_ndx = $this->plugin->get_favorites()->size() - 1;
                 }
-                return $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_MOVE_DOWN, $selected_media_url->channel_id);
+                return $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_MOVE_DOWN, $channel_id);
 
             case ACTION_ITEM_DELETE:
-                if ($this->plugin->get_channels_list_favorites()->in_order($selected_media_url->channel_id)) {
+                if ($this->plugin->get_channels_list_favorites()->in_order($channel_id)) {
                     return Action_Factory::show_error(false, TR::t('err_delete_embedded_fav'));
                 }
 
-                $action = $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_REMOVE, $selected_media_url->channel_id);
+                $action = $this->plugin->change_tv_favorites(PLUGIN_FAVORITES_OP_REMOVE, $channel_id);
                 if ($this->plugin->get_favorites()->size() !== 0) {
                     return $action;
                 }
@@ -96,8 +99,23 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                 $this->plugin->change_tv_favorites(ACTION_ITEMS_CLEAR, null);
                 return User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN);
 
+            case GUI_EVENT_KEY_INFO:
+                return $this->plugin->do_show_channel_info($channel_id);
+
+            case GUI_EVENT_KEY_SUBTITLE:
+                return $this->plugin->do_show_channel_epg($channel_id, -1, $plugin_cookies);
+
             case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ITEMS_CLEAR, TR::t('clear_favorites'), "brush.png");
+                $menu_items[] = $this->plugin->create_menu_item($this, GuiMenuItemDef::is_separator);
+                $menu_items[] = $this->plugin->create_menu_item($this,
+                    GUI_EVENT_KEY_SUBTITLE,
+                    TR::t('channel_epg_dlg'),
+                    "epg.png");
+                $menu_items[] = $this->plugin->create_menu_item($this,
+                    GUI_EVENT_KEY_INFO,
+                    TR::t('channel_info_dlg'),
+                    "info.png");
                 return Action_Factory::show_popup_menu($menu_items);
 
             case GUI_EVENT_KEY_RETURN:
