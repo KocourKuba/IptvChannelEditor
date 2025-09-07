@@ -127,7 +127,7 @@ echo "remove %ROOT%package\dune_channel_editor_universal.7z" >nul
 del "%ROOT%package\dune_channel_editor_universal.7z" >nul
 
 7z a -xr!*.bin -xr!custom "%ROOT%package\dune_channel_editor_universal.7z" @packing.lst >nul
-copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%ROOT%package\dune_channel_editor_universal.7z.%BUILD%" >nul
+copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%ROOT%package\dune_channel_editor_universal.%BUILD%.7z" >nul
 del packing.lst >nul 2>&1
 del dune_plugin_*.zip >nul 2>&1
 popd
