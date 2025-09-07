@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20250831001613" scan="320" scanned="20250831001610">
+<document created="20211012165442" version="4.0.374" date="20250907191630" scan="321" scanned="20250907191611">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20250830211544" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20250907161546" usesmfc="1">
     <headerfiles>
       <header name="..\..\resource.h"/>
       <resource name="..\..\IPTVChannelEditor.rc"/>
@@ -104,9 +104,9 @@
           <component class="TVisLabel" name="STATIC_Copyright_©" created="20220331213759" type="static" unnamed="1" autosize="0" wordwrap="1">
             <row id="CX" changed="20230330110553">158</row>
             <row id="CY">22</row>
-            <row id="Text" locked="1" state="3" changed="20250114174407">
-              <prev>Copyright © 2021-2025#nPavel Abakanov (sharky72)</prev>
-              <native>Copyright © 2020-2024#lPavel Abakanov (sharky72)</native>
+            <row id="Text" locked="1" state="3" changed="20250907191611">
+              <prev>Copyright © 2020-2024#nPavel Abakanov (sharky72)</prev>
+              <native>Copyright © 2020-2025#lPavel Abakanov (sharky72)</native>
             </row>
             <row id="X" changed="20230330110553">53</row>
             <row id="Y">15</row>
@@ -5369,9 +5369,9 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20250831001610">
-          <prev>8.7.2256, 27 Jan 2025</prev>
-          <native>9.0.2325, 23 Aug 2025</native>
+        <row id="FileVersion" locked="1" state="3" changed="20250907191611">
+          <prev>9.0.2325, 23 Aug 2025</prev>
+          <native>9.0.2348, 6 Sep 2025</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" state="3" changed="20250831001610">
           <prev>8</prev>
@@ -5381,16 +5381,16 @@
           <prev>7</prev>
           <native>0</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20250831001610">
-          <prev>2256</prev>
-          <native>2325</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20250907191611">
+          <prev>2325</prev>
+          <native>2348</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20250831001610">
-          <prev>8.7.2256</prev>
-          <native>9.0.2325</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20250907191611">
+          <prev>9.0.2325</prev>
+          <native>9.0.2348</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" state="3" changed="20250831001610">
           <prev>8</prev>
@@ -5400,9 +5400,9 @@
           <prev>7</prev>
           <native>0</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20250831001610">
-          <prev>2256</prev>
-          <native>2325</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20250907191611">
+          <prev>2325</prev>
+          <native>2348</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

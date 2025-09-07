@@ -3833,7 +3833,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 {
 	auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
 	auto uri_stream = GetUriStream(info);
-	if (!uri_stream)
+	if (uri_stream)
 	{
 		int epg_idx = GetEpgIdx();
 
