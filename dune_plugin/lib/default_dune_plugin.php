@@ -123,11 +123,6 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * @var bool
      */
-    protected $ext_epg_supported = false;
-
-    /**
-     * @var bool
-     */
     protected $need_update_epfs = false;
 
     protected function __construct()
@@ -278,9 +273,9 @@ class Default_Dune_Plugin implements DunePlugin
         return !empty($epg_url1) || !empty($epg_url2);
     }
 
-    public function is_ext_epg_exist()
+    public function is_ext_epg_enabled()
     {
-        return $this->ext_epg_supported;
+        return $this->get_bool_setting(PARAM_SHOW_EXT_EPG) && is_ext_epg_supported();
     }
 
     public function init_epg_manager()
@@ -552,7 +547,7 @@ class Default_Dune_Plugin implements DunePlugin
             hd_debug_print("EPG time shift $time_shift", true);
             $day_start_tm_sec += $time_shift;
 
-            $show_ext_epg = $this->get_bool_setting(PARAM_SHOW_EXT_EPG) && $this->ext_epg_supported;
+            $show_ext_epg = $this->is_ext_epg_enabled();
 
             if (LogSeverity::$is_debug) {
                 hd_debug_print("day_start timestamp: $day_start_tm_sec (" . format_datetime("Y-m-d H:i", $day_start_tm_sec) . ")");
@@ -900,8 +895,8 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_bool_setting($type, $default = true)
     {
-        $val = $this->get_setting($type, $default ? SwitchOnOff::on : SwitchOnOff::off);
-        return $val === SwitchOnOff::on;
+        $val = $this->get_setting($type, SwitchOnOff::to_def($default));
+        return SwitchOnOff::to_bool($val);
     }
 
     /**
@@ -912,7 +907,7 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function set_bool_setting($type, $val)
     {
-        $this->set_setting($type, $val ? SwitchOnOff::on : SwitchOnOff::off);
+        $this->set_setting($type, SwitchOnOff::to_def($val));
     }
 
     /**

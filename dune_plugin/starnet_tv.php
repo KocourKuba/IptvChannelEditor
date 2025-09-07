@@ -572,7 +572,7 @@ class Starnet_Tv implements User_Input_Handler
         }
 
         $group_all = $this->get_special_group(ALL_CHANNEL_GROUP_ID);
-        $ext_epg_enabled = $this->plugin->get_bool_setting(PARAM_SHOW_EXT_EPG) && $this->plugin->is_ext_epg_exist();
+        $ext_epg_enabled = $this->plugin->is_ext_epg_enabled();
         $show_all = !$group_all->is_disabled();
         $all_channels = new Hashed_Array();
         $all_groups_ids = array();

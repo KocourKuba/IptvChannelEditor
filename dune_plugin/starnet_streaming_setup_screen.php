@@ -72,8 +72,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
 
         Control_Factory::add_image_button($defs, $this, null,
             self::CONTROL_AUTO_PLAY, TR::t('setup_autostart'),
-            SwitchOnOff::$translated[$plugin_cookies->{self::CONTROL_AUTO_PLAY}],
-            get_image_path(SwitchOnOff::$image[$plugin_cookies->{self::CONTROL_AUTO_PLAY}]), self::CONTROLS_WIDTH);
+            SwitchOnOff::translate($plugin_cookies->{self::CONTROL_AUTO_PLAY}),
+            SwitchOnOff::to_image($plugin_cookies->{self::CONTROL_AUTO_PLAY}), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // auto resume
@@ -82,8 +82,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
 
         Control_Factory::add_image_button($defs, $this, null,
             self::CONTROL_AUTO_RESUME, TR::t('setup_continue_play'),
-            SwitchOnOff::$translated[$plugin_cookies->{self::CONTROL_AUTO_RESUME}],
-            get_image_path(SwitchOnOff::$image[$plugin_cookies->{self::CONTROL_AUTO_RESUME}]), self::CONTROLS_WIDTH);
+            SwitchOnOff::translate($plugin_cookies->{self::CONTROL_AUTO_RESUME}),
+            SwitchOnOff::to_image($plugin_cookies->{self::CONTROL_AUTO_RESUME}), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // select server
@@ -149,8 +149,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         // Per channel zoom
         $per_channel_zoom = $this->plugin->get_setting(PARAM_PER_CHANNELS_ZOOM, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_PER_CHANNELS_ZOOM, TR::t('setup_per_channel_zoom'), SwitchOnOff::$translated[$per_channel_zoom],
-            get_image_path(SwitchOnOff::$image[$per_channel_zoom]), self::CONTROLS_WIDTH);
+            PARAM_PER_CHANNELS_ZOOM, TR::t('setup_per_channel_zoom'), SwitchOnOff::translate($per_channel_zoom),
+            SwitchOnOff::to_image($per_channel_zoom), self::CONTROLS_WIDTH);
 
 
         //////////////////////////////////////

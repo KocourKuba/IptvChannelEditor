@@ -30,64 +30,62 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
         if (!is_limited_apk()) {
             $show_tv = self::get_cookie_bool_param($plugin_cookies, self::CONTROL_SHOW_TV);
             Control_Factory::add_image_button($defs, $this, null,
-                self::CONTROL_SHOW_TV, TR::t('setup_show_in_main'), SwitchOnOff::$translated[$show_tv],
-                get_image_path(SwitchOnOff::$image[$show_tv]), self::CONTROLS_WIDTH);
+                self::CONTROL_SHOW_TV, TR::t('setup_show_in_main'), SwitchOnOff::translate($show_tv),
+                SwitchOnOff::to_image($show_tv), self::CONTROLS_WIDTH);
         }
 
         //////////////////////////////////////
         // ask exit parameter
         $ask_exit = $this->plugin->get_setting(PARAM_ASK_EXIT, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_ASK_EXIT, TR::t('setup_ask_exit'), SwitchOnOff::$translated[$ask_exit],
-            get_image_path(SwitchOnOff::$image[$ask_exit]), self::CONTROLS_WIDTH);
+            PARAM_ASK_EXIT, TR::t('setup_ask_exit'), SwitchOnOff::translate($ask_exit),
+            SwitchOnOff::to_image($ask_exit), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // show all channels category
         $show_all = $this->plugin->get_setting(PARAM_SHOW_ALL, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_SHOW_ALL, TR::t('setup_show_all_channels'), SwitchOnOff::$translated[$show_all],
-            get_image_path(SwitchOnOff::$image[$show_all]), self::CONTROLS_WIDTH);
+            PARAM_SHOW_ALL, TR::t('setup_show_all_channels'), SwitchOnOff::translate($show_all),
+            SwitchOnOff::to_image($show_all), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // show favorites category
         $show_fav = $this->plugin->get_setting(PARAM_SHOW_FAVORITES, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_SHOW_FAVORITES, TR::t('setup_show_favorites'), SwitchOnOff::$translated[$show_fav],
-            get_image_path(SwitchOnOff::$image[$show_fav]), self::CONTROLS_WIDTH);
+            PARAM_SHOW_FAVORITES, TR::t('setup_show_favorites'), SwitchOnOff::translate($show_fav),
+            SwitchOnOff::to_image($show_fav), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // show history category
         $show_history = $this->plugin->get_setting(PARAM_SHOW_HISTORY, SwitchOnOff::on);
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_SHOW_HISTORY, TR::t('setup_show_history'), SwitchOnOff::$translated[$show_history],
-            get_image_path(SwitchOnOff::$image[$show_history]), self::CONTROLS_WIDTH);
+            PARAM_SHOW_HISTORY, TR::t('setup_show_history'), SwitchOnOff::translate($show_history),
+            SwitchOnOff::to_image($show_history), self::CONTROLS_WIDTH);
 
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) !== "None") {
             //////////////////////////////////////
             // show history category
             $show_vod = $this->plugin->get_setting(PARAM_SHOW_VOD, SwitchOnOff::on);
             Control_Factory::add_image_button($defs, $this, null,
-                PARAM_SHOW_VOD, TR::t('setup_show_vod'), SwitchOnOff::$translated[$show_vod],
-                get_image_path(SwitchOnOff::$image[$show_vod]), self::CONTROLS_WIDTH);
+                PARAM_SHOW_VOD, TR::t('setup_show_vod'), SwitchOnOff::translate($show_vod),
+                SwitchOnOff::to_image($show_vod), self::CONTROLS_WIDTH);
 
             if ($show_vod) {            //////////////////////////////////////
                 // show vod at the end of categories
                 $vod_last = $this->plugin->get_setting(PARAM_VOD_LAST, SwitchOnOff::off);
                 Control_Factory::add_image_button($defs, $this, null,
-                    PARAM_VOD_LAST, TR::t('setup_vod_last'), SwitchOnOff::$translated[$vod_last],
-                    get_image_path(SwitchOnOff::$image[$vod_last]), self::CONTROLS_WIDTH);
+                    PARAM_VOD_LAST, TR::t('setup_vod_last'), SwitchOnOff::translate($vod_last),
+                    SwitchOnOff::to_image($vod_last), self::CONTROLS_WIDTH);
             }
         }
 
         //////////////////////////////////////
         // epg font size
         $font_size = $this->plugin->get_setting(PARAM_EPG_FONT_SIZE, SwitchOnOff::on);
-        $font_ops_translated[SwitchOnOff::on] = TR::t('setup_small');
-        $font_ops_translated[SwitchOnOff::off] = TR::t('setup_normal');
-
+        $font_ops_translated = array(SwitchOnOff::on => TR::t('setup_small'), SwitchOnOff::off => TR::t('setup_normal'));
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_EPG_FONT_SIZE, TR::t('setup_epg_font'), $font_ops_translated[$font_size],
-            get_image_path(SwitchOnOff::$image[$font_size]), self::CONTROLS_WIDTH);
+            PARAM_EPG_FONT_SIZE, TR::t('setup_epg_font'), SwitchOnOff::translate_from($font_ops_translated, $font_size),
+            SwitchOnOff::to_image($font_size), self::CONTROLS_WIDTH);
 
         return $defs;
     }

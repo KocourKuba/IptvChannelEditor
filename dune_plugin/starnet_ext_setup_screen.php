@@ -94,8 +94,8 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
         if (is_updater_proxy_needs()) {
             $use_proxy = $this->plugin->get_setting(PARAM_USE_UPDATER_PROXY, SwitchOnOff::off);
             Control_Factory::add_image_button($defs, $this, null, PARAM_USE_UPDATER_PROXY,
-                TR::t('setup_updater_proxy'), SwitchOnOff::$translated[$use_proxy],
-                get_image_path(SwitchOnOff::$image[$use_proxy]), self::CONTROLS_WIDTH);
+                TR::t('setup_updater_proxy'), SwitchOnOff::translate($use_proxy),
+                SwitchOnOff::to_image($use_proxy), self::CONTROLS_WIDTH);
         }
 
         //////////////////////////////////////
@@ -108,8 +108,8 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
 
         $debug_state = $this->plugin->get_setting(PARAM_ENABLE_DEBUG, SwitchOnOff::off);
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_ENABLE_DEBUG, TR::t('setup_debug'), SwitchOnOff::$translated[$debug_state],
-            get_image_path(SwitchOnOff::$image[$debug_state]), self::CONTROLS_WIDTH);
+            PARAM_ENABLE_DEBUG, TR::t('setup_debug'), SwitchOnOff::translate($debug_state),
+            SwitchOnOff::to_image($debug_state), self::CONTROLS_WIDTH);
 
         return $defs;
     }

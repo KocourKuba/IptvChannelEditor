@@ -233,7 +233,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
             );
         }
 
-        $vod_last = $this->plugin->get_setting(PARAM_VOD_LAST,SwitchOnOff::off) === SwitchOnOff::on;
+        $vod_last = SwitchOnOff::to_bool($this->plugin->get_setting(PARAM_VOD_LAST,SwitchOnOff::off));
         if (isset($vod_item) && !$vod_last) {
             $items[] = $vod_item;
         }

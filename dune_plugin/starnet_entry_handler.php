@@ -70,7 +70,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 return Action_Factory::open_folder('channels_setup', TR::t('tv_screen_channels_setup'));
 
             case self::ACTION_DO_SEND_LOG:
-                if (is_newer_versions()) {
+                if (is_r11_or_higher()) {
                     $error_msg = '';
                     $msg = HD::send_log_to_developer($error_msg) ? TR::t('entry_log_sent') : TR::t('entry_log_not_sent') . " $error_msg";
                     return Action_Factory::show_title_dialog($msg);
@@ -89,7 +89,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
 
                 hd_debug_print("plugin_entry $user_input->action_id");
 
-                if (!is_newer_versions()) {
+                if (!is_r11_or_higher()) {
                     hd_debug_print("Too old Dune HD firmware! " . get_raw_firmware_version());
                     return  Action_Factory::show_error(true, TR::t('err_too_old_player'),
                         array(
@@ -116,7 +116,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         $this->plugin->tv->reload_channels();
 
                         if ((int)$user_input->mandatory_playback === 1
-                            || (isset($plugin_cookies->auto_play) && $plugin_cookies->auto_play === SwitchOnOff::on)) {
+                            || (isset($plugin_cookies->auto_play) && SwitchOnOff::to_bool($plugin_cookies->auto_play))) {
                             hd_debug_print("launch play");
 
                             $action = Action_Factory::tv_play($this->get_resume_mediaurl());
@@ -135,7 +135,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         $this->plugin->tv->reload_channels();
 
                         if ((int)$user_input->mandatory_playback !== 1
-                            || (isset($plugin_cookies->auto_resume) && $plugin_cookies->auto_resume === SwitchOnOff::off)) break;
+                            || (isset($plugin_cookies->auto_resume) && !SwitchOnOff::to_bool($plugin_cookies->auto_resume))) break;
 
                         return Action_Factory::tv_play($this->get_resume_mediaurl());
 

@@ -61,12 +61,9 @@ class Starnet_Interface_NewUI_Setup_Screen extends Abstract_Controls_Screen impl
         // Square icons
         $square_icon = $this->plugin->get_setting(PARAM_SQUARE_ICONS, SwitchOnOff::on);
         hd_debug_print(PARAM_SQUARE_ICONS . ": $square_icon", true);
-        $square_icon_translated[SwitchOnOff::on] = TR::t('yes');
-        $square_icon_translated[SwitchOnOff::off] = TR::t('no');
-
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_SQUARE_ICONS, TR::t('tv_screen_toggle_icons_aspect'), $square_icon_translated[$square_icon],
-            get_image_path(SwitchOnOff::$image[$square_icon]), self::CONTROLS_WIDTH);
+            PARAM_SQUARE_ICONS, TR::t('tv_screen_toggle_icons_aspect'), SwitchOnOff::translate($square_icon),
+            SwitchOnOff::to_image($square_icon), self::CONTROLS_WIDTH);
 
         //////////////////////////////////////
         // Channel position in NewUI
@@ -93,12 +90,9 @@ class Starnet_Interface_NewUI_Setup_Screen extends Abstract_Controls_Screen impl
         // Show caption
         $show_caption = $this->plugin->get_setting(PARAM_SHOW_CHANNEL_CAPTION, SwitchOnOff::on);
         hd_debug_print(PARAM_SHOW_CHANNEL_CAPTION . ": $show_caption", true);
-        $show_caption_translated[SwitchOnOff::on] = TR::t('yes');
-        $show_caption_translated[SwitchOnOff::off] = TR::t('no');
-
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_SHOW_CHANNEL_CAPTION, TR::t('setup_show_caption'), $show_caption_translated[$show_caption],
-            get_image_path(SwitchOnOff::$image[$show_caption]), self::CONTROLS_WIDTH);
+            PARAM_SHOW_CHANNEL_CAPTION, TR::t('setup_show_caption'), SwitchOnOff::translate($show_caption),
+            SwitchOnOff::to_image($show_caption), self::CONTROLS_WIDTH);
 
         return $defs;
     }

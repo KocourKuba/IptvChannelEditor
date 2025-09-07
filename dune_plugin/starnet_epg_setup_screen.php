@@ -75,19 +75,19 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
         //////////////////////////////////////
         // ext epg
-        if (is_ext_epg_supported() && $this->plugin->is_ext_epg_exist()) {
+        if (is_ext_epg_supported() && $this->plugin->get_bool_setting(PARAM_SHOW_EXT_EPG)) {
             $ext_epg = $this->plugin->get_setting(PARAM_SHOW_EXT_EPG, SwitchOnOff::off);
             Control_Factory::add_image_button($defs, $this, null,
-                PARAM_SHOW_EXT_EPG, TR::t('setup_ext_epg'), SwitchOnOff::$translated[$ext_epg],
-                get_image_path(SwitchOnOff::$image[$ext_epg]), self::CONTROLS_WIDTH);
+                PARAM_SHOW_EXT_EPG, TR::t('setup_ext_epg'), SwitchOnOff::translate($ext_epg),
+                SwitchOnOff::to_image($ext_epg), self::CONTROLS_WIDTH);
         }
 
         //////////////////////////////////////
         // Fake EPG
         $fake_epg = $this->plugin->get_setting(PARAM_FAKE_EPG, SwitchOnOff::off);
         Control_Factory::add_image_button($defs, $this, null,
-            PARAM_FAKE_EPG, TR::t('entry_epg_fake'), SwitchOnOff::$translated[$fake_epg],
-            get_image_path(SwitchOnOff::$image[$fake_epg]), self::CONTROLS_WIDTH);
+            PARAM_FAKE_EPG, TR::t('entry_epg_fake'), SwitchOnOff::translate($fake_epg),
+            SwitchOnOff::to_image($fake_epg), self::CONTROLS_WIDTH);
 
         if ($cache_engine === ENGINE_XMLTV && $sources->size()) {
             //////////////////////////////////////
