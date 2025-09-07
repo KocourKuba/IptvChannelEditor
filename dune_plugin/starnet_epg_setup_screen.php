@@ -189,11 +189,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         dump_input_handler($user_input);
 
         $control_id = $user_input->control_id;
-        if (isset($user_input->action_type, $user_input->{$control_id})
-            && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
-            hd_debug_print("Setup: changing $control_id value to " . $user_input->{$control_id});
-        }
-
         $post_action = null;
         switch ($control_id) {
             case GUI_EVENT_TIMER:

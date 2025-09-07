@@ -165,12 +165,6 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
         dump_input_handler($user_input);
 
         $control_id = $user_input->control_id;
-        $new_value = '';
-        if (isset($user_input->action_type, $user_input->{$control_id})
-            && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
-            $new_value = $user_input->{$control_id};
-        }
-
         switch ($control_id) {
 
             case self::SETUP_ACTION_CHANGE_CH_LIST_PATH:
@@ -189,14 +183,14 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
             case PARAM_PLAYLIST_IDX:
             case PARAM_CHANNELS_SOURCE:
-                hd_debug_print("$control_id: " . $new_value);
-                $this->plugin->set_setting($control_id, $new_value);
+                hd_debug_print("$control_id: " . $user_input->{$control_id});
+                $this->plugin->set_setting($control_id, $user_input->{$control_id});
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case PARAM_CHANNELS_LIST_NAME:
-                hd_debug_print("$control_id: " . $new_value);
-                $this->plugin->set_setting($control_id, $new_value);
-                $channel_list = empty($new_value) ? 'default' : $new_value;
+                hd_debug_print("$control_id: " . $user_input->{$control_id});
+                $this->plugin->set_setting($control_id, $user_input->{$control_id});
+                $channel_list = empty($user_input->{$control_id}) ? 'default' : $user_input->{$control_id};
                 $favorites = 'favorite_channels_' . hash('crc32', $channel_list);
 
                 if (isset($plugin_cookies->{$favorites})) {

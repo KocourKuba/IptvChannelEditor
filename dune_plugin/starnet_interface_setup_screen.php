@@ -109,12 +109,6 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
         dump_input_handler($user_input);
 
         $control_id = $user_input->control_id;
-        if (isset($user_input->action_type, $user_input->{$control_id})
-            && ($user_input->action_type === 'confirm' || $user_input->action_type === 'apply')) {
-            $new_value = $user_input->{$control_id};
-            hd_debug_print("changing $control_id value to $new_value");
-        }
-
         switch ($control_id) {
             case self::CONTROL_SHOW_TV:
                 if (!is_limited_apk()) {
