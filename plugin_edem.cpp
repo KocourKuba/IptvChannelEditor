@@ -63,11 +63,14 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 
 		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 
-		utils::http_request req{ url, cache_ttl };
-		req.verb_post = true;
-		req.headers.emplace_back("accept: */*");
-		req.headers.emplace_back("Content-Type: application/json");
-		req.post_data = json_request.dump();
+		utils::http_request req
+		{
+			.url = url,
+			.cache_ttl = cache_ttl,
+			.headers{ "accept: */*", "Content-Type: application/json" },
+			.post_data = json_request.dump(),
+			.verb_post = true,
+		};
 
 		if (!utils::AsyncDownloadFile(req).get()) break;
 
@@ -127,10 +130,14 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 				json_request["fid"] = utils::char_to_int(category.second->id);
 				json_request["offset"] = 0;
 
-				utils::http_request cat_req{ url, cache_ttl };
-				cat_req.verb_post = true;
-				cat_req.headers = req.headers;
-				cat_req.post_data = json_request.dump();
+				utils::http_request cat_req
+				{
+					.url = url,
+					.cache_ttl = cache_ttl,
+					.headers = req.headers,
+					.post_data = json_request.dump(),
+					.verb_post = true
+				};
 
 				if (!utils::AsyncDownloadFile(cat_req).get()) break;
 
@@ -187,10 +194,14 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 					json_request["offset"] = offset;
 					ATLTRACE("\noffset: %d\n", offset);
 
-					utils::http_request mov_req{ url, cache_ttl };
-					mov_req.verb_post = true;
-					mov_req.headers = req.headers;
-					mov_req.post_data = json_request.dump();
+					utils::http_request mov_req
+					{
+						.url = url,
+						.cache_ttl = cache_ttl,
+						.headers = req.headers,
+						.post_data = json_request.dump(),
+						.verb_post = true,
+					};
 					if (!utils::AsyncDownloadFile(mov_req).get()) break;
 
 					movie_json = nlohmann::json::parse(mov_req.body.str());
@@ -231,12 +242,14 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 		json_request["app"] = "IPTV ChannelEditor";
 		json_request["fid"] = utils::char_to_int(movie.id);
 
-		utils::http_request req{url};
-		req.verb_post = true;
-		req.post_data = json_request.dump();
+		utils::http_request req
+		{
+			.url = url,
+			.headers{ "accept: */*", "Content-Type: application/json" },
+			.post_data = json_request.dump(),
+			.verb_post = true
+		};
 		ATLTRACE("\n%s\n", req.post_data.c_str());
-		req.headers.emplace_back("accept: */*");
-		req.headers.emplace_back("Content-Type: application/json");
 
 		if (!utils::AsyncDownloadFile(req).get()) break;
 
@@ -267,10 +280,13 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 
 					json_request["fid"] = utils::char_to_int(episode.id);
 
-					utils::http_request var_req{ url };
-					var_req.verb_post = true;
-					var_req.post_data = json_request.dump();
-					var_req.headers = req.headers;
+					utils::http_request var_req
+					{
+						.url = url,
+						.headers = req.headers,
+						.post_data = json_request.dump(),
+						.verb_post = true
+					};
 					ATLTRACE("\n%s\n", var_req.post_data.c_str());
 
 					if (utils::AsyncDownloadFile(var_req).get())

@@ -61,9 +61,11 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 	}
 	else
 	{
-		utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
-		req.headers.emplace_back("accept: */*");
-		req.headers.emplace_back(std::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password));
+		utils::http_request req
+		{
+			.url = replace_params_vars(params, API_COMMAND_AUTH),
+			.headers { "accept: */*", std::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password) }
+		};
 		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY
@@ -138,7 +140,11 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 			{
 				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0 || retry > 2) break;
 
-				utils::http_request jreq{ std::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", config.m_url, category->id, page), cache_ttl };
+				utils::http_request jreq
+				{
+					.url = std::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", config.m_url, category->id, page),
+					.cache_ttl = cache_ttl
+				};
 				if (!utils::AsyncDownloadFile(jreq).get())
 				{
 					retry++;

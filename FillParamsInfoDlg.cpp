@@ -86,36 +86,37 @@ BOOL CFillParamsInfoDlg::OnInitDialog()
 	CString csName;
 	switch (m_type)
 	{
-		case DynamicParamsType::enServers:
+		using enum DynamicParamsType;
+		case enServers:
 			csID = REPL_SERVER_ID;
 			csName = REPL_SERVER;
 			break;
-		case DynamicParamsType::enDevices:
+		case enDevices:
 			csID = REPL_DEVICE_ID;
 			csName = L"{DEVICE_NAME}";
 			break;
-		case DynamicParamsType::enQuality:
+		case enQuality:
 			csID = REPL_QUALITY_ID;
 			csName = L"{QUALITY_NAME}";
 			break;
-		case DynamicParamsType::enProfiles:
+		case enProfiles:
 			csID = REPL_PROFILE_ID;
 			csName = L"{PROFILE_NAME}";
 			break;
-		case DynamicParamsType::enManifest:
+		case enManifest:
 			m_isFirstColEditable = false;
 			VERIFY(csID.LoadString(IDS_STRING_ENTRY));
 			VERIFY(csName.LoadString(IDS_STRING_VALUE));
 			m_fixed = true;
 			break;
-		case DynamicParamsType::enLinks:
-		case DynamicParamsType::enEpgLinks:
+		case enLinks:
+		case enEpgLinks:
 			VERIFY(csID.LoadString(IDS_STRING_NAME));
 			VERIFY(csName.LoadString(IDS_STRING_VALUE));
 			break;
-		case DynamicParamsType::enFiles:
-		case DynamicParamsType::enPlaylistTV:
-		case DynamicParamsType::enPlaylistVOD:
+		case enFiles:
+		case enPlaylistTV:
+		case enPlaylistVOD:
 			m_isFirstColEditable = false;
 			VERIFY(csID.LoadString(IDS_STRING_ENTRY));
 			VERIFY(csName.LoadString(IDS_STRING_NAME));
@@ -213,16 +214,17 @@ void CFillParamsInfoDlg::OnBnClickedButtonAdd()
 	variantInfo param;
 	switch (m_type)
 	{
-		case DynamicParamsType::enServers:
-		case DynamicParamsType::enDevices:
-		case DynamicParamsType::enQuality:
-		case DynamicParamsType::enProfiles:
-		case DynamicParamsType::enFiles:
-		case DynamicParamsType::enDomains:
+		using enum DynamicParamsType;
+		case enServers:
+		case enDevices:
+		case enQuality:
+		case enProfiles:
+		case enFiles:
+		case enDomains:
 			param = DynamicParamsInfo(std::to_string(cnt), std::format("name{:d}", cnt));
 			break;
-		case DynamicParamsType::enPlaylistTV:
-		case DynamicParamsType::enPlaylistVOD:
+		case enPlaylistTV:
+		case enPlaylistVOD:
 			param = PlaylistTemplateInfo(std::format("name{:d}", cnt));
 			break;
 		default:

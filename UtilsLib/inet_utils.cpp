@@ -134,7 +134,7 @@ bool DownloadFile(http_request& request)
 	std::wstring hash_str = request.url;
 	if (!request.post_data.empty())
 	{
-		hash_str += utf8_to_utf16(std::string(request.post_data));
+		hash_str += utf8_to_utf16(request.post_data);
 	}
 
 	LOG_PROTOCOL(std::format(L"download url: {:s}", request.url));

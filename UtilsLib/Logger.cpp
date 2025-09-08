@@ -100,7 +100,7 @@ void Logger::processLogs()
 				std::stringstream ss(m_logQueue.front());
 				while (std::getline(ss, line))
 				{
-					while (!line.empty() && line.back() == '\r')
+					while (!line.empty() && line.ends_with('\r'))
 					{
 						line.pop_back();
 					}

@@ -42,7 +42,8 @@ bool PlaylistEntry::Parse(const std::string& str)
 	bool result = false;
 	switch (m3uEntry.get_directive())
 	{
-		case m3u_entry::directives::ext_header:
+		using enum m3u_entry::directives;
+		case ext_header:
 		{
 			if (!playlist) break;
 
@@ -71,11 +72,11 @@ bool PlaylistEntry::Parse(const std::string& str)
 			playlist->catchup_source = search_catchup_source(tags);
 			break;
 		}
-		case m3u_entry::directives::ext_pathname:
+		case ext_pathname:
 		{
 			return true;
 		}
-		case m3u_entry::directives::ext_group:
+		case ext_group:
 		{
 			if (category.empty())
 			{
@@ -84,7 +85,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 			}
 			break;
 		}
-		case m3u_entry::directives::ext_info:
+		case ext_info:
 		{
 			const auto& tags = m3uEntry.get_tags_map();
 
@@ -130,7 +131,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 			}
 			break;
 		}
-		case m3u_entry::directives::ext_vlcopt:
+		case ext_vlcopt:
 			break;
 
 		default:
@@ -142,13 +143,14 @@ bool PlaylistEntry::Parse(const std::string& str)
 
 void PlaylistEntry::search_id(const std::wstring& search_tag)
 {
+	using enum m3u_entry::info_tags;
 	static std::map<std::wstring, m3u_entry::info_tags> id_tags = {
-		{ L"channel-id", m3u_entry::info_tags::tag_channel_id      },
-		{ L"CUID",       m3u_entry::info_tags::tag_cuid            },
-		{ L"tvg-chno",   m3u_entry::info_tags::tag_tvg_chno        },
-		{ L"tvg-id",     m3u_entry::info_tags::tag_tvg_id          },
-		{ L"tvg-name",   m3u_entry::info_tags::tag_tvg_name        },
-		{ L"name",       m3u_entry::info_tags::tag_directive_title },
+		{ L"channel-id", tag_channel_id      },
+		{ L"CUID",       tag_cuid            },
+		{ L"tvg-chno",   tag_tvg_chno        },
+		{ L"tvg-id",     tag_tvg_id          },
+		{ L"tvg-name",   tag_tvg_name        },
+		{ L"name",       tag_directive_title },
 	};
 
 	const m3u_tags& tags = m3uEntry.get_tags_map();
@@ -177,14 +179,15 @@ void PlaylistEntry::search_group(const m3u_tags& tags)
 int PlaylistEntry::search_archive(const m3u_tags& tags)
 {
 	// priority -> catchup_days -> catchup_time -> tag_timeshift ... -> tvg_rec
+	using enum m3u_entry::info_tags;
 	static std::array<m3u_entry::info_tags, 6> archive_search_tags =
 	{
-		m3u_entry::info_tags::tag_catchup_days,
-		m3u_entry::info_tags::tag_catchup_time,
-		m3u_entry::info_tags::tag_timeshift,
-		m3u_entry::info_tags::tag_arc_timeshift,
-		m3u_entry::info_tags::tag_arc_time,
-		m3u_entry::info_tags::tag_tvg_rec,
+		tag_catchup_days,
+		tag_catchup_time,
+		tag_timeshift,
+		tag_arc_timeshift,
+		tag_arc_time,
+		tag_tvg_rec,
 	};
 
 	int day = 0;
@@ -205,11 +208,12 @@ int PlaylistEntry::search_archive(const m3u_tags& tags)
 void PlaylistEntry::search_epg(const m3u_tags& tags)
 {
 	// priority -> tvg_id -> tvg_name -> title
+	using enum m3u_entry::info_tags;
 	static std::array<m3u_entry::info_tags, 3> epg_search_tags =
 	{
-		m3u_entry::info_tags::tag_tvg_id,
-		m3u_entry::info_tags::tag_tvg_name,
-		m3u_entry::info_tags::tag_directive_title,
+		tag_tvg_id,
+		tag_tvg_name,
+		tag_directive_title,
 	};
 
 	for (const auto& tag : epg_search_tags)
@@ -224,10 +228,11 @@ void PlaylistEntry::search_epg(const m3u_tags& tags)
 
 std::string PlaylistEntry::search_logo(const m3u_tags& tags)
 {
+	using enum m3u_entry::info_tags;
 	static std::array<m3u_entry::info_tags, 2> logo_search_tags =
 	{
-		m3u_entry::info_tags::tag_url_logo,
-		m3u_entry::info_tags::tag_tvg_logo,
+		tag_url_logo,
+		tag_tvg_logo,
 	};
 
 	for (const auto& tag : logo_search_tags)
@@ -243,10 +248,11 @@ std::string PlaylistEntry::search_logo(const m3u_tags& tags)
 
 std::string PlaylistEntry::search_catchup_source(const m3u_tags& tags)
 {
+	using enum m3u_entry::info_tags;
 	static std::array<m3u_entry::info_tags, 2> catchup_source_tags =
 	{
-		m3u_entry::info_tags::tag_catchup_source,
-		m3u_entry::info_tags::tag_catchup_template,
+		tag_catchup_source,
+		tag_catchup_template,
 	};
 
 	for (const auto& tag : catchup_source_tags)
@@ -262,39 +268,42 @@ std::string PlaylistEntry::search_catchup_source(const m3u_tags& tags)
 
 CatchupType PlaylistEntry::search_catchup(const m3u_tags& tags)
 {
+	using enum m3u_entry::info_tags;
 	static std::array<m3u_entry::info_tags, 2> catchup_tags =
 	{
-		m3u_entry::info_tags::tag_catchup,
-		m3u_entry::info_tags::tag_catchup_type,
+		tag_catchup,
+		tag_catchup_type,
 	};
 
+	using enum CatchupType;
 	for (const auto& tag : catchup_tags)
 	{
 		if (const auto& pair = tags.find(tag); pair != tags.end() && !pair->second.empty())
 		{
 			if (pair->second == "append")
-				return CatchupType::cu_append;
+				return cu_append;
 
 			if (pair->second == "shift")
-				return CatchupType::cu_shift;
+				return cu_shift;
 
 			if (pair->second == "flussonic")
-				return CatchupType::cu_flussonic;
+				return cu_flussonic;
 
 			if (pair->second == "default")
-				return CatchupType::cu_default;
+				return cu_default;
 		}
 	}
 
-	return CatchupType::cu_not_set;
+	return cu_not_set;
 }
 
 void PlaylistEntry::check_adult(const m3u_tags& tags, const std::string& category)
 {
+	using enum m3u_entry::info_tags;
 	static std::array<m3u_entry::info_tags, 2> adult_tags =
 	{
-		m3u_entry::info_tags::tag_parent_code,
-		m3u_entry::info_tags::tag_censored,
+		tag_parent_code,
+		tag_censored,
 	};
 
 	for (const auto& tag : adult_tags)

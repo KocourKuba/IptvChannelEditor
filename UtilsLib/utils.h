@@ -344,34 +344,15 @@ std::basic_string<T> string_replace(const std::basic_string<T>& source, const st
 /// </summary>
 /// <param name="w">A two byte character UTF-16 string.</param>
 /// <returns>A single byte character UTF-8 string.</returns>
-std::string utf16_to_utf8(const wchar_t* srcData, size_t srcSize);
-
-inline std::string utf16_to_utf8(std::wstring_view w)
-{
-	return utf16_to_utf8(w.data(), w.size());
-}
-
-inline std::string utf16_to_utf8(const std::wstring& w)
-{
-	return utf16_to_utf8(w.c_str(), w.size());
-}
+std::string utf16_to_utf8(const std::wstring_view s);
 
 /// <summary>
 /// Converts a UTF-8 string to a UTF-16
 /// </summary>
 /// <param name="s">A single byte character UTF-8 string.</param>
 /// <returns>A two byte character UTF-16 string.</returns>
-std::wstring utf8_to_utf16(const char* srcData, size_t srcSize);
+std::wstring utf8_to_utf16(const std::string_view s);
 
-inline std::wstring utf8_to_utf16(std::string_view s)
-{
-	return utf8_to_utf16(s.data(), s.size());
-}
-
-inline std::wstring utf8_to_utf16(const std::string& s)
-{
-	return utf8_to_utf16(s.c_str(), s.size());
-}
 
 template<typename T>
 std::vector<std::basic_string<T>> string_split(const std::basic_string<T>& str, T delim = ' ')

@@ -47,8 +47,11 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 		all_category->name = all_name;
 		categories->set_back(all_name, all_category);
 
-		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-		utils::http_request req{ config.m_url, cache_ttl };
+		utils::http_request req
+		{
+			.url = config.m_url,
+			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL)
+		};
 		if (!utils::AsyncDownloadFile(req).get()) break;
 
 		nlohmann::json parsed_json;

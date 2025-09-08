@@ -78,11 +78,13 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 	json_request["client_secret"] = client_secret;
 	json_request["device_id"] = device_id;
 
-	utils::http_request req{ replace_params_vars(params, url) };
-	req.headers.emplace_back("accept: */*");
-	req.headers.emplace_back("Content-Type: application/json; charset=utf-8");
-	req.post_data = json_request.dump();
-	req.verb_post = true;
+	utils::http_request req
+	{
+		.url = replace_params_vars(params, url),
+		.headers{"accept: */*", "Content-Type: application/json; charset=utf-8"},
+		.post_data = json_request.dump(),
+		.verb_post = true
+	};
 	if (utils::AsyncDownloadFile(req).get())
 	{
 		JSON_ALL_TRY
@@ -231,9 +233,12 @@ bool plugin_iptvonline::set_server(TemplateParams& params)
 		nlohmann::json json_request;
 		json_request["server_location"] = std::stoi(servers_list[params.creds.server_id].id);
 
-		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_DEVICE, L"settings")) };
-		req.verb_post = true;
-		req.post_data = json_request.dump();
+		utils::http_request req
+		{
+			.url = replace_params_vars(params, std::format(API_COMMAND_DEVICE, L"settings")),
+			.post_data = json_request.dump(),
+			.verb_post = true
+		};
 		const auto& parsed_json = server_request(req);
 
 		JSON_ALL_TRY
@@ -286,12 +291,13 @@ void plugin_iptvonline::parse_vod(const ThreadConfig& config)
 
 void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 {
-	TemplateParams params;
-	params.creds = creds;
+	TemplateParams params
+	{
+		.creds = creds
+	};
 	update_provider_params(params);
 
-	const auto& url = std::format(L"{:s}/movies/{:s}", get_vod_url(params),  movie.id);
-	utils::http_request req{ url };
+	utils::http_request req{ std::format(L"{:s}/movies/{:s}", get_vod_url(params),  movie.id) };
 	nlohmann::json movies_json = server_request(req, true);
 	if (movies_json.empty() || !movies_json.contains("data"))
 	{

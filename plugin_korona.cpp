@@ -67,8 +67,12 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 		return session_token;
 	}
 
-	utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
-	req.verb_post = true;
+	utils::http_request req
+	{
+		.url = replace_params_vars(params, API_COMMAND_AUTH),
+		.headers { "accept: */*",  "Content-Type: application/x-www-form-urlencoded" },
+		.verb_post = true
+	};
 
 	for (const auto& [key, value] : post_request)
 	{
@@ -79,8 +83,6 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 		req.post_data += std::format(PARAM_FMT, key, utils::encodeURIComponent(value));
 	}
 
-	req.headers.emplace_back("accept: */*");
-	req.headers.emplace_back("Content-Type: application/x-www-form-urlencoded");
 
 	if (utils::AsyncDownloadFile(req).get())
 	{
@@ -272,8 +274,10 @@ void plugin_korona::parse_vod(const ThreadConfig& config)
 
 void plugin_korona::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 {
-	TemplateParams params;
-	params.creds = creds;
+	TemplateParams params
+	{
+		.creds = creds
+	};
 	update_provider_params(params);
 
 	const auto& url = std::format(L"{:s}/video/{:s}", get_vod_url(params),  movie.id);
@@ -370,15 +374,12 @@ nlohmann::json plugin_korona::server_request(const std::wstring& url, const bool
 	const auto& session_token = get_file_cookie(session_token_file);
 	if (!session_token.empty())
 	{
-		utils::http_request req{ url };
-		if (use_cache_ttl)
+		utils::http_request req
 		{
-			req.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-		}
-
-		req.headers.emplace_back("accept: */*");
-		req.headers.emplace_back("Content-Type: application/x-www-form-urlencoded");
-		req.headers.emplace_back(std::format("Authorization: Bearer {:s}", session_token));
+			.url = url,
+			.cache_ttl = use_cache_ttl ? GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) : std::chrono::seconds::zero(),
+			.headers { "accept: */*",  "Content-Type: application/x-www-form-urlencoded", std::format("Authorization: Bearer {:s}", session_token) },
+		};
 
 		if (utils::AsyncDownloadFile(req).get())
 		{

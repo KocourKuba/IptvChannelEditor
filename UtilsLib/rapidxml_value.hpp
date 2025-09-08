@@ -39,7 +39,7 @@ inline std::string get_value_string(const xml_node<>* node)
 inline std::wstring get_value_wstring(const xml_node<>* node)
 {
 	if (node && node->value())
-		return utils::utf8_to_utf16(node->value(), node->value_size());
+		return utils::utf8_to_utf16(std::string_view(node->value(), node->value_size()));
 	return {};
 }
 
@@ -63,7 +63,7 @@ inline std::string get_value_string(const xml_attribute<>* attr)
 inline std::wstring get_value_wstring(const xml_attribute<>* attr)
 {
 	if (attr && attr->value())
-		return utils::utf8_to_utf16(attr->value(), attr->value_size());
+		return utils::utf8_to_utf16(std::string_view(attr->value(), attr->value_size()));
 	return {};
 }
 

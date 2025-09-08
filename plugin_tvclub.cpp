@@ -143,10 +143,7 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 	{
 		get_api_token(params);
 
-		auto url = std::format(API_COMMAND_URL, L"set");
-		url += std::format(PARAM_FMT, L"server", REPL_SERVER_ID);
-
-		utils::http_request req{ replace_params_vars(params, url) };
+		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"set") + std::format(PARAM_FMT, L"server", REPL_SERVER_ID)) };
 		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY

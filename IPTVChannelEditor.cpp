@@ -1177,14 +1177,15 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 			nlohmann::json node;
 			switch (plugin->get_access_type())
 			{
-				case AccountAccessType::enPin:
+				using enum AccountAccessType;
+				case enPin:
 					node["password"] = cred.password;
 					break;
-				case AccountAccessType::enLoginPass:
+				case enLoginPass:
 					node["login"] = cred.login;
 					node["password"] = cred.password;
 					break;
-				case AccountAccessType::enOtt:
+				case enOtt:
 					node["subdomain"] = cred.subdomain;
 					node["ott_key"] = cred.ott_key;
 					node["vportal"] = cred.portal;
@@ -1507,7 +1508,8 @@ void ConvertAccounts()
 					Credentials cred;
 					switch (access_type)
 					{
-						case AccountAccessType::enPin:
+						using enum AccountAccessType;
+						case enPin:
 							cred.password = get_array_value(creds, last);
 							if (cred.password == password)
 							{
@@ -1515,7 +1517,7 @@ void ConvertAccounts()
 							}
 							break;
 
-						case AccountAccessType::enLoginPass:
+						case enLoginPass:
 							cred.login = get_array_value(creds, last);
 							cred.password = get_array_value(creds, last);
 							if (cred.login == login)
@@ -1524,7 +1526,7 @@ void ConvertAccounts()
 							}
 							break;
 
-						case AccountAccessType::enOtt:
+						case enOtt:
 							cred.token = get_array_value(creds, last);
 							cred.portal = get_array_value(creds, last);
 							if (cred.token == token)
@@ -1550,16 +1552,17 @@ void ConvertAccounts()
 					Credentials cred;
 					switch (access_type)
 					{
-						case AccountAccessType::enPin:
+						using enum AccountAccessType;
+						case enPin:
 							cred.password = password;
 							break;
 
-						case AccountAccessType::enLoginPass:
+						case enLoginPass:
 							cred.login = login;
 							cred.password = password;
 							break;
 
-						case AccountAccessType::enOtt:
+						case enOtt:
 							cred.token = token;
 							cred.portal = portal;
 							break;
@@ -1748,7 +1751,7 @@ void SetImageControl(const CImage& image, CStatic& wnd)
 
 int RequestToUpdateServer(const std::wstring& command, bool isThread /*= true*/)
 {
-	const auto& cur_ver = utils::utf8_to_utf16(STRPRODUCTVER, sizeof(STRPRODUCTVER));
+	const auto& cur_ver = utils::utf8_to_utf16(STRPRODUCTVER);
 	const auto& avail_ver = GetConfig().get_string(true, REG_AVAIL_UPDATE);
 
 	do

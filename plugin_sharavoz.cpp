@@ -180,21 +180,17 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 
 	const auto& api_url = get_vod_url(params);
 	const auto& token = creds.get_password();
-	const auto& base_url = std::format(L"{:s}/player_api.php?username={:s}&password={:s}", api_url, token, token);
-	std::wstring url;
+	auto url = std::format(L"{:s}/player_api.php?username={:s}&password={:s}", api_url, token, token);
 	if (movie.is_series)
 	{
-		url = std::format(L"&action=get_series_info&series_id={:s}", movie.id);
+		url += std::format(L"&action=get_series_info&series_id={:s}", movie.id);
 	}
 	else
 	{
-		url = std::format(L"&action=get_vod_info&vod_id={:s}", movie.id);
+		url += std::format(L"&action=get_vod_info&vod_id={:s}", movie.id);
 	}
 
-	url = base_url + url;
-
-	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-	utils::http_request req{ url, cache_ttl };
+	utils::http_request req{ url, GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) };
 	if (!utils::AsyncDownloadFile(req).get())
 	{
 		return;
@@ -317,8 +313,7 @@ nlohmann::json plugin_sharavoz::xtream_request(const ThreadConfig& config, const
 {
 	nlohmann::json category_json;
 
-	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-	utils::http_request req{ url, cache_ttl };
+	utils::http_request req{ url, GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) };
 	if (utils::AsyncDownloadFile(req).get())
 	{
 		JSON_ALL_TRY

@@ -460,11 +460,10 @@ inline std::string md5_hash_hex(const std::string& input)
 
 inline std::string md5_hash_file(const std::wstring& path)
 {
-	static constexpr auto BUFFSIZE = 16384;
+	constexpr auto BUFFSIZE = 16384;
 	std::ifstream ifs(path, std::ifstream::binary);
 
 	std::vector<char> buffer(BUFFSIZE);
-
 	md5::md5_state_t state;
 	md5::md5_init(&state);
 	while (ifs.good())

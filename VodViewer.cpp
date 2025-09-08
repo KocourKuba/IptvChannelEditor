@@ -130,8 +130,10 @@ BOOL CVodViewer::OnInitDialog()
 
 	m_wndMoviesList.InsertColumn(0, load_string_resource(IDS_STRING_COL_INFO).c_str(), LVCFMT_LEFT, vWidth, 0);
 
-	TemplateParams params;
-	params.creds = m_account;
+	TemplateParams params
+	{
+		.creds = m_account
+	};
 	m_plugin->get_api_token(params);
 
 	SetButtonImage(IDB_PNG_RELOAD, m_wndBtnReload);
@@ -209,17 +211,18 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 	m_wndAudio.EnableWindow(FALSE);
 	m_wndBtnReload.EnableWindow(FALSE);
 
+	using enum VodEngine;
 	switch (m_plugin->get_vod_engine())
 	{
-		case VodEngine::enNone:
+		case enNone:
 			break;
 
-		case VodEngine::enM3U:
+		case enM3U:
 			LoadM3U8Playlist(use_cache);
 			break;
 
-		case VodEngine::enJson:
-		case VodEngine::enXC:
+		case enJson:
+		case enXC:
 			LoadJsonPlaylist(use_cache);
 			break;
 	}
@@ -314,13 +317,17 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 
 	m_wndTotal.SetWindowText(load_string_resource(IDS_STRING_LOADING).c_str());
 
-	TemplateParams params;
-	params.creds = m_account;
+	TemplateParams params
+	{
+		.creds = m_account
+	};
 
 	m_plugin->update_provider_params(params);
 
-	utils::http_request req{ m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params) };
-	req.user_agent = m_plugin->get_user_agent();
+	utils::http_request req {
+		.url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params),
+		.user_agent = m_plugin->get_user_agent()
+	};
 
 	if (!utils::AsyncDownloadFile(req).get())
 	{
@@ -1042,12 +1049,15 @@ void CVodViewer::FilterList()
 
 
 			auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-			utils::http_request req{ url, cache_ttl };
-			req.verb_post = true;
-			req.user_agent = m_plugin->get_user_agent();
-			req.headers.emplace_back("accept: */*");
-			req.headers.emplace_back("Content-Type: application/json");
-			req.post_data = json_request.dump();
+			utils::http_request req
+			{
+				.url = url,
+				.cache_ttl = cache_ttl,
+				.headers{ "accept: */*", "Content-Type: application/json" },
+				.user_agent = m_plugin->get_user_agent(),
+				.post_data = json_request.dump(),
+				.verb_post = true
+			};
 			ATLTRACE("\n%s\n", req.post_data.c_str());
 
 			if (!utils::AsyncDownloadFile(req).get()) break;
@@ -1180,7 +1190,13 @@ void CVodViewer::GetUrl(int idx)
 
 	const auto& movie = m_filtered_movies[idx];
 
-	base_plugin::movie_request request{ m_season_idx, m_episode_idx, m_quality_idx, m_audio_idx };
+	base_plugin::movie_request request
+	{
+		.season_idx = m_season_idx,
+		.episode_idx = m_episode_idx,
+		.quality_idx = m_quality_idx,
+		.audio_idx = m_audio_idx
+	};
 
 	m_streamUrl = m_plugin->get_movie_url(m_account, request, *movie).c_str();
 	m_iconUrl = movie->poster_url.get_uri().c_str();

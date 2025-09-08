@@ -57,8 +57,7 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
-		const auto& url = std::format(API_COMMAND_URL, L"subscr_info");
-		utils::http_request req{ replace_params_vars(params, url) };
+		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"subscr_info")) };
 
 		if (utils::AsyncDownloadFile(req).get())
 		{
@@ -100,9 +99,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 
 	std::vector<DynamicParamsInfo> servers;
 
-	const auto& url = std::format(API_COMMAND_URL, L"ch_cdn");
-
-	utils::http_request req{ replace_params_vars(params, url) };
+	utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"ch_cdn")) };
 
 	if (utils::AsyncDownloadFile(req).get())
 	{
@@ -136,10 +133,7 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 
 	if (!servers_list.empty())
 	{
-		auto url = std::format(API_COMMAND_URL, L"ch_cdn");
-		url += std::format(PARAM_FMT, L"num", REPL_SERVER_ID);
-
-		utils::http_request req{ replace_params_vars(params, url) };
+		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"ch_cdn") + std::format(PARAM_FMT, L"num", REPL_SERVER_ID)) };
 		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY
@@ -199,10 +193,7 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 {
 	if (!profiles_list.empty())
 	{
-		auto url = std::format(API_COMMAND_URL, L"list_profiles");
-		url += std::format(PARAM_FMT, L"num", REPL_PROFILE_ID);
-
-		utils::http_request req{ replace_params_vars(params, url) };
+		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"list_profiles") + std::format(PARAM_FMT, L"num", REPL_PROFILE_ID)) };
 		if (utils::AsyncDownloadFile(req).get())
 		{
 			JSON_ALL_TRY
@@ -228,8 +219,11 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 		all_category->name = all_name;
 		categories->set_back(all_name, all_category);
 
-		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-		utils::http_request req{ config.m_url, cache_ttl };
+		utils::http_request req
+		{
+			.url = config.m_url,
+			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL)
+		};
 		if (!utils::AsyncDownloadFile(req).get()) break;
 
 		nlohmann::json parsed_json;

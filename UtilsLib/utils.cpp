@@ -28,9 +28,10 @@ DEALINGS IN THE SOFTWARE.
 #include <chrono>
 #include <random>
 
-#include "utils.h"
-
 #include <boost/regex.hpp>
+#include <span>
+#include "utils.h"
+#include "Logger.h"
 
 namespace utils
 {
@@ -84,26 +85,27 @@ bool CheckForTimeOut(const std::chrono::milliseconds& startTime, const std::chro
 	return (GetTimeDiff(startTime) > timeOut);
 }
 
-inline size_t count_utf8_to_utf16(const char* sData, size_t sSize)
+inline size_t count_utf8_to_utf16(const std::string_view s)
 {
-	size_t destSize(sSize);
+	const auto sz = s.size();
+	size_t destSize(sz);
 
 	try
 	{
-		for (size_t index = 0; index < sSize;)
+		for (size_t index = 0; index < sz;)
 		{
-			if (sData[index] >= 0)
+			if (s[index] >= 0)
 			{
 				// use fast inner loop to skip single byte code points (which are
 				// expected to be the most frequent)
-				while ((++index < sSize) && (sData[index] >= 0))
+				while ((++index < sz) && (s[index] >= 0))
 					;
 
-				if (index >= sSize) break;
+				if (index >= sz) break;
 			}
 
 			// start special handling for multi-byte code points
-			const char c{ sData[index++] };
+			const char c{ s[index++] };
 
 			if ((c & BIT7) == 0)
 			{
@@ -111,12 +113,12 @@ inline size_t count_utf8_to_utf16(const char* sData, size_t sSize)
 			}
 			if ((c & BIT6) == 0) // 2 byte character, 0x80 to 0x7FF
 			{
-				if (index == sSize)
+				if (index == sz)
 				{
 					throw std::range_error("UTF-8 string is missing bytes in character");
 				}
 
-				const char c2{ sData[index++] };
+				const char c2{ s[index++] };
 				if ((c2 & 0xC0) != BIT8)
 				{
 					throw std::range_error("UTF-8 continuation byte is missing leading bit mask");
@@ -127,13 +129,13 @@ inline size_t count_utf8_to_utf16(const char* sData, size_t sSize)
 			}
 			else if ((c & BIT5) == 0) // 3 byte character, 0x800 to 0xFFFF
 			{
-				if (sSize - index < 2)
+				if (sz - index < 2)
 				{
 					throw std::range_error("UTF-8 string is missing bytes in character");
 				}
 
-				const char c2{ sData[index++] };
-				const char c3{ sData[index++] };
+				const char c2{ s[index++] };
+				const char c3{ s[index++] };
 				if (((c2 | c3) & 0xC0) != BIT8)
 				{
 					throw std::range_error("UTF-8 continuation byte is missing leading bit mask");
@@ -143,14 +145,14 @@ inline size_t count_utf8_to_utf16(const char* sData, size_t sSize)
 			}
 			else if ((c & BIT4) == 0) // 4 byte character, 0x10000 to 0x10FFFF
 			{
-				if (sSize - index < 3)
+				if (sz - index < 3)
 				{
 					throw std::range_error("UTF-8 string is missing bytes in character");
 				}
 
-				const char c2{ sData[index++] };
-				const char c3{ sData[index++] };
-				const char c4{ sData[index++] };
+				const char c2{ s[index++] };
+				const char c3{ s[index++] };
+				const char c4{ s[index++] };
 				if (((c2 | c3 | c4) & 0xC0) != BIT8)
 				{
 					throw std::range_error("UTF-8 continuation byte is missing leading bit mask");
@@ -168,7 +170,8 @@ inline size_t count_utf8_to_utf16(const char* sData, size_t sSize)
 	}
 	catch (std::range_error& ex)
 	{
-		ex;
+		LOG_PROTOCOL(ex.what());
+		LOG_PROTOCOL({ s.data(), s.size() });
 		destSize = 0;
 	}
 
@@ -209,14 +212,14 @@ std::vector<std::wstring> regex_split(const std::wstring& str, const wchar_t* to
 	return elems;
 }
 
-inline size_t count_utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
+inline size_t count_utf16_to_utf8(const std::wstring_view s)
 {
-	size_t destSize(srcSize);
+	size_t destSize(s.size());
 	try
 	{
-		for (size_t index = 0; index < srcSize; ++index)
+		for (size_t index = 0; index < s.size(); ++index)
 		{
-			const std::wstring::value_type ch(srcData[index]);
+			const std::wstring::value_type ch(s[index]);
 			if (ch <= 0x7FF)
 			{
 				if (ch > 0x7F) // 2 bytes needed (11 bits used)
@@ -228,12 +231,12 @@ inline size_t count_utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
 			else if (ch >= H_SURROGATE_START && ch <= H_SURROGATE_END) // 4 bytes needed (21 bits used)
 			{
 				++index;
-				if (index == srcSize)
+				if (index == s.size())
 				{
 					throw std::range_error("UTF-16 string is missing low surrogate");
 				}
 
-				const auto lowSurrogate = srcData[index];
+				const auto lowSurrogate = s[index];
 				if (lowSurrogate < L_SURROGATE_START || lowSurrogate > L_SURROGATE_END)
 				{
 					throw std::range_error("UTF-16 string has invalid low surrogate");
@@ -249,22 +252,23 @@ inline size_t count_utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
 	}
 	catch (std::range_error& ex)
 	{
-		ex;
+		LOG_PROTOCOL(ex.what());
+		LOG_PROTOCOL({s.data(), s.size()});
 		destSize = 0;
 	}
 
 	return destSize;
 }
 
-std::string utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
+std::string utf16_to_utf8(std::wstring_view s)
 {
-	std::string dest(count_utf16_to_utf8(srcData, srcSize), '\0');
-	char* destData = &dest[0];
+	std::string dest(count_utf16_to_utf8(s), '\0');
+	std::span<char> destData(dest);
 	size_t destIndex(0);
 
-	for (size_t index = 0; index < srcSize; ++index)
+	for (size_t index = 0; index < s.size(); ++index)
 	{
-		const std::wstring::value_type src = srcData[index];
+		const std::wstring::value_type src = s[index];
 		if (src <= 0x7FF)
 		{
 			if (src <= 0x7F) // single byte character
@@ -281,7 +285,7 @@ std::string utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
 		else if (src >= H_SURROGATE_START && src <= H_SURROGATE_END)
 		{
 			const auto highSurrogate = src;
-			const auto lowSurrogate = srcData[++index];
+			const auto lowSurrogate = s[++index];
 
 			// To get from surrogate pair to Unicode code point:
 			// - subtract 0xD800 from high surrogate, this forms top ten bits
@@ -310,23 +314,24 @@ std::string utf16_to_utf8(const wchar_t* srcData, size_t srcSize)
 	return dest;
 }
 
-std::wstring utf8_to_utf16(const char* srcData, size_t srcSize)
+std::wstring utf8_to_utf16(std::string_view s)
 {
 	// Save repeated heap allocations, use the length of resulting sequence.
-	std::wstring dest(count_utf8_to_utf16(srcData, srcSize), L'\0');
-	std::wstring::value_type* const destData = &dest[0];
+	const auto sz = s.size();
+	std::wstring dest(count_utf8_to_utf16(s), L'\0');
+	std::span<wchar_t>destData(dest);
 	size_t destIndex = 0;
 
-	for (size_t index = 0; index < srcSize; ++index)
+	for (size_t index = 0; index < sz; ++index)
 	{
-		char src = srcData[index];
+		char src = s[index];
 		switch (src & 0xF0)
 		{
 			case 0xF0: // 4 byte character, 0x10000 to 0x10FFFF
 			{
-				const char c2{ srcData[++index] };
-				const char c3{ srcData[++index] };
-				const char c4{ srcData[++index] };
+				const char c2{ s[++index] };
+				const char c3{ s[++index] };
+				const char c4{ s[++index] };
 				uint32_t codePoint =
 					((src & LOW_3BITS) << 18) | ((c2 & LOW_6BITS) << 12) | ((c3 & LOW_6BITS) << 6) | (c4 & LOW_6BITS);
 				if (codePoint >= SURROGATE_PAIR_START)
@@ -351,8 +356,8 @@ std::wstring utf8_to_utf16(const char* srcData, size_t srcSize)
 			break;
 			case 0xE0: // 3 byte character, 0x800 to 0xFFFF
 			{
-				const char c2{ srcData[++index] };
-				const char c3{ srcData[++index] };
+				const char c2{ s[++index] };
+				const char c3{ s[++index] };
 				destData[destIndex++] = static_cast<std::wstring::value_type>(
 					((src & LOW_4BITS) << 12) | ((c2 & LOW_6BITS) << 6) | (c3 & LOW_6BITS));
 			}
@@ -360,9 +365,8 @@ std::wstring utf8_to_utf16(const char* srcData, size_t srcSize)
 			case 0xD0: // 2 byte character, 0x80 to 0x7FF
 			case 0xC0:
 			{
-				const char c2{ srcData[++index] };
-				destData[destIndex++] =
-					static_cast<std::wstring::value_type>(((src & LOW_5BITS) << 6) | (c2 & LOW_6BITS));
+				const char c2{ s[++index] };
+				destData[destIndex++] = static_cast<std::wstring::value_type>(((src & LOW_5BITS) << 6) | (c2 & LOW_6BITS));
 			}
 			break;
 			default: // single byte character, 0x0 to 0x7F
@@ -370,14 +374,15 @@ std::wstring utf8_to_utf16(const char* srcData, size_t srcSize)
 				// since they are quite probable
 				do
 				{
-					destData[destIndex++] = static_cast<std::wstring::value_type>(srcData[index++]);
-				} while (index < srcSize && srcData[index] > 0);
+					destData[destIndex++] = static_cast<std::wstring::value_type>(s[index++]);
+				} while (index < sz && s[index] > 0);
 				// adjust index since it will be incremented by the for loop
 				--index;
 		}
 	}
 	return dest;
 }
+
 
 std::string generateRandomId(size_t length /*= 0*/)
 {
@@ -401,20 +406,6 @@ bool is_ascii(const wchar_t* szFilename)
 	while (szFilename[i] != 0)
 	{
 		if (szFilename[i++] > 127)
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool is_number(const wchar_t* szFilename)
-{
-	size_t i = 0;
-	while (szFilename[i] != 0)
-	{
-		if (!std::isdigit(szFilename[i++]))
 		{
 			return false;
 		}
@@ -516,7 +507,7 @@ time_t parse_xmltv_date(const char* sz_date, size_t full_len)
 		return 0;
 	}
 
-	struct tm tm_obj;
+	struct tm tm_obj{};
 
 	time_t result = 0;
 	if (len >= DATE_OFF_SEC + 2)
@@ -565,7 +556,7 @@ time_t parse_xmltv_date(const char* sz_date, size_t full_len)
 
 std::wstring& ensure_backslash(std::wstring& src)
 {
-	if (!src.empty() && src.back() == '\\')
+	if (!src.empty() && src.ends_with('\\'))
 	{
 		return src;
 	}

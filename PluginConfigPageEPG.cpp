@@ -145,8 +145,10 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	m_wndEpgIdSource.SetCurSel(plugin->get_epg_parameter(0).epg_id_source);
 
 	m_DuneIP = GetConfig().get_string(true, REG_DUNE_IP).c_str();
-	TemplateParams params;
-	params.creds = GetPropertySheet()->m_selected_cred;
+	TemplateParams params
+	{
+		.creds = GetPropertySheet()->m_selected_cred
+	};
 
 	plugin->get_api_token(params);
 	m_Token = GetPropertySheet()->m_selected_cred.s_token.c_str();
@@ -314,13 +316,19 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 {
 	UpdateData(TRUE);
 
-	utils::http_request req{ CompileEpgUrl() };
-	req.user_agent = GetPropertySheet()->m_plugin->get_user_agent();
+	utils::http_request req
+	{
+		.url = CompileEpgUrl(),
+		.user_agent = GetPropertySheet()->m_plugin->get_user_agent()
+	};
 
 	if (!m_EpgAuth.IsEmpty())
 	{
-		TemplateParams params;
-		params.creds = GetPropertySheet()->m_selected_cred;
+		TemplateParams params
+		{
+			.creds = GetPropertySheet()->m_selected_cred
+		};
+
 		const auto& token = utils::utf8_to_utf16(GetPropertySheet()->m_plugin->get_api_token(params));
 		if (!token.empty())
 		{

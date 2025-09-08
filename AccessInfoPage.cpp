@@ -55,12 +55,12 @@ static std::string get_utf8(const std::wstring& value)
 
 static std::string get_utf8(const CString& value)
 {
-	return utils::utf16_to_utf8(value.GetString(), value.GetLength());
+	return utils::utf16_to_utf8(std::wstring_view(value.GetString(), value.GetLength()));
 }
 
 static std::string get_utf8(const wchar_t* value)
 {
-	return utils::utf16_to_utf8(std::wstring_view(value));
+	return utils::utf16_to_utf8(value);
 }
 
 static std::wstring get_utf16(const std::string& value)
@@ -70,7 +70,7 @@ static std::wstring get_utf16(const std::string& value)
 
 static std::wstring get_utf16(const char* value)
 {
-	return utils::utf8_to_utf16(std::string_view(value));
+	return utils::utf8_to_utf16(value);
 }
 
 // CAccessDlg dialog
@@ -271,16 +271,17 @@ void CAccessInfoPage::CreateAccountsList()
 	m_wndAccounts.InsertColumn(last++, L"", LVCFMT_LEFT, 22, 0);
 	switch (m_plugin->get_access_type())
 	{
-		case AccountAccessType::enPin:
+		using enum AccountAccessType;
+		case enPin:
 			vWidth /= 2;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
-		case AccountAccessType::enLoginPass:
+		case enLoginPass:
 			vWidth /= 3;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_LOGIN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_PASSWORD).c_str(), LVCFMT_LEFT, vWidth, 0);
 			break;
-		case AccountAccessType::enOtt:
+		case enOtt:
 			vWidth /= 3;
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_TOKEN).c_str(), LVCFMT_LEFT, vWidth, 0);
 			m_wndAccounts.InsertColumn(last++, load_string_resource(IDS_STRING_COL_VPORTAL).c_str(), LVCFMT_LEFT, vWidth, 0);
@@ -300,16 +301,17 @@ void CAccessInfoPage::CreateAccountsList()
 		size_t sub_idx = 0;
 		switch (m_plugin->get_access_type())
 		{
-			case AccountAccessType::enPin:
+			using enum AccountAccessType;
+			case enPin:
 				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_password().c_str());
 				break;
 
-			case AccountAccessType::enLoginPass:
+			case enLoginPass:
 				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_login().c_str());
 				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_password().c_str());
 				break;
 
-			case AccountAccessType::enOtt:
+			case enOtt:
 				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_ott_key().c_str());
 				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_portal().c_str());
 				break;
@@ -399,8 +401,10 @@ BOOL CAccessInfoPage::OnApply()
 		return FALSE;
 	}
 
-	TemplateParams params;
-	params.creds = selected;
+	TemplateParams params
+	{
+		.creds = selected
+	};
 
 	if (m_wndServers.GetCount())
 	{
@@ -442,15 +446,16 @@ void CAccessInfoPage::OnBnClickedButtonAdd()
 	static constexpr auto newVal = "new";
 	switch (m_plugin->get_access_type())
 	{
-		case AccountAccessType::enPin:
+		using enum AccountAccessType;
+		case enPin:
 			cred.password = newVal;
 			break;
 
-		case AccountAccessType::enLoginPass:
+		case enLoginPass:
 			cred.login = newVal;
 			break;
 
-		case AccountAccessType::enOtt:
+		case enOtt:
 			cred.token = newVal;
 			break;
 
@@ -485,10 +490,13 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 
 		switch (m_plugin->get_access_type())
 		{
-			case AccountAccessType::enOtt:
+			using enum AccountAccessType;
+			case enOtt:
 			{
-				utils::http_request req{ url };
-				req.user_agent = m_plugin->get_user_agent();
+				utils::http_request req {
+					.url = url,
+					.user_agent = m_plugin->get_user_agent()
+				};
 				if (utils::AsyncDownloadFile(req).get())
 				{
 					std::ifstream instream(url);
@@ -498,7 +506,6 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 				std::istringstream stream(req.body.str());
 				if (!stream.good()) return;
 
-				Credentials cred;
 				auto playlist = std::make_unique<Playlist>();
 				auto entry = std::make_unique<PlaylistEntry>(playlist, GetAppPath(utils::PLUGIN_ROOT));
 				std::string line;
@@ -528,7 +535,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			}
 
 			// Pin
-			case AccountAccessType::enPin:
+			case enPin:
 			{
 				if (boost::regex_match(url, m, re))
 				{
@@ -544,7 +551,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			}
 
 			// Login/Password
-			case AccountAccessType::enLoginPass:
+			case enLoginPass:
 			{
 				if (boost::regex_match(url, m, re))
 				{
@@ -604,7 +611,8 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 
 	switch (m_plugin->get_access_type())
 	{
-		case AccountAccessType::enPin:
+		using enum AccountAccessType;
+		case enPin:
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
@@ -619,7 +627,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			}
 			break;
 
-		case AccountAccessType::enLoginPass:
+		case enLoginPass:
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
@@ -639,7 +647,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			}
 			break;
 
-		case AccountAccessType::enOtt:
+		case enOtt:
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
@@ -768,8 +776,10 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	}
 	m_wndConfigs.SetCurSel(sel_idx);
 
-	TemplateParams params;
-	params.creds = selected;
+	TemplateParams params
+	{
+		.creds = selected
+	};
 
 	m_plugin->parse_account_info(params);
 	m_plugin->update_provider_params(params);
@@ -994,8 +1004,10 @@ void CAccessInfoPage::GetAccountInfo()
 	auto entry = std::make_shared<PlaylistEntry>(playlist, GetAppPath(utils::PLUGIN_ROOT));
 	entry->set_is_template(false);
 
-	TemplateParams params;
-	params.creds = selected_cred;
+	TemplateParams params
+	{
+		.creds = selected_cred
+	};
 
 	m_plugin->get_api_token(params);
 	m_plugin->parse_account_info(params);
@@ -1016,8 +1028,12 @@ void CAccessInfoPage::GetAccountInfo()
 
 	if (!pl_url.empty())
 	{
-		utils::http_request req{ pl_url, min_cache_ttl };
-		req.user_agent = m_plugin->get_user_agent();
+		utils::http_request req
+		{
+			.url = pl_url,
+			.cache_ttl = min_cache_ttl,
+			.user_agent = m_plugin->get_user_agent()
+		};
 		if (utils::AsyncDownloadFile(req).get())
 		{
 			std::istringstream stream(req.body.str());

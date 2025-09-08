@@ -236,15 +236,20 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	const auto& plugin = GetPropertySheet()->m_plugin;
 	auto& cred = GetPropertySheet()->m_selected_cred;
 
-	TemplateParams params;
-	params.creds = cred;
-	params.playlist_idx = m_wndVodTemplates.GetCurSel();
+	TemplateParams params
+	{
+		.creds = cred,
+		.playlist_idx = m_wndVodTemplates.GetCurSel()
+	};
 
 	plugin->get_api_token(params);
 	plugin->update_provider_params(params);
 
-	utils::http_request req{ plugin->get_vod_url(params) };
-	req.user_agent = plugin->get_user_agent();
+	utils::http_request req
+	{
+		.url = plugin->get_vod_url(params),
+		.user_agent = plugin->get_user_agent()
+	};
 	if (utils::AsyncDownloadFile(req).get())
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"vod.m3u8";
@@ -328,8 +333,10 @@ void CPluginConfigPageVOD::OnBnClickedCheckPlaylistShowLink()
 	{
 		auto& cred = GetPropertySheet()->m_selected_cred;
 
-		TemplateParams params;
-		params.creds = cred;
+		TemplateParams params
+		{
+			.creds = cred
+		};
 
 		GetPropertySheet()->m_plugin->get_api_token(params);
 		params.playlist_idx = m_wndVodTemplates.GetCurSel();

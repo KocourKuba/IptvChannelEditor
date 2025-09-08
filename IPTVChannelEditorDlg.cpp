@@ -726,8 +726,10 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_plugin->configure_plugin();
 	m_plugin->configure_provider_plugin();
 
-	TemplateParams params;
-	params.creds = cur_account;
+	TemplateParams params
+	{
+		.creds = cur_account
+	};
 
 	m_plugin->get_api_token(params);
 	m_plugin->parse_account_info(params);
@@ -748,10 +750,11 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		std::wstring name;
 		switch (stream.stream_type)
 		{
-			case StreamType::enHLS:
+			using enum StreamType;
+			case enHLS:
 				name = L"HLS";
 				break;
-			case StreamType::enMPEGTS:
+			case enMPEGTS:
 				name = L"MPEG";
 				break;
 		}
@@ -984,9 +987,11 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 
 	Credentials old_credentials(cur_account);
 
-	TemplateParams params;
-	params.creds = old_credentials;
-	params.playlist_idx = idx;
+	TemplateParams params
+	{
+		.creds = old_credentials,
+		.playlist_idx = idx
+	};
 
 	m_plugin->get_api_token(params);
 
@@ -1054,8 +1059,12 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 	}
 	else if (utils::CrackUrl(m_playlist_url))
 	{
-		utils::http_request req{ m_playlist_url, force ? std::chrono::hours::zero() : GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) };
-		req.user_agent = m_plugin->get_user_agent();
+		utils::http_request req
+		{
+			.url = m_playlist_url,
+			.cache_ttl = force ? std::chrono::hours::zero() : GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
+			.user_agent = m_plugin->get_user_agent()
+		};
 
 		if (!utils::AsyncDownloadFile(req).get())
 		{
@@ -1900,9 +1909,11 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	m_epgID1 = channel->get_epg_id(0).c_str();
 	m_epgID2 = m_plugin->get_epg_parameter(1).epg_url.empty() ? L"" : channel->get_epg_id(1).c_str();
 
-	TemplateParams params;
-	params.creds = GetCurrentAccount();
-	params.streamSubtype = (StreamType)stream_idx;
+	TemplateParams params
+	{
+		.creds = GetCurrentAccount(),
+		.streamSubtype = (StreamType)stream_idx
+	};
 
 	UpdateExtToken(channel.get());
 	UpdateVars(channel.get());
@@ -2155,14 +2166,17 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 		}
 
 
-		TemplateParams params;
-		params.creds = GetCurrentAccount();
+		TemplateParams params
+		{
+			.creds = GetCurrentAccount()
+		};
 
-		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-		const auto& url = m_plugin->compile_epg_url(epg_idx, epg_id, time(nullptr), uri_stream, params);
-
-		utils::http_request req{ url, cache_ttl };
-		req.user_agent = m_plugin->get_user_agent();
+		utils::http_request req
+		{
+			.url = m_plugin->compile_epg_url(epg_idx, epg_id, time(nullptr), uri_stream, params),
+			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
+			.user_agent = m_plugin->get_user_agent()
+		};
 
 		const auto epg_param = m_plugin->get_epg_parameter(epg_idx);
 		if (!epg_param.epg_auth.empty())
@@ -2282,11 +2296,14 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 {
 	auto stop = m_threadDownload.get_stop_token();
 
-	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 	auto url_n = utils::utf16_to_utf8(url);
-	utils::http_request req{ url, cache_ttl};
-	req.user_agent = m_plugin->get_user_agent();
-	req.stop_token = stop;
+	utils::http_request req
+	{
+		.url = url,
+		.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
+		.user_agent = m_plugin->get_user_agent(),
+		.stop_token = stop
+	};
 
 	try
 	{
@@ -2380,7 +2397,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 		bool added = false;
 		auto dwStart = utils::ChronoGetTickCount();
 		int ch_cnt = 0;
-		auto xmltv_file = utils::utf16_to_utf8(cache_file);
+		auto xmltv_file = utils::utf16_to_utf8(cache_file.c_str());
 		auto node_doc = std::make_unique<rapidxml::xml_document<>>();
 		rapidxml::file<> xmlFileTmp(xmltv_file.c_str());
 		node_doc->parse<rapidxml::parse_fastest>(xmlFileTmp.data());
@@ -3939,12 +3956,14 @@ void CIPTVChannelEditorDlg::PlayItem(HTREEITEM hItem, int archive_hour /*= 0*/, 
 	auto uri_stream = GetUriStream(info);
 	if (uri_stream)
 	{
-		TemplateParams params;
-		params.creds = GetCurrentAccount();
-		params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
-
 		int sec_back = 86400 * archive_day + 3600 * archive_hour;
-		params.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back;
+		TemplateParams params
+		{
+			.creds = GetCurrentAccount(),
+			.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel()),
+			.shift_back = sec_back ? _time32(nullptr) - sec_back : sec_back
+		};
+
 
 		UpdateExtToken(uri_stream);
 		UpdateVars(uri_stream);
@@ -4359,58 +4378,62 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 	bool save = false;
 	switch (image_lib.get_type())
 	{
-	case ImageLibType::enFile:
-		if (image_lib.get_package_name().empty())
-		{
-			const auto& logos = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH) + (isChannel ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH);
-			save = ChooseIconFromFile(logos.c_str(), uri_stream, isChannel);
-		}
-		else if (!image_lib.get_url().empty())
-		{
-			const std::filesystem::path image_cache = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
-			const auto& dir_path = image_cache / std::filesystem::path(image_lib.get_package_name()).stem() / L"";
-			const auto& file_path = utils::GetCachedPath(image_lib.get_url());
-			if (!std::filesystem::exists(file_path) || std::filesystem::file_size(file_path) == 0)
+		using enum ImageLibType;
+		case enFile:
+			if (image_lib.get_package_name().empty())
 			{
-				std::error_code err;
-				std::filesystem::remove_all(dir_path, err);
-
-				auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL, 24h);
-				utils::http_request req{ image_lib.get_url(), cache_ttl };
-				if (!utils::AsyncDownloadFile(req).get())
-				{
-					AfxMessageBox(req.error_message.c_str(), MB_ICONERROR | MB_OK);
-					break;
-				}
+				const auto& logos = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH) + (isChannel ? utils::CHANNELS_LOGO_PATH : utils::CATEGORIES_LOGO_PATH);
+				save = ChooseIconFromFile(logos.c_str(), uri_stream, isChannel);
 			}
-
-			if (!std::filesystem::exists(dir_path))
+			else if (!image_lib.get_url().empty())
 			{
-				auto& extractor = theApp.m_archiver.GetExtractor();
-				extractor.SetArchivePath(file_path);
-				extractor.DetectCompressionFormat();
-				if (!extractor.ExtractArchive(dir_path.wstring()))
+				const std::filesystem::path image_cache = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
+				const auto& dir_path = image_cache / std::filesystem::path(image_lib.get_package_name()).stem() / L"";
+				const auto& file_path = utils::GetCachedPath(image_lib.get_url());
+				if (!std::filesystem::exists(file_path) || std::filesystem::file_size(file_path) == 0)
 				{
-					const auto& msg = load_string_resource_fmt(IDS_STRING_ERR_FAILED_UNPACK_PACKAGE, file_path.wstring(), dir_path.wstring());
-					AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
-					break;
-				}
-			}
+					std::error_code err;
+					std::filesystem::remove_all(dir_path, err);
 
-			save = ChooseIconFromFile(dir_path.c_str(), uri_stream, isChannel);
-		}
-		break;
-	case ImageLibType::enLink:
-		save = ChooseIconFromLink(uri_stream);
-		break;
-	case ImageLibType::enHTML:
-		save = ChooseIconFromLib(idx, image_lib.get_url(), uri_stream, true, image_lib.get_square());
-		break;
-	case ImageLibType::enM3U:
-		save = ChooseIconFromLib(idx, image_lib.get_url(), uri_stream, false, image_lib.get_square());
-		break;
-	default:
-		break;
+					utils::http_request req
+					{
+						.url = image_lib.get_url(),
+						.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL, 24h)
+					};
+					if (!utils::AsyncDownloadFile(req).get())
+					{
+						AfxMessageBox(req.error_message.c_str(), MB_ICONERROR | MB_OK);
+						break;
+					}
+				}
+
+				if (!std::filesystem::exists(dir_path))
+				{
+					auto& extractor = theApp.m_archiver.GetExtractor();
+					extractor.SetArchivePath(file_path);
+					extractor.DetectCompressionFormat();
+					if (!extractor.ExtractArchive(dir_path.wstring()))
+					{
+						const auto& msg = load_string_resource_fmt(IDS_STRING_ERR_FAILED_UNPACK_PACKAGE, file_path.wstring(), dir_path.wstring());
+						AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
+						break;
+					}
+				}
+
+				save = ChooseIconFromFile(dir_path.c_str(), uri_stream, isChannel);
+			}
+			break;
+		case enLink:
+			save = ChooseIconFromLink(uri_stream);
+			break;
+		case enHTML:
+			save = ChooseIconFromLib(idx, image_lib.get_url(), uri_stream, true, image_lib.get_square());
+			break;
+		case enM3U:
+			save = ChooseIconFromLib(idx, image_lib.get_url(), uri_stream, false, image_lib.get_square());
+			break;
+		default:
+			break;
 	}
 
 	if (!save)
@@ -4725,9 +4748,11 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 		return;
 	}
 
-	TemplateParams params;
-	params.creds = GetCurrentAccount();
-	params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
+	TemplateParams params
+	{
+		.creds = GetCurrentAccount(),
+		.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel())
+	};
 
 
 	CFileDialog dlg(FALSE);
@@ -4801,16 +4826,17 @@ void CIPTVChannelEditorDlg::OnBnClickedExportM3U()
 			std::string catchup;
 			switch (m_plugin->get_supported_stream(0).cu_type)
 			{
-				case CatchupType::cu_default:
+				using enum CatchupType;
+				case cu_default:
 					catchup = "default";
 					break;
-				case CatchupType::cu_shift:
+				case cu_shift:
 					catchup = "shift";
 					break;
-				case CatchupType::cu_append:
+				case cu_append:
 					catchup = "append";
 					break;
-				case CatchupType::cu_flussonic:
+				case cu_flussonic:
 					catchup = "flussonic";
 					break;
 				default:
@@ -5042,8 +5068,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		icon_uri.set_uri(utils::ICON_TEMPLATE);
 		icon_uri.set_path(utils::CHANNELS_LOGO_URL + fname.substr(pos + 1));
 
-		utils::http_request req{ channel->get_icon_uri().get_uri() };
-		req.user_agent = m_plugin->get_user_agent();
+		utils::http_request req
+		{
+			.url = channel->get_icon_uri().get_uri(),
+			.user_agent = m_plugin->get_user_agent()
+		};
 
 		if (!utils::AsyncDownloadFile(req).get())
 		{

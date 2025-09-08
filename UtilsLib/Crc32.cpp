@@ -35,6 +35,7 @@ DEALINGS IN THE SOFTWARE.
 /// zlib's CRC32 polynomial
 constexpr uint32_t Polynomial = 0xEDB88320;
 constexpr uint32_t nChunkSize = 1024 * 64;
+constexpr auto BUFFSIZE = 16384;
 
 /// compute CRC32 (bitwise algorithm)
 uint32_t crc32_bitwise(const void* data, size_t length, uint32_t previousCrc32 /*= 0*/)
@@ -58,8 +59,7 @@ uint32_t crc32_bitwise(const void* data, size_t length, uint32_t previousCrc32 /
 
 uint32_t file_crc32(const std::wstring& filename)
 {
-	static constexpr auto BUFFSIZE = 16384;
-	std::array<char, BUFFSIZE> buffer{};
+	std::vector<char> buffer(BUFFSIZE);
 
 	uint32_t nCrc32 = 0;
 	std::ifstream ifs(filename, std::ifstream::binary);

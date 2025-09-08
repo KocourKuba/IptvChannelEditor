@@ -376,14 +376,20 @@ void CPluginConfigPageTV::OnCbnSelchangeComboStreamType()
 void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 {
 	const auto& cred = GetPropertySheet()->m_selected_cred;
-	TemplateParams params;
-	params.creds = cred;
-	params.playlist_idx = m_wndPlaylistTemplates.GetCurSel();
+	TemplateParams params
+	{
+		.creds = cred,
+		.playlist_idx = m_wndPlaylistTemplates.GetCurSel()
+	};
 
 	GetPropertySheet()->m_plugin->update_provider_params(params);
 
-	utils::http_request req{ GetPropertySheet()->m_plugin->get_playlist_url(params) };
-	req.user_agent = GetPropertySheet()->m_plugin->get_user_agent();
+	utils::http_request req
+	{
+		.url = GetPropertySheet()->m_plugin->get_playlist_url(params),
+		.user_agent = GetPropertySheet()->m_plugin->get_user_agent()
+	};
+
 	if (utils::AsyncDownloadFile(req).get())
 	{
 		const auto& out_file = std::filesystem::temp_directory_path().wstring() + L"tmp.m3u8";
@@ -454,9 +460,11 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShowLink()
 	if (show)
 	{
 		const auto& cred = GetPropertySheet()->m_selected_cred;
-		TemplateParams params;
-		params.creds = cred;
-		params.playlist_idx = m_wndPlaylistTemplates.GetCurSel();
+		TemplateParams params
+		{
+			.creds = cred,
+			.playlist_idx = m_wndPlaylistTemplates.GetCurSel()
+		};
 
 		GetPropertySheet()->m_plugin->update_provider_params(params);
 		m_PlaylistTemplate = GetPropertySheet()->m_plugin->get_playlist_url(params).c_str();
