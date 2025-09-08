@@ -1953,7 +1953,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	m_timeShiftHours = channel->get_time_shift_hours();
 	m_timeShiftMins = channel->get_time_shift_mins();
 	m_isArchive = !!channel->is_archive();
-	m_wndArchiveDays.EnableWindow(m_isArchive);
+	m_wndArchiveDays.SetReadOnly(!m_isArchive);
 	m_archiveDays = channel->get_archive_days();
 	m_isAdult = channel->get_adult();
 
@@ -3349,14 +3349,14 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 	m_wndEpg2.EnableWindow(single && !m_plugin->get_epg_parameter(1).epg_url.empty());
 	m_wndEpg3.EnableWindow((m_xmltvEpgSource != -1 && m_xmltvEpgSource < (int)m_xmltv_sources.size()) ? !m_xmltv_sources[m_xmltvEpgSource].empty() : FALSE);
 
-	m_wndArchiveDays.EnableWindow((state != 0) && (m_isArchive != 0));
+	m_wndArchiveDays.SetReadOnly((state == 0) || (m_isArchive == 0));
 	m_wndArchiveDays.SetTextColor(single && (changed_flag & MOD_ARCHIVE) ? m_colorChanged : m_normal);
 
 	m_wndEpgID1.SetTextColor(single && (changed_flag & MOD_EPG1) ? m_colorChanged : m_normal);
-	m_wndEpgID1.EnableWindow(single);
+	m_wndEpgID1.SetReadOnly(!single);
 
 	m_wndEpgID2.SetTextColor(single && (changed_flag & MOD_EPG2) ? m_colorChanged : m_normal);
-	m_wndEpgID2.EnableWindow(single && !m_plugin->get_epg_parameter(1).epg_url.empty());
+	m_wndEpgID2.SetReadOnly(!single || m_plugin->get_epg_parameter(1).epg_url.empty());
 
 	m_wndIconUrl.SetTextColor(single && (changed_flag & MOD_ICON) ? m_colorChanged : m_normal);
 
@@ -3644,7 +3644,7 @@ void CIPTVChannelEditorDlg::OnBnClickedCheckArchive()
 
 		m_archiveDays = m_isArchive ? (m_archiveDays != 0 ? m_archiveDays : 7) : 0;
 		channel->set_archive_days(m_archiveDays);
-		m_wndArchiveDays.EnableWindow(m_isArchive);
+		m_wndArchiveDays.SetReadOnly(!m_isArchive);
 		UpdateData(FALSE);
 	}
 
