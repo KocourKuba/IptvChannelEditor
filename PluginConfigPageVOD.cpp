@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include <iosfwd>
+#include <ranges>
 #include "IPTVChannelEditor.h"
 #include "PluginConfigPageVOD.h"
 #include "FillParamsInfoDlg.h"

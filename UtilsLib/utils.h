@@ -137,9 +137,9 @@ public:
 
 inline std::string& string_tolower(std::string& s)
 {
-	std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c)
+	std::transform(s.begin(), s.end(), s.begin(), [](const char c)
 				   {
-					   return (char)std::tolower(c);
+					   return static_cast<char>(std::tolower(c));
 				   });
 
 	return s;
@@ -147,10 +147,11 @@ inline std::string& string_tolower(std::string& s)
 
 inline std::string string_tolower_copy(const std::string& s)
 {
-	std::string str(s);
-	std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
+	std::string str;
+	str.reserve(s.size());
+	std::ranges::transform(s, std::back_inserter(str), [](const char c)
 				   {
-					   return (char)std::tolower(c);
+					   return static_cast<char>(std::tolower(c));
 				   });
 
 	return str;
@@ -158,9 +159,9 @@ inline std::string string_tolower_copy(const std::string& s)
 
 inline std::wstring& wstring_tolower(std::wstring& s)
 {
-	std::transform(s.begin(), s.end(), s.begin(), [](wchar_t c)
+	std::transform(s.begin(), s.end(), s.begin(), [](const wchar_t c)
 				   {
-					   return (wchar_t)std::tolower(c);
+					   return static_cast<wchar_t>(std::tolower(c));
 				   });
 
 	return s;
@@ -405,22 +406,22 @@ static std::basic_string<T> make_text_rtf_safe(const std::basic_string<T>& text)
 												   std::basic_string<T>((const T*)replace.data()));
 
 	std::basic_string<T> rtf;
-	for (auto it = html_fixed.begin(); it != html_fixed.end(); ++it)
+	for (const auto ch : html_fixed)
 	{
-		if (*it == '\r') continue;
+		if (ch == '\r') continue;
 
-		if (*it == '\n')
+		if (ch == '\n')
 		{
-			rtf += (const T*)paragraph.data();
+			rtf += paragraph.data();
 			continue;
 		}
 
-		if (*it == '\\' || *it == '{' || *it == '}')
+		if (ch == '\\' || ch == '{' || ch == '}')
 		{
 			rtf += '\\';
 		}
 
-		rtf += *it;
+		rtf += ch;
 	}
 
 	return rtf;
@@ -446,6 +447,5 @@ std::wstring& ensure_backslash(std::wstring& src);
 time_t parse_xmltv_date(const char* sz_date, size_t full_len);
 std::string generateRandomId(size_t length = 0);
 bool is_ascii(const wchar_t* szFilename);
-bool is_number(const wchar_t* szFilename);
 
 }

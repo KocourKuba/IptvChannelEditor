@@ -26,10 +26,10 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include <chrono>
-#include <random>
 
 #include <boost/regex.hpp>
-#include <span>
+#include <ranges>
+#include <random>
 #include "utils.h"
 #include "Logger.h"
 
@@ -92,7 +92,8 @@ inline size_t count_utf8_to_utf16(const std::string_view s)
 
 	try
 	{
-		for (size_t index = 0; index < sz;)
+		size_t index = 0;
+		while (index < sz)
 		{
 			if (s[index] >= 0)
 			{
@@ -217,7 +218,7 @@ inline size_t count_utf16_to_utf8(const std::wstring_view s)
 	size_t destSize(s.size());
 	try
 	{
-		for (size_t index = 0; index < s.size(); ++index)
+		for (size_t index : std::views::iota(0ul, s.size()))
 		{
 			const std::wstring::value_type ch(s[index]);
 			if (ch <= 0x7FF)
@@ -266,7 +267,7 @@ std::string utf16_to_utf8(std::wstring_view s)
 	std::span<char> destData(dest);
 	size_t destIndex(0);
 
-	for (size_t index = 0; index < s.size(); ++index)
+	for (size_t index : std::views::iota(0ul, s.size()))
 	{
 		const std::wstring::value_type src = s[index];
 		if (src <= 0x7FF)
@@ -322,7 +323,7 @@ std::wstring utf8_to_utf16(std::string_view s)
 	std::span<wchar_t>destData(dest);
 	size_t destIndex = 0;
 
-	for (size_t index = 0; index < sz; ++index)
+	for (size_t index : std::views::iota(0ul, sz))
 	{
 		char src = s[index];
 		switch (src & 0xF0)

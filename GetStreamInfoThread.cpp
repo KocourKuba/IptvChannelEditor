@@ -53,9 +53,9 @@ BOOL CGetStreamInfoThread::InitInstance()
 
 		BS::thread_pool pool(m_config.m_max_threads);
 		std::atomic<int> count { 0 };
-		const auto& res = pool.submit_blocks(0, (int)m_config.m_container->size(), [this, &count](const auto& a, const auto& b)
+		const auto& res = pool.submit_blocks(0ul , m_config.m_container->size(), [this, &count](const auto& a, const auto& b)
 											 {
-												 for (auto i = a; i < b; i++)
+												 for (auto i : std::views::iota(a, b))
 												 {
 													 GetChannelStreamInfo(m_config, count, i);
 												 }
@@ -72,22 +72,24 @@ BOOL CGetStreamInfoThread::InitInstance()
 	return FALSE;
 }
 
-void CGetStreamInfoThread::GetChannelStreamInfo(CThreadConfig& config, std::atomic<int>& count, int index)
+void CGetStreamInfoThread::GetChannelStreamInfo(CThreadConfig& config, std::atomic<int>& count, size_t index)
 {
 	TRACE("GetChannelStreamInfo: thread %d start\n", index);
 	if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0)
 		return;
 
-	auto uri = config.m_container->at(index);
-	const auto& url = config.m_plugin->get_play_stream(config.m_params, uri);
+	const auto& uri_stream = config.m_container->at(index);
+	const auto& url = config.m_plugin->get_play_stream(config.m_params, uri_stream);
 
 	if (url.empty())
 		return;
 
-	SECURITY_ATTRIBUTES sa{};
-	sa.nLength = sizeof(sa);
-	sa.bInheritHandle = TRUE;
-	sa.lpSecurityDescriptor = nullptr;
+	SECURITY_ATTRIBUTES sa
+	{
+		.nLength = sizeof(sa),
+		.lpSecurityDescriptor = nullptr,
+		.bInheritHandle = TRUE,
+	};
 
 	// Create a pipe for the child process's STDOUT
 	HANDLE hStdoutRd;
@@ -106,13 +108,14 @@ void CGetStreamInfoThread::GetChannelStreamInfo(CThreadConfig& config, std::atom
 	std::string result;
 	BOOL bResult = FALSE;
 
-	STARTUPINFO si = { 0 };
-	si.cb = sizeof(STARTUPINFO);
-	si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
-	si.wShowWindow = SW_HIDE;
-	si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-	si.hStdInput = nullptr;
-	si.hStdOutput = hChildStdoutWr;
+	STARTUPINFO si = {
+		.cb = sizeof(STARTUPINFO),
+		.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES,
+		.wShowWindow = SW_HIDE,
+		.hStdInput = nullptr,
+		.hStdOutput = hChildStdoutWr,
+		.hStdError = GetStdHandle(STD_ERROR_HANDLE),
+	};
 
 	PROCESS_INFORMATION pi = { nullptr };
 
@@ -272,7 +275,7 @@ void CGetStreamInfoThread::GetChannelStreamInfo(CThreadConfig& config, std::atom
 	TRACE("GetChannelStreamInfo: Thread %d, Video: %s, Audio: %s\n", (int)count, video.c_str(), audio.c_str());
 
 	ULARGE_INTEGER ul = { (DWORD)++count, (DWORD)config.m_container->size() };
-	std::tuple<int, std::string, std::string> tuple = { uri->get_hash(), audio, video };
+	std::tuple<int, std::string, std::string> tuple = { uri_stream->get_hash(), audio, video };
 
 	SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul, (LPARAM)&tuple);
 }

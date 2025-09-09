@@ -26,12 +26,12 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "inet_utils.h"
-#include "Logger.h"
 #include <winhttp.h>
 #include <unordered_map>
 #include <filesystem>
 #include <fstream>
 #include <future>
+#include "Logger.h"
 #include "xxhash.hpp"
 #include "utils.h"
 

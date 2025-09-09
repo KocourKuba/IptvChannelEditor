@@ -53,7 +53,7 @@ public:
 	void SetData(const CThreadConfig& config) { m_config = config; };
 
 protected:
-	static void GetChannelStreamInfo(CThreadConfig& config, std::atomic<int>& count, int index);
+	static void GetChannelStreamInfo(CThreadConfig& config, std::atomic<int>& count, size_t index);
 
 protected:
 	CThreadConfig m_config;
