@@ -3,10 +3,18 @@
 
 $HD_NEW_LINE = '';
 
+$HD_OB_PREFIX = null;
+
 function hd_print($str)
 {
-    global $HD_NEW_LINE;
-    echo $str . $HD_NEW_LINE;
+    global $HD_NEW_LINE, $HD_OB_PREFIX;
+    if (isset($HD_OB_PREFIX))
+    {
+        echo $HD_OB_PREFIX . $str . $HD_NEW_LINE;
+        ob_flush();
+    }
+    else
+        echo $str . $HD_NEW_LINE;
 }
 
 ///////////////////////////////////////////////////////////////////////////

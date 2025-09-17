@@ -21,6 +21,23 @@ abstract class DunePluginFw
 
     public function invoke_operation($plugin, $call_ctx)
     {
+        if (method_exists($plugin, "set_plugin_cookies"))
+            $plugin->set_plugin_cookies($call_ctx->plugin_cookies);
+
+        if (method_exists($plugin, "set_internet_status"))
+        {
+            $internet_status = isset($call_ctx->internet_status) ?
+                intval($call_ctx->internet_status) : -2;
+            $plugin->set_internet_status($internet_status);
+        }
+
+        if (method_exists($plugin, "set_opexec_id"))
+        {
+            $opexec_id = isset($call_ctx->opexec_id) ?
+                $call_ctx->opexec_id : "-1";
+            $plugin->set_opexec_id($opexec_id);
+        }
+
         if ($call_ctx->op_type_code === PLUGIN_OP_GET_FOLDER_VIEW ||
             $call_ctx->op_type_code === PLUGIN_OP_GET_NEXT_FOLDER_VIEW ||
             $call_ctx->op_type_code === PLUGIN_OP_GET_TV_INFO ||
@@ -29,11 +46,21 @@ abstract class DunePluginFw
             $call_ctx->op_type_code === PLUGIN_OP_GET_VOD_STREAM_URL)
         {
             $php_func_name = $call_ctx->op_type_code;
+            $php_func_name_v2 = $call_ctx->op_type_code . "_v2";
 
-            return
-                $plugin->$php_func_name(
+            if (isset($call_ctx->input_data) &&
+                isset($call_ctx->input_data->sel_state) &&
+                method_exists($plugin, $php_func_name_v2))
+            {
+                return $plugin->$php_func_name_v2(
                     $call_ctx->input_data->media_url,
+                    $call_ctx->input_data->sel_state,
                     $call_ctx->plugin_cookies);
+            }
+
+            return $plugin->$php_func_name(
+                $call_ctx->input_data->media_url,
+                $call_ctx->plugin_cookies);
         }
 
         if ($call_ctx->op_type_code === PLUGIN_OP_GET_REGULAR_FOLDER_ITEMS)
@@ -56,6 +83,19 @@ abstract class DunePluginFw
 
         if ($call_ctx->op_type_code === PLUGIN_OP_GET_TV_PLAYBACK_URL)
         {
+            $php_func_name_v2 = $call_ctx->op_type_code . "_v2";
+            if (isset($call_ctx->input_data) &&
+                isset($call_ctx->input_data->program_id) &&
+                method_exists($plugin, $php_func_name_v2))
+            {
+                return $plugin->$php_func_name_v2(
+                    $call_ctx->input_data->channel_id,
+                    $call_ctx->input_data->archive_tm,
+                    $call_ctx->input_data->protect_code,
+                    $call_ctx->input_data->program_id,
+                    $call_ctx->plugin_cookies);
+            }
+
             return
                 $plugin->get_tv_playback_url(
                     $call_ctx->input_data->channel_id,
