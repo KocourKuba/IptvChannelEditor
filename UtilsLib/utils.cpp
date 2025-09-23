@@ -267,7 +267,7 @@ std::string utf16_to_utf8(std::wstring_view s)
 	std::span<char> destData(dest);
 	size_t destIndex(0);
 
-	for (size_t index : std::views::iota(0ul, s.size()))
+	for (size_t index = 0; index < s.size(); ++index)
 	{
 		const std::wstring::value_type src = s[index];
 		if (src <= 0x7FF)
@@ -323,7 +323,7 @@ std::wstring utf8_to_utf16(std::string_view s)
 	std::span<wchar_t>destData(dest);
 	size_t destIndex = 0;
 
-	for (size_t index : std::views::iota(0ul, sz))
+	for (size_t index = 0; index < sz; ++index)
 	{
 		char src = s[index];
 		switch (src & 0xF0)
