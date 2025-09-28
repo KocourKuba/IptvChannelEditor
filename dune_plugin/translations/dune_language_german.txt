@@ -271,6 +271,8 @@ epg_not_ready = EPG nicht bereit
 epg_not_ready_desc = EPG wird noch indexiert, bitte warten
 fake_epg_program = Programm
 epg_indexing = Verarbeitung...
+epg_not_set = XMTLV-Quellen nicht gesetzt!
+epg_not_capable = Internetquelle EPG wird vom Provider nicht unterstützt!
 
 err_too_old_player = Dieser DUNE HD-Player ist zu alt und wird nicht unterstützt
 err_load_playlist = Fehler beim Laden der Playlist!
@@ -294,3 +296,5 @@ err_auth_no_spam = Vorherige Autorisierungsanforderung fehlgeschlagen|um zu verm
 err_empty_zip__1 = Leere ZIP-Datei %s
 err_unknown_file_type = Unbekannter Dateityp
 err_load_vod = Fehler beim Laden des VOD!
+err_using_json_epg = EPG-Internetquelle wird nicht unterstützt!
+err_no_xmltv_sources = Keine XMLTV-Quellen vorhanden!

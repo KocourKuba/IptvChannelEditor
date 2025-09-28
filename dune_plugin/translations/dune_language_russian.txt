@@ -272,6 +272,8 @@ epg_not_ready = Программа передач еще не готова
 epg_not_ready_desc = Идет индексирование программ передач, пожалуйста подождите
 fake_epg_program = Телепрограмма
 epg_indexing = Идет обработка...
+epg_not_set = Источники XMLTV не заданы!
+epg_not_capable = Провайдер не поддерживает Интернет источник EPG!
 
 err_too_old_player = Эта DUNE HD слишком старая и не поддерживается плагином
 err_load_playlist = Ошибка загрузки плейлиста!
@@ -295,3 +297,5 @@ err_auth_no_spam = Предыдущий запрос авторизации не
 err_empty_zip__1 = Пустой файл архива %s
 err_unknown_file_type = Неизвестный тип файла
 err_load_vod = Ошибка чтения медиатеки!
+err_using_json_epg = Провайдер не поддерживает Интернет источник!
+err_no_xmltv_sources = Нет источников XMLTV!

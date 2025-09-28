@@ -57,21 +57,13 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
         }
 
         $sources = $this->plugin->get_all_xmltv_sources();
-        if ($sources->size() !== 0) {
-            $epg_source_ops[ENGINE_XMLTV] = TR::t('setup_epg_engine_xmltv');
-        }
+        $epg_source_ops[ENGINE_XMLTV] = TR::t('setup_epg_engine_xmltv');
 
         $cache_engine = $this->plugin->get_setting(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
 
-        $source_ops_cnt = count($epg_source_ops);
-        if ($source_ops_cnt > 1) {
-            Control_Factory::add_combobox($defs, $this, null,
-                PARAM_EPG_CACHE_ENGINE, TR::t('setup_epg_engine'),
-                $cache_engine, $epg_source_ops, self::CONTROLS_WIDTH, true);
-        } else if ($source_ops_cnt === 1) {
-            Control_Factory::add_button($defs, $this,null, "dummy",
-                TR::t('setup_epg_engine'), reset($epg_source_ops), self::CONTROLS_WIDTH);
-        }
+        Control_Factory::add_combobox($defs, $this, null,
+            PARAM_EPG_CACHE_ENGINE, TR::t('setup_epg_engine'),
+            $cache_engine, $epg_source_ops, self::CONTROLS_WIDTH, true);
 
         //////////////////////////////////////
         // ext epg
@@ -208,6 +200,15 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
                 break;
 
             case PARAM_EPG_CACHE_ENGINE:
+                if ($user_input->{$control_id} === ENGINE_JSON && !$this->plugin->is_json_capable()) {
+                    $post_action = Action_Factory::show_title_dialog(TR::t('err_using_json_epg'));
+                    break;
+                }
+                if ($user_input->{$control_id} === ENGINE_XMLTV && !$this->plugin->get_all_xmltv_sources()->size()) {
+                    $post_action = Action_Factory::show_title_dialog(TR::t('err_no_xmltv_sources'));
+                    break;
+                }
+
                 $this->plugin->tv->unload_channels();
                 $this->plugin->set_setting($control_id, $user_input->{$control_id});
                 $this->plugin->init_epg_manager();

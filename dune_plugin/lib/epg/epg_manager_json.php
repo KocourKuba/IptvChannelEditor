@@ -51,6 +51,14 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
             return false;
         }
 
+        if (!$this->plugin->is_json_capable()) {
+            return array($day_start_ts => array(
+                Epg_Params::EPG_END => $day_start_ts + 86400,
+                Epg_Params::EPG_NAME => TR::load('epg_not_exist'),
+                Epg_Params::EPG_DESC => TR::load('epg_not_capable'),
+            ));
+        }
+
         $day_epg = array();
         $first = reset($epg_ids);
         foreach (array(Plugin_Constants::EPG_FIRST, Plugin_Constants::EPG_SECOND) as $key => $epg_source) {

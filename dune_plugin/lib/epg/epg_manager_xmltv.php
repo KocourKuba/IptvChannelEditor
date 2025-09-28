@@ -158,6 +158,14 @@ class Epg_Manager_Xmltv
         $any_lock = $this->indexer->is_any_index_locked();
         $day_epg = array();
         $ext_epg = $this->plugin->is_ext_epg_enabled();
+        if (!$active_sources->size()) {
+            return array($day_start_ts => array(
+                Epg_Params::EPG_END => $day_start_ts + 86400,
+                Epg_Params::EPG_NAME => TR::load('epg_not_exist'),
+                Epg_Params::EPG_DESC => TR::load('epg_not_set'),
+            ));
+        }
+
         foreach($active_sources as $hash => $source) {
             if ($this->indexer->is_index_locked($hash)) {
                 hd_debug_print("EPG $source->url still indexing, append to delayed queue channel id: " . $channel->get_id());
