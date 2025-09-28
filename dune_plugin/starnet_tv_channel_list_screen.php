@@ -179,10 +179,10 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
             case ACTION_ZOOM_POPUP_MENU:
                 $menu_items = array();
                 $zoom_data = $this->plugin->get_channel_zoom($selected_media_url->channel_id);
-                foreach (DuneVideoZoomPresets::$zoom_ops as $idx => $zoom_item) {
+                foreach (HD::get_zoom_opts_translated() as $idx => $zoom_item) {
                     $menu_items[] = $this->plugin->create_menu_item($this,
                         ACTION_ZOOM_APPLY,
-                        TR::t($zoom_item),
+                        $zoom_item,
                         (strcmp($idx, $zoom_data) !== 0 ? null : "check.png"),
                         array(ACTION_ZOOM_SELECT => (string)$idx));
                 }
@@ -321,11 +321,12 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
                         implode(", ", $channel->get_epg_ids())
                     );
                 } else {
+                    $zoom_ops = HD::get_zoom_opts_translated();
                     $detailed_info = TR::t('tv_screen_channel_info__4',
                         $channel->get_title(),
                         $channel->get_archive(),
                         implode(", ", $channel->get_epg_ids()),
-                        TR::load(DuneVideoZoomPresets::$zoom_ops[$zoom_data])
+                        $zoom_ops[$zoom_data]
                     );
                 }
 

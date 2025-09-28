@@ -66,8 +66,9 @@ class Control_Factory
      * @param array &$defs
      * @param string $title
      * @param string $text
+     * @param int $vgap_after
      */
-    public static function add_smart_label(&$defs, $title, $text)
+    public static function add_smart_label(&$defs, $title, $text, $vgap_after = false)
     {
         $defs[] = array(
             GuiControlDef::name => '',
@@ -76,6 +77,9 @@ class Control_Factory
             GuiControlDef::specific_def => array(GuiLabelDef::caption => $text),
             GuiControlDef::params => array('smart' => true),
         );
+        if ($vgap_after !== false) {
+            self::add_vgap($defs, $vgap_after);
+        }
     }
 
     /**

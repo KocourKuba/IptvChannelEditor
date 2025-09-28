@@ -32,7 +32,6 @@ const ACTION_EMPTY = 'empty';
 const ACTION_PLUGIN_INFO = 'plugin_info';
 const ACTION_CHANGE_GROUP_ICON = 'change_group_icon';
 const ACTION_CHANGE_BACKGROUND = 'change_background';
-const ACTION_CHANNEL_INFO = 'channel_info';
 const ACTION_CHANGE_EPG_SOURCE = 'change_epg_source';
 const ACTION_FILTER = 'action_filter';
 const ACTION_CREATE_FILTER = 'create_filter';

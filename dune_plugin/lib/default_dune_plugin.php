@@ -1316,40 +1316,66 @@ class Default_Dune_Plugin implements DunePlugin
             return null;
         }
 
-        $info  = "ID: {$channel->get_id()}" . PHP_EOL;
-        $info .= "Name: {$channel->get_title()}" . PHP_EOL;
-        $info .= "Archive: " . var_export($channel->get_archive(), true) . " day's" . PHP_EOL;
-        $info .= "Protected: " . var_export($channel->is_protected(), true) . PHP_EOL;
-        $info .= "EPG IDs: " . implode(', ', $channel->get_epg_ids()) . PHP_EOL;
-        if ($channel->get_timeshift_hours() !== 0 || $channel->get_timeshift_mins() !== 0) {
-            $info .= sprintf("Timeshift hours: %d:%02d", $channel->get_timeshift_hours(),$channel->get_timeshift_mins()) . PHP_EOL;
-        }
+        $defs = array();
+
+        Control_Factory::add_vgap($defs, -20);
+        self::format_smart_label($defs, "ID:", $channel->get_id());
+        self::format_smart_label($defs, TR::load('name'), $channel->get_title());
         $groups = array();
         foreach ($channel->get_groups() as $group) {
             $groups[] = $group->get_title();
         }
-        $info .= "Categories: " . implode(', ', $groups) . PHP_EOL;
-        $info .= "Icon: " . wrap_string_to_lines($channel->get_icon_url(), 70) . PHP_EOL;
-        $info .= PHP_EOL;
+        self::format_smart_label($defs, TR::load('categories'), implode(', ', $groups));
+        self::format_smart_label($defs, TR::load('archive'), $channel->get_archive() . ' ' . TR::load('days'));
+        self::format_smart_label($defs, TR::load('adult'), $channel->is_protected() ? TR::load('yes') : TR::load('no'));
+        self::format_smart_label($defs, "EPG ID:", implode(', ', $channel->get_epg_ids()));
+
+        if ($channel->get_timeshift_hours() !== 0 || $channel->get_timeshift_mins() !== 0) {
+            $epg_shift = format_duration_minutes($channel->get_timeshift_hours() * 60 + $channel->get_timeshift_mins());
+            self::format_smart_label($defs, TR::load('time_shift'), $epg_shift . ' ' . TR::load('hours'));
+        }
+        self::format_smart_label($defs, TR::load('icon'), wrap_string_to_lines($channel->get_icon_url(), 120, "<br/>"));
+        Control_Factory::add_vgap($defs, 30);
+
+        if ($this->get_setting(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON) === ENGINE_JSON) {
+            self::format_smart_label($defs, TR::load('setup_epg_engine'), TR::load('setup_epg_engine_json'));
+            foreach (array(Plugin_Constants::EPG_FIRST, Plugin_Constants::EPG_SECOND) as $epg_source) {
+                $epg_url = $this->config->get_epg_parameter($epg_source, Epg_Params::EPG_URL);
+                if (!empty($epg_url)) {
+                    $epg_url = wrap_string_to_lines($epg_url, 120, "<br/>");
+                    self::format_smart_label($defs, TR::load('epg_url'), $epg_url);
+                }
+            }
+        } else {
+            self::format_smart_label($defs, TR::load('setup_epg_engine'), TR::load('setup_epg_engine_xmltv'));
+            foreach($this->get_all_xmltv_sources() as $source) {
+                $epg_url = wrap_string_to_lines($source->url, 120, "<br/>");
+                self::format_smart_label($defs, TR::load('epg_url'), $epg_url);
+            }
+        }
 
         $live_url = '';
         try {
             $live_url = $this->config->GenerateStreamUrl($channel, -1, true);
-            $info .= "Live URL: " . wrap_string_to_lines($live_url, 76) . PHP_EOL;
+            $live_url = wrap_string_to_lines(htmlspecialchars($live_url), 120, "<br/>");
+            self::format_smart_label($defs, TR::load('live_url'), $live_url);
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
         }
 
         try {
             $archive_url = $this->config->GenerateStreamUrl($channel, time() - 3600, true);
-            $info .= "Archive URL: " . wrap_string_to_lines($archive_url, 76) . PHP_EOL;
+            $archive_url = wrap_string_to_lines(htmlspecialchars($archive_url), 120, "<br/>");
+            self::format_smart_label($defs, TR::load('archive_url'), $archive_url);
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
         }
 
         $dune_params = $this->config->UpdateDuneParams('');
         if (!empty($dune_params)) {
-            $info .= "dune_params: " . substr($dune_params, strlen(HD::DUNE_PARAMS_MAGIC)) . PHP_EOL;
+            Control_Factory::add_vgap($defs, 30);
+            self::format_smart_label($defs, "dune_params:", $dune_params);
+            Control_Factory::add_vgap($defs, 30);
         }
 
         if (!empty($live_url) && !is_limited_apk()) {
@@ -1372,31 +1398,20 @@ class Default_Dune_Plugin implements DunePlugin
                 fclose($pipes[1]);
                 proc_close($process);
 
-                $info .= PHP_EOL;
                 foreach(explode(PHP_EOL, $output) as $line) {
                     $line = trim($line);
                     if (empty($line)) continue;
                     if (strpos($line, "Output") !== false) break;
                     if (strpos($line, "Stream") !== false) {
-                        $info .= preg_replace("/ \([\[].*\)| \[.*\]|, [0-9k\.]+ tb[rcn]|, q=[0-9\-]+/", "", $line) . PHP_EOL;
+                        $line = substr($line, 7);
+                        $line = preg_replace("/ \(\[.*\)| \[.*]|, [0-9k.]+ tb[rcn]|, q=[0-9\-]+/", "", $line);
+                        self::format_smart_label($defs, TR::load('stream'), $line);
                     }
                 }
             }
         }
 
-        Control_Factory::add_multiline_label($defs, null, $info, 18);
-        Control_Factory::add_vgap($defs, 10);
-
-        $text = sprintf("<gap width=%s/><icon>%s</icon><gap width=10/><icon>%s</icon><text color=%s size=small>  %s</text>",
-            1200,
-            get_image_path('page_plus_btn.png'),
-            get_image_path('page_minus_btn.png'),
-            DEF_LABEL_TEXT_COLOR_SILVER,
-            TR::load('scroll_page')
-        );
-        Control_Factory::add_smart_label($defs, '', $text);
-        Control_Factory::add_vgap($defs, -80);
-
+        Control_Factory::add_vgap($defs, 20);
         Control_Factory::add_close_dialog_button($defs, TR::t('ok'), 250, true);
         Control_Factory::add_vgap($defs, 10);
 
@@ -1510,6 +1525,21 @@ class Default_Dune_Plugin implements DunePlugin
 
         $item[PluginTvEpgProgram::ext_id] = $channel_id;
         return $item;
+    }
+
+    protected static function format_smart_label(&$defs, $name, $text)
+    {
+        if ($name === null) {
+            Control_Factory::add_smart_label($defs, null,
+                sprintf("<text color=%s size=small>%s</text>", DEF_LABEL_TEXT_COLOR_WHITE, $text),  -30);
+        } else {
+            Control_Factory::add_smart_label($defs, null,
+                sprintf("<gap width=0/><text color=%s size=small>%s</text><gap width=20/><text color=%s size=small>%s</text>",
+                    DEF_LABEL_TEXT_COLOR_GOLD, $name,
+                    DEF_LABEL_TEXT_COLOR_WHITE, $text),
+                -30
+            );
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////

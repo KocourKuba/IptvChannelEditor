@@ -125,10 +125,10 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             case ACTION_ZOOM_POPUP_MENU:
                 $menu_items = array();
                 $zoom_data = $this->plugin->get_channel_zoom($media_url->channel_id);
-                foreach (DuneVideoZoomPresets::$zoom_ops as $idx => $zoom_item) {
+                foreach (HD::get_zoom_opts_translated() as $idx => $zoom_item) {
                     $menu_items[] = $this->plugin->create_menu_item($this,
                         ACTION_ZOOM_APPLY,
-                        TR::t($zoom_item),
+                        $zoom_item,
                         (strcmp($idx, $zoom_data) !== 0 ? null : "check.png"),
                         array(ACTION_ZOOM_SELECT => (string)$idx)
                     );

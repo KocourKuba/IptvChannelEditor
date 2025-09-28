@@ -263,21 +263,21 @@ class Starnet_Tv implements User_Input_Handler
         $all_channels = new Default_Group(
             $this->plugin,
             ALL_CHANNEL_GROUP_ID,
-            TR::load(Default_Group::ALL_CHANNEL_GROUP_CAPTION),
+            TR::load(TR::load('plugin_all_channels')),
             Default_Group::ALL_CHANNEL_GROUP_ICON);
 
         // Favorites group
         $fav_group = new Default_Group(
             $this->plugin,
             FAVORITES_GROUP_ID,
-            TR::load(Default_Group::FAV_CHANNEL_GROUP_CAPTION),
+            TR::load('plugin_favorites'),
             Default_Group::FAV_CHANNEL_GROUP_ICON);
 
         // History channels category
         $history_channels = new Default_Group(
             $this->plugin,
             HISTORY_GROUP_ID,
-            TR::load(Default_Group::HISTORY_GROUP_CAPTION),
+            TR::load('plugin_history'),
             Default_Group::HISTORY_GROUP_ICON);
 
         // Vod group

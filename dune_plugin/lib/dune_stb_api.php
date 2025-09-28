@@ -728,30 +728,55 @@ function get_local_tz()
 }
 
 /**
- * @return int|string
+ * Return integer of offset in seconds
+ * @return int
  */
 function get_local_time_zone_offset()
 {
-    // return integer of offset in seconds
-    $local_tz = get_local_tz();
+    static $offset = null;
 
-    if ($local_tz !== '') {
-        $sign_ch = $local_tz[0];
-        if ($sign_ch === '-') {
-            $sign = -1;
-        } else if ($sign_ch === '+') {
-            $sign = +1;
+    if (is_null($offset)) {
+        $local_tz = get_local_tz();
+        if ($local_tz === '') {
+            $offset = 0;
         } else {
-            return '';
+            $sign_ch = $local_tz[0];
+            if ($sign_ch === '-') {
+                $sign = -1;
+            } else {
+                $sign = 1;
+            }
+
+            $tz_hh = (int)substr($local_tz, 1, 2);
+            $tz_mm = (int)substr($local_tz, 3, 2);
+
+            $offset = $sign * ($tz_hh * 60 + $tz_mm) * 60;
         }
-
-        $tz_hh = (int)substr($local_tz, 1, 2);
-        $tz_mm = (int)substr($local_tz, 3, 2);
-
-        return $sign * ($tz_hh * 60 + $tz_mm) * 60;
     }
 
-    return 0;
+    return $offset;
+}
+
+/**
+ * Adjust timestamp from local time TZ to UTC
+ *
+ * @param int $time
+ * @return int
+ */
+function from_local_time_zone_offset($time)
+{
+    return $time - get_local_time_zone_offset();
+}
+
+/**
+ * Adjust timestamp from UTC to local time TZ
+ *
+ * @param int $time
+ * @return int
+ */
+function to_local_time_zone_offset($time)
+{
+    return $time + get_local_time_zone_offset();
 }
 
 /**
@@ -884,6 +909,30 @@ function format_duration_seconds($secs)
     }
 
     return sprintf("%02d:%02d", $minutes, $seconds);
+}
+
+/**
+ * @param string $secs
+ * @param bool $show_sign
+ * @return string
+ */
+function format_duration_minutes($secs, $show_sign = true)
+{
+    if ($show_sign) {
+        $n = (int)$secs;
+    } else {
+        $n = (int)abs($secs);
+    }
+
+    if (!$show_sign && ($n <= 0 || strlen($secs) <= 0)) {
+        return "00:00";
+    }
+
+    $hours = $n / 3600;
+    $remainder = $n % 3600;
+    $minutes = abs($remainder / 60);
+
+    return sprintf(($show_sign ? "%+d:%02d" : "%d:%02d"), $hours, $minutes);
 }
 
 /**
@@ -2354,16 +2403,17 @@ function pretty_json_format($content, $options = JSON_UNESCAPED_UNICODE)
  *
  * @param string $long_string
  * @param int $max_chars
+ * @param string $separator
  * @return string
  */
-function wrap_string_to_lines($long_string, $max_chars)
+function wrap_string_to_lines($long_string, $max_chars, $separator = PHP_EOL)
 {
     $lines = array_slice(
         explode(PHP_EOL,
             iconv('Windows-1251', 'UTF-8',
                 wordwrap(iconv('UTF-8', 'Windows-1251',
                     trim(preg_replace('/([!?])\.+\s*$/Uu', '$1', $long_string))),
-                    $max_chars, PHP_EOL, true))
+                    $max_chars, $separator, true))
         ),
         0, 2
     );

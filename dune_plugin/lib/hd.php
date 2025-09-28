@@ -785,4 +785,26 @@ class HD
         }
         return null;
     }
+
+    public static function get_zoom_opts_translated()
+    {
+        static $zoom_ops_translated;
+
+        if (empty($zoom_ops_translated)) {
+            $zoom_ops_translated = array(
+                DuneVideoZoomPresets::not_set => TR::load('tv_screen_zoom_not_set'),
+                DuneVideoZoomPresets::normal => TR::load('tv_screen_zoom_normal'),
+                DuneVideoZoomPresets::enlarge => TR::load('tv_screen_zoom_enlarge'),
+                DuneVideoZoomPresets::make_wider => TR::load('tv_screen_zoom_make_wider'),
+                DuneVideoZoomPresets::fill_screen => TR::load('tv_screen_zoom_fill_screen'),
+                DuneVideoZoomPresets::full_fill_screen => TR::load('tv_screen_zoom_full_fill_screen'),
+                DuneVideoZoomPresets::make_taller => TR::load('tv_screen_zoom_make_taller'),
+                DuneVideoZoomPresets::cut_edges => TR::load('tv_screen_zoom_cut_edges'),
+                DuneVideoZoomPresets::full_enlarge => TR::load('tv_screen_zoom_full_enlarge'),
+                DuneVideoZoomPresets::full_stretch => TR::load('tv_screen_zoom_full_stretch'),
+            );
+        }
+
+        return $zoom_ops_translated;
+    }
 }

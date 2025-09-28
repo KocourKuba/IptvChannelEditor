@@ -33,13 +33,10 @@ class Default_Group extends Json_Serializer implements Group
     // views constants
     const DEFAULT_GROUP_ICON = 'plugin_file://icons/categories/default_group.png';
 
-    const ALL_CHANNEL_GROUP_CAPTION = 'plugin_all_channels';
     const ALL_CHANNEL_GROUP_ICON = 'plugin_file://icons/categories/all.png';
 
-    const FAV_CHANNEL_GROUP_CAPTION = 'plugin_favorites';
     const FAV_CHANNEL_GROUP_ICON = 'plugin_file://icons/categories/fav.png';
 
-    const HISTORY_GROUP_CAPTION = 'plugin_history';
     const HISTORY_GROUP_ICON = 'plugin_file://icons/categories/history.png';
 
     const CHANGED_CHANNELS_GROUP_CAPTION = 'plugin_changed';
