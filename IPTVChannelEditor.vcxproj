@@ -311,7 +311,6 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ResourceCompile Include="IPTVChannelEditor.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="defaults_8.7.json" />
     <None Include="defaults_9.0.json" />
     <None Include="dune_plugin\changelog.md" />
     <None Include="PropertySheet.props" />
