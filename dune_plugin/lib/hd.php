@@ -209,18 +209,18 @@ class HD
      * @param $url string
      * @param $opts array
      * @return bool|string
-     * @throws Exception
      */
-    public static function http_get_document($url, $opts = null)
+    public static function get_http_document($url, $opts = null)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_MAXREDIRS, 2);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 90);
+        curl_setopt($ch, CURLOPT_FILETIME, true);
         curl_setopt($ch, CURLOPT_USERAGENT, self::get_dune_user_agent());
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -231,22 +231,28 @@ class HD
             }
         }
 
-        hd_debug_print("Using UserAgent: " . self::get_dune_user_agent());
         hd_debug_print("HTTP fetching '$url'");
 
         $content = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $info = curl_getinfo($ch);
+        $http_code = $info['http_code'];
 
         if ($content === false) {
             $err_msg = "Fetch $url failed. HTTP error: $http_code (" . curl_error($ch) . ')';
             hd_debug_print($err_msg);
-            throw new Exception($err_msg);
+            return false;
+        }
+
+        if ($http_code >= 400) {
+            $err_msg = "Fetch $url failed. HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
+            hd_debug_print($err_msg);
+            return false;
         }
 
         if ($http_code >= 300) {
-            $err_msg = "Fetch $url failed. HTTP request failed ($http_code): " . self::http_status_code_to_string($http_code);
+            $err_msg = "Fetch $url completed, but ignored. HTTP request ($http_code): " . self::http_status_code_to_string($http_code);
             hd_debug_print($err_msg);
-            throw new Exception($err_msg);
+            $content = '';
         }
 
         curl_close($ch);
@@ -344,7 +350,7 @@ class HD
      */
     public static function http_post_document($url, $post_data)
     {
-        return self::http_get_document($url,
+        return self::get_http_document($url,
             array
             (
                 CURLOPT_POST => true,
@@ -361,7 +367,7 @@ class HD
      */
     public static function http_put_document($url, $in_file, $in_file_size)
     {
-        return self::http_get_document($url,
+        return self::get_http_document($url,
             array
             (
                 CURLOPT_PUT => true,

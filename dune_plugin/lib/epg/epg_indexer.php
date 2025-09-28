@@ -217,9 +217,8 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         $expired = true;
 
         if ((int)$source->ttl === -1) {
-            $this->curl_wrapper->set_url($source->url);
-            if ($this->curl_wrapper->check_is_expired()) {
-                $this->curl_wrapper->clear_cached_etag();
+            if ($this->curl_wrapper->check_is_expired($source->url)) {
+                Curl_Wrapper::clear_cached_etag($source->url);
             } else {
                 $expired = false;
             }
@@ -297,20 +296,19 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 throw new Exception("Unsupported EPG format (JTV)");
             }
 
-            $this->curl_wrapper->set_url($source->url);
-            $expired = $this->curl_wrapper->check_is_expired() || !file_exists($tmp_filename);
+            $expired = $this->curl_wrapper->check_is_expired($source->url) || !file_exists($tmp_filename);
             if (!$expired) {
                 hd_debug_print("File not changed, using cached file: $cached_file");
                 $this->set_index_locked($hash, false);
                 return 1;
             }
 
-            $this->curl_wrapper->clear_cached_etag();
-            if (!$this->curl_wrapper->download_file($tmp_filename, true)) {
+            Curl_Wrapper::clear_cached_etag($source->url);
+            if (!$this->curl_wrapper->download_file($source->url, $tmp_filename)) {
                 throw new Exception("Ошибка скачивания $source->url\n\n" . $this->curl_wrapper->get_raw_response_headers());
             }
 
-            if ($this->curl_wrapper->get_response_code() !== 200) {
+            if ($this->curl_wrapper->get_http_code() !== 200) {
                 throw new Exception("Ошибка скачивания $source->url\n\n" . $this->curl_wrapper->get_raw_response_headers());
             }
 
@@ -468,7 +466,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     public function clear_all_epg_files()
     {
         hd_debug_print(null, true);
-        $this->curl_wrapper->clear_all_etag_cache();
+        Curl_Wrapper::clear_cached_etag_by_hash('');
         $this->clear_memory_index();
 
         if (empty($this->cache_dir)) {

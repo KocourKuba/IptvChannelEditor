@@ -227,7 +227,7 @@ class Starnet_Tv implements User_Input_Handler
                     if (is_file($channels_list_path)) {
                         unlink($channels_list_path);
                     }
-                    file_put_contents($channels_list_path, HD::http_get_document($url_path));
+                    file_put_contents($channels_list_path, Curl_Wrapper::simple_download_content($url_path));
                 } catch (Exception $ex) {
                     if (!file_exists($channels_list_path)) {
                         hd_debug_print("Can't fetch channel_list from $url_path");

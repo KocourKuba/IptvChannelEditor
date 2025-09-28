@@ -1275,8 +1275,6 @@ class default_config extends dynamic_config
 
         hd_debug_print("ApiCommandUrl: $command_url", true);
 
-        $this->curl_wrapper->set_url($command_url);
-
         $send_headers = array();
         if (isset($curl_opt[CURLOPT_HTTPHEADER])) {
             $send_headers = array_merge($send_headers, $curl_opt[CURLOPT_HTTPHEADER]);
@@ -1300,9 +1298,9 @@ class default_config extends dynamic_config
         }
 
         if (is_null($file)) {
-            $response = $this->curl_wrapper->download_content();
+            $response = $this->curl_wrapper->download_content($command_url);
         } else {
-            $response = $this->curl_wrapper->download_file($file);
+            $response = $this->curl_wrapper->download_file($command_url, $file);
         }
 
         if ($response === false) {
@@ -1363,7 +1361,7 @@ class default_config extends dynamic_config
                     hd_debug_print("$type playlist not defined");
                     throw new Exception('$type playlist not defined');
                 }
-                file_put_contents($m3u_file, HD::http_get_document($url));
+                file_put_contents($m3u_file, Curl_Wrapper::simple_download_content($url));
             } catch (Exception $ex) {
                 hd_debug_print("Unable to load $type playlist");
                 print_backtrace_exception($ex);

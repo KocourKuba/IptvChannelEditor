@@ -123,7 +123,7 @@ class tvclub_config extends default_config
             $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
             $param_set = $this->plugin->get_setting($param, '');
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/set?token=$token&$param=$param_set";
-            HD::http_get_document($url);
+            Curl_Wrapper::simple_download_content($url);
             $this->load_settings();
             return true;
         } catch (Exception $ex) {

@@ -210,7 +210,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
         hd_debug_print("parser params: " . json_encode($parser_params), true);
 
         try {
-            $doc = HD::http_get_document($url);
+            $doc = Curl_Wrapper::simple_download_content($url);
             $ch_data = json_decode($doc, true);
             if (empty($ch_data)) {
                 hd_debug_print("failed to decode json: $doc");
