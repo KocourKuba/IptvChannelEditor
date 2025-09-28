@@ -650,6 +650,48 @@
           "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
           "pl_template": "http://epg.one/edem_epg_ico3.m3u8",
           "square_icons": true
+        },
+        {
+          "name": "Standard (Mirror)",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
+          "pl_template": "https://raw.githubusercontent.com/KocourKuba/epgone_mirror/master/playlists/edem_epg_ico.m3u8",
+          "square_icons": false
+        },
+        {
+          "name": "Thematic (Mirror)",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
+          "pl_template": "https://raw.githubusercontent.com/KocourKuba/epgone_mirror/master/playlists/edem_epg_ico2.m3u8",
+          "square_icons": false
+        },
+        {
+          "name": "Thematic Sorted (Mirror)",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
+          "pl_template": "https://raw.githubusercontent.com/KocourKuba/epgone_mirror/master/playlists/edem_epg_ico3.m3u8",
+          "square_icons": false
+        },
+        {
+          "name": "Standard (Square icons) (Mirror)",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
+          "pl_template": "https://raw.githubusercontent.com/KocourKuba/epgone_mirror/master/playlists/edem_epg_ico.m3u8",
+          "square_icons": true
+        },
+        {
+          "name": "Thematic (Square icons) (Mirror)",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
+          "pl_template": "https://raw.githubusercontent.com/KocourKuba/epgone_mirror/master/playlists/edem_epg_ico2.m3u8",
+          "square_icons": true
+        },
+        {
+          "name": "Thematic Sorted (Square icons) (Mirror)",
+          "parse_regex": "^(?<scheme>https?):\\/\\/.+\\/iptv\\/(?<ott_key>.+)\\/(?<id>.+)\\/.*\\.m3u8$",
+          "pl_parse_regex": "^https?:\\/\\/.*\\/playlists\\/uplist\\/.*\\/playlist\\.m3u8$",
+          "pl_template": "https://raw.githubusercontent.com/KocourKuba/epgone_mirror/master/playlists/edem_epg_ico3.m3u8",
+          "square_icons": true
         }
       ],
       "provider_url": "https://ilook.tv/",
