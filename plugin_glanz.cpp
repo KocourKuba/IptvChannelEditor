@@ -52,7 +52,7 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 			.url = config.m_url,
 			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL)
 		};
-		if (!utils::AsyncDownloadFile(req).get()) break;
+		if (!utils::DownloadFile(req)) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY
@@ -63,7 +63,9 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 
 		if (parsed_json.empty()) break;
 
-		SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, (int)parsed_json.size(), 0);
+		utils::progress_info info{ .maxPos = static_cast<int>(parsed_json.size()) };
+		config.progress_callback(info);
+		info.type = utils::ProgressType::Progress;
 
 		int cnt = 0;
 		for (const auto& item : parsed_json.items())
@@ -118,9 +120,11 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 			}
 			JSON_ALL_CATCH
 
-			if (++cnt % 100 == 0)
+			if (++cnt % 200 == 0)
 			{
-				SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
+				info.curPos = info.value = cnt;
+				config.progress_callback(info);
+
 				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 			}
 		}
@@ -131,6 +135,8 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 		categories.reset();
 	}
 
+	utils::progress_info info{ .type = utils::ProgressType::Finalizing };
+	config.progress_callback(info);
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 

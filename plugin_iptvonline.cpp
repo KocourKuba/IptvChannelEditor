@@ -85,7 +85,7 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 		.post_data = json_request.dump(),
 		.verb_post = true
 	};
-	if (utils::AsyncDownloadFile(req).get())
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY
 		{
@@ -436,15 +436,18 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 	int total = utils::get_json_int("total_items", meta_info_json["data"]["pagination"]);
 	int last = utils::get_json_int("pages", meta_info_json["data"]["pagination"]);;
 
-	SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, total, 0);
+	utils::progress_info info{ .maxPos = total };
+	config.progress_callback(info);
+	info.type = utils::ProgressType::Progress;
 
 	int cnt = 0;
 	int page = 1;
+	constexpr int limit = 100;
 	for (;;)
 	{
 		if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 
-		const auto page_url = std::format(L"{:s}/movies/?limit=100&page={:d}&category={:s}", config.m_url, page, id);
+		const auto page_url = std::format(L"{:s}/movies/?limit={:d}&page={:d}&category={:s}", config.m_url, limit, page, id);
 		utils::http_request page_req{ page_url };
 		nlohmann::json movies_json = server_request(req, true);
 		if (movies_json.empty() || !movies_json.contains("data") || !movies_json["data"].contains("items"))
@@ -497,9 +500,11 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 			}
 			JSON_ALL_CATCH
 
-			if (++cnt % 100 == 0)
+			if (++cnt % limit == 0)
 			{
-				SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
+				info.curPos = info.value = cnt;
+				config.progress_callback(info);
+
 				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 			}
 		}
@@ -507,6 +512,9 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 		if (page >= last) break;
 		page++;
 	}
+
+	info.type = utils::ProgressType::Finalizing;
+	config.progress_callback(info);
 
 	categories->set_back(movie_category->id, movie_category);
 }
@@ -524,7 +532,7 @@ nlohmann::json plugin_iptvonline::server_request(utils::http_request& request, c
 		request.headers.emplace_back("Content-Type: application/json; charset=utf-8");
 		request.headers.emplace_back(std::format("Authorization: Bearer {:s}", session_token));
 
-		if (utils::AsyncDownloadFile(request).get())
+		if (utils::DownloadFile(request))
 		{
 			JSON_ALL_TRY
 			{

@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "IconCache.h"
 
 #include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,8 +46,6 @@ void IconsSourceParseThread(const std::shared_ptr<ThreadConfig> config)
 		std::istringstream stream(wbuf);
 		if (stream.good())
 		{
-			SendNotifyParent(config->m_parent, WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
-
 			int num = 0;
 			int step = 0;
 
@@ -66,14 +65,10 @@ void IconsSourceParseThread(const std::shared_ptr<ThreadConfig> config)
 
 				entries->emplace_back(entry);
 				num++;
-				if (num % 100 == 0)
+				if (::WaitForSingleObject(config->m_hStop, 0) == WAIT_OBJECT_0)
 				{
-					SendNotifyParent(config->m_parent, WM_UPDATE_PROGRESS, num, step);
-					if (::WaitForSingleObject(config->m_hStop, 0) == WAIT_OBJECT_0)
-					{
-						entries.release();
-						break;
-					}
+					entries.release();
+					break;
 				}
 			}
 		}

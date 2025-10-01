@@ -84,7 +84,7 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 	}
 
 
-	if (utils::AsyncDownloadFile(req).get())
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY
 		{
@@ -206,9 +206,12 @@ void plugin_korona::parse_vod(const ThreadConfig& config)
 		}
 		JSON_ALL_CATCH
 
-		SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, total, 0);
+		utils::progress_info info{ .maxPos = total };
+		config.progress_callback(info);
+		info.type = utils::ProgressType::Progress;
 
 		int cnt = 0;
+		constexpr int limit = 200;
 		for (const auto& pair : categories->vec())
 		{
 			const auto& category = pair.second;
@@ -251,9 +254,11 @@ void plugin_korona::parse_vod(const ThreadConfig& config)
 					}
 					JSON_ALL_CATCH
 
-					if (++cnt % 100 == 0)
+					if (++cnt % limit == 0)
 					{
-						SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
+						info.curPos = info.value = cnt;
+						config.progress_callback(info);
+
 						if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 					}
 				}
@@ -269,6 +274,8 @@ void plugin_korona::parse_vod(const ThreadConfig& config)
 		categories.reset();
 	}
 
+	utils::progress_info info{ .type = utils::ProgressType::Finalizing };
+	config.progress_callback(info);
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
@@ -381,7 +388,7 @@ nlohmann::json plugin_korona::server_request(const std::wstring& url, const bool
 			.headers { "accept: */*",  "Content-Type: application/x-www-form-urlencoded", std::format("Authorization: Bearer {:s}", session_token) },
 		};
 
-		if (utils::AsyncDownloadFile(req).get())
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
 			{

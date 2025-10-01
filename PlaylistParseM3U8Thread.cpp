@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE.
 #include "base_plugin.h"
 
 #include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -44,8 +45,6 @@ void PlaylistParseM3U8Thread(const std::shared_ptr<ThreadConfig> config, const s
 		std::istringstream stream(wbuf);
 		if (stream.good())
 		{
-			SendNotifyParent(config->m_parent, WM_INIT_PROGRESS, (int)std::count(wbuf.begin(), wbuf.end(), '\n'), 0);
-
 			auto entry = std::make_shared<PlaylistEntry>(playlist, rootPath);
 			const auto& pl_info = parent_plugin->get_current_playlist_info();
 			const auto& epg_info = parent_plugin->get_epg_parameters();
@@ -101,14 +100,10 @@ void PlaylistParseM3U8Thread(const std::shared_ptr<ThreadConfig> config, const s
 					entry = std::make_shared<PlaylistEntry>(playlist, rootPath);
 
 					channels++;
-					if (channels % 100 == 0)
+					if (::WaitForSingleObject(config->m_hStop, 0) == WAIT_OBJECT_0)
 					{
-						SendNotifyParent(config->m_parent, WM_UPDATE_PROGRESS, channels, step);
-						if (::WaitForSingleObject(config->m_hStop, 0) == WAIT_OBJECT_0)
-						{
-							playlist.reset();
-							break;
-						}
+						playlist.reset();
+						break;
 					}
 				}
 

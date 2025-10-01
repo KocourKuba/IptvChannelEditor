@@ -66,7 +66,7 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 			.url = replace_params_vars(params, API_COMMAND_AUTH),
 			.headers { "accept: */*", std::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password) }
 		};
-		if (utils::AsyncDownloadFile(req).get())
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
 			{
@@ -107,7 +107,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 
 		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 		utils::http_request req{ config.m_url, cache_ttl };
-		if (!utils::AsyncDownloadFile(req).get()) break;
+		if (!utils::DownloadFile(req)) break;
 
 		int total = 0;
 		JSON_ALL_TRY
@@ -127,9 +127,12 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 		}
 		JSON_ALL_CATCH
 
-		SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, total, 0);
+		utils::progress_info info{ .maxPos = total };
+		config.progress_callback(info);
+		info.type = utils::ProgressType::Progress;
 
 		int cnt = 0;
+		constexpr int limit = 200;
 		for (const auto& pair : categories->vec())
 		{
 			const auto& category = pair.second;
@@ -142,10 +145,10 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 
 				utils::http_request jreq
 				{
-					.url = std::format(L"{:s}/cat/{:s}?page={:d}&per_page=200", config.m_url, category->id, page),
+					.url = std::format(L"{:s}/cat/{:s}?page={:d}&per_page={:d}", config.m_url, category->id, page, limit),
 					.cache_ttl = cache_ttl
 				};
-				if (!utils::AsyncDownloadFile(jreq).get())
+				if (!utils::DownloadFile(jreq))
 				{
 					retry++;
 					continue;
@@ -196,9 +199,10 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 					}
 					JSON_ALL_CATCH
 
-					if (++cnt % 100 == 0)
+					if (++cnt % limit == 0)
 					{
-						SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
+						info.curPos = info.value = static_cast<int>(cnt);
+						config.progress_callback(info);
 						if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 					}
 				}
@@ -224,6 +228,8 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 		categories.reset();
 	}
 
+	utils::progress_info info{ .type = utils::ProgressType::Finalizing };
+	config.progress_callback(info);
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
@@ -236,7 +242,7 @@ void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie& movi
 	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 	utils::http_request req{ url, cache_ttl };
 
-	if (!utils::AsyncDownloadFile(req).get())
+	if (!utils::DownloadFile(req))
 	{
 		return;
 	}

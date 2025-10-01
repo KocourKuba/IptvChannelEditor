@@ -61,7 +61,6 @@ protected:
 	afx_msg void OnNMDblclkListIcons(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMClickListIcons(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
-	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedButtonSearchNext();
 
@@ -80,7 +79,6 @@ protected:
 	std::wstring m_iconSource;
 	std::shared_ptr<std::vector<CIconSourceData>>& m_Icons;
 
-	CProgressCtrl m_wndProgress;
 	CListCtrlEx m_wndIconsList;
 	CImageList	m_imageList;
 	CEdit m_wndIconPath;

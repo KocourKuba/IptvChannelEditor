@@ -61,8 +61,6 @@ protected:
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 	afx_msg LRESULT OnEndLoadM3U8Playlist(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndLoadJsonPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
-	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
-	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnGetDispinfo(NMHDR* pNMHDR, LRESULT* pResult);
@@ -94,6 +92,7 @@ private:
 	void LoadMovieInfo(int idx);
 	void FilterList();
 	void GetUrl(int idx);
+	void ProgressCallbackJsonParse(const utils::progress_info& info);
 
 public:
 	Credentials m_account;

@@ -232,6 +232,7 @@ bool DownloadFile(http_request& request)
 		bool bResults = false;
 		bool bRepeat = false;
 		bool bSaveBadCache = false;
+		DWORD dwToDownload = 0;
 		for (;;)
 		{
 			if (request.stop_token.stop_requested())
@@ -266,11 +267,26 @@ bool DownloadFile(http_request& request)
 
 			if (!WinHttpQueryHeaders(hRequest,
 										WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-										WINHTTP_HEADER_NAME_BY_INDEX,
-										&dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
+									 WINHTTP_HEADER_NAME_BY_INDEX,
+									 &dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
 			{
 				request.error_message = std::format(L"Error: Failed to query headers: error code {:d}", GetLastError());
 				break;
+			}
+
+			WCHAR szContentLength[32] = { 0 };
+
+			// Query the Content-Length header
+			dwSize = sizeof(szContentLength);
+			if (WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_CONTENT_LENGTH,
+									WINHTTP_HEADER_NAME_BY_INDEX,
+									szContentLength, &dwSize, WINHTTP_NO_HEADER_INDEX)) {
+				LOG_PROTOCOL(std::format(L"Content-Length: {:s} for {:s}", szContentLength, request.url));
+				dwToDownload = std::stol(szContentLength);
+			}
+			else
+			{
+				LOG_PROTOCOL(std::format("Failed to retrieve Content-Length. Error: {:d}", GetLastError()));
 			}
 
 			switch (dwStatusCode)
@@ -319,10 +335,12 @@ bool DownloadFile(http_request& request)
 				}
 
 				case 200:
+				{
 					request.max_redirect = 5;
 					bResults = true;
 					bRepeat = false;
 					break;
+				}
 
 				case 301:
 				case 302:
@@ -367,8 +385,21 @@ bool DownloadFile(http_request& request)
 			if (!bResults || !bRepeat) break;
 		}
 
+		progress_info info;
+
+		if (dwToDownload && request.progress_callback != nullptr)
+		{
+			info.maxPos = dwToDownload / 1024;
+			request.progress_callback(info);
+			info.type = ProgressType::Progress;
+		}
+		else
+		{
+			request.progress_callback = nullptr;
+		}
 
 		DWORD dwSize = 0;
+		DWORD dwDownloaded = 0;
 		for (;;)
 		{
 			if (request.stop_token.stop_requested())
@@ -394,10 +425,19 @@ bool DownloadFile(http_request& request)
 			if (!dwSize) break;
 			std::vector<unsigned char> chunk(dwSize);
 
-			DWORD dwDownloaded = 0;
-			if (WinHttpReadData(hRequest, chunk.data(), dwSize, &dwDownloaded))
+			DWORD dwChunkSize = 0;
+			int prev = 0;
+			if (WinHttpReadData(hRequest, chunk.data(), dwSize, &dwChunkSize))
 			{
-				request.body.write(reinterpret_cast<const char*>(chunk.data()), dwDownloaded);
+				request.body.write(reinterpret_cast<const char*>(chunk.data()), dwChunkSize);
+				dwDownloaded += dwChunkSize;
+				int percent = MulDiv(dwDownloaded, 100, dwToDownload);
+				if (request.progress_callback && percent != prev && !request.stop_token.stop_requested())
+				{
+					prev = percent;
+					info.curPos = info.value = dwDownloaded / 1024;
+					request.progress_callback(info);
+				}
 			}
 			else
 			{
@@ -407,9 +447,15 @@ bool DownloadFile(http_request& request)
 			}
 		}
 
+		if (request.progress_callback && !request.stop_token.stop_requested())
+		{
+			info.type = ProgressType::Finalizing,
+			request.progress_callback(info);
+		}
+
 		if (!bResults && !bSaveBadCache) break;
 
-		if (request.cache_ttl.count() > 0 && (!request.body.fail() || bSaveBadCache))
+		if (request.cache_ttl.count() > 0 && (!request.body.fail() || bSaveBadCache || !request.body.view().size()))
 		{
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
 			request.body.seekg(0);

@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "Credentials.h"
+#include "UtilsLib\inet_utils.h"
 
 struct ThreadConfig
 {
@@ -38,6 +39,7 @@ struct ThreadConfig
 	std::string nparam;
 	std::wstring wparam;
 	std::shared_ptr<std::stringstream> m_data;
+	std::function<void(const utils::progress_info&)> progress_callback = nullptr;
 };
 
 void SendNotifyParent(CWnd* parent, UINT message, WPARAM wParam = 0, LPARAM lParam = 0);

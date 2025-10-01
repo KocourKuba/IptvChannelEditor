@@ -45,6 +45,7 @@ DEALINGS IN THE SOFTWARE.
 #include "Credentials.h"
 #include "base_plugin.h"
 #include "PlaylistTemplateInfo.h"
+#include "UtilsLib/inet_utils.h"
 
 using variantBaseInfo = std::variant<std::shared_ptr<ChannelInfo>, std::shared_ptr<ChannelCategory>, std::shared_ptr<PlaylistEntry>, std::nullptr_t>;
 
@@ -213,12 +214,8 @@ protected:
 	afx_msg void OnBeginlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedButtonChangelog();
 	afx_msg void OnBnClickedButtonCheckUpdate();
-	afx_msg LRESULT OnInitProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnSwitchPlugin(WPARAM wParam = 0, LPARAM lParam = 0);
-	afx_msg LRESULT OnUpdateProgress(WPARAM wParam = 0, LPARAM lParam = 0);
-	afx_msg LRESULT OnEndProgress(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
-	afx_msg LRESULT OnUpdateProgressStream(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndGetStreamInfo(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnTrayIconNotify(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnExit(WPARAM wParam, LPARAM lParam);
@@ -303,6 +300,10 @@ private:
 	void UpdateWindowTitle();
 	void UpdateIconInfo(uri_stream* uri);
 	void LoadCustomXmltvSources();
+	void ProgressCallbackDownload(const utils::progress_info& info);
+	void ProgressCallbackXmltvParse(const utils::progress_info& info);
+	void ProgressCallbackStreamInfo(const utils::progress_info& info);
+	void StopXmltvParseThread();
 
 protected:
 	CFont m_largeFont;
@@ -530,6 +531,6 @@ private:
 	// vod
 	std::map<std::string, std::map<std::wstring, vod_category_storage>> m_vod_categories;
 
-	std::jthread m_threadDownload;
+	std::jthread m_threadParseXml;
 	std::jthread m_threadEPG;
 };

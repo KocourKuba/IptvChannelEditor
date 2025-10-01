@@ -72,7 +72,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 			.verb_post = true,
 		};
 
-		if (!utils::AsyncDownloadFile(req).get()) break;
+		if (!utils::DownloadFile(req)) break;
 
 		JSON_ALL_TRY
 		{
@@ -119,8 +119,9 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 				categories->vec().front().second->filters.set_back(utils::utf8_to_utf16(id_tag), filters);
 			}
 
+			constexpr int limit = 300;
 			json_request["cmd"] = "flicks";
-			json_request["limit"] = 300;
+			json_request["limit"] = limit;
 			int cnt = 0;
 			int total = 0;
 			if (categories->empty()) break;
@@ -139,12 +140,15 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 					.verb_post = true
 				};
 
-				if (!utils::AsyncDownloadFile(cat_req).get()) break;
+				if (!utils::DownloadFile(cat_req)) break;
 
 				const auto& data_str = cat_req.body.str();
 				nlohmann::json movie_json = nlohmann::json::parse(data_str);
 				total += utils::get_json_int("count", movie_json);
-				SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, total, cnt);
+
+				utils::progress_info info{ .maxPos = total, .curPos = cnt };
+				config.progress_callback(info);
+				info.type = utils::ProgressType::Progress;
 				ATLTRACE("\ntotal movies: %d\n", total);
 
 				int readed = 0;
@@ -179,9 +183,10 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 						category.second->movies.set_back(movie->id, movie);
 
 						readed++;
-						if (++cnt % 100 == 0)
+						if (++cnt % limit == 0)
 						{
-							SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
+							info.curPos = info.value = cnt;
+							config.progress_callback(info);
 							if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 						}
 					}
@@ -202,7 +207,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 						.post_data = json_request.dump(),
 						.verb_post = true,
 					};
-					if (!utils::AsyncDownloadFile(mov_req).get()) break;
+					if (!utils::DownloadFile(mov_req)) break;
 
 					movie_json = nlohmann::json::parse(mov_req.body.str());
 				}
@@ -218,6 +223,8 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 		categories.reset();
 	}
 
+	utils::progress_info info{ .type = utils::ProgressType::Finalizing };
+	config.progress_callback(info);
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
@@ -251,7 +258,7 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 		};
 		ATLTRACE("\n%s\n", req.post_data.c_str());
 
-		if (!utils::AsyncDownloadFile(req).get()) break;
+		if (!utils::DownloadFile(req)) break;
 
 		JSON_ALL_TRY
 		{
@@ -289,7 +296,7 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 					};
 					ATLTRACE("\n%s\n", var_req.post_data.c_str());
 
-					if (utils::AsyncDownloadFile(var_req).get())
+					if (utils::DownloadFile(var_req))
 					{
 						const auto& variants_data = nlohmann::json::parse(var_req.body.str());
 						if (variants_data.contains("variants"))

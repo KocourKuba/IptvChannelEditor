@@ -58,7 +58,7 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 	const auto& url = std::format(API_COMMAND_AUTH, utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
 	utils::http_request req{ replace_params_vars(params, url) };
 
-	if (utils::AsyncDownloadFile(req).get())
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY
 		{
@@ -107,7 +107,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 									  L"getUserPackages",
 									  utils::utf8_to_utf16(session_id));
 		utils::http_request req{replace_params_vars(params, url)};
-		if (!utils::AsyncDownloadFile(req).get())
+		if (!utils::DownloadFile(req))
 		{
 			LOG_PROTOCOL(std::format(L"plugin_tvteam: Failed to get account info: {:s}", req.error_message));
 			return;
@@ -195,7 +195,7 @@ bool plugin_tvteam::set_server(TemplateParams& params)
 									  utils::utf8_to_utf16(session_id));
 
 		utils::http_request req{replace_params_vars(params, url)};
-		if (utils::AsyncDownloadFile(req).get())
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
 			{

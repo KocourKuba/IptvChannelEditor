@@ -30,7 +30,7 @@ DEALINGS IN THE SOFTWARE.
 #include "GetStreamInfoThread.h"
 #include "map_serializer.h"
 
-#include "UtilsLib\utils.h"
+#include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -46,10 +46,9 @@ BOOL CGetStreamInfoThread::InitInstance()
 
 	if (m_config.m_container)
 	{
-		SendNotifyParent(m_config.m_parent, WM_INIT_PROGRESS, (WPARAM)m_config.m_container->size(), 0);
+		utils::progress_info info { .maxPos = static_cast<int>(m_config.m_container->size()) };
+		m_config.progress_callback(info);
 
-		ULARGE_INTEGER ul = { 0, (DWORD)m_config.m_container->size() };
-		SendNotifyParent(m_config.m_parent, WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul);
 
 		BS::thread_pool pool(m_config.m_max_threads);
 		std::atomic<int> count { 0 };
@@ -60,6 +59,9 @@ BOOL CGetStreamInfoThread::InitInstance()
 													 GetChannelStreamInfo(m_config, count, i);
 												 }
 											 });
+
+		info.type = utils::ProgressType::Finalizing;
+		m_config.progress_callback(info);
 	}
 
 	SendNotifyParent(m_config.m_parent, WM_END_GET_STREAM_INFO);
@@ -274,8 +276,14 @@ void CGetStreamInfoThread::GetChannelStreamInfo(CThreadConfig& config, std::atom
 
 	TRACE("GetChannelStreamInfo: Thread %d, Video: %s, Audio: %s\n", (int)count, video.c_str(), audio.c_str());
 
-	ULARGE_INTEGER ul = { (DWORD)++count, (DWORD)config.m_container->size() };
 	std::tuple<int, std::string, std::string> tuple = { uri_stream->get_hash(), audio, video };
 
-	SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS_STREAM, (WPARAM)&ul, (LPARAM)&tuple);
+	utils::progress_info info
+	{
+		.type = utils::ProgressType::Progress,
+		.maxPos = (int)config.m_container->size(),
+		.curPos = ++count,
+		.extraData = &tuple
+	};
+	config.progress_callback(info);
 }

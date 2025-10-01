@@ -50,8 +50,6 @@ BEGIN_MESSAGE_MAP(CVodViewer, CDialogEx)
 	ON_WM_GETMINMAXINFO()
 	ON_MESSAGE(WM_END_LOAD_PLAYLIST, &CVodViewer::OnEndLoadM3U8Playlist)
 	ON_MESSAGE(WM_END_LOAD_JSON_PLAYLIST, &CVodViewer::OnEndLoadJsonPlaylist)
-	ON_MESSAGE(WM_INIT_PROGRESS, &CVodViewer::OnInitProgress)
-	ON_MESSAGE(WM_UPDATE_PROGRESS, &CVodViewer::OnUpdateProgress)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_MOVIES, &CVodViewer::OnItemChanged)
 	ON_NOTIFY(LVN_GETDISPINFO, IDC_LIST_MOVIES, &CVodViewer::OnGetDispinfo)
 	ON_CBN_SELCHANGE(IDC_COMBO_CATEGORIES, &CVodViewer::OnCbnSelchangeComboCategories)
@@ -247,13 +245,11 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	m_evtStop.ResetEvent();
 	m_evtFinished.ResetEvent();
 
-	m_wndProgress.ShowWindow(SW_HIDE);
-	m_wndStop.ShowWindow(SW_HIDE);
-
 	auto cfg = std::make_shared<ThreadConfig>();
 	cfg->m_parent = this;
 	cfg->m_hStop = m_evtStop;
 	cfg->m_params.creds = m_account;
+	cfg->progress_callback = std::bind(&CVodViewer::ProgressCallbackJsonParse, this, std::placeholders::_1);
 	m_plugin->get_api_token(cfg->m_params);
 	m_plugin->update_provider_params(cfg->m_params);
 	cfg->m_url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), cfg->m_params);
@@ -265,10 +261,6 @@ LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /
 {
 	m_evtStop.ResetEvent();
 	m_evtFinished.SetEvent();
-
-	m_wndProgress.ShowWindow(SW_HIDE);
-	m_wndStop.ShowWindow(SW_HIDE);
-	m_wndBtnReload.EnableWindow(TRUE);
 
 	// make copy content not pointers!
 	std::unique_ptr<vod_category_storage> deleter((vod_category_storage*)wParam);
@@ -446,22 +438,34 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	return 0;
 }
 
-LRESULT CVodViewer::OnInitProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+void CVodViewer::ProgressCallbackJsonParse(const utils::progress_info& info)
 {
-	m_wndProgress.SetRange32(0, (int)wParam);
-	m_wndProgress.SetPos((int)lParam);
-	m_wndProgress.ShowWindow(SW_SHOW);
-	m_wndStop.ShowWindow(SW_SHOW);
+	switch (info.type)
+	{
+		case utils::ProgressType::Initializing:
+		{
+			m_wndProgress.SetRange32(0, info.maxPos);
+			m_wndProgress.SetPos(info.curPos);
+			m_wndProgress.ShowWindow(SW_SHOW);
+			m_wndStop.ShowWindow(SW_SHOW);
+			break;
+		}
 
-	return 0;
-}
+		case utils::ProgressType::Progress:
+		{
+			m_wndTotal.SetWindowText(std::format(L"{:d}", info.value).c_str());
+			m_wndProgress.SetPos(info.curPos);
+			break;
+		}
 
-LRESULT CVodViewer::OnUpdateProgress(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
-{
-	m_wndTotal.SetWindowText(std::format(L"{:d}", (int)wParam).c_str());
-	m_wndProgress.SetPos((int)lParam);
-
-	return 0;
+		case utils::ProgressType::Finalizing:
+		{
+			m_wndProgress.ShowWindow(FALSE);
+			m_wndStop.ShowWindow(SW_HIDE);
+			m_wndBtnReload.EnableWindow(TRUE);
+			break;
+		}
+	}
 }
 
 void CVodViewer::OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1025,9 +1029,10 @@ void CVodViewer::FilterList()
 			const auto& key = m[1].str();
 			const auto& url = m[2].str();
 
+			constexpr int limit = 300;
 			nlohmann::json json_request;
 			json_request["filter"] = "on";
-			json_request["limit"] = 300;
+			json_request["limit"] = limit;
 			json_request["offset"] = 0;
 			json_request["key"] = utils::utf16_to_utf8(key);
 			json_request["mac"] = "000000000000";
@@ -1066,8 +1071,11 @@ void CVodViewer::FilterList()
 			{
 				nlohmann::json parsed_json = nlohmann::json::parse(req.body.str());
 				int total = utils::get_json_int("count", parsed_json);
-				OnInitProgress(total, 0);
 				ATLTRACE("\nfiltered movies: %d\n", total);
+
+				utils::progress_info info { .maxPos = total };
+				ProgressCallbackJsonParse(info);
+				info.type = utils::ProgressType::Progress;
 
 				int cnt = 0;
 				int offset = 0;
@@ -1100,9 +1108,10 @@ void CVodViewer::FilterList()
 						filtered_movies.set_back(movie->id, movie);
 						cnt++;
 
-						if (cnt % 100 == 0)
+						if (cnt % limit == 0)
 						{
-							OnUpdateProgress(cnt);
+							info.curPos = cnt;
+							ProgressCallbackJsonParse(info);
 							if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0)
 							{
 								throw stop_exception();
@@ -1141,6 +1150,9 @@ void CVodViewer::FilterList()
 
 		if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0)
 			filtered_movies.clear();
+
+		utils::progress_info info { .type = utils::ProgressType::Finalizing };
+		ProgressCallbackJsonParse(info);
 	}
 	else
 	{
@@ -1172,8 +1184,6 @@ void CVodViewer::FilterList()
 
 	std::swap(m_filtered_movies, filtered_movies);
 
-	m_wndProgress.ShowWindow(SW_HIDE);
-	m_wndStop.ShowWindow(SW_HIDE);
 	m_wndBtnReload.EnableWindow(TRUE);
 	m_wndTotal.SetWindowText(std::format(L"{:d} / {:d}", m_filtered_movies.size(), m_total).c_str());
 	m_wndMoviesList.SetItemCount((int)m_filtered_movies.size());

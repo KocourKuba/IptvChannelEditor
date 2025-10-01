@@ -59,7 +59,7 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 	{
 		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"subscr_info")) };
 
-		if (utils::AsyncDownloadFile(req).get())
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
 			{
@@ -101,7 +101,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 
 	utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"ch_cdn")) };
 
-	if (utils::AsyncDownloadFile(req).get())
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY
 		{
@@ -134,7 +134,7 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 	if (!servers_list.empty())
 	{
 		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"ch_cdn") + std::format(PARAM_FMT, L"num", REPL_SERVER_ID)) };
-		if (utils::AsyncDownloadFile(req).get())
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
 			{
@@ -155,7 +155,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 
 	utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"list_profiles")) };
 
-	if (!utils::AsyncDownloadFile(req).get())
+	if (!utils::DownloadFile(req))
 	{
 		return;
 	}
@@ -194,7 +194,7 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 	if (!profiles_list.empty())
 	{
 		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"list_profiles") + std::format(PARAM_FMT, L"num", REPL_PROFILE_ID)) };
-		if (utils::AsyncDownloadFile(req).get())
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
 			{
@@ -224,7 +224,7 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 			.url = config.m_url,
 			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL)
 		};
-		if (!utils::AsyncDownloadFile(req).get()) break;
+		if (!DownloadFile(req)) break;
 
 		nlohmann::json parsed_json;
 		JSON_ALL_TRY
@@ -235,9 +235,12 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 
 		if (parsed_json.empty()) break;
 
-		SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, (int)parsed_json.size(), 0);
+		utils::progress_info info{ .maxPos = static_cast<int>(parsed_json.size()) };
+		config.progress_callback(info);
+		info.type = utils::ProgressType::Progress;
 
 		int cnt = 0;
+		constexpr int limit = 200;
 		for (const auto& item : parsed_json.items())
 		{
 			const auto& value = item.value();
@@ -341,9 +344,11 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 			}
 			JSON_ALL_CATCH
 
-			if (++cnt % 100 == 0)
+			if (++cnt % limit == 0)
 			{
-				SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
+				info.curPos = info.value = cnt;
+				config.progress_callback(info);
+
 				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 			}
 		}
@@ -354,6 +359,8 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 		categories.reset();
 	}
 
+	utils::progress_info info{ .type = utils::ProgressType::Finalizing };
+	config.progress_callback(info);
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 

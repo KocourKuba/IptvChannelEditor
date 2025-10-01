@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE.
 #include <atlenc.h>
 #include <sstream>
 #include <future>
+#include <variant>
 
 namespace utils
 {
@@ -48,6 +49,23 @@ struct CrackedUrl
 	unsigned short nScheme = 1; // INTERNET_SCHEME_HTTP
 };
 
+enum class ProgressType
+{
+	Initializing,
+	Finalizing,
+	Progress
+
+};
+
+struct progress_info
+{
+	ProgressType type = ProgressType::Initializing;
+	int maxPos = 0;
+	int curPos = 0;
+	int value = 0;
+	void* extraData = nullptr;
+};
+
 struct http_request
 {
 	std::wstring url;
@@ -60,10 +78,11 @@ struct http_request
 	bool verb_post = false;
 	std::stringstream body;
 	std::stop_token stop_token;
+	std::function<void(const progress_info&)> progress_callback = nullptr;
 };
 
 std::future<bool> AsyncDownloadFile(http_request& request);
-
+bool DownloadFile(http_request& request);
 bool CheckIsCacheExpired(const std::wstring& cache_file, const std::chrono::seconds& cache_ttl);
 void ClearCache();
 void ClearCachedUrl(const std::wstring& url);

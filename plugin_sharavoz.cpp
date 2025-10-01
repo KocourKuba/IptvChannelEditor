@@ -58,8 +58,10 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 		const auto& category_json = xtream_request(config, request_url);
 		if (category_json.empty()) break;
 
-		size_t cnt = 0;
-		size_t total = 0;
+		int cnt = 0;
+		int total = 0;
+		constexpr int limit = 200;
+		utils::progress_info info;
 		for (const auto& item : category_json.items())
 		{
 			const auto& val = item.value();
@@ -76,8 +78,12 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 			const auto& streams_json = xtream_request(config, request_url);
 			if (streams_json.empty()) continue;
 
-			total += streams_json.size();
-			SendNotifyParent(config.m_parent, WM_INIT_PROGRESS, cnt, total);
+			total += static_cast<int>(streams_json.size());
+			info.type = utils::ProgressType::Initializing;
+			info.curPos = cnt;
+			info.maxPos = total;
+			config.progress_callback(info);
+			info.type = utils::ProgressType::Progress;
 
 			for (const auto& item : streams_json.items())
 			{
@@ -104,9 +110,11 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 
 				movie->genres.set_back(category_id, category->genres.get(category_id));
 
-				if (++cnt % 100 == 0)
+				if (++cnt % limit == 0)
 				{
-					SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
+					info.curPos = info.value = cnt;
+					config.progress_callback(info);
+
 					if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 				}
 			}
@@ -155,9 +163,11 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 
 				movie->genres.set_back(category_id, category->genres.get(category_id));
 
-				if (++cnt % 100 == 0)
+				if (++cnt % limit == 0)
 				{
-					SendNotifyParent(config.m_parent, WM_UPDATE_PROGRESS, cnt, cnt);
+					info.curPos = info.value = static_cast<int>(cnt);
+					config.progress_callback(info);
+
 					if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 				}
 			}
@@ -170,6 +180,8 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 		categories.reset();
 	}
 
+	utils::progress_info info{ .type = utils::ProgressType::Finalizing };
+	config.progress_callback(info);
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
@@ -191,7 +203,7 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 	}
 
 	utils::http_request req{ url, GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) };
-	if (!utils::AsyncDownloadFile(req).get())
+	if (!utils::DownloadFile(req))
 	{
 		return;
 	}
@@ -314,7 +326,7 @@ nlohmann::json plugin_sharavoz::xtream_request(const ThreadConfig& config, const
 	nlohmann::json category_json;
 
 	utils::http_request req{ url, GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) };
-	if (utils::AsyncDownloadFile(req).get())
+	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY
 		{

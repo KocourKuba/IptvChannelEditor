@@ -40,7 +40,7 @@ void plugin_shuriktv::parse_account_info(TemplateParams& params)
 	if (account_info.empty())
 	{
 		utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
-		if (utils::AsyncDownloadFile(req).get())
+		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
 			{

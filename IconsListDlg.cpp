@@ -50,7 +50,6 @@ BEGIN_MESSAGE_MAP(CIconsListDlg, CDialogEx)
 	ON_NOTIFY(LVN_GETDISPINFO, IDC_LIST_ICONS, &CIconsListDlg::OnGetdispinfoListIcons)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_ICONS, &CIconsListDlg::OnNMDblclkListIcons)
 	ON_NOTIFY(NM_CLICK, IDC_LIST_ICONS, &CIconsListDlg::OnNMClickListIcons)
-	ON_MESSAGE(WM_UPDATE_PROGRESS, &CIconsListDlg::OnUpdateProgress)
 	ON_MESSAGE(WM_END_LOAD_PLAYLIST, &CIconsListDlg::OnEndLoadPlaylist)
 END_MESSAGE_MAP()
 
@@ -74,7 +73,6 @@ void CIconsListDlg::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 
 	DDX_Control(pDX, IDC_LIST_ICONS, m_wndIconsList);
-	DDX_Control(pDX, IDC_PROGRESS_LOAD, m_wndProgress);
 	DDX_Text(pDX, IDC_EDIT_SEARCH, m_search);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, m_wndSearch);
 	DDX_Control(pDX, IDC_EDIT_ICON_PATH, m_wndIconPath);
@@ -128,10 +126,6 @@ BOOL CIconsListDlg::OnInitDialog()
 			GetDlgItem(IDOK)->EnableWindow(FALSE);
 			GetDlgItem(IDC_EDIT_SEARCH)->ShowWindow(SW_HIDE);
 			GetDlgItem(IDC_BUTTON_SEARCH_NEXT)->ShowWindow(SW_HIDE);
-			m_wndProgress.SetRange32(0, m_isHtmlParser ? lines : lines / 2);
-			m_wndProgress.SetPos(0);
-			m_wndProgress.ShowWindow(SW_SHOW);
-
 			auto cfg = std::make_shared<ThreadConfig>();
 			cfg->m_parent = this;
 			cfg->m_data = std::make_shared<std::stringstream>(std::move(req.body));
@@ -276,19 +270,11 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-LRESULT CIconsListDlg::OnUpdateProgress(WPARAM wParam, LPARAM lParam /*= 0*/)
-{
-	m_wndProgress.SetPos((int)lParam);
-
-	return 0;
-}
-
 LRESULT CIconsListDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
 {
 	GetDlgItem(IDOK)->EnableWindow(TRUE);
 	GetDlgItem(IDC_EDIT_SEARCH)->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_BUTTON_SEARCH_NEXT)->ShowWindow(SW_SHOW);
-	m_wndProgress.ShowWindow(SW_HIDE);
 
 	m_wndIconsList.DeleteAllItems();
 	if (m_isHtmlParser)
