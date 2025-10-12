@@ -2529,8 +2529,7 @@
           "epg_name": "name",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_icon": "icon",
-          "epg_id_source": 2
+          "epg_icon": "icon"
         }
       ],
       "playlist_templates": [
@@ -2787,8 +2786,7 @@
           "epg_name": "name",
           "epg_root": "epg_data",
           "epg_start": "time",
-          "epg_icon": "icon",
-          "epg_id_source": 2
+          "epg_icon": "icon"
         }
       ],
       "name": "tv.team",
@@ -2798,7 +2796,7 @@
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/.+\\/.+\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/pl\\/11\\/(?<password>.+)\\/.*$",
           "pl_template": "http://team.ga/pl/11/{S_TOKEN}/playlist.m3u8",
-          "tag_id_match": "tvg-name"
+          "tag_id_match": "tvg-id"
         }
       ],
       "provider_url": "https://tv.team/",
