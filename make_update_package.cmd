@@ -72,7 +72,6 @@ copy "%ROOT%readme.md"									"%build_pkg%" >nul
 copy "%ROOT%dune_plugin\changelog.md"					"%build_pkg%" >nul
 
 copy "%ROOT%dune_plugin\changelog.md" 					"%pkg%\changelog.md" >nul
-copy "%ROOT%dune_plugin\changelog.md" 					"%pkg%\changelog.md.%BUILD%" >nul
 
 echo build dune_plugin package...
 del %build_pkg%\dune_plugin.pkg >nul 2>&1
@@ -108,7 +107,7 @@ call :add_node dune_plugin.pkg					>>%outfile%
 call :add_node picons.pkg						>>%outfile%
 call :add_node ChannelsLists.pkg				>>%outfile%
 echo ^</package^> >>%outfile%
-copy /Y "%outfile%" "%outfile%.%BUILD%" >nul
+copy /Y "%outfile%" "%build_pkg%/%outfile%" >nul
 
 echo %BUILD_NAME%.exe				>packing.lst
 echo %BUILD_NAME%RUS.dll			>>packing.lst
@@ -127,7 +126,7 @@ echo "remove %ROOT%package\dune_channel_editor_universal.7z" >nul
 del "%ROOT%package\dune_channel_editor_universal.7z" >nul
 
 7z a -xr!*.bin -xr!custom "%ROOT%package\dune_channel_editor_universal.7z" @packing.lst >nul
-copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%ROOT%package\dune_channel_editor_universal.%BUILD%.7z" >nul
+copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%build_pkg%" >nul
 del packing.lst >nul 2>&1
 del dune_plugin_*.zip >nul 2>&1
 popd
