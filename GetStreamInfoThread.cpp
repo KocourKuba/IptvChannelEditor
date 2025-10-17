@@ -67,7 +67,7 @@ BOOL CGetStreamInfoThread::InitInstance()
 	SendNotifyParent(m_config.m_parent, WM_END_GET_STREAM_INFO);
 
 	::SetEvent(m_config.m_hExit);
-	ATLTRACE("\nThread exit\n");
+	ATLTRACE("CGetStreamInfoThread thread exit\n");
 
 	CoUninitialize();
 

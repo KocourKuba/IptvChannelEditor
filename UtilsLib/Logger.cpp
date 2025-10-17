@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <iostream>
+#include <atltrace.h>
 #include "Logger.h"
 #include "utils.h"
 
@@ -21,6 +22,7 @@ void Logger::log(const std::string& message)
 	{
 		std::lock_guard<std::mutex> lock(m_queueMutex);
 		m_logQueue.push(message);
+		ATLTRACE("%s\n", message.c_str());
 	}
 	m_cv.notify_one(); // Notify the worker thread
 }
@@ -30,6 +32,7 @@ void Logger::log(const std::wstring& message)
 	{
 		std::lock_guard<std::mutex> lock(m_queueMutex);
 		m_logQueue.push(utils::utf16_to_utf8(message));
+		ATLTRACE(L"%s\n", message.c_str());
 	}
 	m_cv.notify_one(); // Notify the worker thread
 }

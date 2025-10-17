@@ -1041,14 +1041,14 @@ void CVodViewer::FilterList()
 			{
 				int id = utils::char_to_int(m_genres[static_cast<size_t>(m_genre_idx) - 1].id);
 				json_request["genre"] = id;
-				ATLTRACE("\ngenre id: %d\n", id);
+				ATLTRACE("genre id: %d\n", id);
 			}
 
 			if (m_year_idx > 0)
 			{
 				const auto& years = utils::utf16_to_utf8(m_years[static_cast<size_t>(m_year_idx) - 1]);
 				json_request["years"] = years;
-				ATLTRACE("\nyears: %s\n", years.c_str());
+				ATLTRACE("years: %s\n", years.c_str());
 			}
 
 
@@ -1063,7 +1063,7 @@ void CVodViewer::FilterList()
 				.post_data = json_request.dump(),
 				.verb_post = true
 			};
-			ATLTRACE("\n%s\n", req.post_data.c_str());
+			ATLTRACE("%s\n", req.post_data.c_str());
 
 			if (!utils::AsyncDownloadFile(req).get()) break;
 
@@ -1071,7 +1071,7 @@ void CVodViewer::FilterList()
 			{
 				nlohmann::json parsed_json = nlohmann::json::parse(req.body.str());
 				int total = utils::get_json_int("count", parsed_json);
-				ATLTRACE("\nfiltered movies: %d\n", total);
+				ATLTRACE("filtered movies: %d\n", total);
 
 				utils::progress_info info { .maxPos = total };
 				ProgressCallbackJsonParse(info);
@@ -1119,7 +1119,7 @@ void CVodViewer::FilterList()
 						}
 					}
 
-					ATLTRACE("\nreaded: %d\n", cnt);
+					ATLTRACE("readed: %d\n", cnt);
 
 					if (::WaitForSingleObject(m_evtStop, 0) == WAIT_OBJECT_0)
 					{
@@ -1130,10 +1130,10 @@ void CVodViewer::FilterList()
 
 					prev_offset = offset;
 					json_request["offset"] = offset;
-					ATLTRACE("\noffset: %d\n", offset);
+					ATLTRACE("offset: %d\n", offset);
 
 					req.post_data = json_request.dump();
-					ATLTRACE("\n%s\n", req.post_data.c_str());
+					ATLTRACE("%s\n", req.post_data.c_str());
 
 					if (!utils::AsyncDownloadFile(req).get()) break;
 

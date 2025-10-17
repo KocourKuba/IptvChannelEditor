@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20251002012800" scan="323" scanned="20251002012718">
+<document created="20211012165442" version="4.0.374" date="20251017201608" scan="324" scanned="20251017201524">
   <lang id="ru"/>
-  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20251001222700" usesmfc="1">
+  <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20251017171442" usesmfc="1">
     <headerfiles>
       <header name="..\..\resource.h"/>
       <resource name="..\..\IPTVChannelEditor.rc"/>
@@ -5431,6 +5431,14 @@
           <native>Can't load plugins configurations!</native>
           <lang id="ru">Не могу загрузить конфигурации плагинов!</lang>
         </row>
+        <row id="IDS_STRING_ERR_EPG_NOT_EXIST" state="0" created="20251017201524">
+          <native>EPG does not exist</native>
+          <lang id="ru" date="20251017201534">EPG не существует</lang>
+        </row>
+        <row id="IDS_STRING_ERR_EPG_NOT_FOUND" state="0" created="20251017201524">
+          <native>EPG not found.#lKnown EPG time range:#l%s - %s</native>
+          <lang id="ru" date="20251017201605">EPG не найдено.#nИзвестный диапазон EPG:#n%s - %s</lang>
+        </row>
         <row id="IDS_STRING_ERR_FAILED_DOWNLOAD_PACKAGE" created="20240512115127">
           <native>Failed to download package!#l{:s}</native>
           <lang id="ru" date="20240512115320">Ошибка загрузки пакета!#n{:s}</lang>
@@ -5509,9 +5517,9 @@
     <node class="TWindowsVersionFolder" name="Versions" created="20211012190157" resid="16">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" locked="1" state="3" changed="20251002012718">
-          <prev>9.0.2369, 28 Sep 2025</prev>
-          <native>9.0.2370, 2 Oct 2025</native>
+        <row id="FileVersion" locked="1" state="3" changed="20251017201524">
+          <prev>9.0.2370, 2 Oct 2025</prev>
+          <native>9.0.2373, 16 Oct 2025</native>
         </row>
         <row id="FileVersion[1]" class="TIntegerRow" hidden="1" state="3" changed="20250831001610">
           <prev>8</prev>
@@ -5521,16 +5529,16 @@
           <prev>7</prev>
           <native>0</native>
         </row>
-        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20251002012718">
-          <prev>2369</prev>
-          <native>2370</native>
+        <row id="FileVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20251017201524">
+          <prev>2370</prev>
+          <native>2373</native>
         </row>
         <row id="FileVersion[4]" class="TIntegerRow" hidden="1">0</row>
         <row id="LegalCopyright" locked="1">All rights reserved.</row>
         <row id="ProductName" locked="1">Dune HD IPTV Channel Editor</row>
-        <row id="ProductVersion" hidden="1" state="3" changed="20251002012718">
-          <prev>9.0.2369</prev>
-          <native>9.0.2370</native>
+        <row id="ProductVersion" hidden="1" state="3" changed="20251017201524">
+          <prev>9.0.2370</prev>
+          <native>9.0.2373</native>
         </row>
         <row id="ProductVersion[1]" class="TIntegerRow" hidden="1" state="3" changed="20250831001610">
           <prev>8</prev>
@@ -5540,9 +5548,9 @@
           <prev>7</prev>
           <native>0</native>
         </row>
-        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20251002012718">
-          <prev>2369</prev>
-          <native>2370</native>
+        <row id="ProductVersion[3]" class="TIntegerRow" hidden="1" state="3" changed="20251017201524">
+          <prev>2370</prev>
+          <native>2373</native>
         </row>
         <row id="ProductVersion[4]" class="TIntegerRow" hidden="1">0</row>
       </node>

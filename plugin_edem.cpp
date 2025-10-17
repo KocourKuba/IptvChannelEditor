@@ -149,7 +149,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 				utils::progress_info info{ .maxPos = total, .curPos = cnt };
 				config.progress_callback(info);
 				info.type = utils::ProgressType::Progress;
-				ATLTRACE("\ntotal movies: %d\n", total);
+				LOG_PROTOCOL(std::format("total movies: {:d}", total));
 
 				int readed = 0;
 				int offset = 0;
@@ -191,13 +191,13 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 						}
 					}
 
-					ATLTRACE("\nreaded: %d\n", readed);
+					ATLTRACE("readed: %d\n", readed);
 
 					if (offset == prev_offset || ::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 
 					prev_offset = offset;
 					json_request["offset"] = offset;
-					ATLTRACE("\noffset: %d\n", offset);
+					ATLTRACE("offset: %d\n", offset);
 
 					utils::http_request mov_req
 					{
@@ -256,7 +256,7 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 			.post_data = json_request.dump(),
 			.verb_post = true
 		};
-		ATLTRACE("\n%s\n", req.post_data.c_str());
+		ATLTRACE("%s\n", req.post_data.c_str());
 
 		if (!utils::DownloadFile(req)) break;
 
@@ -294,7 +294,7 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 						.post_data = json_request.dump(),
 						.verb_post = true
 					};
-					ATLTRACE("\n%s\n", var_req.post_data.c_str());
+					ATLTRACE("%s\n", var_req.post_data.c_str());
 
 					if (utils::DownloadFile(var_req))
 					{

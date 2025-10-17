@@ -1757,6 +1757,9 @@ BEGIN
                             "Set value for {EPG_ID} macros to test EPG template url."
     IDS_STRING_EDIT_AUTH    "EPG HTTP authorization string"
     IDS_STRING_FMT_DOWNLOADED "Downloaded: %d Kbytes"
+    IDS_STRING_ERR_EPG_NOT_EXIST "EPG does not exist"
+    IDS_STRING_ERR_EPG_NOT_FOUND 
+                            "EPG not found.\nKnown EPG time range:\n%s - %s"
 END
 
 STRINGTABLE

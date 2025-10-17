@@ -434,6 +434,9 @@
 #define IDS_STRING_EDIT_SET_EPG_ID      635
 #define IDS_STRING_EDIT_AUTH            636
 #define IDS_STRING_FMT_DOWNLOADED       637
+#define IDS_STRING_ERR_EPG_NOT_EXIST    638
+#define IDS_STRINGERR_EPG_NOT_FOUND     639
+#define IDS_STRING_ERR_EPG_NOT_FOUND    639
 #define IDC_BUTTON_ABOUT                1001
 #define IDC_CHECK_CASE_HIDE             1002
 #define IDC_CHECK_REGEX_HIDE            1003
@@ -766,7 +769,7 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        282

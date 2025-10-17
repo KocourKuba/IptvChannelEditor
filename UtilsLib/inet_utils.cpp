@@ -137,7 +137,7 @@ bool DownloadFile(http_request& request)
 		hash_str += utf8_to_utf16(request.post_data);
 	}
 
-	LOG_PROTOCOL(std::format(L"download url: {:s}", request.url));
+	LOG_PROTOCOL(std::format(L"Download url: {:s}", request.url));
 
 	const auto& cache_file = GetCachedPath(hash_str);
 	if (!CheckIsCacheExpired(cache_file, request.cache_ttl))
@@ -167,6 +167,7 @@ bool DownloadFile(http_request& request)
 		if (!utils::CrackUrl(request.url, &cracked))
 		{
 			request.error_message += L"Error: Failed to parse url";
+			LOG_PROTOCOL(request.error_message);
 			break;
 		}
 
@@ -179,6 +180,7 @@ bool DownloadFile(http_request& request)
 		if (!hSession)
 		{
 			request.error_message = L"Error: Failed to open connection";
+			LOG_PROTOCOL(request.error_message);
 			break;
 		}
 		defer[&]{ WinHttpCloseHandle(hSession); };
@@ -190,6 +192,7 @@ bool DownloadFile(http_request& request)
 		if (!hConnect)
 		{
 			request.error_message = L"Error: Failed to connect";
+			LOG_PROTOCOL(request.error_message);
 			break;
 		}
 		defer[&]{ WinHttpCloseHandle(hConnect); };
@@ -209,6 +212,7 @@ bool DownloadFile(http_request& request)
 		if (!hRequest)
 		{
 			request.error_message = L"Error: Failed to open request";
+			LOG_PROTOCOL(request.error_message);
 			break;
 		}
 		defer[&]{ WinHttpCloseHandle(hRequest); };
@@ -222,7 +226,7 @@ bool DownloadFile(http_request& request)
 			}
 
 			BOOL result = WinHttpAddRequestHeaders(hRequest, all_headers.c_str(), static_cast<DWORD>(all_headers.size()), WINHTTP_ADDREQ_FLAG_ADD);
-			LOG_PROTOCOL(std::format("header added: {:d}", result));
+			LOG_PROTOCOL(std::format(L"header added: {:s} with result: {:d}", all_headers, result));
 		}
 
 		DWORD options = SECURITY_FLAG_IGNORE_ALL_CERT_ERRORS;
@@ -238,6 +242,7 @@ bool DownloadFile(http_request& request)
 			if (request.stop_token.stop_requested())
 			{
 				bResults = false;
+				LOG_PROTOCOL("Download abort requested");
 				break;
 			}
 
@@ -251,6 +256,7 @@ bool DownloadFile(http_request& request)
 									0))
 			{
 				request.error_message = L"Error: Failed to send request";
+				LOG_PROTOCOL(request.error_message);
 				break;
 			}
 
@@ -259,6 +265,7 @@ bool DownloadFile(http_request& request)
 			if (!WinHttpReceiveResponse(hRequest, nullptr))
 			{
 				request.error_message = std::format(L"Error: Failed to receive response: error code {:d}", GetLastError());
+				LOG_PROTOCOL(request.error_message);
 				break;
 			}
 
@@ -271,6 +278,7 @@ bool DownloadFile(http_request& request)
 									 &dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
 			{
 				request.error_message = std::format(L"Error: Failed to query headers: error code {:d}", GetLastError());
+				LOG_PROTOCOL(request.error_message);
 				break;
 			}
 
@@ -326,6 +334,7 @@ bool DownloadFile(http_request& request)
 												nullptr))
 					{
 						request.error_message = std::format(L"Error: Failed to set credentials: error code {:d}", GetLastError());
+						LOG_PROTOCOL(request.error_message);
 						break;
 					}
 
@@ -339,6 +348,7 @@ bool DownloadFile(http_request& request)
 					request.max_redirect = 5;
 					bResults = true;
 					bRepeat = false;
+					LOG_PROTOCOL("Response: 200");
 					break;
 				}
 
@@ -348,9 +358,11 @@ bool DownloadFile(http_request& request)
 					--request.max_redirect;
 					if (request.max_redirect <= 0)
 					{
+						LOG_PROTOCOL("Max redirect reached...");
 						return false;
 					}
 
+					LOG_PROTOCOL(std::format(L"Response: {:d}", dwStatusCode));
 					DWORD dwBuffer = 0;
 					WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_RAW_HEADERS_CRLF, nullptr, nullptr, &dwBuffer, nullptr);
 					std::wstring chData;
@@ -365,6 +377,7 @@ bool DownloadFile(http_request& request)
 						if (boost::regex_match(line, m, re))
 						{
 							request.url = m[1].str();
+							LOG_PROTOCOL(std::format(L"Follow redirect: {:s}", request.url));
 							return DownloadFile(request);
 						}
 					}
@@ -372,13 +385,15 @@ bool DownloadFile(http_request& request)
 				}
 
 				case 304:
+					request.error_message = std::format(L"Response: {:d}", dwStatusCode);
 					bResults = false;
 					bRepeat = false;
 					bSaveBadCache = true;
 					break;
 
 				default:
-					request.error_message = std::format(L"Response returns error code: {:d}", dwStatusCode);
+					request.error_message = std::format(L"Response: {:d}", dwStatusCode);
+					LOG_PROTOCOL(request.error_message);
 					break;
 			}
 
@@ -411,6 +426,7 @@ bool DownloadFile(http_request& request)
 			if (!bResults)
 			{
 				request.error_message += std::format(L"\nError code: {:d}", GetLastError());
+				LOG_PROTOCOL(request.error_message);
 				break;
 			}
 			// Check for available data.
@@ -418,6 +434,7 @@ bool DownloadFile(http_request& request)
 			{
 				request.error_message += std::format(L"\nError: WinHttpQueryDataAvailable error code {:d}", GetLastError());
 				bResults = false;
+				LOG_PROTOCOL(request.error_message);
 				break;
 			}
 
@@ -443,6 +460,7 @@ bool DownloadFile(http_request& request)
 			{
 				request.error_message = std::format(L"\nError: WinHttpReadData error code {:d}", GetLastError());
 				bResults = false;
+				LOG_PROTOCOL(request.error_message);
 				break;
 			}
 		}
@@ -469,6 +487,7 @@ bool DownloadFile(http_request& request)
 			if (request.error_message.empty())
 			{
 				request.error_message = L"Error: Empty response";
+				LOG_PROTOCOL(request.error_message);
 			}
 			break;
 		}

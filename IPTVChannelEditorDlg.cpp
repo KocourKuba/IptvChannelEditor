@@ -2089,9 +2089,6 @@ void CIPTVChannelEditorDlg::FillEPG()
 			continue;
 		}
 
-		int epg_idx = GetEpgIdx();
-		ParseJsonEpg(epg_idx);
-
 		int time_shift = m_timeShiftHours * 3600 + m_timeShiftMins * 60;
 
 		time_t now = time(nullptr);
@@ -2100,13 +2097,15 @@ void CIPTVChannelEditorDlg::FillEPG()
 			now += time_shift;
 		}
 
-	#ifdef _DEBUG
+#ifdef _DEBUG
 		COleDateTime tnow(now);
 		std::wstring show = std::format(L"{:04d}-{:02d}-{:02d} {:02d}:{:02d}", tnow.GetYear(), tnow.GetMonth(), tnow.GetDay(), tnow.GetHour(), tnow.GetMinute());
-		ATLTRACE(L"\n%s\n", show.c_str());
-	#endif // _DEBUG
+		ATLTRACE(L"Show date time: %s\n", show.c_str());
+#endif // _DEBUG
 
 		const auto dwStart = utils::ChronoGetTickCount();
+
+		int epg_idx = GetEpgIdx();
 
 		auto uri_stream = GetUriStream(v);
 		if (uri_stream == nullptr) continue;
@@ -2115,7 +2114,12 @@ void CIPTVChannelEditorDlg::FillEPG()
 		std::vector<std::wstring> ids;
 		if (epg_idx != XMLTV_EPG)
 		{
-			ids.emplace_back(uri_stream->get_epg_id(epg_idx));
+			const auto& epg_id = uri_stream->get_epg_id(epg_idx);
+			ids.emplace_back(epg_id);
+			if (m_epg_cache[epg_idx].find(epg_id) == m_epg_cache[epg_idx].end())
+			{
+				ParseJsonEpg(epg_idx);
+			}
 		}
 		else
 		{
@@ -2133,6 +2137,9 @@ void CIPTVChannelEditorDlg::FillEPG()
 
 		std::shared_lock<std::shared_mutex> lk(m_mxEpgCache);
 		EpgInfo epg_info{};
+
+		time_t first_time = std::numeric_limits<time_t>::max();
+		time_t last_time = 0;
 		for(const auto& epg_id : ids)
 		{
 			if (epg_id.empty()) continue;
@@ -2152,6 +2159,8 @@ void CIPTVChannelEditorDlg::FillEPG()
 				{
 					if (stop.stop_requested()) return;
 
+					first_time = std::min(first_time, epg_pair.second->time_start);
+					last_time = std::max(last_time, epg_pair.second->time_end);
 					if (epg_pair.second->time_start <= now && now <= epg_pair.second->time_end)
 					{
 						epg_info = *epg_pair.second;
@@ -2163,14 +2172,35 @@ void CIPTVChannelEditorDlg::FillEPG()
 			if (found) break;
 		}
 
-		ATLTRACE("\nEPG load time %.3f s\n", utils::GetTimeDiff(dwStart).count() / 1000.);
+#ifdef _DEBUG
+		LOG_PROTOCOL(std::format("EPG load time {:.3f} s", utils::GetTimeDiff(dwStart).count() / 1000.));
+#endif
 
-		if (found && epg_info.time_start != 0 && IsWindow(m_hWnd))
+
+		CStringA text;
+		if (!found)
+		{
+			CString txt;
+			if (first_time != std::numeric_limits<time_t>::max() && last_time != 0)
+			{
+				COleDateTime time_n(now);
+				txt.Format(IDS_STRING_ERR_EPG_NOT_FOUND,
+								  COleDateTime(first_time).Format(_T("%d.%m.%Y %H:%M:%S")).GetString(),
+								  COleDateTime(last_time).Format(_T("%d.%m.%Y %H:%M:%S")).GetString()
+				);
+			}
+			else
+			{
+				txt.LoadString(IDS_STRING_ERR_EPG_NOT_EXIST);
+			}
+			text = utils::utf16_to_utf8(txt.GetString()).c_str();
+
+		}
+		else if (epg_info.time_start != 0)
 		{
 			COleDateTime time_n(now);
 			COleDateTime time_s(epg_info.time_start - time_shift);
 			COleDateTime time_e(epg_info.time_end - time_shift);
-			CStringA text;
 			text.Format(R"({\rtf1 %ls - %ls\par\b %s\b0\par %s})",
 						time_s.Format(_T("%d.%m.%Y %H:%M:%S")).GetString(),
 						time_e.Format(_T("%d.%m.%Y %H:%M:%S")).GetString(),
@@ -2187,7 +2217,11 @@ void CIPTVChannelEditorDlg::FillEPG()
 				staticText->SetWindowText(time_left.Format(_T("%H:%M")));
 			}
 
-			SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
+		}
+
+		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
+		if (IsWindow(m_hWnd) && IsWindow(m_wndEpg))
+		{
 			m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.GetString());
 		}
 	}
@@ -2248,6 +2282,8 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 			throw std::exception("Failed to download file");
 		}
 
+		LOG_PROTOCOL(std::format(L"Downloaded url: {}", req.url));
+
 		std::wstring time_format = utils::utf8_to_utf16(epg_param.epg_time_format);
 		// replace to "%d-%m-%Y %H:%M"
 		if (!time_format.empty())
@@ -2259,6 +2295,7 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 			utils::string_replace_inplace<wchar_t>(time_format, REPL_MIN, L"%M");
 		}
 
+		LOG_PROTOCOL("Parse data...");
 		bool added = false;
 		const auto& parsed_json = nlohmann::json::parse(req.body.str());
 
@@ -2336,6 +2373,7 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 			std::unique_lock<std::shared_mutex> lk(m_mxEpgCache);
 			m_epg_cache[epg_idx][epg_id] = std::move(epg_map);
 		}
+		LOG_PROTOCOL("Parse data done.");
 	}
 	JSON_STD_CATCH
 	catch (std::exception& ex)
