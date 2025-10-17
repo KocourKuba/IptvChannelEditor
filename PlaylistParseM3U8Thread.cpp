@@ -86,7 +86,7 @@ void PlaylistParseM3U8Thread(const std::shared_ptr<ThreadConfig> config, const s
 						switch (static_cast<epg_id_sources>(epg_param.get_epg_id_source()))
 						{
 							case epg_id_sources::enEpgId:
-								entry->set_epg_id(i, entry->get_id());
+								entry->set_epg_id(i, entry->get_epg_id());
 								break;
 							case epg_id_sources::enChannelId:
 								entry->set_epg_id(i, entry->get_id());
