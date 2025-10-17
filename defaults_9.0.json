@@ -2100,6 +2100,18 @@
       ],
       "title": "RU TV",
       "vod_engine": "M3U",
+      "epg_params": [
+        {
+          "epg_param": "first",
+          "epg_url": "http://epg.drm-play.com/rutv%2Fepg%2F{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time"
+        },
+        {}
+      ],
       "vod_templates": [
         {
           "name": "Standard",
