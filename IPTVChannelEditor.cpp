@@ -221,6 +221,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	m_bDev = cmdInfo.m_bDev;
 
 	utils::Logger::getInstance().setLogName(GetAppPath() + L"IPTVChannelEditor.log");
+	LOG_PROTOCOL("Start application");
 
 	if (!GetPluginFactory().load_configs(m_bDev))
 	{
@@ -246,7 +247,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	if (!GetConfig().IsPortable())
 	{
 		HANDLE hAppRunningMutex = OpenMutex(READ_CONTROL, FALSE, g_sz_Run_GUID);
-		if (hAppRunningMutex && !GetConfig().IsPortable())
+		if (hAppRunningMutex)
 		{
 			AfxMessageBox(IDS_STRING_ALREADY_RUNNING, MB_OK | MB_ICONEXCLAMATION);
 			CloseHandle(hAppRunningMutex);
@@ -463,6 +464,8 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	if (g_hAppRunningMutex)
 		::CloseHandle(g_hAppRunningMutex);
+
+	LOG_PROTOCOL("---------------------------------------");
 
 	return FALSE;
 }
