@@ -237,6 +237,7 @@ static int download_update(UpdateInfo& info)
 			}
 
 			utils::http_request req{ std::format(L"{:s}/{:s}/{:s}", info.server, info.version, item.name)};
+			const auto dwStart = utils::ChronoGetTickCount();
 			LOG_PROTOCOL(req.url);
 			if (!utils::AsyncDownloadFile(req).get())
 			{
@@ -244,7 +245,7 @@ static int download_update(UpdateInfo& info)
 				LOG_PROTOCOL(req.error_message);
 				break;
 			}
-
+			const auto dlTime = utils::GetTimeDiff(dwStart).count() / 1000.;
 			std::ofstream os_file(loaded_file, std::ofstream::binary);
 			req.body.seekg(0);
 			os_file << req.body.rdbuf();
@@ -254,6 +255,7 @@ static int download_update(UpdateInfo& info)
 				LOG_PROTOCOL(std::format(L"error save: {:s} Error code: {:d}", update_file, GetLastError()));
 				break;
 			}
+			LOG_PROTOCOL(std::format("Download load time {:.3f} s ({:.1f} KB/s)", dlTime, std::filesystem::file_size(loaded_file) / dlTime / 1024));
 			LOG_PROTOCOL(std::format(L"saved to: {:s}", loaded_file));
 		}
 	} while (false);

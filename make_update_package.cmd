@@ -107,7 +107,7 @@ call :add_node dune_plugin.pkg					>>%outfile%
 call :add_node picons.pkg						>>%outfile%
 call :add_node ChannelsLists.pkg				>>%outfile%
 echo ^</package^> >>%outfile%
-copy /Y "%outfile%" "%build_pkg%/%outfile%" >nul
+copy /Y "%outfile%" "%ROOT%package" >nul
 
 echo %BUILD_NAME%.exe				>packing.lst
 echo %BUILD_NAME%RUS.dll			>>packing.lst
@@ -127,6 +127,8 @@ del "%ROOT%package\dune_channel_editor_universal.7z" >nul
 
 7z a -xr!*.bin -xr!custom "%ROOT%package\dune_channel_editor_universal.7z" @packing.lst >nul
 copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%build_pkg%" >nul
+copy /Y "%ROOT%package\dune_channel_editor_universal.7z" "%ROOT%package%" >nul
+
 del packing.lst >nul 2>&1
 del dune_plugin_*.zip >nul 2>&1
 popd
