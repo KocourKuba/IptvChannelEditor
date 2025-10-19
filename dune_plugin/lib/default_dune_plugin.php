@@ -1318,8 +1318,10 @@ class Default_Dune_Plugin implements DunePlugin
 
         $defs = array();
 
+        $epg_ids = $channel->get_epg_ids();
+
         Control_Factory::add_vgap($defs, -20);
-        self::format_smart_label($defs, "ID:", $channel->get_id());
+        self::format_smart_label($defs, "ID:", $channel_id);
         self::format_smart_label($defs, TR::load('name'), $channel->get_title());
         $groups = array();
         foreach ($channel->get_groups() as $group) {
@@ -1328,32 +1330,37 @@ class Default_Dune_Plugin implements DunePlugin
         self::format_smart_label($defs, TR::load('categories'), implode(', ', $groups));
         self::format_smart_label($defs, TR::load('archive'), $channel->get_archive() . ' ' . TR::load('days'));
         self::format_smart_label($defs, TR::load('adult'), $channel->is_protected() ? TR::load('yes') : TR::load('no'));
-        self::format_smart_label($defs, "EPG ID:", implode(', ', $channel->get_epg_ids()));
+        self::format_smart_label($defs, "EPG ID:", implode(', ', $epg_ids));
 
         if ($channel->get_timeshift_hours() !== 0 || $channel->get_timeshift_mins() !== 0) {
             $epg_shift = format_duration_minutes($channel->get_timeshift_hours() * 60 + $channel->get_timeshift_mins());
             self::format_smart_label($defs, TR::load('time_shift'), $epg_shift . ' ' . TR::load('hours'));
         }
-        self::format_smart_label($defs, TR::load('icon'), wrap_string_to_lines($channel->get_icon_url(), 120, "<br/>"));
+        self::format_smart_label($defs, TR::load('icon'), $channel->get_icon_url());
         Control_Factory::add_vgap($defs, 30);
 
-        if ($this->get_setting(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON) === ENGINE_JSON) {
-            self::format_smart_label($defs, TR::load('setup_epg_engine'), TR::load('setup_epg_engine_json'));
-            foreach (array(Plugin_Constants::EPG_FIRST, Plugin_Constants::EPG_SECOND) as $epg_source) {
-                $epg_url = $this->config->get_epg_parameter($epg_source, Epg_Params::EPG_URL);
-                if (!empty($epg_url)) {
-                    $epg_url = wrap_string_to_lines($epg_url, 120, "<br/>");
-                    self::format_smart_label($defs, TR::load('epg_url'), $epg_url);
+        if (!empty($epg_ids)) {
+            if ($this->get_setting(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON) === ENGINE_JSON) {
+                $time_shift = 3600 * ($channel->get_timeshift_hours() + $this->get_setting(PARAM_EPG_SHIFT, 0));
+                $time_shift += 60 * $channel->get_timeshift_hours();
+                $day_start_ts = strtotime(date("Y-m-d", time())) + $time_shift;
+
+                self::format_smart_label($defs, TR::load('setup_epg_engine'), TR::load('setup_epg_engine_json'));
+                $first = reset($epg_ids);
+                foreach (array(Plugin_Constants::EPG_FIRST, Plugin_Constants::EPG_SECOND) as $key => $epg_source) {
+                    $epg_id = isset($epg_ids[$key]) ? $epg_ids[$key] : $first;
+                    $epg_url = $this->get_epg_manager()->get_egp_url($epg_source, $epg_id, $channel_id, $day_start_ts);
+                    if (!empty($epg_url)) {
+                        self::format_smart_label($defs, TR::load('epg_url'), $epg_url);
+                    }
+                }
+            } else {
+                self::format_smart_label($defs, TR::load('setup_epg_engine'), TR::load('setup_epg_engine_xmltv'));
+                foreach ($this->get_all_xmltv_sources() as $source) {
+                    self::format_smart_label($defs, TR::load('epg_url'), $source->url);
                 }
             }
-        } else {
-            self::format_smart_label($defs, TR::load('setup_epg_engine'), TR::load('setup_epg_engine_xmltv'));
-            foreach($this->get_all_xmltv_sources() as $source) {
-                $epg_url = wrap_string_to_lines($source->url, 120, "<br/>");
-                self::format_smart_label($defs, TR::load('epg_url'), $epg_url);
-            }
         }
-
         $live_url = '';
         try {
             $live_url = $this->config->GenerateStreamUrl($channel, -1, true);

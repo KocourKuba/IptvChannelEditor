@@ -263,6 +263,18 @@ class Epg_Manager_Xmltv
     }
 
     /**
+     * @param string $epg_source
+     * @param string $epg_id
+     * @param string $channel_id
+     * @param int $day_start_ts
+     * @return string
+     */
+    public function get_egp_url($epg_source, $epg_id, $channel_id, $day_start_ts)
+    {
+        return '';
+    }
+
+    /**
      * Import indexing log to plugin logs
      *
      * @return bool true if import successful and no other active locks, false if any active source is locked

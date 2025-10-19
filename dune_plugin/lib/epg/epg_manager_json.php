@@ -62,52 +62,20 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
         $day_epg = array();
         $first = reset($epg_ids);
         foreach (array(Plugin_Constants::EPG_FIRST, Plugin_Constants::EPG_SECOND) as $key => $epg_source) {
-            $epg_url = $this->plugin->config->get_epg_parameter($epg_source, Epg_Params::EPG_URL);
-            if (empty($epg_url)) continue;
-
+            $channel_id = $channel->get_id();
+            $channel_title = $channel->get_title();
             $epg_id = isset($epg_ids[$key]) ? $epg_ids[$key] : $first;
+
+            hd_debug_print("Try to load EPG ID: '$epg_id' for channel '$channel_id' ($channel_title)");
 
             if (isset($this->epg_cache[$epg_id][$day_start_ts])) {
                 hd_debug_print("Load day EPG ID $epg_id ($day_start_ts) from memory cache ");
                 return $this->epg_cache[$epg_id][$day_start_ts];
             }
 
-            $channel_id = $channel->get_id();
-            $channel_title = $channel->get_title();
-            hd_debug_print("Try to load EPG ID: '$epg_id' for channel '$channel_id' ($channel_title)");
+            $epg_url = $this->get_egp_url($epg_source, $epg_id, $channel_id, $day_start_ts);
+            if (empty($epg_url)) continue;
 
-            $epg_url = $this->plugin->config->replace_account_vars($epg_url);
-
-            $epg_id = str_replace(array('%28', '%29'), array('(', ')'), rawurlencode($epg_id));
-
-            $epg_url = str_replace(
-                array(Plugin_Macros::EPG_DOMAIN,
-                    Plugin_Macros::EPG_ID,
-                    Plugin_Macros::ID,
-                    Plugin_Macros::DUNE_IP
-                ),
-                array($this->plugin->config->get_epg_parameter($epg_source, Epg_Params::EPG_DOMAIN),
-                    $epg_id,
-                    $channel_id,
-                    $this->dune_ip
-                ),
-                $epg_url);
-
-            if (strpos($epg_url, Plugin_Macros::DATE) !== false) {
-                $date_format = str_replace(
-                    array(Plugin_Macros::YEAR, Plugin_Macros::MONTH, Plugin_Macros::DAY),
-                    array('Y', 'm', 'd'),
-                    $this->plugin->config->get_epg_parameter($epg_source, Epg_Params::EPG_DATE_FORMAT));
-
-                $epg_date = gmdate($date_format, $day_start_ts + get_local_time_zone_offset());
-                $epg_url = str_replace(Plugin_Macros::DATE, $epg_date, $epg_url);
-            }
-
-            if (strpos($epg_url, Plugin_Macros::TIMESTAMP) !== false) {
-                $epg_url = str_replace(Plugin_Macros::TIMESTAMP, $day_start_ts, $epg_url);
-            }
-
-            $epg_url = str_replace('#', '%23', $epg_url);
             $epg_cache_file = get_temp_path(Hashed_Array::hash($epg_url) . ".cache");
             $from_cache = false;
             $all_epg = array();
@@ -180,6 +148,45 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
         }
 
         return $day_epg;
+     }
+
+     public function get_egp_url($epg_source, $epg_id, $channel_id, $day_start_ts)
+     {
+         $epg_url = $this->plugin->config->get_epg_parameter($epg_source, Epg_Params::EPG_URL);
+         if (empty($epg_url)) {
+             return '';
+         }
+
+         $epg_id = str_replace(array('%28', '%29'), array('(', ')'), rawurlencode($epg_id));
+         $epg_url = $this->plugin->config->replace_account_vars($epg_url);
+         $epg_url = str_replace(
+             array(Plugin_Macros::EPG_DOMAIN,
+                 Plugin_Macros::EPG_ID,
+                 Plugin_Macros::ID,
+                 Plugin_Macros::DUNE_IP
+             ),
+             array($this->plugin->config->get_epg_parameter($epg_source, Epg_Params::EPG_DOMAIN),
+                 $epg_id,
+                 $channel_id,
+                 $this->dune_ip
+             ),
+             $epg_url);
+
+         if (strpos($epg_url, Plugin_Macros::DATE) !== false) {
+             $date_format = str_replace(
+                 array(Plugin_Macros::YEAR, Plugin_Macros::MONTH, Plugin_Macros::DAY),
+                 array('Y', 'm', 'd'),
+                 $this->plugin->config->get_epg_parameter($epg_source, Epg_Params::EPG_DATE_FORMAT));
+
+             $epg_date = gmdate($date_format, $day_start_ts + get_local_time_zone_offset());
+             $epg_url = str_replace(Plugin_Macros::DATE, $epg_date, $epg_url);
+         }
+
+         if (strpos($epg_url, Plugin_Macros::TIMESTAMP) !== false) {
+             $epg_url = str_replace(Plugin_Macros::TIMESTAMP, $day_start_ts, $epg_url);
+         }
+
+         return str_replace('#', '%23', $epg_url);
      }
 
     public function clear_epg_cache()
