@@ -49,6 +49,9 @@
     <Filter Include="Resource Files\PNG">
       <UniqueIdentifier>{35e70383-4749-424d-af38-4efd108f437e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{72444f9a-32b8-46a9-b3ab-ab7332834c9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPTVChannelEditor.h">
@@ -532,6 +535,11 @@
     <None Include="Readme.md" />
     <None Include="PropertySheet.props" />
     <None Include="defaults_9.0.json" />
+    <None Include="make_icon_package.cmd" />
+    <None Include="make_update_package.cmd" />
+    <None Include="scripts\editor.php">
+      <Filter>Scripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\IPTVChannelEditor.ico">

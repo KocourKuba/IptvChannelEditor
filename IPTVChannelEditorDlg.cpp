@@ -6503,21 +6503,40 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonChangelog()
 
 void CIPTVChannelEditorDlg::OnBnClickedButtonCheckUpdate()
 {
-	std::wstring cmd = L"check";
+	std::wstring cmd = L"download";
 	if (RequestToUpdateServer(cmd) != 0)
 	{
 		AfxMessageBox(IDS_STRING_NOUPDATE_AVAILABLE, MB_OK);
 	}
-	else if (IDYES == AfxMessageBox(IDS_STRING_UPDATE_AVAILABLE, MB_YESNO) && CheckForSave())
+	else
 	{
-		cmd = L"update";
-		if (GetConfig().get_int(true, REG_UPDATE_PL))
+		std::ifstream is("update.lst");
+		if (is)
 		{
-			cmd += L" --optional";
-		}
+			std::string line;
+			std::wstring list;
+			while (std::getline(is, line))
+			{
+				list += utils::utf8_to_utf16(line) + L"\r\n";
+			}
+			is.close();
 
-		RequestToUpdateServer(cmd, false);
-		PostMessage(WM_CLOSE);
+			std::filesystem::remove("update.lst");
+
+			CString msg;
+			msg.Format(IDS_STRING_UPDATE_AVAILABLE, list.c_str());
+			if (!list.empty() && IDYES == AfxMessageBox(msg, MB_YESNO) && CheckForSave())
+			{
+				cmd = L"update";
+				if (GetConfig().get_int(true, REG_UPDATE_PL))
+				{
+					cmd += L" --optional";
+				}
+
+				RequestToUpdateServer(cmd, false);
+				PostMessage(WM_CLOSE);
+			}
+		}
 	}
 }
 

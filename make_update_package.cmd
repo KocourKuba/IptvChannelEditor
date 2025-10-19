@@ -44,18 +44,17 @@ goto :EOF
 :getversion
 rem Get app version
 bin\GetVersion.exe "%BUILD_PATH%\%BUILD_NAME%.exe" \\StringFileInfo\\040904b0\\ProductVersion >AppVer.tmp
-set /P BUILD=<AppVer.tmp
+set /P FULL_VER=<AppVer.tmp
 del AppVer.tmp >nul 2>&1
-FOR /f "tokens=1,2 delims=." %%a IN ("%BUILD%") do set MAJOR=%%a&set MINOR=%%b
+FOR /f "tokens=1,2,3 delims=." %%a IN ("%FULL_VER%") do set MAJOR=%%a&set MINOR=%%b&set BUILD=%%c
 
-set outfile=%ROOT%package\update.xml
-echo %BUILD%
+echo %FULL_VER%
 
 call :update_source
 call :upload_pdb
 
 set pkg=%ROOT%package
-set build_pkg=%pkg%\%BUILD%
+set build_pkg=%pkg%\%FULL_VER%
 
 echo prepare package folder...
 md "%pkg%" >nul 2>&1
@@ -91,23 +90,23 @@ popd
 
 pushd "%build_pkg%"
 
-call :header > %outfile%
-
-echo ^<package^> >>%outfile%
-call :add_node %BUILD_NAME%.exe					>>%outfile%
-call :add_node %BUILD_NAME%RUS.dll				>>%outfile%
-call :add_node Updater.exe						>>%outfile%
-call :add_node 7z.dll							>>%outfile%
-call :add_node %BUGTRAP%.dll					>>%outfile%
-call :add_node dbghelp.dll						>>%outfile%
-call :add_node changelog.md						>>%outfile%
-call :add_node Readme.md						>>%outfile%
-call :add_node defaults_%MAJOR%.%MINOR%.json	>>%outfile%
-call :add_node dune_plugin.pkg					>>%outfile%
-call :add_node picons.pkg						>>%outfile%
-call :add_node ChannelsLists.pkg				>>%outfile%
-echo ^</package^> >>%outfile%
-copy /Y "%outfile%" "%ROOT%package" >nul
+echo ^<?xml version="1.0" encoding="UTF-8"?^> >update.xml
+echo ^<update_info version="%FULL_VER%" /^> >>update.xml
+echo ^<package^> >>update.xml
+call :add_node %BUILD_NAME%.exe
+call :add_node %BUILD_NAME%RUS.dll
+call :add_node Updater.exe
+call :add_node 7z.dll
+call :add_node %BUGTRAP%.dll
+call :add_node dbghelp.dll
+call :add_node changelog.md
+call :add_node Readme.md
+call :add_node defaults_%MAJOR%.%MINOR%.json
+call :add_node dune_plugin.pkg
+call :add_node picons.pkg
+call :add_node ChannelsLists.pkg
+echo ^</package^> >>update.xml
+copy /Y update.xml "%ROOT%package" >nul
 
 echo %BUILD_NAME%.exe				>packing.lst
 echo %BUILD_NAME%RUS.dll			>>packing.lst
@@ -134,7 +133,7 @@ del dune_plugin_*.zip >nul 2>&1
 popd
 
 echo done!
-endlocal & set BUILD=%BUILD%
+endlocal & set FULL_VER=%FULL_VER% & set BUILD=%BUILD%
 goto :EOF
 
 :update_source
@@ -144,6 +143,8 @@ call %ROOT%_ProjectScripts\SrcSrvNew.cmd %ROOT%BugTrap "%ROOT%BugTrap\bin"
 goto :EOF
 
 :upload_pdb
+
+if NOT "%DEV%" == "" goto :EOF
 
 echo Upload PDB to symbol server
 
@@ -162,28 +163,20 @@ copy "%BUILD_PATH%\Updater.pdb" "%dest%" >nul
 pushd "%dest%"
 dir /b /O:N *.exe *.dll *.pdb > upload.lst
 
-%SYMSRV_APP% add /o /t "%BUILD_NAME%" /v "%BUILD% (%BUILD_PLATFORM%)" /d Transaction.log /3 /f "@upload.lst" /s %SYMSTORE% /compress
+%SYMSRV_APP% add /o /t "%BUILD_NAME%" /v "%FULL_VER% (%BUILD_PLATFORM%)" /d Transaction.log /3 /f "@upload.lst" /s %SYMSTORE% /compress
 del /q *.exe *.dll *.pdb *.lst >nul 2>&1
 popd
-
-git tag %BUILD%
-git push --force --tags  -- "github" master:master
 
 echo done!
 goto :EOF
 
-:header
-echo ^<?xml version="1.0" encoding="UTF-8"?^>
-echo ^<update_info version="%BUILD%" /^>
-goto :EOF
-
-:add_node 
+:add_node
 %ROOT%bin\FileCrc.exe -d %1 > crc.tmp
 Set /P CRC32=<crc.tmp
 del crc.tmp >nul 2>&1
 if [%2]==[] (
-echo   ^<file name="%1" hash="%CRC32%"^>^</file^>
+echo   ^<file name="%1" hash="%CRC32%" build="%BUILD%"^>^</file^> >>update.xml
 ) else (
-echo   ^<file name="%1" hash="%CRC32%" opt="%2"^>^</file^>
+echo   ^<file name="%1" hash="%CRC32%" build="%BUILD%" opt="%2"^>^</file^> >>update.xml
 )
 goto :EOF

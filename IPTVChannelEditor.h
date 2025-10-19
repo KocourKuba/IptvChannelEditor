@@ -93,6 +93,7 @@ BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image);
 void SetImageControl(const CImage& image, CStatic& wnd);
 
 std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr, bool no_end_slash = false);
+std::wstring GetDevAppPath(LPCWSTR szSubFolder = nullptr, bool no_end_slash = false);
 
 void ConvertAccounts();
 

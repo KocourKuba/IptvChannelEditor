@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="324" scanned="20251017201524" built="20241013152255" lang="ru" pane="TLogPane" col="3" row="Strings.40.IDS_STRING_ERR_EPG_NOT_EXIST">
+<desktop scan="325" scanned="20251019225702" built="20241013152255" lang="ru" pane="TLogPane" col="4" row="Strings.14.IDS_STRING_UPDATE_AVAILABLE">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
-    <item class="TRemoveUnusedItemsTrigger" position="3"/>
+    <item class="TRemoveUnusedItemsTrigger" position="4"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>

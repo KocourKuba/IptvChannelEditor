@@ -213,7 +213,7 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 	if (data.rdbuf()->_Get_buffer_view()._Size == 0)
 	{
 		std::wstring path;
-		path = std::format(L"{:s}defaults_{:d}.{:d}.json", GetAppPath(), MAJOR, MINOR);
+		path = std::format(L"{:s}defaults_{:d}.{:d}.json", GetDevAppPath(), MAJOR, MINOR);
 		std::ifstream in_file(path);
 		if (in_file.good())
 		{

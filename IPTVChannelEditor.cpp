@@ -140,11 +140,6 @@ void CCommandLineInfoEx::ParseParam(LPCTSTR szParam, BOOL bFlag, BOOL bLast)
 	if (m_bDev) //-V547
 	{
 		CIPTVChannelEditorApp::DEV_PATH = LR"(..\..\)";
-#ifdef _WIN64
-		CIPTVChannelEditorApp::PACK_DLL_PATH = LR"(dll64\)";
-#else
-		CIPTVChannelEditorApp::PACK_DLL_PATH = LR"(dll\)";
-#endif //  _WIN64
 	}
 
 	CCommandLineInfo::ParseParam(szParam, bFlag, bLast);
@@ -256,7 +251,12 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		g_hAppRunningMutex = CreateMutex(nullptr, FALSE, g_sz_Run_GUID);
 	}
 
+#ifdef _DEBUG
+	const auto& pack_dll = GetDevAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
+#else
 	const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
+#endif // _DEBUG
+
 	if (!std::filesystem::exists(pack_dll))
 	{
 		AfxMessageBox(IDS_STRING_ERR_DLL_MISSING, MB_OK | MB_ICONSTOP);
@@ -272,18 +272,18 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	}
 
 	// check and create required directories
-	CheckAndCreateDirs(REG_OUTPUT_PATH, GetAppPath());
-	CheckAndCreateDirs(REG_WEB_UPDATE_PATH, GetAppPath(L"WebUpdate\\"));
-	CheckAndCreateDirs(REG_SAVE_SETTINGS_PATH, GetAppPath(L"Settings\\"));
+	CheckAndCreateDirs(REG_OUTPUT_PATH, GetDevAppPath());
+	CheckAndCreateDirs(REG_WEB_UPDATE_PATH, GetDevAppPath(L"WebUpdate\\"));
+	CheckAndCreateDirs(REG_SAVE_SETTINGS_PATH, GetDevAppPath(L"Settings\\"));
 
 	auto& extractor = m_archiver.GetExtractor();
 
 	// prepare and unpack default picons
-	const std::filesystem::path image_cache = CheckAndCreateDirs(REG_SAVE_IMAGE_PATH, GetAppPath(L"ImageCache\\"));
+	const std::filesystem::path image_cache = CheckAndCreateDirs(REG_SAVE_IMAGE_PATH, GetDevAppPath(L"ImageCache\\"));
 	if (   !std::filesystem::exists(image_cache / utils::CHANNELS_LOGO_PATH)
 		|| !std::filesystem::exists(image_cache / utils::CATEGORIES_LOGO_PATH))
 	{
-		const auto& package = GetAppPath(utils::PICONS_PACKAGE);
+		const auto& package = GetDevAppPath(utils::PICONS_PACKAGE);
 		extractor.SetArchivePath(package);
 		if (!extractor.ExtractArchive(image_cache.wstring()))
 		{
@@ -296,7 +296,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	const std::filesystem::path channels_dir = CheckAndCreateDirs(REG_LISTS_PATH, GetAppPath(utils::CHANNELS_LIST_PATH));
 	if (std::filesystem::is_empty(channels_dir))
 	{
-		const auto& channels_pkg = GetAppPath(utils::CHANNELS_LIST_PACKAGE);
+		const auto& channels_pkg = GetDevAppPath(utils::CHANNELS_LIST_PACKAGE);
 		if (std::filesystem::exists(channels_pkg))
 		{
 			extractor.SetArchivePath(channels_pkg);
@@ -414,24 +414,43 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	int freq = GetConfig().get_int(true, REG_UPDATE_FREQ, 3);
 	if (res == 2 || (freq && GetConfig().get_int64(true, REG_NEXT_UPDATE) < time(nullptr)))
 	{
-		std::wstring cmd = L"check";
+		std::wstring cmd = L"download";
 		if (RequestToUpdateServer(cmd) == 0)
 		{
-			if (IDYES == AfxMessageBox(IDS_STRING_UPDATE_AVAILABLE, MB_YESNO))
+			std::ifstream is("update.lst");
+			if (is)
 			{
-				// clear cache before update.
-				std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
-				std::error_code err;
-				std::filesystem::remove_all(cache_file, err);
+				std::string line;
+				std::wstring list;
+				while (std::getline(is, line))
+				{
+					list += utils::utf8_to_utf16(line) + L"\r\n";
+				}
+				is.close();
 
-				cmd = L"update";
-				if (GetConfig().get_int(true, REG_UPDATE_PL))
-					cmd += L" --optional";
+				std::filesystem::remove("update.lst");
 
-				const time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
-				GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
-				RequestToUpdateServer(cmd, false);
-				return FALSE;
+
+				CString msg;
+				msg.Format(IDS_STRING_UPDATE_AVAILABLE, list.c_str());
+				if (!list.empty() && IDYES == AfxMessageBox(msg, MB_YESNO))
+				{
+					// clear cache before update.
+					std::filesystem::path cache_file = std::filesystem::temp_directory_path().append(L"iptv_cache");
+					std::error_code err;
+					std::filesystem::remove_all(cache_file, err);
+
+					cmd = L"update";
+					if (GetConfig().get_int(true, REG_UPDATE_PL))
+					{
+						cmd += L" --optional";
+					}
+
+					const time_t next_check = time(nullptr) + (time_t)freq * 24 * 3600;
+					GetConfig().set_int64(true, REG_NEXT_UPDATE, next_check);
+					RequestToUpdateServer(cmd, false);
+					return FALSE;
+				}
 			}
 		}
 
@@ -506,7 +525,13 @@ int CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 		}
 	}
 
-	const auto& update_pkg = GetAppPath(utils::UPDATES_FOLDER) + utils::UPDATE_NAME;
+	auto update_name = utils::UPDATE_NAME;
+	if (theApp.m_bDev)
+	{
+		update_name = utils::UPDATE_NAME_DEV;
+	}
+
+	const auto& update_pkg = GetAppPath(utils::UPDATES_FOLDER) + update_name;
 	if (!std::filesystem::exists(update_pkg))
 	{
 		std::wstring cmd = L"download --force";
@@ -1444,13 +1469,15 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/, bool no_end_slash /*=
 		fileName.ReleaseBuffer();
 		int pos = fileName.ReverseFind('\\');
 		if (pos != -1)
+		{
 			fileName.Truncate(pos + 1);
+		}
 	}
 
-	fileName += CIPTVChannelEditorApp::DEV_PATH.c_str();
-
 	if (szSubFolder)
+	{
 		fileName += szSubFolder;
+	}
 
 	if (no_end_slash)
 	{
@@ -1458,6 +1485,12 @@ std::wstring GetAppPath(LPCWSTR szSubFolder /*= nullptr*/, bool no_end_slash /*=
 	}
 
 	return std::filesystem::absolute(fileName.GetString());
+}
+
+std::wstring GetDevAppPath(LPCWSTR szSubFolder /*= nullptr*/, bool no_end_slash /*= false*/)
+{
+	const auto folder = CIPTVChannelEditorApp::DEV_PATH + (szSubFolder != nullptr ? szSubFolder : L"");
+	return std::filesystem::absolute(GetAppPath(folder.c_str(), no_end_slash));
 }
 
 std::string get_array_value(const std::vector<std::wstring>& creds, size_t& last)
@@ -1768,6 +1801,11 @@ int RequestToUpdateServer(const std::wstring& command, bool isThread /*= true*/)
 		std::wstring newCmd(command);
 		//const auto& url = GetConfig().get_int(true, REG_UPDATE_SERVER, 0) == 0 ? utils::UPDATE_SERVER1 : utils::UPDATE_SERVER1;
 		newCmd += std::format(L" --server={:s}", utils::UPDATE_SERVER1);
+
+		if (theApp.m_bDev)
+		{
+			newCmd += L" --debug";
+		}
 
 		if (!isThread)
 		{
