@@ -301,7 +301,7 @@ class tvizi_config extends default_config
         hd_debug_print("filter page_idx:  $page_idx");
 
         $post_params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, $query_id);
-        $post_params[CURLOPT_POSTFIELDS]['features_hash'] = $param_str;
+        $post_params[CURLOPT_POSTFIELDS] = array('features_hash' => $param_str);
         $json = $this->make_json_request(self::API_COMMAND_GET_VOD, $post_params);
 
         return $json === false ? array() : $this->CollectSearchResult($query_id, $json, self::API_ACTION_FILTER);
@@ -392,13 +392,11 @@ class tvizi_config extends default_config
             $curl_opt[CURLOPT_CUSTOMREQUEST] = $params[CURLOPT_CUSTOMREQUEST];
         }
 
-        $curl_opt[CURLOPT_HTTPHEADER] = array(
-            "Content-Type: application/json; charset=utf-8",
-            "Authorization: Bearer " . $this->plugin->get_credentials(Ext_Params::M_S_TOKEN)
-        );
+        $curl_opt[CURLOPT_HTTPHEADER][] = CONTENT_TYPE_JSON;
+        $curl_opt[CURLOPT_HTTPHEADER][] = AUTH_BEARER . $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
 
         if (isset($params[CURLOPT_POSTFIELDS])) {
-            $curl_opt[CURLOPT_POSTFIELDS] = escaped_raw_json_encode($params[CURLOPT_POSTFIELDS]);
+            $curl_opt[CURLOPT_POSTFIELDS] = $params[CURLOPT_POSTFIELDS];
         }
 
         $data = $this->execApiCommand($path, null, true, $curl_opt);
@@ -494,8 +492,8 @@ class tvizi_config extends default_config
         $pairs['device_id'] = get_serial_number();
 
         $curl_opt[CURLOPT_POST] = true;
-        $curl_opt[CURLOPT_HTTPHEADER] = array("Content-Type: application/json; charset=utf-8");
-        $curl_opt[CURLOPT_POSTFIELDS] = escaped_raw_json_encode($pairs);
+        $curl_opt[CURLOPT_HTTPHEADER][] = CONTENT_TYPE_JSON;
+        $curl_opt[CURLOPT_POSTFIELDS] = $pairs;
 
         $data = $this->execApiCommand($cmd, null, true, $curl_opt);
         if (isset($data->access_token)) {

@@ -632,14 +632,37 @@ class Curl_Wrapper
 
         if (!empty($this->post_data)) {
             hd_debug_print("Sending POST fields '$this->post_data'", true);
-            $opts[CURLOPT_POSTFIELDS] = $this->post_data;
+            if (!is_array($this->post_data)) {
+                $opts[CURLOPT_POSTFIELDS] = $this->post_data;
+            } else if (in_array(CONTENT_TYPE_JSON, $this->send_headers)) {
+                $opts[CURLOPT_POSTFIELDS] = $this->internal_curl ? json_encode($this->post_data) : escaped_raw_json_encode($this->post_data);
+            } else if (in_array(CONTENT_TYPE_WWW_FORM_URLENCODED, $this->send_headers)) {
+                $data = '';
+                foreach ($this->post_data as $key => $value) {
+                    if (!empty($data)) {
+                        $data .= "&";
+                    }
+                    $data .= $key . "=" . urlencode($value);
+                }
+                $opts[CURLOPT_POSTFIELDS] = $data;
+            }
         }
 
         $this->http_response_headers = array();
         $opts[CURLOPT_HEADERFUNCTION] = array($this, 'http_header_function');
 
         $ch = curl_init();
+
         foreach ($opts as $k => $v) {
+            if (LogSeverity::$is_debug) {
+                if (is_bool($v)) {
+                    hd_debug_print(HD::curlopt_to_string($k) . " ($k) = " . var_export($v, true));
+                } else if (is_array($v)) {
+                    hd_debug_print(HD::curlopt_to_string($k) . " ($k) = " . json_encode($v));
+                } else {
+                    hd_debug_print(HD::curlopt_to_string($k) . " ($k) = $v");
+                }
+            }
             curl_setopt($ch, $k, $v);
         }
 

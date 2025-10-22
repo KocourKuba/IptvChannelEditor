@@ -52,16 +52,8 @@ class korona_config extends default_config
         }
 
         $curl_opt[CURLOPT_POST] = true;
-        $curl_opt[CURLOPT_HTTPHEADER][] = "Content-Type: application/x-www-form-urlencoded";
-        $data = '';
-        foreach($pairs as $key => $value) {
-            if (!empty($data)) {
-                $data .= "&";
-            }
-            $data .= $key . "=" . urlencode($value);
-        }
-        $curl_opt[CURLOPT_POSTFIELDS] = $data;
-
+        $curl_opt[CURLOPT_HTTPHEADER][] = CONTENT_TYPE_WWW_FORM_URLENCODED;
+        $curl_opt[CURLOPT_POSTFIELDS] = $pairs;
         $data = $this->execApiCommand($cmd, null, true, $curl_opt);
         if (isset($data->access_token)) {
             hd_debug_print("token requested", true);
@@ -315,10 +307,8 @@ class korona_config extends default_config
 
         $curl_opt[CURLOPT_CUSTOMREQUEST] = $path;
 
-        $curl_opt[CURLOPT_HTTPHEADER] = array(
-            "Content-Type: application/json; charset=utf-8",
-            "Authorization: Bearer " . $this->plugin->get_credentials(Ext_Params::M_S_TOKEN)
-        );
+        $curl_opt[CURLOPT_HTTPHEADER][] = CONTENT_TYPE_JSON;
+        $curl_opt[CURLOPT_HTTPHEADER][] = AUTH_BEARER . $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
 
         $jsonItems = $this->execApiCommand(self::API_COMMAND_GET_VOD, null, true, $curl_opt);
         if ($jsonItems === false) {

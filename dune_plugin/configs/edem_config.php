@@ -272,8 +272,8 @@ class edem_config extends default_config
         $pairs['app'] = "IPTV_ChannelEditor_edem_dune_plugin";
 
         $curl_opt[CURLOPT_POST] = true;
-        $curl_opt[CURLOPT_HTTPHEADER] = array("Content-Type: application/json; charset=utf-8");
-        $curl_opt[CURLOPT_POSTFIELDS] = escaped_raw_json_encode($pairs);
+        $curl_opt[CURLOPT_HTTPHEADER][] = CONTENT_TYPE_JSON;
+        $curl_opt[CURLOPT_POSTFIELDS] = $pairs;
 
         return $this->execApiCommand($url, null, true, $curl_opt);
     }
