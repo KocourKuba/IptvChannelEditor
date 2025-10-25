@@ -629,7 +629,7 @@ std::vector<HTREEITEM> CTreeCtrlEx::GetSelectedItems() const
 	for (auto hItem = GetFirstSelectedItem(); hItem != nullptr; hItem = GetNextSelectedItem(hItem))
 		selected.emplace_back(hItem);
 
-	return std::move(selected);
+	return selected;
 }
 
 // Select/unselect item without unselecting other items
@@ -948,6 +948,18 @@ void CTreeCtrlEx::DeleteDragImageEx()
 	m_CurrentDragImage.DeleteImageList();
 }
 
+BOOL CTreeCtrlEx::DeleteItem(HTREEITEM hItem)
+{
+	m_mapColorFont.RemoveKey(hItem);
+	return CTreeCtrl::DeleteItem(hItem);
+}
+
+BOOL CTreeCtrlEx::DeleteAllItems()
+{
+	m_mapColorFont.RemoveAll();
+	return CTreeCtrl::DeleteAllItems();
+}
+
 void CTreeCtrlEx::ScrollUp()
 {
 	HTREEITEM hItem = GetFirstVisibleItem();
@@ -965,6 +977,18 @@ void CTreeCtrlEx::ScrollUp()
 			SelectSetFirstVisible(hParent);
 		}
 	}
+}
+
+void CTreeCtrlEx::SetItemProperty(HTREEITEM hItem, const CTreeCtrlEx::CLRFONT& cf)
+{
+	m_mapColorFont[hItem] = cf;
+}
+
+CTreeCtrlEx::CLRFONT CTreeCtrlEx::GetItemProperty(HTREEITEM hItem)
+{
+	CLRFONT cf;
+	m_mapColorFont.Lookup(hItem, cf);
+	return cf;
 }
 
 void CTreeCtrlEx::SetItemFont(HTREEITEM hItem, LOGFONT& logfont)

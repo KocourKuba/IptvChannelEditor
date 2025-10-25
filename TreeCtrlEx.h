@@ -74,6 +74,11 @@ public:
 	void ScrollUp();
 	void DeleteDragImageEx();
 
+	BOOL DeleteItem(HTREEITEM hItem);
+	BOOL DeleteAllItems();
+
+	virtual void SetItemProperty(HTREEITEM hItem, const CLRFONT& cf);
+	virtual CLRFONT GetItemProperty(HTREEITEM hItem);
 	virtual void SetItemFont(HTREEITEM hItem, LOGFONT& logfont);
 	virtual BOOL GetItemFont(HTREEITEM hItem, LOGFONT* plogfont);
 	virtual void SetItemBold(HTREEITEM hItem, BOOL bBold);

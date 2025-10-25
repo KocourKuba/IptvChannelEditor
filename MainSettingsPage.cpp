@@ -75,6 +75,7 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_CHANGED, m_wndChanged);
 	DDX_Control(pDX, IDC_BUTTON_UNKNOWN, m_wndUnknown);
 	DDX_Control(pDX, IDC_BUTTON_HEVC, m_wndHEVC);
+	DDX_Control(pDX, IDC_BUTTON_HD, m_wndHD);
 	DDX_Control(pDX, IDC_BUTTON_DUPLICATED, m_wndDuplicated);
 	DDX_Control(pDX, IDC_BUTTON_CLEAR_CACHE, m_wndClearCache);
 }
@@ -111,11 +112,12 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
 	m_MaxCacheTTL = GetConfig().get_int(true, REG_MAX_CACHE_TTL, 24);
 	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
-	m_wndAdded.SetColor(GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 200, 0)));
+	m_wndAdded.SetColor(GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 128, 0)));
 	m_wndNotAdded.SetColor(GetConfig().get_int(true, REG_COLOR_NOT_ADDED, RGB(200, 0, 0)));
 	m_wndUnknown.SetColor(GetConfig().get_int(true, REG_COLOR_UNKNOWN, ::GetSysColor(COLOR_WINDOWTEXT)));
 	m_wndChanged.SetColor(GetConfig().get_int(true, REG_COLOR_CHANGED, RGB(226, 135, 67)));
 	m_wndHEVC.SetColor(GetConfig().get_int(true, REG_COLOR_HEVC, RGB(158, 255, 250)));
+	m_wndHD.SetColor(GetConfig().get_int(true, REG_COLOR_HD, RGB(255, 255, 157)));
 	m_wndDuplicated.SetColor(GetConfig().get_int(true, REG_COLOR_DUPLICATED, ::GetSysColor(COLOR_GRAYTEXT)));
 
 	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
@@ -165,6 +167,7 @@ BOOL CMainSettingsPage::OnApply()
 	GetConfig().set_int(true, REG_COLOR_CHANGED, m_wndChanged.GetColor());
 	GetConfig().set_int(true, REG_COLOR_UNKNOWN, m_wndUnknown.GetColor());
 	GetConfig().set_int(true, REG_COLOR_HEVC, m_wndHEVC.GetColor());
+	GetConfig().set_int(true, REG_COLOR_HD, m_wndHD.GetColor());
 	GetConfig().set_int(true, REG_COLOR_DUPLICATED, m_wndDuplicated.GetColor());
 
 	int flags = 0;
@@ -232,10 +235,13 @@ void CMainSettingsPage::OnCbnSelchangeComboLang()
 
 void CMainSettingsPage::OnBnClickedButtonReset()
 {
-	m_wndAdded.SetColor(RGB(0, 200, 0));
+	m_wndAdded.SetColor(RGB(0, 128, 0));
 	m_wndNotAdded.SetColor(RGB(200, 0, 0));
+	m_wndUnknown.SetColor(::GetSysColor(COLOR_WINDOWTEXT));
 	m_wndChanged.SetColor(RGB(226, 135, 67));
 	m_wndHEVC.SetColor(RGB(158, 255, 250));
+	m_wndHD.SetColor(RGB(255, 255, 157));
+	m_wndDuplicated.SetColor(::GetSysColor(COLOR_GRAYTEXT));
 }
 
 void CMainSettingsPage::OnBnClickedButtonClearCache()

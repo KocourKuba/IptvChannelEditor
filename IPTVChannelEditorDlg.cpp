@@ -253,11 +253,12 @@ CIPTVChannelEditorDlg::CIPTVChannelEditorDlg(CWnd* pParent /*=nullptr*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_gray = ::GetSysColor(COLOR_GRAYTEXT);
 	m_normal = ::GetSysColor(COLOR_WINDOWTEXT);
-	m_colorAdded = RGB(0, 200, 0);
+	m_colorAdded = RGB(0, 255, 0);
 	m_colorNotAdded = RGB(200, 0, 0);
 	m_colorNotChanged = m_colorAdded;
 	m_colorUnknown = m_normal;
 	m_colorHEVC = RGB(158, 255, 250);
+	m_colorHD = RGB(255, 255, 157);
 	m_colorChanged = RGB(226, 135, 67);
 	m_colorDuplicated = m_gray;
 }
@@ -462,11 +463,13 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	}
 
 
-	m_colorAdded = GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 200, 0));
+	m_colorAdded = GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 128, 0));
+	m_colorNotChanged = m_colorAdded;
 	m_colorNotAdded = GetConfig().get_int(true, REG_COLOR_NOT_ADDED, RGB(200, 0, 0));
-	m_colorChanged = GetConfig().get_int(true, REG_COLOR_CHANGED, RGB(158, 255, 250));
+	m_colorChanged = GetConfig().get_int(true, REG_COLOR_CHANGED, RGB(226, 135, 67));
 	m_colorUnknown = GetConfig().get_int(true, REG_COLOR_UNKNOWN, ::GetSysColor(COLOR_WINDOWTEXT));
-	m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC, RGB(226, 135, 67));
+	m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC, RGB(158, 255, 250));
+	m_colorHD = GetConfig().get_int(true, REG_COLOR_HD, RGB(255, 255, 157));
 	m_colorDuplicated = GetConfig().get_int(true, REG_COLOR_DUPLICATED, ::GetSysColor(COLOR_GRAYTEXT));
 
 	m_wndTrayIcon.HideIcon();
@@ -1481,6 +1484,8 @@ LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM 
 
 	UpdateControlsForItem();
 	LoadPlayListInfo();
+	UpdatePlaylistTreeColors();
+	UpdateChannelsTreeColors();
 
 	return 0;
 }
@@ -1864,6 +1869,10 @@ void CIPTVChannelEditorDlg::UpdateChannelsTreeColors(HTREEITEM root /*= nullptr*
 					{
 						m_wndChannelsTree.SetItemBackColor(hItem, m_colorHEVC);
 					}
+					else  if (pair->second.second.find("x1080") != std::string::npos)
+					{
+						m_wndChannelsTree.SetItemBackColor(hItem, m_colorHD);
+					}
 				}
 
 				m_wndChannelsTree.SetItemColor(hItem, color);
@@ -1915,6 +1924,10 @@ void CIPTVChannelEditorDlg::UpdatePlaylistTreeColors()
 				if (pair->second.second.find("HEVC") != std::string::npos)
 				{
 					m_wndPlaylistTree.SetItemBackColor(hItem, m_colorHEVC);
+				}
+				else  if (pair->second.second.find("x1080") != std::string::npos)
+				{
+					m_wndPlaylistTree.SetItemBackColor(hItem, m_colorHD);
 				}
 			}
 
@@ -3219,7 +3232,9 @@ void CIPTVChannelEditorDlg::MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool 
 	const auto& chEnd = FindChannel(hEnd);
 	const auto& chMoved = FindChannel(hMoved);
 	if (!chBegin || !chEnd || !chMoved)
+	{
 		return;
+	}
 
 	category->move_channels(chBegin, chEnd, down);
 
@@ -3231,7 +3246,7 @@ void CIPTVChannelEditorDlg::MoveChannels(HTREEITEM hBegin, HTREEITEM hEnd, bool 
 	tvInsert.hInsertAfter = hAfter;
 
 	HTREEITEM newItem = m_wndChannelsTree.InsertItem(&tvInsert);
-	m_wndChannelsTree.SetItemColor(newItem, m_wndChannelsTree.GetItemColor(hMoved));
+	m_wndChannelsTree.SetItemProperty(newItem, m_wndChannelsTree.GetItemProperty(hMoved));
 	m_channelsTreeMap.emplace(newItem, chMoved);
 
 	m_channelsTreeMap.erase(hMoved);
@@ -5138,10 +5153,12 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 		}
 
 		m_colorAdded = GetConfig().get_int(true, REG_COLOR_ADDED);
+		m_colorNotChanged = m_colorAdded;
 		m_colorNotAdded = GetConfig().get_int(true, REG_COLOR_NOT_ADDED);
 		m_colorChanged = GetConfig().get_int(true, REG_COLOR_CHANGED);
 		m_colorUnknown = GetConfig().get_int(true, REG_COLOR_UNKNOWN);
 		m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC);
+		m_colorHD = GetConfig().get_int(true, REG_COLOR_HD);
 		SwitchPlugin();
 	}
 }

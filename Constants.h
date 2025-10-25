@@ -76,6 +76,7 @@ constexpr auto REG_COLOR_CHANGED       = _T("ColorChanged");
 constexpr auto REG_COLOR_UNKNOWN       = _T("ColorUnknown");
 constexpr auto REG_COLOR_HEVC          = _T("ColorHEVC");
 constexpr auto REG_COLOR_DUPLICATED    = _T("ColorDuplicated");
+constexpr auto REG_COLOR_HD            = _T("ColorHD");
 
 // main dialog
 constexpr auto REG_PLUGIN              = _T("PluginType");
