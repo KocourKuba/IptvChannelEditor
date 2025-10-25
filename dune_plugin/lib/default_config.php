@@ -1275,25 +1275,15 @@ class default_config extends dynamic_config
 
         hd_debug_print("ApiCommandUrl: $command_url", true);
 
-        $send_headers = array();
-        if (isset($curl_opt[CURLOPT_HTTPHEADER])) {
-            $send_headers = array_merge($send_headers, $curl_opt[CURLOPT_HTTPHEADER]);
-        }
-
-        if (!empty($send_headers)) {
-            foreach ($send_headers as $header) {
-                hd_debug_print("CURLOPT_HTTPHEADER: " . $header, true);
-            }
-            $this->curl_wrapper->set_send_headers($send_headers);
+        if (!empty($curl_opt[CURLOPT_HTTPHEADER])) {
+            $this->curl_wrapper->set_send_headers($curl_opt[CURLOPT_HTTPHEADER]);
         }
 
         if (isset($curl_opt[CURLOPT_POST])) {
-            hd_debug_print("CURLOPT_POST: " . var_export($curl_opt[CURLOPT_POST], true), true);
             $this->curl_wrapper->set_post($curl_opt[CURLOPT_POST]);
         }
 
         if (isset($curl_opt[CURLOPT_POSTFIELDS])) {
-            hd_debug_print("CURLOPT_POSTFIELDS: {$curl_opt[CURLOPT_POSTFIELDS]}", true);
             $this->curl_wrapper->set_post_data($curl_opt[CURLOPT_POSTFIELDS]);
         }
 
@@ -1361,7 +1351,7 @@ class default_config extends dynamic_config
                     hd_debug_print("$type playlist not defined");
                     throw new Exception('$type playlist not defined');
                 }
-                file_put_contents($m3u_file, Curl_Wrapper::simple_download_content($url));
+                file_put_contents($m3u_file, Curl_Wrapper::getInstance()->download_content($url));
             } catch (Exception $ex) {
                 hd_debug_print("Unable to load $type playlist");
                 print_backtrace_exception($ex);

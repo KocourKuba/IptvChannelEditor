@@ -21,7 +21,7 @@ class tvclub_config extends default_config
             try {
                 $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/servers?token=$token";
-                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
+                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::getInstance()->download_content($url));
                 foreach ($content->servers as $item) {
                     $this->servers->item->id = $item->name;
                 }
@@ -96,7 +96,7 @@ class tvclub_config extends default_config
             $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/account?token=$token";
             // provider returns token used to download playlist
-            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
+            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::getInstance()->download_content($url));
             if (!isset($content->account->info->login)) {
                 throw new Exception("Account status unknown");
             }
@@ -123,7 +123,8 @@ class tvclub_config extends default_config
             $token = $this->plugin->get_credentials(Ext_Params::M_S_TOKEN);
             $param_set = $this->plugin->get_setting($param, '');
             $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/set?token=$token&$param=$param_set";
-            Curl_Wrapper::simple_download_content($url);
+            // simple get request. return value is not needed
+            Curl_Wrapper::getInstance()->download_content($url);
             $this->load_settings();
             return true;
         } catch (Exception $ex) {

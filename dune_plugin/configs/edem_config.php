@@ -119,17 +119,18 @@ class edem_config extends default_config
         }
 
         $exist_filters = array();
-        foreach ($doc->controls->filters as $filter) {
-            $first = reset($filter->items);
-            $key = key(array_diff_key((array)$first->request, array('filter' => 'on')));
-            $exist_filters[$key] = array('title' => $filter->title, 'values' => array(-1 => TR::t('no')));
-            foreach ($filter->items as $item) {
-                $val = $item->request->{$key};
-                $exist_filters[$key]['values'][$val] = $item->title;
+        if (isset($doc->controls->filters)) {
+            foreach ($doc->controls->filters as $filter) {
+                $first = reset($filter->items);
+                $key = key(array_diff_key((array)$first->request, array('filter' => 'on')));
+                $exist_filters[$key] = array('title' => $filter->title, 'values' => array(-1 => TR::t('no')));
+                foreach ($filter->items as $item) {
+                    $val = $item->request->{$key};
+                    $exist_filters[$key]['values'][$val] = $item->title;
+                }
             }
+            $this->set_filters($exist_filters);
         }
-
-        $this->set_filters($exist_filters);
 
         hd_debug_print("Categories read: " . count($category_list));
         hd_debug_print("Filters count: " . count($exist_filters));

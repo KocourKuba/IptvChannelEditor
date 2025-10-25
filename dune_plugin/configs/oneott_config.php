@@ -22,7 +22,7 @@ class oneott_config extends default_config
             if ($force !== false || empty($this->account_data)) {
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/PinApi/$login/$password";
                 // provider returns token used to download playlist
-                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
+                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::getInstance()->download_content($url));
                 if ($content === false || !isset($content->token)) {
                     throw new Exception("User token not loaded");
                 }

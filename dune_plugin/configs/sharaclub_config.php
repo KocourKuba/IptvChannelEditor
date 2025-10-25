@@ -27,7 +27,7 @@ class sharaclub_config extends default_config
         if (empty($this->servers)) {
             try {
                 $url = $this->replace_api_command('ch_cdn');
-                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
+                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::getInstance()->download_content($url), true);
 
                 if ($content !== false && $content['status'] === '1') {
                     foreach ($content['allow_nums'] as $server) {
@@ -55,7 +55,7 @@ class sharaclub_config extends default_config
         try {
             $url = $this->replace_api_command('ch_cdn') . "&num=$server";
             hd_debug_print("change server to: $server", true);
-            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
+            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::getInstance()->download_content($url), true);
             if ($content !== false) {
                 hd_debug_print("changing result: {$content['msg']}");
                 if ($content['status'] === '1') {
@@ -80,7 +80,7 @@ class sharaclub_config extends default_config
             $profiles = array("0" => TR::t('by_default'));
             try {
                 $url = $this->replace_api_command('list_profiles');
-                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
+                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::getInstance()->download_content($url), true);
 
                 if ($content !== false && isset($content['profiles'])) {
                     foreach ($content['profiles'] as $profile) {
@@ -109,7 +109,7 @@ class sharaclub_config extends default_config
         try {
             $url = $this->replace_api_command('list_profiles') . "&num=$profile_id";
             hd_debug_print("change profile to: $profile_id");
-            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url), true);
+            $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::getInstance()->download_content($url), true);
             if ($content !== false) {
                 hd_debug_print("changing result: {$content['msg']}");
                 if ($content['status'] === '1') {
@@ -155,7 +155,7 @@ class sharaclub_config extends default_config
 
             if ($force !== false || empty($this->account_data)) {
                 $url = $this->replace_api_command('subscr_info');
-                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
+                $content = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::getInstance()->download_content($url));
                 if ($content === false || !isset($content->status) || $content->status !== '1') {
                     throw new Exception("Account status unknown. " . HD::get_last_error());
                 }

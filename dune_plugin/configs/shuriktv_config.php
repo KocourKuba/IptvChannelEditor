@@ -19,7 +19,7 @@ class shuriktv_config extends default_config
 
             if ($force !== false || empty($this->account_data)) {
                 $url = $this->get_feature(Plugin_Constants::PROVIDER_API_URL) . "/customers/expired_packet/$password/";
-                $json = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::simple_download_content($url));
+                $json = Curl_Wrapper::decodeJsonResponse(false, Curl_Wrapper::getInstance()->download_content($url));
                 if ($json === false || !isset($json[0])) {
                     throw new Exception("Account status unknown");
                 }
