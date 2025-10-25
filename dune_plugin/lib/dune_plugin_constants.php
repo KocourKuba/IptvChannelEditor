@@ -102,6 +102,9 @@ const PARAM_VOD_DEFAULT_QUALITY = 'variant';
 const PARAM_LOGIN = 'login';
 const PARAM_PASSWORD = 'password';
 const PARAM_CHANNEL_POSITION = 'channel_position';
+const PARAM_CHANNEL_TS = 'channel_ts';
+const PARAM_START_TM = 'start_tm';
+const PARAM_END_TM = 'end_tm';
 
 const EPG_SOURCES_SEPARATOR_TAG = 'special_source_separator_tag';
 const ENGINE_JSON = 'json';

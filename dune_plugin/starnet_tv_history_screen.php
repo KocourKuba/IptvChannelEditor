@@ -108,23 +108,24 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
 
         $items = array();
         $now = time();
-        foreach ($this->plugin->get_playback_points()->get_all() as $channel_id => $channel_ts) {
+        foreach ($this->plugin->get_playback_points()->get_all() as $channel_id => $point) {
             if (is_null($channel = $this->plugin->tv->get_channel($channel_id))) continue;
 
-            $prog_info = $this->plugin->get_program_info($channel_id, $channel_ts, $plugin_cookies);
+            $archive_ts = $point[PARAM_CHANNEL_TS];
+            $prog_info = $this->plugin->get_program_info($channel_id, $archive_ts);
             $description = '';
             if (is_null($prog_info)) {
                 $title = $channel->get_title();
             } else {
                 // program epg available
                 $title = $prog_info[PluginTvEpgProgram::name];
-                if ($channel_ts > 0) {
+                if ($archive_ts > 0) {
                     $start_tm = $prog_info[PluginTvEpgProgram::start_tm_sec];
                     $epg_len = $prog_info[PluginTvEpgProgram::end_tm_sec] - $start_tm;
                     $description = $prog_info[PluginTvEpgProgram::description];
-                    if ($channel_ts >= $now - $channel->get_archive_past_sec() - 60) {
-                        $progress = max(0.01, min(1.0, round(($channel_ts - $start_tm) / $epg_len, 2))) * 100;
-                        $title = "$title | " . date("j.m H:i", $channel_ts) . " [$progress%]";
+                    if ($archive_ts >= $now - $channel->get_archive_past_sec() - 60) {
+                        $progress = max(0.01, min(1.0, round(($archive_ts - $start_tm) / $epg_len, 2))) * 100;
+                        $title = "$title | " . date("j.m H:i", $archive_ts) . " [$progress%]";
                     }
                 }
             }
@@ -135,7 +136,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen implem
                     array(
                         'channel_id' => $channel_id,
                         'group_id' => HISTORY_GROUP_ID,
-                        'archive_tm' => $channel_ts
+                        'archive_tm' => $archive_ts
                     )
                 ),
                 PluginRegularFolderItem::caption => $title,

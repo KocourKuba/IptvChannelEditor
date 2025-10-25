@@ -632,7 +632,7 @@ class Default_Dune_Plugin implements DunePlugin
         return $day_epg;
     }
 
-    public function get_program_info($channel_id, $program_ts, $plugin_cookies)
+    public function get_program_info($channel_id, $program_ts)
     {
         $program_ts = ($program_ts > 0 ? $program_ts : time());
         hd_debug_print("for $channel_id at time $program_ts " . format_datetime("Y-m-d H:i", $program_ts));
@@ -1502,10 +1502,9 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * @param string $channel_id
      * @param int $program_ts
-     * @param object $plugin_cookies
      * @return mixed|null
      */
-    public function get_epg_info($channel_id, $program_ts, $plugin_cookies)
+    public function get_epg_info($channel_id, $program_ts)
     {
         hd_debug_print(null, true);
 

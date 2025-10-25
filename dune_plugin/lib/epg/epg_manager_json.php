@@ -186,7 +186,9 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
              $epg_url = str_replace(Plugin_Macros::TIMESTAMP, $day_start_ts, $epg_url);
          }
 
-         return str_replace('#', '%23', $epg_url);
+         $epg_url = str_replace('#', '%23', $epg_url);
+         hd_debug_print("EPG URL: $epg_url");
+         return $epg_url;
      }
 
     public function clear_epg_cache()

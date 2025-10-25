@@ -32,14 +32,9 @@ require_once 'dune_stb_api.php';
 class Playback_Points
 {
     /**
-     * @var string
-     */
-    private $curr_point_id;
-
-    /**
      * @var array
      */
-    private $points;
+    private $playback_points;
 
     /**
      * @var Default_Dune_Plugin
@@ -62,7 +57,7 @@ class Playback_Points
      */
     public function get_all()
     {
-        return $this->points;
+        return $this->playback_points;
     }
 
     /**
@@ -70,7 +65,7 @@ class Playback_Points
      */
     public function size()
     {
-        return count($this->points);
+        return count($this->playback_points);
     }
 
     /**
@@ -79,17 +74,17 @@ class Playback_Points
      */
     public function load_points($force = false)
     {
-        if (!isset($this->points) || $force) {
+        if (!isset($this->playback_points) || $force) {
             $path = $this->get_playback_points_file();
             if (empty($path)) {
-                $this->points = array();
+                $this->playback_points = array();
                 return;
             }
 
-            $this->points = HD::get_items($path);
-            hd_debug_print(count($this->points) . " from: $path", true);
-            while (count($this->points) > 7) {
-                array_pop($this->points);
+            $this->playback_points = HD::get_items($path);
+            hd_debug_print(count($this->playback_points) . " from: $path", true);
+            while (count($this->playback_points) > 7) {
+                array_pop($this->playback_points);
             }
         }
     }
@@ -104,61 +99,71 @@ class Playback_Points
             return;
         }
 
-        if (count($this->points) !== 0) {
-            hd_debug_print(count($this->points) . " to: $path", true);
-            HD::put_items($path, $this->points);
+        if (count($this->playback_points) !== 0) {
+            hd_debug_print(count($this->playback_points) . " to: $path", true);
+            HD::put_items($path, $this->playback_points);
         } else if (file_exists($path)) {
             unlink($path);
         }
     }
 
     /**
-     * @param string|null $id
+     * /**
+     * * Called when first start url
+     * *
+     * @param string $channel_id
+     * @param int $channel_ts
      */
-    public function update_point($id)
+    public function push_point($channel_id, $channel_ts)
     {
-        //hd_debug_print($id);
-
-        if ($this->curr_point_id === null && $id === null)
-            return;
-
-        // update point for selected channel
-        $id = ($id !== null) ? $id : $this->curr_point_id;
-
-        if (isset($this->points[$id])) {
-            $player_state = get_player_state_assoc();
-            if (isset($player_state['playback_state'], $player_state['playback_position'])
-                && ($player_state['playback_state'] === PLAYBACK_PLAYING || $player_state['playback_state'] === PLAYBACK_STOPPED)) {
-
-                // if channel does support archive do not update current point
-                $this->points[$id] += ($this->points[$id] !== 0) ? $player_state['playback_position'] : 0;
-                hd_debug_print("channel_id $id at time mark: {$this->points[$id]}", true);
-            }
+        hd_debug_print(null, true);
+        $player_state = get_player_state_assoc();
+        $state = safe_get_value($player_state, PLAYER_STATE);
+        $event = safe_get_value($player_state, LAST_PLAYBACK_EVENT);
+        if ($state !== null && $state !== PLAYER_STATE_NAVIGATOR && $event !== PLAYBACK_PCR_DISCONTINUITY) {
+            $ts_str = format_datetime("Y-m-d H:i", $channel_ts);
+            hd_debug_print("Push playback point for channel: '$channel_id' at time mark: $channel_ts ($ts_str)", true);
+            $this->playback_points[$channel_id][PARAM_CHANNEL_TS] = $channel_ts;
         }
     }
 
     /**
-     * @param string $channel_id
-     * @param integer $archive_ts
+     * Called when playing stop
+     *
+     * @param string $id
      */
-    public function push_point($channel_id, $archive_ts)
+    public function update_point($id)
     {
+        hd_debug_print(null, true);
+        if (empty($id) || !isset($this->playback_points[$id])) {
+            return;
+        }
+
+        // update point for selected channel
         $player_state = get_player_state_assoc();
-        if (isset($player_state['player_state']) && $player_state['player_state'] !== 'navigator') {
-            if (!isset($player_state['last_playback_event']) || ($player_state['last_playback_event'] !== PLAYBACK_PCR_DISCONTINUITY)) {
+        $state = safe_get_value($player_state, PLAYBACK_STATE);
+        $position = safe_get_value($player_state, PLAYBACK_POSITION, 0);
+        if ($state !== PLAYBACK_PLAYING && $state !== PLAYBACK_STOPPED) {
+            return;
+        }
 
-                //hd_debug_print("channel_id $channel_id time mark: $archive_ts");
-                $this->curr_point_id = $channel_id;
+        if ($this->playback_points[$id][PARAM_CHANNEL_TS] !== 0) {
+            $this->playback_points[$id][PARAM_CHANNEL_TS] += $position;
+            $channel_ts = $this->playback_points[$id][PARAM_CHANNEL_TS];
+        } else {
+            $channel_ts = 0;
+        }
 
-                if (isset($this->points[$channel_id])) {
-                    unset($this->points[$channel_id]);
-                }
-                $this->points = array($channel_id => $archive_ts) + $this->points;
-                if (count($this->points) > 7) {
-                    array_pop($this->points);
-                }
-                $this->save();
+        if ($channel_ts !== 0) {
+            $prog_info = $this->plugin->get_epg_info($id, $channel_ts);
+            if (isset($prog_info[PluginTvEpgProgram::start_tm_sec])) {
+                $this->playback_points[$id][PARAM_START_TM] = $prog_info[PluginTvEpgProgram::start_tm_sec];
+                $this->playback_points[$id][PARAM_END_TM] = $prog_info[PluginTvEpgProgram::end_tm_sec];
             }
+
+            $this->save();
+            $ts_str = format_datetime("Y-m-d H:i", $channel_ts);
+            hd_debug_print("Save playback point for channel '$id' at time mark: $channel_ts ($ts_str)", true);
         }
     }
 
@@ -168,7 +173,7 @@ class Playback_Points
     public function erase_point($id)
     {
         hd_debug_print("erase $id");
-        unset($this->points[$id]);
+        unset($this->playback_points[$id]);
         $this->save();
     }
 
@@ -178,7 +183,7 @@ class Playback_Points
     public function clear_points()
     {
         hd_debug_print();
-        $this->points = array();
+        $this->playback_points = array();
         $this->save();
     }
     ///////////////////////////////////////////////////////////////////////////

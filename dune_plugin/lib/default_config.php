@@ -826,7 +826,6 @@ class default_config extends dynamic_config
                 $play_template_url = str_replace($value, $ext_params[$key], $play_template_url);
             }
         }
-        hd_debug_print("Result url: $play_template_url", true);
 
         $play_template_url = $this->replace_account_vars($play_template_url);
 

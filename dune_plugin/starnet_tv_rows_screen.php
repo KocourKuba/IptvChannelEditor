@@ -65,9 +65,8 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         switch ($control_id) {
             case GUI_EVENT_TIMER:
-                // rising after playback end + 100 ms
-                $this->plugin->get_playback_points()->update_point(null);
-                return User_Input_Handler_Registry::create_action($this, ACTION_REFRESH_SCREEN);
+                $this->plugin->set_need_update_epfs();
+                return Action_Factory::invalidate_all_folders($plugin_cookies);
 
             case GUI_EVENT_KEY_ENTER:
                 $tv_play_action = Action_Factory::tv_play($media_url);
@@ -527,7 +526,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         ///////////// start_time, end_time, genre, country, person /////////////////
 
-        if (is_null($epg_data = $this->plugin->get_program_info($channel_id, $archive_tm, $plugin_cookies))) {
+        if (is_null($epg_data = $this->plugin->get_program_info($channel_id, $archive_tm))) {
             hd_debug_print("no epg data");
             $channel_desc = $channel->get_desc();
             if (!empty($channel_desc)) {
@@ -760,18 +759,19 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
         $watched = array();
         $playback_points = $this->plugin->get_playback_points();
         if ($playback_points !== null) {
-            foreach ($playback_points->get_all() as $channel_id => $channel_ts) {
+            foreach ($playback_points->get_all() as $channel_id => $channel_data) {
                 if (is_null($channel = $this->plugin->tv->get_channel($channel_id))) continue;
 
-                $prog_info = $this->plugin->get_program_info($channel_id, $channel_ts, $plugin_cookies);
                 $progress = 0;
-
-                if (is_null($prog_info)) {
-                    $title = $channel->get_title();
-                } else {
-                    // program epg available
-                    $title = $prog_info[PluginTvEpgProgram::name];
-                    if ($channel_ts > 0) {
+                $title = $channel->get_title();
+                // program epg available
+                $channel_ts = safe_get_value($channel_data, PARAM_CHANNEL_TS, 0);
+                if ($channel_ts > 0) {
+                    $title = format_datetime("d.m H:i", $channel_ts);
+                    $start_tm = safe_get_value($channel_data, PARAM_START_TM, 0);
+                    $end_tm = safe_get_value($channel_data, PARAM_END_TM, 0);
+                    if ($start_tm === 0 || $end_tm === 0) {
+                        $prog_info = $this->plugin->get_program_info($channel_id, $channel_ts);
                         $start_tm = $prog_info[PluginTvEpgProgram::start_tm_sec];
                         $epg_len = $prog_info[PluginTvEpgProgram::end_tm_sec] - $start_tm;
                         if ($channel_ts >= $now - $channel->get_archive_past_sec() - 60) {

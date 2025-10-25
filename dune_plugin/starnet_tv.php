@@ -521,13 +521,11 @@ class Starnet_Tv implements User_Input_Handler
                 throw new Exception("Undefined channel!");
             }
 
-            if ($channel->is_protected()) {
-                if ($protect_code !== $pass_sex) {
-                    throw new Exception("Wrong adult password");
-                }
-            } else {
+            if (!$channel->is_protected()) {
                 $now = $channel->get_archive() > 0 ? time() : 0;
                 $this->plugin->get_playback_points()->push_point($channel_id, ($archive_ts !== -1 ? $archive_ts : $now));
+            } else if (!empty($pass_sex) && $protect_code !== $pass_sex) {
+                throw new Exception("Wrong adult password");
             }
 
             // update url if play archive or different type of the stream
@@ -751,8 +749,7 @@ class Starnet_Tv implements User_Input_Handler
                 $this->plugin->get_playback_points()->update_point($user_input->plugin_tv_channel_id);
 
                 if (isset($user_input->playback_stop_pressed) || isset($user_input->playback_power_off_needed)) {
-                    $this->plugin->get_playback_points()->save();
-                    return Action_Factory::invalidate_folders(array(Starnet_Tv_Groups_Screen::ID));
+                    return Action_Factory::invalidate_all_folders($plugin_cookies);
                 }
         }
 
