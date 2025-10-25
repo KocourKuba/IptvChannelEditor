@@ -5375,6 +5375,7 @@ void CIPTVChannelEditorDlg::OnGetStreamInfo()
 	cfg.m_max_threads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
 	cfg.m_params.creds = GetCurrentAccount();
 	cfg.m_params.shift_back = 0;
+	cfg.progress_callback = std::bind(&CIPTVChannelEditorDlg::ProgressCallbackStreamInfo, this, std::placeholders::_1);
 
 	auto* pThread = (CGetStreamInfoThread*)AfxBeginThread(RUNTIME_CLASS(CGetStreamInfoThread),
 														  THREAD_PRIORITY_HIGHEST, 0, CREATE_SUSPENDED);

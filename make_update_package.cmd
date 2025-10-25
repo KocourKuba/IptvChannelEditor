@@ -167,7 +167,7 @@ dir /b /O:N *.exe *.dll *.pdb > upload.lst
 del /q *.exe *.dll *.pdb *.lst >nul 2>&1
 popd
 
-git tag %BUILD%
+git tag %FULL_VER%
 git push --force --tags  -- "github" master:master
 
 echo done!

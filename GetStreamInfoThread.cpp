@@ -59,11 +59,10 @@ BOOL CGetStreamInfoThread::InitInstance()
 													 GetChannelStreamInfo(m_config, count, i);
 												 }
 											 });
-
-		info.type = utils::ProgressType::Finalizing;
-		m_config.progress_callback(info);
 	}
 
+	utils::progress_info info{ .type = utils::ProgressType::Finalizing };
+	m_config.progress_callback(info);
 	SendNotifyParent(m_config.m_parent, WM_END_GET_STREAM_INFO);
 
 	::SetEvent(m_config.m_hExit);
