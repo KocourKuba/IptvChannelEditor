@@ -45,7 +45,6 @@ BEGIN_MESSAGE_MAP(CMainSettingsPage, CTooltipPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_CACHE_TTL, &CMainSettingsPage::OnEnChangeEditCacheTTL)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_CACHE_TTL, &CMainSettingsPage::OnDeltaposSpinCacheTTL)
 	ON_CBN_SELCHANGE(IDC_COMBO_LANG, &CMainSettingsPage::OnCbnSelchangeComboLang)
-	ON_BN_CLICKED(IDC_BUTTON_RESET, &CMainSettingsPage::OnBnClickedButtonReset)
 	ON_BN_CLICKED(IDC_BUTTON_CLEAR_CACHE, &CMainSettingsPage::OnBnClickedButtonClearCache)
 END_MESSAGE_MAP()
 
@@ -70,13 +69,6 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_CMP_ARCHIVE, m_bCmpArchive);
 	DDX_Check(pDX, IDC_CHECK_CMP_EPG1, m_bCmpEpg1);
 	DDX_Check(pDX, IDC_CHECK_CMP_EPG2, m_bCmpEpg2);
-	DDX_Control(pDX, IDC_BUTTON_ADDED, m_wndAdded);
-	DDX_Control(pDX, IDC_BUTTON_NOT_ADDED, m_wndNotAdded);
-	DDX_Control(pDX, IDC_BUTTON_CHANGED, m_wndChanged);
-	DDX_Control(pDX, IDC_BUTTON_UNKNOWN, m_wndUnknown);
-	DDX_Control(pDX, IDC_BUTTON_HEVC, m_wndHEVC);
-	DDX_Control(pDX, IDC_BUTTON_HD, m_wndHD);
-	DDX_Control(pDX, IDC_BUTTON_DUPLICATED, m_wndDuplicated);
 	DDX_Control(pDX, IDC_BUTTON_CLEAR_CACHE, m_wndClearCache);
 }
 
@@ -92,13 +84,6 @@ BOOL CMainSettingsPage::OnInitDialog()
 	AddTooltip(IDC_CHECK_AUTO_HIDE, IDS_STRING_CHECK_AUTO_HIDE);
 	AddTooltip(IDC_CHECK_PORTABLE, IDS_STRING_CHECK_PORTABLE);
 	AddTooltip(IDC_CHECK_CONVERT_DUPES, IDS_STRING_CHECK_CONVERT_DUPES);
-	AddTooltip(IDC_BUTTON_ADDED, IDS_STRING_BUTTON_COLORS);
-	AddTooltip(IDC_BUTTON_CHANGED, IDS_STRING_BUTTON_COLORS);
-	AddTooltip(IDC_BUTTON_HEVC, IDS_STRING_BUTTON_COLORS);
-	AddTooltip(IDC_BUTTON_NOT_ADDED, IDS_STRING_BUTTON_COLORS);
-	AddTooltip(IDC_BUTTON_UNKNOWN, IDS_STRING_BUTTON_COLORS);
-	AddTooltip(IDC_BUTTON_DUPLICATED, IDS_STRING_BUTTON_DUPLICATED);
-	AddTooltip(IDC_BUTTON_RESET, IDS_STRING_BUTTON_RESET);
 	AddTooltip(IDC_CHECK_CMP_TITLE, IDS_STRING_CHECK_CMP_TITLE);
 	AddTooltip(IDC_CHECK_CMP_EPG1, IDS_STRING_CHECK_CMP_EPG1);
 	AddTooltip(IDC_CHECK_CMP_EPG2, IDS_STRING_CHECK_CMP_EPG2);
@@ -112,13 +97,6 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
 	m_MaxCacheTTL = GetConfig().get_int(true, REG_MAX_CACHE_TTL, 24);
 	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
-	m_wndAdded.SetColor(GetConfig().get_int(true, REG_COLOR_ADDED, RGB(0, 128, 0)));
-	m_wndNotAdded.SetColor(GetConfig().get_int(true, REG_COLOR_NOT_ADDED, RGB(200, 0, 0)));
-	m_wndUnknown.SetColor(GetConfig().get_int(true, REG_COLOR_UNKNOWN, ::GetSysColor(COLOR_WINDOWTEXT)));
-	m_wndChanged.SetColor(GetConfig().get_int(true, REG_COLOR_CHANGED, RGB(226, 135, 67)));
-	m_wndHEVC.SetColor(GetConfig().get_int(true, REG_COLOR_HEVC, RGB(158, 255, 250)));
-	m_wndHD.SetColor(GetConfig().get_int(true, REG_COLOR_HD, RGB(255, 255, 157)));
-	m_wndDuplicated.SetColor(GetConfig().get_int(true, REG_COLOR_DUPLICATED, ::GetSysColor(COLOR_GRAYTEXT)));
 
 	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
 
@@ -162,13 +140,6 @@ BOOL CMainSettingsPage::OnApply()
 	GetConfig().set_int(true, REG_MAX_THREADS, m_MaxThreads);
 	GetConfig().set_int(true, REG_MAX_CACHE_TTL, m_MaxCacheTTL);
 	GetConfig().set_int(true, REG_LANGUAGE, m_nLang);
-	GetConfig().set_int(true, REG_COLOR_ADDED, m_wndAdded.GetColor());
-	GetConfig().set_int(true, REG_COLOR_NOT_ADDED, m_wndNotAdded.GetColor());
-	GetConfig().set_int(true, REG_COLOR_CHANGED, m_wndChanged.GetColor());
-	GetConfig().set_int(true, REG_COLOR_UNKNOWN, m_wndUnknown.GetColor());
-	GetConfig().set_int(true, REG_COLOR_HEVC, m_wndHEVC.GetColor());
-	GetConfig().set_int(true, REG_COLOR_HD, m_wndHD.GetColor());
-	GetConfig().set_int(true, REG_COLOR_DUPLICATED, m_wndDuplicated.GetColor());
 
 	int flags = 0;
 	flags |= (m_bCmpTitle ? CMP_FLAG_TITLE : 0);
@@ -231,17 +202,6 @@ void CMainSettingsPage::OnCbnSelchangeComboLang()
 {
 	AfxMessageBox(IDS_STRING_INFO_RESTART_NEED, MB_OK | MB_ICONINFORMATION);
 	m_nLang = (WORD)m_wndLanguage.GetItemData(m_wndLanguage.GetCurSel());
-}
-
-void CMainSettingsPage::OnBnClickedButtonReset()
-{
-	m_wndAdded.SetColor(RGB(0, 128, 0));
-	m_wndNotAdded.SetColor(RGB(200, 0, 0));
-	m_wndUnknown.SetColor(::GetSysColor(COLOR_WINDOWTEXT));
-	m_wndChanged.SetColor(RGB(226, 135, 67));
-	m_wndHEVC.SetColor(RGB(158, 255, 250));
-	m_wndHD.SetColor(RGB(255, 255, 157));
-	m_wndDuplicated.SetColor(::GetSysColor(COLOR_GRAYTEXT));
 }
 
 void CMainSettingsPage::OnBnClickedButtonClearCache()

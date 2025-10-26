@@ -77,6 +77,7 @@ constexpr auto REG_COLOR_UNKNOWN       = _T("ColorUnknown");
 constexpr auto REG_COLOR_HEVC          = _T("ColorHEVC");
 constexpr auto REG_COLOR_DUPLICATED    = _T("ColorDuplicated");
 constexpr auto REG_COLOR_HD            = _T("ColorHD");
+constexpr auto REG_COLOR_FHD           = _T("ColorFHD");
 
 // main dialog
 constexpr auto REG_PLUGIN              = _T("PluginType");
@@ -123,6 +124,7 @@ constexpr auto REG_ACTIVE_ACCOUNT      = _T("ActiveAccount");
 constexpr auto REG_ACTIVE_CH_LIST      = _T("ActiveChannelsList");
 constexpr auto REG_EPG_ID_IDX          = _T("EpgIdIdx");
 constexpr auto REG_EPG_SOURCE_IDX      = _T("EpgSourceIdx");
+constexpr auto REG_HIGHLIGHT_STREAM    = _T("HighlightStream");
 
 constexpr auto REPL_API_URL            = L"{API_URL}";       // special url used to get information from provider
 constexpr auto REPL_LIVE_URL           = L"{LIVE_URL}";      // live url, used in archive template substitution

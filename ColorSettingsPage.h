@@ -27,19 +27,27 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include "TooltipPropertyPage.h"
 
-// CMainSettingsPage dialog
+const auto DEFAULT_COLOR_ADDED = RGB(0, 128, 0);
+const auto DEFAULT_COLOR_NOT_ADDED = RGB(200, 0, 0);
+const auto DEFAULT_COLOR_CHANGED = RGB(226, 135, 67);
 
-class CMainSettingsPage : public CTooltipPropertyPage
+const auto DEFAULT_COLOR_HEVC = RGB(158, 255, 250);
+const auto DEFAULT_COLOR_HD = RGB(255, 255, 157);
+const auto DEFAULT_COLOR_FHD = RGB(243, 193, 254);
+
+// CColorSettingsPage dialog
+
+class CColorSettingsPage : public CTooltipPropertyPage
 {
-	DECLARE_DYNAMIC(CMainSettingsPage)
+	DECLARE_DYNAMIC(CColorSettingsPage)
 
 public:
-	CMainSettingsPage();   // standard constructor
-	virtual ~CMainSettingsPage() = default;
+	CColorSettingsPage();   // standard constructor
+	virtual ~CColorSettingsPage() = default;
 
 	// Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_MAIN_SETTINGS_PAGE };
+	enum { IDD = IDD_COLOR_SETTINGS_PAGE };
 #endif
 
 protected:
@@ -49,33 +57,15 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-	afx_msg void OnEnChangeEditStreamThreads();
-	afx_msg void OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEnChangeEditCacheTTL();
-	afx_msg void OnDeltaposSpinCacheTTL(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnCbnSelchangeComboLang();
-	afx_msg void OnBnClickedButtonClearCache();
-
-public:
-	std::array<EpgStorage, 3>* m_epg_cache = nullptr;
-	EpgAliases* m_epg_aliases = nullptr;
+	afx_msg void OnBnClickedButtonReset();
 
 protected:
-	CComboBox m_wndLanguage;
-	CButton m_wndClearCache;
-
-private:
-	BOOL m_bAutoSync = FALSE;
-	BOOL m_bAutoHide = FALSE;
-	BOOL m_bPortable = FALSE;
-	BOOL m_bConvertDupes = FALSE;
-
-	BOOL m_bCmpTitle = TRUE;
-	BOOL m_bCmpIcon = TRUE;
-	BOOL m_bCmpArchive = TRUE;
-	BOOL m_bCmpEpg1 = TRUE;
-	BOOL m_bCmpEpg2 = TRUE;
-	int m_MaxThreads = 1;
-	int m_MaxCacheTTL = 24;
-	WORD m_nLang = 0;
+	CMFCColorButton m_wndAdded;
+	CMFCColorButton m_wndNotAdded;
+	CMFCColorButton m_wndUnknown;
+	CMFCColorButton m_wndChanged;
+	CMFCColorButton m_wndHEVC;
+	CMFCColorButton m_wndHD;
+	CMFCColorButton m_wndFHD;
+	CMFCColorButton m_wndDuplicated;
 };

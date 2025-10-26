@@ -57,5 +57,4 @@ private:
 	BOOL m_bUpdateChannels = FALSE;
 	int m_UpdateFreq = 3;
 	int m_UpdateServer = 0;
-
 };

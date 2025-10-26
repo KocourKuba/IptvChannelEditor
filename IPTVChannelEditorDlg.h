@@ -162,6 +162,7 @@ protected:
 	afx_msg void OnBnClickedCheckCustomArchive();
 	afx_msg void OnBnClickedCheckAdult();
 	afx_msg void OnBnClickedCheckArchive();
+	afx_msg void OnBnClickedCheckHighlighStream();
 	afx_msg void OnEnChangeEditEpg2ID();
 	afx_msg void OnEnChangeEditEpg1ID();
 	afx_msg void OnEnChangeEditStreamUrl();
@@ -378,6 +379,7 @@ protected:
 	CButton m_wndEpg3;
 	CButton m_wndBtnSettings;
 	CButton m_wndMakeWebUpdate;
+	CButton m_wndHighlightStream;
 	CProgressCtrl m_wndProgress;
 	CProgressCtrl m_wndProgressTime;
 	CTrayIcon m_wndTrayIcon;
@@ -396,6 +398,7 @@ protected:
 
 	BOOL m_isArchive = FALSE; // m_wndArchive
 	BOOL m_isAdult = FALSE; // m_wndAdult
+	BOOL m_highlightStream = FALSE; // m_wndHighlightStream
 	CString m_streamID; // m_wndStreamID
 	CString m_epgID1; // Primary EPG source m_wndEpg1ID
 	CString m_epgID2; // Secondary EPG source m_wndEpg2ID
@@ -450,6 +453,7 @@ private:
 	COLORREF m_colorAdded; // channel present in the playlist and have not differences
 	COLORREF m_colorHEVC; // channel HEVC
 	COLORREF m_colorHD; // Channel HD
+	COLORREF m_colorFHD; // Channel FHD
 	COLORREF m_colorChanged; // channel has difference with same entry in the playlist
 	COLORREF m_colorUnknown; // channel not present in the current playlist
 	COLORREF m_colorDuplicated; // channel not present in the current playlist

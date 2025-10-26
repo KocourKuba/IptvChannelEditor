@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 
 #define TVGN_EX_ALL   0x000F
+#define COLORREF_NULL ((COLORREF)-1)
 
 // CTreeCtrlEx window
 

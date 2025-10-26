@@ -309,6 +309,9 @@
     <ClInclude Include="plugin_shuriktv.h">
       <Filter>Header Files\plugin</Filter>
     </ClInclude>
+    <ClInclude Include="ColorSettingsPage.h">
+      <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -520,6 +523,9 @@
     </ClCompile>
     <ClCompile Include="plugin_shurikv.cpp">
       <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorSettingsPage.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

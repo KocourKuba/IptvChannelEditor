@@ -32,7 +32,6 @@ DEALINGS IN THE SOFTWARE.
 #endif
 
 constexpr auto TCEX_EDITLABEL = 1;  // Edit label timer event;
-#define COLORREF_NULL ((COLORREF)-1)
 
 // CTreeCtrlEx
 
