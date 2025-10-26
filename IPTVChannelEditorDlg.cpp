@@ -4043,7 +4043,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
 		FillTreePlaylist();
 		UpdateControlsForItem();
 	}
-
+	OnRemoveUnknownChannels();
 	set_allow_save(changed);
 }
 
