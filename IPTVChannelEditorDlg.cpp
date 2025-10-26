@@ -477,7 +477,7 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 
 	m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC, DEFAULT_COLOR_HEVC);
 	m_colorHD = GetConfig().get_int(true, REG_COLOR_HD, DEFAULT_COLOR_HD);
-	m_colorFHD = GetConfig().get_int(true, REG_COLOR_HD, DEFAULT_COLOR_FHD);
+	m_colorFHD = GetConfig().get_int(true, REG_COLOR_FHD, DEFAULT_COLOR_FHD);
 
 	m_wndTrayIcon.HideIcon();
 
@@ -650,9 +650,9 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	m_wndShowEPG.SetCheck(GetConfig().get_int(true, REG_SHOW_EPG, 1));
 	m_wndIconSource.SetCurSel(GetConfig().get_int(true, REG_ICON_SOURCE));
 	m_wndEpg1.SetCheck(TRUE);
+	m_wndHighlightStream.SetCheck(GetConfig().get_int(false, REG_HIGHLIGHT_STREAM));
 
 	m_switch_plugin_timer = SetTimer(ID_SWITCH_PLUGIN_TIMER, 500, nullptr);
-
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 

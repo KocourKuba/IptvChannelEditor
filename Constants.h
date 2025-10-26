@@ -74,8 +74,8 @@ constexpr auto REG_COLOR_ADDED         = _T("ColorAdded");
 constexpr auto REG_COLOR_NOT_ADDED     = _T("ColorNotAdded");
 constexpr auto REG_COLOR_CHANGED       = _T("ColorChanged");
 constexpr auto REG_COLOR_UNKNOWN       = _T("ColorUnknown");
-constexpr auto REG_COLOR_HEVC          = _T("ColorHEVC");
 constexpr auto REG_COLOR_DUPLICATED    = _T("ColorDuplicated");
+constexpr auto REG_COLOR_HEVC          = _T("ColorHEVC");
 constexpr auto REG_COLOR_HD            = _T("ColorHD");
 constexpr auto REG_COLOR_FHD           = _T("ColorFHD");
 

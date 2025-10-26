@@ -76,6 +76,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_COLOR_UNKNOWN,
 	REG_COLOR_HEVC,
 	REG_COLOR_HD,
+	REG_COLOR_FHD,
 	REG_COLOR_DUPLICATED,
 	REG_PLUGIN,
 	REG_SEL_PLUGIN,
