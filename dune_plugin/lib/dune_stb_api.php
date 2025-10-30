@@ -1864,6 +1864,11 @@ function is_r11_or_higher()
     return safe_get_value(get_parsed_firmware_ver(), 'rev_number', 0) > 10;
 }
 
+function is_r20_or_higher()
+{
+    return safe_get_value(get_parsed_firmware_ver(), 'rev_number', 0) > 19;
+}
+
 function is_r22_or_higher()
 {
     return safe_get_value(get_parsed_firmware_ver(), 'rev_number', 0) > 21;

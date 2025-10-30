@@ -679,6 +679,12 @@ class Starnet_Tv implements User_Input_Handler
             PluginTvInfo::timer => Action_Factory::timer(1000),
         );
 
+        if (is_r20_or_higher()) {
+            $tv_info[PluginTvInfo::epg_day_use_local_tz] = USE_TZ_LOCAL;
+        } else {
+            $tv_info[PluginTvInfo::epg_day_shift_sec] = -get_local_time_zone_offset();
+        }
+
         if ($ext_epg_enabled) {
             $app_name = $this->plugin->config->plugin_info['app_type_name'];
             $content = '';
