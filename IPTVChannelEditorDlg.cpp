@@ -4132,7 +4132,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAccountSettings()
 	auto info = GetBaseInfo(&m_wndChannelsTree, m_wndChannelsTree.GetSelectedItem());
 	auto uri_stream = GetUriStream(info);
 
-	CAccessInfoPage dlgInfo;
+	CAccessInfoPage dlgInfo(m_all_credentials);
 	dlgInfo.m_psp.dwFlags &= ~PSP_HASHELP;
 	dlgInfo.m_plugin = GetPluginFactory().create_plugin(m_plugin_type);
 	dlgInfo.m_plugin->copy_config(*m_plugin);

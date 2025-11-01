@@ -217,7 +217,12 @@ public:
 			|| token != that.token
 			|| s_token != that.s_token
 			|| ott_key != that.ott_key
-			|| subdomain != that.subdomain;
+			|| subdomain != that.subdomain
+			|| domain_id != that.domain_id
+			|| server_id != that.server_id
+			|| device_id != that.device_id
+			|| profile_id != that.profile_id
+			|| quality_id != that.quality_id;
 	}
 };
 

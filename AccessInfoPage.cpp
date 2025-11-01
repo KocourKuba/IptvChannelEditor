@@ -113,7 +113,9 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CTooltipPropertyPage)
 END_MESSAGE_MAP()
 
 
-CAccessInfoPage::CAccessInfoPage() : CTooltipPropertyPage(IDD_DIALOG_ACCESS_INFO)
+CAccessInfoPage::CAccessInfoPage(std::vector<Credentials>& creds)
+	: CTooltipPropertyPage(IDD_DIALOG_ACCESS_INFO)
+	, m_all_credentials(creds)
 {
 }
 
@@ -220,8 +222,6 @@ BOOL CAccessInfoPage::OnInitDialog()
 	m_wndAccounts.SetExtendedStyle(m_wndAccounts.GetExtendedStyle() | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
 	CHeaderCtrl* header = m_wndAccounts.GetHeaderCtrl();
 	header->ModifyStyle(0, HDS_CHECKBOXES);
-
-	m_all_credentials = GetConfig().LoadCredentials();
 
 	std::vector<std::wstring> macroses =
 	{

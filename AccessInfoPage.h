@@ -37,7 +37,7 @@ class CAccessInfoPage : public CTooltipPropertyPage
 	DECLARE_DYNAMIC(CAccessInfoPage)
 
 public:
-	CAccessInfoPage();   // standard constructor
+	explicit CAccessInfoPage(std::vector<Credentials>& creds);   // standard constructor
 	virtual ~CAccessInfoPage() = default;
 
 	Credentials& GetCheckedAccount();
@@ -162,5 +162,5 @@ private:
 	std::vector<DynamicParamsInfo> m_profiles;
 	std::vector<DynamicParamsInfo> m_qualities;
 	std::vector<DynamicParamsInfo> m_domains;
-	std::vector<Credentials> m_all_credentials;
+	std::vector<Credentials>& m_all_credentials;
 };
