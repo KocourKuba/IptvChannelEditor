@@ -135,7 +135,7 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_EPG1, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_RADIO_EPG2, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
 	ON_BN_CLICKED(IDC_RADIO_EPG3, &CIPTVChannelEditorDlg::OnBnClickedButtonEpg)
-	ON_BN_CLICKED(IDC_BUTTON_ADD_EPG, &CIPTVChannelEditorDlg::OnBnClickedButtonAddEpg)
+	ON_BN_CLICKED(IDC_BUTTON_ADD_EPG, &CIPTVChannelEditorDlg::OnBnClickedButtonAddXmltvSource)
 	ON_CBN_SELCHANGE(IDC_COMBO_CUSTOM_XMLTV_EPG, &CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomXmltvEpg)
 	ON_BN_CLICKED(IDC_CHECK_SHOW_EPG, &CIPTVChannelEditorDlg::OnBnClickedCheckShowEpg)
 	ON_BN_CLICKED(IDC_SPLIT_BUTTON_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
@@ -698,6 +698,22 @@ BOOL CIPTVChannelEditorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 	}
 
 	return FALSE;
+}
+
+void CIPTVChannelEditorDlg::StartXmltvParseThread()
+{
+	int epg_idx = GetEpgIdx();
+	if ((m_xmltvEpgSource != -1 && !m_xmltv_sources.empty())
+		&& (m_xmltv_sources[m_xmltvEpgSource].empty() || m_epg_cache.at(epg_idx).find(L"file already parsed") == m_epg_cache.at(epg_idx).end()))
+	{
+		StopXmltvParseThread();
+		if (m_threadParseXml.joinable())
+		{
+			m_threadParseXml.join();
+		}
+		m_wndBtnStop.EnableWindow(TRUE);
+		m_threadParseXml = std::jthread(std::bind_front(&CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg, this), m_xmltv_sources.at(m_xmltvEpgSource));
+	}
 }
 
 void CIPTVChannelEditorDlg::UpdateWindowTitle()
@@ -1348,22 +1364,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM l
 	UpdateChannelsTreeColors();
 	FillTreePlaylist();
 	UpdateControlsForItem();
-
-	int epg_idx = GetEpgIdx();
-	if (m_xmltvEpgSource != -1 && !m_xmltv_sources.empty())
-	{
-		if (m_xmltv_sources[m_xmltvEpgSource].empty() || m_epg_cache.at(epg_idx).find(L"file already parsed") == m_epg_cache.at(epg_idx).end())
-		{
-
-			StopXmltvParseThread();
-			if (m_threadParseXml.joinable())
-			{
-				m_threadParseXml.join();
-			}
-			m_wndBtnStop.EnableWindow(TRUE);
-			m_threadParseXml = std::jthread(std::bind_front(&CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg, this), m_xmltv_sources.at(m_xmltvEpgSource));
-		}
-	}
+	StartXmltvParseThread();
 
 	if (!m_threadEPG.joinable())
 	{
@@ -6596,7 +6597,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCheckUpdate()
 	}
 }
 
-void CIPTVChannelEditorDlg::OnBnClickedButtonAddEpg()
+void CIPTVChannelEditorDlg::OnBnClickedButtonAddXmltvSource()
 {
 	std::vector<CFillParamsInfoDlg::variantInfo> info;
 	for (const auto& item : m_plugin->get_custom_epg_urls())
@@ -6624,6 +6625,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddEpg()
 		GetConfig().SaveSettings();
 		FillXmlSources();
 		UpdateControlsForItem();
+		StartXmltvParseThread();
 	}
 }
 

@@ -155,7 +155,7 @@ protected:
 	afx_msg void OnBnClickedCheckShowDuplicates();
 	afx_msg void OnBnClickedCheckShowUrl();
 	afx_msg void OnBnClickedExportM3U();
-	afx_msg void OnBnClickedButtonAddEpg();
+	afx_msg void OnBnClickedButtonAddXmltvSource();
 	afx_msg void OnCbnSelchangeComboCustomXmltvEpg();
 
 	afx_msg void OnBnClickedCheckCustomUrl();
@@ -304,6 +304,7 @@ private:
 	void ProgressCallbackDownload(const utils::progress_info& info);
 	void ProgressCallbackXmltvParse(const utils::progress_info& info);
 	void ProgressCallbackStreamInfo(const utils::progress_info& info);
+	void StartXmltvParseThread();
 	void StopXmltvParseThread();
 
 protected:
