@@ -342,7 +342,7 @@ class Default_Dune_Plugin implements DunePlugin
                 $hash = Hashed_Array::hash($source['name']);
                 $cached_type->ttl = $cache_params->has($hash) ? $cache_params->get($hash) : -1;
                 $xmltv_sources->set($hash, $cached_type);
-                hd_debug_print("$key => $source", true);
+                hd_debug_print("$key => {$source['name']}", true);
             }
         }
 

@@ -412,7 +412,7 @@ class Curl_Wrapper
      */
     protected function exec_curl($url, $save_file, $use_cache = false)
     {
-        if (is_r22_or_higher()) {
+        if (is_r21_or_higher()) {
             $res = $this->exec_php_curl($url, $save_file, $use_cache);
         } else {
             $res = $this->exec_shell_curl($url, $save_file, $use_cache);

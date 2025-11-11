@@ -318,7 +318,9 @@ class default_config extends dynamic_config
     public function get_domain_name()
     {
         $domains = $this->get_domains();
-        return $domains[$this->get_domain_id()];
+        $domain = $domains[$this->get_domain_id()];
+        hd_debug_print("domain: '$domain'");
+        return $domain;
     }
 
     /**

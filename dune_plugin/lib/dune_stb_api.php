@@ -445,8 +445,7 @@ function hd_debug_print($val = null, $is_debug = false)
         $prefix .= "{$parent_caller['function']}(): ";
     } else if ($val instanceof Json_Serializer) {
         $val = $val->__toString();
-    } else if (is_object($val) ||is_array($val)) {
-        $val = (array)$val;
+    } else if (is_array($val)) {
         if (empty($val)) {
             $val = '{}';
         } else {
@@ -1859,24 +1858,39 @@ function get_local_storages_list($path)
 # Miscellaneous
 ###############################################################################
 
+/**
+ * @param int $rev
+ * @return bool
+ */
+function is_rev_or_higher($rev)
+{
+    return safe_get_value(get_parsed_firmware_ver(), 'rev_number', 0) >= $rev;
+}
+
+
 function is_r11_or_higher()
 {
-    return safe_get_value(get_parsed_firmware_ver(), 'rev_number', 0) > 10;
+    return is_rev_or_higher(11);
 }
 
 function is_r20_or_higher()
 {
-    return safe_get_value(get_parsed_firmware_ver(), 'rev_number', 0) > 19;
+    return is_rev_or_higher(20);
+}
+
+function is_r21_or_higher()
+{
+    return is_rev_or_higher(21);
 }
 
 function is_r22_or_higher()
 {
-    return safe_get_value(get_parsed_firmware_ver(), 'rev_number', 0) > 21;
+    return is_rev_or_higher(22);
 }
 
 function is_r24_or_higher()
 {
-    return safe_get_value(get_parsed_firmware_ver(), 'rev_number', 0) > 22;
+    return is_rev_or_higher(24);
 }
 
 function is_ext_epg_supported()
