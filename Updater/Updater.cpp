@@ -45,11 +45,7 @@ static LPCTSTR g_sz_Run_GUID = _T("Global\\IPTVChannelEditor.{E4DC62B5-45AD-47AA
 
 #ifdef _DEBUG
 std::wstring DEV_PATH = LR"(..\..\)";
-#ifdef _WIN64
 std::wstring PACK_DLL_PATH = LR"(dll64\)";
-#else
-std::wstring PACK_DLL_PATH = LR"(dll\)";
-#endif // _WIN64
 #else
 std::wstring DEV_PATH;
 std::wstring PACK_DLL_PATH;

@@ -53,11 +53,7 @@ constexpr auto PACK_PATH = L"{:s}_plugin\\";
 
 #ifdef _DEBUG
 std::wstring CIPTVChannelEditorApp::DEV_PATH = LR"(..\..\)";
-#ifdef _WIN64
 std::wstring CIPTVChannelEditorApp::PACK_DLL_PATH = LR"(dll64\)";
-#else
-std::wstring CIPTVChannelEditorApp::PACK_DLL_PATH = LR"(dll\)";
-#endif //  _WIN64
 #else
 std::wstring CIPTVChannelEditorApp::DEV_PATH;
 std::wstring CIPTVChannelEditorApp::PACK_DLL_PATH;
@@ -252,7 +248,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	}
 
 #ifdef _DEBUG
-	const auto& pack_dll = GetDevAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
+	const auto& pack_dll = GetDevAppPath(CIPTVChannelEditorApp::PACK_DLL_PATH.c_str()) + PACK_DLL;
 #else
 	const auto& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
 #endif // _DEBUG
@@ -669,7 +665,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 									   bool noEmbed /*= false*/,
 									   bool noCustom /*= false*/)
 {
-	const std::wstring& pack_dll = GetAppPath((CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
+	const std::wstring& pack_dll = GetAppPath((CIPTVChannelEditorApp::DEV_PATH + CIPTVChannelEditorApp::PACK_DLL_PATH).c_str()) + PACK_DLL;
 	if (!std::filesystem::exists(pack_dll))
 	{
 		if (showMessage)
