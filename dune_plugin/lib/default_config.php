@@ -1274,6 +1274,8 @@ class default_config extends dynamic_config
 
         hd_debug_print("ApiCommandUrl: $command_url", true);
 
+        $this->curl_wrapper->reset();
+
         if (!empty($curl_opt[CURLOPT_HTTPHEADER])) {
             $this->curl_wrapper->set_send_headers($curl_opt[CURLOPT_HTTPHEADER]);
         }
