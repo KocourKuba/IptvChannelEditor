@@ -1083,7 +1083,17 @@
         }
       ],
       "provider_url": "https://iptv.online/",
-      "provider_api_url": "https://see-tv.eu/api/v4",
+      "provider_api_url": "https://{DOMAIN_ID}/api/v4",
+      "domains_list": [
+        {
+          "id": "0",
+          "name": "see-tv.eu"
+        },
+        {
+          "id": "1",
+          "name": "iptv.online"
+        }
+      ],
       "streams_config": [
         {
           "cu_type": "flussonic",
