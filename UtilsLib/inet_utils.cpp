@@ -413,8 +413,8 @@ bool DownloadFile(http_request& request)
 			request.progress_callback = nullptr;
 		}
 
-		DWORD dwSize = 0;
 		DWORD dwDownloaded = 0;
+		int prev = 0;
 		for (;;)
 		{
 			if (request.stop_token.stop_requested())
@@ -430,6 +430,7 @@ bool DownloadFile(http_request& request)
 				break;
 			}
 			// Check for available data.
+			DWORD dwSize = 0;
 			if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
 			{
 				request.error_message += std::format(L"\nError: WinHttpQueryDataAvailable error code {:d}", GetLastError());
@@ -443,7 +444,6 @@ bool DownloadFile(http_request& request)
 			std::vector<unsigned char> chunk(dwSize);
 
 			DWORD dwChunkSize = 0;
-			int prev = 0;
 			if (WinHttpReadData(hRequest, chunk.data(), dwSize, &dwChunkSize))
 			{
 				request.body.write(reinterpret_cast<const char*>(chunk.data()), dwChunkSize);
