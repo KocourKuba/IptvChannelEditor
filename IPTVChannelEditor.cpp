@@ -388,10 +388,6 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	}
 
 	int res = CheckPluginConsistency(m_bDev);
-	if (res == 0)
-	{
-		return FALSE;
-	}
 
 	// cleanup old files
 	std::error_code err;
