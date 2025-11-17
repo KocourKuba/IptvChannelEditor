@@ -167,7 +167,7 @@ static int download_update(UpdateInfo& info)
 	{
 		LOG_PROTOCOL("Try to download update info...");
 		utils::http_request req{ std::format(L"{:s}/{:s}", info.server, info.info_file) };
-		if (!utils::AsyncDownloadFile(req).get())
+		if (!utils::DownloadFile(req))
 		{
 			LOG_PROTOCOL(req.error_message);
 			return err_download_info; // Unable to download update info!
@@ -175,7 +175,20 @@ static int download_update(UpdateInfo& info)
 
 		std::swap(info.update_info, req.body);
 
+		const auto& update_manifest = std::format(L"{:s}{:s}", info.update_path, info.info_file);
+		std::ofstream os(update_manifest, std::ofstream::binary);
+		info.update_info.seekg(0);
+		os << info.update_info.rdbuf();
+		if (os.fail())
+		{
+			LOG_PROTOCOL(std::format(L"error save: {:s} Error code: {:d}", update_manifest, GetLastError()));
+			return err_save_pkg;  // Unable to save update package!
+		}
+		LOG_PROTOCOL(std::format(L"saved to: {:s}", update_manifest));
+		os.close();
+
 		// Parse the buffer using the xml file parsing library into doc
+		info.update_info.seekg(0);
 		auto doc = std::make_unique<rapidxml::xml_document<>>();
 
 		auto xml = info.update_info.str();
@@ -273,18 +286,6 @@ static int download_update(UpdateInfo& info)
 		{
 			return ret;
 		}
-
-		const auto& update_manifest = std::format(L"{:s}{:s}", info.update_path, info.info_file);
-		std::ofstream os(update_manifest, std::ofstream::binary);
-		info.update_info.seekg(0);
-		os << info.update_info.rdbuf();
-		if (os.fail())
-		{
-			ret = err_save_pkg; // Unable to save update package!
-			LOG_PROTOCOL(std::format(L"error save: {:s} Error code: {:d}", update_manifest, GetLastError()));
-			break;
-		}
-		LOG_PROTOCOL(std::format(L"saved to: {:s}", update_manifest));
 	} while (false);
 
 	return ret;
@@ -473,6 +474,7 @@ int main(int argc, char* argv[])
 
 	if (!std::filesystem::create_directories(info.update_path, err) && err.value())
 	{
+		LOG_PROTOCOL(std::format(L"Unable create directories. {}", info.update_path));
 		return err_create_dir; // Unable to create update directory!
 	}
 
@@ -492,13 +494,17 @@ int main(int argc, char* argv[])
 	if (download) //-V547
 	{
 		LOG_PROTOCOL("Downloading update package.");
-		return download_update(info);
+		int ret_code = download_update(info);
+		LOG_PROTOCOL(std::format("ret code: {}", ret_code));
+		return ret_code;
 	}
 
 	if (update) //-V547
 	{
 		LOG_PROTOCOL("Performing update application.");
-		return update_app(info, force);
+		int ret_code = update_app(info, force);
+		LOG_PROTOCOL(std::format("ret code: {}", ret_code));
+		return ret_code;
 	}
 
 	args.printHelp();

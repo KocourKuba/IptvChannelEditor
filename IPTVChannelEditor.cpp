@@ -532,15 +532,20 @@ int CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 			AfxMessageBox(load_string_resource_fmt(IDS_STRING_ERR_FAILED_DOWNLOAD_PACKAGE, update_pkg).c_str(), MB_OK | MB_ICONSTOP);
 			return 0;
 		}
-		Sleep(500);
 	}
 
 	// Parse the buffer using the xml file parsing library into doc
 
-	if (!std::filesystem::exists(update_pkg))
+
+	int cnt = 0;
+	while(!std::filesystem::exists(update_pkg))
 	{
-		AfxMessageBox(load_string_resource_fmt(IDS_STRING_ERR_FILE_MISSING, update_pkg).c_str(), MB_OK | MB_ICONSTOP);
-		return 0;
+		Sleep(1000);
+		if (cnt++ > 30)
+		{
+			AfxMessageBox(load_string_resource_fmt(IDS_STRING_ERR_FILE_MISSING, update_pkg).c_str(), MB_OK | MB_ICONSTOP);
+			return 0;
+		}
 	}
 
 	std::ifstream file(update_pkg);
@@ -1845,7 +1850,7 @@ int RequestToUpdateServer(const std::wstring& command, bool isThread /*= true*/)
 				break;
 			}
 
-			if (utils::CheckForTimeOut(dwStart, 60s))
+			if (utils::CheckForTimeOut(dwStart, 180s))
 			{
 				::TerminateProcess(pi.hProcess, 0);
 				dwExitCode = STATUS_TIMEOUT;
