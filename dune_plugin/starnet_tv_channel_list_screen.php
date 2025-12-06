@@ -1,7 +1,7 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
+class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen
 {
     const ID = 'tv_channel_list';
 
@@ -352,7 +352,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen i
     /**
      * @inheritDoc
      */
-    public function get_timer(MediaURL $media_url, $plugin_cookies)
+    public function get_timer()
     {
         return Action_Factory::timer(1000);
     }

@@ -25,21 +25,69 @@
  */
 
 require_once 'abstract_screen.php';
+require_once 'user_input_handler_registry.php';
 
 abstract class Abstract_Controls_Screen extends Abstract_Screen
 {
     const CONTROLS_WIDTH = 850;
 
+    protected $return_index = 0;
+    protected $force_parent_reload = false;
+
     ///////////////////////////////////////////////////////////////////////
 
     /**
      * @param MediaURL $media_url
-     * @param $plugin_cookies
+     * @param object $plugin_cookies
      * @return array
      */
     abstract public function get_control_defs(MediaURL $media_url, &$plugin_cookies);
 
+    /**
+     * Get MediaURL string representation (json encoded)
+     *
+     * @param string $parent_id
+     * @param int $return_index
+     * @return false|string
+     */
+    public static function make_controls_media_url_str($parent_id, $return_index = -1)
+    {
+        return MediaURL::encode(array(PARAM_SCREEN_ID => static::ID, PARAM_SOURCE_WINDOW_ID => $parent_id, PARAM_RETURN_INDEX => $return_index));
+    }
+
+    /**
+     * Generate action with remembered initial_sel_idx
+     *
+     * @param object $parent_media_url
+     * @param string $action_id
+     * @return array
+     */
+    protected static function make_return_action($parent_media_url, $action_id = ACTION_REFRESH_SCREEN)
+    {
+        $actions[] = Action_Factory::close_and_run();
+        $actions[] = User_Input_Handler_Registry::create_screen_action(
+            $parent_media_url->{PARAM_SOURCE_WINDOW_ID},
+            $action_id,
+            null,
+            array('initial_sel_ndx' => $parent_media_url->{PARAM_RETURN_INDEX})
+        );
+
+        return Action_Factory::composite($actions);
+    }
+
     ///////////////////////////////////////////////////////////////////////
+
+    /**
+     * @inheritDoc
+     */
+    public function get_action_map(MediaURL $media_url, &$plugin_cookies)
+    {
+        hd_debug_print(null, true);
+
+        $actions[GUI_EVENT_KEY_TOP_MENU] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_TOP_MENU);
+        $actions[GUI_EVENT_KEY_RETURN] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN);
+        return $actions;
+    }
 
     /**
      * @inheritDoc
@@ -47,53 +95,26 @@ abstract class Abstract_Controls_Screen extends Abstract_Screen
     public function get_folder_view(MediaURL $media_url, &$plugin_cookies)
     {
         hd_debug_print(null, true);
-        hd_debug_print($media_url, true);
 
         $defs = $this->get_control_defs($media_url, $plugin_cookies);
 
-        $folder_view = array
-        (
+        $folder_view = array(
             PluginControlsFolderView::defs => $defs,
             PluginControlsFolderView::initial_sel_ndx => -1,
             PluginControlsFolderView::actions => $this->get_action_map($media_url, $plugin_cookies),
+            PluginControlsFolderView::timer => $this->get_timer(),
             PluginControlsFolderView::params => array(
                 PluginFolderViewParams::paint_path_box => true,
                 PluginFolderViewParams::paint_content_box_background => true,
-                PluginFolderViewParams::background_url => $this->plugin->config->plugin_info['app_background'],
+                PluginFolderViewParams::background_url => $this->plugin->get_background_image(),
             ),
         );
 
-        return array
-        (
+        return array(
             PluginFolderView::multiple_views_supported => false,
             PluginFolderView::archive => null,
             PluginFolderView::view_kind => PLUGIN_FOLDER_VIEW_CONTROLS,
             PluginFolderView::data => $folder_view,
         );
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @param string $param
-     * @param bool $default
-     * @return mixed
-     */
-    protected static function get_cookie_bool_param($plugin_cookies, $param, $default = true)
-    {
-        if (!isset($plugin_cookies->{$param}))
-            $plugin_cookies->{$param} = SwitchOnOff::to_def($default);
-
-        return $plugin_cookies->{$param};
-    }
-
-    /**
-     * @param $plugin_cookies
-     * @param string $param
-     * @return void
-     */
-    protected static function toggle_cookie_param($plugin_cookies, $param)
-    {
-        $plugin_cookies->{$param} = SwitchOnOff::toggle($plugin_cookies->{$param});
-        hd_debug_print("$param: " . $plugin_cookies->{$param}, true);
     }
 }

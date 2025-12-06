@@ -1,7 +1,7 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
+class Starnet_Vod_Filter_Screen extends Abstract_Preloaded_Regular_Screen
 {
     const ID = 'filter_screen';
     const FILTER_ICON_PATH = 'plugin_file://img/icon_filter.png';

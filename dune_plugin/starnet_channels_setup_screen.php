@@ -1,10 +1,9 @@
 <?php
 require_once 'lib/abstract_controls_screen.php';
-require_once 'lib/user_input_handler.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
-class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements User_Input_Handler
+class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
 {
     const ID = 'channels_setup';
 

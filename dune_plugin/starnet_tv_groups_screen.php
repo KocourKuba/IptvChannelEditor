@@ -3,7 +3,7 @@ require_once 'lib/abstract_preloaded_regular_screen.php';
 require_once 'starnet_setup_screen.php';
 require_once 'starnet_channels_setup_screen.php';
 
-class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
+class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
 {
     const ID = 'tv_groups';
 
@@ -264,7 +264,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen impleme
     /**
      * @inheritDoc
      */
-    public function get_timer(MediaURL $media_url, $plugin_cookies)
+    public function get_timer()
     {
         return Action_Factory::timer(1000);
     }

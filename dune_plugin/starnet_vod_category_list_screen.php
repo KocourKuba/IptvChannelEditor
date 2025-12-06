@@ -3,7 +3,7 @@ require_once 'lib/abstract_preloaded_regular_screen.php';
 require_once 'lib/vod_category.php';
 require_once 'starnet_vod_list_screen.php';
 
-class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
+class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
 {
     const ID = 'vod_category_list';
 

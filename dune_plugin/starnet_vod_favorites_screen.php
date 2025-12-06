@@ -2,7 +2,7 @@
 
 require_once 'lib/abstract_preloaded_regular_screen.php';
 
-class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen implements User_Input_Handler
+class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen
 {
     const ID = 'vod_favorites';
 

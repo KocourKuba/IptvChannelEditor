@@ -25,11 +25,15 @@
  */
 
 require_once 'screen.php';
+require_once 'user_input_handler.php';
 
-class Abstract_Screen implements Screen
+abstract class Abstract_Screen implements Screen, User_Input_Handler
 {
     const ID = 'abstract_screen';
 
+    /**
+     * @var Default_Dune_Plugin
+     */
     protected $plugin;
 
     public function __construct(Default_Dune_Plugin $plugin)
@@ -37,14 +41,13 @@ class Abstract_Screen implements Screen
         $this->plugin = $plugin;
     }
 
+    ///////////////////////////////////////////////////////////////////////
+    // User_Input_Handler interface
+
     /**
-     * This is not override of User_Input_Handler interface!
-     * It helper method to call inherited classes
-     * that implements User_Input_Handler interface
-     *
-     * @return string
+     * @inheritDoc
      */
-    public static function get_handler_id()
+    public function get_handler_id()
     {
         return static::get_id() . '_handler';
     }
@@ -63,7 +66,7 @@ class Abstract_Screen implements Screen
     /**
      * @inheritDoc
      */
-    public function get_timer(MediaURL $media_url, $plugin_cookies)
+    public function get_timer()
     {
         return null;
     }
@@ -74,14 +77,6 @@ class Abstract_Screen implements Screen
     public static function get_id()
     {
         return static::ID;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function get_action_map(MediaURL $media_url, &$plugin_cookies)
-    {
-        return null;
     }
 
     /**

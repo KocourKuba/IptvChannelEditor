@@ -29,7 +29,7 @@ require_once 'rows_factory.php';
 require_once 'gcomps_factory.php';
 require_once 'gcomp_geom.php';
 
-class Dummy_Epfs_Screen extends Abstract_Rows_Screen implements User_Input_Handler
+class Dummy_Epfs_Screen extends Abstract_Rows_Screen
 {
     const ID = 'dummy_epf';
 

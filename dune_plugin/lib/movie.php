@@ -1,6 +1,7 @@
 <?php
 
 require_once 'lib/default_dune_plugin.php';
+require_once 'lib/user_input_handler_registry.php';
 require_once 'movie_series.php';
 require_once 'movie_season.php';
 require_once 'movie_variant.php';
@@ -153,7 +154,7 @@ class Movie implements User_Input_Handler
     /**
     * @return string
     */
-    public static function get_handler_id()
+    public function get_handler_id()
     {
         return self::ID;
     }

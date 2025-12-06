@@ -690,4 +690,28 @@ class Action_Factory
             ),
         );
     }
+
+    public static function bt_command($name, $params = null, $callback_action = null)
+    {
+        if (!defined('BT_COMMAND_ACTION_ID')) {
+            return $callback_action;
+        }
+
+        return array(
+            GuiAction::handler_string_id => BT_COMMAND_ACTION_ID,
+            GuiAction::data => array(
+                BtCommandActionData::name => $name,
+                BtCommandActionData::params => $params,
+                BtCommandActionData::callback_action => $callback_action
+            ),
+        );
+    }
+
+    public static function composite($actions)
+    {
+        return array(
+            GuiAction::handler_string_id => COMPOSITE_ACTION_ID,
+            GuiAction::data => array(CompositeActionData::actions => $actions),
+        );
+    }
 }

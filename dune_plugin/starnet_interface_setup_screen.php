@@ -1,10 +1,9 @@
 <?php
 require_once 'lib/abstract_controls_screen.php';
-require_once 'lib/user_input_handler.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
-class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements User_Input_Handler
+class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen
 {
     const ID = 'interface_setup';
 
@@ -28,7 +27,7 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
         //////////////////////////////////////
         // Show in main screen
         if (!is_limited_apk()) {
-            $show_tv = self::get_cookie_bool_param($plugin_cookies, self::CONTROL_SHOW_TV);
+            $show_tv = get_cookie_bool_param($plugin_cookies, self::CONTROL_SHOW_TV);
             Control_Factory::add_image_button($defs, $this, null,
                 self::CONTROL_SHOW_TV, TR::t('setup_show_in_main'), SwitchOnOff::translate($show_tv),
                 SwitchOnOff::to_image($show_tv), self::CONTROLS_WIDTH);
@@ -112,7 +111,7 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen implements
         switch ($control_id) {
             case self::CONTROL_SHOW_TV:
                 if (!is_limited_apk()) {
-                    self::toggle_cookie_param($plugin_cookies, $control_id);
+                    toggle_cookie_param($plugin_cookies, $control_id);
                 }
                 break;
 

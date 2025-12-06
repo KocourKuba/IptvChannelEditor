@@ -208,6 +208,11 @@ class Default_Dune_Plugin implements DunePlugin
             20);
     }
 
+    public function get_background_image()
+    {
+        return $this->config->plugin_info['app_background'];
+    }
+
     ///////////////////////////////////////////////////////////////////////
 
     public function init_plugin()

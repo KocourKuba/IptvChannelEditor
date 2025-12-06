@@ -1,10 +1,9 @@
 <?php
 require_once 'lib/abstract_controls_screen.php';
-require_once 'lib/user_input_handler.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
-class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements User_Input_Handler
+class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
 {
     const ID = 'stream_setup';
 
@@ -323,7 +322,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
         switch ($control_id) {
             case self::CONTROL_AUTO_PLAY:
             case self::CONTROL_AUTO_RESUME:
-                self::toggle_cookie_param($plugin_cookies, $control_id);
+                toggle_cookie_param($plugin_cookies, $control_id);
                 hd_debug_print("$control_id: " . $plugin_cookies->{$control_id});
                 break;
 

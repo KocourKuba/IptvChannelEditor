@@ -1,11 +1,10 @@
 <?php
 require_once 'lib/abstract_controls_screen.php';
-require_once 'lib/user_input_handler.php';
 require_once 'lib/epg/epg_manager_xmltv.php';
 
 ///////////////////////////////////////////////////////////////////////////
 
-class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_Input_Handler
+class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
 {
     const ID = 'epg_setup';
 
@@ -304,7 +303,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
     /**
      * @inheritDoc
      */
-    public function get_timer(MediaURL $media_url, $plugin_cookies)
+    public function get_timer()
     {
         return Action_Factory::timer(500);
     }

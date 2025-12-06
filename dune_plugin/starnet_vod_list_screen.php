@@ -2,9 +2,10 @@
 
 require_once 'lib/abstract_regular_screen.php';
 require_once 'lib/short_movie_range.php';
+require_once 'lib/user_input_handler_registry.php';
 require_once 'starnet_vod_search_screen.php';
 
-class Starnet_Vod_List_Screen extends Abstract_Regular_Screen implements User_Input_Handler
+class Starnet_Vod_List_Screen extends Abstract_Regular_Screen
 {
     const ID = 'vod_list';
 

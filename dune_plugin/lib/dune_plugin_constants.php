@@ -70,6 +70,7 @@ const PARAM_SQUARE_ICONS = 'square_icons';
 const PARAM_ICONS_IN_ROW = 'icons_in_row';
 const PARAM_SHOW_CHANNEL_CAPTION = 'show_channel_caption';
 const PARAM_HISTORY_PATH = 'history_path';
+const PARAM_RETURN_INDEX = 'return_index';
 const PARAM_CHANNELS_LIST_PATH = 'channels_list_path';
 const PARAM_CHANNELS_LIST_NAME = 'channels_list_name';
 const PARAM_CHANNELS_SOURCE = 'channels_source';

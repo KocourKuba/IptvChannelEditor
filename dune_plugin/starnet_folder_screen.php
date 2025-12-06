@@ -30,7 +30,7 @@ require_once 'lib/smb_tree.php';
 require_once 'lib/hd.php';
 require_once 'lib/curl_wrapper.php';
 
-class Starnet_Folder_Screen extends Abstract_Regular_Screen implements User_Input_Handler
+class Starnet_Folder_Screen extends Abstract_Regular_Screen
 {
     const ID = 'file_list';
     const ACTION_FS = 'fs_action';

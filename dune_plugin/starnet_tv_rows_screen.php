@@ -6,7 +6,7 @@ require_once 'lib/epfs/gcomps_factory.php';
 require_once 'lib/epfs/gcomp_geom.php';
 require_once 'lib/playback_points.php';
 
-class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_Handler
+class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen
 {
     const ID = 'rows_epf';
 
@@ -58,8 +58,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
             if (is_null($media_url))
                 return null;
         }
-
-        $this->set_cur_sel_state_str(isset($user_input->parent_sel_state) ? $user_input->parent_sel_state : null);
 
         $control_id = $user_input->control_id;
 
