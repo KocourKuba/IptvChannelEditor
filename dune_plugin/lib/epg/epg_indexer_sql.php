@@ -183,12 +183,10 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
                 if (empty($channel_id)) continue;
 
-                /** @noinspection PhpUnusedLocalVariableInspection */
                 $alias = $channel_id;
                 $stm_channels->execute();
 
                 foreach ($xml_node->getElementsByTagName('display-name') as $tag) {
-                    /** @noinspection PhpUnusedLocalVariableInspection */
                     $alias = mb_convert_case($tag->nodeValue, MB_CASE_LOWER, "UTF-8");
                     $stm_channels->execute();
                 }
@@ -285,7 +283,6 @@ class Epg_Indexer_Sql extends Epg_Indexer
                     // check if end
                     $end_tv = strpos($line, "</tv>");
                     if ($end_tv !== false) {
-                        /** @noinspection PhpUnusedLocalVariableInspection */
                         $tag_end_pos = $end_tv + $tag_start_pos;
                         $stm->execute();
                         break;
@@ -296,7 +293,6 @@ class Epg_Indexer_Sql extends Epg_Indexer
                 }
 
                 // end position include closing tag!
-                /** @noinspection PhpUnusedLocalVariableInspection */
                 $tag_end_pos = ftell($file);
                 // append position of open tag to file position of chunk
                 $tag_start_pos += $offset;

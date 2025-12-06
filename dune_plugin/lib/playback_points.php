@@ -102,8 +102,8 @@ class Playback_Points
         if (count($this->playback_points) !== 0) {
             hd_debug_print(count($this->playback_points) . " to: $path", true);
             HD::put_items($path, $this->playback_points);
-        } else if (file_exists($path)) {
-            unlink($path);
+        } else {
+            safe_unlink($path);
         }
     }
 

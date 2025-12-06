@@ -260,15 +260,15 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
-                hd_debug_print(ACTION_FOLDER_SELECTED . ": $data->filepath");
-                if ($this->plugin->get_cache_dir() === $data->filepath) break;
+                hd_debug_print(ACTION_FOLDER_SELECTED . ": " . $data->{PARAM_FILEPATH});
+                if ($this->plugin->get_cache_dir() === $data->{PARAM_FILEPATH}) break;
 
                 $this->plugin->clear_all_epg_cache();
-                $this->plugin->set_setting(PARAM_CACHE_PATH, $data->filepath);
+                $this->plugin->set_setting(PARAM_CACHE_PATH, $data->{PARAM_FILEPATH});
                 $this->plugin->init_epg_manager();
 
-                $post_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
-                    null, $data->filepath, self::CONTROLS_WIDTH);
+                $post_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->{Starnet_Folder_Screen::PARAM_CAPTION}),
+                    null, $data->{PARAM_FILEPATH}, self::CONTROLS_WIDTH);
                 break;
 
             case PARAM_FAKE_EPG:

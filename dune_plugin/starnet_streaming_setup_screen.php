@@ -253,7 +253,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_OTTKEY_APPLY, TR::t('ok'), 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, self::SETUP_ACTION_OTTKEY_APPLY, TR::t('ok'), 300);
         Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
         Control_Factory::add_vgap($defs, 10);
 
@@ -280,7 +280,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_LOGIN_APPLY, TR::t('apply'), 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, self::SETUP_ACTION_LOGIN_APPLY, TR::t('apply'), 300);
         Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
         Control_Factory::add_vgap($defs, 10);
 
@@ -303,7 +303,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen implements
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_PIN_APPLY, TR::t('apply'), 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, self::SETUP_ACTION_PIN_APPLY, TR::t('apply'), 300);
         Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
         Control_Factory::add_vgap($defs, 10);
 

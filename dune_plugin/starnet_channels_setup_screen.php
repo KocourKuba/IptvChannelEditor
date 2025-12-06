@@ -146,11 +146,11 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null,
-            self::SETUP_ACTION_CHANNELS_URL_APPLY, TR::t('ok'), 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, self::SETUP_ACTION_CHANNELS_URL_APPLY,
+            TR::t('ok'), 300);
         Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
         $push_action = User_Input_Handler_Registry::create_action($this, self::SETUP_ACTION_CHANNELS_URL_DEFAULT);
-        Control_Factory::add_custom_close_dialog_and_apply_buffon($defs, self::SETUP_ACTION_CHANNELS_URL_DEFAULT, TR::t('by_default'), 300, $push_action);
+        Control_Factory::add_custom_close_dialog_and_apply_button($defs, self::SETUP_ACTION_CHANNELS_URL_DEFAULT, TR::t('by_default'), 300, $push_action);
         Control_Factory::add_vgap($defs, 10);
 
         return $defs;
@@ -243,10 +243,10 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen implements 
 
             case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
-                hd_debug_print(ACTION_FOLDER_SELECTED . " $data->filepath");
+                hd_debug_print(ACTION_FOLDER_SELECTED . " " . $data->{PARAM_FILEPATH});
                 $this->plugin->set_setting(PARAM_CHANNELS_LIST_PATH, smb_tree::set_folder_info($user_input->selected_data));
-                return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
-                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->filepath, self::CONTROLS_WIDTH);
+                return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->{Starnet_Folder_Screen::PARAM_CAPTION}),
+                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->{PARAM_FILEPATH}, self::CONTROLS_WIDTH);
 
             case ACTION_RESET_DEFAULT:
                 hd_debug_print(ACTION_RESET_DEFAULT);

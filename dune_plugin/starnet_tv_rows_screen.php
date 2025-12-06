@@ -85,7 +85,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 if (!isset($user_input->item_id, $user_input->folder_key))
                     return null;
 
-                $info_children = $this->do_get_info_children(MediaURL::decode($media_url_str), $plugin_cookies);
+                $info_children = $this->do_get_info_children(MediaURL::decode($media_url_str));
 
                 return Action_Factory::update_rows_info(
                     $user_input->folder_key,
@@ -196,7 +196,6 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
                 break;
 
             case ACTION_REFRESH_SCREEN:
-                $this->plugin->set_need_update_epfs();
                 return Action_Factory::invalidate_all_folders($plugin_cookies);
         }
 
@@ -280,7 +279,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
         $rows = $this->create_rows(array(), json_encode(array('group_id' => '__dummy__row__')), '', '', null );
 
-        $history_rows = $this->get_history_rows($plugin_cookies);
+        $history_rows = $this->get_history_rows();
         if (!is_null($history_rows)) {
             hd_debug_print("added history: " . count($history_rows) . " rows", true);
             $rows = array_merge($rows, $history_rows);
@@ -474,10 +473,9 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
 
     /**
      * @param MediaURL $media_url
-     * @param Object $plugin_cookies
      * @return array|null
      */
-    private function do_get_info_children($media_url, $plugin_cookies)
+    private function do_get_info_children($media_url)
     {
         hd_debug_print(null, true);
 
@@ -737,10 +735,9 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen implements User_Input_
     }
 
     /**
-     * @param $plugin_cookies
      * @return array
      */
-    private function get_history_rows($plugin_cookies)
+    private function get_history_rows()
     {
         hd_debug_print(null, true);
         if (!$this->plugin->get_bool_setting(PARAM_SHOW_HISTORY)) {

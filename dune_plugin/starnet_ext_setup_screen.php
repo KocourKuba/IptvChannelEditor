@@ -143,7 +143,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
 
         Control_Factory::add_vgap($defs, 50);
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $this, null, self::SETUP_ACTION_PASS_APPLY, TR::t('ok'), 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $this, self::SETUP_ACTION_PASS_APPLY, TR::t('ok'), 300);
         Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
         Control_Factory::add_vgap($defs, 10);
 
@@ -177,10 +177,10 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
 
             case ACTION_FOLDER_SELECTED:
                 $data = MediaURL::decode($user_input->selected_data);
-                hd_debug_print(ACTION_FOLDER_SELECTED . " $data->filepath");
+                hd_debug_print(ACTION_FOLDER_SELECTED . " " . $data->{PARAM_FILEPATH});
                 $this->plugin->set_setting(PARAM_HISTORY_PATH, smb_tree::set_folder_info($user_input->selected_data));
-                return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->caption),
-                    $action_reload, $data->filepath, self::CONTROLS_WIDTH);
+                return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->{Starnet_Folder_Screen::PARAM_CAPTION}),
+                    $action_reload, $data->{PARAM_FILEPATH}, self::CONTROLS_WIDTH);
 
             case ACTION_RESET_DEFAULT:
                 hd_debug_print("do set history folder to default");
@@ -270,7 +270,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen implements User_
             case ACTION_RELOAD:
                 hd_debug_print(ACTION_RELOAD);
                 return Action_Factory::reset_controls($this->do_get_control_defs(),
-                    User_Input_Handler_Registry::create_action_screen(Starnet_Tv_Rows_Screen::ID, ACTION_REFRESH_SCREEN));
+                    User_Input_Handler_Registry::create_screen_action(Starnet_Tv_Rows_Screen::ID, ACTION_REFRESH_SCREEN));
         }
 
         return Action_Factory::reset_controls($this->do_get_control_defs());

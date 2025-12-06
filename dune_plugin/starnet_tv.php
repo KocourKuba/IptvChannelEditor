@@ -225,7 +225,7 @@ class Starnet_Tv implements User_Input_Handler
                 try {
                     $channels_list_path = get_data_path(hash('crc32', $url_path));
                     if (is_file($channels_list_path)) {
-                        unlink($channels_list_path);
+                        safe_unlink($channels_list_path);
                     }
                     file_put_contents($channels_list_path, Curl_Wrapper::getInstance()->download_content($url_path));
                 } catch (Exception $ex) {

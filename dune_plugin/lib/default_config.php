@@ -669,7 +669,7 @@ class default_config extends dynamic_config
             return null;
         }
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $parent, array(ACTION_ITEMS_EDIT => $initial), ACTION_RUN_FILTER, TR::t('ok'), 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $parent, ACTION_RUN_FILTER, TR::t('ok'), 300, array(ACTION_ITEMS_EDIT => $initial));
         Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
         Control_Factory::add_vgap($defs, 10);
         return Action_Factory::show_dialog(TR::t('filter'), $defs, true);
@@ -960,18 +960,14 @@ class default_config extends dynamic_config
     {
         $tmp_file = $this->get_cached_playlist_name($is_tv);
         hd_debug_print($tmp_file, true);
-        if (file_exists($tmp_file)) {
-            unlink($tmp_file);
-        }
+        safe_unlink($tmp_file);
 
         if ($is_tv) {
             unset($this->tv_m3u_entries);
         } else {
             unset($this->vod_m3u_indexes);
             $vod_cache = self::get_vod_cache_file();
-            if (file_exists($vod_cache)) {
-                unlink($vod_cache);
-            }
+            safe_unlink($vod_cache);
         }
     }
 
@@ -988,9 +984,7 @@ class default_config extends dynamic_config
 
         $tmp_file = get_temp_path($name);
         hd_debug_print($tmp_file);
-        if (file_exists($tmp_file)) {
-            unlink($tmp_file);
-        }
+        safe_unlink($tmp_file);
     }
 
     protected static function get_vod_cache_file()
@@ -1589,7 +1583,7 @@ class default_config extends dynamic_config
             $diff = time() - $mtime;
             if ($diff > 3600) {
                 hd_debug_print("Vod playlist cache expired " . ($diff - 3600) . " sec ago. Timestamp $mtime. Forcing reload");
-                unlink($tmp_file);
+                safe_unlink($tmp_file);
             } else {
                 $need_load = false;
             }
@@ -1602,18 +1596,14 @@ class default_config extends dynamic_config
             if ($response === false) {
                 $exception_msg = "Ошибка скачивания медиатеки!\n\n" . $this->curl_wrapper->get_raw_response_headers();
                 HD::set_last_error("vod_last_error", $exception_msg);
-                if (file_exists($tmp_file)) {
-                    unlink($tmp_file);
-                }
+                safe_unlink($tmp_file);
             } else {
                 $this->vod_items = Curl_Wrapper::decodeJsonResponse(true, $tmp_file, $assoc);
                 if ($this->vod_items === false) {
                     $exception_msg = "Ошибка декодирования данных медиатеки!\n\n";
                     HD::set_last_error("vod_last_error", $exception_msg);
                     if (file_exists($tmp_file)) {
-                        if (file_exists($tmp_file . "_bad.json")) {
-                            unlink($tmp_file . "_bad.json");
-                        }
+                        safe_unlink($tmp_file . "_bad.json");
                         rename($tmp_file, $tmp_file . "_bad.json");
                     }
                 }

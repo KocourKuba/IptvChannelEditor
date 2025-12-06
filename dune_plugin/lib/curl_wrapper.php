@@ -437,9 +437,7 @@ class Curl_Wrapper
 
         $url_hash = self::get_url_hash($url);
         $logfile = get_temp_path("{$url_hash}_response.log");
-        if (file_exists($logfile)) {
-            unlink($logfile);
-        }
+        safe_unlink($logfile);
         $headers_path = get_temp_path("{$url_hash}_headers.log");
         $temp_file = tempnam(get_temp_path(), 'dl_');
 
@@ -536,7 +534,7 @@ class Curl_Wrapper
                 $this->http_code = (int)trim(substr($log_content, $pos + strlen("RESPONSE_CODE:")));
                 hd_debug_print("Response code: $this->http_code", true);
             }
-            unlink($logfile);
+            safe_unlink($logfile);
         }
 
         if (file_exists($headers_path)) {
@@ -569,11 +567,10 @@ class Curl_Wrapper
 
         if ($save_file === null && file_exists($temp_file)) {
             $content = file_get_contents($temp_file);
-            unlink($temp_file);
+            safe_unlink($temp_file);
             return $content;
         }
 
-        /** @noinspection PhpConditionAlreadyCheckedInspection */
         return $this->error_no === 0;
     }
 

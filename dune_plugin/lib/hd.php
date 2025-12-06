@@ -649,7 +649,7 @@ class HD
         if (is_resource($handle)) {
             @fclose($handle);
         }
-        @unlink($zip_file);
+        safe_unlink($zip_file);
 
         return $ret;
     }
@@ -785,10 +785,7 @@ class HD
      */
     public static function erase_items($path)
     {
-        if (file_exists($path)) {
-            hd_debug_print("$path deleted");
-            unlink($path);
-        }
+        safe_unlink($path);
     }
 
     /**
@@ -943,8 +940,8 @@ class HD
 
         if (!empty($error)) {
             file_put_contents($error_file, $error);
-        } else if (file_exists($error_file)) {
-            unlink($error_file);
+        } else {
+            safe_unlink($error_file);
         }
     }
 

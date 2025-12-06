@@ -151,7 +151,7 @@ class tvteam_config extends default_config
             $expired = time() > filemtime($session_file);
             if ($expired) {
                 hd_debug_print("session file $session_file expired", true);
-                unlink($session_file);
+                safe_unlink($session_file);
             } else {
                 $this->session_id[CURLOPT_CUSTOMREQUEST] = file_get_contents($session_file);
             }

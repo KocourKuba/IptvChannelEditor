@@ -200,7 +200,7 @@ class Starnet_Epfs_Handler
                 hd_debug_print("Failed to write tmp file: $tmp_path");
             } else if (!rename($tmp_path, $path)) {
                 hd_debug_print("Failed to rename $tmp_path to $path");
-                unlink($tmp_path);
+                safe_unlink($tmp_path);
             }
         }
     }

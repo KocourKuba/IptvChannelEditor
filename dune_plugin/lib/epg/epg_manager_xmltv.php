@@ -77,7 +77,7 @@ class Epg_Manager_Xmltv
         }
 
         $config = json_decode(file_get_contents($config_file));
-        @unlink($config_file);
+        safe_unlink($config_file);
         if ($config === false) {
             HD::set_last_error("xmltv_last_error", "Invalid config file for indexing");
             return false;
@@ -90,9 +90,7 @@ class Epg_Manager_Xmltv
         $pid = getmypid();
 
         $LOG_FILE = $config->cache_dir . $config->current_xmltv_source . "_indexing.log";
-        if (file_exists($LOG_FILE)) {
-            @unlink($LOG_FILE);
-        }
+        safe_unlink($LOG_FILE);
         date_default_timezone_set('UTC');
 
         set_debug_log($config->debug);
@@ -303,8 +301,8 @@ class Epg_Manager_Xmltv
                 }
                 hd_debug_print_separator();
                 hd_debug_print("Read finished");
-                @unlink($index_log);
             }
+            safe_unlink($index_log);
         }
 
         return !$has_locks;

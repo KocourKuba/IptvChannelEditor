@@ -357,10 +357,7 @@ class Epg_Indexer_Classic extends Epg_Indexer
     public function remove_index($name, $hash)
     {
         $name = $this->get_index_name($name, $hash);
-        if (file_exists($name)) {
-            hd_debug_print("Remove index: $name");
-            unlink($name);
-        }
+        safe_unlink($name);
         return true;
     }
 
@@ -372,10 +369,7 @@ class Epg_Indexer_Classic extends Epg_Indexer
     {
         foreach (array(self::INDEX_CHANNELS, self::INDEX_ENTRIES) as $name) {
             $filename = $this->get_index_name($name, $hash);
-            if (file_exists($filename)) {
-                hd_debug_print("Remove index: $filename");
-                @unlink($filename);
-            }
+            safe_unlink($filename);
         }
     }
 

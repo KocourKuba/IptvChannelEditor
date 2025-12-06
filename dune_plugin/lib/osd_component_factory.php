@@ -41,12 +41,12 @@ class OSD_Component_Factory
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * @throws Exception
      */
     public static function init()
     {
-        if (is_null(self::$instance))
+        if (is_null(self::$instance)) {
             self::$instance = new self();
+        }
 
         clearstatcache();
 
@@ -59,16 +59,18 @@ class OSD_Component_Factory
         $osd_glass_center_icon = 'osd_glass_center' . self::$instance->osd_glass_manifest['ext'];
 
         if (isset(self::$instance->osd_glass_manifest['has_center_icon']) && self::$instance->osd_glass_manifest['has_center_icon'] && file_exists(self::$instance->osd_glass_path . "/$osd_glass_center_icon")) {
-			self::$instance->osd_glass_center = self::$instance->osd_glass_path . "/$osd_glass_center_icon";
-		} else if (isset(self::$instance->osd_glass_manifest['center_color'])) {
+            self::$instance->osd_glass_center = self::$instance->osd_glass_path . "/$osd_glass_center_icon";
+        } else if (isset(self::$instance->osd_glass_manifest['center_color'])) {
             $center_color = str_replace('#', '0x', strtolower(trim(self::$instance->osd_glass_manifest['center_color'])));
             self::$instance->osd_glass_center = $dots_path . "/$center_color.aai";
 
             if (!file_exists(self::$instance->osd_glass_center)) {
                 $argb = str_split($center_color, 2);
 
-                if (false === file_put_contents(self::$instance->osd_glass_center, pack("V2C4", 1, 1, hexdec($argb[4]), hexdec($argb[3]), hexdec($argb[2]), hexdec($argb[1]))))
-                    throw new Exception(get_class(self::$instance) . ': Attempt to write to the system drive failed!');
+                if (false === file_put_contents(self::$instance->osd_glass_center, pack("V2C4", 1, 1, hexdec($argb[4]), hexdec($argb[3]), hexdec($argb[2]), hexdec($argb[1])))) {
+                    hd_debug_print(get_class(self::$instance) . ': Attempt to write to the system drive failed!');
+                    return;
+                }
             }
         }
 
@@ -77,9 +79,8 @@ class OSD_Component_Factory
         $weather_glass_center_icon = 'weather_glass_center' . self::$instance->weather_glass_manifest['ext'];
 
         if (isset(self::$instance->weather_glass_manifest['has_center_icon']) && self::$instance->weather_glass_manifest['has_center_icon'] && file_exists(self::$instance->weather_glass_path . "/$weather_glass_center_icon")) {
-			self::$instance->weather_glass_center = self::$instance->osd_glass_path . "/$weather_glass_center_icon";
-		}
-        else if (isset(self::$instance->weather_glass_manifest['center_color'])) {
+            self::$instance->weather_glass_center = self::$instance->osd_glass_path . "/$weather_glass_center_icon";
+        } else if (isset(self::$instance->weather_glass_manifest['center_color'])) {
             $center_color = str_replace('#', '0x', strtolower(trim(self::$instance->weather_glass_manifest['center_color'])));
             self::$instance->weather_glass_center = $dots_path . "/$center_color.aai";
 
@@ -87,11 +88,10 @@ class OSD_Component_Factory
                 $argb = str_split($center_color, 2);
 
                 if (false === file_put_contents(self::$instance->weather_glass_center, pack("V2C4", 1, 1, hexdec($argb[4]), hexdec($argb[3]), hexdec($argb[2]), hexdec($argb[1])))) {
-					throw new Exception(get_class(self::$instance) . ': Attempt to write to the system drive failed!');
-				}
+                    hd_debug_print(get_class(self::$instance) . ': Attempt to write to the system drive failed!');
+                }
             }
         }
-
     }
 
     /**
@@ -235,12 +235,12 @@ class OSD_Component_Factory
      * @param $width
      * @param $height
      * @return void
-     * @throws Exception
      */
     public static function add_content_box(&$comps, $dx, $dy, $width, $height)
     {
-        if (is_null(self::$instance))
+        if (is_null(self::$instance)) {
             self::init();
+        }
 
         $dx -= self::$instance->osd_glass_manifest['left_extent'];
         $dy -= self::$instance->osd_glass_manifest['top_extent'];
@@ -254,8 +254,8 @@ class OSD_Component_Factory
         Action_Factory::add_osd_image($comps, "$path/osd_glass_top_right.$ext", $dx + $width - self::$instance->osd_glass_manifest['right'], $dy);
 
         if ($width <= (self::$instance->osd_glass_manifest['left'] + self::$instance->osd_glass_manifest['right'])) {
-			$need_fill_flag = false;
-		} else {
+            $need_fill_flag = false;
+        } else {
             Action_Factory::add_osd_image($comps,
                 "$path/osd_glass_top.$ext",
                 $dx + self::$instance->osd_glass_manifest['left'],
@@ -274,43 +274,43 @@ class OSD_Component_Factory
 
         if ($height > (self::$instance->osd_glass_manifest['top'] + self::$instance->osd_glass_manifest['bottom'])) {
             Action_Factory::add_osd_image($comps,
-				"$path/osd_glass_left.$ext",
-				$dx,
-				$dy + self::$instance->osd_glass_manifest['top'],
-				0,
-				$height - self::$instance->osd_glass_manifest['top'] - self::$instance->osd_glass_manifest['bottom']
-			);
+                "$path/osd_glass_left.$ext",
+                $dx,
+                $dy + self::$instance->osd_glass_manifest['top'],
+                0,
+                $height - self::$instance->osd_glass_manifest['top'] - self::$instance->osd_glass_manifest['bottom']
+            );
 
             Action_Factory::add_osd_image($comps,
-				"$path/osd_glass_right.$ext",
-				$dx + $width - self::$instance->osd_glass_manifest['right'],
-				$dy + self::$instance->osd_glass_manifest['top'],
-				0,
-				$height - self::$instance->osd_glass_manifest['top'] - self::$instance->osd_glass_manifest['bottom']
-			);
+                "$path/osd_glass_right.$ext",
+                $dx + $width - self::$instance->osd_glass_manifest['right'],
+                $dy + self::$instance->osd_glass_manifest['top'],
+                0,
+                $height - self::$instance->osd_glass_manifest['top'] - self::$instance->osd_glass_manifest['bottom']
+            );
 
             if ($need_fill_flag) {
-				Action_Factory::add_osd_image($comps,
-					self::$instance->osd_glass_center,
-					$dx + self::$instance->osd_glass_manifest['left'],
-					$dy + self::$instance->osd_glass_manifest['top'],
-					$width - self::$instance->osd_glass_manifest['right'] - self::$instance->osd_glass_manifest['left'],
-					$height - self::$instance->osd_glass_manifest['top'] - self::$instance->osd_glass_manifest['bottom']
-				);
-			}
+                Action_Factory::add_osd_image($comps,
+                    self::$instance->osd_glass_center,
+                    $dx + self::$instance->osd_glass_manifest['left'],
+                    $dy + self::$instance->osd_glass_manifest['top'],
+                    $width - self::$instance->osd_glass_manifest['right'] - self::$instance->osd_glass_manifest['left'],
+                    $height - self::$instance->osd_glass_manifest['top'] - self::$instance->osd_glass_manifest['bottom']
+                );
+            }
         }
 
         Action_Factory::add_osd_image($comps,
-			"$path/osd_glass_bottom_left.$ext",
-			$dx,
-			$dy + $height - self::$instance->osd_glass_manifest['bottom']
-			);
+            "$path/osd_glass_bottom_left.$ext",
+            $dx,
+            $dy + $height - self::$instance->osd_glass_manifest['bottom']
+        );
 
         Action_Factory::add_osd_image($comps,
-			"$path/osd_glass_bottom_right.$ext",
-			$dx + $width - self::$instance->osd_glass_manifest['right'],
-			$dy + $height - self::$instance->osd_glass_manifest['bottom']
-			);
+            "$path/osd_glass_bottom_right.$ext",
+            $dx + $width - self::$instance->osd_glass_manifest['right'],
+            $dy + $height - self::$instance->osd_glass_manifest['bottom']
+        );
     }
 }
 

@@ -60,29 +60,23 @@ class User_Input_Handler_Registry
      * @param array|null $add_params
      * @return array
      */
-    public static function create_action_screen($screen_id, $name, $caption = null, $add_params = null)
+    /**
+     * @param string $screen_id
+     * @param string $name
+     * @param string|null $caption
+     * @param array|null $add_params
+     * @return array
+     */
+    public static function create_screen_action($screen_id, $name, $caption = null, $add_params = null)
     {
-        $handler = self::get_instance()->get_registered_handler($screen_id . "_handler");
+        $handler = self::get_instance()->get_registered_handler($screen_id);
         if (is_null($handler)) {
             hd_debug_print(null, true);
             hd_debug_print("No handler registered for {$screen_id}_handler");
             return null;
         }
 
-        $params = array(
-            'handler_id' => $handler->get_handler_id(),
-            'control_id' => $name);
-        if (isset($add_params)) {
-            $params = array_merge($params, $add_params);
-        }
-
-        return array
-        (
-            GuiAction::handler_string_id => PLUGIN_HANDLE_USER_INPUT_ACTION_ID,
-            GuiAction::caption => $caption,
-            GuiAction::data => null,
-            GuiAction::params => $params,
-        );
+        return self::create_action($handler, $name, $caption, $add_params);
     }
 
     /**
@@ -90,24 +84,24 @@ class User_Input_Handler_Registry
      * @param string $name
      * @param string|null $caption
      * @param array|null $add_params
+     * @param int $flags
      * @return array
      */
-    public static function create_action(User_Input_Handler $handler, $name, $caption = null, $add_params = null)
+    public static function create_action(User_Input_Handler $handler, $name, $caption = null, $add_params = null, $flags = 0)
     {
-        $params = array(
-            'handler_id' => $handler->get_handler_id(),
-            'control_id' => $name);
+        $params = array('handler_id' => $handler->get_handler_id(), 'control_id' => $name);
         if (isset($add_params)) {
             $params = array_merge($params, $add_params);
         }
 
-        return array
-        (
-            GuiAction::handler_string_id => PLUGIN_HANDLE_USER_INPUT_ACTION_ID,
-            GuiAction::caption => $caption,
-            GuiAction::data => null,
-            GuiAction::params => $params,
-        );
+        $arr[GuiAction::handler_string_id] = PLUGIN_HANDLE_USER_INPUT_ACTION_ID;
+        if ($caption) {
+            $arr[GuiAction::caption] = $caption;
+        }
+        $arr[GuiAction::params] = $params;
+        $arr[GuiAction::flags] = $flags;
+
+        return $arr;
     }
 
     /**

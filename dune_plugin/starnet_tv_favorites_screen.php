@@ -103,7 +103,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen impl
                 return $this->plugin->do_show_channel_info($channel_id);
 
             case GUI_EVENT_KEY_SUBTITLE:
-                return $this->plugin->do_show_channel_epg($channel_id, -1, $plugin_cookies);
+                return $this->plugin->do_show_channel_epg($channel_id, -1);
 
             case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ITEMS_CLEAR, TR::t('clear_favorites'), "brush.png");

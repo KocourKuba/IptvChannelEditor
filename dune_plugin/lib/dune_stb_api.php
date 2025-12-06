@@ -1952,6 +1952,13 @@ function create_path($path, $dir_mode = 0777)
     return true;
 }
 
+function safe_unlink($path)
+{
+    if (!empty($path) && file_exists($path) && !is_dir($path)) {
+        unlink($path);
+    }
+}
+
 /** @noinspection PhpUnusedParameterInspection */
 function json_encode_unicode($data, $flags = 0)
 {

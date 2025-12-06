@@ -284,9 +284,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         hd_debug_print("Storage space in cache dir: " . HD::get_storage_size($this->cache_dir));
         $cached_file = $this->get_cache_filename($hash);
         $tmp_filename = $cached_file . '.tmp';
-        if (file_exists($tmp_filename)) {
-            unlink($tmp_filename);
-        }
+        safe_unlink($tmp_filename);
 
         try {
             HD::set_last_error("xmltv_last_error", null);
@@ -324,9 +322,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             hd_debug_print("Last changed time of local file: " . date("Y-m-d H:i", $file_time));
             hd_debug_print("Download $file_size bytes of xmltv source $source->url done in: $dl_time secs (speed $speed)");
 
-            if (file_exists($cached_file)) {
-                unlink($cached_file);
-            }
+            safe_unlink($cached_file);
 
             $this->perf->setLabel('unpack');
 
@@ -375,7 +371,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 hd_debug_print("zip list: $filename");
                 $cmd = "unzip -oq $tmp_filename -d $this->cache_dir";
                 $out = system($cmd, $ret);
-                unlink($tmp_filename);
+                safe_unlink($tmp_filename);
                 if ($ret !== 0) {
                     throw new Exception("Failed to unpack $tmp_filename (error code: $ret)\n$out");
                 }
@@ -402,13 +398,8 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             $this->remove_all_indexes($hash);
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
-            if (!empty($tmp_filename) && file_exists($tmp_filename)) {
-                unlink($tmp_filename);
-            }
-
-            if (file_exists($cached_file)) {
-                unlink($cached_file);
-            }
+            safe_unlink($tmp_filename);
+            safe_unlink($cached_file);
             $this->set_index_locked($hash, false);
         }
 

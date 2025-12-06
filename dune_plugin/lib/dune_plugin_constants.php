@@ -106,6 +106,18 @@ const PARAM_CHANNEL_TS = 'channel_ts';
 const PARAM_START_TM = 'start_tm';
 const PARAM_END_TM = 'end_tm';
 
+const PARAM_SCREEN_ID = 'screen_id';
+const PARAM_SOURCE_WINDOW_ID = 'source_window_id';
+const PARAM_END_ACTION = 'end_action';
+const PARAM_CANCEL_ACTION = 'cancel_action';
+const PARAM_SELECTED_ACTION = 'selected_action';
+const PARAM_ACTION_ID = 'action_id';
+const PARAM_WINDOW_COUNTER = 'window_counter';
+const PARAM_EXTENSION = 'extension';
+const PARAM_FILEPATH = 'filepath';
+const PARAM_NAME = 'name';
+const PARAM_TYPE = 'type';
+
 const EPG_SOURCES_SEPARATOR_TAG = 'special_source_separator_tag';
 const ENGINE_JSON = 'json';
 const ENGINE_XMLTV = 'xmltv';

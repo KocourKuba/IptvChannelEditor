@@ -1428,14 +1428,13 @@ class Default_Dune_Plugin implements DunePlugin
     /**
      * @param string $channel_id
      * @param int $program_ts
-     * @param object $plugin_cookies
      * @return array|null
      */
-    public function do_show_channel_epg($channel_id, $program_ts, $plugin_cookies)
+    public function do_show_channel_epg($channel_id, $program_ts)
     {
         hd_debug_print(null, true);
 
-        $prog_info = $this->get_epg_info($channel_id, $program_ts, $plugin_cookies);
+        $prog_info = $this->get_epg_info($channel_id, $program_ts);
 
         if (!isset($prog_info[PluginTvEpgProgram::ext_id])) {
             hd_debug_print("Unknown channel ID", true);

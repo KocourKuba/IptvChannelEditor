@@ -157,12 +157,12 @@ class Action_Factory
 
     /**
      * @param string $title
-     * @param array|null $post_action
      * @param array|string|null $multiline
+     * @param array|null $post_action
      * @param int $preferred_width
      * @return array
      */
-    public static function show_title_dialog($title, $post_action = null, $multiline = '', $preferred_width = 0)
+    public static function show_title_dialog($title, $multiline = '', $post_action = null, $preferred_width = 0, $attrs = array())
     {
         $defs = array();
 
@@ -187,9 +187,9 @@ class Action_Factory
         }
 
         Control_Factory::add_multiline_label($defs, '', $text, 15);
-        Control_Factory::add_custom_close_dialog_and_apply_buffon($defs, 'close_button', TR::t('ok'), 300, $post_action);
+        Control_Factory::add_custom_close_dialog_and_apply_button($defs, 'close_button', TR::t('ok'), 300, $post_action);
 
-        return self::show_dialog($title, $defs, false, $preferred_width);
+        return self::show_dialog($title, $defs, false, $preferred_width, $attrs);
     }
 
     /**
@@ -240,7 +240,7 @@ class Action_Factory
             Control_Factory::add_multiline_label($defs, '', $multiline, 15);
         }
 
-        Control_Factory::add_close_dialog_and_apply_button($defs, $handler, null, $action, TR::t('yes'), 300);
+        Control_Factory::add_close_dialog_and_apply_button($defs, $handler, $action, TR::t('yes'), 300);
         Control_Factory::add_close_dialog_button($defs, TR::t('no'), 300);
 
         return self::show_dialog($title, $defs, false, $preferred_width);
