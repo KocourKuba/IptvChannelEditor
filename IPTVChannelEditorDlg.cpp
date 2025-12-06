@@ -1726,7 +1726,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		else
 		{
 			auto it = m_categoriesMap.begin();
-			while (it->second.category->get_channels().empty()) ++it;
+			while (it->second.category->get_channels().empty() && it != m_categoriesMap.end()) ++it;
 
 			if (it == m_categoriesMap.end())
 				return;
@@ -6632,11 +6632,12 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonAddXmltvSource()
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomXmltvEpg()
 {
 	UpdateData(TRUE);
-	m_epg_cache[2].clear();
+	m_epg_cache[XMLTV_EPG].clear();
 	m_epg_aliases.clear();
 
 	GetConfig().set_int(false, REG_EPG_SOURCE_IDX, m_xmltvEpgSource);
 
 	CWaitCursor cur;
+	StartXmltvParseThread();
 	TriggerEpg();
 }
