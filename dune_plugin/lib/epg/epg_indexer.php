@@ -336,19 +336,30 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
             if (0 === mb_strpos($hdr, "\x1f\x8b\x08")) {
                 hd_debug_print("GZ signature: " . bin2hex(substr($hdr, 0, 3)), true);
-                rename($tmp_filename, $cached_file . '.gz');
-                $tmp_filename = $cached_file . '.gz';
+                $gz_filename = $cached_file . '.gz';
+                if (!rename($tmp_filename, $gz_filename)) {
+                    throw new Exception("Failed to rename $tmp_filename to $gz_filename");
+                }
+                $tmp_filename = $gz_filename;
                 hd_debug_print("ungzip $tmp_filename to $cached_file");
                 $cmd = "gzip -d $tmp_filename 2>&1";
-                system($cmd, $ret);
-                /** @noinspection PhpConditionAlreadyCheckedInspection */
-                if ($ret !== 0) {
-                    throw new Exception("Failed to unpack $tmp_filename (error code: $ret)");
+                $out = system($cmd, $ret);
+                if ($ret > 1) {
+                    throw new Exception("Failed to unpack $tmp_filename (error code: $ret)\n$out");
+                }
+                if ($ret === 1 && file_exists($cached_file)) {
+                    hd_debug_print("Unpack $tmp_filename with error code: $ret\n$out");
                 }
                 clearstatcache();
                 $size = filesize($cached_file);
+                if ($size === 0) {
+                    unlink($cached_file);
+                    throw new Exception("Unpacked file empty!");
+                }
                 touch($cached_file, $file_time);
-                hd_debug_print("$size bytes ungzipped to $cached_file in " . $this->perf->getReportItemCurrent(Perf_Collector::TIME, 'unpack') . " secs");
+                hd_debug_print("$size bytes ungzipped to $cached_file in "
+                    . $this->perf->getReportItemCurrent(Perf_Collector::TIME, 'unpack')
+                    . " secs");
             } else if (0 === mb_strpos($hdr, "\x50\x4b\x03\x04")) {
                 hd_debug_print("ZIP signature: " . bin2hex(substr($hdr, 0, 4)), true);
                 hd_debug_print("unzip $tmp_filename to $cached_file");
@@ -362,12 +373,11 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 }
 
                 hd_debug_print("zip list: $filename");
-                $cmd = "unzip -oq $tmp_filename -d $this->cache_dir 2>&1";
-                system($cmd, $ret);
+                $cmd = "unzip -oq $tmp_filename -d $this->cache_dir";
+                $out = system($cmd, $ret);
                 unlink($tmp_filename);
-                /** @noinspection PhpConditionAlreadyCheckedInspection */
                 if ($ret !== 0) {
-                    throw new Exception("Failed to unpack $tmp_filename (error code: $ret)");
+                    throw new Exception("Failed to unpack $tmp_filename (error code: $ret)\n$out");
                 }
                 clearstatcache();
 
@@ -488,6 +498,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 if ($pid !== 0 && send_process_signal($pid, 0)) {
                     hd_debug_print("Kill process $pid");
                     send_process_signal($pid, -9);
+                    sleep(50);
                 }
                 hd_debug_print("Remove lock: $lock");
                 shell_exec("rm -rf $lock");
