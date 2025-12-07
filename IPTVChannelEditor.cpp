@@ -87,6 +87,8 @@ static void SetupExceptionHandler()
 	BT_ExportRegistryKey(export_path.c_str(), L"HKCU\\SOFTWARE\\Dune IPTV Channel Editor");
 	BT_AddLogFile(export_path.c_str());
 	BT_AddLogFile(GetAppPath(L"settings.cfg").c_str());
+	BT_AddLogFile(GetAppPath(L"IPTVChannelEditor.log").c_str());
+	BT_AddLogFile(GetAppPath(L"Updater.log").c_str());
 	// required for VS 2005 & 2008
 	BT_InstallSehFilter();
 }
@@ -290,7 +292,8 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 
 	// check and unpack default channels list
 	const std::filesystem::path channels_dir = CheckAndCreateDirs(REG_LISTS_PATH, GetAppPath(utils::CHANNELS_LIST_PATH));
-	if (std::filesystem::is_empty(channels_dir))
+	std::error_code ec;
+	if (std::filesystem::is_empty(channels_dir, ec))
 	{
 		const auto& channels_pkg = GetDevAppPath(utils::CHANNELS_LIST_PACKAGE);
 		if (std::filesystem::exists(channels_pkg))
@@ -397,9 +400,9 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 		const auto& path = dir_entry.path();
 		if (path.extension() != _T(".bak")) continue;
 
-		if (std::filesystem::is_regular_file(path))
+		if (std::filesystem::is_regular_file(path, err))
 			std::filesystem::remove(path, err);
-		else if (std::filesystem::is_directory(path))
+		else if (std::filesystem::is_directory(path, err))
 			std::filesystem::remove_all(path, err);
 	}
 
@@ -420,7 +423,7 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 				}
 				is.close();
 
-				std::filesystem::remove("update.lst");
+				std::filesystem::remove("update.lst", ec);
 
 
 				CString msg;

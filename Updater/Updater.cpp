@@ -321,7 +321,8 @@ static int update_app(UpdateInfo& info, bool force)
 	int ret = download_update(info);
 	if (std::filesystem::exists("update.lst"))
 	{
-		std::filesystem::remove("update.lst");
+		std::error_code err;
+		std::filesystem::remove("update.lst", err);
 	}
 
 	if (ret != no_error)
@@ -371,7 +372,7 @@ static int update_app(UpdateInfo& info, bool force)
 		if (std::filesystem::exists(target_file))
 		{
 			// we can check hash only for file
-			if (std::filesystem::is_regular_file(target_file))
+			if (std::filesystem::is_regular_file(target_file, err))
 			{
 				// if file already the same skip it
 				if (file_crc32(target_file) == item.crc)

@@ -6578,7 +6578,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCheckUpdate()
 			}
 			is.close();
 
-			std::filesystem::remove("update.lst");
+			std::error_code err;
+			std::filesystem::remove("update.lst", err);
 
 			CString msg;
 			msg.Format(IDS_STRING_UPDATE_AVAILABLE, list.c_str());
