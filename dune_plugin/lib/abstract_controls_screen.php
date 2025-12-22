@@ -82,11 +82,7 @@ abstract class Abstract_Controls_Screen extends Abstract_Screen
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        hd_debug_print(null, true);
-
-        $actions[GUI_EVENT_KEY_TOP_MENU] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_TOP_MENU);
-        $actions[GUI_EVENT_KEY_RETURN] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN);
-        return $actions;
+        return array();
     }
 
     /**
