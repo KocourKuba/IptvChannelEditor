@@ -302,7 +302,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             }
 
             Curl_Wrapper::clear_cached_etag($source->url);
-            if (!$this->curl_wrapper->download_file($source->url, $tmp_filename)) {
+            if (!$this->curl_wrapper->download_file($source->url, $tmp_filename, true)) {
                 throw new Exception("Ошибка скачивания $source->url\n\n" . $this->curl_wrapper->get_raw_response_headers());
             }
 

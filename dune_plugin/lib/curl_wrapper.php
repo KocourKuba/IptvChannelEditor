@@ -432,6 +432,7 @@ class Curl_Wrapper
      */
     protected function exec_shell_curl($url, $save_file, $use_cache = false)
     {
+        hd_debug_print("curl: '$url' saved to '$save_file' use cache: " . var_export($use_cache, true), true);
         $this->http_code = 0;
         $this->error_no = 0;
 
@@ -585,6 +586,8 @@ class Curl_Wrapper
      */
     private function exec_php_curl($url, $save_file, $use_cache = false)
     {
+        hd_debug_print("curl: '$url' saved to '$save_file' use cache: " . var_export($use_cache, true), true);
+
         $this->http_code = 0;
         self::$http_response_headers = null;
 
