@@ -2692,6 +2692,49 @@
       ],
       "title": "Top IPTV"
     },
+    "tvboom": {
+      "access_type": "login",
+      "name": "tvboom",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/index\\.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/(?<login>.+)\\/(?<password>.+)\\/.+\\/playlist.m3u8?$",
+          "pl_template": "https://tvboom.vip/{LOGIN}/{PASSWORD}/hls/playlist.m3u8"
+        }
+      ],
+      "provider_url": "https://tvboom.vip/",
+      "servers_list": [
+        {
+          "id": "cdn.tvboom.vip",
+          "name": "Germany"
+        },
+        {
+          "id": "ru.tvboom.vip:81",
+          "name": "Russia 1"
+        },
+        {
+          "id": "ru2.tvboom.vip/hls",
+          "name": "Russia 2"
+        },
+        {
+          "id": "fluss.kinooboomru.workers.dev",
+          "name": "Cloud"
+        }
+      ],
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{SERVER_ID}/{ID}/index.m3u8?token={TOKEN}"
+        },
+        {
+        }
+      ],
+      "title": "TV Boom"
+    },
     "tvclub": {
       "access_type": "login",
       "balance_support": true,
