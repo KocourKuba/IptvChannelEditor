@@ -147,16 +147,16 @@ class User_Input_Handler_Registry
      */
     public function register_handler(User_Input_Handler $handler)
     {
-        $handler_id = $handler->get_handler_id();
-        $this->handlers[$handler_id] = $handler;
+        $this->handlers[$handler->get_handler_id()] = $handler;
     }
 
     /**
-     * @param string $id
+     * @param string $screen_id
      * @return User_Input_Handler|null
      */
-    public function get_registered_handler($id)
+    public function get_registered_handler($screen_id)
     {
-        return isset($this->handlers[$id]) ? $this->handlers[$id] : null;
+        $handler_id = $screen_id . "_handler";
+        return isset($this->handlers[$handler_id]) ? $this->handlers[$handler_id] : null;
     }
 }

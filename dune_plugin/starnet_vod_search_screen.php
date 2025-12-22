@@ -62,8 +62,9 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen
 
                 $defs = array();
                 Control_Factory::add_text_field($defs,
-                    $this, null, ACTION_NEW_SEARCH, '',
-                    $search_string, false, false, true, true, 1300, false, true);
+                    $this, ACTION_NEW_SEARCH, '', $search_string,
+                    false, false, true, true,
+                    Control_Factory::DLG_MAX_CONTROLS_WIDTH, false, true);
                 Control_Factory::add_vgap($defs, 500);
 
                 return Action_Factory::show_dialog(TR::t('search'), $defs, true);

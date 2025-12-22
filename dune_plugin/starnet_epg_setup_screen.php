@@ -27,9 +27,10 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
     {
         hd_debug_print(null, true);
 
-        return array(
-            GUI_EVENT_TIMER => User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER),
-        );
+        $actions = parent::get_action_map($media_url, $plugin_cookies);
+        $actions[GUI_EVENT_TIMER] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER);
+
+        return $actions;
     }
 
     /**
@@ -60,25 +61,22 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
 
         $cache_engine = $this->plugin->get_setting(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON);
 
-        Control_Factory::add_combobox($defs, $this, null,
-            PARAM_EPG_CACHE_ENGINE, TR::t('setup_epg_engine'),
-            $cache_engine, $epg_source_ops, self::CONTROLS_WIDTH, true);
+        Control_Factory::add_combobox($defs, $this, PARAM_EPG_CACHE_ENGINE,
+            TR::t('setup_epg_engine'), $cache_engine, $epg_source_ops);
 
         //////////////////////////////////////
         // ext epg
         if (is_ext_epg_supported() && $this->plugin->get_bool_setting(PARAM_SHOW_EXT_EPG)) {
             $ext_epg = $this->plugin->get_setting(PARAM_SHOW_EXT_EPG, SwitchOnOff::off);
-            Control_Factory::add_image_button($defs, $this, null,
-                PARAM_SHOW_EXT_EPG, TR::t('setup_ext_epg'), SwitchOnOff::translate($ext_epg),
-                SwitchOnOff::to_image($ext_epg), self::CONTROLS_WIDTH);
+            Control_Factory::add_image_button($defs, $this, PARAM_SHOW_EXT_EPG,
+                TR::t('setup_ext_epg'), SwitchOnOff::translate($ext_epg), SwitchOnOff::to_image($ext_epg));
         }
 
         //////////////////////////////////////
         // Fake EPG
         $fake_epg = $this->plugin->get_setting(PARAM_FAKE_EPG, SwitchOnOff::off);
-        Control_Factory::add_image_button($defs, $this, null,
-            PARAM_FAKE_EPG, TR::t('entry_epg_fake'), SwitchOnOff::translate($fake_epg),
-            SwitchOnOff::to_image($fake_epg), self::CONTROLS_WIDTH);
+        Control_Factory::add_image_button($defs, $this, PARAM_FAKE_EPG,
+            TR::t('entry_epg_fake'), SwitchOnOff::translate($fake_epg), SwitchOnOff::to_image($fake_epg));
 
         if ($cache_engine === ENGINE_XMLTV && $sources->size()) {
             //////////////////////////////////////
@@ -86,8 +84,8 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
             $xcache_dir = $this->plugin->get_cache_dir();
             $free_size = TR::t('setup_storage_info__1', HD::get_storage_size($xcache_dir));
             $xcache_dir = HD::string_ellipsis($xcache_dir);
-            Control_Factory::add_image_button($defs, $this, null, self::CONTROL_CHANGE_CACHE_PATH,
-                $free_size, $xcache_dir, get_image_path('folder.png'), self::CONTROLS_WIDTH);
+            Control_Factory::add_image_button($defs, $this, self::CONTROL_CHANGE_CACHE_PATH, $free_size,
+                $xcache_dir, get_image_path('folder.png'));
 
             //////////////////////////////////////
             // XMLTV sources
@@ -102,9 +100,8 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
                 return $source->url;
             }, $sources->to_array());
 
-            Control_Factory::add_combobox($defs, $this, null,
-                PARAM_XMLTV_SOURCE, TR::t('setup_xmltv_epg_source'),
-                $this->selected, $xmltv_sources, self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, PARAM_XMLTV_SOURCE,
+                TR::t('setup_xmltv_epg_source'), $this->selected, $xmltv_sources);
 
             //////////////////////////////////////
             // EPG cache
@@ -120,31 +117,28 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
             $epg_cache_ops[6] = 6;
             $epg_cache_ops[7] = 7;
 
-            Control_Factory::add_combobox($defs, $this, null,
-                PARAM_EPG_CACHE_TTL, TR::t('setup_epg_cache_ttl'),
-                $cache_ttl, $epg_cache_ops, self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, PARAM_EPG_CACHE_TTL,
+                TR::t('setup_epg_cache_ttl'), $cache_ttl, $epg_cache_ops);
 
             // Reload XMLTV source
             if ((int)$cache_ttl !== -2) {
                 $epg_manager = $this->plugin->get_epg_manager();
                 $locked = $epg_manager !== null && $epg_manager->get_indexer()->is_index_locked($this->selected);
-                Control_Factory::add_image_button($defs, $this, null, self::ACTION_RELOAD_EPG,
-                    TR::t('setup_reload_xmltv_epg'), $locked ? TR::t('epg_indexing') : TR::t('refresh'), get_image_path('refresh.png'));
+                Control_Factory::add_image_button($defs, $this, self::ACTION_RELOAD_EPG, TR::t('setup_reload_xmltv_epg'),
+                    $locked ? TR::t('epg_indexing') : TR::t('refresh'), get_image_path('refresh.png'));
             }
 
             //////////////////////////////////////
             // clear epg cache
-            Control_Factory::add_image_button($defs, $this, null,
-                self::ACTION_CLEAR_EPG_CACHE, TR::t('entry_epg_cache_clear'), TR::t('clear'),
-                $remove_icon, self::CONTROLS_WIDTH);
+            Control_Factory::add_image_button($defs, $this, self::ACTION_CLEAR_EPG_CACHE,
+                TR::t('entry_epg_cache_clear'), TR::t('clear'), $remove_icon);
         } else {
             foreach (array(1, 2, 3, 6, 12) as $hour) {
                 $caching_range[$hour] = TR::t('setup_cache_time_h__1', $hour);
             }
             $cache_time = $this->plugin->get_setting(PARAM_EPG_CACHE_TIME, 1);
-            Control_Factory::add_combobox($defs, $this, null,
-                PARAM_EPG_CACHE_TIME, TR::t('setup_cache_time'),
-                $cache_time, $caching_range, self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, PARAM_EPG_CACHE_TIME,
+                TR::t('setup_cache_time'), $cache_time, $caching_range);
         }
 
         //////////////////////////////////////
@@ -156,9 +150,8 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
         $show_epg_shift_ops[0] = TR::t('setup_epg_shift_default__1', "00");
 
         $epg_shift = $this->plugin->get_setting(PARAM_EPG_SHIFT, 0);
-        Control_Factory::add_combobox($defs, $this, null,
-            PARAM_EPG_SHIFT, TR::t('setup_epg_shift'),
-            $epg_shift, $show_epg_shift_ops, self::CONTROLS_WIDTH, true);
+        Control_Factory::add_combobox($defs, $this, PARAM_EPG_SHIFT,
+            TR::t('setup_epg_shift'), $epg_shift, $show_epg_shift_ops);
 
         return $defs;
     }
@@ -182,6 +175,11 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
         $control_id = $user_input->control_id;
         $post_action = null;
         switch ($control_id) {
+            case GUI_EVENT_KEY_TOP_MENU:
+            case GUI_EVENT_KEY_RETURN:
+                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                return self::make_return_action($parent_media_url);
+
             case GUI_EVENT_TIMER:
                 $epg_manager = $this->plugin->get_epg_manager();
                 if ($epg_manager === null) {
@@ -254,7 +252,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
                 $this->plugin->init_epg_manager();
                 $default_path = $this->plugin->get_cache_dir();
                 $post_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $default_path),
-                    null, $default_path, self::CONTROLS_WIDTH);
+                    $default_path, null, Control_Factory::SCR_CONTROLS_WIDTH);
                 break;
 
             case ACTION_FOLDER_SELECTED:
@@ -267,7 +265,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
                 $this->plugin->init_epg_manager();
 
                 $post_action = Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->{Starnet_Folder_Screen::PARAM_CAPTION}),
-                    null, $data->{PARAM_FILEPATH}, self::CONTROLS_WIDTH);
+                    $data->{PARAM_FILEPATH}, null, Control_Factory::SCR_CONTROLS_WIDTH);
                 break;
 
             case PARAM_FAKE_EPG:

@@ -55,8 +55,9 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen
             case ACTION_CREATE_SEARCH:
                 $defs = array();
                 Control_Factory::add_text_field($defs,
-                    $this, null, ACTION_NEW_SEARCH, '',
-                    $media_url->name, false, false, true, true, 1300, false, true);
+                    $this, ACTION_NEW_SEARCH, '', $media_url->name,
+                    false, false, true, true,
+                    Control_Factory::DLG_MAX_CONTROLS_WIDTH, false, true);
                 Control_Factory::add_vgap($defs, 500);
                 return Action_Factory::show_dialog(TR::t('search'), $defs, true);
 

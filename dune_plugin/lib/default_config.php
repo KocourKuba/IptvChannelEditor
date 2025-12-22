@@ -646,8 +646,8 @@ class default_config extends dynamic_config
 
             if (isset($filter['text'])) {
                 $initial_value = isset($user_value) ? $user_value : '';
-                Control_Factory::add_text_field($defs, $parent, null, $name,
-                    $filter['title'], $initial_value, true, false, false, false, 600);
+                Control_Factory::add_text_field($defs, $parent, $name, $filter['title'],
+                    $initial_value, true, false, false, false);
                 Control_Factory::add_vgap($defs, 20);
                 $added = true;
             }
@@ -658,8 +658,7 @@ class default_config extends dynamic_config
                     $idx = array_search($user_value, $filter['values']) ?: -1;
                 }
 
-                Control_Factory::add_combobox($defs, $parent, null, $name,
-                    $filter['title'], $idx, $filter['values'], 600, true);
+                Control_Factory::add_combobox($defs, $parent, $name, $filter['title'], $idx, $filter['values']);
                 Control_Factory::add_vgap($defs, 20);
                 $added = true;
             }

@@ -61,9 +61,7 @@ class Starnet_Tv_Favorites_Screen extends Abstract_Preloaded_Regular_Screen
                 } catch (Exception $ex) {
                     hd_debug_print("Channel can't played");
                     print_backtrace_exception($ex);
-                    return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
-                        null,
-                        TR::t('warn_msg2__1', $ex->getMessage()));
+                    return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'), TR::t('warn_msg2__1', $ex->getMessage()));
                 }
 
                 $this->plugin->save_favorites();

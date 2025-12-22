@@ -577,14 +577,12 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen
     {
         hd_debug_print(null, true);
 
-        Control_Factory::add_text_field($defs, $this, null,
-            'new_user',
+        Control_Factory::add_text_field($defs, $this, 'new_user',
             TR::t('folder_screen_user'),
             $user, false, false, false, true, 500
         );
 
-        Control_Factory::add_text_field($defs, $this, null,
-            'new_pass',
+        Control_Factory::add_text_field($defs, $this, 'new_pass',
             TR::t('folder_screen_password'),
             $password, false, false, false, true, 500
         );
@@ -673,9 +671,10 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen
 
         $defs = array();
         Control_Factory::add_text_field($defs,
-            $this, null,
-            self::ACTION_CREATE_FOLDER, '',
-            '', false, false, true, true, 1230, false, true
+            $this, self::ACTION_CREATE_FOLDER,
+            '', '',
+            false, false, true, true,
+            Control_Factory::DLG_MAX_CONTROLS_WIDTH, false, true
         );
         Control_Factory::add_vgap($defs, 500);
         return Action_Factory::show_dialog(TR::t('folder_screen_choose_name'), $defs, true);
@@ -820,10 +819,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen
         $smb_view_ops[3] = TR::t('folder_screen_search_smb');
 
         $defs = array();
-        Control_Factory::add_combobox($defs, $this, null,
-            'smb_view', TR::t('folder_screen_show'),
-            $smb_view, $smb_view_ops, 0
-        );
+        Control_Factory::add_combobox($defs, $this, 'smb_view', TR::t('folder_screen_show'), $smb_view, $smb_view_ops);
 
         $save_smb_setup = User_Input_Handler_Registry::create_action($this, self::ACTION_SAVE_SMB_SETUP);
         Control_Factory::add_custom_close_dialog_and_apply_button($defs,

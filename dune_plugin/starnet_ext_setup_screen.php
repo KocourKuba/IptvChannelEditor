@@ -68,47 +68,45 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
         hd_debug_print("history path: $history_path");
         $display_path = HD::string_ellipsis($history_path);
 
-        Control_Factory::add_image_button($defs, $this, null,
-            self::CONTROL_HISTORY_CHANGE_FOLDER, TR::t('setup_history_folder_path'), $display_path, $folder_icon, self::CONTROLS_WIDTH);
+        Control_Factory::add_image_button($defs, $this, self::CONTROL_HISTORY_CHANGE_FOLDER,
+            TR::t('setup_history_folder_path'), $display_path, $folder_icon);
 
         $path = $this->plugin->get_setting(PARAM_HISTORY_PATH);
         if (!is_null($path) && $history_path !== get_data_path(Default_Dune_Plugin::HISTORY_FOLDER)) {
-            Control_Factory::add_image_button($defs, $this, null,
-                self::CONTROL_COPY_TO_DATA, TR::t('setup_copy_to_data'), TR::t('apply'), $refresh_icon, self::CONTROLS_WIDTH);
+            Control_Factory::add_image_button($defs, $this, self::CONTROL_COPY_TO_DATA,
+                TR::t('setup_copy_to_data'), TR::t('apply'), $refresh_icon);
 
-            Control_Factory::add_image_button($defs, $this, null,
-                self::CONTROL_COPY_TO_PLUGIN, TR::t('setup_copy_to_plugin'), TR::t('apply'), $refresh_icon, self::CONTROLS_WIDTH);
+            Control_Factory::add_image_button($defs, $this, self::CONTROL_COPY_TO_PLUGIN,
+                TR::t('setup_copy_to_plugin'), TR::t('apply'), $refresh_icon);
         }
 
-        Control_Factory::add_image_button($defs, $this, null,
-            self::CONTROL_TV_HISTORY_CLEAR, TR::t('setup_tv_history_clear'), TR::t('clear'), $remove_icon, self::CONTROLS_WIDTH);
+        Control_Factory::add_image_button($defs, $this, self::CONTROL_TV_HISTORY_CLEAR,
+            TR::t('setup_tv_history_clear'), TR::t('clear'), $remove_icon);
 
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) !== "None") {
-            Control_Factory::add_image_button($defs, $this, null,
-                self::CONTROL_VOD_HISTORY_CLEAR, TR::t('setup_vod_history_clear'), TR::t('clear'), $remove_icon, self::CONTROLS_WIDTH);
+            Control_Factory::add_image_button($defs, $this, self::CONTROL_VOD_HISTORY_CLEAR,
+                TR::t('setup_vod_history_clear'), TR::t('clear'), $remove_icon);
         }
 
         //////////////////////////////////////
         // https proxy settings
         if (is_updater_proxy_needs()) {
             $use_proxy = $this->plugin->get_setting(PARAM_USE_UPDATER_PROXY, SwitchOnOff::off);
-            Control_Factory::add_image_button($defs, $this, null, PARAM_USE_UPDATER_PROXY,
-                TR::t('setup_updater_proxy'), SwitchOnOff::translate($use_proxy),
-                SwitchOnOff::to_image($use_proxy), self::CONTROLS_WIDTH);
+            Control_Factory::add_image_button($defs, $this, PARAM_USE_UPDATER_PROXY, TR::t('setup_updater_proxy'),
+                SwitchOnOff::translate($use_proxy), SwitchOnOff::to_image($use_proxy));
         }
 
         //////////////////////////////////////
         // adult channel password
-        Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_PASS_DLG,
-            TR::t('setup_adult_title'), TR::t('setup_adult_change'), $text_icon, self::CONTROLS_WIDTH);
+        Control_Factory::add_image_button($defs, $this, self::SETUP_ACTION_PASS_DLG, TR::t('setup_adult_title'),
+            TR::t('setup_adult_change'), $text_icon);
 
         //////////////////////////////////////
         // debugging
 
         $debug_state = $this->plugin->get_setting(PARAM_ENABLE_DEBUG, SwitchOnOff::off);
-        Control_Factory::add_image_button($defs, $this, null,
-            PARAM_ENABLE_DEBUG, TR::t('setup_debug'), SwitchOnOff::translate($debug_state),
-            SwitchOnOff::to_image($debug_state), self::CONTROLS_WIDTH);
+        Control_Factory::add_image_button($defs, $this, PARAM_ENABLE_DEBUG,
+            TR::t('setup_debug'), SwitchOnOff::translate($debug_state), SwitchOnOff::to_image($debug_state));
 
         return $defs;
     }
@@ -135,10 +133,10 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
 
         Control_Factory::add_vgap($defs, 20);
 
-        Control_Factory::add_text_field($defs, $this, null, 'pass1', TR::t('setup_old_pass'),
-            $pass1, 1, true, 0, 1, 500, 0);
-        Control_Factory::add_text_field($defs, $this, null, 'pass2', TR::t('setup_new_pass'),
-            $pass2, 1, true, 0, 1, 500, 0);
+        Control_Factory::add_text_field($defs, $this, 'pass1', TR::t('setup_old_pass'), $pass1,
+            true, true, false, true);
+        Control_Factory::add_text_field($defs, $this, 'pass2', TR::t('setup_new_pass'), $pass2,
+            true, true, false, true);
 
         Control_Factory::add_vgap($defs, 50);
 
@@ -161,6 +159,11 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
         $control_id = $user_input->control_id;
 
         switch ($control_id) {
+            case GUI_EVENT_KEY_TOP_MENU:
+            case GUI_EVENT_KEY_RETURN:
+                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                return self::make_return_action($parent_media_url);
+
             case self::CONTROL_HISTORY_CHANGE_FOLDER:
                 $media_url_str = MediaURL::encode(
                     array(
@@ -179,7 +182,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
                 hd_debug_print(ACTION_FOLDER_SELECTED . " " . $data->{PARAM_FILEPATH});
                 $this->plugin->set_setting(PARAM_HISTORY_PATH, smb_tree::set_folder_info($user_input->selected_data));
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->{Starnet_Folder_Screen::PARAM_CAPTION}),
-                    $action_reload, $data->{PARAM_FILEPATH}, self::CONTROLS_WIDTH);
+                    $data->{PARAM_FILEPATH}, $action_reload, Control_Factory::SCR_CONTROLS_WIDTH);
 
             case ACTION_RESET_DEFAULT:
                 hd_debug_print("do set history folder to default");
@@ -195,7 +198,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
                     return Action_Factory::show_title_dialog(TR::t('err_copy'));
                 }
 
-                return Action_Factory::show_title_dialog(TR::t('setup_copy_done'), $action_reload);
+                return Action_Factory::show_title_dialog(TR::t('setup_copy_done'), '', $action_reload);
 
             case self::CONTROL_COPY_TO_PLUGIN:
                 hd_debug_print("copy to: " . get_data_path(Default_Dune_Plugin::HISTORY_FOLDER));
@@ -204,7 +207,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
                     return Action_Factory::show_title_dialog(TR::t('err_copy'));
                 }
 
-                return Action_Factory::show_title_dialog(TR::t('setup_copy_done'), $action_reload);
+                return Action_Factory::show_title_dialog(TR::t('setup_copy_done'), '', $action_reload);
 
             case PARAM_USE_UPDATER_PROXY:
                 $old_val = $this->plugin->get_bool_setting(PARAM_USE_UPDATER_PROXY, false);
@@ -215,14 +218,14 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
                 }
 
                 $msg = $use_proxy ? TR::t('setup_use_updater_proxy_enabled') : TR::t('setup_use_updater_proxy_disable');
-                return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'), Action_Factory::restart(), $msg);
+                return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'), $msg, Action_Factory::restart());
 
             case self::CONTROL_TV_HISTORY_CLEAR:
                 $history_path = $this->plugin->get_history_path();
                 hd_debug_print("do clear TV history in $history_path");
                 $this->plugin->get_playback_points()->clear_points();
 
-                return Action_Factory::show_title_dialog(TR::t('setup_history_cleared'), $action_reload);
+                return Action_Factory::show_title_dialog(TR::t('setup_history_cleared'), '', $action_reload);
 
             case self::CONTROL_VOD_HISTORY_CLEAR:
                 $filename = Starnet_Vod::VOD_HISTORY_ITEMS . "_" . $this->plugin->config->get_vod_template_name();
@@ -231,7 +234,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
                 hd_debug_print("do clear VOD history $history_path");
                 exec("rm -rf $history_path");
 
-                return Action_Factory::show_title_dialog(TR::t('setup_history_cleared'), $action_reload);
+                return Action_Factory::show_title_dialog(TR::t('setup_history_cleared'), '', $action_reload);
 
             case self::SETUP_ACTION_PASS_DLG: // show pass dialog
                 $defs = $this->do_get_pass_control_defs();
@@ -257,8 +260,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
                     $this->plugin->tv->reload_channels();
                 }
 
-                return Action_Factory::show_title_dialog($msg,
-                    Action_Factory::reset_controls($this->do_get_control_defs()));
+                return Action_Factory::show_title_dialog($msg, '', Action_Factory::reset_controls($this->do_get_control_defs()));
 
             case PARAM_ENABLE_DEBUG:
                 $debug = $this->plugin->toggle_setting(PARAM_ENABLE_DEBUG, false);

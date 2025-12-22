@@ -28,6 +28,11 @@ require_once 'action_factory.php';
 
 class Control_Factory
 {
+    const SCR_CONTROLS_WIDTH = 850;
+    const DLG_CONTROLS_WIDTH = 850;
+    const DLG_MAX_CONTROLS_WIDTH = 1400;
+    const DLG_BUTTON_WIDTH = 300;
+
     public static function apply_action($handler, $name, $add_params)
     {
         $params = array('action_type' => 'apply');
@@ -120,15 +125,15 @@ class Control_Factory
     /**
      * @param array &$defs
      * @param User_Input_Handler $handler
-     * @param array|null $add_params
      * @param string $name
      * @param string $title
      * @param string $caption
      * @param int $width
+     * @param array|null $add_params
      * @param bool $caption_centered
      */
-    public static function add_button(&$defs, $handler, $add_params,
-                                      $name, $title, $caption, $width, $caption_centered = false)
+    public static function add_button(&$defs, $handler, $name, $title, $caption,
+                                      $width = self::SCR_CONTROLS_WIDTH, &$add_params = array(), $caption_centered = false)
     {
         $defs[] = array(
             GuiControlDef::name => $name,
@@ -141,6 +146,10 @@ class Control_Factory
                 GuiButtonDef::push_action => self::apply_action($handler, $name, $add_params)
             ),
         );
+
+        if (isset($add_params[PARAM_RETURN_INDEX])) {
+            $add_params[PARAM_RETURN_INDEX] += 1;
+        }
     }
 
     /**
@@ -183,14 +192,14 @@ class Control_Factory
     /**
      * @param array &$defs
      * @param User_Input_Handler $handler
-     * @param array|null $add_params
      * @param string $name
      * @param string $title
      * @param string $caption
      * @param string $image
      * @param int $width
+     * @param array|null $add_params
      */
-    public static function add_image_button(&$defs, $handler, $add_params, $name, $title, $caption, $image, $width = 0)
+    public static function add_image_button(&$defs, $handler, $name, $title, $caption, $image, $width = self::SCR_CONTROLS_WIDTH, &$add_params = array())
     {
         $defs[] = array(
             GuiControlDef::name => $name,
@@ -205,6 +214,10 @@ class Control_Factory
 
         self::add_vgap($defs, -65);
         self::add_smart_label($defs, null, "<gap width=15/><icon dy='-2'>$image</icon><gap width=20/><text dy='-2'>$caption</text>");
+
+        if (isset($add_params[PARAM_RETURN_INDEX])) {
+            $add_params[PARAM_RETURN_INDEX] += 2;
+        }
     }
 
     /**
@@ -274,7 +287,6 @@ class Control_Factory
     /**
      * @param array &$defs
      * @param User_Input_Handler $handler
-     * @param array|null $add_params
      * @param string $name
      * @param string $title
      * @param string $initial_value
@@ -285,12 +297,14 @@ class Control_Factory
      * @param int $width
      * @param bool $need_confirm
      * @param bool $need_apply
+     * @param array|null $add_params
      */
     public static function add_text_field(&$defs,
-                                          $handler, $add_params,
-                                          $name, $title, $initial_value,
-                                          $numeric, $password, $has_osk, $always_active, $width,
-                                          $need_confirm = false, $need_apply = false)
+                                          $handler, $name,
+                                          $title, $initial_value, $numeric,
+                                          $password, $has_osk, $always_active,
+                                          $width = self::SCR_CONTROLS_WIDTH,
+                                          $need_confirm = false, $need_apply = false, &$add_params = array())
     {
         $apply_action = null;
         if ($need_apply) {
@@ -322,19 +336,18 @@ class Control_Factory
     /**
      * @param array &$defs
      * @param User_Input_Handler $handler
-     * @param array|null $add_params
      * @param string $name
      * @param string $title
      * @param string $initial_value
      * @param array $value_caption_pairs
+     * @param array|null $add_params
      * @param int $width
      * @param bool $need_confirm
      * @param bool $need_apply
      */
-    public static function add_combobox(&$defs,
-                                        $handler, $add_params,
-                                        $name, $title, $initial_value, $value_caption_pairs, $width,
-                                        $need_confirm = false, $need_apply = false)
+    public static function add_combobox(&$defs, $handler, $name, $title, $initial_value, $value_caption_pairs,
+                                        &$add_params = array(), $width = Control_Factory::SCR_CONTROLS_WIDTH,
+                                        $need_confirm = true, $need_apply = false)
     {
         $apply_action = null;
         if ($need_apply) {
@@ -360,6 +373,10 @@ class Control_Factory
         );
 
         self::add_vgap($defs, 4);
+
+        if (isset($add_params[PARAM_RETURN_INDEX])) {
+            $add_params[PARAM_RETURN_INDEX] += 1;
+        }
     }
 
     public static function add_progress_bar(&$defs, $title = null, $width = 0, $progress = 0, $gui_params = null)

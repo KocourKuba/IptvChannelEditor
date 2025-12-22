@@ -156,7 +156,7 @@ class Movie implements User_Input_Handler
     */
     public function get_handler_id()
     {
-        return self::ID;
+        return self::ID . '_handler';
     }
 
     public function get_action_map()

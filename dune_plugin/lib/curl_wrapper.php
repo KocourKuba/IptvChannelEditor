@@ -678,6 +678,14 @@ class Curl_Wrapper
             fclose($fp);
         }
 
+        if (!empty(self::$http_response_headers) && LogSeverity::$is_debug) {
+            hd_debug_print("---------  Response headers start ---------");
+            foreach (self::$http_response_headers as $key => $header) {
+                hd_debug_print("$key: $header");
+            }
+            hd_debug_print("---------   Response headers end  ---------");
+        }
+
         if ($this->error_no !== 0) {
             hd_debug_print("CURL errno: $this->error_no ($this->error_desc); HTTP error: $this->http_code;");
             return false;
@@ -696,14 +704,6 @@ class Curl_Wrapper
             hd_debug_print(sprintf("HTTP OK (%d) in %.3fs", $this->http_code, $execution_tm), true);
         } else {
             hd_debug_print(sprintf("HTTP OK (%d, %d bytes) in %.3fs", $this->http_code, filesize($save_file), $execution_tm), true);
-        }
-
-        if (!empty(self::$http_response_headers) && LogSeverity::$is_debug) {
-            hd_debug_print("---------  Response headers start ---------");
-            foreach (self::$http_response_headers as $key => $header) {
-                hd_debug_print("$key: $header");
-            }
-            hd_debug_print("---------   Response headers end  ---------");
         }
 
         return $save_file === null ? $content : true;

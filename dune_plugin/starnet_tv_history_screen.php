@@ -56,9 +56,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen
                 } catch (Exception $ex) {
                     hd_debug_print("Channel can't played");
                     print_backtrace_exception($ex);
-                    return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'),
-                        null,
-                        TR::t('warn_msg2__1', $ex->getMessage()));
+                    return Action_Factory::show_title_dialog(TR::t('err_channel_cant_start'), TR::t('warn_msg2__1', $ex->getMessage()));
                 }
 
                 return $this->plugin->invalidate_epfs_folders($plugin_cookies, null, $post_action);
@@ -81,7 +79,7 @@ class Starnet_TV_History_Screen extends Abstract_Preloaded_Regular_Screen
                 $opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
                 $message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
                 $this->plugin->save_favorites();
-                return Action_Factory::show_title_dialog($message,
+                return Action_Factory::show_title_dialog($message, '',
                     $this->plugin->change_tv_favorites($opt_type, $selected_media_url->channel_id));
 
             case GUI_EVENT_KEY_POPUP_MENU:

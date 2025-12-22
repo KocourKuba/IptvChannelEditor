@@ -232,7 +232,7 @@ class Action_Factory
      * Confirmation dialog
      * @return array
      */
-    public static function show_confirmation_dialog($title, $handler, $action, $multiline = null, $preferred_width = 0)
+    public static function show_confirmation_dialog($title, $handler, $action, $multiline = '', $preferred_width = 0)
     {
         $defs = array();
 

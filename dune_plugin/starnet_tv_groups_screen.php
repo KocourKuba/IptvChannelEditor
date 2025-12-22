@@ -81,7 +81,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
                     foreach (array('pl_last_error', 'xmltv_last_error') as $last_error) {
                         $error_msg = HD::get_last_error($last_error);
                         if (!empty($error_msg)) {
-                            return Action_Factory::show_title_dialog(TR::t('err_load_playlist'), null, $error_msg);
+                            return Action_Factory::show_title_dialog(TR::t('err_load_playlist'), $error_msg);
                         }
                     }
                     return null;
@@ -96,7 +96,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
             case ACTION_NEED_CONFIGURE:
                 if ($this->IsSetupNeeds()) {
                     hd_debug_print("Setup required!");
-                    return Action_Factory::show_title_dialog(TR::t('err_no_account_data'),
+                    return Action_Factory::show_title_dialog(TR::t('err_no_account_data'), '',
                         Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), TR::t('entry_setup')));
                 }
 
@@ -108,7 +108,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
                 $has_error = $this->plugin->config->get_last_error();
                 if (!empty($has_error)) {
                     $this->plugin->config->clear_last_error();
-                    return Action_Factory::show_title_dialog(TR::t('err_load_any'), $post_action, $has_error);
+                    return Action_Factory::show_title_dialog(TR::t('err_load_any'), $has_error, $post_action);
                 }
 
                 return $post_action;

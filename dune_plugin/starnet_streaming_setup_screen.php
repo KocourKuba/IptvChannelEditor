@@ -50,39 +50,39 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
         //////////////////////////////////////
         // ott or token dialog
         if ($this->plugin->config->get_embedded_account() !== null) {
-            Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CLEAR_ACCOUNT,
-                TR::t('setup_account_title'), TR::t('setup_account_delete'), $delete_icon);
+            Control_Factory::add_image_button($defs, $this, self::SETUP_ACTION_CLEAR_ACCOUNT, TR::t('setup_account_title'),
+                TR::t('setup_account_delete'), $delete_icon);
         } else {
             switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
                 case Plugin_Constants::ACCOUNT_OTT_KEY:
-                    Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_OTTKEY_DLG,
-                        TR::t('setup_account_title'), TR::t('setup_account_ott'), $text_icon);
+                    Control_Factory::add_image_button($defs, $this, self::SETUP_ACTION_OTTKEY_DLG, TR::t('setup_account_title'),
+                        TR::t('setup_account_ott'), $text_icon);
                     break;
                 case Plugin_Constants::ACCOUNT_LOGIN:
-                    Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_LOGIN_DLG,
-                        TR::t('setup_account_title'), TR::t('setup_account_login'), $text_icon);
+                    Control_Factory::add_image_button($defs, $this, self::SETUP_ACTION_LOGIN_DLG, TR::t('setup_account_title'),
+                        TR::t('setup_account_login'), $text_icon);
                     break;
                 case Plugin_Constants::ACCOUNT_PIN:
-                    Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_PIN_DLG,
-                        TR::t('setup_account_title'), TR::t('setup_account_pin'), $text_icon);
+                    Control_Factory::add_image_button($defs, $this, self::SETUP_ACTION_PIN_DLG, TR::t('setup_account_title'),
+                        TR::t('setup_account_pin'), $text_icon);
                     break;
             }
         }
 
-        Control_Factory::add_image_button($defs, $this, null,
-            self::CONTROL_AUTO_PLAY, TR::t('setup_autostart'),
-            SwitchOnOff::translate($plugin_cookies->{self::CONTROL_AUTO_PLAY}),
-            SwitchOnOff::to_image($plugin_cookies->{self::CONTROL_AUTO_PLAY}), self::CONTROLS_WIDTH);
+        Control_Factory::add_image_button($defs, $this, self::CONTROL_AUTO_PLAY,
+            TR::t('setup_autostart'), SwitchOnOff::translate($plugin_cookies->{self::CONTROL_AUTO_PLAY}),
+            SwitchOnOff::to_image($plugin_cookies->{self::CONTROL_AUTO_PLAY})
+        );
 
         //////////////////////////////////////
         // auto resume
         if (!isset($plugin_cookies->{self::CONTROL_AUTO_RESUME}))
             $plugin_cookies->{self::CONTROL_AUTO_RESUME} = SwitchOnOff::on;
 
-        Control_Factory::add_image_button($defs, $this, null,
-            self::CONTROL_AUTO_RESUME, TR::t('setup_continue_play'),
-            SwitchOnOff::translate($plugin_cookies->{self::CONTROL_AUTO_RESUME}),
-            SwitchOnOff::to_image($plugin_cookies->{self::CONTROL_AUTO_RESUME}), self::CONTROLS_WIDTH);
+        Control_Factory::add_image_button($defs, $this, self::CONTROL_AUTO_RESUME,
+            TR::t('setup_continue_play'), SwitchOnOff::translate($plugin_cookies->{self::CONTROL_AUTO_RESUME}),
+            SwitchOnOff::to_image($plugin_cookies->{self::CONTROL_AUTO_RESUME})
+        );
 
         //////////////////////////////////////
         // select server
@@ -91,9 +91,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
             $server_id = $this->plugin->config->get_server_id();
             $server_name = $this->plugin->config->get_server_name();
             hd_debug_print("Selected server: id: '$server_id' name: '$server_name'");
-            Control_Factory::add_combobox($defs, $this, null,
-                self::CONTROL_SERVER, TR::t('server'),
-                $server_id, $servers, self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, self::CONTROL_SERVER,
+                TR::t('server'), $server_id, $servers);
         }
 
         //////////////////////////////////////
@@ -103,9 +102,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
             $device_id = $this->plugin->config->get_device_id();
             $device_name = $this->plugin->config->get_device_name();
             hd_debug_print("Selected device: id: '$device_id' name: '$device_name'");
-            Control_Factory::add_combobox($defs, $this, null,
-                self::CONTROL_DEVICE, TR::t('setup_device'),
-                $device_id, $devices,self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, self::CONTROL_DEVICE,
+                TR::t('setup_device'), $device_id, $devices);
         }
 
         //////////////////////////////////////
@@ -115,9 +113,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
             $quality_id = $this->plugin->config->get_quality_id();
             $quality_name = $this->plugin->config->get_quality_name();
             hd_debug_print("Selected quality: id: '$quality_id' name: '$quality_name'");
-            Control_Factory::add_combobox($defs, $this, null,
-                self::CONTROL_QUALITY, TR::t('setup_quality'),
-                $quality_id, $qualities, self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, self::CONTROL_QUALITY,
+                TR::t('setup_quality'), $quality_id, $qualities);
         }
 
         //////////////////////////////////////
@@ -127,9 +124,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
             $profile_id = $this->plugin->config->get_profile_id();
             $profile_name = $this->plugin->config->get_profile_name();
             hd_debug_print("Selected profile: id: '$profile_id' name: '$profile_name'");
-            Control_Factory::add_combobox($defs, $this, null,
-                self::CONTROL_PROFILE, TR::t('setup_profile'),
-                $profile_id, $profiles, self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, self::CONTROL_PROFILE,
+                TR::t('setup_profile'), $profile_id, $profiles);
         }
 
         //////////////////////////////////////
@@ -139,17 +135,16 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
             $domain_id = $this->plugin->config->get_domain_id();
             $domain_name = $this->plugin->config->get_domain_name();
             hd_debug_print("Selected domain: id: '$domain_id' name: '$domain_name'");
-            Control_Factory::add_combobox($defs, $this, null,
-                self::CONTROL_DOMAIN, TR::t('setup_domain'),
-                $domain_id, $domains, self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, self::CONTROL_DOMAIN,
+                TR::t('setup_domain'), $domain_id, $domains);
         }
 
         //////////////////////////////////////
         // Per channel zoom
         $per_channel_zoom = $this->plugin->get_setting(PARAM_PER_CHANNELS_ZOOM, SwitchOnOff::on);
-        Control_Factory::add_image_button($defs, $this, null,
-            PARAM_PER_CHANNELS_ZOOM, TR::t('setup_per_channel_zoom'), SwitchOnOff::translate($per_channel_zoom),
-            SwitchOnOff::to_image($per_channel_zoom), self::CONTROLS_WIDTH);
+        Control_Factory::add_image_button($defs, $this, PARAM_PER_CHANNELS_ZOOM,
+            TR::t('setup_per_channel_zoom'), SwitchOnOff::translate($per_channel_zoom), SwitchOnOff::to_image($per_channel_zoom)
+        );
 
 
         //////////////////////////////////////
@@ -166,9 +161,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
         if (count($format_ops) > 1) {
             $format_id = $this->plugin->config->get_format();
             hd_debug_print("Selected stream type: id: $format_id name: '$format_ops[$format_id]'");
-            Control_Factory::add_combobox($defs, $this, null,
-                PARAM_STREAM_FORMAT, TR::t('setup_stream'),
-                $format_id, $format_ops, self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, PARAM_STREAM_FORMAT,
+                TR::t('setup_stream'), $format_id, $format_ops);
         }
 
         //////////////////////////////////////
@@ -180,9 +174,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
             $caching_range[$hour] = TR::t('setup_cache_time_d__1', $hour / 24);
         }
         $cache_time = $this->plugin->get_setting(PARAM_PLAYLIST_CACHE_TIME, 1);
-        Control_Factory::add_combobox($defs, $this, null,
-            PARAM_PLAYLIST_CACHE_TIME, TR::t('setup_cache_time'),
-            $cache_time, $caching_range, self::CONTROLS_WIDTH, true);
+        Control_Factory::add_combobox($defs, $this, PARAM_PLAYLIST_CACHE_TIME,
+            TR::t('setup_cache_time'), $cache_time, $caching_range);
 
         //////////////////////////////////////
         // buffering time
@@ -196,9 +189,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
         $show_buf_time_ops[10000] = TR::t('setup_buffer_sec__1', "10");
 
         $buf_time = (int)$this->plugin->get_setting(PARAM_BUFFERING_TIME,1000);
-        Control_Factory::add_combobox($defs, $this, null,
-            PARAM_BUFFERING_TIME, TR::t('setup_buffer_time'),
-            $buf_time, $show_buf_time_ops, self::CONTROLS_WIDTH, true);
+        Control_Factory::add_combobox($defs, $this, PARAM_BUFFERING_TIME,
+            TR::t('setup_buffer_time'), $buf_time, $show_buf_time_ops);
 
         //////////////////////////////////////
         // archive delay time
@@ -212,9 +204,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
         $show_delay_time_ops[5*60] = TR::t('setup_buffer_sec__1', "300");
 
         $delay_time = (int)$this->plugin->get_setting(PARAM_ARCHIVE_DELAY_TIME,60);
-        Control_Factory::add_combobox($defs, $this, null,
-            PARAM_ARCHIVE_DELAY_TIME, TR::t('setup_delay_time'),
-            $delay_time, $show_delay_time_ops, self::CONTROLS_WIDTH, true);
+        Control_Factory::add_combobox($defs, $this, PARAM_ARCHIVE_DELAY_TIME,
+            TR::t('setup_delay_time'), $delay_time, $show_delay_time_ops);
 
         return $defs;
     }
@@ -241,14 +232,14 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
         $vportal = $this->plugin->get_credentials(Ext_Params::M_VPORTAL);
 
         Control_Factory::add_vgap($defs, 20);
-        Control_Factory::add_text_field($defs, $this, null, 'subdomain', TR::t('setup_enter_domain'),
-            $subdomain, false, false, false, true, 600);
+        Control_Factory::add_text_field($defs, $this, 'subdomain', TR::t('setup_enter_domain'), $subdomain,
+            false, false, false, true);
 
-        Control_Factory::add_text_field($defs, $this, null, 'ott_key', TR::t('setup_enter_ott'),
-            $ott_key, false, true, false, true, 600);
+        Control_Factory::add_text_field($defs, $this, 'ott_key', TR::t('setup_enter_ott'), $ott_key,
+            false, true, false, true);
 
-        Control_Factory::add_text_field($defs, $this, null, 'vportal', TR::t('setup_enter_vportal'),
-            $vportal, false, false, false, true, 600);
+        Control_Factory::add_text_field($defs, $this, 'vportal', TR::t('setup_enter_vportal'), $vportal,
+            false, false, false, true);
 
         Control_Factory::add_vgap($defs, 50);
 
@@ -270,12 +261,12 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
         $login = $this->plugin->get_credentials(Ext_Params::M_LOGIN);
 
         Control_Factory::add_vgap($defs, 20);
-        Control_Factory::add_text_field($defs, $this, null, 'login', TR::t('login'),
-            $login, false, false, false, true, 600);
+        Control_Factory::add_text_field($defs, $this, 'login', TR::t('login'), $login,
+            false, false, false, true);
 
         $password = $this->plugin->get_credentials(Ext_Params::M_PASSWORD);
-        Control_Factory::add_text_field($defs, $this, null, 'password', TR::t('password'),
-            $password, false, true, false, true, 600);
+        Control_Factory::add_text_field($defs, $this, 'password', TR::t('password'), $password,
+            false, true, false, true);
 
         Control_Factory::add_vgap($defs, 50);
 
@@ -297,8 +288,8 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
         $password = $this->plugin->get_credentials(Ext_Params::M_PASSWORD);
 
         Control_Factory::add_vgap($defs, 20);
-        Control_Factory::add_text_field($defs, $this, null, 'password', TR::t('password'),
-            $password, false, true, false, true, 600);
+        Control_Factory::add_text_field($defs, $this, 'password', TR::t('password'), $password,
+            false, true, false, true);
 
         Control_Factory::add_vgap($defs, 50);
 
@@ -320,6 +311,11 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
         $control_id = $user_input->control_id;
         $need_reload = false;
         switch ($control_id) {
+            case GUI_EVENT_KEY_TOP_MENU:
+            case GUI_EVENT_KEY_RETURN:
+                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                return self::make_return_action($parent_media_url);
+
             case self::CONTROL_AUTO_PLAY:
             case self::CONTROL_AUTO_RESUME:
                 toggle_cookie_param($plugin_cookies, $control_id);
@@ -426,7 +422,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
                 exec('rm -rf ' . get_data_path('account.dat'));
                 $this->plugin->config->set_embedded_account(null);
                 $post_action = User_Input_Handler_Registry::create_action($this, RESET_CONTROLS_ACTION_ID);
-                return Action_Factory::show_title_dialog(TR::t('setup_deleted_embedded'), $post_action);
+                return Action_Factory::show_title_dialog(TR::t('setup_deleted_embedded'), '', $post_action);
         }
 
         if ($need_reload) {

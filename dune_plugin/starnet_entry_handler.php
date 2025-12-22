@@ -110,7 +110,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
                         if (toggle_updater_proxy($value)) {
                             $this->plugin->set_bool_setting(PARAM_USE_UPDATER_PROXY, true);
                             return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'),
-                                Action_Factory::restart(), TR::t('entry_updater_proxy_enabled'));
+                                TR::t('entry_updater_proxy_enabled'), Action_Factory::restart());
                         }
 
                         $this->plugin->tv->reload_channels();

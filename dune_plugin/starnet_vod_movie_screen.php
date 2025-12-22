@@ -129,7 +129,7 @@ class Starnet_Vod_Movie_Screen extends Abstract_Controls_Screen
             $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
             $opt_type = $this->plugin->vod->is_favorite_movie_id($movie_id) ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
             return Action_Factory::show_title_dialog(
-                $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite'),
+                $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite'), '',
                 $this->plugin->vod->change_vod_favorites($opt_type, $movie_id)
             );
         }

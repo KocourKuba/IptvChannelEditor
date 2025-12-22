@@ -29,8 +29,6 @@ require_once 'user_input_handler_registry.php';
 
 abstract class Abstract_Controls_Screen extends Abstract_Screen
 {
-    const CONTROLS_WIDTH = 850;
-
     protected $return_index = 0;
     protected $force_parent_reload = false;
 
@@ -82,7 +80,11 @@ abstract class Abstract_Controls_Screen extends Abstract_Screen
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
-        return array();
+        hd_debug_print(null, true);
+
+        $actions[GUI_EVENT_KEY_TOP_MENU] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_TOP_MENU);
+        $actions[GUI_EVENT_KEY_RETURN] = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN);
+        return $actions;
     }
 
     /**

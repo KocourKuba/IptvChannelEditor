@@ -58,7 +58,7 @@ class Starnet_Vod_History_Screen extends Abstract_Preloaded_Regular_Screen
 				$is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);
 				$opt_type = $is_favorite ? PLUGIN_FAVORITES_OP_REMOVE : PLUGIN_FAVORITES_OP_ADD;
 				$message = $is_favorite ? TR::t('deleted_from_favorite') : TR::t('added_to_favorite');
-				return Action_Factory::show_title_dialog($message,
+				return Action_Factory::show_title_dialog($message, '',
                     $this->plugin->vod->change_vod_favorites($opt_type, $movie_id));
 		}
 

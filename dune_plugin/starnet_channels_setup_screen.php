@@ -23,6 +23,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
     {
         hd_debug_print(null, true);
         $defs = array();
+        $params = array();
 
         $folder_icon = get_image_path('folder.png');
         $web_icon = get_image_path('web.png');
@@ -38,8 +39,8 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
         $source_ops[2] = TR::t('setup_channels_src_internet');
         $source_ops[3] = TR::t('setup_channels_src_direct');
         $channels_source = $this->plugin->get_setting(PARAM_CHANNELS_SOURCE, 1);
-        Control_Factory::add_combobox($defs, $this, null, PARAM_CHANNELS_SOURCE,
-            TR::t('setup_channels_src_combo'), $channels_source, $source_ops, self::CONTROLS_WIDTH, true);
+        Control_Factory::add_combobox($defs, $this, PARAM_CHANNELS_SOURCE, TR::t('setup_channels_src_combo'),
+            $channels_source, $source_ops, $params);
 
         switch ($channels_source)
         {
@@ -56,17 +57,17 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
                 if (is_limited_apk()) {
                     Control_Factory::add_label($defs, TR::t('setup_channels_src_label'), $display_path);
                 } else {
-                    Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANGE_CH_LIST_PATH,
-                        TR::t('setup_channels_src_folder_path'), $display_path, $folder_icon);
+                    Control_Factory::add_image_button($defs, $this, self::SETUP_ACTION_CHANGE_CH_LIST_PATH, TR::t('setup_channels_src_folder_path'),
+                        $display_path, $folder_icon);
                 }
                 break;
             case 2: // internet url
-                Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANNELS_URL_DLG,
-                    TR::t('setup_channels_src_internet_path'), TR::t('setup_channels_src_change_caption'), $web_icon, self::CONTROLS_WIDTH);
+                Control_Factory::add_image_button($defs, $this, self::SETUP_ACTION_CHANNELS_URL_DLG, TR::t('setup_channels_src_internet_path'),
+                    TR::t('setup_channels_src_change_caption'), $web_icon);
                 break;
             case 3: // direct internet url
-                Control_Factory::add_image_button($defs, $this, null, self::SETUP_ACTION_CHANNELS_URL_DLG,
-                    TR::t('setup_channels_src_direct_link'), TR::t('setup_channels_src_change_caption'), $link_icon, self::CONTROLS_WIDTH);
+                Control_Factory::add_image_button($defs, $this, self::SETUP_ACTION_CHANNELS_URL_DLG, TR::t('setup_channels_src_direct_link'),
+                    TR::t('setup_channels_src_change_caption'), $link_icon);
                 break;
         }
 
@@ -74,14 +75,14 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
         // channels lists
         $all_channels = $this->plugin->config->get_channel_list($channels_list);
         if (empty($all_channels)) {
-            Control_Factory::add_button($defs, $this,null, "dummy",
-                TR::t('setup_channels_src_used_label'), TR::t('setup_channels_src_no_channels'), self::CONTROLS_WIDTH);
+            Control_Factory::add_button($defs, $this, "dummy", TR::t('setup_channels_src_used_label'),
+                TR::t('setup_channels_src_no_channels'));
         } else if (count($all_channels) === 1) {
-            Control_Factory::add_button($defs, $this,null, "dummy",
-                TR::t('setup_channels_src_used_label'), reset($all_channels), self::CONTROLS_WIDTH);
+            Control_Factory::add_button($defs, $this, "dummy", TR::t('setup_channels_src_used_label'),
+                reset($all_channels));
         } else {
-            Control_Factory::add_combobox($defs, $this, null, PARAM_CHANNELS_LIST_NAME,
-                TR::t('setup_channels_src_used_label'), $channels_list, $all_channels, self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, PARAM_CHANNELS_LIST_NAME, TR::t('setup_channels_src_used_label'),
+                $channels_list, $all_channels, $params);
         }
 
         //////////////////////////////////////
@@ -91,9 +92,8 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
         hd_debug_print("current playlist index: $play_list_idx");
 
         if (count($all_tv_lists) > 1) {
-            Control_Factory::add_combobox($defs, $this, null, PARAM_PLAYLIST_IDX,
-                TR::t('setup_channels_src_playlist'), $play_list_idx,
-                $all_tv_lists, self::CONTROLS_WIDTH, true);
+            Control_Factory::add_combobox($defs, $this, PARAM_PLAYLIST_IDX, TR::t('setup_channels_src_playlist'),
+                $play_list_idx, $all_tv_lists, $params);
         }
 
         Control_Factory::add_vgap($defs, 10);
@@ -140,8 +140,8 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
         }
 
         Control_Factory::add_vgap($defs, 20);
-        Control_Factory::add_text_field($defs, $this, null, self::SETUP_ACTION_CHANNELS_URL_PATH, '',
-            $url_path, false, false, false, true, self::CONTROLS_WIDTH);
+        Control_Factory::add_text_field($defs, $this, self::SETUP_ACTION_CHANNELS_URL_PATH, '', $url_path,
+            false, false, false, true);
 
         Control_Factory::add_vgap($defs, 50);
 
@@ -149,7 +149,8 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
             TR::t('ok'), 300);
         Control_Factory::add_close_dialog_button($defs, TR::t('cancel'), 300);
         $push_action = User_Input_Handler_Registry::create_action($this, self::SETUP_ACTION_CHANNELS_URL_DEFAULT);
-        Control_Factory::add_custom_close_dialog_and_apply_button($defs, self::SETUP_ACTION_CHANNELS_URL_DEFAULT, TR::t('by_default'), 300, $push_action);
+        Control_Factory::add_custom_close_dialog_and_apply_button($defs,
+            self::SETUP_ACTION_CHANNELS_URL_DEFAULT, TR::t('by_default'), 300, $push_action);
         Control_Factory::add_vgap($defs, 10);
 
         return $defs;
@@ -165,6 +166,10 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
 
         $control_id = $user_input->control_id;
         switch ($control_id) {
+            case GUI_EVENT_KEY_TOP_MENU:
+            case GUI_EVENT_KEY_RETURN:
+                $parent_media_url = MediaURL::decode($user_input->parent_media_url);
+                return self::make_return_action($parent_media_url);
 
             case self::SETUP_ACTION_CHANGE_CH_LIST_PATH:
                 $media_url_str = MediaURL::encode(
@@ -245,7 +250,8 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
                 hd_debug_print(ACTION_FOLDER_SELECTED . " " . $data->{PARAM_FILEPATH});
                 $this->plugin->set_setting(PARAM_CHANNELS_LIST_PATH, smb_tree::set_folder_info($user_input->selected_data));
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->{Starnet_Folder_Screen::PARAM_CAPTION}),
-                    User_Input_Handler_Registry::create_action($this, ACTION_RELOAD), $data->{PARAM_FILEPATH}, self::CONTROLS_WIDTH);
+                    $data->{PARAM_FILEPATH}, User_Input_Handler_Registry::create_action($this, ACTION_RELOAD),
+                    Control_Factory::SCR_CONTROLS_WIDTH);
 
             case ACTION_RESET_DEFAULT:
                 hd_debug_print(ACTION_RESET_DEFAULT);
