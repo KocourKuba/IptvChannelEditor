@@ -366,9 +366,9 @@ class Curl_Wrapper
      */
     protected static function load_cached_etags()
     {
-        $cache_path = get_data_path(self::CACHE_TAG_FILE);
-        if (file_exists($cache_path)) {
-            $cache_db = json_decode(file_get_contents($cache_path), true);
+        $etag_cache_file = get_data_path(self::CACHE_TAG_FILE);
+        if (file_exists($etag_cache_file)) {
+            $cache_db = json_decode(file_get_contents($etag_cache_file), true);
         } else {
             $cache_db = array();
         }

@@ -311,14 +311,14 @@ class Default_Dune_Plugin implements DunePlugin
      */
     public function get_cache_dir()
     {
-        $cache_dir = smb_tree::get_folder_info($this->get_setting(PARAM_CACHE_PATH));
+        $cache_dir = get_slash_trailed_path(smb_tree::get_folder_info($this->get_setting(PARAM_CACHE_PATH)));
         if (!is_null($cache_dir) && rtrim($cache_dir, DIRECTORY_SEPARATOR) === get_data_path(EPG_CACHE_SUBDIR)) {
             $this->remove_setting(PARAM_CACHE_PATH);
             $cache_dir = null;
         }
 
         if (is_null($cache_dir)) {
-            $cache_dir = get_data_path(EPG_CACHE_SUBDIR);
+            $cache_dir = get_slash_trailed_path(get_data_path(EPG_CACHE_SUBDIR));
         }
 
         return $cache_dir;

@@ -174,13 +174,13 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
             case self::SETUP_ACTION_CHANGE_CH_LIST_PATH:
                 $media_url_str = MediaURL::encode(
                     array(
-                        'screen_id' => Starnet_Folder_Screen::ID,
-                        'source_window_id' => static::ID,
-                        'allow_network' => !is_limited_apk(),
-                        'choose_folder' => true,
-                        'allow_reset' => true,
-                        'end_action' => ACTION_RELOAD,
-                        'windowCounter' => 1,
+                        PARAM_SCREEN_ID => Starnet_Folder_Screen::ID,
+                        PARAM_SOURCE_WINDOW_ID => static::ID,
+                        Starnet_Folder_Screen::PARAM_ALLOW_NETWORK => !is_limited_apk(),
+                        Starnet_Folder_Screen::PARAM_CHOOSE_FOLDER => true,
+                        Starnet_Folder_Screen::PARAM_ALLOW_RESET => true,
+                        PARAM_END_ACTION => ACTION_RELOAD,
+                        PARAM_WINDOW_COUNTER => 1,
                     )
                 );
                 return Action_Factory::open_folder($media_url_str, TR::t('setup_channels_src_folder_caption'));
@@ -246,9 +246,11 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
                 return User_Input_Handler_Registry::create_action($this, ACTION_RELOAD);
 
             case ACTION_FOLDER_SELECTED:
-                $data = MediaURL::decode($user_input->selected_data);
+                $selected_data = $user_input->{Starnet_Folder_Screen::PARAM_SELECTED_DATA};
+                $data = MediaURL::decode($selected_data);
                 hd_debug_print(ACTION_FOLDER_SELECTED . " " . $data->{PARAM_FILEPATH});
-                $this->plugin->set_setting(PARAM_CHANNELS_LIST_PATH, smb_tree::set_folder_info($user_input->selected_data));
+                $this->plugin->set_setting(PARAM_CHANNELS_LIST_PATH,
+                    smb_tree::set_folder_info($selected_data));
                 return Action_Factory::show_title_dialog(TR::t('folder_screen_selected_folder__1', $data->{Starnet_Folder_Screen::PARAM_CAPTION}),
                     $data->{PARAM_FILEPATH}, User_Input_Handler_Registry::create_action($this, ACTION_RELOAD),
                     Control_Factory::SCR_CONTROLS_WIDTH);

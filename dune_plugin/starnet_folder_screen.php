@@ -69,6 +69,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen
     const PARAM_ADD_PARAMS = 'add_params';
     const PARAM_SELECTED_DATA = 'selected_data';
     const PARAM_ALLOW_NETWORK = 'allow_network';
+    const PARAM_ALLOW_RESET = 'allow_reset';
     const PARAM_ALLOW_IMAGE_LIB = 'allow_image_lib';
     const PARAM_READ_ONLY = 'read_only';
     const PARAM_NEW_USER = 'new_user';
@@ -560,7 +561,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen
 
         if ($selected_url->{self::PARAM_CHOOSE_FILE} !== false && $selected_url->{PARAM_EXTENSION} === $selected_url->{PARAM_TYPE}) {
             $post_action = User_Input_Handler_Registry::create_screen_action($selected_url->{PARAM_SOURCE_WINDOW_ID}, ACTION_FILE_SELECTED,
-                '', array('selected_data' => $selected_url->get_media_url_string()));
+                '', array(self::PARAM_SELECTED_DATA => $selected_url->get_media_url_string()));
 
             return Action_Factory::replace_path(MediaURL::decode($user_input->parent_media_url)->{PARAM_WINDOW_COUNTER}, null, $post_action);
         }
@@ -619,7 +620,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen
             $post_action = User_Input_Handler_Registry::create_screen_action($url->{PARAM_SOURCE_WINDOW_ID},
                 ACTION_FOLDER_SELECTED,
                 '',
-                array('selected_data' => $url->get_media_url_string()));
+                array(self::PARAM_SELECTED_DATA => $url->get_media_url_string()));
         }
 
         return Action_Factory::replace_path($parent_url->{PARAM_WINDOW_COUNTER}, null, $post_action);
@@ -641,7 +642,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen
         $post_action = User_Input_Handler_Registry::create_screen_action($url->{PARAM_SOURCE_WINDOW_ID},
             ACTION_RESET_DEFAULT,
             '',
-            array('selected_data' => $url->get_media_url_string()));
+            array(self::PARAM_SELECTED_DATA => $url->get_media_url_string()));
 
         return Action_Factory::replace_path($parent_url->{PARAM_WINDOW_COUNTER}, null, $post_action);
     }
@@ -694,7 +695,7 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen
         if (!create_path($parent_url->{PARAM_FILEPATH} . '/' . $user_input->{self::ACTION_CREATE_FOLDER})) {
             return Action_Factory::show_title_dialog(TR::t('err_error'), TR::t('err_cant_create_folder'));
         }
-        return Action_Factory::invalidate_all_folders($plugin_cookies, array($user_input->parent_media_url));
+        return Action_Factory::invalidate_all_folders($plugin_cookies);
     }
 
     /**

@@ -214,13 +214,14 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
             case self::CONTROL_CHANGE_CACHE_PATH:
                 $media_url_str = MediaURL::encode(
                     array(
-                        'screen_id' => Starnet_Folder_Screen::ID,
-                        'source_window_id' => static::ID,
-                        'allow_network' => !is_limited_apk(),
-                        'choose_folder' => true,
-                        'allow_reset' => true,
-                        'end_action' => ACTION_RELOAD,
-                        'windowCounter' => 1,
+                        PARAM_SCREEN_ID => Starnet_Folder_Screen::ID,
+                        PARAM_SOURCE_WINDOW_ID => static::ID,
+                        Starnet_Folder_Screen::PARAM_CHOOSE_FOLDER => true,
+                        Starnet_Folder_Screen::PARAM_ALLOW_NETWORK => !is_limited_apk(),
+                        Starnet_Folder_Screen::PARAM_ALLOW_RESET => true,
+                        Starnet_Folder_Screen::PARAM_RESET_ACTION => ACTION_RESET_DEFAULT,
+                        PARAM_END_ACTION => ACTION_RELOAD,
+                        PARAM_WINDOW_COUNTER => 1,
                     )
                 );
                 return Action_Factory::open_folder($media_url_str, TR::t('setup_epg_xmltv_cache_caption'));
@@ -256,7 +257,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
                 break;
 
             case ACTION_FOLDER_SELECTED:
-                $data = MediaURL::decode($user_input->selected_data);
+                $data = MediaURL::decode($user_input->{Starnet_Folder_Screen::PARAM_SELECTED_DATA});
                 hd_debug_print(ACTION_FOLDER_SELECTED . ": " . $data->{PARAM_FILEPATH});
                 if ($this->plugin->get_cache_dir() === $data->{PARAM_FILEPATH}) break;
 
