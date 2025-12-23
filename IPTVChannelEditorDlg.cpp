@@ -734,6 +734,12 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_plugin_type = GetConfig().get_plugin_type();
 	m_plugin = GetPluginFactory().create_plugin(m_plugin_type);
+	if (!m_plugin)
+	{
+		UnlockWindowUpdate();
+		AfxMessageBox(L"Unknown plugin configuration!", MB_ICONERROR | MB_OK);
+		return;
+	}
 
 	ReloadConfigs();
 	m_plugin->load_plugin_parameters(cur_account.get_config(), m_plugin->get_internal_name());
