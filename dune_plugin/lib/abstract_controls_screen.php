@@ -62,15 +62,14 @@ abstract class Abstract_Controls_Screen extends Abstract_Screen
      */
     protected static function make_return_action($parent_media_url, $action_id = ACTION_REFRESH_SCREEN)
     {
-        $actions[] = Action_Factory::close_and_run();
-        $actions[] = User_Input_Handler_Registry::create_screen_action(
+        $post_action = User_Input_Handler_Registry::create_screen_action(
             $parent_media_url->{PARAM_SOURCE_WINDOW_ID},
             $action_id,
             null,
             array('initial_sel_ndx' => $parent_media_url->{PARAM_RETURN_INDEX})
         );
 
-        return Action_Factory::composite($actions);
+        return Action_Factory::close_and_run($post_action);
     }
 
     ///////////////////////////////////////////////////////////////////////
