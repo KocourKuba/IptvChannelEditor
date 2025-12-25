@@ -547,15 +547,14 @@ class Curl_Wrapper
                     /** @var array $m */
                     if (preg_match("/^(.*):(.*)$/", $line, $m)) {
                         $header = trim($m[2]);
-                        self::$http_response_headers[$m[1]] = $header;
-                        hd_debug_print("$m[1]: $header", true);
+                        self::$http_response_headers[strtolower($m[1])] = $header;
                     }
                 }
 
                 if (LogSeverity::$is_debug) {
                     hd_debug_print("---------  Read response headers ---------");
-                    foreach (self::$http_response_headers as $header) {
-                        hd_debug_print($header);
+                    foreach (self::$http_response_headers as $tag => $header) {
+                        hd_debug_print("$tag: $header");
                     }
                     hd_debug_print("---------     Read finished    ---------");
                 }
