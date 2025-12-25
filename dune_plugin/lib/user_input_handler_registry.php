@@ -99,7 +99,9 @@ class User_Input_Handler_Registry
             $arr[GuiAction::caption] = $caption;
         }
         $arr[GuiAction::params] = $params;
-        $arr[GuiAction::flags] = $flags;
+        if (defined('GuiAction::flags')) {
+            $arr[GuiAction::flags] = $flags;
+        }
 
         return $arr;
     }
