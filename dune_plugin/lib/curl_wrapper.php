@@ -551,17 +551,19 @@ class Curl_Wrapper
                     }
                 }
 
-                if (LogSeverity::$is_debug) {
-                    hd_debug_print("---------  Read response headers ---------");
-                    foreach (self::$http_response_headers as $tag => $header) {
-                        hd_debug_print("$tag: $header");
+                if (!empty(self::$http_response_headers) && LogSeverity::$is_debug) {
+                    hd_debug_print("---------  Response headers start ---------");
+                    foreach (self::$http_response_headers as $key => $header) {
+                        hd_debug_print("$key: $header");
                     }
-                    hd_debug_print("---------     Read finished    ---------");
+                    hd_debug_print("---------   Response headers end  ---------");
                 }
             }
 
             if ($use_cache) {
-                self::set_cached_etag($url, self::get_etag_header());
+                $etag = self::get_etag_header();
+                hd_debug_print("Save ETag header ($etag) for: $url", true);
+                self::set_cached_etag($url, $etag);
             }
         }
 
@@ -696,7 +698,9 @@ class Curl_Wrapper
         }
 
         if ($use_cache) {
-            self::set_cached_etag($url, $this->get_etag_header());
+            $etag = self::get_etag_header();
+            hd_debug_print("Save ETag header ($etag) for: $url", true);
+            self::set_cached_etag($url, $etag);
         }
 
         if (empty($save_file)) {

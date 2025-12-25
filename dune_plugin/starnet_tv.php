@@ -147,6 +147,9 @@ class Starnet_Tv implements User_Input_Handler
      */
     public function get_special_group($id)
     {
+        if (!isset($this->special_groups)) {
+            return null;
+        }
         return $this->special_groups->get($id);
     }
 
@@ -571,7 +574,7 @@ class Starnet_Tv implements User_Input_Handler
 
         $group_all = $this->get_special_group(ALL_CHANNEL_GROUP_ID);
         $ext_epg_enabled = $this->plugin->is_ext_epg_enabled();
-        $show_all = !$group_all->is_disabled();
+        $show_all = $group_all && !$group_all->is_disabled();
         $all_channels = new Hashed_Array();
         $all_groups_ids = array();
         /** @var Group $group */
@@ -656,6 +659,7 @@ class Starnet_Tv implements User_Input_Handler
             $initial_is_favorite = 0;
         }
 
+        $fav_group = $this->get_special_group(FAVORITES_GROUP_ID);
         $tv_info = array(
             PluginTvInfo::show_group_channels_only => true,
 
@@ -663,7 +667,7 @@ class Starnet_Tv implements User_Input_Handler
             PluginTvInfo::channels => $all_channels->get_ordered_values(),
 
             PluginTvInfo::favorites_supported => $this->plugin->get_bool_setting(PARAM_SHOW_FAVORITES),
-            PluginTvInfo::favorites_icon_url => $this->get_special_group(FAVORITES_GROUP_ID)->get_icon_url(),
+            PluginTvInfo::favorites_icon_url => $fav_group !== null ? $fav_group->get_icon_url() : null,
 
             PluginTvInfo::initial_channel_id => (string)$media_url->channel_id,
             PluginTvInfo::initial_group_id => $initial_group_id,
