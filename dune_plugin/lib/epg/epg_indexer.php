@@ -79,7 +79,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function init($cache_dir)
     {
-        $this->cache_dir = $cache_dir;
+        $this->cache_dir = get_slash_trailed_path($cache_dir);
         create_path($this->cache_dir);
 
         hd_debug_print("Indexer engine: " . get_class($this));
@@ -259,7 +259,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function get_cache_filename($hash, $ext = ".xmltv")
     {
-        return $this->cache_dir . DIRECTORY_SEPARATOR . $hash . $ext;
+        return $this->cache_dir . $hash . $ext;
     }
 
     /**
@@ -340,6 +340,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 hd_debug_print("ungzip $tmp_filename to $cached_file");
                 $cmd = "gzip -d $tmp_filename 2>&1";
                 $out = system($cmd, $ret);
+                /** @noinspection PhpConditionAlreadyCheckedInspection */
                 if ($ret > 1) {
                     throw new Exception("Failed to unpack $tmp_filename (error code: $ret)\n$out");
                 }
@@ -372,6 +373,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 $cmd = "unzip -oq $tmp_filename -d $this->cache_dir";
                 $out = system($cmd, $ret);
                 safe_unlink($tmp_filename);
+                /** @noinspection PhpConditionAlreadyCheckedInspection */
                 if ($ret !== 0) {
                     throw new Exception("Failed to unpack $tmp_filename (error code: $ret)\n$out");
                 }
@@ -414,7 +416,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      */
     public function is_index_locked($hash)
     {
-        $dirs = glob($this->cache_dir . DIRECTORY_SEPARATOR . $hash . "_*.lock", GLOB_ONLYDIR);
+        $dirs = glob($this->cache_dir . $hash . '_*.lock', GLOB_ONLYDIR);
         return !empty($dirs);
     }
 
@@ -426,10 +428,10 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
         $locks = array();
         $dirs = array();
         if ($this->active_sources->size() === 0) {
-            $dirs = glob($this->cache_dir . DIRECTORY_SEPARATOR . "*_*.lock", GLOB_ONLYDIR);
+            $dirs = glob($this->cache_dir . '*_*.lock', GLOB_ONLYDIR);
         } else {
             foreach ($this->active_sources as $key => $value) {
-                $dirs = safe_merge_array($dirs, glob($this->cache_dir . DIRECTORY_SEPARATOR . $key . "_*.lock", GLOB_ONLYDIR));
+                $dirs = safe_merge_array($dirs, glob($this->cache_dir . $key . '_*.lock', GLOB_ONLYDIR));
             }
         }
 
@@ -467,14 +469,14 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     public function clear_all_epg_files()
     {
         hd_debug_print(null, true);
-        Curl_Wrapper::clear_cached_etag_by_hash('');
+        Curl_Wrapper::clear_all_cached_etags();
         $this->clear_memory_index();
 
         if (empty($this->cache_dir)) {
             return;
         }
 
-        $dirs = glob($this->cache_dir . DIRECTORY_SEPARATOR . "*_*.lock", GLOB_ONLYDIR);
+        $dirs = glob($this->cache_dir . "*_*.lock", GLOB_ONLYDIR);
         $locks = array();
         foreach ($dirs as $dir) {
             hd_debug_print("Found locks: $dir");
@@ -513,8 +515,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
                 if ($pid !== 0 && !send_process_signal($pid, 0)) {
                     hd_debug_print("Remove stalled lock: $lock");
-                    shell_exec("rmdir $this->cache_dir" . DIRECTORY_SEPARATOR . $lock);
-                }
+                    shell_exec("rmdir $this->cache_dir$lock");                }
             }
         }
     }

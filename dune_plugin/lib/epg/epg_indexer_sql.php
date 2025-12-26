@@ -357,7 +357,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
     public function remove_index($name, $hash)
     {
         if ($this->is_index_locked($hash)) {
-            hd_debug_print("Unable to drop table because index $name is locked");
+            hd_debug_print("Unable to drop table '$name' because index '$hash' is locked");
             return false;
         }
 
@@ -378,7 +378,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
     public function remove_all_indexes($hash)
     {
         if ($this->is_index_locked($hash)) {
-            hd_debug_print("Unable to drop table because current index is locked");
+            hd_debug_print("Unable to drop table because current index '$hash' is locked");
             return;
         }
 
