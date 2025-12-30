@@ -197,9 +197,10 @@ class edem_config extends default_config
      */
     public function getMovieList($query_id)
     {
-        $page_idx = $this->get_next_page($query_id);
-        if ($page_idx < 0)
+        $page_idx = $this->get_current_page($query_id);
+        if ($page_idx < 0) {
             return array();
+        }
 
         $post_params = array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => $page_idx, 'limit' => 50);
         $json = $this->make_json_request($post_params);
@@ -218,8 +219,9 @@ class edem_config extends default_config
         $movies = array();
 
         $current_offset = $this->get_current_page($query_id);
-        if ($current_offset < 0)
+        if ($current_offset < 0) {
             return $movies;
+        }
 
         if (!isset($json->items)) {
             hd_debug_print("No items in query! " . json_format_unescaped($json), true);
