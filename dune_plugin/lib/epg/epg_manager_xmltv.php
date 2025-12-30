@@ -98,7 +98,7 @@ class Epg_Manager_Xmltv
         hd_print("Script config");
         hd_print("Log: $LOG_FILE");
         hd_print("Process ID: $pid");
-        hd_print("Active sources: " . pretty_json_format($config->active_xmltv_sources));
+        hd_print("Active sources: " . json_format_unescaped($config->active_xmltv_sources));
         hd_print("Current source: $config->current_xmltv_source");
 
         $this->init_indexer($config->cache_dir);

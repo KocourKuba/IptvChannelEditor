@@ -617,7 +617,7 @@ class default_config extends dynamic_config
         hd_debug_print("used filter: $user_filter", true);
         $added = false;
         $filter_items = HD::get_data_items(Starnet_Vod_Filter_Screen::VOD_FILTER_LIST);
-        hd_debug_print("user filters: " . pretty_json_format($filter_items), true);
+        hd_debug_print("user filters: " . json_format_unescaped($filter_items), true);
         $initial = array_search($user_filter, $filter_items);
         hd_debug_print("user filter idx: " . ($initial !== false ? $initial: -1), true);
 

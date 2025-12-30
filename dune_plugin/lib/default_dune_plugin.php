@@ -626,7 +626,7 @@ class Default_Dune_Plugin implements DunePlugin
             if (!empty($ext_epg) && create_path($dir)) {
                 $filename = sprintf("%s-%s-%s.json", $app_name, Hashed_Array::hash($channel_id), strftime('%Y-%m-%d', $day_start_tm_sec));
                 hd_debug_print("save ext_epg to: $filename");
-                if (file_put_contents(get_temp_path($filename), pretty_json_format($ext_epg))) {
+                if (file_put_contents(get_temp_path($filename), json_format_unescaped($ext_epg))) {
                     rename(get_temp_path($filename), "$dir/$filename");
                 }
             }
@@ -1301,8 +1301,8 @@ class Default_Dune_Plugin implements DunePlugin
                 'active_xmltv_sources' => $sources->to_array()
             );
             $config_file = get_temp_path(sprintf(self::PARSE_CONFIG, $key));
-            hd_debug_print("Config: " . pretty_json_format($config), true);
-            file_put_contents($config_file, pretty_json_format($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            hd_debug_print("Config: " . json_format_unescaped($config), true);
+            file_put_contents($config_file, json_format_readable($config));
 
             $cmd = get_install_path('bin/cgi_wrapper.sh') . " index_epg.php $config_file &";
             hd_debug_print("exec: $cmd", true);

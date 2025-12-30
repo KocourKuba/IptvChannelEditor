@@ -75,7 +75,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
                 $res = $stm->execute();
                 if (!$res) {
-                    throw new Exception("Query failed for epg's: " . pretty_json_format($epg_ids) . " ($channel_title)");
+                    throw new Exception("Query failed for epg's: " . json_format_unescaped($epg_ids) . " ($channel_title)");
                 }
 
                 while ($row = $res->fetchArray(SQLITE3_NUM)) {
@@ -84,7 +84,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
             }
 
             $epg_ids = array_values(array_unique($epg_ids));
-            hd_debug_print("Found epg_ids: " . pretty_json_format($epg_ids), true);
+            hd_debug_print("Found epg_ids: " . json_format_unescaped($epg_ids), true);
             $channel_id = $channel->get_id();
             if (!empty($epg_ids)) {
                 hd_debug_print("Load position indexes for: $channel_id ($channel_title)", true);
@@ -97,7 +97,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
                     $res = $stmt->execute();
                     if (!$res) {
-                        throw new Exception("Query failed for epg's: " . pretty_json_format($epg_ids) . " ($channel_title)");
+                        throw new Exception("Query failed for epg's: " . json_format_unescaped($epg_ids) . " ($channel_title)");
                     }
 
                     while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
@@ -108,13 +108,13 @@ class Epg_Indexer_Sql extends Epg_Indexer
             }
 
             if (empty($channel_position)) {
-                hd_debug_print("No positions for channel $channel_id ($channel_title) and epg id's: " . pretty_json_format($epg_ids));
+                hd_debug_print("No positions for channel $channel_id ($channel_title) and epg id's: " . json_format_unescaped($epg_ids));
             }
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
         }
 
-        hd_debug_print("Channel positions: " . pretty_json_format($channel_position), true);
+        hd_debug_print("Channel positions: " . json_format_unescaped($channel_position), true);
         return $channel_position;
     }
 

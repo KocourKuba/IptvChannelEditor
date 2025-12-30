@@ -34,7 +34,7 @@ class tvteam_config extends default_config
         parent::set_server_id($server);
 
         $response = $this->execApiCommand(self::API_COMMAND_SET_SERVER, null, true, $this->session_id);
-        hd_debug_print("SetServer: " . pretty_json_format($response), true);
+        hd_debug_print("SetServer: " . json_format_unescaped($response), true);
         if (isset($response->status) && (int)$response->status === 1) {
             $this->account_data = null;
             $this->servers = array();
@@ -61,7 +61,7 @@ class tvteam_config extends default_config
 
         if (empty($this->account_data) || $force) {
             $this->account_data = $this->execApiCommand(self::API_COMMAND_ACCOUNT_INFO, null, true, $this->session_id);
-            hd_debug_print("get provider info response: " . pretty_json_format($this->account_data), true);
+            hd_debug_print("get provider info response: " . json_format_unescaped($this->account_data), true);
             if (isset($this->account_data->data->userData->userToken)) {
                 $this->plugin->set_credentials(Ext_Params::M_S_TOKEN, $this->account_data->data->userData->userToken);
             }
@@ -172,7 +172,7 @@ class tvteam_config extends default_config
             HD::set_last_error("rq_last_error", null);
             $curl_options[CURLOPT_CUSTOMREQUEST] = md5($password);
             $response = $this->execApiCommand(self::API_COMMAND_REQUEST_TOKEN, null, true, $curl_options);
-            hd_debug_print("request provider token response: " . pretty_json_format($response), true);
+            hd_debug_print("request provider token response: " . json_format_unescaped($response), true);
             if ($response->status === 0 || !empty($response->error)) {
                 HD::set_last_error("pl_last_error", $response->error);
                 HD::set_last_error("rq_last_error", $response->error);

@@ -76,7 +76,7 @@ class korona_config extends default_config
             return $this->ensure_token_loaded(true);
         }
 
-        hd_debug_print("token not received: " . pretty_json_format($data), true);
+        hd_debug_print("token not received: " . json_format_unescaped($data), true);
         return false;
     }
 
@@ -89,7 +89,7 @@ class korona_config extends default_config
 
         if (empty($this->servers)) {
             $response = $this->execApiCommand(self::API_COMMAND_GET_SERVERS);
-            hd_debug_print("GetServers: " . pretty_json_format($response), true);
+            hd_debug_print("GetServers: " . json_format_unescaped($response), true);
             if (isset($response->data)) {
                 foreach ($response->data as $server) {
                     $this->servers[(string)$server->id] = $server->title;
@@ -120,7 +120,7 @@ class korona_config extends default_config
                 $this->plugin->set_credentials(Ext_Params::M_S_TOKEN, '');
                 $this->plugin->set_credentials(Ext_Params::M_R_TOKEN, '');
             } else {
-                hd_debug_print("get_provider_info: " . pretty_json_format($account_info), true);
+                hd_debug_print("get_provider_info: " . json_format_unescaped($account_info), true);
                 $this->account_data = $account_info;
             }
         }

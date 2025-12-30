@@ -30,12 +30,12 @@ class Json_Serializer
 {
     public function __toString()
     {
-        return str_replace(array('"{', '}"', '\"'), array('{', '}', '"'), (string)pretty_json_format($this->_toStdClass()));
+        return json_format_unescaped($this->_toStdClass());
     }
 
     public function _toStdClass()
     {
-        $object = new StdClass();
+        $object = new stdClass();
         $object->_class = get_class($this);
         $serialized = method_exists($this, '__sleep') ? $this->__sleep() : array();
 

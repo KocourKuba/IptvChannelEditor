@@ -198,7 +198,11 @@ class Curl_Wrapper
      */
     public function get_raw_response_headers()
     {
-        return implode(PHP_EOL, $this->get_response_headers());
+        $headers = array();
+        foreach ($this->get_response_headers() as $key => $header) {
+            $headers[] = "$key: $header";
+        }
+        return implode(PHP_EOL, $headers);
     }
 
     /**
@@ -548,11 +552,8 @@ class Curl_Wrapper
             if (!empty($headers)) {
                 $lines = explode("\r\n", $headers);
                 foreach ($lines as $line) {
-                    if (empty($line)) continue;
-                    /** @var array $m */
-                    if (preg_match("/^(.*):(.*)$/", $line, $m)) {
-                        $header = trim($m[2]);
-                        self::$http_response_headers[strtolower($m[1])] = $header;
+                    if (!empty($line)) {
+                        self::http_header_function(null, $line);
                     }
                 }
 

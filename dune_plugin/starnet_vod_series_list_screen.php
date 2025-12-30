@@ -302,7 +302,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen
 
             if (!empty($episode->audios)) {
                 $this->audios[$episode->id] = $episode->audios;
-                hd_debug_print("Audio: " . pretty_json_format($episode->audios), true);
+                hd_debug_print("Audio: " . json_format_unescaped($episode->audios), true);
             }
 
             $items[] = array(

@@ -112,6 +112,8 @@ class edem_config extends default_config
 
         if (isset($doc->items)) {
             foreach ($doc->items as $node) {
+                if (isset($node->request->vc)) continue;
+
                 $cat = new Vod_Category((string)$node->request->fid, (string)$node->title);
                 $category_list[] = $cat;
                 $category_index[$cat->get_id()] = $cat;
@@ -218,6 +220,11 @@ class edem_config extends default_config
         $current_offset = $this->get_current_page($query_id);
         if ($current_offset < 0)
             return $movies;
+
+        if (!isset($json->items)) {
+            hd_debug_print("No items in query! " . json_format_unescaped($json), true);
+            return $movies;
+        }
 
         foreach ($json->items as $entry) {
             if ($entry->type === 'next') {

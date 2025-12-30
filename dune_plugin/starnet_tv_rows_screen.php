@@ -769,7 +769,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen
                         $prog_info = $this->plugin->get_program_info($channel_id, $channel_ts);
                         $start_tm = $prog_info[PluginTvEpgProgram::start_tm_sec];
                         $epg_len = $prog_info[PluginTvEpgProgram::end_tm_sec] - $start_tm;
-                        if ($channel_ts >= $now - $channel->get_archive_past_sec() - 60) {
+                        if ($channel_ts >= $now - $channel->get_archive_past_sec() - 60 && $epg_len) {
                             $progress = max(0.01, min(1.0, round(($channel_ts - $start_tm) / $epg_len, 2)));
                         }
                     }

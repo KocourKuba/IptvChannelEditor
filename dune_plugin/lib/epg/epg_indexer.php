@@ -155,7 +155,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             return;
         }
 
-        hd_debug_print("Processing source: " . pretty_json_format($source), true);
+        hd_debug_print("Processing source: " . json_format_unescaped($source), true);
 
         $res = $this->is_xmltv_cache_valid($hash, $source);
         hd_debug_print("cache valid status: $res", true);
