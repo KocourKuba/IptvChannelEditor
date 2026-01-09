@@ -2464,21 +2464,10 @@
         {
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/~(?<token>.+)\\/(?<id>.+)\\/hls\\/.+\\.m3u8$",
-          "pl_template": "http://pl.tvshka.net/?uid={PASSWORD}&srv={SERVER_ID}&type=halva"
+          "pl_template": "http://shura.tv/b/playlist.php?uid={PASSWORD}&srv=1&type=halva"
         }
       ],
       "provider_url": "http://shura.tv/b/",
-      "servers_list": [
-        {
-          "id": "0",
-          "name": "Server 1"
-        },
-        {
-          "id": "1",
-          "name": "Server 2"
-        }
-      ],
-      "static_servers": true,
       "streams_config": [
         {
           "cu_type": "shift",
@@ -2843,7 +2832,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://tvteam.eu/{EPG_ID}.json",
+          "epg_url": "http://tvtm.one/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2884,6 +2873,10 @@
         {
           "id": "tvteam.pro",
           "name": "tvteam.pro"
+        },
+        {
+          "id": "tvtm.one",
+          "name": "tvtm.one"
         }
       ],
       "static_domains": true,
