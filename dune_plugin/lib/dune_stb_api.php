@@ -684,17 +684,23 @@ function get_platform_info()
             } else {
                 $platform['type'] = 'apk';
             }
-        } else if (!is_dune()) {
-            $platform['platform'] = 'windows';
-            $platform['type'] = 'test';
         } else {
-            $ini_arr = @parse_ini_file(getenv('FS_PREFIX') . '/tmp/run/versions.txt');
-            if ($ini_arr === false || (isset($ini_arr['platform_kind']) && $ini_arr['platform_kind'] !== 'android')) {
-                $platform['platform'] = 'unsupported';
-                $platform['type'] = 'unsupported';
-            } else  {
-                $platform['platform'] = $ini_arr['platform_kind'];
-                $platform['type'] = safe_get_value($ini_arr, 'android_platform', "not android");
+            $ini_arr = @parse_ini_file('/tmp/run/versions.txt');
+            if ($ini_arr !== false && isset($ini_arr['platform_kind'])) {
+                if ($ini_arr['platform_kind'] === 'android') {
+                    $platform['platform'] = $ini_arr['platform_kind'];
+                    if (isset($ini_arr['android_platform'])) {
+                        $platform['type'] = $ini_arr['android_platform'];
+                    } else {
+                        $platform['type'] = "not android";
+                    }
+                } else {
+                    $platform['platform'] = 'sigma';
+                    $platform['type'] = $ini_arr['platform_kind'];
+                }
+            } else {
+                $platform['platform'] = 'unknown';
+                $platform['type'] = 'unknown';
             }
         }
     }
@@ -706,37 +712,40 @@ function get_platform_curl()
     static $curl = null;
     if (is_null($curl)) {
         $v = get_platform_info();
-        hd_debug_print("platform: {$v['platform']}", true);
-        hd_debug_print("type:     {$v['type']}", true);
-        if ($v['platform'] == 'android') {
+        hd_debug_print("platform: " . $v['platform']);
+        hd_debug_print("type: " . $v['type']);
+        $curl = "curl";
+        if ($v['platform'] === 'android') {
             $curl = getenv('FS_PREFIX') . "/firmware/bin/curl";
-        } else {
-            // run curl using path
-            $curl = "curl";
+        } else if ($v['platform'] === 'sigma') {
+            $short3 = substr($v['type'], 0, 3);
+            if (strpos($v['type'], '87') === 0) {
+                $curl = get_install_path("/bin/curl.87xx");
+            } else if ($short3 === '864') {
+                $curl = get_install_path("/bin/curl.864x");
+            } else if ($short3 === '865') {
+                $curl = get_install_path("/bin/curl.865x");
+            } else if ($short3 === '867') {
+                $curl = get_install_path("/bin/curl.867x");
+            }
         }
-        hd_debug_print("used curl: $curl", true);
+        hd_debug_print("used curl: $curl");
     }
 
     return $curl;
 }
 
-function get_platform_php()
+function get_bug_platform_kind()
 {
-    static $php = null;
-    if (is_null($php)) {
-        $v = get_platform_info();
-        if ($v['platform'] == 'android') {
-            $php = '$FS_PREFIX/firmware_ext/php/php-cgi';
-        } else {
-            $php = getenv('PHP_EXTERNAL');
-            if (empty($php)) {
-                hd_debug_print("Please define PHP_EXTERNAL environment variable that point to system PHP interpreter!");
-            }
-        }
-        hd_debug_print("used php interpreter: $php", true);
-    }
+    static $bug_platform_kind = null;
 
-    return $php;
+    if (is_null($bug_platform_kind)) {
+        $v = get_platform_info();
+        if ($v['platform'] !== 'android') {
+            $bug_platform_kind = ($v['type'] === '8672' || $v['type'] === '8673' || $v['type'] === '8758');
+        }
+    }
+    return $bug_platform_kind;
 }
 
 /**
@@ -838,8 +847,11 @@ function get_serial_number()
  */
 function get_ip_address()
 {
-    $ip = '';
-    if (is_dune()) {
+    $v = get_platform_info();
+    if ($v['type'] === '8670') {
+        $active_network_connection = parse_ini_file('/tmp/run/active_network_connection.txt', 0, INI_SCANNER_RAW);
+        $ip = isset($active_network_connection['ip']) ? trim($active_network_connection['ip']) : '';
+    } else {
         $ip = trim(shell_exec('ifconfig eth0 2>/dev/null | head -2 | tail -1 | sed "s/^.*inet addr:\([^ ]*\).*$/\1/"'));
         if (!is_numeric(preg_replace('/\s|\./', '', $ip))) {
             $ip = trim(shell_exec('ifconfig wlan0 2>/dev/null | head -2 | tail -1 | sed "s/^.*inet addr:\([^ ]*\).*$/\1/"'));
@@ -851,25 +863,27 @@ function get_ip_address()
 
     return $ip;
 }
-
 /**
  * @return string
  */
 function get_dns_address()
 {
-    $addr = '';
-    if (is_dune()) {
+    if (is_android()) {
         $dns = explode(PHP_EOL, shell_exec('getprop | grep "net.dns"'));
-        foreach ($dns as $key => $server) {
-            /** @var array $m */
-            if (preg_match("|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|", $server, $m)) {
-                $addr .= "nameserver" . ($key + 1) . ": " . $m[1] . ", ";
-            }
+    } else {
+        $dns = explode(PHP_EOL, shell_exec('cat /etc/resolv.conf | grep "nameserver"'));
+    }
+
+    $addr = '';
+    /** @var array $m */
+    foreach ($dns as $key => $server) {
+        if (preg_match("|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|", $server, $m)) {
+            $addr .= "nameserver" . ($key + 1) . ": " . $m[1] . ", ";
         }
     }
+
     return $addr;
 }
-
 /**
  * @return string|null
  */
