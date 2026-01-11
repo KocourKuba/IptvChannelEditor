@@ -540,7 +540,7 @@
     <None Include="dune_plugin\changelog.md" />
     <None Include="Readme.md" />
     <None Include="PropertySheet.props" />
-    <None Include="defaults_9.0.json" />
+    <None Include="defaults_9.1.json" />
     <None Include="make_icon_package.cmd" />
     <None Include="make_update_package.cmd" />
     <None Include="scripts\editor.php">
