@@ -39,10 +39,11 @@ DEALINGS IN THE SOFTWARE.
 constexpr auto API_COMMAND_URL = L"{{API_URL}}/{:s}?token={{S_TOKEN}}";
 constexpr auto PARAM_FMT = L"&{:s}={:s}";
 
-std::string plugin_tvclub::get_api_token(TemplateParams& params)
+bool plugin_tvclub::get_api_token(TemplateParams& params, std::string& api_token)
 {
 	params.creds.s_token = utils::md5_hash_hex(params.creds.login + utils::md5_hash_hex(params.creds.password));
-	return params.creds.s_token;
+	api_token = params.creds.s_token;
+	return !empty(api_token);
 }
 
 void plugin_tvclub::parse_account_info(TemplateParams& params)
@@ -102,7 +103,11 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 
 	std::vector<DynamicParamsInfo> servers;
 
-	get_api_token(params);
+	std::string api_token;
+	if (!get_api_token(params, api_token))
+	{
+		return;
+	}
 
 	utils::http_request req{replace_params_vars(params, std::format(API_COMMAND_URL, L"settings"))};
 	if (utils::DownloadFile(req))
@@ -141,7 +146,11 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 
 	if (!servers_list.empty())
 	{
-		get_api_token(params);
+		std::string api_token;
+		if (!get_api_token(params, api_token))
+		{
+			return false;
+		}
 
 		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"set") + std::format(PARAM_FMT, L"server", REPL_SERVER_ID)) };
 		if (utils::DownloadFile(req))

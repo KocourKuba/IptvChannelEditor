@@ -150,7 +150,9 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 		.creds = GetPropertySheet()->m_selected_cred
 	};
 
-	plugin->get_api_token(params);
+	std::string api_token;
+	plugin->get_api_token(params, api_token);
+
 	m_Token = GetPropertySheet()->m_selected_cred.s_token.c_str();
 
 	for(const auto& [key, value] : GetPluginFactory().get_epg_presets())
@@ -329,12 +331,11 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 			.creds = GetPropertySheet()->m_selected_cred
 		};
 
-		const auto& token = utils::utf8_to_utf16(GetPropertySheet()->m_plugin->get_api_token(params));
-		if (!token.empty())
+		std::string api_token;
+		if (GetPropertySheet()->m_plugin->get_api_token(params, api_token) && !empty(api_token))
 		{
 			std::wstring header = m_EpgAuth.GetString();
-			utils::string_replace_inplace<wchar_t>(header, REPL_TOKEN, token);
-			req.headers.emplace_back("accept: */*");
+			utils::string_replace_inplace<wchar_t>(header, REPL_TOKEN, utils::utf8_to_utf16(api_token));
 			req.headers.emplace_back(utils::utf16_to_utf8(header));
 		}
 	}

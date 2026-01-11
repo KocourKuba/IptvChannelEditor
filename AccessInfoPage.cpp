@@ -1036,7 +1036,12 @@ void CAccessInfoPage::GetAccountInfo()
 		.creds = selected_cred
 	};
 
-	m_plugin->get_api_token(params);
+	std::string api_token;
+	if (!m_plugin->get_api_token(params, api_token))
+	{
+		return;
+	}
+
 	m_plugin->parse_account_info(params);
 	m_plugin->update_provider_params(params);
 	if (selected_cred != params.creds)

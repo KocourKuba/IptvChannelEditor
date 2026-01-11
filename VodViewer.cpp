@@ -132,7 +132,9 @@ BOOL CVodViewer::OnInitDialog()
 	{
 		.creds = m_account
 	};
-	m_plugin->get_api_token(params);
+	std::string api_token;
+	m_plugin->get_api_token(params, api_token);
+
 
 	SetButtonImage(IDB_PNG_RELOAD, m_wndBtnReload);
 
@@ -250,11 +252,14 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	cfg->m_hStop = m_evtStop;
 	cfg->m_params.creds = m_account;
 	cfg->progress_callback = std::bind(&CVodViewer::ProgressCallbackJsonParse, this, std::placeholders::_1);
-	m_plugin->get_api_token(cfg->m_params);
-	m_plugin->update_provider_params(cfg->m_params);
-	cfg->m_url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), cfg->m_params);
+	std::string api_token;
+	if (m_plugin->get_api_token(cfg->m_params, api_token))
+	{
+		m_plugin->update_provider_params(cfg->m_params);
+		cfg->m_url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), cfg->m_params);
 
-	std::jthread(&PlaylistParseJsonThread, cfg, m_plugin).detach();
+		std::jthread(&PlaylistParseJsonThread, cfg, m_plugin).detach();
+	}
 }
 
 LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
@@ -1058,7 +1063,7 @@ void CVodViewer::FilterList()
 			{
 				.url = url,
 				.cache_ttl = cache_ttl,
-				.headers{ "accept: */*", "Content-Type: application/json" },
+				.headers{ "Content-Type: application/json" },
 				.user_agent = m_plugin->get_user_agent(),
 				.post_data = json_request.dump(),
 				.verb_post = true

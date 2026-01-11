@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 class plugin_tvclub : public base_plugin
 {
 public:
-	std::string get_api_token(TemplateParams& params) override;
+	bool get_api_token(TemplateParams& params, std::string& api_token) override;
 	void parse_account_info(TemplateParams& params) override;
 	void fill_servers_list(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;

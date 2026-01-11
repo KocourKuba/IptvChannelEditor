@@ -760,7 +760,12 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		.creds = cur_account
 	};
 
-	m_plugin->get_api_token(params);
+	std::string api_token;
+	if (!m_plugin->get_api_token(params, api_token))
+	{
+		return;
+	}
+
 	m_plugin->parse_account_info(params);
 	m_plugin->update_provider_params(params);
 	if (cur_account != params.creds)
@@ -1137,7 +1142,11 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 		.playlist_idx = idx
 	};
 
-	m_plugin->get_api_token(params);
+	std::string api_token;
+	if (!m_plugin->get_api_token(params, api_token))
+	{
+		return;
+	}
 
 	if (old_credentials != params.creds)
 	{
@@ -1732,7 +1741,7 @@ void CIPTVChannelEditorDlg::FillTreeChannels(LPCWSTR select /*= nullptr*/)
 		else
 		{
 			auto it = m_categoriesMap.begin();
-			while (it->second.category->get_channels().empty() && it != m_categoriesMap.end()) ++it;
+			while (it != m_categoriesMap.end() && it->second.category->get_channels().empty()) ++it;
 
 			if (it == m_categoriesMap.end())
 				return;
@@ -2313,11 +2322,16 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 		const auto epg_param = m_plugin->get_epg_parameter(epg_idx);
 		if (!epg_param.epg_auth.empty())
 		{
-			const auto& token = utils::utf8_to_utf16(m_plugin->get_api_token(params));
+			std::string api_token;
+			if (!m_plugin->get_api_token(params, api_token))
+			{
+				throw std::exception("Failed to get token");
+
+			}
+			const auto& token = utils::utf8_to_utf16(api_token);
 			if (!token.empty())
 			{
 				std::wstring header = utils::string_replace<wchar_t>(epg_param.get_epg_auth(), REPL_TOKEN, token);
-				req.headers.emplace_back("accept: */*");
 				req.headers.emplace_back(utils::utf16_to_utf8(header));
 			}
 		}

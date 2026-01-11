@@ -67,7 +67,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 		{
 			.url = url,
 			.cache_ttl = cache_ttl,
-			.headers{ "accept: */*", "Content-Type: application/json" },
+			.headers{ "Content-Type: application/json" },
 			.post_data = json_request.dump(),
 			.verb_post = true,
 		};
@@ -252,7 +252,7 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 		utils::http_request req
 		{
 			.url = url,
-			.headers{ "accept: */*", "Content-Type: application/json" },
+			.headers{ "Content-Type: application/json" },
 			.post_data = json_request.dump(),
 			.verb_post = true
 		};

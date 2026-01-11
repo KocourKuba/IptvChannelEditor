@@ -40,7 +40,7 @@ constexpr auto API_COMMAND_AUTH    = L"{{API_URL}}?userLogin={{LOGIN}}&userPassw
 constexpr auto API_COMMAND_GET_URL = L"{{API_URL}}/?apiAction={:s},{:s},{:s}&sessionId={:s}";
 constexpr auto API_COMMAND_SET_URL = L"{{API_URL}}/?apiAction={:s}&{:s}={:s}&sessionId={:s}";
 
-std::string plugin_tvteam::get_api_token(TemplateParams& params)
+bool plugin_tvteam::get_api_token(TemplateParams& params, std::string& api_token)
 {
 	if (params.creds.login.empty() || params.creds.password.empty())
 	{
@@ -49,39 +49,38 @@ std::string plugin_tvteam::get_api_token(TemplateParams& params)
 
 	session_id_name = utils::utf8_to_utf16(std::format("session_{:s}", utils::md5_hash_hex(params.creds.login)));
 
-	auto session_id = get_file_cookie(session_id_name);
-	if (!session_id.empty())
+	api_token = get_file_cookie(session_id_name);
+	if (api_token.empty())
 	{
-		return session_id;
-	}
+		const auto& url = std::format(API_COMMAND_AUTH, utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
+		utils::http_request req{ replace_params_vars(params, url) };
 
-	const auto& url = std::format(API_COMMAND_AUTH, utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
-	utils::http_request req{ replace_params_vars(params, url) };
-
-	if (utils::DownloadFile(req))
-	{
-		JSON_ALL_TRY
+		if (utils::DownloadFile(req))
 		{
-			const auto& parsed_json = nlohmann::json::parse(req.body.str());
-			if (parsed_json.contains("status") && parsed_json["status"] == 1)
+			JSON_ALL_TRY
 			{
-				session_id = utils::get_json_string("sessionId", parsed_json["data"]);
-				set_file_cookie(session_id_name, session_id, time(nullptr) + 86400*6);
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
+				if (parsed_json.contains("status") && parsed_json["status"] == 1)
+				{
+					api_token = utils::get_json_string("sessionId", parsed_json["data"]);
+					set_file_cookie(session_id_name, api_token, time(nullptr) + 86400*6);
+				}
+				else
+				{
+					api_token.clear();
+					delete_file_cookie(session_id_name);
+				}
 			}
-			else
-			{
-				session_id.clear();
-				delete_file_cookie(session_id_name);
-			}
+			JSON_ALL_CATCH
 		}
-		JSON_ALL_CATCH
-	}
-	else
-	{
-		LOG_PROTOCOL(std::format(L"plugin_tvteam: Failed to get token: {:s}", req.error_message));
+		else
+		{
+			LOG_PROTOCOL(std::format(L"plugin_tvteam: Failed to get token: {:s}", req.error_message));
+		}
 	}
 
-	return session_id;
+
+	return !api_token.empty();
 }
 
 void plugin_tvteam::parse_account_info(TemplateParams& params)

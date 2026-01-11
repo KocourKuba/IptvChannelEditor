@@ -49,15 +49,15 @@ constexpr const char* device_id = "IPTV Channel Editor " STRPRODUCTVER;
 
 constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
 
-std::string plugin_iptvonline::get_api_token(TemplateParams& params)
+bool plugin_iptvonline::get_api_token(TemplateParams& params, std::string& api_token)
 {
 	session_token_file = utils::utf8_to_utf16(std::format(SESSION_TOKEN_TEMPLATE,
 														  utils::md5_hash_hex(params.creds.login + utils::md5_hash_hex(params.creds.password))));
 
-	auto session_token = get_file_cookie(session_token_file);
+	api_token = get_file_cookie(session_token_file);
 	nlohmann::json json_request;
 	std::wstring url;
-	if (session_token.empty() && !params.creds.token.empty())
+	if (api_token.empty() && !params.creds.token.empty())
 	{
 		url = API_COMMAND_REFRESH_TOKEN;
 		json_request["grant_type"] = "refresh_token";
@@ -71,7 +71,7 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		return session_token;
+		return true;
 	}
 
 	json_request["client_id"] = client_id;
@@ -81,7 +81,7 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 	utils::http_request req
 	{
 		.url = replace_params_vars(params, url),
-		.headers{"accept: */*", "Content-Type: application/json; charset=utf-8"},
+		.headers{"Content-Type: application/json; charset=utf-8"},
 		.post_data = json_request.dump(),
 		.verb_post = true
 	};
@@ -104,11 +104,11 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 		LOG_PROTOCOL(error);
 		params.creds.token.clear();
 		delete_file_cookie(session_token_file);
-		session_token.clear();
+		api_token.clear();
 		AfxMessageBox(error.c_str(), MB_OK | MB_ICONERROR);
 	}
 
-	return session_token;
+	return !api_token.empty();
 }
 
 void plugin_iptvonline::clear_account_info()
@@ -532,7 +532,6 @@ nlohmann::json plugin_iptvonline::server_request(utils::http_request& request, c
 		{
 			request.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 		}
-		request.headers.emplace_back("accept: */*");
 		request.headers.emplace_back("Content-Type: application/json; charset=utf-8");
 		request.headers.emplace_back(std::format("Authorization: Bearer {:s}", session_token));
 

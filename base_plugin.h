@@ -184,7 +184,7 @@ public:
 	/// returns s_token from account if exist
 	/// </summary>
 	/// <param name="params">parameters used to download url</param>
-	virtual std::string get_api_token(TemplateParams& params) { return {}; };
+	virtual bool get_api_token(TemplateParams& params, std::string& api_token) { return true; };
 
 	/// <summary>
 	/// parse vod

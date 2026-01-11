@@ -44,14 +44,14 @@ constexpr auto API_COMMAND_SERVERS = L"{API_URL}/xapi10/tv/servers";
 constexpr auto PARAM_FMT = "{:s}={:s}";
 constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
 
-std::string plugin_korona::get_api_token(TemplateParams& params)
+bool plugin_korona::get_api_token(TemplateParams& params, std::string& api_token)
 {
 	session_token_file = utils::utf8_to_utf16(std::format(SESSION_TOKEN_TEMPLATE,
 														  utils::md5_hash_hex(params.creds.login + utils::md5_hash_hex(params.creds.password))));
 
-	auto session_token = get_file_cookie(session_token_file);
+	api_token = get_file_cookie(session_token_file);
 	std::map<std::string, std::string> post_request;
-	if (session_token.empty() && !params.creds.token.empty())
+	if (api_token.empty() && !params.creds.token.empty())
 	{
 		post_request["grant_type"] = "refresh_token";
 		post_request["refresh_token"] = params.creds.token;
@@ -64,13 +64,13 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		return session_token;
+		return true;
 	}
 
 	utils::http_request req
 	{
 		.url = replace_params_vars(params, API_COMMAND_AUTH),
-		.headers { "accept: */*",  "Content-Type: application/x-www-form-urlencoded" },
+		.headers { "Content-Type: application/x-www-form-urlencoded" },
 		.verb_post = true
 	};
 
@@ -91,17 +91,16 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (utils::get_json_string("error", parsed_json).empty())
 			{
-				session_token = utils::get_json_string("access_token", parsed_json);
-				set_file_cookie(session_token_file, session_token,
+				api_token = utils::get_json_string("access_token", parsed_json);
+				set_file_cookie(session_token_file, api_token,
 								 time(nullptr) + utils::get_json_int("expires_in", parsed_json));
 				params.creds.token = utils::get_json_string("refresh_token", parsed_json);
-				return session_token;
 			}
 			else
 			{
 				delete_file_cookie(session_token_file);
 				params.creds.token.clear();
-				session_token.clear();
+				api_token.clear();
 			}
 		}
 		JSON_ALL_CATCH
@@ -111,7 +110,7 @@ std::string plugin_korona::get_api_token(TemplateParams& params)
 		LOG_PROTOCOL(std::format(L"plugin_korona: Failed to get token: {:s}", req.error_message));
 	}
 
-	return session_token;
+	return !api_token.empty();
 }
 
 void plugin_korona::parse_account_info(TemplateParams& params)
@@ -385,7 +384,7 @@ nlohmann::json plugin_korona::server_request(const std::wstring& url, const bool
 		{
 			.url = url,
 			.cache_ttl = use_cache_ttl ? GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) : std::chrono::seconds::zero(),
-			.headers { "accept: */*",  "Content-Type: application/x-www-form-urlencoded", std::format("Authorization: Bearer {:s}", session_token) },
+			.headers { "Content-Type: application/x-www-form-urlencoded", std::format("Authorization: Bearer {:s}", session_token) },
 		};
 
 		if (utils::DownloadFile(req))

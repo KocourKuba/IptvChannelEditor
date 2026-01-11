@@ -243,7 +243,13 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 		.playlist_idx = m_wndVodTemplates.GetCurSel()
 	};
 
-	plugin->get_api_token(params);
+	std::string api_token;
+	if (!plugin->get_api_token(params, api_token))
+	{
+		AfxMessageBox(L"Token not set!", MB_ICONERROR | MB_OK);
+		return;
+	}
+
 	plugin->update_provider_params(params);
 
 	utils::http_request req
@@ -339,12 +345,13 @@ void CPluginConfigPageVOD::OnBnClickedCheckPlaylistShowLink()
 			.creds = cred
 		};
 
-		GetPropertySheet()->m_plugin->get_api_token(params);
-		params.playlist_idx = m_wndVodTemplates.GetCurSel();
-
-		GetPropertySheet()->m_plugin->update_provider_params(params);
-
-		m_VodPlaylistTemplate = GetPropertySheet()->m_plugin->get_vod_url(params).c_str();
+		std::string api_token;
+		if (GetPropertySheet()->m_plugin->get_api_token(params, api_token))
+		{
+			params.playlist_idx = m_wndVodTemplates.GetCurSel();
+			GetPropertySheet()->m_plugin->update_provider_params(params);
+			m_VodPlaylistTemplate = GetPropertySheet()->m_plugin->get_vod_url(params).c_str();
+		}
 	}
 	else
 	{

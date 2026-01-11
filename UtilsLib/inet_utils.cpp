@@ -199,17 +199,20 @@ bool DownloadFile(http_request& request)
 		}
 		defer[&]{ WinHttpCloseHandle(hConnect); };
 
+		const auto& verb = request.verb_post ? L"POST" : L"GET";
+		LOG_PROTOCOL(std::format(L"Verb: {}", verb));
 		DWORD dwFlags = WINHTTP_FLAG_BYPASS_PROXY_CACHE;
 		if (cracked.nScheme == 2) /*INTERNET_SCHEME_HTTPS*/
 			dwFlags |= 0x00800000; // INTERNET_FLAG_SECURE
 		// Create an HTTP request handle.
+		LPCWSTR acceptTypes[] = { L"*/*", nullptr };
 		auto hRequest = WinHttpOpenRequest(hConnect,
-											request.verb_post ? L"POST" : L"GET",
-											(cracked.path + cracked.extra_info).c_str(),
-											nullptr,
-											WINHTTP_NO_REFERER,
-											WINHTTP_DEFAULT_ACCEPT_TYPES,
-											dwFlags);
+										   verb,
+										   (cracked.path + cracked.extra_info).c_str(),
+										   nullptr,
+										   WINHTTP_NO_REFERER,
+										   acceptTypes,
+										   dwFlags);
 
 		if (!hRequest)
 		{
@@ -219,16 +222,15 @@ bool DownloadFile(http_request& request)
 		}
 		defer[&]{ WinHttpCloseHandle(hRequest); };
 
+		std::wstring all_headers;
 		if (!request.headers.empty())
 		{
-			std::wstring all_headers;
 			for (const auto& str : request.headers)
 			{
 				all_headers += utils::utf8_to_utf16(str) + L"\n";
 			}
 
-			BOOL result = WinHttpAddRequestHeaders(hRequest, all_headers.c_str(), static_cast<DWORD>(all_headers.size()), WINHTTP_ADDREQ_FLAG_ADD);
-			LOG_PROTOCOL(std::format(L"header added: {:s} with result: {:d}", all_headers, result));
+			LOG_PROTOCOL(std::format(L"header added: {:s}", all_headers));
 		}
 
 		DWORD options = SECURITY_FLAG_IGNORE_ALL_CERT_ERRORS;
@@ -250,8 +252,8 @@ bool DownloadFile(http_request& request)
 
 			DWORD post_size = request.post_data.empty() ? 0 : static_cast<DWORD>(request.post_data.length());
 			if (!WinHttpSendRequest(hRequest,
-									WINHTTP_NO_ADDITIONAL_HEADERS,
-									0,
+									empty(all_headers) ? WINHTTP_NO_ADDITIONAL_HEADERS : all_headers.c_str(),
+									static_cast<DWORD>(all_headers.size()),
 									request.post_data.empty() ? WINHTTP_NO_REQUEST_DATA : reinterpret_cast<void*>(request.post_data.data()),
 									post_size,
 									post_size,
@@ -426,12 +428,6 @@ bool DownloadFile(http_request& request)
 				break;
 			}
 
-			if (!bResults)
-			{
-				request.error_message += std::format(L"\nError code: {:d}", GetLastError());
-				LOG_PROTOCOL(request.error_message);
-				break;
-			}
 			// Check for available data.
 			DWORD dwSize = 0;
 			if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
@@ -474,9 +470,19 @@ bool DownloadFile(http_request& request)
 			request.progress_callback(info);
 		}
 
-		if (!bResults && !bSaveBadCache) break;
+		if (!bResults)
+		{
+			request.error_message += std::format(L"\nError code: {:d}", GetLastError());
+			LOG_PROTOCOL(request.error_message);
+			if (!body.fail() && body.view().size())
+			{
+				body.seekg(0);
+				LOG_PROTOCOL(std::format("\n{}", body.str()));
+			}
+			break;
+		}
 
-		if (request.cache_ttl.count() > 0 && (!body.fail() || bSaveBadCache || !body.view().size()))
+		if (request.cache_ttl.count() > 0 && !body.fail() && !body.view().empty() || bSaveBadCache)
 		{
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
 			body.seekg(0);
