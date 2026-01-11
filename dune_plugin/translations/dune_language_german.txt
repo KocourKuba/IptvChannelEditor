@@ -302,6 +302,7 @@ err_too_old_player = Dieser DUNE HD-Player ist zu alt und wird nicht unterstütz
 err_load_playlist = Fehler beim Laden der Playlist!
 err_load_channels_list = Fehler beim Laden der Kanalliste!
 err_load_any = Fehler beim Laden der Playlist oder Kanalliste!
+err_load_xmltv = Fehler XMLTV laden!
 err_error = Fehler!!!
 err_error_nfs = NFS-Fehler!
 err_error_nfs__1 = ||NFS Error!:|%s

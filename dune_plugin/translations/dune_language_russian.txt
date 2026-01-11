@@ -303,6 +303,7 @@ err_too_old_player = Эта DUNE HD слишком старая и не подд
 err_load_playlist = Ошибка загрузки плейлиста!
 err_load_channels_list = Ошибка загрузки списка каналов!
 err_load_any = Ошибка при загрузке плейлиста или списка!
+err_load_xmltv = Ошибка загрузки XMLTV!
 err_error = Ошибка!!!
 err_error_nfs = Ошибка NFS!
 err_error_nfs__1 = ||Ошибка NFS!:|%s

@@ -75,19 +75,22 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
 
                 clearstatcache();
 
+                $post_action = null;
                 $actions = $this->get_action_map($parent_media_url, $plugin_cookies);
                 $res = $epg_manager->import_indexing_log();
                 if ($res !== false) {
-                    foreach (array('pl_last_error', 'xmltv_last_error') as $last_error) {
-                        $error_msg = HD::get_last_error($last_error);
-                        if (!empty($error_msg)) {
-                            return Action_Factory::show_title_dialog(TR::t('err_load_playlist'), $error_msg);
-                        }
+                    $error_msg = HD::get_last_error('xmltv_last_error');
+                    if (!empty($error_msg)) {
+                        $post_action = Action_Factory::show_title_dialog(TR::t('err_load_xmltv'), $error_msg, $post_action);
                     }
-                    return null;
                 }
 
-                return Action_Factory::change_behaviour($actions, 1000);
+                $error_msg = HD::get_last_error();
+                if (!empty($error_msg)) {
+                    $post_action = Action_Factory::show_title_dialog(TR::t('err_load_playlist'), $error_msg);
+                }
+
+                return Action_Factory::change_behaviour($actions, 1000, $post_action);
 
             case self::ACTION_CONFIRM_DLG_APPLY:
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
