@@ -100,10 +100,12 @@ std::string plugin_iptvonline::get_api_token(TemplateParams& params)
 	}
 	else
 	{
-		LOG_PROTOCOL(std::format(L"plugin_iptvonline: Failed to get token: {:s}", req.error_message));
+		const auto& error = std::format(L"plugin_iptvonline: Failed to get token: {:s}", req.error_message);
+		LOG_PROTOCOL(error);
 		params.creds.token.clear();
 		delete_file_cookie(session_token_file);
 		session_token.clear();
+		AfxMessageBox(error.c_str(), MB_OK | MB_ICONERROR);
 	}
 
 	return session_token;
@@ -425,6 +427,8 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 	utils::http_request req{ cat_url };
 	const auto& meta_info_json = server_request(req, true);
 
+	if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) return;
+
 	if (meta_info_json.empty()
 		|| !utils::get_json_bool("success", meta_info_json)
 		|| utils::get_json_int("status", meta_info_json) != 200
@@ -452,7 +456,7 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 		nlohmann::json movies_json = server_request(req, true);
 		if (movies_json.empty() || !movies_json.contains("data") || !movies_json["data"].contains("items"))
 		{
-			continue;
+			break;
 		}
 
 		for (const auto& movie_it : movies_json["data"]["items"].items())

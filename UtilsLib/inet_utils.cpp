@@ -145,13 +145,15 @@ bool DownloadFile(http_request& request)
 		std::ifstream in_file(cache_file.c_str(), std::ifstream::binary);
 		if (in_file.good())
 		{
-			request.body << in_file.rdbuf();
+			std::stringstream body;
+			body << in_file.rdbuf();
 			in_file.close();
-			size_t data_size = request.body.rdbuf()->_Get_buffer_view()._Size;
+			size_t data_size = body.rdbuf()->_Get_buffer_view()._Size;
 			LOG_PROTOCOL(std::format(L"loaded: {:d} bytes from cache {:s}", data_size, cache_file.c_str()));
 			if (data_size != 0)
 			{
-				request.body.seekg(0);
+				body.seekg(0);
+				std::swap(request.body, body);
 				return true;
 			}
 		}
@@ -413,6 +415,7 @@ bool DownloadFile(http_request& request)
 			request.progress_callback = nullptr;
 		}
 
+		std::stringstream body;
 		DWORD dwDownloaded = 0;
 		int prev = 0;
 		for (;;)
@@ -446,7 +449,7 @@ bool DownloadFile(http_request& request)
 			DWORD dwChunkSize = 0;
 			if (WinHttpReadData(hRequest, chunk.data(), dwSize, &dwChunkSize))
 			{
-				request.body.write(reinterpret_cast<const char*>(chunk.data()), dwChunkSize);
+				body.write(reinterpret_cast<const char*>(chunk.data()), dwChunkSize);
 				dwDownloaded += dwChunkSize;
 				int percent = MulDiv(dwDownloaded, 100, dwToDownload);
 				if (request.progress_callback && percent != prev && !request.stop_token.stop_requested())
@@ -473,15 +476,15 @@ bool DownloadFile(http_request& request)
 
 		if (!bResults && !bSaveBadCache) break;
 
-		if (request.cache_ttl.count() > 0 && (!request.body.fail() || bSaveBadCache || !request.body.view().size()))
+		if (request.cache_ttl.count() > 0 && (!body.fail() || bSaveBadCache || !body.view().size()))
 		{
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
-			request.body.seekg(0);
-			out_stream << request.body.rdbuf();
+			body.seekg(0);
+			out_stream << body.rdbuf();
 			LOG_PROTOCOL(std::format("Save to cache for {:d} seconds", request.cache_ttl.count()));
 		}
 
-		bool res = request.body.tellp() != std::streampos(0);
+		bool res = body.tellp() != std::streampos(0);
 		if (!res)
 		{
 			if (request.error_message.empty())
@@ -492,7 +495,8 @@ bool DownloadFile(http_request& request)
 			break;
 		}
 
-		request.body.seekg(0);
+		body.seekg(0);
+		std::swap(request.body, body);
 		return true;
 	} while (false);
 
@@ -504,7 +508,6 @@ bool DownloadFile(http_request& request)
 	}
 #endif // _DEBUG
 
-	request.body.clear();
 	return false;
 }
 
