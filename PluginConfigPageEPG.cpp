@@ -410,6 +410,14 @@ std::wstring CPluginConfigPageEPG::CompileEpgUrl()
 		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN_ID, domains_list[domain_id].get_name());
 	}
 
+	const auto& api_domains_list = GetPropertySheet()->m_plugin->get_api_domains_list();
+	if (!api_domains_list.empty())
+	{
+		size_t api_domain_id = GetPropertySheet()->m_selected_cred.api_domain_id;
+		api_domain_id = ((api_domain_id >= (int)api_domains_list.size()) ? api_domains_list.size() - 1 : api_domain_id);
+		utils::string_replace_inplace<wchar_t>(url, REPL_API_DOMAIN_ID, api_domains_list[api_domain_id].get_name());
+	}
+
 	return url;
 }
 

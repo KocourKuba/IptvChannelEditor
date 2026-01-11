@@ -54,6 +54,7 @@ protected:
 	afx_msg void OnBnClickedButtonEditQuality();
 	afx_msg void OnBnClickedButtonEditProfiles();
 	afx_msg void OnBnClickedButtonEditDomains();
+	afx_msg void OnBnClickedButtonEditApiDomains();
 
 	afx_msg void OnCbnSelchangeComboAccessType();
 
@@ -87,8 +88,10 @@ protected:
 	CButton m_wndChkStaticQualities;
 	CButton m_wndBtnProfiles;
 	CButton m_wndChkStaticProfiles;
-	CButton m_wndBtnDomains;
-	CButton m_wndChkStaticDomains;
+	CButton m_wndBtnPlDomains;
+	CButton m_wndBtnApiDomains;
+	CButton m_wndChkStaticPlDomains;
+	CButton m_wndChkStaticApiDomains;
 	CButton m_wndChkEnableBalance;
 
 	CString m_Name;

@@ -11,6 +11,7 @@ class Plugin_Macros
     const PORT           = "{PORT}";          // stream url port (set from playlist)
     const ID             = "{ID}";            // id (set from playlist)
     const DOMAIN_ID      = "{DOMAIN_ID}";     // playlist domain (set from settings or set by provider)
+    const API_DOMAIN_ID  = "{API_DOMAIN_ID}"; // API domain (set from settings or set by provider)
     const SUBDOMAIN      = "{SUBDOMAIN}";     // sub domain (used in edem)
     const OTT_KEY        = "{OTT_KEY}";       // ott key (used in edem)
     const TOKEN          = "{TOKEN}";         // token (set from playlist)

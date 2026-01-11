@@ -67,6 +67,9 @@ class Plugin_Constants
     // domains parameters
     const /* array */ DOMAINS_LIST = 'domains_list';
 
+    // api domains parameters
+    const /* array */ API_DOMAINS_LIST = 'api_domains_list';
+
     const LIST_ID = 'id';
     const LIST_NAME = 'name';
 

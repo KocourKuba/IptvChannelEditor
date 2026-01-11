@@ -90,7 +90,10 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
                     $post_action = Action_Factory::show_title_dialog(TR::t('err_load_playlist'), $error_msg);
                 }
 
-                return Action_Factory::change_behaviour($actions, 1000, $post_action);
+                if ($post_action !== null || $res === false) {
+                    return Action_Factory::change_behaviour($actions, 1000, $post_action);
+                }
+                return null;
 
             case self::ACTION_CONFIRM_DLG_APPLY:
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);

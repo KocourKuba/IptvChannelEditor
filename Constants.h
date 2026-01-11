@@ -134,6 +134,7 @@ constexpr auto REPL_DOMAIN             = L"{DOMAIN}";        // stream url domai
 constexpr auto REPL_PORT               = L"{PORT}";          // stream url port (set from playlist)
 constexpr auto REPL_ID                 = L"{ID}";            // id (set from playlist)
 constexpr auto REPL_DOMAIN_ID          = L"{DOMAIN_ID}";     // playlist domain (set from settings or set by provider)
+constexpr auto REPL_API_DOMAIN_ID      = L"{API_DOMAIN_ID}"; // API domain (set from settings or set by provider)
 constexpr auto REPL_SUBDOMAIN          = L"{SUBDOMAIN}";     // domain (used in edem)
 constexpr auto REPL_OTT_KEY            = L"{OTT_KEY}";       // ott key (used in edem)
 constexpr auto REPL_TOKEN              = L"{TOKEN}";         // token (set from playlist)

@@ -123,6 +123,7 @@ public:
 		SERIALIZE_STRUCT(j, c, profile_id);
 		SERIALIZE_STRUCT(j, c, quality_id);
 		SERIALIZE_STRUCT(j, c, domain_id);
+		SERIALIZE_STRUCT(j, c, api_domain_id);
 		SERIALIZE_STRUCT(j, c, embed);
 		SERIALIZE_STRUCT(j, c, ch_list);
 		SERIALIZE_STRUCT(j, c, m_direct_links);
@@ -163,6 +164,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, profile_id);
 		DESERIALIZE_STRUCT(j, c, quality_id);
 		DESERIALIZE_STRUCT(j, c, domain_id);
+		DESERIALIZE_STRUCT(j, c, api_domain_id);
 		DESERIALIZE_STRUCT(j, c, embed);
 		DESERIALIZE_STRUCT(j, c, ch_list);
 		DESERIALIZE_STRUCT(j, c, m_direct_links);
@@ -202,6 +204,7 @@ public:
 	int profile_id = 0; // zero based index
 	int quality_id = 0; // zero based index
 	int domain_id = 0; // zero based index
+	int api_domain_id = 0; // zero based index
 	int embed = 0;
 
 	bool not_valid = false;
@@ -219,6 +222,7 @@ public:
 			|| ott_key != that.ott_key
 			|| subdomain != that.subdomain
 			|| domain_id != that.domain_id
+			|| api_domain_id != that.api_domain_id
 			|| server_id != that.server_id
 			|| device_id != that.device_id
 			|| profile_id != that.profile_id

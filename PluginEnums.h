@@ -144,6 +144,7 @@ enum class DynamicParamsType
 	enPlaylistTV,
 	enPlaylistVOD,
 	enDomains,
+	enApiDomains,
 };
 
 ENUM_TO_STRING(DynamicParamsType, std::wstring,

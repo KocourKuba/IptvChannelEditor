@@ -115,6 +115,7 @@ void plugin_config::clear()
 	devices_list.clear();
 	profiles_list.clear();
 	domains_list.clear();
+	api_domains_list.clear();
 
 	static_servers = false;
 	static_domains = false;

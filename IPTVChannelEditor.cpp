@@ -1223,15 +1223,41 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 			}
 
 			if (!plugin->get_devices_list().empty())
-				node["device_id"] = plugin->get_devices_list().at(cred.device_id).id;
+			{
+				int size = (int)plugin->get_devices_list().size();
+				size_t device_id = cred.device_id >= size ? size - 1 : cred.device_id;
+				node["device_id"] = plugin->get_devices_list().at(device_id).id;
+			}
 			if (!plugin->get_servers_list().empty())
-				node["server_id"] = plugin->get_servers_list().at(cred.server_id).id;
+			{
+				int size = (int)plugin->get_servers_list().size();
+				size_t server_id = cred.server_id >= size ? size - 1 : cred.server_id;
+				node["server_id"] = plugin->get_servers_list().at(server_id).id;
+			}
 			if (!plugin->get_qualities_list().empty())
-				node["quality_id"] = plugin->get_qualities_list().at(cred.quality_id).id;
+			{
+				int size = (int)plugin->get_qualities_list().size();
+				size_t quality_id = cred.quality_id >= size ? size - 1 : cred.quality_id;
+				node["quality_id"] = plugin->get_qualities_list().at(quality_id).id;
+			}
 			if (!plugin->get_profiles_list().empty())
+			{
+				int size = (int)plugin->get_profiles_list().size();
+				size_t profile_id = cred.profile_id >= size ? size - 1 : cred.profile_id;
 				node["profile_id"] = plugin->get_profiles_list().at(cred.profile_id).id;
+			}
 			if (!plugin->get_domains_list().empty())
-				node["domain_id"] = plugin->get_domains_list().at(cred.domain_id).id;
+			{
+				int size = (int)plugin->get_domains_list().size();
+				size_t domain_id = cred.domain_id >= size ? size - 1 : cred.domain_id;
+				node["domain_id"] = plugin->get_domains_list().at(domain_id).id;
+			}
+			if (!plugin->get_api_domains_list().empty())
+			{
+				int size = (int)plugin->get_api_domains_list().size();
+				size_t api_domain_id = cred.api_domain_id >= size ? size - 1 : cred.api_domain_id;
+				node["api_domain_id"] = plugin->get_api_domains_list().at(api_domain_id).id;
+			}
 
 			if (!node.empty())
 			{

@@ -90,7 +90,8 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CTooltipPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO_SERVER_ID, &CAccessInfoPage::OnCbnSelchangeComboServerId)
 	ON_CBN_SELCHANGE(IDC_COMBO_PROFILE, &CAccessInfoPage::OnCbnSelchangeComboProfile)
 	ON_CBN_SELCHANGE(IDC_COMBO_QUALITY, &CAccessInfoPage::OnCbnSelchangeComboQuality)
-	ON_CBN_SELCHANGE(IDC_COMBO_DOMAIN, &CAccessInfoPage::OnCbnSelchangeComboDomain)
+	ON_CBN_SELCHANGE(IDC_COMBO_PL_DOMAIN, &CAccessInfoPage::OnCbnSelchangeComboPlDomain)
+	ON_CBN_SELCHANGE(IDC_COMBO_API_DOMAIN, &CAccessInfoPage::OnCbnSelchangeComboApiDomain)
 	ON_BN_CLICKED(IDC_CHECK_EMBED, &CAccessInfoPage::OnBnClickedCheckEmbed)
 	ON_EN_CHANGE(IDC_EDIT_PLUGIN_CAPTION, &CAccessInfoPage::OnEnChangeEditPluginCaption)
 	ON_BN_CLICKED(IDC_CHECK_CUSTOM_PLUGIN_NAME, &CAccessInfoPage::OnBnClickedCheckCustomPluginNameTemplate)
@@ -133,7 +134,8 @@ void CAccessInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_DEVICE_ID, m_wndDevices);
 	DDX_Control(pDX, IDC_COMBO_PROFILE, m_wndProfiles);
 	DDX_Control(pDX, IDC_COMBO_QUALITY, m_wndQualities);
-	DDX_Control(pDX, IDC_COMBO_DOMAIN, m_wndDomains);
+	DDX_Control(pDX, IDC_COMBO_PL_DOMAIN, m_wndPlDomains);
+	DDX_Control(pDX, IDC_COMBO_API_DOMAIN, m_wndApiDomains);
 	DDX_Control(pDX, IDC_CHECK_EMBED, m_wndEmbed);
 	DDX_Control(pDX, IDC_COMBO_CONFIGS, m_wndConfigs);
 	DDX_Control(pDX, IDC_EDIT_PLUGIN_ARCHIVE_TEMPLATE, m_wndPluginNameTemplate);
@@ -421,9 +423,14 @@ BOOL CAccessInfoPage::OnApply()
 		m_plugin->set_profile(params);
 	}
 
-	if (m_wndDomains.GetCount())
+	if (m_wndPlDomains.GetCount())
 	{
 		m_plugin->set_domain(params);
+	}
+
+	if (m_wndApiDomains.GetCount())
+	{
+		m_plugin->set_api_domain(params);
 	}
 
 	GetConfig().set_int(false, REG_ACTIVE_ACCOUNT, GetCheckedAccountIdx());
@@ -742,7 +749,8 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	m_wndChLists.EnableWindow(enable);
 	m_wndServers.EnableWindow(enable);
 	m_wndProfiles.EnableWindow(enable);
-	m_wndDomains.EnableWindow(enable);
+	m_wndPlDomains.EnableWindow(enable);
+	m_wndApiDomains.EnableWindow(enable);
 	m_wndEmbed.EnableWindow(enable);
 	m_wndCustomLogo.EnableWindow(enable);
 	m_wndCustomBackground.EnableWindow(enable);
@@ -858,24 +866,43 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 		m_wndProfiles.SetCurSel(params.creds.profile_id);
 	}
 
-	m_domains = m_plugin->get_domains_list();
-	m_wndDomains.ResetContent();
+	m_pl_domains = m_plugin->get_domains_list();
+	m_wndPlDomains.ResetContent();
 
-	if (!m_domains.empty())
+	if (!m_pl_domains.empty())
 	{
-		for (const auto& info : m_domains)
+		for (const auto& info : m_pl_domains)
 		{
-			m_wndDomains.AddString(info.get_name().c_str());
+			m_wndPlDomains.AddString(info.get_name().c_str());
 		}
 
-		if (params.creds.domain_id >= (int)m_domains.size())
+		if (params.creds.domain_id >= (int)m_pl_domains.size())
 		{
 			params.creds.domain_id = 0;
 		}
 
-		m_wndDomains.SetCurSel(params.creds.domain_id);
+		m_wndPlDomains.SetCurSel(params.creds.domain_id);
 	}
-	m_wndDomains.EnableWindow(m_domains.size() > 1 && enable);
+	m_wndPlDomains.EnableWindow(m_pl_domains.size() > 1 && enable);
+
+	m_api_domains = m_plugin->get_api_domains_list();
+	m_wndApiDomains.ResetContent();
+
+	if (!m_api_domains.empty())
+	{
+		for (const auto& info : m_api_domains)
+		{
+			m_wndApiDomains.AddString(info.get_name().c_str());
+		}
+
+		if (params.creds.api_domain_id >= (int)m_api_domains.size())
+		{
+			params.creds.api_domain_id = 0;
+		}
+
+		m_wndApiDomains.SetCurSel(params.creds.api_domain_id);
+	}
+	m_wndApiDomains.EnableWindow(m_api_domains.size() > 1 && enable);
 
 	m_wndCustomCaption.SetCheck(selected.custom_caption);
 	m_wndCaption.EnableWindow(selected.custom_caption && enable);
@@ -1139,10 +1166,16 @@ void CAccessInfoPage::OnCbnSelchangeComboQuality()
 	selected.quality_id = m_wndQualities.GetCurSel();
 }
 
-void CAccessInfoPage::OnCbnSelchangeComboDomain()
+void CAccessInfoPage::OnCbnSelchangeComboPlDomain()
 {
 	auto& selected = GetCheckedAccount();
-	selected.domain_id = m_wndDomains.GetCurSel();
+	selected.domain_id = m_wndPlDomains.GetCurSel();
+}
+
+void CAccessInfoPage::OnCbnSelchangeComboApiDomain()
+{
+	auto& selected = GetCheckedAccount();
+	selected.api_domain_id = m_wndApiDomains.GetCurSel();
 }
 
 void CAccessInfoPage::OnBnClickedCheckEmbed()

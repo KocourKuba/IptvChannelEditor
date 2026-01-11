@@ -70,7 +70,8 @@ protected:
 	afx_msg void OnCbnSelchangeComboDeviceId();
 	afx_msg void OnCbnSelchangeComboProfile();
 	afx_msg void OnCbnSelchangeComboQuality();
-	afx_msg void OnCbnSelchangeComboDomain();
+	afx_msg void OnCbnSelchangeComboPlDomain();
+	afx_msg void OnCbnSelchangeComboApiDomain();
 	afx_msg void OnBnClickedCheckCustomPluginCaption();
 	afx_msg void OnEnChangeEditPluginCaption();
 	afx_msg void OnBnClickedCheckCustomPluginNameTemplate();
@@ -121,7 +122,8 @@ protected:
 	CComboBox m_wndDevices;
 	CComboBox m_wndQualities;
 	CComboBox m_wndProfiles;
-	CComboBox m_wndDomains;
+	CComboBox m_wndPlDomains;
+	CComboBox m_wndApiDomains;
 	CComboBox m_wndConfigs;
 	CButton m_wndCustomCaption;
 	CEdit m_wndCaption;
@@ -161,6 +163,7 @@ private:
 	std::vector<DynamicParamsInfo> m_devices;
 	std::vector<DynamicParamsInfo> m_profiles;
 	std::vector<DynamicParamsInfo> m_qualities;
-	std::vector<DynamicParamsInfo> m_domains;
+	std::vector<DynamicParamsInfo> m_pl_domains;
+	std::vector<DynamicParamsInfo> m_api_domains;
 	std::vector<Credentials>& m_all_credentials;
 };

@@ -158,6 +158,12 @@ std::wstring base_plugin::replace_params_vars(const TemplateParams& params, cons
 		replaced = utils::string_replace<wchar_t>(replaced, REPL_DOMAIN_ID, domains_list[domain].get_name());
 	}
 
+	if (!api_domains_list.empty())
+	{
+		size_t domain = ((params.creds.api_domain_id >= (int)api_domains_list.size()) ? api_domains_list.size() - 1 : params.creds.api_domain_id);
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_API_DOMAIN_ID, api_domains_list[domain].get_name());
+	}
+
 	if (!servers_list.empty())
 	{
 		size_t server = (params.creds.server_id >= (int)servers_list.size()) ? servers_list.size() - 1 : params.creds.server_id;

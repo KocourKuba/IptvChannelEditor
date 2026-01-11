@@ -16,6 +16,7 @@ class dynamic_config
     protected $qualities = array();
     protected $profiles = array();
     protected $domains = array();
+    protected $api_domains = array();
 
     /**
      * load configuration
@@ -101,6 +102,14 @@ class dynamic_config
         }
         if (!empty($domains)) {
             $this->set_domains($domains);
+        }
+
+        $api_domains = array();
+        foreach ($this->get_parameter(Plugin_Constants::API_DOMAINS_LIST, array()) as $pair) {
+            $api_domains[$pair[Plugin_Constants::LIST_ID]] = $pair[Plugin_Constants::LIST_NAME];
+        }
+        if (!empty($api_domains)) {
+            $this->set_api_domains($api_domains);
         }
     }
 
@@ -239,6 +248,22 @@ class dynamic_config
     public function set_domains($val)
     {
         $this->domains = $val;
+    }
+
+    /**
+     * @return array
+     */
+    public function get_api_domains()
+    {
+        return $this->api_domains;
+    }
+
+    /**
+     * @param array $val
+     */
+    public function set_api_domains($val)
+    {
+        $this->api_domains = $val;
     }
 
     /**

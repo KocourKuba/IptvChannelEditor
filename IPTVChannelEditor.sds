@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="335" scanned="20251026172125" built="20251026165508" lang="ru" pane="TLogPane" col="4" row="Text">
+<desktop scan="337" scanned="20260111175315" built="20251026165508" lang="ru" pane="TLogPane" col="2" row="1250.Text">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
+    <item class="TRemoveUnusedItemsTrigger" position="2"/>
     <item class="TValidateTrigger" position="6" enabled="0"/>
   </triggers>
   <sheet>
@@ -26,7 +27,7 @@
     <item>All</item>
     <item>x64\Release Unicode\IPTVChannelEditor.exe</item>
     <item>Dialogs</item>
-    <item>140</item>
+    <item>131</item>
   </path>
   <export format="efXliff">
     <filter duplicates="dfDuplicatesEqual">

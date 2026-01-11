@@ -308,6 +308,12 @@ public:
 	void set_static_domains(bool val) { static_domains = val; }
 
 	/// <summary>
+	/// property api domain list static, not loaded from provider settings
+	/// </summary>
+	bool get_static_api_domains() const { return static_api_domains; }
+	void set_static_api_domains(bool val) { static_api_domains = val; }
+
+	/// <summary>
 	/// property list external bin files (puts in /bin folder)
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
@@ -428,6 +434,12 @@ public:
 	virtual bool set_domain(TemplateParams& /*params*/) { return true; }
 
 	/// <summary>
+	/// set profile
+	/// </summary>
+	/// <param name="params">Template parameters.</param>
+	virtual bool set_api_domain(TemplateParams& /*params*/) { return true; }
+
+	/// <summary>
 	/// fill list of domains variants
 	/// </summary>
 	/// <param name="params">Template parameters. Can be changed</param>
@@ -439,6 +451,13 @@ public:
 	/// <param name="params">Template parameters. Can be changed</param>
 	virtual const std::vector<DynamicParamsInfo>& get_domains_list() { return domains_list; }
 	virtual void set_domains_list(const std::vector<DynamicParamsInfo>& info) { domains_list = info; }
+
+	/// <summary>
+	/// property list of domains
+	/// </summary>
+	/// <param name="params">Template parameters. Can be changed</param>
+	virtual const std::vector<DynamicParamsInfo>& get_api_domains_list() { return api_domains_list; }
+	virtual void set_api_domains_list(const std::vector<DynamicParamsInfo>& info) { api_domains_list = info; }
 
 	static void to_json_wrapper(nlohmann::json& j, const plugin_config& c)
 	{
@@ -474,6 +493,7 @@ public:
 		SERIALIZE_STRUCT(j, c, static_devices); //-V601
 		SERIALIZE_STRUCT(j, c, static_profiles); //-V601
 		SERIALIZE_STRUCT(j, c, static_domains); //-V601
+		SERIALIZE_STRUCT(j, c, static_api_domains); //-V601
 		SERIALIZE_STRUCT(j, c, streams_config);
 		SERIALIZE_STRUCT(j, c, epg_params);
 		SERIALIZE_STRUCT(j, c, files_list);
@@ -483,6 +503,7 @@ public:
 		SERIALIZE_STRUCT(j, c, devices_list);
 		SERIALIZE_STRUCT(j, c, profiles_list);
 		SERIALIZE_STRUCT(j, c, domains_list);
+		SERIALIZE_STRUCT(j, c, api_domains_list);
 		SERIALIZE_STRUCT(j, c, custom_epg_urls);
 	}
 
@@ -519,6 +540,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, static_devices);
 		DESERIALIZE_STRUCT(j, c, static_profiles);
 		DESERIALIZE_STRUCT(j, c, static_domains);
+		DESERIALIZE_STRUCT(j, c, static_api_domains);
 		DESERIALIZE_STRUCT(j, c, streams_config);
 		DESERIALIZE_STRUCT(j, c, epg_params);
 		DESERIALIZE_STRUCT(j, c, files_list);
@@ -528,6 +550,7 @@ public:
 		DESERIALIZE_STRUCT(j, c, devices_list);
 		DESERIALIZE_STRUCT(j, c, profiles_list);
 		DESERIALIZE_STRUCT(j, c, domains_list);
+		DESERIALIZE_STRUCT(j, c, api_domains_list);
 		DESERIALIZE_STRUCT(j, c, custom_epg_urls);
 	}
 
@@ -574,6 +597,7 @@ protected:
 	bool static_devices = false;
 	bool static_profiles = false;
 	bool static_domains = false;
+	bool static_api_domains = false;
 
 	std::vector<std::string> vod_filters;
 
@@ -596,5 +620,6 @@ protected:
 	std::vector<DynamicParamsInfo> devices_list;
 	std::vector<DynamicParamsInfo> profiles_list;
 	std::vector<DynamicParamsInfo> domains_list;
+	std::vector<DynamicParamsInfo> api_domains_list;
 	std::vector<DynamicParamsInfo> custom_epg_urls;
 };

@@ -350,6 +350,43 @@ class default_config extends dynamic_config
     }
 
     /**
+     * @return string
+     */
+    public function get_api_domain_name()
+    {
+        $api_domains = $this->get_api_domains();
+        $api_domain = $api_domains[$this->get_api_domain_id()];
+        hd_debug_print("API domain: '$api_domain'");
+        return $api_domain;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function get_api_domain_id()
+    {
+        $embedded_acc = $this->get_embedded_account();
+        $api_domain_id = $this->plugin->get_setting(Ext_Params::M_API_DOMAIN_ID);
+        hd_debug_print("get_api_domain_id: $api_domain_id");
+        if (is_null($api_domain_id) && !is_null($embedded_acc) && isset($embedded_acc->api_domain_id)) {
+            $this->plugin->set_setting(Ext_Params::M_API_DOMAIN_ID, $embedded_acc->api_domain_id);
+            $api_domain_id = $embedded_acc->api_domain_id;
+            hd_debug_print("get_api_domain_id default: $api_domain_id");
+        }
+
+        $api_domains = $this->get_api_domains();
+        return !empty($api_domain_id) && isset($api_domains[$api_domain_id]) ? $api_domain_id : key($api_domains);
+    }
+
+    /**
+     * @param $api_domain_id
+     */
+    public function set_api_domain_id($api_domain_id)
+    {
+        $this->plugin->set_setting(Ext_Params::M_API_DOMAIN_ID, $api_domain_id);
+    }
+
+    /**
      * @param string &$used_list
      * @return array $all_channels
      */
@@ -1405,6 +1442,15 @@ class default_config extends dynamic_config
                 hd_debug_print("Domain ID not set, but macro was used");
             } else {
                 $url = str_replace(Plugin_Macros::DOMAIN_ID, $domain, $url);
+            }
+        }
+
+        if (strpos($url, Plugin_Macros::API_DOMAIN_ID) !== false) {
+            $api_domain = $this->get_api_domain_name();
+            if (empty($api_domain)) {
+                hd_debug_print("API Domain ID not set, but macro was used");
+            } else {
+                $url = str_replace(Plugin_Macros::API_DOMAIN_ID, $api_domain, $url);
             }
         }
 

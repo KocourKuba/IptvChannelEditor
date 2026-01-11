@@ -20,6 +20,7 @@ class Ext_Params
     const /* (char *) */ M_SERVER_ID   = 'server';    // server (used in sharavoz)
     const /* (char *) */ M_PROFILE_ID  = 'profile';   // profile (used in sharavoz)
     const /* (char *) */ M_DOMAIN_ID   = 'domain';    // domain (used in ottclub, glanz)
+    const /* (char *) */ M_API_DOMAIN_ID = 'api_domain'; // API domain (used in tvteam)
     const /* (char *) */ M_VAR1        = 'var1';      // custom regex capture group
     const /* (char *) */ M_VAR2        = 'var2';      // custom regex capture group
     const /* (char *) */ M_VAR3        = 'var3';      // custom regex capture group
