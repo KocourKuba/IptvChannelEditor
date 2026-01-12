@@ -100,6 +100,7 @@ setup_account_ott = Ввести ОТТ ключ и домен
 setup_account_login = Введите логин и пароль
 setup_account_pin = Введите ключ доступа
 setup_epg_settings = Настройки EPG
+setup_provider_settings = Настройки провайдера
 setup_streaming_settings = Настройки проигрывания
 setup_updater_proxy = Включить proxy для веб обновления
 setup_adult_title = Пароль для взрослых каналов

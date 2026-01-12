@@ -2473,7 +2473,10 @@ function replace_https($url)
 }
 
 /**
- * This is more efficient then merge_array in the loops
+ * /**
+ * * This is more efficient then merge_array in the loops
+ * * Do not use with indexed arrays!
+ * *
  *
  * @param array $ar1
  * @param array|null $ar2

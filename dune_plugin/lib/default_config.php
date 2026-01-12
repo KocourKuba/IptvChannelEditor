@@ -1384,7 +1384,13 @@ class default_config extends dynamic_config
                     hd_debug_print("$type playlist not defined");
                     throw new Exception('$type playlist not defined');
                 }
-                file_put_contents($m3u_file, Curl_Wrapper::getInstance()->download_content($url));
+                $curl = Curl_Wrapper::getInstance();
+                $content = $curl->download_content($url);
+                if ($content === false) {
+                    hd_debug_print("CURL errno: {$curl->get_error_no()} ({$curl->get_error_desc()}); HTTP error: {$curl->get_http_code()};");
+                    throw new Exception("Can't download playlist");
+                }
+                file_put_contents($m3u_file, $content);
             } catch (Exception $ex) {
                 hd_debug_print("Unable to load $type playlist");
                 print_backtrace_exception($ex);

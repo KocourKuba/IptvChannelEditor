@@ -100,6 +100,7 @@ setup_account_ott = Ott Schlüssel eingeben
 setup_account_login = Anmeldung und Pawwort eingeben
 setup_account_pin = Zugangsschlüssel eingeben
 setup_epg_settings = EPG-Einstellungen
+setup_provider_settings = Anbieter-Einstellungen
 setup_streaming_settings = Wiedergabeeinstellungen
 setup_updater_proxy = Proxy für Plugin-Web-Update
 setup_adult_title = Passwort für Erwachsenenkanäle

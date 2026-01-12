@@ -100,6 +100,7 @@ setup_account_ott = Enter OTT key and domain
 setup_account_login = Enter login and password
 setup_account_pin = Enter access key
 setup_epg_settings = EPG settings
+setup_provider_settings = Provider settings
 setup_streaming_settings = Playback settings
 setup_updater_proxy = Use Proxy for plugin web update
 setup_adult_title = Password for adult channels

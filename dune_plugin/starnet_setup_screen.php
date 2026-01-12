@@ -10,12 +10,22 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen
     const SETUP_ACTION_DONATE_DLG = 'donate_dlg';
     const CONTROL_INTERFACE_SCREEN = 'interface_screen';
     const CONTROL_INTERFACE_NEWUI_SCREEN = 'interface_newui_screen';
-    const CONTROL_CHANNELS_SCREEN = 'channels_screen';
     const CONTROL_EPG_SCREEN = 'epg_screen';
+    const CONTROL_PROVIDER_SCREEN = 'provider_screen';
     const CONTROL_STREAMING_SCREEN = 'streaming_screen';
     const CONTROL_EXT_SETUP_SCREEN = 'extended_setup_screen';
 
     ///////////////////////////////////////////////////////////////////////
+
+    /**
+     * @param MediaURL $media_url
+     * @param $plugin_cookies
+     * @return array
+     */
+    public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
+    {
+        return $this->do_get_control_defs();
+    }
 
     /**
      * defs for all controls on screen
@@ -44,6 +54,11 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen
             'QR code', Control_Factory::SCR_CONTROLS_WIDTH, $params);
 
         //////////////////////////////////////
+        // Provider settings
+        Control_Factory::add_image_button($defs, $this, self::CONTROL_PROVIDER_SCREEN, TR::t('setup_provider_settings'),
+            TR::t('setup_change_settings'), $setting_icon, Control_Factory::SCR_CONTROLS_WIDTH, $params);
+
+        //////////////////////////////////////
         // Streaming settings
         Control_Factory::add_image_button($defs, $this, self::CONTROL_STREAMING_SCREEN, TR::t('setup_streaming_settings'),
             TR::t('setup_change_settings'), $setting_icon, Control_Factory::SCR_CONTROLS_WIDTH, $params);
@@ -59,11 +74,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen
             Control_Factory::add_image_button($defs, $this, self::CONTROL_INTERFACE_NEWUI_SCREEN, TR::t('setup_interface_newui_title'),
                 TR::t('setup_change_settings'), $setting_icon, Control_Factory::SCR_CONTROLS_WIDTH, $params);
         }
-
-        //////////////////////////////////////
-        // Channels settings
-        Control_Factory::add_image_button($defs, $this, self::CONTROL_CHANNELS_SCREEN, TR::t('tv_screen_channels_setup'),
-            TR::t('setup_change_settings'), $setting_icon, Control_Factory::SCR_CONTROLS_WIDTH, $params);
 
         //////////////////////////////////////
         // EPG settings
@@ -102,16 +112,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen
         }
 
         return Action_Factory::status(0);
-    }
-
-    /**
-     * @param MediaURL $media_url
-     * @param $plugin_cookies
-     * @return array
-     */
-    public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
-    {
-        return $this->do_get_control_defs();
     }
 
     /**
@@ -157,6 +157,10 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen
             case self::SETUP_ACTION_DONATE_DLG:
                 return $this->do_donate_dialog();
 
+            case self::CONTROL_PROVIDER_SCREEN: // show provider settings dialog
+                return Action_Factory::open_folder(Starnet_Provider_Setup_Screen::make_controls_media_url_str(static::ID, $user_input->return_index),
+                    TR::t('setup_provider_settings'));
+
             case self::CONTROL_STREAMING_SCREEN: // show streaming settings dialog
                 return Action_Factory::open_folder(Starnet_Streaming_Setup_Screen::make_controls_media_url_str(static::ID, $user_input->return_index),
                     TR::t('setup_streaming_settings'));
@@ -168,10 +172,6 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen
             case self::CONTROL_INTERFACE_NEWUI_SCREEN: // show interface NewUI settings dialog
                 return Action_Factory::open_folder(Starnet_Interface_NewUI_Setup_Screen::make_controls_media_url_str(static::ID, $user_input->return_index),
                     TR::t('setup_interface_newui_title'));
-
-            case self::CONTROL_CHANNELS_SCREEN: // show epg settings dialog
-                return Action_Factory::open_folder(Starnet_Channels_Setup_Screen::make_controls_media_url_str(static::ID, $user_input->return_index),
-                    TR::t('tv_screen_channels_setup'));
 
             case self::CONTROL_EPG_SCREEN: // show epg settings dialog
                 return Action_Factory::open_folder(Starnet_Epg_Setup_Screen::make_controls_media_url_str(static::ID, $user_input->return_index),
