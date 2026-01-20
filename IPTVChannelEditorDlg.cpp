@@ -2520,7 +2520,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 
 				if (!extractor.ExtractFile(names[0], utils::GetCacheDir()))
 				{
-			throw std::exception(std::format("Can't extract file: '{:s}' from '{:s}'", utils::utf16_to_utf8(names[0]), url_n).c_str());
+					throw std::exception(std::format("Can't extract file: '{:s}' from '{:s}'", utils::utf16_to_utf8(names[0]), url_n).c_str());
 				}
 
 				// Special case for unpacking gz

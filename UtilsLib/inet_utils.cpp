@@ -158,7 +158,7 @@ bool DownloadFile(http_request& request)
 			}
 		}
 	}
-	else
+	else if (std::filesystem::exists(cache_file))
 	{
 		LOG_PROTOCOL("Cache expired. Download again.");
 	}
@@ -295,10 +295,6 @@ bool DownloadFile(http_request& request)
 									szContentLength, &dwSize, WINHTTP_NO_HEADER_INDEX)) {
 				LOG_PROTOCOL(std::format(L"Content-Length: {:s} for {:s}", szContentLength, request.url));
 				dwToDownload = std::stol(szContentLength);
-			}
-			else
-			{
-				LOG_PROTOCOL(std::format("Failed to retrieve Content-Length. Error: {:d}", GetLastError()));
 			}
 
 			switch (dwStatusCode)
@@ -487,7 +483,7 @@ bool DownloadFile(http_request& request)
 			std::ofstream out_stream(cache_file, std::ofstream::binary);
 			body.seekg(0);
 			out_stream << body.rdbuf();
-			LOG_PROTOCOL(std::format("Save to cache for {:d} seconds", request.cache_ttl.count()));
+			LOG_PROTOCOL(std::format(L"Save to cache for {:d} seconds: {:s}", request.cache_ttl.count(), cache_file.c_str()));
 		}
 
 		bool res = body.tellp() != std::streampos(0);

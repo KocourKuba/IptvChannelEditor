@@ -136,6 +136,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 		for (const auto& pair : categories->vec())
 		{
 			const auto& category = pair.second;
+			if (category->id == all_name) continue;
 
 			int page = 1;
 			int retry = 0;
@@ -154,7 +155,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 					continue;
 				}
 
-				if (req.body.bad())
+				if (jreq.body.bad())
 				{
 					retry++;
 					continue;
@@ -163,7 +164,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 				nlohmann::json movies_json;
 				JSON_ALL_TRY
 				{
-					movies_json = nlohmann::json::parse(req.body.str());
+					movies_json = nlohmann::json::parse(jreq.body.str());
 				}
 				JSON_ALL_CATCH
 
@@ -188,11 +189,14 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 						movie->country = utils::get_json_wstring("country", movie_item);
 						movie->year = utils::get_json_wstring("year", movie_item);
 
-						for (const auto& genre_item : movie_item["genres"].items())
+						if (movie_item.contains("genres"))
 						{
-							const auto& vod_title = utils::get_json_wstring("title", genre_item.value());
-							vod_genre_def genre({ vod_title, vod_title });
-							movie->genres.set_back(vod_title, genre);
+							for (const auto& genre_item : movie_item["genres"].items())
+							{
+								const auto& vod_title = utils::get_json_wstring("title", genre_item.value());
+								vod_genre_def genre({ vod_title, vod_title });
+								movie->genres.set_back(vod_title, genre);
+							}
 						}
 
 						category->movies.set_back(movie->id, movie);
