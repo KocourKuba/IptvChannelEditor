@@ -95,7 +95,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 	{
 		if (params.creds.s_token.empty())
 		{
-			params.creds.set_s_token(account_info[L"userToken"]);
+			params.creds.set_s_token(std::get<std::wstring>(account_info[L"userToken"]));
 		}
 	}
 	else

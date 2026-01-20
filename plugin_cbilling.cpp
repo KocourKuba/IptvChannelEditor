@@ -84,8 +84,8 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 					set_json_info("public_token", js_data, account_info);
 					set_json_info("private_token", js_data, account_info);
 
-					params.creds.set_subdomain(account_info[L"server"]);
-					params.creds.set_s_token(account_info[L"private_token"]);
+					params.creds.set_subdomain(std::get<std::wstring>(account_info[L"server"]));
+					params.creds.set_s_token(std::get<std::wstring>(account_info[L"private_token"]));
 				}
 			}
 			JSON_ALL_CATCH
@@ -314,5 +314,6 @@ std::wstring plugin_cbilling::get_movie_url(const Credentials& creds, const movi
 		url = movie.url;
 	}
 
-	return std::format(L"http://{:s}{:s}?token={:s}", creds.get_subdomain(), url, creds.get_s_token());
+	std::wstring scheme = std::get<bool>(account_info[L"ssl"]) ? L"https" : L"http";
+	return std::format(L"{:s}://{:s}{:s}?token={:s}", scheme, creds.get_subdomain(), url, creds.get_s_token());
 }

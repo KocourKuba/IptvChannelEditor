@@ -1054,7 +1054,7 @@ void CAccessInfoPage::GetAccountInfo()
 	const auto& account_info = m_plugin->get_account_info();
 	if (const auto& it = account_info.find(L"url"); it != account_info.end())
 	{
-		pl_url = it->second;
+		pl_url = std::get<std::wstring>(it->second);
 	}
 
 
@@ -1092,7 +1092,16 @@ void CAccessInfoPage::GetAccountInfo()
 	for (const auto& [key, value] : account_info)
 	{
 		m_wndInfo.InsertItem(++idx, key.c_str());
-		m_wndInfo.SetItemText(idx, 1, value.c_str());
+		std::wstring str;
+		if (std::holds_alternative<bool>(value))
+		{
+			str = load_string_resource(std::get<bool>(value) ? IDS_STRING_YES : IDS_STRING_NO);
+		}
+		else
+		{
+			str = std::get<std::wstring>(value);
+		}
+		m_wndInfo.SetItemText(idx, 1, str.c_str());
 	}
 
 	UpdateData(FALSE);

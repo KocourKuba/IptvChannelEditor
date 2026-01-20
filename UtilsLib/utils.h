@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #pragma once
 #include <algorithm>
 #include <locale>
-#include <boost/regex.hpp>
+#include <chrono>
 
 namespace utils
 {

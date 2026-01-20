@@ -451,13 +451,15 @@ void AccountSettings::SaveSectionRegistry(const std::string& plugin_type)
 			{
 				case 0: // int
 				{
-					const auto pbData = reinterpret_cast<const unsigned char*>(&std::get<int>(value));
+					auto val = std::get<int>(value);
+					const auto pbData = reinterpret_cast<const unsigned char*>(&val);
 					::RegSetValueExW(hKey, key.c_str(), 0, REG_DWORD, pbData, sizeof(int));
 					break;
 				}
 				case 1: // __int64
 				{
-					const auto pbData = reinterpret_cast<const unsigned char*>(&std::get<__int64>(value));
+					auto val = std::get<__int64>(value);
+					const auto pbData = reinterpret_cast<const unsigned char*>(&val);
 					::RegSetValueExW(hKey, key.c_str(), 0, REG_QWORD, pbData, sizeof(__int64));
 					break;
 				}

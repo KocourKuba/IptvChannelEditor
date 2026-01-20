@@ -154,7 +154,7 @@ public:
 	/// <summary>
 	/// returns parsed account info
 	/// </summary>
-	const std::map<std::wstring, std::wstring, std::less<>>& get_account_info() { return account_info; }
+	const std::map<std::wstring, std::variant<std::wstring, bool>, std::less<>>& get_account_info() { return account_info; }
 
 	/// <summary>
 	/// clear account info
@@ -207,7 +207,7 @@ protected:
 	void set_file_cookie(const std::wstring& name, const std::string& session, time_t expire_time) const;
 	void delete_file_cookie(const std::wstring& name) const;
 
-	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const;
+	void set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::variant<std::wstring, bool>, std::less<>>& info) const;
 	std::wstring replace_params_vars(const TemplateParams& params, const std::wstring& url) const;
 	std::wstring replace_uri_stream_vars(const uri_stream* info, const std::wstring& url) const;
 
@@ -220,5 +220,5 @@ protected:
 
 	// extracted named groups from uri parse template
 	std::vector<std::wstring> regex_named_groups{};
-	std::map<std::wstring, std::wstring, std::less<>> account_info{};
+	std::map<std::wstring, std::variant<std::wstring, bool>, std::less<>> account_info{};
 };

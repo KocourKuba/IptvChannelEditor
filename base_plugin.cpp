@@ -450,7 +450,7 @@ void base_plugin::delete_file_cookie(const std::wstring& name) const
 	std::filesystem::remove(cookie_name, ec);
 }
 
-void base_plugin::set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::wstring, std::less<>>& info) const
+void base_plugin::set_json_info(const std::string& name, const nlohmann::json& js_data, std::map<std::wstring, std::variant<std::wstring, bool>, std::less<>>& info) const
 {
 	JSON_ALL_TRY
 	{
@@ -461,7 +461,7 @@ void base_plugin::set_json_info(const std::string& name, const nlohmann::json& j
 
 			if (js_param.is_boolean())
 			{
-				info.emplace(w_name, load_string_resource(js_param.get<bool>() ? IDS_STRING_YES : IDS_STRING_NO));
+				info.emplace(w_name, js_param.get<bool>());
 			}
 			else if (js_param.is_number_integer())
 			{
