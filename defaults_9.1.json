@@ -3148,10 +3148,28 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}/{ID}/{VAR1}-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{SERVER_ID}/{ID}/{VAR1}.m3u8?token={TOKEN}"
         },
         {}
+      ],
+      "servers_list": [
+        {
+          "id": "ru.vivamax.pro",
+          "name": "Russia"
+        },
+        {
+          "id": "msk.vivamax.pro",
+          "name": "Moscow"
+        },
+        {
+          "id": "de.vivamax.pro",
+          "name": "Germany"
+        },
+        {
+          "id": "fr.vivamax.pro",
+          "name": "France"
+        }
       ],
       "title": "VivaMax"
     },
