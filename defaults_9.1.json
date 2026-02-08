@@ -929,6 +929,7 @@
     },
     "ipstream": {
       "access_type": "pin",
+      "class_name": "ipstream_config",
       "custom_epg_urls": [
         {
           "id": "light",
@@ -972,7 +973,17 @@
           "uri_template": "{SCHEME}://{DOMAIN}/live/{TOKEN}/{ID}.ts"
         }
       ],
-      "title": "IpStream/Ishara"
+      "title": "IpStream/Ishara",
+      "vod_engine": "Json",
+      "vod_filter": true,
+      "vod_season": true,
+      "vod_filters": [ "genre", "from", "to" ],
+      "vod_templates": [
+        {
+          "name": "Standard",
+          "pl_template": "http://www.ishara.tv/kino-ottn/{PASSWORD}"
+        }
+      ]
     },
     "iptvbest": {
       "access_type": "pin",

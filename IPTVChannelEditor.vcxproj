@@ -165,6 +165,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="PluginEnums.h" />
     <ClInclude Include="plugin_edem.h" />
     <ClInclude Include="plugin_glanz.h" />
+    <ClInclude Include="plugin_ipstream.h" />
     <ClInclude Include="plugin_iptvonline.h" />
     <ClInclude Include="plugin_kineskop.h" />
     <ClInclude Include="plugin_korona.h" />
@@ -269,6 +270,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="PluginConfigPropertySheet.cpp" />
     <ClCompile Include="plugin_edem.cpp" />
     <ClCompile Include="plugin_glanz.cpp" />
+    <ClCompile Include="plugin_ipstream.cpp" />
     <ClCompile Include="plugin_iptvonline.cpp" />
     <ClCompile Include="plugin_kineskop.cpp" />
     <ClCompile Include="plugin_korona.cpp" />

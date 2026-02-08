@@ -312,6 +312,9 @@
     <ClInclude Include="ColorSettingsPage.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_ipstream.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -526,6 +529,9 @@
     </ClCompile>
     <ClCompile Include="ColorSettingsPage.cpp">
       <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_ipstream.cpp">
+      <Filter>Source Files\plugin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

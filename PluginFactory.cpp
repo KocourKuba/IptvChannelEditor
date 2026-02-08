@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_antifriz.h"
 #include "plugin_edem.h"
 #include "plugin_glanz.h"
+#include "plugin_ipstream.h"
 #include "plugin_iptvonline.h"
 #include "plugin_itv.h"
 #include "plugin_kineskop.h"
@@ -53,6 +54,7 @@ constexpr const char* const antifriz = "antifriz";
 constexpr const char* const cbilling = "cbilling";
 constexpr const char* const edem = "edem";
 constexpr const char* const glanz = "glanz";
+constexpr const char* const ipstream = "ipstream";
 constexpr const char* const iptvonline = "iptvonline";
 constexpr const char* const itv = "itv";
 constexpr const char* const kineskop = "kineskop";
@@ -91,6 +93,10 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(const std::string& typ
 	else if (type == glanz)
 	{
 		plugin = std::make_shared<plugin_glanz>();
+	}
+	else if (type == ipstream)
+	{
+		plugin = std::make_shared<plugin_ipstream>();
 	}
 	else if (type == iptvonline)
 	{
