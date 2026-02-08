@@ -66,7 +66,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
 
         //////////////////////////////////////
         // ext epg
-        if (is_ext_epg_supported() && $this->plugin->get_bool_setting(PARAM_SHOW_EXT_EPG)) {
+        if (is_ext_epg_supported()) {
             $ext_epg = $this->plugin->get_setting(PARAM_SHOW_EXT_EPG, SwitchOnOff::off);
             Control_Factory::add_image_button($defs, $this, PARAM_SHOW_EXT_EPG,
                 TR::t('setup_ext_epg'), SwitchOnOff::translate($ext_epg), SwitchOnOff::to_image($ext_epg));
