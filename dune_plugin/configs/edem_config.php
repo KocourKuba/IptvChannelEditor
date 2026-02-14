@@ -19,68 +19,93 @@ class edem_config extends default_config
     {
         hd_debug_print(null, true);
         hd_debug_print($movie_id);
-        $movieData = $this->make_json_request(array('cmd' => "flick", 'fid' => (int)$movie_id, 'offset' => 0, 'limit' => 0));
+        $jsonData = $this->make_json_request(array('cmd' => "flick", 'fid' => (int)$movie_id, 'offset' => 0, 'limit' => 0));
 
-        if ($movieData === false) {
+        if ($jsonData === false) {
             hd_debug_print("failed to load movie: $movie_id");
             return null;
         }
 
         $movie = new Movie($movie_id, $this->plugin);
         $qualities_str = '';
-        if ($movieData->type === 'multistream') {
-            // collect series
-            foreach ($movieData->items as $item) {
-                $episodeData = $this->make_json_request(array('cmd' => "flick", 'fid' => (int)$item->fid, 'offset' => 0, 'limit' => 0));
-
-                $movie_serie = new Movie_Series($item->fid, $item->title, $item->url);
-                if (isset($episodeData->variants) && count((array)$episodeData->variants) === 1) {
-                    $movie_serie->description = $movie->to_string(key($episodeData->variants));
-                } else {
-                    $variants_data = (array)$episodeData->variants;
-                    $qualities_str = '';
-                    foreach ($variants_data as $key => $url) {
-                        $movie_serie->qualities[(string)$key] = new Movie_Variant($item->fid . "_" . $key, $key, $url);
-                        if (!empty($qualities_str)) {
-                            $qualities_str .= ",";
-                        }
-                        $qualities_str .= ($key === 'auto' ? '' : $key);
-                    }
-
-                    $movie_serie->description = TR::load('vod_screen_quality') . "|" . rtrim($qualities_str, ' ,\0');
-                }
-                $movie->add_series_data($movie_serie);
-            }
-        } else {
-            $movie_serie = new Movie_Series($movie_id, $movieData->title, $movieData->url);
-            if (isset($movieData->variants) && count((array)$movieData->variants) === 1) {
-                $movie_serie->description = $movie->to_string(key($movieData->variants));
+        $type = safe_get_value($jsonData, 'type');
+        if ($type === 'stream') {
+            $movie_series = new Movie_Series($movie_id, $jsonData->title, $jsonData->url);
+            if (isset($jsonData->variants) && count((array)$jsonData->variants) === 1) {
+                $movie_series->description = $movie->to_string(key($jsonData->variants));
             } else {
-                $variants_data = (array)$movieData->variants;
+                $variants_data = (array)$jsonData->variants;
                 foreach ($variants_data as $key => $url) {
-                    $movie_serie->qualities[$key] = new Movie_Variant($movie_id . "_" . $key, $key, $url);
-                    if (!empty($qualities_str)) {
+                    $movie_series->qualities[$key] = new Movie_Variant($movie_id . "_" . $key, $key, $url);
+                    if (!empty($qualities_str) && $key !== 'auto') {
                         $qualities_str .= ",";
                     }
                     $qualities_str .= ($key === 'auto' ? '' : $key);
                 }
 
                 $qualities_str = rtrim($qualities_str, ' ,\0');
-                $movie_serie->description = TR::load('vod_screen_quality') . "|$qualities_str";
+                $movie_series->description = TR::load('vod_screen_quality') . "|$qualities_str";
             }
-            $movie->add_series_data($movie_serie);
+            $movie->add_series_data($movie_series);
+        } else if ($type === 'multistream') {
+            // collect series
+            foreach ($jsonData->items as $item) {
+                $episodeData = $this->make_json_request(array('cmd' => "flick", 'fid' => (int)$item->fid, 'offset' => 0, 'limit' => 0));
+
+                $movie_series = new Movie_Series($item->fid, $item->title, $item->url);
+                if (isset($episodeData->variants) && count((array)$episodeData->variants) === 1) {
+                    $movie_series->description = $movie->to_string(key($episodeData->variants));
+                } else {
+                    $variants_data = (array)$episodeData->variants;
+                    $qualities_str = '';
+                    foreach ($variants_data as $key => $url) {
+                        $movie_series->qualities[(string)$key] = new Movie_Variant($item->fid . "_" . $key, $key, $url);
+                        if (!empty($qualities_str) && $key !== 'auto') {
+                            $qualities_str .= ",";
+                        }
+                        $qualities_str .= ($key === 'auto' ? '' : $key);
+                    }
+
+                    $movie_series->description = TR::load('vod_screen_quality') . "|" . rtrim($qualities_str, ' ,\0');
+                }
+                $movie->add_series_data($movie_series);
+            }
+        } else {
+            hd_debug_print("Unsupported type: '$type' for '$movie_id'");
+            return null;
         }
 
-        $age = isset($movieData->agelimit) ? "$movieData->agelimit+" : '';
-        $age_limit = empty($age) ? array() : array(TR::t('vod_screen_age_limit') => $age);
+        $rate_details = array();
+
+        $age = safe_get_value($jsonData, 'agelimit');
+        if (!empty($age)) {
+            $rate_details[TR::t('vod_screen_age_limit')] = "$age+";
+        }
+
+        if (safe_get_value($jsonData, 'fhd', false)) {
+            $rate_details['Full HD'] = TR::load('yes');
+        }
+
+        if (safe_get_value($jsonData, '4k', false)) {
+            $rate_details['4K'] = TR::load('yes');
+        }
+
+        if (safe_get_value($jsonData, 'hdr', false)) {
+            $rate_details['HDR'] = TR::load('yes');
+        }
+
+        $details = array();
+        if (!empty($qualities_str)) {
+            $details[TR::t('vod_screen_quality')] = $qualities_str;
+        }
 
         $movie->set_data(
-            $movieData->title,      // caption
+            safe_get_value($jsonData, 'title', TR::t('no_title')),      // caption
             '',         // caption_original
-            isset($movieData->description) ? $movieData->description : '',  // description
-            isset($movieData->img) ? $movieData->img : '',  // poster_url
-            isset($movieData->duration) ? $movieData->duration : '',    // length
-            isset($movieData->year) ? $movieData->year : '',    // year
+            safe_get_value($jsonData, 'description', ''),  // description
+            safe_get_value($jsonData, 'img', ''),  // poster_url
+            safe_get_value($jsonData, 'duration', ''),    // length
+            safe_get_value($jsonData, 'year', ''),    // year
             '',          // director
             '',          // scenario
             '',            // actors
@@ -90,8 +115,8 @@ class edem_config extends default_config
             '',            // rate_mpaa
             '',              // country
             '',              // budget
-            array(TR::t('vod_screen_quality') => $qualities_str), // details
-            $age_limit // rate details
+            $details, // details
+            $rate_details // rate details
         );
 
         return $movie;

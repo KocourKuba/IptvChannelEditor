@@ -51,6 +51,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen
      */
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
+        hd_debug_print($media_url);
         $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_ITEM);
 
         $actions = array(
@@ -62,6 +63,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen
         if ($this->plugin->config->get_feature(Plugin_Constants::VOD_QUALITY_SUPPORTED)) {
             $movie = $this->plugin->vod->get_loaded_movie($media_url->movie_id);
             $current_quality = $this->plugin->get_setting(PARAM_VOD_DEFAULT_QUALITY, 'auto');
+            hd_debug_print("qualities: " . count($movie->qualities_list));
             if (!is_null($movie) && isset($movie->qualities_list) && count($movie->qualities_list) > 1) {
                 $q_exist = (in_array($current_quality, $movie->qualities_list) ? "" : "? ");
                 $actions[GUI_EVENT_KEY_D_BLUE] = User_Input_Handler_Registry::create_action($this,

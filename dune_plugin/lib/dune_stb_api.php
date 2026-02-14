@@ -2494,19 +2494,57 @@ function safe_merge_array($ar1, $ar2)
 }
 
 /**
- * Safe get value from array by key
+ * Safe get value from array or object by key or the keys chain
  *
- * @param array $ar
- * @param string $param
- * @param mixed|null $default
+ * @param array|object $src
+ * @param string|array $param
+ * @param mixed $default
  * @return mixed
  */
-function safe_get_value($ar, $param, $default = null)
+function safe_get_value($src, $param, $default = null)
 {
-    if (is_null($param)) {
+    // No key to resolve. Null key or empty string is not allowed
+    if (is_null($param) || $param === '') {
         return $default;
     }
-    return isset($ar[$param]) ? $ar[$param] : $default;
+
+    // Base case: single key
+    if (!is_array($param)) {
+        if (is_array($src)) {
+            return isset($src[$param]) ? $src[$param] : $default;
+        }
+
+        if (is_object($src)) {
+            return isset($src->{$param}) ? $src->{$param} : $default;
+        }
+
+        return $default;
+    }
+
+    // Recursive case: key path
+
+    // empty array also is not allowed
+    if (empty($param)) {
+        return $default;
+    }
+
+    $key = array_shift($param);
+
+    if (is_array($src)) {
+        if (!isset($src[$key])) {
+            return $default;
+        }
+        return count($param) ? safe_get_value($src[$key], $param, $default) : $src[$key];
+    }
+
+    if (is_object($src)) {
+        if (!isset($src->{$key})) {
+            return $default;
+        }
+        return count($param) ? safe_get_value($src->{$key}, $param, $default) : $src->{$key};
+    }
+
+    return $default;
 }
 
 /**

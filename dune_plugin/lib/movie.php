@@ -317,11 +317,11 @@ class Movie implements User_Input_Handler
     public function add_series_data($movie_series)
     {
         $this->series_list[$movie_series->id] = $movie_series;
-        if (!empty($series->qualities)) {
-            $this->qualities_list = array_keys($series->qualities);
+        if (!empty($movie_series->qualities)) {
+            $this->qualities_list = array_keys($movie_series->qualities);
         }
-        if (!empty($series->audios)) {
-            $this->audios_list = array_keys($series->audios);
+        if (!empty($movie_series->audios)) {
+            $this->audios_list = array_keys($movie_series->audios);
         }
     }
 

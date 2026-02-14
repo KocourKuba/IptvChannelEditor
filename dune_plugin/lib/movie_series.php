@@ -52,13 +52,12 @@ class Movie_Series
      * @param string $name
      * @param string $playback_url
      * @param string $season_id
-     * @throws Exception
      */
     public function __construct($id, $name, $playback_url, $season_id = '')
     {
         if (is_null($id)) {
-            print_backtrace();
-            throw new Exception("Movie_Series::id is null");
+            hd_debug_print("Movie_Series::id is null");
+            return;
         }
 
         $this->id = (string)$id;
