@@ -232,9 +232,9 @@ void AccountSettings::set_plugin_type(const std::string& val)
 	m_pluginType = val;
 }
 
-std::vector<Credentials> AccountSettings::LoadCredentials() const
+std::vector<std::shared_ptr<Credentials>> AccountSettings::LoadCredentials() const
 {
-	std::vector<Credentials> credentials;
+	std::vector<std::shared_ptr<Credentials>> credentials;
 	nlohmann::json creds;
 	JSON_ALL_TRY
 	{
@@ -250,19 +250,18 @@ std::vector<Credentials> AccountSettings::LoadCredentials() const
 		const auto& val = item.value();
 		if (val.empty()) continue;
 
-		Credentials cred;
 		JSON_ALL_TRY
 		{
-			cred = val.get<Credentials>();
+			auto cred = std::make_shared<Credentials>(val.get<Credentials>());
 			// only edem has special cred type and only edem has server filters
 			// it's not correctly but using this method
-			if (GetPluginFactory().get_config(m_pluginType).get_vod_server_filter() && (cred.ott_key.empty())) {
-				std::swap(cred.ott_key, cred.token);
-				std::swap(cred.subdomain, cred.domain);
+			if (GetPluginFactory().get_config(m_pluginType).get_vod_server_filter() && (cred->ott_key.empty())) {
+				std::swap(cred->ott_key, cred->token);
+				std::swap(cred->subdomain, cred->domain);
 			}
+			credentials.emplace_back(cred);
 		}
 		JSON_ALL_CATCH
-		credentials.emplace_back(cred);
 	}
 
 	return credentials;

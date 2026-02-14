@@ -80,10 +80,10 @@ class glanz_config extends default_config
         // all movies
         $cat_info[Vod_Category::FLAG_ALL_MOVIES] = $count;
         $genres = array();
+        $countries = array();
         $years = array();
         foreach ($this->vod_items as $movie) {
-            $movie = (object)$movie;
-            $category = (string)$movie->category;
+            $category = safe_get_value($movie, 'category');
             if (empty($category)) {
                 $category = TR::load('no_category');
             }
@@ -95,9 +95,22 @@ class glanz_config extends default_config
             ++$cat_info[$category];
 
             // collect filters information
-            $years[(int)$movie->year] = $movie->year;
-            foreach ($movie->genres as $genre) {
-                $genres[(int)$genre['id']] = $genre['title'];
+            $year = (int)safe_get_value($movie, 'year');
+            $years[$year] = $year;
+
+            foreach (explode(',', safe_get_value($movie, 'country')) as $item) {
+                $item = trim($item);
+                if (!empty($item)) {
+                    $countries[$item] = $item;
+                }
+            }
+
+            foreach (safe_get_value($movie, 'genres', array()) as $genre) {
+                $id = (int)safe_get_value($genre, 'id');
+                $title = safe_get_value($genre, 'title');
+                if (!empty($title) && !empty($id)) {
+                    $genres[$id] = $title;
+                }
             }
         }
 
@@ -109,18 +122,21 @@ class glanz_config extends default_config
         }
 
         ksort($genres);
+        ksort($countries);
         krsort($years);
 
         $filters = array();
         $filters['genre'] = array('title' => TR::t('genre'), 'values' => array(-1 => TR::t('no')));
+        $filters['country'] = array('title' => TR::t('country'), 'values' => array(-1 => TR::t('no')));
         $filters['from'] = array('title' => TR::t('year_from'), 'values' => array(-1 => TR::t('no')));
         $filters['to'] = array('title' => TR::t('year_to'), 'values' => array(-1 => TR::t('no')));
 
         $filters['genre']['values'] += $genres;
+        $filters['country']['values'] += $countries;
         $filters['from']['values'] += $years;
         $filters['to']['values'] += $years;
 
-        $this->set_filters($filters);
+        $this->set_filter_types($filters);
 
         $this->perf->setLabel('end');
         $report = $this->perf->getFullReport();
@@ -147,11 +163,10 @@ class glanz_config extends default_config
         }
 
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
-        foreach ($this->vod_items as $item) {
-            $item = (object)$item;
-            $search = utf8_encode(mb_strtolower($item->name, 'UTF-8'));
+        foreach ($this->vod_items as $movieData) {
+            $search = utf8_encode(mb_strtolower(safe_get_value($movieData, 'name'), 'UTF-8'));
             if (strpos($search, $keyword) !== false) {
-                $movies[] = self::CreateShortMovie($item);
+                $movies[] = $this->CreateShortMovie($movieData);
             }
         }
 
@@ -179,17 +194,16 @@ class glanz_config extends default_config
             return array();
 
         $pos = 0;
-        foreach ($this->vod_items as $movie) {
+        foreach ($this->vod_items as $movieData) {
             if ($pos++ < $page_idx) continue;
 
-            $movie = (object)$movie;
-            $category = $movie->category;
+            $category = safe_get_value($movieData, 'category');
             if (empty($category)) {
                 $category = TR::load('no_category');
             }
 
             if ($category_id === Vod_Category::FLAG_ALL_MOVIES || $category_id === $category) {
-                $movies[] = self::CreateShortMovie($movie);
+                $movies[] = $this->CreateShortMovie($movieData);
             }
         }
         $this->get_next_page($query_id, $pos - $page_idx);
@@ -201,56 +215,49 @@ class glanz_config extends default_config
     /**
      * @inheritDoc
      */
-    public function getFilterList($params)
+    public function getFilterList($query_id)
     {
         hd_debug_print(null, true);
-        hd_debug_print("getFilterList: $params");
+        hd_debug_print("getFilterList: $query_id");
 
         if ($this->vod_items === false) {
             hd_debug_print("failed to load movies");
             return array();
         }
 
+        $filter_params = $this->get_filter_params($query_id);
+
         $movies = array();
 
-        $pairs = explode(",", $params);
-        $post_params = array();
-        foreach ($pairs as $pair) {
-            /** @var array $m */
-            if (preg_match("/^(.+):(.+)$/", $pair, $m)) {
-                $filter = $this->get_filter($m[1]);
-                if ($filter !== null && !empty($filter['values'])) {
-                    $item_idx = array_search($m[2], $filter['values']);
-                    if ($item_idx !== false && $item_idx !== -1) {
-                        $post_params[$m[1]] = (int)$item_idx;
-                    }
+        foreach ($this->vod_items as $movieData) {
+            $match_genre = true;
+            $match_country = true;
+            $match_year = true;
+
+            if (isset($filter_params['genre'])) {
+                $genres = array_map(function($item) {
+                    return safe_get_value($item, 'id');
+                }, safe_get_value($movieData, 'genres', array()));
+                $match_genre = !empty($genres) && in_array($filter_params['genre'], $genres);
+            }
+
+            if (isset($filter_params['country'])) {
+                $country_str = safe_get_value($movieData, 'country');
+                $match_country = strpos($country_str, $filter_params['country']) !== false;
+            }
+
+            if (isset($filter_params['from']) || isset($filter_params['to'])) {
+                $match_year = false;
+                $year_from = safe_get_value($filter_params, 'from', ~PHP_INT_MAX);
+                $year_to = safe_get_value($filter_params, 'to', PHP_INT_MAX);
+                $year = (int)safe_get_value($movieData, 'year');
+                if ($year >= $year_from && $year <= $year_to) {
+                    $match_year = true;
                 }
             }
-        }
 
-        foreach ($this->vod_items as $movie) {
-            $movie = (object)$movie;
-
-            $match_genre = !isset($post_params['genre']);
-            if (!$match_genre) {
-                foreach ($movie->genres as $genre) {
-                    if (!isset($post_params['genre']) || (int)$genre['id'] === $post_params['genre']) {
-                        $match_genre = true;
-                        break;
-                    }
-                }
-            }
-
-            $match_year = false;
-            $year_from = isset($post_params['from']) ? $post_params['from'] : ~PHP_INT_MAX;
-            $year_to = isset($post_params['to']) ? $post_params['to'] : PHP_INT_MAX;
-
-            if ((int)$movie->year >= $year_from && (int)$movie->year <= $year_to) {
-                $match_year = true;
-            }
-
-            if ($match_year && $match_genre) {
-                $movies[] = self::CreateShortMovie($movie);
+            if ($match_year && $match_genre && $match_country) {
+                $movies[] = $this->CreateShortMovie($movieData);
             }
         }
 
@@ -259,30 +266,35 @@ class glanz_config extends default_config
     }
 
     /**
-     * @param Object $movie_obj
+     * @param array $movieData
      * @return Short_Movie
      */
-    protected static function CreateShortMovie($movie_obj)
+    protected function CreateShortMovie($movieData)
     {
-        if (isset($movie_obj->id)) {
-            $id = (string)$movie_obj->id;
-        } else {
+        $id = (string)safe_get_value($movieData, 'id');
+        if (empty($id)) {
             $id = '-1';
         }
 
         $genres = array();
-        foreach ($movie_obj->genres as $genre) {
-            if (!empty($genre->title)) {
-                $genres[] = $genre->title;
+        foreach (safe_get_value($movieData, 'genres', array()) as $genre) {
+            $title = safe_get_value($genre, 'title');
+            if (!empty($title)) {
+                $genres[] = $title;
             }
         }
         $genres_str = implode(", ", $genres);
 
+        $name = safe_get_value($movieData, 'name');
         return new Short_Movie(
             $id,
-            (string)$movie_obj->name,
-            (string)$movie_obj->cover,
-            TR::t('vod_screen_movie_info__4', $movie_obj->name, $movie_obj->year, $movie_obj->country, $genres_str)
+            safe_get_value($movieData, 'name'),
+            safe_get_value($movieData, 'cover'),
+            TR::t('vod_screen_movie_info__4',
+                $name,
+                safe_get_value($movieData, 'year'),
+                safe_get_value($movieData, 'country'),
+                $genres_str)
         );
     }
 }

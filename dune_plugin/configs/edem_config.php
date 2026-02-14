@@ -156,7 +156,7 @@ class edem_config extends default_config
                     $exist_filters[$key]['values'][$val] = $item->title;
                 }
             }
-            $this->set_filters($exist_filters);
+            $this->set_filter_types($exist_filters);
         }
 
         hd_debug_print("Categories read: " . count($category_list));
@@ -178,12 +178,12 @@ class edem_config extends default_config
     /**
      * @inheritDoc
      */
-    public function getFilterList($params)
+    public function getFilterList($query_id)
     {
         hd_debug_print(null, true);
-        hd_debug_print("getFilterList: $params");
+        hd_debug_print("getFilterList: $query_id");
 
-        $pairs = explode(",", $params);
+        $pairs = explode(",", $query_id);
         $post_params = array();
         /** @var array $m */
         foreach ($pairs as $pair) {
@@ -206,7 +206,7 @@ class edem_config extends default_config
             return array();
         }
 
-        $page_idx = $this->get_next_page($params);
+        $page_idx = $this->get_next_page($query_id);
         if ($page_idx < 0)
             return array();
 
@@ -214,7 +214,7 @@ class edem_config extends default_config
         $post_params['offset'] = $page_idx;
         $json = $this->make_json_request($post_params);
 
-        return $json === false ? array() : $this->CollectSearchResult($params, $json);
+        return $json === false ? array() : $this->CollectSearchResult($query_id, $json);
     }
 
     /**

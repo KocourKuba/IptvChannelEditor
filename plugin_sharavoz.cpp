@@ -91,13 +91,13 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 				if (val.empty()) continue;
 
 
-				std::shared_ptr<vod_movie> movie;
+				std::shared_ptr<vod_movie_def> movie;
 				JSON_ALL_TRY
 				{
 					const auto& movie_id = utils::get_json_wstring("stream_id", val);
 					if (!category->movies.tryGet(movie_id, movie))
 					{
-						movie = std::make_shared<vod_movie>();
+						movie = std::make_shared<vod_movie_def>();
 						movie->id = movie_id;
 						movie->title = utils::get_json_wstring("name", val);
 						movie->poster_url.set_uri(utils::get_json_wstring("stream_icon", val));
@@ -145,13 +145,13 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 				const auto& val = item.value();
 				if (val.empty()) continue;
 
-				std::shared_ptr<vod_movie> movie;
+				std::shared_ptr<vod_movie_def> movie;
 				JSON_ALL_TRY
 				{
 					const auto& movie_id = utils::get_json_wstring("series_id", val);
 					if (!category->movies.tryGet(movie_id, movie))
 					{
-						movie = std::make_shared<vod_movie>();
+						movie = std::make_shared<vod_movie_def>();
 						movie->id = movie_id;
 						movie->title = utils::get_json_wstring("name", val);
 						movie->is_series = true;
@@ -185,7 +185,7 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
-void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movie)
+void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie_def& movie)
 {
 	TemplateParams params;
 	update_provider_params(params);
@@ -230,13 +230,13 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 				for (const auto& season_it : parsed_json["episodes"].items())
 				{
 					vod_season_def season;
-					season.id = season.season_id = utils::utf8_to_utf16(season_it.key());
+					season.id = season.number = utils::utf8_to_utf16(season_it.key());
 					for (auto& episode_item : season_it.value())
 					{
 						vod_episode_def episode;
 						episode.id = utils::get_json_wstring("id", episode_item);
 						episode.title = utils::get_json_wstring("title", episode_item);
-						episode.episode_id = utils::get_json_wstring("episode_num", episode_item);
+						episode.number = utils::get_json_wstring("episode_num", episode_item);
 						auto ext = utils::get_json_wstring("container_extension", episode_item);
 						if (!ext.empty())
 						{
@@ -272,7 +272,7 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie& movi
 	JSON_ALL_CATCH
 }
 
-std::wstring plugin_sharavoz::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie)
+std::wstring plugin_sharavoz::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie)
 {
 	if (!movie.seasons.empty() && request.season_idx != CB_ERR)
 	{

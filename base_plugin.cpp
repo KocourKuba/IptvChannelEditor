@@ -121,52 +121,52 @@ std::wstring base_plugin::replace_params_vars(const TemplateParams& params, cons
 		replaced = utils::string_replace<wchar_t>(replaced, REPL_API_URL, get_provider_api_url());
 	}
 
-	if (!params.creds.subdomain.empty())
+	if (!params.creds->subdomain.empty())
 	{
-		replaced = utils::string_replace<wchar_t>(replaced, REPL_SUBDOMAIN, params.creds.get_subdomain());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_SUBDOMAIN, params.creds->get_subdomain());
 	}
 
-	if (!params.creds.ott_key.empty())
+	if (!params.creds->ott_key.empty())
 	{
-		replaced = utils::string_replace<wchar_t>(replaced, REPL_OTT_KEY, params.creds.get_ott_key());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_OTT_KEY, params.creds->get_ott_key());
 	}
 
-	if (!params.creds.login.empty())
+	if (!params.creds->login.empty())
 	{
-		replaced = utils::string_replace<wchar_t>(replaced, REPL_LOGIN, params.creds.get_login());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_LOGIN, params.creds->get_login());
 	}
 
-	if (!params.creds.password.empty())
+	if (!params.creds->password.empty())
 	{
-		replaced = utils::string_replace<wchar_t>(replaced, REPL_PASSWORD, params.creds.get_password());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_PASSWORD, params.creds->get_password());
 	}
 
-	if (!params.creds.token.empty())
+	if (!params.creds->token.empty())
 	{
-		replaced = utils::string_replace<wchar_t>(replaced, REPL_TOKEN, params.creds.get_token());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_TOKEN, params.creds->get_token());
 	}
 
-	if (!params.creds.s_token.empty())
+	if (!params.creds->s_token.empty())
 	{
-		replaced = utils::string_replace<wchar_t>(replaced, REPL_S_TOKEN, params.creds.get_s_token());
+		replaced = utils::string_replace<wchar_t>(replaced, REPL_S_TOKEN, params.creds->get_s_token());
 	}
 
 
 	if (!domains_list.empty())
 	{
-		size_t domain = ((params.creds.domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : params.creds.domain_id);
+		size_t domain = ((params.creds->domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : params.creds->domain_id);
 		replaced = utils::string_replace<wchar_t>(replaced, REPL_DOMAIN_ID, domains_list[domain].get_name());
 	}
 
 	if (!api_domains_list.empty())
 	{
-		size_t domain = ((params.creds.api_domain_id >= (int)api_domains_list.size()) ? api_domains_list.size() - 1 : params.creds.api_domain_id);
+		size_t domain = ((params.creds->api_domain_id >= (int)api_domains_list.size()) ? api_domains_list.size() - 1 : params.creds->api_domain_id);
 		replaced = utils::string_replace<wchar_t>(replaced, REPL_API_DOMAIN_ID, api_domains_list[domain].get_name());
 	}
 
 	if (!servers_list.empty())
 	{
-		size_t server = (params.creds.server_id >= (int)servers_list.size()) ? servers_list.size() - 1 : params.creds.server_id;
+		size_t server = (params.creds->server_id >= (int)servers_list.size()) ? servers_list.size() - 1 : params.creds->server_id;
 		auto srv_name = servers_list[server].get_name();
 		replaced = utils::string_replace<wchar_t>(replaced, REPL_SERVER, utils::wstring_tolower(srv_name));
 		auto id = servers_list[server].get_id();
@@ -175,19 +175,19 @@ std::wstring base_plugin::replace_params_vars(const TemplateParams& params, cons
 
 	if (!devices_list.empty())
 	{
-		size_t device = (params.creds.device_id >= (int)devices_list.size()) ? devices_list.size() - 1 : params.creds.device_id;
+		size_t device = (params.creds->device_id >= (int)devices_list.size()) ? devices_list.size() - 1 : params.creds->device_id;
 		replaced = utils::string_replace<wchar_t>(replaced, REPL_DEVICE_ID, devices_list[device].get_id());
 	}
 
 	if (!qualities_list.empty())
 	{
-		size_t quality = (params.creds.quality_id >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.creds.quality_id;
+		size_t quality = (params.creds->quality_id >= (int)qualities_list.size()) ? qualities_list.size() - 1 : params.creds->quality_id;
 		replaced = utils::string_replace<wchar_t>(replaced, REPL_QUALITY_ID, qualities_list[quality].get_id());
 	}
 
 	if (!profiles_list.empty())
 	{
-		size_t profile = (params.creds.profile_id >= (int)profiles_list.size()) ? profiles_list.size() - 1 : params.creds.profile_id;
+		size_t profile = (params.creds->profile_id >= (int)profiles_list.size()) ? profiles_list.size() - 1 : params.creds->profile_id;
 		replaced = utils::string_replace<wchar_t>(replaced, REPL_PROFILE_ID, profiles_list[profile].get_id());
 	}
 
@@ -457,23 +457,14 @@ void base_plugin::set_json_info(const std::string& name, const nlohmann::json& j
 		if (js_data.contains(name))
 		{
 			const auto& w_name = utils::utf8_to_utf16(name);
-			const auto& js_param = js_data[name];
 
-			if (js_param.is_boolean())
+			if (js_data[name].is_boolean())
 			{
-				info.emplace(w_name, js_param.get<bool>());
+				info.emplace(w_name, utils::get_json_bool(name, js_data));
 			}
-			else if (js_param.is_number_integer())
+			else
 			{
-				info.emplace(w_name, std::to_wstring(js_param.get<int>()));
-			}
-			else if (js_param.is_number_float())
-			{
-				info.emplace(w_name, std::to_wstring(js_param.get<float>()));
-			}
-			else if (js_param.is_string())
-			{
-				info.emplace(w_name, utils::utf8_to_utf16(js_param.get<std::string>()));
+				info.emplace(w_name, utils::get_json_wstring(name, js_data));
 			}
 		}
 	}

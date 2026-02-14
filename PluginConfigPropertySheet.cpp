@@ -252,7 +252,7 @@ void CPluginConfigPropertySheet::FillConfigs()
 	int cur_idx = 0;
 	for (const auto& entry : m_configs)
 	{
-		if (!m_selected_cred.config.empty() && entry == m_selected_cred.get_config())
+		if (!m_selected_cred->config.empty() && entry == m_selected_cred->get_config())
 		{
 			const auto& name = std::format(L"{:s} ({:s})", entry, load_string_resource(IDS_STRING_CURRENT));
 			int idx = m_wndPluginConfigs.AddString(name.c_str());

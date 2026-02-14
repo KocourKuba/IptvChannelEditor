@@ -136,9 +136,10 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen
                 foreach ($this->qualities as $key => $quality) {
                     if ($key === 'auto') continue;
 
+                    hd_debug_print("quality [$key]");
                     $icon = null;
                     if ((string)$key === $current_quality) {
-                        $icon = 'gui_skin://small_icons/video_settings.aai';
+                        $icon = 'check.png';
                     }
                     $menu_items[] = $this->plugin->create_menu_item($this, self::ACTION_QUALITY_SELECTED, $quality->name, $icon, array('quality' => $key));
                 }
@@ -175,7 +176,7 @@ class Starnet_Vod_Series_List_Screen extends Abstract_Preloaded_Regular_Screen
                     $name = ($key === 'auto') ? $audio : $audio->name;
                     $icon = null;
                     if ((string)$key === $selected_audio) {
-                        $icon = 'gui_skin://small_icons/audiot_settings.aai';
+                        $icon = 'check.png';
                     }
                     $menu_items[] = $this->plugin->create_menu_item($this, self::ACTION_AUDIO_SELECTED, $name, $icon, array('audio' => $key));
                 }

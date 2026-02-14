@@ -153,7 +153,7 @@ BOOL CPluginConfigPageEPG::OnInitDialog()
 	std::string api_token;
 	plugin->get_api_token(params, api_token);
 
-	m_Token = GetPropertySheet()->m_selected_cred.s_token.c_str();
+	m_Token = GetPropertySheet()->m_selected_cred->s_token.c_str();
 
 	for(const auto& [key, value] : GetPluginFactory().get_epg_presets())
 	{
@@ -406,7 +406,7 @@ std::wstring CPluginConfigPageEPG::CompileEpgUrl()
 	const auto& domains_list = GetPropertySheet()->m_plugin->get_domains_list();
 	if (!domains_list.empty())
 	{
-		size_t domain_id = GetPropertySheet()->m_selected_cred.domain_id;
+		size_t domain_id = GetPropertySheet()->m_selected_cred->domain_id;
 		domain_id = ((domain_id >= (int)domains_list.size()) ? domains_list.size() - 1 : domain_id);
 		utils::string_replace_inplace<wchar_t>(url, REPL_DOMAIN_ID, domains_list[domain_id].get_name());
 	}
@@ -414,7 +414,7 @@ std::wstring CPluginConfigPageEPG::CompileEpgUrl()
 	const auto& api_domains_list = GetPropertySheet()->m_plugin->get_api_domains_list();
 	if (!api_domains_list.empty())
 	{
-		size_t api_domain_id = GetPropertySheet()->m_selected_cred.api_domain_id;
+		size_t api_domain_id = GetPropertySheet()->m_selected_cred->api_domain_id;
 		api_domain_id = ((api_domain_id >= (int)api_domains_list.size()) ? api_domains_list.size() - 1 : api_domain_id);
 		utils::string_replace_inplace<wchar_t>(url, REPL_API_DOMAIN_ID, api_domains_list[api_domain_id].get_name());
 	}

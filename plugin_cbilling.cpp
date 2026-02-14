@@ -64,7 +64,7 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 		utils::http_request req
 		{
 			.url = replace_params_vars(params, API_COMMAND_AUTH),
-			.headers { std::format(ACCOUNT_HEADER_TEMPLATE, params.creds.password) }
+			.headers { std::format(ACCOUNT_HEADER_TEMPLATE, params.creds->password) }
 		};
 		if (utils::DownloadFile(req))
 		{
@@ -84,8 +84,8 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 					set_json_info("public_token", js_data, account_info);
 					set_json_info("private_token", js_data, account_info);
 
-					params.creds.set_subdomain(std::get<std::wstring>(account_info[L"server"]));
-					params.creds.set_s_token(std::get<std::wstring>(account_info[L"private_token"]));
+					params.creds->set_subdomain(std::get<std::wstring>(account_info[L"server"]));
+					params.creds->set_s_token(std::get<std::wstring>(account_info[L"private_token"]));
 				}
 			}
 			JSON_ALL_CATCH
@@ -121,7 +121,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 				auto category = std::make_shared<vod_category>();
 				category->id = utils::get_json_wstring("id", item);
 				category->name = utils::get_json_wstring("name", item);
-				total += item["count"].get<int>();
+				total += utils::get_json_int("count", item);
 				categories->set_back(category->id, category);
 			}
 		}
@@ -180,7 +180,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 
 					JSON_ALL_TRY
 					{
-						auto movie = std::make_shared<vod_movie>();
+						auto movie = std::make_shared<vod_movie_def>();
 
 						movie->id = utils::get_json_wstring("id", movie_item);
 						movie->title = utils::get_json_wstring("name", movie_item);
@@ -193,9 +193,9 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 						{
 							for (const auto& genre_item : movie_item["genres"].items())
 							{
-								const auto& vod_title = utils::get_json_wstring("title", genre_item.value());
-								vod_genre_def genre({ vod_title, vod_title });
-								movie->genres.set_back(vod_title, genre);
+								const auto& genre_title = utils::get_json_wstring("title", genre_item.value());
+								vod_genre_def genre({ genre_title, genre_title });
+								movie->genres.set_back(genre_title, genre);
 							}
 						}
 
@@ -237,7 +237,7 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
-void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie& movie)
+void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie_def& movie)
 {
 	TemplateParams params;
 	update_provider_params(params);
@@ -275,7 +275,7 @@ void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie& movi
 					vod_season_def season;
 					season.id = utils::get_json_wstring("id", season_item);
 					season.title = utils::get_json_wstring("name", season_item);
-					season.season_id = utils::get_json_wstring("number", season_item);
+					season.number = utils::get_json_wstring("number", season_item);
 
 					for (const auto& episode_it : season_item["series"].items())
 					{
@@ -284,7 +284,7 @@ void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie& movi
 						vod_episode_def episode;
 						episode.id = utils::get_json_wstring("id", episode_item);
 						episode.title = utils::get_json_wstring("name", episode_item);
-						episode.episode_id = utils::get_json_wstring("number", episode_item);
+						episode.number = utils::get_json_wstring("number", episode_item);
 
 						if (episode_item["files"].is_array())
 						{
@@ -305,7 +305,7 @@ void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie& movi
 	JSON_ALL_CATCH
 }
 
-std::wstring plugin_cbilling::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie)
+std::wstring plugin_cbilling::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie)
 {
 	std::wstring url;
 	if (movie.url.empty() && request.season_idx != CB_ERR && request.episode_idx != CB_ERR)

@@ -50,7 +50,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 
 		boost::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
 		boost::wsmatch m;
-		const auto& vportal = config.m_params.creds.get_portal();
+		const auto& vportal = config.m_params.creds->get_portal();
 		if (!boost::regex_match(vportal, m, re_url)) break;
 
 		const auto& key = m[1].str();
@@ -107,7 +107,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 					continue;
 				}
 
-				utils::vectormap<std::wstring, vod_filter_def> filters;
+				vod_filter_storage filters;
 				for (const auto& filter_sub_it : filter["items"].items())
 				{
 					const auto& filter_sub = filter_sub_it.value();
@@ -162,7 +162,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 					{
 						const auto& movie_item = item_it.value();
 
-						auto movie = std::make_shared<vod_movie>();
+						auto movie = std::make_shared<vod_movie_def>();
 
 						if (utils::get_json_wstring("type", movie_item) == L"next")
 						{
@@ -228,7 +228,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
-void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
+void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie_def& movie)
 {
 	do
 	{
@@ -303,10 +303,11 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 						{
 							for (const auto& variant_it : variants_data["variants"].items())
 							{
-								const auto& vod_title = utils::utf8_to_utf16(variant_it.key());
-								const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
+								vod_variant_def quality;
+								quality.title = utils::utf8_to_utf16(variant_it.key());
+								quality.url = utils::get_json_wstring("", variant_it.value());
 
-								episode.qualities.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
+								movie.qualities.set_back(quality.title, quality);
 							}
 						}
 					}
@@ -321,10 +322,11 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 				{
 					for (const auto& variant_it : json_data["variants"].items())
 					{
-						const auto& vod_title = utils::utf8_to_utf16(variant_it.key());
-						const auto& q_url = utils::utf8_to_utf16(variant_it.value().get<std::string>());
+						vod_variant_def quality;
+						quality.title = utils::utf8_to_utf16(variant_it.key());
+						quality.url = utils::get_json_wstring("", variant_it.value());
 
-						movie.quality.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
+						movie.qualities.set_back(quality.title, quality);
 					}
 				}
 			}
@@ -333,23 +335,28 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie& movie)
 	} while (false);
 }
 
-std::wstring plugin_edem::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie)
+std::wstring plugin_edem::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie)
 {
 	std::wstring url = movie.url;
 
-	if (!movie.quality.empty() && request.quality_idx != CB_ERR)
+	if (!movie.qualities.empty() && request.quality_idx != CB_ERR)
 	{
-		url = movie.quality[request.quality_idx].url;
-	} else if (!movie.seasons.empty())
+		url = movie.qualities[request.quality_idx].url;
+	}
+	else if (!movie.seasons.empty())
 	{
 		const auto& episodes = movie.seasons.front().episodes;
 		if (!episodes.empty() && request.episode_idx != CB_ERR)
 		{
 			const auto& quality = episodes[request.episode_idx].qualities;
 			if (quality.empty())
+			{
 				url = episodes[request.episode_idx].url;
+			}
 			else
+			{
 				url = episodes[request.episode_idx].qualities[request.quality_idx].url;
+			}
 		}
 	}
 

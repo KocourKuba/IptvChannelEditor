@@ -315,6 +315,9 @@
     <ClInclude Include="plugin_ipstream.h">
       <Filter>Header Files\plugin</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_yosso.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -533,6 +536,9 @@
     <ClCompile Include="plugin_ipstream.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
+    <ClCompile Include="plugin_yosso.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IPTVChannelEditor.rc">
@@ -546,7 +552,7 @@
     <None Include="dune_plugin\changelog.md" />
     <None Include="Readme.md" />
     <None Include="PropertySheet.props" />
-    <None Include="defaults_9.1.json" />
+    <None Include="defaults_9.2.json" />
     <None Include="make_icon_package.cmd" />
     <None Include="make_update_package.cmd" />
     <None Include="scripts\editor.php">

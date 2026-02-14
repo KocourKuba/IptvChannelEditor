@@ -133,7 +133,7 @@ BOOL CVodViewer::OnInitDialog()
 		.creds = m_account
 	};
 	std::string api_token;
-	m_plugin->get_api_token(params, api_token);
+	m_plugin->get_vod_api_token(params, api_token);
 
 
 	SetButtonImage(IDB_PNG_RELOAD, m_wndBtnReload);
@@ -253,7 +253,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	cfg->m_params.creds = m_account;
 	cfg->progress_callback = std::bind(&CVodViewer::ProgressCallbackJsonParse, this, std::placeholders::_1);
 	std::string api_token;
-	if (m_plugin->get_api_token(cfg->m_params, api_token))
+	if (m_plugin->get_vod_api_token(cfg->m_params, api_token))
 	{
 		m_plugin->update_provider_params(cfg->m_params);
 		cfg->m_url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), cfg->m_params);
@@ -343,7 +343,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 
 LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {
-	static vod_movie default_vod;
+	static vod_movie_def default_vod;
 
 	m_evtStop.ResetEvent();
 	m_evtFinished.SetEvent();
@@ -410,7 +410,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /
 				m_current_vod.set_back(category_name, category);
 			}
 
-			auto movie = std::make_shared<vod_movie>();
+			auto movie = std::make_shared<vod_movie_def>();
 			movie->id = entry->get_epg_id();
 			movie->title = entry->get_title();
 			movie->poster_url = entry->get_icon_uri();
@@ -599,13 +599,13 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 			const auto& season = movie->seasons[m_season_idx];
 			url = season.episodes[m_episode_idx].url;
 		}
-		url = std::format(L"http://{:s}{:s}?token={:s}", m_account.get_subdomain(), url, m_account.get_s_token());
+		url = std::format(L"http://{:s}{:s}?token={:s}", m_account->get_subdomain(), url, m_account->get_s_token());
 	}
 	else
 	{
-		if (!movie->quality.empty() && m_quality_idx != CB_ERR)
+		if (!movie->qualities.empty() && m_quality_idx != CB_ERR)
 		{
-			url = movie->quality[m_quality_idx].url;
+			url = movie->qualities[m_quality_idx].url;
 		}
 		else if (!movie->audios.empty() && m_audio_idx != CB_ERR)
 		{
@@ -717,13 +717,40 @@ void CVodViewer::FillCategories()
 		{
 			for (const auto& pair : m_current_vod.vec())
 			{
-				for (const auto& movie_pair : pair.second->movies.vec())
+				if (pair.second->genres.empty())
 				{
-					for (const auto& [key, value] : movie_pair.second->genres.vec())
+					for (const auto& movie_pair : pair.second->movies.vec())
+					{
+						for (const auto& [key, value] : movie_pair.second->genres.vec())
+						{
+							m_genres.set_back(key, value);
+						}
+						m_years.set_back(movie_pair.second->year, movie_pair.second->year);
+					}
+				}
+				else
+				{
+					for (const auto& [key, value] : pair.second->genres.vec())
 					{
 						m_genres.set_back(key, value);
 					}
-					m_years.set_back(movie_pair.second->year, movie_pair.second->year);
+
+				}
+
+				if (pair.second->years.empty())
+				{
+					for (const auto& movie_pair : pair.second->movies.vec())
+					{
+						m_years.set_back(movie_pair.second->year, movie_pair.second->year);
+					}
+				}
+				else
+				{
+					for (const auto& [key, value] : pair.second->years.vec())
+					{
+						m_years.set_back(key, value.title);
+					}
+
 				}
 			}
 		}
@@ -787,7 +814,7 @@ void CVodViewer::FillYears()
 	UpdateData(FALSE);
 }
 
-void CVodViewer::FillSeasons(const std::shared_ptr<vod_movie>& movie)
+void CVodViewer::FillSeasons(const std::shared_ptr<vod_movie_def>& movie)
 {
 	m_season_idx = -1;
 	m_wndSeason.ResetContent();
@@ -800,7 +827,7 @@ void CVodViewer::FillSeasons(const std::shared_ptr<vod_movie>& movie)
 		const auto& season = season_it.second;
 		if (season.title.empty())
 		{
-			m_wndSeason.AddString(std::format(L"{:s} {:s}", str, season.season_id).c_str());
+			m_wndSeason.AddString(std::format(L"{:s} {:s}", str, season.number).c_str());
 		}
 		else
 		{
@@ -814,7 +841,7 @@ void CVodViewer::FillSeasons(const std::shared_ptr<vod_movie>& movie)
 	FillEpisodes(movie);
 }
 
-void CVodViewer::FillEpisodes(const std::shared_ptr<vod_movie>& movie)
+void CVodViewer::FillEpisodes(const std::shared_ptr<vod_movie_def>& movie)
 {
 	m_episode_idx = -1;
 	m_wndEpisode.ResetContent();
@@ -834,7 +861,7 @@ void CVodViewer::FillEpisodes(const std::shared_ptr<vod_movie>& movie)
 		const auto& episode = episode_it.second;
 		if (episode.title.empty())
 		{
-			m_wndEpisode.AddString(std::format(L"{:s} {:s}", str, episode.episode_id).c_str());
+			m_wndEpisode.AddString(std::format(L"{:s} {:s}", str, episode.number).c_str());
 		}
 		else
 		{
@@ -877,7 +904,7 @@ void CVodViewer::FillAudio(const vod_variants_storage& audios)
 	m_wndAudio.EnableWindow(!audios.empty());
 }
 
-std::shared_ptr<vod_movie> CVodViewer::GetFilteredMovie(int idx)
+std::shared_ptr<vod_movie_def> CVodViewer::GetFilteredMovie(int idx)
 {
 	if (idx < 0 || idx >= (int)m_filtered_movies.size())
 	{
@@ -887,10 +914,10 @@ std::shared_ptr<vod_movie> CVodViewer::GetFilteredMovie(int idx)
 		return nullptr;
 	}
 
-	std::shared_ptr<vod_movie> movie = m_filtered_movies[idx];
+	std::shared_ptr<vod_movie_def> movie = m_filtered_movies[idx];
 	if (movie->url.empty() && movie->seasons.empty())
 	{
-		m_plugin->fetch_movie_info(m_account, *movie);
+		m_plugin->fetch_movie_info(*m_account, *movie);
 	}
 
 	return movie;
@@ -918,7 +945,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 		return;
 	}
 
-	FillQuality(movie->quality);
+	FillQuality(movie->qualities);
 	FillAudio(movie->audios);
 	FillSeasons(movie);
 
@@ -1028,7 +1055,7 @@ void CVodViewer::FilterList()
 
 			boost::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
 			boost::wsmatch m;
-			const auto& vportal = m_account.get_portal();
+			const auto& vportal = m_account->get_portal();
 			if (!boost::regex_match(vportal, m, re_url)) break;
 
 			const auto& key = m[1].str();
@@ -1091,7 +1118,7 @@ void CVodViewer::FilterList()
 					{
 						const auto& movie_item = item_it.value();
 
-						auto movie = std::make_shared<vod_movie>();
+						auto movie = std::make_shared<vod_movie_def>();
 
 						if (utils::get_json_wstring("type", movie_item) == L"next")
 						{
@@ -1213,7 +1240,7 @@ void CVodViewer::GetUrl(int idx)
 		.audio_idx = m_audio_idx
 	};
 
-	m_streamUrl = m_plugin->get_movie_url(m_account, request, *movie).c_str();
+	m_streamUrl = m_plugin->get_movie_url(*m_account, request, *movie).c_str();
 	m_iconUrl = movie->poster_url.get_uri().c_str();
 
 	UpdateData(FALSE);

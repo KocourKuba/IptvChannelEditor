@@ -33,7 +33,6 @@ DEALINGS IN THE SOFTWARE.
 
 
 // CVodViewer dialog
-using vod_category_storage = utils::vectormap<std::wstring, std::shared_ptr<vod_category>>;
 
 class CVodViewer : public CDialogEx
 {
@@ -77,14 +76,14 @@ protected:
 	afx_msg void OnBnClickedButtonStop();
 
 private:
-	std::shared_ptr<vod_movie> GetFilteredMovie(int idx);
+	std::shared_ptr<vod_movie_def> GetFilteredMovie(int idx);
 
 	void LoadPlaylist(bool use_cache = true);
 	void LoadM3U8Playlist(bool use_cache = true);
 	void LoadJsonPlaylist(bool use_cache = true);
 	void FillCategories();
-	void FillSeasons(const std::shared_ptr<vod_movie>& movie);
-	void FillEpisodes(const std::shared_ptr<vod_movie>& movie);
+	void FillSeasons(const std::shared_ptr<vod_movie_def>& movie);
+	void FillEpisodes(const std::shared_ptr<vod_movie_def>& movie);
 	void FillQuality(const vod_variants_storage& qualities);
 	void FillAudio(const vod_variants_storage& audios);
 	void FillGenres();
@@ -95,7 +94,7 @@ private:
 	void ProgressCallbackJsonParse(const utils::progress_info& info);
 
 public:
-	Credentials m_account;
+	std::shared_ptr<Credentials> m_account;
 	std::shared_ptr<base_plugin> m_plugin;
 
 protected:

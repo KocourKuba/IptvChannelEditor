@@ -565,5 +565,4 @@ std::wstring& ensure_backslash(std::wstring& src)
 
 	return src;
 }
-
 }

@@ -613,7 +613,7 @@ class default_config extends dynamic_config
     /**
      * @param array $filters
      */
-    public function set_filters($filters)
+    public function set_filter_types($filters)
     {
         $this->filters = $filters;
     }
@@ -1121,10 +1121,10 @@ class default_config extends dynamic_config
     }
 
     /**
-     * @param string $params
+     * @param string $query_id
      * @return array
      */
-    public function getFilterList($params)
+    public function getFilterList($query_id)
     {
         return array();
     }
@@ -1349,6 +1349,28 @@ class default_config extends dynamic_config
 
     ///////////////////////////////////////////////////////////////////////
     /// protected functions
+
+    /**
+     * @param string $query_id
+     * @return array
+     */
+    protected function get_filter_params($query_id)
+    {
+        $filter_params = array();
+        foreach (explode(",", $query_id) as $pair) {
+            /** @var array $m */
+            if (preg_match("/^(.+):(.+)$/", $pair, $m)) {
+                $filter = $this->get_filter($m[1]);
+                if ($filter !== null && !empty($filter['values'])) {
+                    $item_idx = array_search($m[2], $filter['values']);
+                    if ($item_idx !== false && $item_idx !== -1) {
+                        $filter_params[$m[1]] = $item_idx;
+                    }
+                }
+            }
+        }
+        return $filter_params;
+    }
 
     /**
      * @param bool $is_tv

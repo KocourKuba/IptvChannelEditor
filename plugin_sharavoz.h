@@ -32,8 +32,8 @@ class plugin_sharavoz : public base_plugin
 {
 public:
 	void parse_vod(const ThreadConfig& config) override;
-	void fetch_movie_info(const Credentials& creds, vod_movie& movie) override;
-	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie) override;
+	void fetch_movie_info(const Credentials& creds, vod_movie_def& movie) override;
+	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie) override;
 
 private:
 	std::wstring xtream_parse_category(const nlohmann::json& val, std::shared_ptr<vod_category>& category, std::unique_ptr<vod_category_storage>& categories);

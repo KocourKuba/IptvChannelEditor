@@ -47,8 +47,8 @@ void plugin_oneott::parse_account_info(TemplateParams& params)
 				const auto & parsed_json = nlohmann::json::parse(req.body.str());
 				if (parsed_json.contains("token"))
 				{
-					params.creds.s_token = parsed_json.value("token", "");
-					account_info.emplace(L"token", params.creds.get_s_token());
+					params.creds->s_token = parsed_json.value("token", "");
+					account_info.emplace(L"token", params.creds->get_s_token());
 				}
 			}
 			JSON_ALL_CATCH

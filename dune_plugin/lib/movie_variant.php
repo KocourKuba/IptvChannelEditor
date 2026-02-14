@@ -24,13 +24,12 @@ class Movie_Variant
 
     /**
      * @param $id string
-     * @throws Exception
      */
     public function __construct($id, $name, $playback_url, $playback_url_is_stream_url = true)
     {
         if (is_null($id)) {
-            print_backtrace();
-            throw new Exception("Movie_Variant::id is null");
+            hd_debug_print("Movie_Variant::id is null");
+            return;
         }
 
         $this->id = (string)$id;

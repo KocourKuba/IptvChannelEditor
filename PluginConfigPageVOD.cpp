@@ -235,16 +235,14 @@ void CPluginConfigPageVOD::SaveParameters()
 void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 {
 	const auto& plugin = GetPropertySheet()->m_plugin;
-	auto& cred = GetPropertySheet()->m_selected_cred;
-
 	TemplateParams params
 	{
-		.creds = cred,
+		.creds = GetPropertySheet()->m_selected_cred,
 		.playlist_idx = m_wndVodTemplates.GetCurSel()
 	};
 
 	std::string api_token;
-	if (!plugin->get_api_token(params, api_token))
+	if (!plugin->get_vod_api_token(params, api_token))
 	{
 		AfxMessageBox(L"Token not set!", MB_ICONERROR | MB_OK);
 		return;
@@ -338,15 +336,13 @@ void CPluginConfigPageVOD::OnBnClickedCheckPlaylistShowLink()
 
 	if (show)
 	{
-		auto& cred = GetPropertySheet()->m_selected_cred;
-
 		TemplateParams params
 		{
-			.creds = cred
+			.creds = GetPropertySheet()->m_selected_cred
 		};
 
 		std::string api_token;
-		if (GetPropertySheet()->m_plugin->get_api_token(params, api_token))
+		if (GetPropertySheet()->m_plugin->get_vod_api_token(params, api_token))
 		{
 			params.playlist_idx = m_wndVodTemplates.GetCurSel();
 			GetPropertySheet()->m_plugin->update_provider_params(params);

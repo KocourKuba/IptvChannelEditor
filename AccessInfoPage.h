@@ -37,10 +37,10 @@ class CAccessInfoPage : public CTooltipPropertyPage
 	DECLARE_DYNAMIC(CAccessInfoPage)
 
 public:
-	explicit CAccessInfoPage(std::vector<Credentials>& creds);   // standard constructor
+	explicit CAccessInfoPage(std::vector<std::shared_ptr<Credentials>>& creds);   // standard constructor
 	virtual ~CAccessInfoPage() = default;
 
-	Credentials& GetCheckedAccount();
+	std::shared_ptr<Credentials> GetCheckedAccount();
 
 	// Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -106,7 +106,7 @@ private:
 public:
 	CString m_status;
 
-	Credentials m_selected_cred;
+	std::shared_ptr<Credentials> m_selected_cred;
 	uri_stream* m_CurrentStream = nullptr;
 	std::vector<std::wstring> m_all_channels_lists;
 	std::shared_ptr<base_plugin> m_plugin;
@@ -165,5 +165,5 @@ private:
 	std::vector<DynamicParamsInfo> m_qualities;
 	std::vector<DynamicParamsInfo> m_pl_domains;
 	std::vector<DynamicParamsInfo> m_api_domains;
-	std::vector<Credentials>& m_all_credentials;
+	std::vector<std::shared_ptr<Credentials>>& m_all_credentials;
 };

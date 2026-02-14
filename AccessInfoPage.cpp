@@ -114,7 +114,7 @@ BEGIN_MESSAGE_MAP(CAccessInfoPage, CTooltipPropertyPage)
 END_MESSAGE_MAP()
 
 
-CAccessInfoPage::CAccessInfoPage(std::vector<Credentials>& creds)
+CAccessInfoPage::CAccessInfoPage(std::vector<std::shared_ptr<Credentials>>& creds)
 	: CTooltipPropertyPage(IDD_DIALOG_ACCESS_INFO)
 	, m_all_credentials(creds)
 {
@@ -305,23 +305,23 @@ void CAccessInfoPage::CreateAccountsList()
 		{
 			using enum AccountAccessType;
 			case enPin:
-				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_password().c_str());
+				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred->get_password().c_str());
 				break;
 
 			case enLoginPass:
-				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_login().c_str());
-				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_password().c_str());
+				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred->get_login().c_str());
+				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred->get_password().c_str());
 				break;
 
 			case enOtt:
-				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_ott_key().c_str());
-				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_portal().c_str());
+				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred->get_ott_key().c_str());
+				m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred->get_portal().c_str());
 				break;
 
 			default:break;
 		}
 
-		m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred.get_comment().c_str());
+		m_wndAccounts.SetItemText(idx, (int)++sub_idx, cred->get_comment().c_str());
 
 		++idx;
 	}
@@ -361,7 +361,7 @@ void CAccessInfoPage::FillConfigs()
 	for (const auto& entry : m_configs)
 	{
 		int idx = m_wndConfigs.AddString(entry.c_str());
-		if (entry == m_selected_cred.get_config())
+		if (entry == m_selected_cred->get_config())
 			m_initial_config = idx;
 	}
 	m_wndConfigs.SetCurSel(0);
@@ -369,12 +369,11 @@ void CAccessInfoPage::FillConfigs()
 
 void CAccessInfoPage::FillChannelsList()
 {
-	auto& selected = GetCheckedAccount();
-	if (selected.not_valid)
+	if (GetCheckedAccount()->invalid)
 		return;
 
 	int idx = 0;
-	auto ch_list(selected.ch_list);
+	auto ch_list(GetCheckedAccount()->ch_list);
 	bool all = ch_list.empty();
 	m_wndChLists.DeleteAllItems();
 	for (const auto& channel : m_all_channels_lists)
@@ -391,13 +390,13 @@ BOOL CAccessInfoPage::OnApply()
 {
 	UpdateData(TRUE);
 
-	auto& selected = GetCheckedAccount();
-	if (selected.not_valid)
+	auto selected = GetCheckedAccount();
+	if (selected->invalid)
 	{
 		return TRUE;
 	}
 
-	if (selected.update_url.empty() != selected.update_package_url.empty())
+	if (selected->update_url.empty() != selected->update_package_url.empty())
 	{
 		AfxMessageBox(IDS_STRING_BOTH_PATH_MUST_FILLED, MB_ICONERROR | MB_OK);
 		return FALSE;
@@ -449,27 +448,28 @@ void CAccessInfoPage::OnBnClickedButtonAdd()
 {
 	m_wndAccounts.InsertItem(m_wndAccounts.GetItemCount(), L"new");
 
-	Credentials cred;
+	auto cred = std::make_shared<Credentials>();
 	static constexpr auto newVal = "new";
 	switch (m_plugin->get_access_type())
 	{
 		using enum AccountAccessType;
 		case enPin:
-			cred.password = newVal;
+			cred->password = newVal;
+			m_all_credentials.emplace_back(cred);
 			break;
 
 		case enLoginPass:
-			cred.login = newVal;
+			cred->login = newVal;
+			m_all_credentials.emplace_back(cred);
 			break;
 
 		case enOtt:
-			cred.token = newVal;
+			cred->token = newVal;
+			m_all_credentials.emplace_back(cred);
 			break;
 
 		default:break;
 	}
-
-	m_all_credentials.emplace_back(cred);
 }
 
 void CAccessInfoPage::OnBnClickedButtonRemove()
@@ -532,8 +532,8 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 						m_wndAccounts.InsertItem(cnt, L"", 0);
 						m_wndAccounts.SetItemText(cnt, 1, access_key.c_str());
 
-						Credentials cred;
-						cred.set_ott_key(access_key);
+						auto cred = std::make_shared<Credentials>();
+						cred->set_ott_key(access_key);
 						m_all_credentials.emplace_back(cred);
 						break;
 					}
@@ -550,8 +550,8 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 					m_wndAccounts.InsertItem(cnt, L"", 0);
 					m_wndAccounts.SetItemText(cnt, 1, m[1].str().c_str());
 
-					Credentials cred;
-					cred.set_password(m[1].str());
+					auto cred = std::make_shared<Credentials>();
+					cred->set_password(m[1].str());
 					m_all_credentials.emplace_back(cred);
 				}
 				break;
@@ -567,9 +567,9 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 					m_wndAccounts.SetItemText(cnt, 1, m[1].str().c_str());
 					m_wndAccounts.SetItemText(cnt, 2, m[2].str().c_str());
 
-					Credentials cred;
-					cred.set_login(m[1].str());
-					cred.set_password(m[2].str());
+					auto cred = std::make_shared<Credentials>();
+					cred->set_login(m[1].str());
+					cred->set_password(m[2].str());
 					m_all_credentials.emplace_back(cred);
 				}
 				break;
@@ -606,7 +606,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 
 	// Persist the selected attachment details upon updating its text
 	m_wndAccounts.SetItemText(dispinfo->item.iItem, dispinfo->item.iSubItem, dispinfo->item.pszText);
-	auto& cred = m_all_credentials[dispinfo->item.iItem];
+	auto cred = m_all_credentials[dispinfo->item.iItem];
 	bool changed = true;
 
 	std::wstring text;
@@ -623,10 +623,10 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_password(text);
+					cred->set_password(text);
 					break;
 				case 2:
-					cred.set_comment(text);
+					cred->set_comment(text);
 					break;
 				default:
 					changed = false;
@@ -638,15 +638,15 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_login(text);
-					cred.s_token.clear();
+					cred->set_login(text);
+					cred->s_token.clear();
 					break;
 				case 2:
-					cred.set_password(text);
-					cred.s_token.clear();
+					cred->set_password(text);
+					cred->s_token.clear();
 					break;
 				case 3:
-					cred.set_comment(text);
+					cred->set_comment(text);
 					break;
 				default:
 					changed = false;
@@ -658,13 +658,13 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_ott_key(text);
+					cred->set_ott_key(text);
 					break;
 				case 2:
-					cred.set_portal(text);
+					cred->set_portal(text);
 					break;
 				case 3:
-					cred.set_comment(text);
+					cred->set_comment(text);
 					break;
 				default:
 					changed = false;
@@ -676,7 +676,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 			switch (dispinfo->item.iSubItem)
 			{
 				case 1:
-					cred.set_comment(text);
+					cred->set_comment(text);
 					break;
 				default:
 					changed = false;
@@ -738,8 +738,8 @@ void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResu
 
 void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 {
-	auto& selected = GetCheckedAccount();
-	if (selected.not_valid)
+	auto selected = GetCheckedAccount();
+	if (selected->invalid)
 	{
 		enable = FALSE;
 	}
@@ -764,7 +764,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 	m_wndCustomUpdateName.EnableWindow(enable);
 	m_wndUseDropboxUpdate.EnableWindow(enable);
 
-	if (selected.not_valid)
+	if (selected->invalid)
 	{
 		m_wndCaption.EnableWindow(enable);
 		m_wndPluginNameTemplate.EnableWindow(FALSE);
@@ -775,12 +775,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 		return;
 	}
 
-	auto it = std::find(m_configs.begin(), m_configs.end(), selected.get_config());
+	auto it = std::find(m_configs.begin(), m_configs.end(), selected->get_config());
 	int sel_idx = 0;
 	if (it != m_configs.end())
 	{
 		sel_idx = (int)std::distance(m_configs.begin(), it);
-		m_plugin->load_plugin_parameters(selected.get_config(), m_plugin->get_internal_name());
+		m_plugin->load_plugin_parameters(selected->get_config(), m_plugin->get_internal_name());
 	}
 	m_wndConfigs.SetCurSel(sel_idx);
 
@@ -803,12 +803,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndServers.AddString(info.get_name().c_str());
 		}
 
-		if (params.creds.server_id >= (int)m_servers.size())
+		if (selected->server_id >= (int)m_servers.size())
 		{
-			params.creds.server_id = 0;
+			selected->server_id = 0;
 		}
 
-		m_wndServers.SetCurSel(params.creds.server_id);
+		m_wndServers.SetCurSel(selected->server_id);
 	}
 
 	m_devices = m_plugin->get_devices_list();
@@ -821,12 +821,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndDevices.AddString(info.get_name().c_str());
 		}
 
-		if (params.creds.device_id >= (int)m_devices.size())
+		if (selected->device_id >= (int)m_devices.size())
 		{
-			params.creds.device_id = 0;
+			selected->device_id = 0;
 		}
 
-		m_wndDevices.SetCurSel(params.creds.device_id);
+		m_wndDevices.SetCurSel(selected->device_id);
 	}
 
 	m_qualities = m_plugin->get_qualities_list();
@@ -839,12 +839,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndQualities.AddString(info.get_name().c_str());
 		}
 
-		if (params.creds.quality_id >= (int)m_qualities.size())
+		if (selected->quality_id >= (int)m_qualities.size())
 		{
-			params.creds.quality_id = 0;
+			selected->quality_id = 0;
 		}
 
-		m_wndQualities.SetCurSel(params.creds.quality_id);
+		m_wndQualities.SetCurSel(selected->quality_id);
 	}
 
 	m_profiles = m_plugin->get_profiles_list();
@@ -858,12 +858,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndProfiles.AddString(info.get_name().c_str());
 		}
 
-		if (params.creds.profile_id >= (int)m_profiles.size())
+		if (selected->profile_id >= (int)m_profiles.size())
 		{
-			params.creds.profile_id = 0;
+			selected->profile_id = 0;
 		}
 
-		m_wndProfiles.SetCurSel(params.creds.profile_id);
+		m_wndProfiles.SetCurSel(selected->profile_id);
 	}
 
 	m_pl_domains = m_plugin->get_domains_list();
@@ -876,12 +876,12 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndPlDomains.AddString(info.get_name().c_str());
 		}
 
-		if (params.creds.domain_id >= (int)m_pl_domains.size())
+		if (selected->domain_id >= (int)m_pl_domains.size())
 		{
-			params.creds.domain_id = 0;
+			selected->domain_id = 0;
 		}
 
-		m_wndPlDomains.SetCurSel(params.creds.domain_id);
+		m_wndPlDomains.SetCurSel(selected->domain_id);
 	}
 	m_wndPlDomains.EnableWindow(m_pl_domains.size() > 1 && enable);
 
@@ -895,60 +895,60 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 			m_wndApiDomains.AddString(info.get_name().c_str());
 		}
 
-		if (params.creds.api_domain_id >= (int)m_api_domains.size())
+		if (selected->api_domain_id >= (int)m_api_domains.size())
 		{
-			params.creds.api_domain_id = 0;
+			selected->api_domain_id = 0;
 		}
 
-		m_wndApiDomains.SetCurSel(params.creds.api_domain_id);
+		m_wndApiDomains.SetCurSel(selected->api_domain_id);
 	}
 	m_wndApiDomains.EnableWindow(m_api_domains.size() > 1 && enable);
 
-	m_wndCustomCaption.SetCheck(selected.custom_caption);
-	m_wndCaption.EnableWindow(selected.custom_caption && enable);
-	m_caption = selected.get_caption().c_str();
+	m_wndCustomCaption.SetCheck(selected->custom_caption);
+	m_wndCaption.EnableWindow(selected->custom_caption && enable);
+	m_caption = selected->get_caption().c_str();
 
-	m_wndCustomPluginName.SetCheck(selected.custom_plugin_name);
-	m_wndPluginNameTemplate.EnableWindow(selected.custom_plugin_name && enable);
-	m_pluginNameTemplate = (selected.custom_plugin_name ? selected.get_plugin_name().c_str() : utils::DUNE_PLUGIN_FILE_NAME);
+	m_wndCustomPluginName.SetCheck(selected->custom_plugin_name);
+	m_wndPluginNameTemplate.EnableWindow(selected->custom_plugin_name && enable);
+	m_pluginNameTemplate = (selected->custom_plugin_name ? selected->get_plugin_name().c_str() : utils::DUNE_PLUGIN_FILE_NAME);
 	if (m_pluginNameTemplate.IsEmpty())
 		m_pluginNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
 
-	m_pluginName = std::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
+	m_pluginName = std::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), *selected)).c_str();
 
-	m_wndCustomLogo.SetCheck(selected.custom_logo);
-	m_wndLogo.EnableWindow(selected.custom_logo && enable);
+	m_wndCustomLogo.SetCheck(selected->custom_logo);
+	m_wndLogo.EnableWindow(selected->custom_logo && enable);
 
-	if (!selected.get_logo().empty() && std::filesystem::path(selected.get_logo()).parent_path().empty())
-		m_logo = std::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_logo()).c_str();
+	if (!selected->get_logo().empty() && std::filesystem::path(selected->get_logo()).parent_path().empty())
+		m_logo = std::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected->get_logo()).c_str();
 	else
-		m_logo = selected.get_logo().c_str();
+		m_logo = selected->get_logo().c_str();
 
-	m_wndCustomBackground.SetCheck(selected.custom_background);
-	m_wndBackground.EnableWindow(selected.custom_background && enable);
+	m_wndCustomBackground.SetCheck(selected->custom_background);
+	m_wndBackground.EnableWindow(selected->custom_background && enable);
 
-	if (!selected.get_background().empty() && std::filesystem::path(selected.get_background()).parent_path().empty())
-		m_background = std::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected.get_background()).c_str();
+	if (!selected->get_background().empty() && std::filesystem::path(selected->get_background()).parent_path().empty())
+		m_background = std::format(LR"({:s}\{:s})", GetAppPath(utils::PLUGIN_ROOT) + L"plugins_images", selected->get_background()).c_str();
 	else
-		m_background = selected.get_background().c_str();
+		m_background = selected->get_background().c_str();
 
-	m_channelsWebPath = selected.get_ch_web_path().c_str();
+	m_channelsWebPath = selected->get_ch_web_path().c_str();
 
-	m_wndAutoIncrement.SetCheck(selected.custom_increment);
-	m_wndVersionID.EnableWindow(selected.custom_increment && enable);
+	m_wndAutoIncrement.SetCheck(selected->custom_increment);
+	m_wndVersionID.EnableWindow(selected->custom_increment && enable);
 
-	m_wndCustomUpdateName.SetCheck(selected.custom_update_name);
-	m_wndUpdateNameTemplate.EnableWindow(selected.custom_update_name && enable);
+	m_wndCustomUpdateName.SetCheck(selected->custom_update_name);
+	m_wndUpdateNameTemplate.EnableWindow(selected->custom_update_name && enable);
 
-	m_updateNameTemplate = (selected.custom_update_name ? selected.get_update_name().c_str() : utils::DUNE_UPDATE_INFO_NAME);
+	m_updateNameTemplate = (selected->custom_update_name ? selected->get_update_name().c_str() : utils::DUNE_UPDATE_INFO_NAME);
 	if (m_updateNameTemplate.IsEmpty())
 		m_updateNameTemplate = utils::DUNE_UPDATE_INFO_NAME;
 
-	m_updateName = m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected).c_str();
+	m_updateName = m_plugin->compile_name_template(m_updateNameTemplate.GetString(), *selected).c_str();
 
-	if (selected.custom_increment)
+	if (selected->custom_increment)
 	{
-		m_versionIdx = selected.get_version_id().c_str();
+		m_versionIdx = selected->get_version_id().c_str();
 	}
 	else
 	{
@@ -956,9 +956,9 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 		m_versionIdx = std::format(L"{:d}{:02d}{:02d}{:02d}", date.GetYear(), date.GetMonth(), date.GetDay(), date.GetHour()).c_str();
 	}
 
-	m_wndUpdatePackageUrl.SetWindowText(selected.get_update_package_url().c_str());
-	m_wndUpdateUrl.SetWindowText(selected.get_update_url().c_str());
-	m_wndUseDropboxUpdate.SetCheck(selected.use_dropbox ? 1 : 0);
+	m_wndUpdatePackageUrl.SetWindowText(selected->get_update_package_url().c_str());
+	m_wndUpdateUrl.SetWindowText(selected->get_update_url().c_str());
+	m_wndUseDropboxUpdate.SetCheck(selected->use_dropbox ? 1 : 0);
 
 	UpdateData(FALSE);
 }
@@ -969,13 +969,13 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 
 	if ((pNMLV->uChanged & LVIF_STATE))
 	{
-		auto& selected = GetCheckedAccount();
-		if (selected.not_valid)
+		auto selected = GetCheckedAccount();
+		if (selected->invalid)
 			return;
 
 		if (pNMLV->uOldState == 0 && (pNMLV->uNewState & LVIS_SELECTED) == LVIS_SELECTED)
 		{
-			if (const auto& pair = selected.m_direct_links.find(get_utf8(m_all_channels_lists[pNMLV->iItem])); pair != selected.m_direct_links.end())
+			if (const auto& pair = selected->m_direct_links.find(get_utf8(m_all_channels_lists[pNMLV->iItem])); pair != selected->m_direct_links.end())
 			{
 				m_wndDirectLink.SetWindowText(get_utf16(pair->second).c_str());
 			}
@@ -1001,7 +1001,7 @@ void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResu
 			}
 		}
 
-		selected.ch_list.swap(ch_list);
+		selected->ch_list.swap(ch_list);
 	}
 
 	*pResult = 0;
@@ -1016,11 +1016,11 @@ void CAccessInfoPage::GetAccountInfo()
 	m_wndProfiles.EnableWindow(FALSE);
 	m_wndInfo.DeleteAllItems();
 
-	auto& selected_cred = GetCheckedAccount();
-	if (selected_cred.not_valid)
+	auto selected = GetCheckedAccount();
+	if (selected->invalid)
 		return;
 
-	m_wndEmbed.SetCheck(selected_cred.embed);
+	m_wndEmbed.SetCheck(selected->embed);
 	m_wndEmbed.EnableWindow(TRUE);
 
 	if (m_plugin->get_access_type() == AccountAccessType::enNone)
@@ -1033,7 +1033,7 @@ void CAccessInfoPage::GetAccountInfo()
 
 	TemplateParams params
 	{
-		.creds = selected_cred
+		.creds = selected
 	};
 
 	std::string api_token;
@@ -1044,10 +1044,6 @@ void CAccessInfoPage::GetAccountInfo()
 
 	m_plugin->parse_account_info(params);
 	m_plugin->update_provider_params(params);
-	if (selected_cred != params.creds)
-	{
-		selected_cred = params.creds;
-	}
 
 	auto pl_url = m_plugin->get_playlist_url(params);
 
@@ -1107,13 +1103,15 @@ void CAccessInfoPage::GetAccountInfo()
 	UpdateData(FALSE);
 }
 
-Credentials& CAccessInfoPage::GetCheckedAccount()
+std::shared_ptr<Credentials> CAccessInfoPage::GetCheckedAccount()
 {
-	static Credentials empty;
-	empty.not_valid = true;
+	int checked = GetCheckedAccountIdx();
+	if (checked != -1 && checked < (int)m_all_channels_lists.size())
+	{
+		return m_all_credentials[checked];
+	}
 
-	int selected = GetCheckedAccountIdx();
-	return selected != -1 ? m_all_credentials[selected] : empty;
+	return std::make_shared<Credentials>(true);
 }
 
 int CAccessInfoPage::GetCheckedAccountIdx()
@@ -1139,18 +1137,18 @@ int CAccessInfoPage::GetSelectedList()
 void CAccessInfoPage::OnCbnSelchangeComboConfigs()
 {
 	int account_idx = GetCheckedAccountIdx();
-	auto& selected = GetCheckedAccount();
+	auto selected = GetCheckedAccount();
 	int idx = m_wndConfigs.GetCurSel();
 	if (idx < 1)
 	{
-		selected.config.clear();
+		selected->config.clear();
 	}
 	else
 	{
 		CString value;
 		m_wndConfigs.GetLBText(idx, value);
-		selected.set_config(value.GetString());
-		m_plugin->load_plugin_parameters(selected.get_config(), m_plugin->get_internal_name());
+		selected->set_config(value.GetString());
+		m_plugin->load_plugin_parameters(selected->get_config(), m_plugin->get_internal_name());
 		CreateAccountsList();
 		m_wndAccounts.SetCheck(account_idx);
 	}
@@ -1158,68 +1156,60 @@ void CAccessInfoPage::OnCbnSelchangeComboConfigs()
 
 void CAccessInfoPage::OnCbnSelchangeComboServerId()
 {
-	auto& selected = GetCheckedAccount();
-	selected.server_id = m_wndServers.GetCurSel();
+	GetCheckedAccount()->server_id = m_wndServers.GetCurSel();
 }
 
 void CAccessInfoPage::OnCbnSelchangeComboDeviceId()
 {
-	auto& selected = GetCheckedAccount();
-	selected.device_id = m_wndDevices.GetCurSel();
+	GetCheckedAccount()->device_id = m_wndDevices.GetCurSel();
 }
 
 void CAccessInfoPage::OnCbnSelchangeComboProfile()
 {
-	auto& selected = GetCheckedAccount();
-	selected.profile_id = m_wndProfiles.GetCurSel();
+	GetCheckedAccount()->profile_id = m_wndProfiles.GetCurSel();
 }
 
 void CAccessInfoPage::OnCbnSelchangeComboQuality()
 {
-	auto& selected = GetCheckedAccount();
-	selected.quality_id = m_wndQualities.GetCurSel();
+	GetCheckedAccount()->quality_id = m_wndQualities.GetCurSel();
 }
 
 void CAccessInfoPage::OnCbnSelchangeComboPlDomain()
 {
-	auto& selected = GetCheckedAccount();
-	selected.domain_id = m_wndPlDomains.GetCurSel();
+	GetCheckedAccount()->domain_id = m_wndPlDomains.GetCurSel();
 }
 
 void CAccessInfoPage::OnCbnSelchangeComboApiDomain()
 {
-	auto& selected = GetCheckedAccount();
-	selected.api_domain_id = m_wndApiDomains.GetCurSel();
+	GetCheckedAccount()->api_domain_id = m_wndApiDomains.GetCurSel();
 }
 
 void CAccessInfoPage::OnBnClickedCheckEmbed()
 {
-	auto& selected = GetCheckedAccount();
-	selected.embed = m_wndEmbed.GetCheck();
+	GetCheckedAccount()->embed = m_wndEmbed.GetCheck();
 }
 
 void CAccessInfoPage::OnBnClickedCheckCustomPluginCaption()
 {
-	auto& selected = GetCheckedAccount();
-	selected.custom_caption = m_wndCustomCaption.GetCheck();
+	int check = m_wndCustomCaption.GetCheck();
+	GetCheckedAccount()->custom_caption = check;
 
-	m_wndCaption.EnableWindow(selected.custom_caption);
+	m_wndCaption.EnableWindow(check);
 }
 
 void CAccessInfoPage::OnEnChangeEditPluginCaption()
 {
 	UpdateData(TRUE);
 	m_caption.Trim();
-	auto& selected = GetCheckedAccount();
-	selected.set_caption(m_caption.GetString());
+	GetCheckedAccount()->set_caption(m_caption.GetString());
 }
 
 void CAccessInfoPage::OnBnClickedCheckCustomPluginNameTemplate()
 {
-	auto& selected = GetCheckedAccount();
-	selected.custom_plugin_name = m_wndCustomPluginName.GetCheck();
+	int check = m_wndCustomPluginName.GetCheck();
+	GetCheckedAccount()->custom_plugin_name = check;
 
-	m_wndPluginNameTemplate.EnableWindow(selected.custom_plugin_name);
+	m_wndPluginNameTemplate.EnableWindow(check);
 
 	OnEnChangeEditPluginNameTemplate();
 }
@@ -1227,40 +1217,39 @@ void CAccessInfoPage::OnBnClickedCheckCustomPluginNameTemplate()
 void CAccessInfoPage::OnEnChangeEditPluginNameTemplate()
 {
 	UpdateData(TRUE);
-	auto& selected = GetCheckedAccount();
+	auto selected = GetCheckedAccount();
 	if (utils::is_ascii(m_pluginNameTemplate.GetString()))
 	{
 		m_pluginNameTemplate.Trim();
-		selected.set_plugin_name(m_pluginNameTemplate.GetString());
+		selected->set_plugin_name(m_pluginNameTemplate.GetString());
 	}
 	else
 	{
 		AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
 
-		m_pluginNameTemplate = selected.get_plugin_name().c_str();
+		m_pluginNameTemplate = selected->get_plugin_name().c_str();
 	}
 
-	m_pluginName = std::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), selected)).c_str();
+	m_pluginName = std::format(L"dune_plugin_{:s}.zip", m_plugin->compile_name_template(m_pluginNameTemplate.GetString(), *selected)).c_str();
 
 	UpdateData(FALSE);
 }
 
 void CAccessInfoPage::OnBnClickedCheckCustomPluginLogo()
 {
-	auto& selected = GetCheckedAccount();
-	selected.custom_logo = m_wndCustomLogo.GetCheck();
+	int check = m_wndCustomLogo.GetCheck();
+	GetCheckedAccount()->custom_logo = check;
 
-	m_wndLogo.EnableWindow(selected.custom_logo);
+	m_wndLogo.EnableWindow(check);
 }
 
 void CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo()
 {
 	UpdateData(TRUE);
-	auto& selected = GetCheckedAccount();
 	m_logo.Trim();
 	if (utils::is_ascii(std::filesystem::path(m_logo.GetString()).filename().wstring().c_str()))
 	{
-		selected.set_logo(m_logo.GetString());
+		GetCheckedAccount()->set_logo(m_logo.GetString());
 	}
 	else
 	{
@@ -1272,20 +1261,19 @@ void CAccessInfoPage::OnEnChangeMfceditbrowsePluginLogo()
 
 void CAccessInfoPage::OnBnClickedCheckCustomPluginBackground()
 {
-	auto& selected = GetCheckedAccount();
-	selected.custom_background = m_wndCustomBackground.GetCheck();
+	int check = m_wndCustomBackground.GetCheck();
+	GetCheckedAccount()->custom_background = check;
 
-	m_wndBackground.EnableWindow(selected.custom_background);
+	m_wndBackground.EnableWindow(check);
 }
 
 void CAccessInfoPage::OnEnChangeMfceditbrowsePluginBackground()
 {
 	UpdateData(TRUE);
-	auto& selected = GetCheckedAccount();
 	if (utils::is_ascii(std::filesystem::path(m_background.GetString()).filename().wstring().c_str()))
 	{
 		m_background.Trim();
-		selected.set_background(m_background.GetString());
+		GetCheckedAccount()->set_background(m_background.GetString());
 	}
 	else
 	{
@@ -1297,26 +1285,25 @@ void CAccessInfoPage::OnEnChangeMfceditbrowsePluginBackground()
 
 void CAccessInfoPage::OnBnClickedCheckAutoincrementVersion()
 {
-	auto& selected = GetCheckedAccount();
-	selected.custom_increment = m_wndAutoIncrement.GetCheck();
+	int check = m_wndAutoIncrement.GetCheck();
+	GetCheckedAccount()->custom_increment = check;
 
-	m_wndVersionID.EnableWindow(selected.custom_increment);
+	m_wndVersionID.EnableWindow(check);
 }
 
 void CAccessInfoPage::OnEnChangeEditPluginUpdateVersion()
 {
 	UpdateData(TRUE);
-	auto& selected = GetCheckedAccount();
 
-	selected.set_version_id(m_versionIdx.GetString());
+	GetCheckedAccount()->set_version_id(m_versionIdx.GetString());
 }
 
 void CAccessInfoPage::OnBnClickedCheckCustomUpdateNameTemplate()
 {
-	auto& selected = GetCheckedAccount();
-	selected.custom_update_name = m_wndCustomUpdateName.GetCheck();
+	int check = m_wndCustomUpdateName.GetCheck();
+	GetCheckedAccount()->custom_update_name = check;
 
-	m_wndUpdateNameTemplate.EnableWindow(selected.custom_update_name);
+	m_wndUpdateNameTemplate.EnableWindow(check);
 
 	OnEnChangeEditPluginUpdateNameTemplate();
 }
@@ -1325,19 +1312,18 @@ void CAccessInfoPage::OnEnChangeEditPluginUpdateNameTemplate()
 {
 	UpdateData(TRUE);
 
-	auto& selected = GetCheckedAccount();
 	if (utils::is_ascii(m_updateNameTemplate.GetString()))
 	{
 		m_updateNameTemplate.Trim();
-		selected.set_update_name(m_updateNameTemplate.GetString());
+		GetCheckedAccount()->set_update_name(m_updateNameTemplate.GetString());
 	}
 	else
 	{
 		AfxMessageBox(IDS_STRING_WRN_NON_ASCII, MB_ICONERROR | MB_OK);
-		m_updateNameTemplate = selected.get_update_name().c_str();
+		m_updateNameTemplate = GetCheckedAccount()->get_update_name().c_str();
 	}
 
-	m_updateName = m_plugin->compile_name_template(m_updateNameTemplate.GetString(), selected).c_str();
+	m_updateName = m_plugin->compile_name_template(m_updateNameTemplate.GetString(), *GetCheckedAccount()).c_str();
 
 	UpdateData(FALSE);
 }
@@ -1346,24 +1332,21 @@ void CAccessInfoPage::OnEnChangeEditPluginChannelsWebPath()
 {
 	UpdateData(TRUE);
 
-	auto& selected = GetCheckedAccount();
-	selected.set_ch_web_path(m_channelsWebPath.GetString());
+	GetCheckedAccount()->set_ch_web_path(m_channelsWebPath.GetString());
 }
 
 void CAccessInfoPage::OnBnClickedButtonEditConfig()
 {
-	auto& selected = GetCheckedAccount();
-
 	auto pSheet = std::make_unique<CPluginConfigPropertySheet>(m_configs, load_string_resource(IDS_STRING_PLUGIN_CONFIG).c_str(), REG_PLUGIN_CFG_WINDOW_POS);
 	pSheet->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	pSheet->m_psh.dwFlags &= ~PSH_HASHELP;
 	pSheet->m_plugin = GetPluginFactory().create_plugin(m_plugin->get_plugin_type());
 	if (m_wndConfigs.GetCurSel() != m_initial_config)
-		pSheet->m_plugin->load_plugin_parameters(selected.get_config(), m_plugin->get_internal_name());
+		pSheet->m_plugin->load_plugin_parameters(GetCheckedAccount()->get_config(), m_plugin->get_internal_name());
 	else
 		pSheet->m_plugin->copy_config(*m_plugin);
 	pSheet->m_CurrentStream = m_CurrentStream;
-	pSheet->m_selected_cred = selected;
+	pSheet->m_selected_cred = GetCheckedAccount();
 
 	auto pDlgCfg = std::make_unique<CPluginConfigPage>();
 	pDlgCfg->m_psp.dwFlags &= ~PSP_HASHELP;
@@ -1392,8 +1375,7 @@ void CAccessInfoPage::OnBnClickedButtonEditConfig()
 
 void CAccessInfoPage::OnBnClickedButtonBrowseDirectLink()
 {
-	auto& selectedAccount = GetCheckedAccount();
-	if (selectedAccount.not_valid)
+	if (GetCheckedAccount()->invalid)
 		return;
 
 	int selectedList = GetSelectedList();
@@ -1408,7 +1390,7 @@ void CAccessInfoPage::OnBnClickedButtonBrowseDirectLink()
 	const auto& ch_list = get_utf8(m_all_channels_lists[selectedList]);
 	if (dlg.m_url.IsEmpty())
 	{
-		selectedAccount.m_direct_links.erase(ch_list);
+		GetCheckedAccount()->m_direct_links.erase(ch_list);
 	}
 	else
 	{
@@ -1428,11 +1410,11 @@ void CAccessInfoPage::OnBnClickedButtonBrowseDirectLink()
 					dlg.m_url.Replace(L"&dl=0", L"");
 				}
 			}
-			selectedAccount.m_direct_links[ch_list] = get_utf8(dlg.m_url);
+			GetCheckedAccount()->m_direct_links[ch_list] = get_utf8(dlg.m_url);
 		}
 		else
 		{
-			selectedAccount.m_direct_links[ch_list] = get_utf8(dlg.m_url);
+			GetCheckedAccount()->m_direct_links[ch_list] = get_utf8(dlg.m_url);
 		}
 	}
 
@@ -1441,8 +1423,7 @@ void CAccessInfoPage::OnBnClickedButtonBrowseDirectLink()
 
 void CAccessInfoPage::OnBnClickedButtonBrowseUpdateDesc()
 {
-	auto& selected = GetCheckedAccount();
-	if (selected.not_valid)
+	if (GetCheckedAccount()->invalid)
 		return;
 
 	CUrlDlg dlg;
@@ -1452,17 +1433,17 @@ void CAccessInfoPage::OnBnClickedButtonBrowseUpdateDesc()
 
 	std::wstring url(dlg.m_url.GetString());
 	CString updateName = m_updateNameTemplate + L".xml";
-	if (!TransformDropboxPath(url, m_plugin->compile_name_template(updateName.GetString(), selected)))
+	if (!TransformDropboxPath(url, m_plugin->compile_name_template(updateName.GetString(), *GetCheckedAccount())))
 		return;
 
 	m_wndUpdateUrl.SetWindowText(url.c_str());
-	selected.set_update_url(url);
+	GetCheckedAccount()->set_update_url(url);
 }
 
 void CAccessInfoPage::OnBnClickedButtonBrowseUpdateFile()
 {
-	auto& selected = GetCheckedAccount();
-	if (selected.not_valid)
+	auto selected = GetCheckedAccount();
+	if (selected->invalid)
 		return;
 
 	CUrlDlg dlg;
@@ -1472,11 +1453,11 @@ void CAccessInfoPage::OnBnClickedButtonBrowseUpdateFile()
 
 	std::wstring url(dlg.m_url.GetString());
 	CString updateName = m_updateNameTemplate + L".tar.gz";
-	if (!TransformDropboxPath(url, m_plugin->compile_name_template(updateName.GetString(), selected)))
+	if (!TransformDropboxPath(url, m_plugin->compile_name_template(updateName.GetString(), *selected)))
 		return;
 
 	m_wndUpdatePackageUrl.SetWindowText(url.c_str());
-	selected.set_update_package_url(url);
+	GetCheckedAccount()->set_update_package_url(url);
 }
 
 bool CAccessInfoPage::TransformDropboxPath(std::wstring& dropbox_link, const std::wstring& file)
@@ -1525,9 +1506,8 @@ void CAccessInfoPage::UpdateTemplatedFields(const Credentials& selected)
 
 void CAccessInfoPage::OnBnClickedCheckUseDropbox()
 {
-	auto& selected = GetCheckedAccount();
-	if (!selected.not_valid)
+	if (!GetCheckedAccount()->invalid)
 	{
-		selected.use_dropbox = m_wndUseDropboxUpdate.GetCheck() != 0;
+		GetCheckedAccount()->use_dropbox = m_wndUseDropboxUpdate.GetCheck() != 0;
 	}
 }

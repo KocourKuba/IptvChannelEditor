@@ -312,14 +312,13 @@ class sharaclub_config extends default_config
         $count = count($this->vod_items);
         $cat_info[Vod_Category::FLAG_ALL_MOVIES] = $count;
         $genres = array();
+        $countries = array();
         $years = array();
-        foreach ($this->vod_items as $movie) {
-            $movie = (object)$movie;
-            $category = (string)$movie->category;
+        foreach ($this->vod_items as $movieData) {
+            $category = safe_get_value($movieData, 'category');
             if (empty($category)) {
                 $category = TR::load('no_category');
             }
-
             if (!array_key_exists($category, $cat_info)) {
                 $cat_info[$category] = 0;
             }
@@ -327,10 +326,17 @@ class sharaclub_config extends default_config
             ++$cat_info[$category];
 
             // collect filters information
-            $movie_year = (int)$movie->info['year'];
-            $years[$movie_year] = $movie_year;
-            foreach ($movie->info['genre'] as $genre) {
-                $genres[$genre] = $genre;
+            $year = safe_get_value($movieData, array('info', 'year'), 0);
+            $years[$year] = $year;
+            foreach (safe_get_value($movieData, array('info', 'genre')) as $genre) {
+                if (!empty($genre)) {
+                    $genres[$genre] = $genre;
+                }
+            }
+            foreach (safe_get_value($movieData, array('info', 'country'), array()) as $country) {
+                if (!empty($country)) {
+                    $countries[$country] = $country;
+                }
             }
         }
 
@@ -342,18 +348,21 @@ class sharaclub_config extends default_config
         }
 
         ksort($genres);
+        ksort($countries);
         krsort($years);
 
         $filters = array();
         $filters['genre'] = array('title' => TR::t('genre'), 'values' => array(-1 => TR::t('no')));
+        $filters['country'] = array('title' => TR::t('country'), 'values' => array(-1 => TR::t('no')));
         $filters['from'] = array('title' => TR::t('year_from'), 'values' => array(-1 => TR::t('no')));
         $filters['to'] = array('title' => TR::t('year_to'), 'values' => array(-1 => TR::t('no')));
 
         $filters['genre']['values'] += $genres;
+        $filters['country']['values'] += $countries;
         $filters['from']['values'] += $years;
         $filters['to']['values'] += $years;
 
-        $this->set_filters($filters);
+        $this->set_filter_types($filters);
 
         hd_debug_print("Categories read: " . count($category_list));
         return true;
@@ -374,11 +383,10 @@ class sharaclub_config extends default_config
 
         $movies = array();
         $keyword = utf8_encode(mb_strtolower($keyword, 'UTF-8'));
-        foreach ($this->vod_items as $item) {
-            $item = (object)$item;
-            $search = utf8_encode(mb_strtolower($item->name, 'UTF-8'));
+        foreach ($this->vod_items as $movieData) {
+            $search = utf8_encode(mb_strtolower(safe_get_value($movieData, 'name'), 'UTF-8'));
             if (strpos($search, $keyword) !== false) {
-                $movies[] = self::CreateShortMovie($item);
+                $movies[] = $this->CreateShortMovie($movieData);
             }
         }
 
@@ -409,17 +417,16 @@ class sharaclub_config extends default_config
         }
 
         $pos = 0;
-        foreach ($this->vod_items as $movie) {
+        foreach ($this->vod_items as $movieData) {
             if ($pos++ < $page_idx) continue;
 
-            $movie = (object)$movie;
-            $category = $movie->category;
+            $category = safe_get_value($movieData, 'category');
             if (empty($category)) {
                 $category = TR::load('no_category');
             }
 
             if ($category_id === Vod_Category::FLAG_ALL_MOVIES || $category_id === $category) {
-                $movies[] = self::CreateShortMovie($movie);
+                $movies[] = $this->CreateShortMovie($movieData);
             }
         }
         $this->get_next_page($query_id, $pos - $page_idx);
@@ -431,52 +438,46 @@ class sharaclub_config extends default_config
     /**
      * @inheritDoc
      */
-    public function getFilterList($params)
+    public function getFilterList($query_id)
     {
         hd_debug_print(null, true);
-        hd_debug_print("getFilterList: $params");
+        hd_debug_print("getFilterList: $query_id");
 
         if ($this->vod_items === false) {
             hd_debug_print("failed to load movies");
             return array();
         }
 
-        $movies = array();
+        $filter_params = $this->get_filter_params($query_id);
 
-        $pairs = explode(",", $params);
-        $post_params = array();
-        foreach ($pairs as $pair) {
-            /** @var array $m */
-            if (preg_match("/^(.+):(.+)$/", $pair, $m)) {
-                $filter = $this->get_filter($m[1]);
-                if ($filter !== null && !empty($filter['values'])) {
-                    $item_idx = array_search($m[2], $filter['values']);
-                    if ($item_idx !== false && $item_idx !== -1) {
-                        $post_params[$m[1]] = $filter['values'][$item_idx];
-                    }
+        $movies = array();
+        foreach ($this->vod_items as $movieData) {
+            $match_genre = true;
+            $match_country = true;
+            $match_year = true;
+
+            if (isset($filter_params['genre'])) {
+                $genres = safe_get_value($movieData, array('info', 'genre'), array());
+                $match_genre = !empty($genres) && in_array($filter_params['genre'], $genres);
+            }
+
+            if (isset($filter_params['country'])) {
+                $countries = safe_get_value($movieData, array('info', 'country'), array());
+                $match_country = !empty($countries) && in_array($filter_params['country'], $countries);
+            }
+
+            if (isset($filter_params['from']) || isset($filter_params['to'])) {
+                $match_year = false;
+                $year_from = safe_get_value($filter_params, 'from', ~PHP_INT_MAX);
+                $year_to = safe_get_value($filter_params, 'to', PHP_INT_MAX);
+                $year = (int)safe_get_value($movieData, array('info', 'year'));
+                if ($year >= $year_from && $year <= $year_to) {
+                    $match_year = true;
                 }
             }
-        }
 
-        foreach ($this->vod_items as $movie) {
-            $movie = (object)$movie;
-            if (isset($post_params['genre'])) {
-                $match_genre = in_array($post_params['genre'], $movie->info['genre']);
-            } else {
-                $match_genre = true;
-            }
-
-            $match_year = false;
-            $year_from = isset($post_params['from']) ? $post_params['from'] : ~PHP_INT_MAX;
-            $year_to = isset($post_params['to']) ? $post_params['to'] : PHP_INT_MAX;
-
-            $movie_year = (int)$movie->info['year'];
-            if ($movie_year >= $year_from && $movie_year <= $year_to) {
-                $match_year = true;
-            }
-
-            if ($match_year && $match_genre) {
-                $movies[] = self::CreateShortMovie($movie);
+            if ($match_year && $match_genre && $match_country) {
+                $movies[] = $this->CreateShortMovie($movieData);
             }
         }
 
@@ -485,26 +486,31 @@ class sharaclub_config extends default_config
     }
 
     /**
-     * @param Object $movie_obj
+     * @param array $movieData
      * @return Short_Movie
      */
-    protected static function CreateShortMovie($movie_obj)
+    protected function CreateShortMovie($movieData)
     {
         $id = '-1';
-        if (isset($movie_obj->id)) {
-            $id = (string)$movie_obj->id;
-        } else if (isset($movie_obj->series_id)) {
-            $id = $movie_obj->series_id . "_serial";
+        if (isset($movieData['id'])) {
+            $id = (string)$movieData['id'];
+        } else if (isset($movieData['series_id'])) {
+            $id = $movieData['series_id'] . "_serial";
         }
 
-        $info = (object)$movie_obj->info;
-        $genres = HD::ArrayToStr($info->genre);
-        $country = HD::ArrayToStr($info->country);
-        return new Short_Movie(
-            $id,
-            (string)$movie_obj->name,
-            (string)$info->poster,
-            TR::t('vod_screen_movie_info__5', $movie_obj->name, $info->year, $country, $genres, $info->rating)
+        $name = safe_get_value($movieData, 'name');
+        $info = safe_get_value($movieData, 'info');
+        $genres = HD::ArrayToStr(safe_get_value($info, 'genre'));
+        $country = HD::ArrayToStr(safe_get_value($info, 'country'));
+        $movie_info = TR::t('vod_screen_movie_info__5',
+            safe_get_value($info, 'year'),
+            $name,
+            $country,
+            $genres,
+            safe_get_value($info, 'rating')
         );
+        $movie = new Short_Movie($id, $name, safe_get_value($info, 'poster'), $movie_info);
+
+        return $movie;
     }
 }

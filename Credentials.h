@@ -33,6 +33,8 @@ DEALINGS IN THE SOFTWARE.
 class Credentials
 {
 public:
+	explicit Credentials(bool no_valid = false) : invalid(no_valid) {}
+
 	void Clear();
 
 	std::wstring get_login() const { return utils::utf8_to_utf16(login); }
@@ -130,6 +132,47 @@ public:
 		SERIALIZE_STRUCT(j, c, use_dropbox); //-V601
 	}
 
+	friend void to_json(nlohmann::json& j, const std::shared_ptr<Credentials>& c)
+	{
+		SERIALIZE_STRUCT_P(j, c, login);
+		SERIALIZE_STRUCT_P(j, c, password);
+		SERIALIZE_STRUCT_P(j, c, ott_key);
+		SERIALIZE_STRUCT_P(j, c, subdomain);
+		SERIALIZE_STRUCT_P(j, c, domain);
+		SERIALIZE_STRUCT_P(j, c, portal);
+		SERIALIZE_STRUCT_P(j, c, token);
+		SERIALIZE_STRUCT_P(j, c, s_token);
+		SERIALIZE_STRUCT_P(j, c, comment);
+		SERIALIZE_STRUCT_P(j, c, config);
+		SERIALIZE_STRUCT_P(j, c, caption);
+		SERIALIZE_STRUCT_P(j, c, logo);
+		SERIALIZE_STRUCT_P(j, c, background);
+		SERIALIZE_STRUCT_P(j, c, update_url);
+		SERIALIZE_STRUCT_P(j, c, update_package_url);
+		SERIALIZE_STRUCT_P(j, c, version_id);
+		SERIALIZE_STRUCT_P(j, c, plugin_name);
+		SERIALIZE_STRUCT_P(j, c, update_name);
+		SERIALIZE_STRUCT_P(j, c, package_name);
+		SERIALIZE_STRUCT_P(j, c, ch_web_path);
+
+		SERIALIZE_STRUCT_P(j, c, custom_caption);
+		SERIALIZE_STRUCT_P(j, c, custom_logo);
+		SERIALIZE_STRUCT_P(j, c, custom_background);
+		SERIALIZE_STRUCT_P(j, c, custom_plugin_name);
+		SERIALIZE_STRUCT_P(j, c, custom_increment);
+		SERIALIZE_STRUCT_P(j, c, custom_update_name);
+		SERIALIZE_STRUCT_P(j, c, server_id);
+		SERIALIZE_STRUCT_P(j, c, device_id);
+		SERIALIZE_STRUCT_P(j, c, profile_id);
+		SERIALIZE_STRUCT_P(j, c, quality_id);
+		SERIALIZE_STRUCT_P(j, c, domain_id);
+		SERIALIZE_STRUCT_P(j, c, api_domain_id);
+		SERIALIZE_STRUCT_P(j, c, embed);
+		SERIALIZE_STRUCT_P(j, c, ch_list);
+		SERIALIZE_STRUCT_P(j, c, m_direct_links);
+		SERIALIZE_STRUCT_P(j, c, use_dropbox); //-V601
+	}
+
 	friend void from_json(const nlohmann::json& j, Credentials& c)
 	{
 		DESERIALIZE_STRUCT(j, c, login);
@@ -171,6 +214,47 @@ public:
 		DESERIALIZE_STRUCT(j, c, use_dropbox);
 	}
 
+	friend void from_json(const nlohmann::json& j, std::shared_ptr<Credentials>& c)
+	{
+		DESERIALIZE_STRUCT_P(j, c, login);
+		DESERIALIZE_STRUCT_P(j, c, password);
+		DESERIALIZE_STRUCT_P(j, c, ott_key);
+		DESERIALIZE_STRUCT_P(j, c, subdomain);
+		DESERIALIZE_STRUCT_P(j, c, domain);
+		DESERIALIZE_STRUCT_P(j, c, portal);
+		DESERIALIZE_STRUCT_P(j, c, token);
+		DESERIALIZE_STRUCT_P(j, c, s_token);
+		DESERIALIZE_STRUCT_P(j, c, comment);
+		DESERIALIZE_STRUCT_P(j, c, config);
+		DESERIALIZE_STRUCT_P(j, c, caption);
+		DESERIALIZE_STRUCT_P(j, c, logo);
+		DESERIALIZE_STRUCT_P(j, c, background);
+		DESERIALIZE_STRUCT_P(j, c, update_url);
+		DESERIALIZE_STRUCT_P(j, c, update_package_url);
+		DESERIALIZE_STRUCT_P(j, c, version_id);
+		DESERIALIZE_STRUCT_P(j, c, plugin_name);
+		DESERIALIZE_STRUCT_P(j, c, update_name);
+		DESERIALIZE_STRUCT_P(j, c, package_name);
+		DESERIALIZE_STRUCT_P(j, c, ch_web_path);
+
+		DESERIALIZE_STRUCT_P(j, c, custom_caption);
+		DESERIALIZE_STRUCT_P(j, c, custom_logo);
+		DESERIALIZE_STRUCT_P(j, c, custom_background);
+		DESERIALIZE_STRUCT_P(j, c, custom_plugin_name);
+		DESERIALIZE_STRUCT_P(j, c, custom_increment);
+		DESERIALIZE_STRUCT_P(j, c, custom_update_name);
+		DESERIALIZE_STRUCT_P(j, c, server_id);
+		DESERIALIZE_STRUCT_P(j, c, device_id);
+		DESERIALIZE_STRUCT_P(j, c, profile_id);
+		DESERIALIZE_STRUCT_P(j, c, quality_id);
+		DESERIALIZE_STRUCT_P(j, c, domain_id);
+		DESERIALIZE_STRUCT_P(j, c, api_domain_id);
+		DESERIALIZE_STRUCT_P(j, c, embed);
+		DESERIALIZE_STRUCT_P(j, c, ch_list);
+		DESERIALIZE_STRUCT_P(j, c, m_direct_links);
+		DESERIALIZE_STRUCT_P(j, c, use_dropbox);
+	}
+
 public:
 	std::string login;
 	std::string password;
@@ -207,11 +291,11 @@ public:
 	int api_domain_id = 0; // zero based index
 	int embed = 0;
 
-	bool not_valid = false;
+	bool invalid = false;
 	bool use_dropbox = false;
 
-	std::vector<std::string> ch_list;
-	std::map<std::string, std::string> m_direct_links;
+	std::vector<std::string> ch_list{};
+	std::map<std::string, std::string> m_direct_links{};
 
 	bool operator!=(const Credentials& that)
 	{
@@ -232,7 +316,7 @@ public:
 
 struct TemplateParams
 {
-	Credentials creds;
+	std::shared_ptr<Credentials> creds;
 	std::wstring error_string;
 	StreamType streamSubtype = StreamType::enHLS;
 	int shift_back = 0;

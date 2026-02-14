@@ -41,8 +41,8 @@ constexpr auto PARAM_FMT = L"&{:s}={:s}";
 
 bool plugin_tvclub::get_api_token(TemplateParams& params, std::string& api_token)
 {
-	params.creds.s_token = utils::md5_hash_hex(params.creds.login + utils::md5_hash_hex(params.creds.password));
-	api_token = params.creds.s_token;
+	params.creds->s_token = utils::md5_hash_hex(params.creds->login + utils::md5_hash_hex(params.creds->password));
+	api_token = params.creds->s_token;
 	return !empty(api_token);
 }
 
@@ -98,7 +98,7 @@ void plugin_tvclub::parse_account_info(TemplateParams& params)
 
 void plugin_tvclub::fill_servers_list(TemplateParams& params)
 {
-	if (params.creds.login.empty() || params.creds.password.empty() || !get_servers_list().empty())
+	if (params.creds->login.empty() || params.creds->password.empty() || !get_servers_list().empty())
 		return;
 
 	std::vector<DynamicParamsInfo> servers;
@@ -125,7 +125,7 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 					const auto& server = item.value();
 					DynamicParamsInfo info{ utils::get_json_string("id", server), utils::get_json_string("name", server) };
 					if (info.get_id() == current)
-						params.creds.server_id = (int)servers.size();
+						params.creds->server_id = (int)servers.size();
 
 					servers.emplace_back(info);
 				}

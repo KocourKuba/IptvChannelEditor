@@ -187,6 +187,12 @@ public:
 	virtual bool get_api_token(TemplateParams& params, std::string& api_token) { return true; };
 
 	/// <summary>
+	/// returns s_token from account if exist
+	/// </summary>
+	/// <param name="params">parameters used to download url</param>
+	virtual bool get_vod_api_token(TemplateParams& params, std::string& api_token) { return get_api_token(params, api_token); };
+
+	/// <summary>
 	/// parse vod
 	/// </summary>
 	virtual void parse_vod(const ThreadConfig& config) {}
@@ -194,12 +200,12 @@ public:
 	/// <summary>
 	/// parse movie
 	/// </summary>
-	virtual void fetch_movie_info(const Credentials& creds, vod_movie& movie) {}
+	virtual void fetch_movie_info(const Credentials& creds, vod_movie_def& movie) {}
 
 	/// <summary>
 	/// get movie url
 	/// </summary>
-	virtual std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie) { return movie.url; }
+	virtual std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie) { return movie.url; }
 
 protected:
 

@@ -81,7 +81,7 @@ protected:
 public:
 	bool m_configPages = false;
 	bool m_allow_save = false;
-	Credentials m_selected_cred;
+	std::shared_ptr<Credentials> m_selected_cred;
 	uri_stream* m_CurrentStream = nullptr;
 	std::shared_ptr<base_plugin> m_plugin;
 

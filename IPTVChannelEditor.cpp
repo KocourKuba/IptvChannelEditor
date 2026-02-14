@@ -722,25 +722,25 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		return false;
 	}
 
-	const auto& cred = all_credentials[selected];
+	auto creds = all_credentials[selected];
 
 	// load plugin settings
-	plugin->load_plugin_parameters(utils::utf8_to_utf16(cred.config), plugin->get_internal_name());
+	plugin->load_plugin_parameters(utils::utf8_to_utf16(creds->config), plugin->get_internal_name());
 	plugin->configure_plugin();
 
 	COleDateTime cur_dt = COleDateTime::GetCurrentTime();
 	const auto& date_string = std::format("{:d}{:02d}{:02d}{:02d}", cur_dt.GetYear(), cur_dt.GetMonth(), cur_dt.GetDay(), cur_dt.GetHour());
 	std::string version_index;
-	if (cred.custom_increment && !cred.version_id.empty())
+	if (creds->custom_increment && !creds->version_id.empty())
 	{
-		version_index = cred.version_id;
+		version_index = creds->version_id;
 	}
 	else
 	{
 		version_index = date_string;
 	}
 
-	if (make_web_update && !cred.use_dropbox && (cred.update_url.empty() || cred.update_package_url.empty()))
+	if (make_web_update && !creds->use_dropbox && (creds->update_url.empty() || creds->update_package_url.empty()))
 	{
 		// revert back to previous state
 		GetConfig().set_plugin_type(old_plugin_type);
@@ -764,10 +764,10 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		const auto& fname = dir_entry.path().filename();
 		const auto& channels = fname.string();
 		if (fname.extension() == L".xml"
-			&& (noCustom || std::find(cred.ch_list.begin(), cred.ch_list.end(), channels) != cred.ch_list.end()))
+			&& (noCustom || std::find(creds->ch_list.begin(), creds->ch_list.end(), channels) != creds->ch_list.end()))
 		{
 			std::string link;
-			if (const auto& pair = cred.m_direct_links.find(channels); pair != cred.m_direct_links.end())
+			if (const auto& pair = creds->m_direct_links.find(channels); pair != creds->m_direct_links.end())
 			{
 				link = pair->second;
 			}
@@ -968,14 +968,14 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	std::filesystem::path plugin_bgnd;
 	if (!noCustom)
 	{
-		if (cred.custom_logo && !cred.logo.empty())
+		if (creds->custom_logo && !creds->logo.empty())
 		{
-			plugin_logo = utils::utf8_to_utf16(cred.logo);
+			plugin_logo = utils::utf8_to_utf16(creds->logo);
 		}
 
-		if (cred.custom_background && !cred.background.empty())
+		if (creds->custom_background && !creds->background.empty())
 		{
-			plugin_bgnd = utils::utf8_to_utf16(cred.background);
+			plugin_bgnd = utils::utf8_to_utf16(creds->background);
 		}
 	}
 
@@ -1021,10 +1021,10 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	config_data.assign(std::istreambuf_iterator<char>(istream), std::istreambuf_iterator<char>());
 
 	std::string plugin_caption;
-	if (!cred.custom_caption || cred.caption.empty())
+	if (!creds->custom_caption || creds->caption.empty())
 		plugin_caption = utils::utf16_to_utf8(plugin->get_title());
 	else
-		plugin_caption = cred.caption;
+		plugin_caption = creds->caption;
 
 	// preprocess common values
 	utils::string_replace_inplace(config_data, "{name}", plugin->get_name().c_str());
@@ -1040,16 +1040,16 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		std::filesystem::copy_file(src_path, packFolder / src_config_file, std::filesystem::copy_options::overwrite_existing, err);
 	}
 
-	const auto& package_info_name = plugin->compile_name_template((cred.custom_update_name && !cred.get_update_name().empty()
-																   ? cred.get_update_name() : utils::DUNE_UPDATE_INFO_NAME), cred);
+	const auto& package_info_name = plugin->compile_name_template((creds->custom_update_name && !creds->get_update_name().empty()
+																   ? creds->get_update_name() : utils::DUNE_UPDATE_INFO_NAME), *creds);
 
 	const auto& version_string = std::format("{:s}.{:s}", STRPRODUCTVER, date_string);
-	std::string update_url(cred.update_url);
-	if (!cred.update_url.empty())
+	std::string update_url(creds->update_url);
+	if (!creds->update_url.empty())
 	{
-		if (cred.update_url.find("?rlkey") == std::string::npos)
+		if (creds->update_url.find("?rlkey") == std::string::npos)
 		{
-			update_url = std::format("{:s}{:s}.xml", cred.update_url, utils::utf16_to_utf8(package_info_name));
+			update_url = std::format("{:s}{:s}.xml", creds->update_url, utils::utf16_to_utf8(package_info_name));
 		}
 	}
 
@@ -1087,12 +1087,12 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		d_node->first_node("list_version_support")->value(channels_list_version.c_str());
 		if (!noCustom)
 		{
-			if (!cred.ch_web_path.empty())
+			if (!creds->ch_web_path.empty())
 			{
-				d_node->first_node("channels_url_path")->value(cred.ch_web_path.c_str());
+				d_node->first_node("channels_url_path")->value(creds->ch_web_path.c_str());
 			}
 
-			if (!cred.m_direct_links.empty())
+			if (!creds->m_direct_links.empty())
 			{
 				auto node = d_node->first_node("channels_direct_links");
 				for (const auto& [key, value] : channels_list)
@@ -1141,7 +1141,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		//	 <timeout>0</timeout>
 		// </check_update>
 
-		if (!noCustom && !cred.update_url.empty())
+		if (!noCustom && !creds->update_url.empty())
 		{
 			auto cu_node = d_node->first_node("check_update");
 			cu_node->first_node("url")->value(update_url.c_str());
@@ -1198,7 +1198,7 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	}
 
 	// copy embedded info
-	if (!noEmbed && cred.embed && !make_web_update)
+	if (!noEmbed && creds->embed && !make_web_update)
 	{
 		JSON_ALL_TRY
 		{
@@ -1207,16 +1207,16 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 			{
 				using enum AccountAccessType;
 				case enPin:
-					node["password"] = cred.password;
+					node["password"] = creds->password;
 					break;
 				case enLoginPass:
-					node["login"] = cred.login;
-					node["password"] = cred.password;
+					node["login"] = creds->login;
+					node["password"] = creds->password;
 					break;
 				case enOtt:
-					node["subdomain"] = cred.subdomain;
-					node["ott_key"] = cred.ott_key;
-					node["vportal"] = cred.portal;
+					node["subdomain"] = creds->subdomain;
+					node["ott_key"] = creds->ott_key;
+					node["vportal"] = creds->portal;
 					break;
 				default:
 					break;
@@ -1225,37 +1225,37 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 			if (!plugin->get_devices_list().empty())
 			{
 				int size = (int)plugin->get_devices_list().size();
-				size_t device_id = cred.device_id >= size ? size - 1 : cred.device_id;
+				size_t device_id = creds->device_id >= size ? size - 1 : creds->device_id;
 				node["device_id"] = plugin->get_devices_list().at(device_id).id;
 			}
 			if (!plugin->get_servers_list().empty())
 			{
 				int size = (int)plugin->get_servers_list().size();
-				size_t server_id = cred.server_id >= size ? size - 1 : cred.server_id;
+				size_t server_id = creds->server_id >= size ? size - 1 : creds->server_id;
 				node["server_id"] = plugin->get_servers_list().at(server_id).id;
 			}
 			if (!plugin->get_qualities_list().empty())
 			{
 				int size = (int)plugin->get_qualities_list().size();
-				size_t quality_id = cred.quality_id >= size ? size - 1 : cred.quality_id;
+				size_t quality_id = creds->quality_id >= size ? size - 1 : creds->quality_id;
 				node["quality_id"] = plugin->get_qualities_list().at(quality_id).id;
 			}
 			if (!plugin->get_profiles_list().empty())
 			{
 				int size = (int)plugin->get_profiles_list().size();
-				size_t profile_id = cred.profile_id >= size ? size - 1 : cred.profile_id;
-				node["profile_id"] = plugin->get_profiles_list().at(cred.profile_id).id;
+				size_t profile_id = creds->profile_id >= size ? size - 1 : creds->profile_id;
+				node["profile_id"] = plugin->get_profiles_list().at(creds->profile_id).id;
 			}
 			if (!plugin->get_domains_list().empty())
 			{
 				int size = (int)plugin->get_domains_list().size();
-				size_t domain_id = cred.domain_id >= size ? size - 1 : cred.domain_id;
+				size_t domain_id = creds->domain_id >= size ? size - 1 : creds->domain_id;
 				node["domain_id"] = plugin->get_domains_list().at(domain_id).id;
 			}
 			if (!plugin->get_api_domains_list().empty())
 			{
 				int size = (int)plugin->get_api_domains_list().size();
-				size_t api_domain_id = cred.api_domain_id >= size ? size - 1 : cred.api_domain_id;
+				size_t api_domain_id = creds->api_domain_id >= size ? size - 1 : creds->api_domain_id;
 				node["api_domain_id"] = plugin->get_api_domains_list().at(api_domain_id).id;
 			}
 
@@ -1331,8 +1331,8 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	{
 		packed_file = std::format(L"{:s}dune_plugin_{:s}.zip",
 								  output_path,
-								  plugin->compile_name_template((cred.custom_plugin_name && !cred.get_plugin_name().empty()
-																 ? cred.get_plugin_name() : utils::DUNE_PLUGIN_FILE_NAME), cred));
+								  plugin->compile_name_template((creds->custom_plugin_name && !creds->get_plugin_name().empty()
+																 ? creds->get_plugin_name() : utils::DUNE_PLUGIN_FILE_NAME), *creds));
 
 		compressor.SetCompressionFormat(CompressionFormat::_Format::Zip);
 		res = archiver.CreateArchive(packed_file);
@@ -1398,14 +1398,14 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 			version_info->append_node(rapidxml::alloc_node(*doc, "beta", "no"));
 			version_info->append_node(rapidxml::alloc_node(*doc, "critical", "no"));
 
-			if (cred.update_package_url.find(".dropbox") != std::string::npos)
+			if (creds->update_package_url.find(".dropbox") != std::string::npos)
 			{
-				version_info->append_node(rapidxml::alloc_node(*doc, "url", cred.update_package_url.c_str()));
+				version_info->append_node(rapidxml::alloc_node(*doc, "url", creds->update_package_url.c_str()));
 			}
 			else
 			{
 				version_info->append_node(rapidxml::alloc_node(*doc, "url", std::format("{:s}{:s}.tar.gz",
-																						cred.update_package_url,
+																						creds->update_package_url,
 																						utils::utf16_to_utf8(package_info_name)).c_str()));
 			}
 			version_info->append_node(rapidxml::alloc_node(*doc, "md5", utils::md5_hash_file(packed_file).c_str()));
@@ -1557,7 +1557,7 @@ void ConvertAccounts()
 				const auto& quality_id = GetConfig().get_int(false, REG_QUALITY_ID);
 				const auto& embed = GetConfig().get_int(false, REG_EMBED_INFO);
 
-				std::vector<Credentials> all_credentials;
+				std::vector<std::shared_ptr<Credentials>> all_credentials;
 				int idx = 0;
 				int selected = 0;
 				const auto& all_accounts = utils::string_split(acc_data, L';');
@@ -1567,31 +1567,31 @@ void ConvertAccounts()
 					if (creds.empty() || creds.front().empty()) continue;
 
 					size_t last = 0;
-					Credentials cred;
+					auto cred = std::make_shared<Credentials>();
 					switch (access_type)
 					{
 						using enum AccountAccessType;
 						case enPin:
-							cred.password = get_array_value(creds, last);
-							if (cred.password == password)
+							cred->password = get_array_value(creds, last);
+							if (cred->password == password)
 							{
 								selected = idx;
 							}
 							break;
 
 						case enLoginPass:
-							cred.login = get_array_value(creds, last);
-							cred.password = get_array_value(creds, last);
-							if (cred.login == login)
+							cred->login = get_array_value(creds, last);
+							cred->password = get_array_value(creds, last);
+							if (cred->login == login)
 							{
 								selected = idx;
 							}
 							break;
 
 						case enOtt:
-							cred.token = get_array_value(creds, last);
-							cred.portal = get_array_value(creds, last);
-							if (cred.token == token)
+							cred->token = get_array_value(creds, last);
+							cred->portal = get_array_value(creds, last);
+							if (cred->token == token)
 							{
 								selected = idx;
 							}
@@ -1600,33 +1600,33 @@ void ConvertAccounts()
 						default:break;
 					}
 
-					cred.comment = get_array_value(creds, last);
-					cred.server_id = device_id;
-					cred.profile_id = profile_id;
-					cred.quality_id = quality_id;
-					cred.embed = embed;
+					cred->comment = get_array_value(creds, last);
+					cred->server_id = device_id;
+					cred->profile_id = profile_id;
+					cred->quality_id = quality_id;
+					cred->embed = embed;
 
 					all_credentials.emplace_back(cred);
 				}
 
 				if (all_credentials.empty())
 				{
-					Credentials cred;
+					auto cred = std::make_shared<Credentials>();
 					switch (access_type)
 					{
 						using enum AccountAccessType;
 						case enPin:
-							cred.password = password;
+							cred->password = password;
 							break;
 
 						case enLoginPass:
-							cred.login = login;
-							cred.password = password;
+							cred->login = login;
+							cred->password = password;
 							break;
 
 						case enOtt:
-							cred.token = token;
-							cred.portal = portal;
+							cred->token = token;
+							cred->portal = portal;
 							break;
 
 						default: break;

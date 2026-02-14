@@ -44,10 +44,10 @@ constexpr auto PARAM_FMT = L"&{:s}={:s}";
 std::wstring plugin_sharaclub::get_playlist_url(const TemplateParams& params, std::wstring url /* = L"" */)
 {
 	url = get_playlist_info(params.playlist_idx).get_pl_template(); //-V763
-	if (params.creds.profile_id != 0)
+	if (params.creds->profile_id != 0)
 	{
 		const auto& profiles = get_profiles_list();
-		url += L"/" + profiles[params.creds.profile_id].get_id();
+		url += L"/" + profiles[params.creds->profile_id].get_id();
 	}
 
 	return base_plugin::get_playlist_url(params, url);
@@ -79,8 +79,8 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 					if (domains_list.empty()) {
 						domains_list.resize(1);
 					}
-					domains_list[0] = {"0", js_data["listdomain"].get<std::string>()};
-					epg_params[0].epg_domain = js_data["jsonEpgDomain"].get<std::string>();
+					domains_list[0] = {"0", utils::get_json_string("listdomain", js_data)};
+					epg_params[0].epg_domain = utils::get_json_string("jsonEpgDomain", js_data);
 				}
 			}
 			JSON_ALL_CATCH
@@ -94,7 +94,7 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 
 void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 {
-	if (params.creds.login.empty() || params.creds.password.empty() || !get_servers_list().empty())
+	if (params.creds->login.empty() || params.creds->password.empty() || !get_servers_list().empty())
 		return;
 
 	std::vector<DynamicParamsInfo> servers;
@@ -108,7 +108,7 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 			const auto& parsed_json = nlohmann::json::parse(req.body.str());
 			if (utils::get_json_int("status", parsed_json) == 1)
 			{
-				params.creds.server_id = utils::get_json_int("current", parsed_json);
+				params.creds->server_id = utils::get_json_int("current", parsed_json);
 				const auto& js_data = parsed_json["allow_nums"];
 				for (const auto& item : js_data.items())
 				{
@@ -150,7 +150,7 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 
 void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 {
-	if (!get_profiles_list().empty() || params.creds.login.empty() || params.creds.password.empty())
+	if (!get_profiles_list().empty() || params.creds->login.empty() || params.creds->password.empty())
 		return;
 
 	utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"list_profiles")) };
@@ -178,7 +178,7 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 					info.set_id(utils::get_json_wstring("id", profile));
 					info.set_name(utils::get_json_wstring("name", profile));
 					if (info.get_id() == current)
-						params.creds.profile_id = (int)profiles.size();
+						params.creds->profile_id = (int)profiles.size();
 
 					profiles.emplace_back(info);
 				}
@@ -248,7 +248,7 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 
 			std::shared_ptr<vod_category> category;
 			std::wstring category_name;
-			auto movie = std::make_shared<vod_movie>();
+			auto movie = std::make_shared<vod_movie_def>();
 
 			JSON_ALL_TRY
 			{
@@ -284,10 +284,10 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 
 					for (const auto& genre_item : info["genre"].items())
 					{
-						const auto& vod_title = utils::utf8_to_utf16(genre_item.value().get<std::string>());
-						vod_genre_def genre({ vod_title, vod_title });
+						const auto& genre_title = utils::get_json_wstring("", genre_item.value());
+						vod_genre_def genre({ genre_title, genre_title });
 
-						movie->genres.set_back(vod_title, genre);
+						movie->genres.set_back(genre_title, genre);
 					}
 
 					std::string country;
@@ -297,7 +297,7 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 						{
 							country += ", ";
 						}
-						country += country_item.value().get<std::string>();
+						country += utils::get_json_string("", country_item.value());
 					}
 					movie->country = utils::utf8_to_utf16(country);
 				}
@@ -311,11 +311,11 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 						season.id = utils::get_json_wstring("season", season_item);
 
 						const auto& season_info = season_item["info"];
-						season.season_id = utils::get_json_wstring("season", season_info);
+						season.number = utils::get_json_wstring("season", season_info);
 						season.title = utils::get_json_wstring("name", season_info);
 						if (season.title.empty())
 						{
-							season.title = load_string_resource(IDS_STRING_SEASON) + L" " + season.season_id;
+							season.title = load_string_resource(IDS_STRING_SEASON) + L" " + season.number;
 						}
 
 						season.year = utils::get_json_wstring("year", season_info);
@@ -331,7 +331,7 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 
 							vod_episode_def episode;
 							episode.id = utils::get_json_wstring("id", episode_item);
-							episode.episode_id = utils::get_json_wstring("episode", episode_item);
+							episode.number = utils::get_json_wstring("episode", episode_item);
 							episode.url = utils::get_json_wstring("video", episode_item);
 
 							season.episodes.set_back(episode.id, episode);
@@ -364,7 +364,7 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
-std::wstring plugin_sharaclub::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie)
+std::wstring plugin_sharaclub::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie)
 {
 	std::wstring url = movie.url;
 

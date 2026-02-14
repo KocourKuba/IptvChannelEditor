@@ -106,23 +106,6 @@ bool CrackUrl(const std::wstring& url, CrackedUrl* st /*= nullptr*/)
 }
 
 
-#ifndef defer
-
-template <typename T>
-struct deferrer
-{
-	T f;
-	deferrer(T f) : f(f) {};
-	deferrer(const deferrer&) = delete;
-	~deferrer() { f(); }
-};
-
-#define TOKEN_CONCAT_NX(a, b) a ## b
-#define TOKEN_CONCAT(a, b) TOKEN_CONCAT_NX(a, b)
-#define defer deferrer TOKEN_CONCAT(__deferred, __COUNTER__) =
-
-#endif
-
 bool DownloadFile(http_request& request)
 {
 	request.error_message.clear();

@@ -228,8 +228,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	Credentials& GetCurrentAccount();
-	void SetCurrentAccount(const Credentials& creds);
+	std::shared_ptr<Credentials> GetCurrentAccount();
 
 	bool is_allow_save() const { return m_allow_save; }
 	void set_allow_save(bool val = true);
@@ -473,7 +472,7 @@ private:
 	EpgAliases m_epg_aliases;
 
 	// Accounts
-	std::vector<Credentials> m_all_credentials;
+	std::vector<std::shared_ptr<Credentials>> m_all_credentials;
 
 	//////////////////////////////////////////////////////////////////////////
 	// channels part

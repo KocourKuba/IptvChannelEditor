@@ -52,22 +52,22 @@ constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
 bool plugin_iptvonline::get_api_token(TemplateParams& params, std::string& api_token)
 {
 	session_token_file = utils::utf8_to_utf16(std::format(SESSION_TOKEN_TEMPLATE,
-														  utils::md5_hash_hex(params.creds.login + utils::md5_hash_hex(params.creds.password))));
+														  utils::md5_hash_hex(params.creds->login + utils::md5_hash_hex(params.creds->password))));
 
 	api_token = get_file_cookie(session_token_file);
 	nlohmann::json json_request;
 	std::wstring url;
-	if (api_token.empty() && !params.creds.token.empty())
+	if (api_token.empty() && !params.creds->token.empty())
 	{
 		url = API_COMMAND_REFRESH_TOKEN;
 		json_request["grant_type"] = "refresh_token";
-		json_request["refresh_token"] = params.creds.token;
+		json_request["refresh_token"] = params.creds->token;
 	}
-	else if (params.creds.token.empty())
+	else if (params.creds->token.empty())
 	{
 		url = API_COMMAND_AUTH;
-		json_request["login"] = params.creds.login;
-		json_request["password"] = params.creds.password;
+		json_request["login"] = params.creds->login;
+		json_request["password"] = params.creds->password;
 	}
 	else
 	{
@@ -93,7 +93,7 @@ bool plugin_iptvonline::get_api_token(TemplateParams& params, std::string& api_t
 			set_file_cookie(session_token_file,
 							utils::get_json_string("access_token", parsed_json),
 							utils::get_json_int("expires_time", parsed_json));
-			params.creds.token = utils::get_json_string("refresh_token", parsed_json);
+			params.creds->token = utils::get_json_string("refresh_token", parsed_json);
 
 		}
 		JSON_ALL_CATCH
@@ -102,7 +102,7 @@ bool plugin_iptvonline::get_api_token(TemplateParams& params, std::string& api_t
 	{
 		const auto& error = std::format(L"plugin_iptvonline: Failed to get token: {:s}", req.error_message);
 		LOG_PROTOCOL(error);
-		params.creds.token.clear();
+		params.creds->token.clear();
 		delete_file_cookie(session_token_file);
 		api_token.clear();
 		AfxMessageBox(error.c_str(), MB_OK | MB_ICONERROR);
@@ -203,7 +203,7 @@ void plugin_iptvonline::fill_servers_list(TemplateParams& params)
 					DynamicParamsInfo info{ utils::get_json_string("id", server), utils::get_json_string("label", server) };
 					if (utils::get_json_bool("selected", server))
 					{
-						params.creds.server_id = idx;
+						params.creds->server_id = idx;
 					}
 					servers.emplace_back(info);
 					idx++;
@@ -233,7 +233,7 @@ bool plugin_iptvonline::set_server(TemplateParams& params)
 	if (!servers_list.empty())
 	{
 		nlohmann::json json_request;
-		json_request["server_location"] = std::stoi(servers_list[params.creds.server_id].id);
+		json_request["server_location"] = std::stoi(servers_list[params.creds->server_id].id);
 
 		utils::http_request req
 		{
@@ -256,7 +256,7 @@ bool plugin_iptvonline::set_server(TemplateParams& params)
 				{
 					if (utils::get_json_bool("selected", item.value()))
 					{
-						params.creds.server_id = idx;
+						params.creds->server_id = idx;
 						break;
 					}
 					idx++;
@@ -291,11 +291,12 @@ void plugin_iptvonline::parse_vod(const ThreadConfig& config)
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
-void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& movie)
+void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie_def& movie)
 {
+	auto creds_copy = std::make_shared<Credentials>(creds);
 	TemplateParams params
 	{
-		.creds = creds
+		.creds = creds_copy
 	};
 	update_provider_params(params);
 
@@ -321,11 +322,11 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 				const auto& season_item = season_it.value();
 				vod_season_def season;
 				season.id = utils::get_json_wstring("season", season_item);
-				season.season_id = utils::get_json_wstring("season", season_item);
+				season.number = utils::get_json_wstring("season", season_item);
 				season.title = utils::get_json_wstring("title", season_item);
 				if (season.title.empty())
 				{
-					season.title = load_string_resource(IDS_STRING_SEASON) + L" " + season.season_id;
+					season.title = load_string_resource(IDS_STRING_SEASON) + L" " + season.number;
 				}
 
 
@@ -336,9 +337,13 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 					vod_episode_def episode;
 					episode.id = utils::get_json_wstring("episode", episode_item);
 					episode.title = utils::get_json_wstring("title", episode_item);
-					episode.episode_id = utils::get_json_wstring("episode", episode_item);
+					episode.number = utils::get_json_wstring("episode", episode_item);
 					episode.url = utils::get_json_wstring("url", episode_item);
-					episode.audios.set_back(L"auto", vod_variant_def({ L"auto", episode.url }));
+
+					vod_variant_def def_audio;
+					def_audio.title = L"auto";
+					def_audio.url = episode.url;
+					movie.audios.set_back(def_audio.title, def_audio);
 
 					if (episode_item.contains("audios"))
 					{
@@ -351,7 +356,10 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 
 							if (!vod_title.empty() && !q_url.empty())
 							{
-								episode.audios.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
+								vod_variant_def audio;
+								audio.title = vod_title;
+								audio.url = q_url;
+								movie.audios.set_back(vod_title, audio);
 							}
 						}
 					}
@@ -365,7 +373,11 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 		{
 			movie.url = utils::get_json_wstring("url", value["medias"]);
 			movie.title = utils::get_json_wstring("title", value["medias"]);
-			movie.audios.set_back(L"auto", vod_variant_def({ L"auto", movie.url }));
+
+			vod_variant_def def_audio;
+			def_audio.title = L"auto";
+			def_audio.url = movie.url;
+			movie.audios.set_back(def_audio.title, def_audio);
 
 			if (value["medias"].contains("audios"))
 			{
@@ -377,7 +389,10 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 					const auto& q_url = utils::get_json_wstring("url", audios);
 					if (!vod_title.empty() && !q_url.empty())
 					{
-						movie.audios.set_back(vod_title, vod_variant_def({ vod_title, q_url }));
+						vod_variant_def audio;
+						audio.title = vod_title;
+						audio.url = q_url;
+						movie.audios.set_back(vod_title, audio);
 					}
 				}
 			}
@@ -386,7 +401,7 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie& mo
 	JSON_ALL_CATCH
 }
 
-std::wstring plugin_iptvonline::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie& movie)
+std::wstring plugin_iptvonline::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie)
 {
 	std::wstring url = movie.url;
 
@@ -465,7 +480,7 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 
 			JSON_ALL_TRY
 			{
-				auto movie = std::make_shared<vod_movie>();
+				auto movie = std::make_shared<vod_movie_def>();
 
 				movie->is_series = is_serial;
 				movie->id = utils::get_json_wstring("id", movie_item);
@@ -486,18 +501,17 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 						{
 							movie->country += L", ";
 						}
-						movie->country += utils::utf8_to_utf16(item.get<std::string>());
+						movie->country += utils::get_json_wstring("", item);
 					}
 				}
 				movie->year = utils::get_json_wstring("year", movie_item);
 
-				for (const auto& genre_item : movie_item["genres"].items())
+				for (const auto& genre_item : movie_item["genres"])
 				{
-					const auto& genre_value = genre_item.value();
-					const auto& vod_title = utils::utf8_to_utf16(genre_value.get<std::string>());
-					vod_genre_def genre({ vod_title, vod_title });
-					movie->genres.set_back(vod_title, genre);
-					movie_category->genres.set_back(vod_title, genre);
+					const auto& genre_title = utils::get_json_wstring("", genre_item);
+					vod_genre_def genre({ genre_title, genre_title });
+					movie->genres.set_back(genre_title, genre);
+					movie_category->genres.set_back(genre_title, genre);
 				}
 
 				movie_category->movies.set_back(movie->id, movie);

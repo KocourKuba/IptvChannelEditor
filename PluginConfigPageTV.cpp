@@ -375,10 +375,9 @@ void CPluginConfigPageTV::OnCbnSelchangeComboStreamType()
 
 void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 {
-	const auto& cred = GetPropertySheet()->m_selected_cred;
 	TemplateParams params
 	{
-		.creds = cred,
+		.creds = GetPropertySheet()->m_selected_cred,
 		.playlist_idx = m_wndPlaylistTemplates.GetCurSel()
 	};
 
@@ -459,10 +458,9 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShowLink()
 
 	if (show)
 	{
-		const auto& cred = GetPropertySheet()->m_selected_cred;
 		TemplateParams params
 		{
-			.creds = cred,
+			.creds = GetPropertySheet()->m_selected_cred,
 			.playlist_idx = m_wndPlaylistTemplates.GetCurSel()
 		};
 

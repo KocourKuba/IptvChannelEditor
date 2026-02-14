@@ -42,17 +42,17 @@ constexpr auto API_COMMAND_SET_URL = L"{{API_URL}}/?apiAction={:s}&{:s}={:s}&ses
 
 bool plugin_tvteam::get_api_token(TemplateParams& params, std::string& api_token)
 {
-	if (params.creds.login.empty() || params.creds.password.empty())
+	if (params.creds->login.empty() || params.creds->password.empty())
 	{
 		return {};
 	}
 
-	session_id_name = utils::utf8_to_utf16(std::format("session_{:s}", utils::md5_hash_hex(params.creds.login)));
+	session_id_name = utils::utf8_to_utf16(std::format("session_{:s}", utils::md5_hash_hex(params.creds->login)));
 
 	api_token = get_file_cookie(session_id_name);
 	if (api_token.empty())
 	{
-		const auto& url = std::format(API_COMMAND_AUTH, utils::utf8_to_utf16(utils::md5_hash_hex(params.creds.password)));
+		const auto& url = std::format(API_COMMAND_AUTH, utils::utf8_to_utf16(utils::md5_hash_hex(params.creds->password)));
 		utils::http_request req{ replace_params_vars(params, url) };
 
 		if (utils::DownloadFile(req))
@@ -93,9 +93,9 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 
 	if (!account_info.empty())
 	{
-		if (params.creds.s_token.empty())
+		if (params.creds->s_token.empty())
 		{
-			params.creds.set_s_token(std::get<std::wstring>(account_info[L"userToken"]));
+			params.creds->set_s_token(std::get<std::wstring>(account_info[L"userToken"]));
 		}
 	}
 	else
@@ -130,7 +130,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 					set_json_info("userEmail", js_account, account_info);
 					set_json_info("userBalance", js_account, account_info);
 					set_json_info("showPorno", js_account, account_info);
-					params.creds.s_token = utils::get_json_string("userToken", js_account);
+					params.creds->s_token = utils::get_json_string("userToken", js_account);
 					selected_server_id = utils::get_json_string("groupId", js_account);
 				}
 
@@ -163,7 +163,7 @@ void plugin_tvteam::parse_account_info(TemplateParams& params)
 
 						if (server_id == selected_server_id)
 						{
-							params.creds.server_id = idx;
+							params.creds->server_id = idx;
 						}
 
 						DynamicParamsInfo info{ server_id, server_name };

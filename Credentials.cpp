@@ -55,6 +55,6 @@ void Credentials::Clear()
 	server_id = 0;
 	profile_id = 0;
 	embed = 0;
-	not_valid = false;
+	invalid = false;
 }
 

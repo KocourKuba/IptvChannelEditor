@@ -28,63 +28,45 @@ DEALINGS IN THE SOFTWARE.
 #include "uri_base.h"
 #include "UtilsLib\vectormap.h"
 
-class vod_filter_def
+struct vod_item_def
 {
-public:
 	std::wstring id;
 	std::wstring title;
 };
+
+using vod_filter_def = vod_item_def;
+using vod_genre_def = vod_item_def;
 
 using vod_filter_storage = utils::vectormap<std::wstring, vod_filter_def>;
-
-class vod_genre_def
-{
-public:
-	std::wstring id;
-	std::wstring title;
-};
-
 using vod_genre_storage = utils::vectormap<std::wstring, vod_genre_def>;
 
-class vod_variant_def
+struct vod_variant_def : public vod_item_def
 {
-public:
-	std::wstring title;
 	std::wstring url;
 };
 
 using vod_variants_storage = utils::vectormap<std::wstring, vod_variant_def>;
 
-class vod_episode_def
+struct vod_episode_def : public vod_variant_def
 {
-public:
-	std::wstring id;
-	std::wstring episode_id;
-	std::wstring title;
-	std::wstring url;
+	std::wstring number;
 	vod_variants_storage qualities;
 	vod_variants_storage audios;
 };
 
-using vod_episode_episode = utils::vectormap<std::wstring, vod_episode_def>;
+using vod_episodes_storage = utils::vectormap<std::wstring, vod_episode_def>;
 
-class vod_season_def
+struct vod_season_def : public vod_item_def
 {
-public:
-	std::wstring id;
-	std::wstring season_id;
-	std::wstring title;
+	std::wstring number;
 	std::wstring year;
-	vod_episode_episode episodes;
+	vod_episodes_storage episodes;
 };
 
 using vod_season_storage = utils::vectormap<std::wstring, vod_season_def>;
 
-class vod_movie
+struct vod_movie_def : public vod_episode_def
 {
-public:
-	std::wstring id;
-	std::wstring title;
 	std::wstring title_orig;
 	std::wstring year;
 	std::wstring rating;
@@ -94,40 +76,11 @@ public:
 	std::wstring casting;
 	std::wstring description;
 	std::wstring category;
-	std::wstring url;
 	bool is_series = false;
 	int movie_time = 0; // in minutes
 	vod_genre_storage genres;
 	uri_base poster_url;
 	vod_season_storage seasons;
-	vod_variants_storage quality;
-	vod_variants_storage audios;
-
-	vod_movie& operator=(const vod_movie& src)
-	{
-		if (this != &src)
-		{
-			id = src.id;
-			title = src.title;
-			title_orig = src.title_orig;
-			year = src.year;
-			rating = src.rating;
-			age = src.age;
-			country = src.country;
-			director = src.director;
-			casting = src.casting;
-			description = src.description;
-			category = src.category;
-			url = src.url;
-			movie_time = src.movie_time;
-			genres = src.genres;
-			poster_url = src.poster_url;
-			seasons = src.seasons;
-			quality = src.quality;
-		}
-
-		return *this;
-	}
 
 	std::map<std::wstring, std::wstring*, std::less<>> parser_mapper = {
 		{L"id"          , &id},
@@ -144,20 +97,18 @@ public:
 	};
 };
 
-using vod_movie_storage = utils::vectormap<std::wstring, std::shared_ptr<vod_movie>>;
+using vod_movie_storage = utils::vectormap<std::wstring, std::shared_ptr<vod_movie_def>>;
 
-class vod_category
+struct vod_category
 {
-public:
 	vod_category() = default;
 	vod_category(const std::wstring& category_id) : id(category_id) {}
-	~vod_category() = default;
 
-public:
 	std::wstring id;
 	std::wstring name;
 	utils::vectormap<std::wstring, vod_filter_storage> filters;
 	vod_genre_storage genres;
+	vod_genre_storage years;
 	vod_movie_storage movies;
 };
 

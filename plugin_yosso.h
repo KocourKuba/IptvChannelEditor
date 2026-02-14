@@ -26,28 +26,19 @@ DEALINGS IN THE SOFTWARE.
 
 #pragma once
 #include "base_plugin.h"
-#include "UtilsLib\inet_utils.h"
+#include "vod_movie.h"
 
-class plugin_iptvonline : public base_plugin
+class plugin_yosso: public base_plugin
 {
 public:
-	bool get_api_token(TemplateParams& params, std::string& api_token) override;
-	void clear_account_info() override;
-	std::wstring get_playlist_url(const TemplateParams& params, std::wstring url = L"") override;
-	void parse_account_info(TemplateParams& params) override;
-	void fill_servers_list(TemplateParams& params) override;
-	bool set_server(TemplateParams& params) override;
+	bool get_vod_api_token(TemplateParams& params, std::string& api_token) override;
 	void parse_vod(const ThreadConfig& config) override;
 	void fetch_movie_info(const Credentials& creds, vod_movie_def& movie) override;
 	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie) override;
 
 private:
-	void collect_movies(const std::wstring& id,
-						const std::wstring& category_name,
-						const ThreadConfig & config,
-						std::unique_ptr<vod_category_storage>& categories,
-						bool is_serial = false);
-	nlohmann::json server_request(utils::http_request& request, const bool use_cache_ttl = false);
-
-	std::wstring session_token_file;
+	std::wstring jellyfin_parse_category(const nlohmann::json& val, std::shared_ptr<vod_category>& category, std::unique_ptr<vod_category_storage>& categories);
+	nlohmann::json jellyfin_request(const TemplateParams& params, const std::wstring& url, const std::map<std::string, std::string>& query_params = {}, bool authorized = true);
+	void collect_qualities(vod_episode_def& movie, const std::wstring& items_request_url, const Credentials& creds, const nlohmann::json& item) const;
+	std::string build_auth_header(const Credentials& creds, bool auth = true);
 };

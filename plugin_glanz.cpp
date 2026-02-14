@@ -75,7 +75,7 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 
 			std::shared_ptr<vod_category> category;
 			std::wstring category_name;
-			auto movie = std::make_shared<vod_movie>();
+			auto movie = std::make_shared<vod_movie_def>();
 
 			JSON_ALL_TRY
 			{
@@ -110,10 +110,10 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 				{
 					const auto& genre_item = item.value();
 					const auto& id = utils::get_json_wstring("id", genre_item);
-					const auto& vod_title = utils::get_json_wstring("title", genre_item);
-					vod_genre_def genre({ id, vod_title });
+					const auto& genre_title = utils::get_json_wstring("title", genre_item);
+					vod_genre_def genre({ id, genre_title });
 
-					movie->genres.set_back(vod_title, genre);
+					movie->genres.set_back(genre_title, genre);
 				}
 
 				category->movies.set_back(movie->id, movie);

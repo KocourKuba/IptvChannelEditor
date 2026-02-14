@@ -72,6 +72,7 @@ const CACHED_IMAGE_SUBDIR = 'cached_img';
 
 const CONTENT_TYPE_JSON = 'Content-Type: application/json; charset=utf-8';
 const CONTENT_TYPE_WWW_FORM_URLENCODED = 'Content-Type: application/x-www-form-urlencoded';
+const ACCEPT_JSON = 'Accept: application/json';
 const AUTH_BEARER = "Authorization: Bearer ";
 
 # Hard-coded constants.

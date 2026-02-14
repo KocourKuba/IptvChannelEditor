@@ -919,7 +919,7 @@
       "title": "glanz TV",
       "vod_engine": "Json",
       "vod_filter": true,
-      "vod_filters": [ "genre", "from", "to" ],
+      "vod_filters": [ "genre", "country", "from", "to" ],
       "vod_templates": [
         {
           "name": "Standard",
@@ -977,7 +977,7 @@
       "vod_engine": "Json",
       "vod_filter": true,
       "vod_season": true,
-      "vod_filters": [ "genre", "from", "to" ],
+      "vod_filters": [ "genre", "country", "from", "to" ],
       "vod_templates": [
         {
           "name": "Standard",
@@ -2294,7 +2294,7 @@
       "vod_engine": "Json",
       "vod_filter": true,
       "vod_season": true,
-      "vod_filters": [ "genre", "from", "to" ],
+      "vod_filters": [ "genre", "country", "from", "to" ],
       "vod_templates": [
         {
           "name": "Standard",

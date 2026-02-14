@@ -255,16 +255,16 @@ class sharavoz_config extends default_config
         $vod_items = $this->xtream->get_streams($arr[2], $category_id);
         $pos = 0;
         $movies = array();
-        foreach ($vod_items as $movie) {
+        foreach ($vod_items as $movieData) {
             if ($pos++ < $page_idx) continue;
 
-            $category = (string)$movie->category_id;
+            $category = (string)safe_get_value($movieData, 'category_id');
             if (empty($category)) {
                 $category = TR::load('no_category');
             }
 
             if ($category_id === Vod_Category::FLAG_ALL_MOVIES || $category_id === $category) {
-                $movies[] = self::CreateShortMovie($movie);
+                $movies[] = $this->CreateShortMovie((array)$movieData);
             }
         }
         $this->get_next_page($query_id, $pos - $page_idx);
@@ -294,27 +294,29 @@ class sharavoz_config extends default_config
     }
 
     /**
-     * @param Object $movie_obj
+     * @param array $movieData
      * @return Short_Movie
      */
-    protected static function CreateShortMovie($movie_obj)
+    protected function CreateShortMovie($movieData)
     {
         $id = '-1';
         $icon = '';
-        if (isset($movie_obj->stream_id)) {
-            $id = $movie_obj->stream_id . "_" . xtream_codes_api::VOD;
-            $icon = (string)$movie_obj->stream_icon;
-        } else if (isset($movie_obj->series_id)) {
-            $id = $movie_obj->series_id . "_" . xtream_codes_api::SERIES;
-            $icon = (string)$movie_obj->cover;
+        if (isset($movieData['stream_id'])) {
+            $id = $movieData['stream_id'] . "_" . xtream_codes_api::VOD;
+            $icon = (string)safe_get_value($movieData, 'stream_icon');
+        } else if (isset($movieData['series_id'])) {
+            $id = safe_get_value($movieData, 'series_id') . "_" . xtream_codes_api::SERIES;
+            $icon = safe_get_value($movieData, 'cover');
         }
 
-        return new Short_Movie(
-            $id,
-            (string)$movie_obj->name,
-            $icon,
-            TR::t('vod_screen_movie_info__2', $movie_obj->name, $movie_obj->rating)
+        $name = safe_get_value($movieData, 'name');
+        $movie = new Short_Movie($id, $name, $icon,
+            TR::t('vod_screen_movie_info__2', $name, safe_get_value($movieData, 'rating'))
         );
+
+        $this->plugin->vod->set_cached_short_movie($movie);
+
+        return $movie;
     }
 
     /**
@@ -349,10 +351,10 @@ class sharavoz_config extends default_config
             if ($streams === false) continue;
 
             foreach ($streams as $stream) {
-                $search = utf8_encode(mb_strtolower($stream->name, 'UTF-8'));
+                $search = utf8_encode(mb_strtolower(safe_get_value($stream, 'name'), 'UTF-8'));
                 if (strpos($search, $keyword) !== false) {
-                    $id = $stream_type === xtream_codes_api::SERIES ? $stream->series_id : $stream->stream_id;
-                    $movies[$id] = self::CreateShortMovie($stream);
+                    $id = safe_get_value($stream, $stream_type === xtream_codes_api::SERIES ?'series_id' : 'stream_id');
+                    $movies[$id] = $this->CreateShortMovie((array)$stream);
                 }
             }
         }

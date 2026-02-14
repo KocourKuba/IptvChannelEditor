@@ -198,7 +198,7 @@ class iptvonline_config extends default_config
             }
         }
 
-        $this->set_filters($exist_filters);
+        $this->set_filter_types($exist_filters);
 
         hd_debug_print("Categories read: " . count($category_list));
         hd_debug_print("Filters count: " . count($exist_filters));
@@ -241,12 +241,12 @@ class iptvonline_config extends default_config
     /**
      * @inheritDoc
      */
-    public function getFilterList($params)
+    public function getFilterList($query_id)
     {
         hd_debug_print(null, true);
-        hd_debug_print("getFilterList: $params");
+        hd_debug_print("getFilterList: $query_id");
 
-        $pairs = explode(",", $params);
+        $pairs = explode(",", $query_id);
         $filter_params = array();
         foreach ($pairs as $pair) {
             // country:USA

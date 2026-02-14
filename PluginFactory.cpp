@@ -43,6 +43,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_tvclub.h"
 #include "plugin_tvizi.h"
 #include "plugin_tvteam.h"
+#include "plugin_yosso.h"
 #include "plugin_vidok.h"
 
 #ifdef _DEBUG
@@ -68,6 +69,7 @@ constexpr const char* const shuriktv = "shuriktv";
 constexpr const char* const tvclub = "tvclub";
 constexpr const char* const tvizi = "tvizi";
 constexpr const char* const tvteam = "tvteam";
+constexpr const char* const yosso = "yosso";
 constexpr const char* const vidok = "vidok";
 constexpr const char* const custom = "~custom";
 
@@ -149,6 +151,10 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(const std::string& typ
 	else if (type == tvteam)
 	{
 		plugin = std::make_shared<plugin_tvteam>();
+	}
+	else if (type == yosso)
+	{
+		plugin = std::make_shared<plugin_yosso>();
 	}
 	else if (type == vidok)
 	{

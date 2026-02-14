@@ -175,6 +175,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClInclude Include="plugin_shuriktv.h" />
     <ClInclude Include="plugin_tvizi.h" />
     <ClInclude Include="plugin_tvteam.h" />
+    <ClInclude Include="plugin_yosso.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="StreamParameters.h" />
     <ClInclude Include="ThreadConfig.h" />
@@ -280,6 +281,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ClCompile Include="plugin_shurikv.cpp" />
     <ClCompile Include="plugin_tvizi.cpp" />
     <ClCompile Include="plugin_tvteam.cpp" />
+    <ClCompile Include="plugin_yosso.cpp" />
     <ClCompile Include="ThreadConfig.cpp" />
     <ClCompile Include="TooltipPropertyPage.cpp" />
     <ClCompile Include="ResizedPropertySheet.cpp" />
@@ -315,7 +317,7 @@ call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
     <ResourceCompile Include="IPTVChannelEditor.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="defaults_9.1.json" />
+    <None Include="defaults_9.2.json" />
     <None Include="dune_plugin\changelog.md" />
     <None Include="make_icon_package.cmd" />
     <None Include="make_update_package.cmd" />

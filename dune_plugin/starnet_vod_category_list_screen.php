@@ -106,7 +106,7 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
 
                     $icon_url = null;
                     if ($idx === (int)$current_idx) {
-                        $icon_url = "gui_skin://small_icons/playlist_file.aai";
+                        $icon_url = "check.png";
                     }
                     $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_CHANGE_PLAYLIST, $list, $icon_url, $add_param);
                 }
@@ -195,7 +195,9 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             }
         }
 
-        if (!empty($category_list)) {
+        if (empty($category_list)) {
+            hd_debug_print("No categories found!");
+        } else {
             foreach ($category_list as $category) {
                 $category_id = $category->get_id();
                 if (!is_null($category->get_sub_categories())) {

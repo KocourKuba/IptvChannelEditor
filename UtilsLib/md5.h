@@ -420,19 +420,26 @@ void md5_finish(md5_state_t* pms, md5_byte_t digest[16])
 } // md5
 
 // some convenience c++ functions
-inline std::string md5_hash_string(const char* s, size_t s_sz)
+inline std::array<char, 16> md5_hash(const char* s, size_t s_sz)
 {
-	char digest[16]{};
+	std::array<char, 16> digest{};
 
 	md5::md5_state_t state;
 
 	md5::md5_init(&state);
 	md5::md5_append(&state, (md5::md5_byte_t const*)s, (md5::md5_word_t)s_sz);
-	md5::md5_finish(&state, (md5::md5_byte_t*)digest);
+	md5::md5_finish(&state, (md5::md5_byte_t*)digest.data());
 
+	return digest;
+}
+
+// some convenience c++ functions
+inline std::string md5_hash_string(const char* s, size_t s_sz)
+{
+	const auto digest = md5_hash(s, s_sz);
 	std::string ret;
 	ret.resize(16);
-	std::copy(digest, digest + 16, ret.begin());
+	std::copy(digest.begin(), digest.end(), ret.begin());
 
 	return ret;
 }

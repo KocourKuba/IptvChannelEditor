@@ -29,34 +29,48 @@ DEALINGS IN THE SOFTWARE.
 #include "utils.h"
 
 #define SERIALIZE_STRUCT(j, c, s) j[""#s""] = c.s;
+#define SERIALIZE_STRUCT_P(j, c, s) j[""#s""] = c->s;
 #define SERIALIZE_STRUCT2(j, c, s, f) j[""#f""] = c.s;
+#define SERIALIZE_STRUCT2_P(j, c, s, f) j[""#f""] = c->s;
 #define DESERIALIZE_STRUCT(j, c, s) if (j.contains(""#s"")) j.at(""#s"").get_to(c.s);
+#define DESERIALIZE_STRUCT_P(j, c, s) if (j.contains(""#s"")) j.at(""#s"").get_to(c->s);
 #define DESERIALIZE_STRUCT2(j, c, s, f) if (j.contains(""#f"")) j.at(""#f"").get_to(c.s);
+#define DESERIALIZE_STRUCT2_P(j, c, s, f) if (j.contains(""#f"")) j.at(""#f"").get_to(c->s);
 
 namespace utils
 {
 	inline std::wstring get_json_wstring(const std::string& key, const nlohmann::json& node)
 	{
 		std::wstring ret_value;
-		if (node.contains(key))
+		nlohmann::json js;
+		if (key.empty())
 		{
-			const auto& js = node[key];
-			if (js.is_number_unsigned())
-			{
-				ret_value = std::move(std::to_wstring(js.get<nlohmann::json::number_unsigned_t>()));
-			}
-			else if (js.is_number_integer())
-			{
-				ret_value = std::move(std::to_wstring(js.get<nlohmann::json::number_integer_t>()));
-			}
-			else if (js.is_number_float())
-			{
-				ret_value = std::move(std::to_wstring(js.get<float>()));
-			}
-			else if (js.is_string())
-			{
-				ret_value = std::move(utf8_to_utf16(js.get<std::string>()));
-			}
+			js = node;
+		}
+		else if (node.contains(key))
+		{
+			js = node[key];
+		}
+		else
+		{
+			return ret_value;
+		}
+
+		if (js.is_number_unsigned())
+		{
+			ret_value = std::move(std::to_wstring(js.get<nlohmann::json::number_unsigned_t>()));
+		}
+		else if (js.is_number_integer())
+		{
+			ret_value = std::move(std::to_wstring(js.get<nlohmann::json::number_integer_t>()));
+		}
+		else if (js.is_number_float())
+		{
+			ret_value = std::move(std::to_wstring(js.get<float>()));
+		}
+		else if (js.is_string())
+		{
+			ret_value = std::move(utf8_to_utf16(js.get<std::string>()));
 		}
 
 		return ret_value;
@@ -65,25 +79,35 @@ namespace utils
 	inline std::string get_json_string(const std::string& key, const nlohmann::json& node)
 	{
 		std::string ret_value;
-		if (node.contains(key))
+		nlohmann::json js;
+		if (key.empty())
 		{
-			const auto& js = node[key];
-			if (js.is_number_unsigned())
-			{
-				ret_value = std::move(std::to_string(js.get<nlohmann::json::number_unsigned_t>()));
-			}
-			else if (js.is_number_integer())
-			{
-				ret_value = std::move(std::to_string(js.get<nlohmann::json::number_integer_t>()));
-			}
-			else if (js.is_number_float())
-			{
-				ret_value = std::move(std::to_string(js.get<float>()));
-			}
-			else if (js.is_string())
-			{
-				ret_value = js.get<std::string>();
-			}
+			js = node;
+		}
+		else if (node.contains(key))
+		{
+			js = node[key];
+		}
+		else
+		{
+			return ret_value;
+		}
+
+		if (js.is_number_unsigned())
+		{
+			ret_value = std::move(std::to_string(js.get<nlohmann::json::number_unsigned_t>()));
+		}
+		else if (js.is_number_integer())
+		{
+			ret_value = std::move(std::to_string(js.get<nlohmann::json::number_integer_t>()));
+		}
+		else if (js.is_number_float())
+		{
+			ret_value = std::move(std::to_string(js.get<float>()));
+		}
+		else if (js.is_string())
+		{
+			ret_value = js.get<std::string>();
 		}
 
 		return ret_value;
@@ -92,22 +116,32 @@ namespace utils
 	inline int get_json_int(const std::string& key, const nlohmann::json& node)
 	{
 		int ret_value = 0;
-		if (node.contains(key))
+		nlohmann::json js;
+		if (key.empty())
 		{
-			const auto& js = node[key];
-			if (js.is_number_integer())
+			js = node;
+		}
+		else if (node.contains(key))
+		{
+			js = node[key];
+		}
+		else
+		{
+			return ret_value;
+		}
+
+		if (js.is_number_integer())
+		{
+			ret_value = js.get<int>();
+		}
+		else if (js.is_string())
+		{
+			try
 			{
-				ret_value = js.get<int>();
+				ret_value = std::stoi(js.get<std::string>());
 			}
-			else if (js.is_string())
+			catch (...)
 			{
-				try
-				{
-					ret_value = std::stoi(js.get<std::string>());
-				}
-				catch (...)
-				{
-				}
 			}
 		}
 
@@ -123,11 +157,6 @@ namespace utils
 		}
 
 		return ret_value;
-	}
-
-	inline std::string get_json_string_value(const std::string& key, const nlohmann::json& val)
-	{
-		return val.contains(key) && val[key].is_string() ? val[key] : "";
 	}
 
 	inline nlohmann::json::number_unsigned_t get_json_number_value(const std::string& key, const nlohmann::json& val)
