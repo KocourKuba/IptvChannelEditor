@@ -340,7 +340,6 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 hd_debug_print("ungzip $tmp_filename to $cached_file");
                 $cmd = "gzip -d $tmp_filename 2>&1";
                 $out = system($cmd, $ret);
-                /** @noinspection PhpConditionAlreadyCheckedInspection */
                 if ($ret > 1) {
                     throw new Exception("Failed to unpack $tmp_filename (error code: $ret)\n$out");
                 }
@@ -373,7 +372,6 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 $cmd = "unzip -oq $tmp_filename -d $this->cache_dir";
                 $out = system($cmd, $ret);
                 safe_unlink($tmp_filename);
-                /** @noinspection PhpConditionAlreadyCheckedInspection */
                 if ($ret !== 0) {
                     throw new Exception("Failed to unpack $tmp_filename (error code: $ret)\n$out");
                 }

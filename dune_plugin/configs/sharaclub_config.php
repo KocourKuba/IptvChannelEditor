@@ -509,8 +509,6 @@ class sharaclub_config extends default_config
             $genres,
             safe_get_value($info, 'rating')
         );
-        $movie = new Short_Movie($id, $name, safe_get_value($info, 'poster'), $movie_info);
-
-        return $movie;
+        return new Short_Movie($id, $name, safe_get_value($info, 'poster'), $movie_info);
     }
 }
