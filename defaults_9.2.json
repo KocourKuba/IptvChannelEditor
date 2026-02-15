@@ -3208,6 +3208,7 @@
     },
     "yosso": {
       "access_type": "login",
+      "class_name": "yosso_config",
       "epg_params": [
         {
           "epg_param": "first",
@@ -3230,6 +3231,7 @@
           "pl_template": "https://streaming-elbrus.su/p12/{LOGIN}/{PASSWORD}/BL/playlist.m3u8"
         }
       ],
+      "provider_api_url": "http://jeleyka.balelbrus.com",
       "provider_url": "https://streaming-elbrus.su/",
       "streams_config": [
         {
@@ -3241,7 +3243,17 @@
         },
         {}
       ],
-      "title": "Yosso TV"
+      "title": "Yosso TV",
+      "vod_engine": "Json",
+      "vod_filter": true,
+      "vod_quality": true,
+      "vod_filters": [ "source", "genre", "years" ],
+      "vod_templates": [
+        {
+          "name": "Standard",
+          "pl_template": "{API_URL}"
+        }
+      ]
     },
     "~custom": {
       "custom": true,
