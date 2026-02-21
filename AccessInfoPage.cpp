@@ -1106,7 +1106,7 @@ void CAccessInfoPage::GetAccountInfo()
 std::shared_ptr<Credentials> CAccessInfoPage::GetCheckedAccount()
 {
 	int checked = GetCheckedAccountIdx();
-	if (checked != -1 && checked < (int)m_all_channels_lists.size())
+	if (checked != -1 && checked < (int)m_all_credentials.size())
 	{
 		return m_all_credentials[checked];
 	}
