@@ -102,6 +102,8 @@ class Epg_Manager_Xmltv
         hd_print("Current source: $config->current_xmltv_source");
 
         $this->init_indexer($config->cache_dir);
+        $this->indexer->get_curl_wrapper()->set_connect_timeout($config->connect_timeout);
+        $this->indexer->get_curl_wrapper()->set_download_timeout($config->download_timeout);
         $this->indexer->set_pid($pid);
         $this->indexer->set_active_sources(Hashed_Array::from_array($config->active_xmltv_sources));
         $this->indexer->index_all($config->current_xmltv_source);

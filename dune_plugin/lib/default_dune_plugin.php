@@ -1298,7 +1298,9 @@ class Default_Dune_Plugin implements DunePlugin
                 'debug' => LogSeverity::$is_debug,
                 'cache_dir' => $this->get_cache_dir(),
                 'current_xmltv_source' => $key,
-                'active_xmltv_sources' => $sources->to_array()
+                'active_xmltv_sources' => $sources->to_array(),
+                'connect_timeout' => $this->get_setting(PARAM_CURL_CONNECT_TIMEOUT, 30),
+                'download_timeout' => $this->get_setting(PARAM_CURL_DOWNLOAD_TIMEOUT, 120),
             );
             $config_file = get_temp_path(sprintf(self::PARSE_CONFIG, $key));
             hd_debug_print("Config: " . json_format_unescaped($config), true);

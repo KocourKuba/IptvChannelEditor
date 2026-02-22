@@ -105,6 +105,14 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     }
 
     /**
+     * @return Curl_Wrapper
+     */
+    public function get_curl_wrapper()
+    {
+        return $this->curl_wrapper;
+    }
+
+    /**
      * @param Hashed_Array<string, Cache_Parameters> $urls
      * @return void
      */

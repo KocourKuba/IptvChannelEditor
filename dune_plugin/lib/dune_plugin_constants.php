@@ -108,7 +108,6 @@ const PARAM_CHANNEL_POSITION = 'channel_position';
 const PARAM_CHANNEL_TS = 'channel_ts';
 const PARAM_START_TM = 'start_tm';
 const PARAM_END_TM = 'end_tm';
-
 const PARAM_SCREEN_ID = 'screen_id';
 const PARAM_SOURCE_WINDOW_ID = 'source_window_id';
 const PARAM_END_ACTION = 'end_action';
@@ -121,6 +120,8 @@ const PARAM_CAPTION = 'caption';
 const PARAM_FILEPATH = 'filepath';
 const PARAM_NAME = 'name';
 const PARAM_TYPE = 'type';
+const PARAM_CURL_CONNECT_TIMEOUT = 'curl_connect_timeout';
+const PARAM_CURL_DOWNLOAD_TIMEOUT = 'curl_download_timeout';
 
 const EPG_SOURCES_SEPARATOR_TAG = 'special_source_separator_tag';
 const ENGINE_JSON = 'json';

@@ -102,6 +102,22 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
             TR::t('setup_adult_change'), $text_icon);
 
         //////////////////////////////////////
+        // Curl connect timeout
+        foreach (array(30, 60, 90, 120, 180, 240, 300) as $sec) {
+            $time_range[$sec] = $sec;
+        }
+        $params = array();
+        Control_Factory::add_combobox($defs, $this, PARAM_CURL_CONNECT_TIMEOUT, TR::t('setup_connect_timeout'),
+            $this->plugin->get_setting(PARAM_CURL_CONNECT_TIMEOUT, 30),
+            $time_range, $params);
+
+        //////////////////////////////////////
+        // Curl download timeout
+        Control_Factory::add_combobox($defs, $this, PARAM_CURL_DOWNLOAD_TIMEOUT, TR::t('setup_download_timeout'),
+            $this->plugin->get_setting(PARAM_CURL_DOWNLOAD_TIMEOUT, 120),
+            $time_range, $params, true);
+
+        //////////////////////////////////////
         // debugging
 
         $debug_state = $this->plugin->get_setting(PARAM_ENABLE_DEBUG, SwitchOnOff::off);
@@ -264,6 +280,11 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
                 }
 
                 return Action_Factory::show_title_dialog($msg, '', Action_Factory::reset_controls($this->do_get_control_defs()));
+
+            case PARAM_CURL_CONNECT_TIMEOUT:
+            case PARAM_CURL_DOWNLOAD_TIMEOUT:
+                $this->plugin->set_setting($control_id, $user_input->{$control_id});
+                break;
 
             case PARAM_ENABLE_DEBUG:
                 $debug = $this->plugin->toggle_setting(PARAM_ENABLE_DEBUG, false);

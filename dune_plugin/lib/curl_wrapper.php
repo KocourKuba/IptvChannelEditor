@@ -33,12 +33,12 @@ class Curl_Wrapper
     /**
      * @var int
      */
-    private $connect_timeout = 60;
+    private $connect_timeout = 30;
 
     /**
      * @var int
      */
-    private $download_timeout = 90;
+    private $download_timeout = 60;
 
     /**
      * @var array
@@ -203,7 +203,7 @@ class Curl_Wrapper
     /**
      * @param  int $timeout
      */
-    public function set_connection_timeout($timeout)
+    public function set_connect_timeout($timeout)
     {
         $this->connect_timeout = $timeout;
     }

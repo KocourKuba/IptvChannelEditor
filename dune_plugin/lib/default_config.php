@@ -120,6 +120,17 @@ class default_config extends dynamic_config
     }
 
     /**
+     * @return Curl_Wrapper
+     */
+    public function setup_curl()
+    {
+        $curl_wrapper = Curl_Wrapper::getInstance();
+        $curl_wrapper->set_connect_timeout($this->get_parameter(PARAM_CURL_CONNECT_TIMEOUT, 30));
+        $curl_wrapper->set_download_timeout($this->get_parameter(PARAM_CURL_DOWNLOAD_TIMEOUT, 120));
+        return $curl_wrapper;
+    }
+
+    /**
      * @return Entry[]
      */
     public function get_tv_m3u_entries()
@@ -1307,6 +1318,8 @@ class default_config extends dynamic_config
         hd_debug_print("ApiCommandUrl: $command_url", true);
 
         $this->curl_wrapper->reset();
+        $this->curl_wrapper->set_connect_timeout($this->plugin->get_setting(PARAM_CURL_CONNECT_TIMEOUT, 30));
+        $this->curl_wrapper->set_download_timeout($this->plugin->get_setting(PARAM_CURL_DOWNLOAD_TIMEOUT, 120));
 
         if (!empty($curl_opt[CURLOPT_HTTPHEADER])) {
             $this->curl_wrapper->set_send_headers($curl_opt[CURLOPT_HTTPHEADER]);
@@ -1406,7 +1419,7 @@ class default_config extends dynamic_config
                     hd_debug_print("$type playlist not defined");
                     throw new Exception('$type playlist not defined');
                 }
-                $curl = Curl_Wrapper::getInstance();
+                $curl = $this->setup_curl();
                 $content = $curl->download_content($url);
                 if ($content === false) {
                     hd_debug_print("CURL errno: {$curl->get_error_no()} ({$curl->get_error_desc()}); HTTP error: {$curl->get_http_code()};");
