@@ -29,10 +29,10 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen
         $add_action = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, TR::t('search'));
 
         return array(
-            GUI_EVENT_KEY_ENTER      => $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play(),
-            GUI_EVENT_KEY_SEARCH     => $add_action,
-            GUI_EVENT_KEY_C_YELLOW   => $add_action,
-            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
+            GUI_EVENT_KEY_ENTER => $this->plugin->vod->is_movie_page_supported() ? Action_Factory::open_folder() : Action_Factory::vod_play(),
+            GUI_EVENT_KEY_SEARCH => $add_action,
+            GUI_EVENT_KEY_C_YELLOW => $add_action,
+            GUI_EVENT_KEY_D_BLUE => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
         );
     }
 

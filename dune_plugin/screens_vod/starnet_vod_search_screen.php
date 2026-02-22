@@ -26,7 +26,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         $actions[GUI_EVENT_KEY_ENTER] = User_Input_Handler_Registry::create_action($this,
-        ACTION_CREATE_SEARCH, null, array(ACTION_SEARCH => ACTION_OPEN_FOLDER));
+            ACTION_CREATE_SEARCH, null, array(ACTION_SEARCH => ACTION_OPEN_FOLDER));
 
         $actions[GUI_EVENT_KEY_B_GREEN] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('up'));
         $actions[GUI_EVENT_KEY_C_YELLOW] = User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('down'));

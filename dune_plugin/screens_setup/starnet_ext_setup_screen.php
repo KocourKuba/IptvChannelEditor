@@ -212,7 +212,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
                 $history_path = $this->plugin->get_history_path();
                 hd_debug_print("copy to: $history_path");
                 if (!HD::copy_data(get_data_path(Default_Dune_Plugin::HISTORY_FOLDER),
-                    "/" . PARAM_TV_HISTORY_ITEMS ."$/", $history_path)) {
+                    "/" . PARAM_TV_HISTORY_ITEMS . "$/", $history_path)) {
 
                     return Action_Factory::show_title_dialog(TR::t('err_copy'));
                 }
@@ -222,7 +222,7 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
             case self::CONTROL_COPY_TO_PLUGIN:
                 hd_debug_print("copy to: " . get_data_path(Default_Dune_Plugin::HISTORY_FOLDER));
                 if (!HD::copy_data($this->plugin->get_history_path(),
-                    "/" . PARAM_TV_HISTORY_ITEMS ."$/", get_data_path(Default_Dune_Plugin::HISTORY_FOLDER))) {
+                    "/" . PARAM_TV_HISTORY_ITEMS . "$/", get_data_path(Default_Dune_Plugin::HISTORY_FOLDER))) {
                     return Action_Factory::show_title_dialog(TR::t('err_copy'));
                 }
 
@@ -301,7 +301,8 @@ class Starnet_Ext_Setup_Screen extends Abstract_Controls_Screen
         return Action_Factory::reset_controls($this->do_get_control_defs());
     }
 
-    public static function CopyData($sourcePath, $destPath){
+    public static function CopyData($sourcePath, $destPath)
+    {
         if (empty($sourcePath) || empty($destPath)) {
             hd_debug_print("sourceDir = $sourcePath | destDir = $destPath");
             return false;

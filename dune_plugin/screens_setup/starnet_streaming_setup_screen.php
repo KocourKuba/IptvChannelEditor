@@ -75,7 +75,7 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
         $show_buf_time_ops[5000] = TR::t('setup_buffer_sec__1', "5");
         $show_buf_time_ops[10000] = TR::t('setup_buffer_sec__1', "10");
 
-        $buf_time = (int)$this->plugin->get_setting(PARAM_BUFFERING_TIME,1000);
+        $buf_time = (int)$this->plugin->get_setting(PARAM_BUFFERING_TIME, 1000);
         Control_Factory::add_combobox($defs, $this, PARAM_BUFFERING_TIME,
             TR::t('setup_buffer_time'), $buf_time, $show_buf_time_ops);
 
@@ -86,11 +86,11 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
         $show_delay_time_ops[10] = TR::t('setup_buffer_sec__1', "10");
         $show_delay_time_ops[20] = TR::t('setup_buffer_sec__1', "20");
         $show_delay_time_ops[30] = TR::t('setup_buffer_sec__1', "30");
-        $show_delay_time_ops[2*60] = TR::t('setup_buffer_sec__1', "120");
-        $show_delay_time_ops[3*60] = TR::t('setup_buffer_sec__1', "180");
-        $show_delay_time_ops[5*60] = TR::t('setup_buffer_sec__1', "300");
+        $show_delay_time_ops[2 * 60] = TR::t('setup_buffer_sec__1', "120");
+        $show_delay_time_ops[3 * 60] = TR::t('setup_buffer_sec__1', "180");
+        $show_delay_time_ops[5 * 60] = TR::t('setup_buffer_sec__1', "300");
 
-        $delay_time = (int)$this->plugin->get_setting(PARAM_ARCHIVE_DELAY_TIME,60);
+        $delay_time = (int)$this->plugin->get_setting(PARAM_ARCHIVE_DELAY_TIME, 60);
         Control_Factory::add_combobox($defs, $this, PARAM_ARCHIVE_DELAY_TIME,
             TR::t('setup_delay_time'), $delay_time, $show_delay_time_ops);
 

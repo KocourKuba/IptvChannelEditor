@@ -34,13 +34,13 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen
         $search_action = User_Input_Handler_Registry::create_action($this, ACTION_CREATE_SEARCH, TR::t('search'));
 
         $actions = array(
-            GUI_EVENT_KEY_ENTER      => $action_play,
-            GUI_EVENT_KEY_PLAY       => $action_play,
+            GUI_EVENT_KEY_ENTER => $action_play,
+            GUI_EVENT_KEY_PLAY => $action_play,
             GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
-            GUI_EVENT_KEY_INFO       => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_INFO),
-            GUI_EVENT_KEY_SETUP      => User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS),
-            GUI_EVENT_KEY_SUBTITLE   => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_SUBTITLE),
-            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
+            GUI_EVENT_KEY_INFO => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_INFO),
+            GUI_EVENT_KEY_SETUP => User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS),
+            GUI_EVENT_KEY_SUBTITLE => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_SUBTITLE),
+            GUI_EVENT_KEY_D_BLUE => User_Input_Handler_Registry::create_action($this, ACTION_ADD_FAV, TR::t('add_to_favorite')),
         );
 
         $group_id = (string)$media_url->group_id;
@@ -221,7 +221,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen
         /** @var Channel $channel */
         $channels = array();
         if ($parent_group->get_id() === ALL_CHANNEL_GROUP_ID) {
-            foreach($this->plugin->tv->get_channels() as $channel) {
+            foreach ($this->plugin->tv->get_channels() as $channel) {
                 if (!is_null($channel) && $channel->is_disabled()) continue;
 
                 foreach ($channel->get_groups() as $group) {
@@ -294,7 +294,7 @@ class Starnet_Tv_Channel_List_Screen extends Abstract_Preloaded_Regular_Screen
             $channels_order = new Hashed_Array();
             /** @var Channel $channel */
             if ($media_url->group_id === ALL_CHANNEL_GROUP_ID) {
-                foreach($this->plugin->tv->get_groups()->get_order() as $group_id) {
+                foreach ($this->plugin->tv->get_groups()->get_order() as $group_id) {
                     $group = $this->plugin->tv->get_group($group_id);
                     if (is_null($group)) continue;
 

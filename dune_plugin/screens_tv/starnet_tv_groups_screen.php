@@ -1,7 +1,7 @@
 <?php
 require_once 'lib/abstract_preloaded_regular_screen.php';
-require_once 'starnet_setup_screen.php';
-require_once 'starnet_channels_setup_screen.php';
+require_once 'screens_setup/starnet_setup_screen.php';
+require_once 'screens_setup/starnet_channels_setup_screen.php';
 
 class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
 {
@@ -23,15 +23,15 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
         $action_settings = User_Input_Handler_Registry::create_action($this, ACTION_SETTINGS, TR::t('entry_setup'));
 
         $actions = array(
-            GUI_EVENT_KEY_ENTER      => User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER),
-            GUI_EVENT_KEY_PLAY       => User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER),
-            GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_CHANNELS_SETTINGS, TR::t('tv_screen_channels_setup')),
-            GUI_EVENT_KEY_SETUP      => $action_settings,
-            GUI_EVENT_KEY_D_BLUE     => $action_settings,
+            GUI_EVENT_KEY_ENTER => User_Input_Handler_Registry::create_action($this, ACTION_OPEN_FOLDER),
+            GUI_EVENT_KEY_PLAY => User_Input_Handler_Registry::create_action($this, ACTION_PLAY_FOLDER),
+            GUI_EVENT_KEY_B_GREEN => User_Input_Handler_Registry::create_action($this, ACTION_CHANNELS_SETTINGS, TR::t('tv_screen_channels_setup')),
+            GUI_EVENT_KEY_SETUP => $action_settings,
+            GUI_EVENT_KEY_D_BLUE => $action_settings,
             GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
-            GUI_EVENT_KEY_RETURN     => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN),
-            GUI_EVENT_KEY_TOP_MENU   => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_TOP_MENU),
-            GUI_EVENT_TIMER          => User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER),
+            GUI_EVENT_KEY_RETURN => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN),
+            GUI_EVENT_KEY_TOP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_TOP_MENU),
+            GUI_EVENT_TIMER => User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER),
         );
 
         if ($this->IsSetupNeeds() !== false) {
@@ -209,7 +209,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
                 if ($special_group->get_id() === ALL_CHANNEL_GROUP_ID) {
                     $color = DEF_LABEL_TEXT_COLOR_SKYBLUE;
                     $size = 0;
-                    foreach($this->plugin->tv->get_groups()->get_order() as $group_id) {
+                    foreach ($this->plugin->tv->get_groups()->get_order() as $group_id) {
                         $group = $this->plugin->tv->get_group($group_id);
                         if (!is_null($group)) {
                             $size += $group->get_group_channels()->size();
@@ -239,7 +239,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
             );
         }
 
-        $vod_last = SwitchOnOff::to_bool($this->plugin->get_setting(PARAM_VOD_LAST,SwitchOnOff::off));
+        $vod_last = SwitchOnOff::to_bool($this->plugin->get_setting(PARAM_VOD_LAST, SwitchOnOff::off));
         if (isset($vod_item) && !$vod_last) {
             $items[] = $vod_item;
         }

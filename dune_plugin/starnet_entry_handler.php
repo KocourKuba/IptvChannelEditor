@@ -1,6 +1,7 @@
 <?php
 
 require_once 'lib/user_input_handler_registry.php';
+require_once 'screens_tv/starnet_tv_favorites_screen.php';
 
 class Starnet_Entry_Handler implements User_Input_Handler
 {

@@ -18,13 +18,13 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen
         $action_play = User_Input_Handler_Registry::create_action($this, ACTION_PLAY_ITEM);
 
         return array(
-            GUI_EVENT_KEY_ENTER      => $action_play,
-            GUI_EVENT_KEY_PLAY       => $action_play,
-            GUI_EVENT_KEY_B_GREEN    => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('left')),
-            GUI_EVENT_KEY_C_YELLOW   => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('right')),
-            GUI_EVENT_KEY_D_BLUE     => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete')),
+            GUI_EVENT_KEY_ENTER => $action_play,
+            GUI_EVENT_KEY_PLAY => $action_play,
+            GUI_EVENT_KEY_B_GREEN => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_UP, TR::t('left')),
+            GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DOWN, TR::t('right')),
+            GUI_EVENT_KEY_D_BLUE => User_Input_Handler_Registry::create_action($this, ACTION_ITEM_DELETE, TR::t('delete')),
             GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
-            GUI_EVENT_KEY_RETURN     => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN),
+            GUI_EVENT_KEY_RETURN => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN),
         );
     }
 
@@ -68,11 +68,11 @@ class Starnet_Vod_Favorites_Screen extends Abstract_Preloaded_Regular_Screen
                 $action = $this->plugin->vod->change_vod_favorites(PLUGIN_FAVORITES_OP_REMOVE, $movie_id);
                 return ($this->plugin->vod->get_favorite_movie_ids()->size() !== 0)
                     ? $action
-                    : User_Input_Handler_Registry::create_action($this,GUI_EVENT_KEY_RETURN);
+                    : User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN);
 
             case ACTION_ITEMS_CLEAR:
                 $this->plugin->vod->change_vod_favorites(ACTION_ITEMS_CLEAR, null);
-                return User_Input_Handler_Registry::create_action($this,GUI_EVENT_KEY_RETURN);
+                return User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_RETURN);
 
             case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items[] = $this->plugin->create_menu_item($this, ACTION_ITEMS_CLEAR, TR::t('clear_favorites'), "brush.png");

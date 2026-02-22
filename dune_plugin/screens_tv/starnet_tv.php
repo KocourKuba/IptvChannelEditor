@@ -4,8 +4,6 @@ require_once 'lib/default_group.php';
 require_once 'lib/default_channel.php';
 require_once 'lib/epg/default_epg_item.php';
 require_once 'lib/perf_collector.php';
-require_once 'starnet_setup_screen.php';
-require_once 'starnet_vod_category_list_screen.php';
 
 
 class Starnet_Tv implements User_Input_Handler
@@ -392,7 +390,7 @@ class Starnet_Tv implements User_Input_Handler
             if ($this->channels->has($hash)) {
                 $channel = $this->channels->get($hash);
                 if ($tv_category_id !== $fav_category_id) {
-                    foreach($channel->get_groups() as $group) {
+                    foreach ($channel->get_groups() as $group) {
                         if ($group->get_id() !== $fav_category_id) {
                             hd_debug_print("Channel $xml_tv_channel->caption ($channel_id) already exist in category: {$group->get_title()} ({$group->get_id()})");
                         }

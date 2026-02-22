@@ -26,7 +26,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-require_once "starnet_tv_rows_screen.php";
+require_once "screens_tv/starnet_tv_rows_screen.php";
 
 require_once 'lib/dune_stb_api.php';
 require_once "lib/epfs/config.php";

@@ -42,8 +42,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
         Control_Factory::add_combobox($defs, $this, PARAM_CHANNELS_SOURCE, TR::t('setup_channels_src_combo'),
             $channels_source, $source_ops, $params);
 
-        switch ($channels_source)
-        {
+        switch ($channels_source) {
             case 1: // channels path
                 $channels_list = smb_tree::get_folder_info($this->plugin->get_setting(PARAM_CHANNELS_LIST_PATH, get_install_path()));
 

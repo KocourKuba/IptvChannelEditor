@@ -797,6 +797,10 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	const auto& plugin_dir = utils::PLUGIN_ROOT;
 	const auto& plugin_root = std::filesystem::temp_directory_path() / utils::PLUGIN_ROOT;
 	auto dir_status = std::filesystem::symlink_status(plugin_dir).type();
+
+	// cleanup if exist
+	std::filesystem::remove_all(plugin_root, err);
+
 #ifdef _DEBUG
 	if (true)
 #else
@@ -843,9 +847,10 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	std::filesystem::remove_all(packFolder, err);
 
 	std::filesystem::copy(plugin_root, packFolder, default_copy, err);
-	std::filesystem::copy(plugin_root / L"lib", packFolder / L"lib", recursive_copy, err);
-	std::filesystem::copy(plugin_root / L"img", packFolder / L"img", recursive_copy, err);
-	std::filesystem::copy(plugin_root / L"translations", packFolder / L"translations", recursive_copy, err);
+	for (const auto& path : { L"lib", L"img", L"screens_common", L"screens_setup", L"screens_tv", L"screens_vod", L"translations" })
+	{
+		std::filesystem::copy(plugin_root / path, packFolder / path, recursive_copy, err);
+	}
 
 	const std::filesystem::path image_cache_path = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
 	for (const auto& ch_list : channels_list)

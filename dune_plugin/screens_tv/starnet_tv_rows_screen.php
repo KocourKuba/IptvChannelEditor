@@ -203,12 +203,12 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen
     public function get_action_map(MediaURL $media_url, &$plugin_cookies)
     {
         return array(
-            GUI_EVENT_KEY_ENTER               => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_ENTER),
-            GUI_EVENT_KEY_B_GREEN             => User_Input_Handler_Registry::create_action($this, PLUGIN_FAVORITES_OP_MOVE_UP),
-            GUI_EVENT_KEY_C_YELLOW            => User_Input_Handler_Registry::create_action($this, PLUGIN_FAVORITES_OP_MOVE_DOWN),
-            GUI_EVENT_KEY_D_BLUE              => User_Input_Handler_Registry::create_action($this, PLUGIN_FAVORITES_OP_ADD),
-            GUI_EVENT_KEY_CLEAR               => User_Input_Handler_Registry::create_action($this, PLUGIN_FAVORITES_OP_REMOVE),
-            GUI_EVENT_KEY_POPUP_MENU          => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
+            GUI_EVENT_KEY_ENTER => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_ENTER),
+            GUI_EVENT_KEY_B_GREEN => User_Input_Handler_Registry::create_action($this, PLUGIN_FAVORITES_OP_MOVE_UP),
+            GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, PLUGIN_FAVORITES_OP_MOVE_DOWN),
+            GUI_EVENT_KEY_D_BLUE => User_Input_Handler_Registry::create_action($this, PLUGIN_FAVORITES_OP_ADD),
+            GUI_EVENT_KEY_CLEAR => User_Input_Handler_Registry::create_action($this, PLUGIN_FAVORITES_OP_REMOVE),
+            GUI_EVENT_KEY_POPUP_MENU => User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU),
             GUI_EVENT_PLUGIN_ROWS_INFO_UPDATE => User_Input_Handler_Registry::create_action($this, GUI_EVENT_PLUGIN_ROWS_INFO_UPDATE),
         );
     }
@@ -275,7 +275,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen
     {
         hd_debug_print(null, true);
 
-        $rows = $this->create_rows(array(), json_encode(array('group_id' => '__dummy__row__')), '', '', null );
+        $rows = $this->create_rows(array(), json_encode(array('group_id' => '__dummy__row__')), '', '', null);
 
         $history_rows = $this->get_history_rows();
         if (!is_null($history_rows)) {
@@ -905,7 +905,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen
         }
 
         $channels_order = new Hashed_Array();
-        foreach($this->plugin->tv->get_groups()->get_order() as $group_id) {
+        foreach ($this->plugin->tv->get_groups()->get_order() as $group_id) {
             $group = $this->plugin->tv->get_group($group_id);
             if (is_null($group)) continue;
 
