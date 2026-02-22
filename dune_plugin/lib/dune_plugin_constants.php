@@ -54,6 +54,8 @@ const ALL_CHANNEL_GROUP_ID = '##all_channels##';
 const HISTORY_GROUP_ID = '##playback_history_tv_group##';
 const VOD_GROUP_ID = '##mediateka##';
 
+const PARAM_COOKIE_ENABLE_NEWUI = 'enable_newui';
+
 # Common parameters
 const PARAM_ADULT_PASSWORD = 'adult_password';
 const PARAM_PLAYLIST = 'playlist';
@@ -115,6 +117,7 @@ const PARAM_SELECTED_ACTION = 'selected_action';
 const PARAM_ACTION_ID = 'action_id';
 const PARAM_WINDOW_COUNTER = 'window_counter';
 const PARAM_EXTENSION = 'extension';
+const PARAM_CAPTION = 'caption';
 const PARAM_FILEPATH = 'filepath';
 const PARAM_NAME = 'name';
 const PARAM_TYPE = 'type';

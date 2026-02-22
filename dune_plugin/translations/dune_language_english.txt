@@ -112,6 +112,7 @@ setup_enter_ott = Enter OTT key
 setup_enter_vportal = Enter VPORTAL key
 setup_autostart = Autoplay on start
 setup_continue_play = Continue play channel on start
+setup_support_newui = Enable NewUI support
 setup_channel_position = NewUI preview channel position
 setup_channel_bottom_left = Bottom left
 setup_channel_top_left = Top left
@@ -170,6 +171,7 @@ setup_ask_exit = Confirm exit plugin
 setup_changelog = History of changes
 setup_debug = Enable debug logging
 setup_per_channel_zoom = Enable per channel zoom
+setup_reboot_required = To continue need to reboot plugin
 
 setup_channels_src_folder = Local or Network folder
 setup_channels_src_internet = Internet/Intranet folder

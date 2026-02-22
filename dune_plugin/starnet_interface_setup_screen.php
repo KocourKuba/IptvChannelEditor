@@ -108,7 +108,7 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen
 
             case self::CONTROL_SHOW_TV:
                 if (!is_limited_apk()) {
-                    toggle_cookie_param($plugin_cookies, $control_id);
+                    toggle_cookie_param($plugin_cookies, $control_id, SwitchOnOff::on);
                 }
                 break;
 

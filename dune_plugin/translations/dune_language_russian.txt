@@ -112,6 +112,7 @@ setup_enter_ott = Введите ключ ОТТ
 setup_enter_vportal = Введите ключ VPORTAL
 setup_autostart = Автостарт воспроизведения
 setup_continue_play = Возобновление просмотра
+setup_support_newui = Включить поддержку NewUI
 setup_channel_position = NewUI позиция номера канала
 setup_channel_bottom_left = Внизу слева
 setup_channel_top_left = Вверху слева
@@ -170,6 +171,7 @@ setup_ask_exit = Подтверждение выхода из плагина
 setup_changelog = История изменений
 setup_debug = Включить расширенное логирование
 setup_per_channel_zoom = Включить масштабирование по каналам
+setup_reboot_required = Для применения внесенных изменений необходимо перезагрузить плагин
 
 setup_channels_src_folder = Локальная или сетевая папка
 setup_channels_src_internet = Интернет/Интранет папка
@@ -185,6 +187,7 @@ setup_channels_src_no_channels = Нет списка каналов!!!
 setup_channels_src_playlist = Источник плейлистов
 setup_channels_src_folder_caption = Папка со списком каналов
 setup_channels_src_link_caption = Ссылка на списки каналов
+setup_support_newui = Включить поддержку NewUI
 
 entry_not_available = Для этой приставки эта функция недоступна!
 entry_send_log = Отправить лог разработчику

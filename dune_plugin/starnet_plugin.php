@@ -36,7 +36,7 @@ class Starnet_Plugin extends Default_Dune_Plugin
     /**
      * @throws Exception
      */
-    public function __construct()
+    public function __construct($plugin_cookies)
     {
         parent::__construct();
 
@@ -80,7 +80,7 @@ class Starnet_Plugin extends Default_Dune_Plugin
             $this->create_screen(new Starnet_Vod_Filter_Screen($this));
         }
 
-        Starnet_Epfs_Handler::init($this);
+        Starnet_Epfs_Handler::init($this, $plugin_cookies);
 
         hd_debug_print("Plugin loading complete.");
     }

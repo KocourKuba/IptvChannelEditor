@@ -123,8 +123,12 @@ class Starnet_Streaming_Setup_Screen extends Abstract_Controls_Screen
                 return self::make_return_action($parent_media_url);
 
             case self::CONTROL_AUTO_PLAY:
+                toggle_cookie_param($plugin_cookies, $control_id, SwitchOnOff::off);
+                hd_debug_print("$control_id: " . $plugin_cookies->{$control_id});
+                break;
+
             case self::CONTROL_AUTO_RESUME:
-                toggle_cookie_param($plugin_cookies, $control_id);
+                toggle_cookie_param($plugin_cookies, $control_id, SwitchOnOff::on);
                 hd_debug_print("$control_id: " . $plugin_cookies->{$control_id});
                 break;
 

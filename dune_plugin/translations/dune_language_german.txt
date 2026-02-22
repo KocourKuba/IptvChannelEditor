@@ -112,6 +112,7 @@ setup_enter_ott = Geben Sie den OTT-Schlüssel ein
 setup_enter_vportal = Geben Sie den VPORTAL-Schlüssel ein
 setup_autostart = Autoplay beim Start
 setup_continue_play = Kanal beim Start weiter abspielen
+setup_support_newui = NewUI-Unterstützung aktivieren
 setup_channel_position = NewUI Vorschau der Kanalposition
 setup_channel_bottom_left = Unten links
 setup_channel_top_left = Oben links
@@ -170,6 +171,7 @@ setup_ask_exit = Bestätigen Sie das Beenden des Plugin
 setup_changelog = Geschichte der Veränderungen
 setup_debug = Aktivieren Sie die Debug-Protokollierung
 setup_per_channel_zoom = Aktivieren Sie den Zoom pro Kanal
+setup_reboot_required = Um fortzufahren, muss das Plugin neu gestartet werden
 
 setup_channels_src_folder = Lokaler oder Netzwerkordner
 setup_channels_src_internet = Ordner „Internet/Intranet“.

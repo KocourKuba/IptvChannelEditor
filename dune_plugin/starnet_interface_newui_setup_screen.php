@@ -39,14 +39,14 @@ class Starnet_Interface_NewUI_Setup_Screen extends Abstract_Controls_Screen
     public function get_control_defs(MediaURL $media_url, &$plugin_cookies)
     {
         hd_debug_print(null, true);
-        return $this->do_get_control_defs();
+        return $this->do_get_control_defs($plugin_cookies);
     }
 
     /**
      * interface dialog defs
      * @return array
      */
-    public function do_get_control_defs()
+    public function do_get_control_defs(&$plugin_cookies)
     {
         hd_debug_print(null, true);
 
@@ -55,6 +55,13 @@ class Starnet_Interface_NewUI_Setup_Screen extends Abstract_Controls_Screen
         //////////////////////////////////////
         // Plugin name
         $this->plugin->create_setup_header($defs);
+
+        //////////////////////////////////////
+        // Enable NewUI
+        $show_newui = safe_get_value($plugin_cookies, PARAM_COOKIE_ENABLE_NEWUI, SwitchOnOff::on);
+        hd_debug_print(PARAM_COOKIE_ENABLE_NEWUI . ": $show_newui", true);
+        Control_Factory::add_image_button($defs, $this, PARAM_COOKIE_ENABLE_NEWUI,
+            TR::t('setup_support_newui'), SwitchOnOff::translate($show_newui), SwitchOnOff::to_image($show_newui));
 
         //////////////////////////////////////
         // Square icons
@@ -108,19 +115,28 @@ class Starnet_Interface_NewUI_Setup_Screen extends Abstract_Controls_Screen
                 $parent_media_url = MediaURL::decode($user_input->parent_media_url);
                 return self::make_return_action($parent_media_url);
 
+            case PARAM_COOKIE_ENABLE_NEWUI:
+                toggle_cookie_param($plugin_cookies, $control_id, SwitchOnOff::on);
+                Starnet_Epfs_Handler::clear_epfs_file();
+                return Action_Factory::show_title_dialog(TR::t('warning'), TR::t('setup_reboot_required'), Action_Factory::restart());
+
             case PARAM_CHANNEL_POSITION:
             case PARAM_ICONS_IN_ROW:
                 $this->plugin->set_setting($control_id, $user_input->{$control_id});
-                $post_action = Starnet_Epfs_Handler::epfs_invalidate_folders();
-                break;
+                return Action_Factory::invalidate_all_folders(
+                    $plugin_cookies,
+                    Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies))
+                );
 
             case PARAM_SQUARE_ICONS:
             case PARAM_SHOW_CHANNEL_CAPTION:
                 $this->plugin->toggle_setting($control_id, false);
-                $post_action = Starnet_Epfs_Handler::epfs_invalidate_folders();
-                break;
+                return Action_Factory::invalidate_all_folders(
+                    $plugin_cookies,
+                    Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies))
+                );
         }
 
-        return Action_Factory::reset_controls($this->do_get_control_defs(), $post_action);
+        return Action_Factory::reset_controls($this->do_get_control_defs($plugin_cookies), $post_action);
     }
 }

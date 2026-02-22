@@ -77,20 +77,21 @@ class Starnet_Epfs_Handler
 
     /**
      * @param Default_Dune_Plugin $plugin
+     * @param object $plugin_cookies
      * @return void
-     * @throws Exception
      */
-    public static function init(Default_Dune_Plugin $plugin)
+    public static function init(Default_Dune_Plugin $plugin, $plugin_cookies)
     {
-        self::$enabled = HD::rows_api_support();
+        $newui_enabled = get_cookie_bool_param($plugin_cookies, PARAM_COOKIE_ENABLE_NEWUI);
+        self::$enabled = HD::rows_api_support() && $newui_enabled;
+        self::$epf_id = $plugin->config->plugin_info['app_name'];
+        self::$no_internet_epfs = self::$epf_id . '.no_internet';
+        self::$dir_path = getenv('FS_PREFIX') . self::EPFS_PATH . self::$epf_id;
+
         if (!self::$enabled)
             return;
 
-        self::$epf_id = $plugin->config->plugin_info['app_name'];
-        self::$no_internet_epfs = self::$epf_id . '.no_internet';
-
         hd_debug_print("epf_id: '" . self::$epf_id . "'", true);
-        self::$dir_path = self::EPFS_PATH . self::$epf_id;
         self::$tv_rows_screen = new Starnet_Tv_Rows_Screen($plugin);
         $plugin->create_screen(self::$tv_rows_screen);
 
@@ -105,6 +106,16 @@ class Starnet_Epfs_Handler
     {
         if (self::$enabled && !empty(self::$tv_rows_screen))
             self::$tv_rows_screen->need_update_epf_mapping_flag = true;
+    }
+
+    /**
+     * @return void
+     */
+    public static function clear_epfs_file()
+    {
+        hd_debug_print(null, true);
+        safe_unlink(self::get_epfs_path(self::$epf_id));
+        safe_unlink(self::get_epfs_path(self::$no_internet_epfs));
     }
 
     /**
@@ -147,7 +158,7 @@ class Starnet_Epfs_Handler
             file_put_contents(self::warmed_up_path(), '');
         }
 
-        $path = self::get_epf_path(self::$epf_id);
+        $path = self::get_epfs_path(self::$epf_id);
         if (!file_exists($path) || hash('md5', json_encode($folder_view) !== hash_file('md5', $path))) {
             self::write_epf_view(self::$epf_id, $folder_view);
         }
@@ -165,7 +176,7 @@ class Starnet_Epfs_Handler
         if (!self::$enabled || self::$no_internet_epfs_created)
             return;
 
-        if ($first_run || !is_file(self::get_epf_path(self::$no_internet_epfs))) {
+        if ($first_run || !is_file(self::get_epfs_path(self::$no_internet_epfs))) {
             self::write_epf_view(self::$no_internet_epfs, self::$dummy_epf_screen->get_folder_view_for_epf(true, $plugin_cookies));
         }
 
@@ -176,7 +187,7 @@ class Starnet_Epfs_Handler
      * @param string $epf_id
      * @return string
      */
-    protected static function get_epf_path($epf_id)
+    protected static function get_epfs_path($epf_id)
     {
         return self::$dir_path . "/$epf_id.json";
     }
@@ -191,7 +202,7 @@ class Starnet_Epfs_Handler
     protected static function write_epf_view($epf_id, $folder_view)
     {
         if ($folder_view) {
-            $path = self::get_epf_path($epf_id);
+            $path = self::get_epfs_path($epf_id);
             hd_debug_print(null, true);
             hd_debug_print("write epf path: $path");
             $tmp_path = "$path.tmp";
