@@ -302,8 +302,8 @@ BOOL CFileVersionInfo::QueryStringValue(IN LPCTSTR lpszItem, OUT LPTSTR lpszValu
 
 BOOL CFileVersionInfo::QueryStringValue(IN INT nIndex, OUT LPTSTR lpszValue, IN INT nBuf) const
 {
-	if( nIndex < VI_STR_COMMENTS ||
-		nIndex > VI_STR_OLESELFREGISTER )
+	if( nIndex < static_cast<INT>(VI_STR::VI_STR_COMMENTS) ||
+		nIndex > static_cast<INT>(VI_STR::VI_STR_OLESELFREGISTER) )
 	{
 		ASSERT_RETURN( FALSE );
 	}
@@ -312,8 +312,8 @@ BOOL CFileVersionInfo::QueryStringValue(IN INT nIndex, OUT LPTSTR lpszValue, IN 
 
 LPCTSTR CFileVersionInfo::GetVerStringName( IN INT nIndex )
 {
-	if( nIndex < VI_STR_COMMENTS ||
-		nIndex > VI_STR_OLESELFREGISTER )
+	if( nIndex < static_cast<INT>(VI_STR::VI_STR_COMMENTS) ||
+		nIndex > static_cast<INT>(VI_STR::VI_STR_OLESELFREGISTER) )
 	{
 		ASSERT_RETURN( FALSE );
 	}
@@ -402,20 +402,20 @@ BOOL CFileVersionInfo::GetCPName( IN  WORD	   wCP,
 	BOOL bRes = TRUE;
 	*ppszName  = nullptr;
 
-	switch ( wCP )
+	switch ( static_cast<VI_CP>(wCP) )
 	{
-		case VI_CP_ASCII:	 *ppszName = _T( "7-bit ASCII" );				break;
-		case VI_CP_JAPAN:	 *ppszName = _T( "Japan (Shift – JIS X-0208)" );break;
-		case VI_CP_KOREA:	 *ppszName = _T( "Korea (Shift – KSC 5601)" );	break;
-		case VI_CP_TAIWAN:	 *ppszName = _T( "Taiwan (Big5)" );				break;
-		case VI_CP_UNICODE:	 *ppszName = _T( "Unicode" );					break;
-		case VI_CP_LATIN2:	 *ppszName = _T( "Latin-2 (Eastern European)" );break;
-		case VI_CP_CYRILLIC: *ppszName = _T( "Cyrillic" );					break;
-		case VI_CP_MULTILNG: *ppszName = _T( "Multilingual" );				break;
-		case VI_CP_GREEK:	 *ppszName = _T( "Greek" );						break;
-		case VI_CP_TURKISH:	 *ppszName = _T( "Turkish" );					break;
-		case VI_CP_HEBREW:	 *ppszName = _T( "Hebrew" );					break;
-		case VI_CP_ARABIC:	 *ppszName = _T( "Arabic" );					break;
+		case VI_CP::VI_CP_ASCII:	 *ppszName = _T("7-bit ASCII");				break;
+		case VI_CP::VI_CP_JAPAN:	 *ppszName = _T( "Japan (Shift – JIS X-0208)" );break;
+		case VI_CP::VI_CP_KOREA:	 *ppszName = _T( "Korea (Shift – KSC 5601)" );	break;
+		case VI_CP::VI_CP_TAIWAN:	 *ppszName = _T( "Taiwan (Big5)" );				break;
+		case VI_CP::VI_CP_UNICODE:	 *ppszName = _T( "Unicode" );					break;
+		case VI_CP::VI_CP_LATIN2:	 *ppszName = _T( "Latin-2 (Eastern European)" );break;
+		case VI_CP::VI_CP_CYRILLIC:  *ppszName = _T( "Cyrillic" );					break;
+		case VI_CP::VI_CP_MULTILNG:  *ppszName = _T( "Multilingual" );				break;
+		case VI_CP::VI_CP_GREEK:	 *ppszName = _T( "Greek" );						break;
+		case VI_CP::VI_CP_TURKISH:	 *ppszName = _T( "Turkish" );					break;
+		case VI_CP::VI_CP_HEBREW:	 *ppszName = _T( "Hebrew" );					break;
+		case VI_CP::VI_CP_ARABIC:	 *ppszName = _T( "Arabic" );					break;
 		default:			 *ppszName = _T( "Unknown" ); bRes = FALSE;		break;
 	}
 	return bRes;

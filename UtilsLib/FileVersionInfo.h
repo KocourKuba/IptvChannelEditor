@@ -84,7 +84,7 @@ STDAPI_( HRESULT ) DllGetVersion( IN HMODULE hModule, OUT DLLVERSIONINFO* lpDVI 
 
 /////////////////////////////////////////////////////////////////////////////
 
-using VI_CP = enum _VI_CP {
+using VI_CP = enum class _VI_CP : unsigned short {
 	VI_CP_ASCII				= 0,	// 7-bit ASCII
 	VI_CP_JAPAN				= 932,	// Japan (Shift - JIS X-0208)
 	VI_CP_KOREA				= 949,	// Korea (Shift - KSC 5601)
@@ -99,7 +99,7 @@ using VI_CP = enum _VI_CP {
 	VI_CP_ARABIC			= 1256	// Arabic
 };
 
-using VI_STR = enum _VI_STR {
+using VI_STR = enum class _VI_STR : unsigned short {
 	VI_STR_COMMENTS			= 0,	// Comments
 	VI_STR_COMPANYNAME		= 1,	// CompanyName
 	VI_STR_FILEDESCRIPTION	= 2,	// FileDescription
@@ -139,7 +139,7 @@ public:	// Implementation:
 	BOOL	QueryStringValue( IN INT nIndex, OUT LPTSTR lpszValue, IN INT nBuf ) const;
 	LPCTSTR	GetVerStringName( IN INT nIndex );
 
-	BOOL	SetTrans ( IN LANGID wLID = LANG_NEUTRAL, IN WORD wCP = VI_CP_UNICODE );
+	BOOL	SetTrans ( IN LANGID wLID = LANG_NEUTRAL, IN WORD wCP = static_cast<WORD>(VI_CP::VI_CP_UNICODE) );
 	BOOL	SetTransIndex( IN UINT nIndex = 0 );
 	INT		FindTrans( IN LANGID wLID, IN WORD wCP ) const;
 	DWORD	GetTransByIndex( IN UINT nIndex  ) const;
