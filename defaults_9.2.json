@@ -993,9 +993,9 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)\\/.+\\.m3u\\d?$",
-          "pl_parse_regex": "^https?:\\/\\/.+\\/iptv\\/m3u_plus-(?<password>.+)-m3u8$",
-          "pl_template": "http://file.ipstr.im/iptv/m3u_plus-{PASSWORD}-m3u8"
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)(\\/.+|\\.ts)$",
+          "pl_parse_regex": "^https?:\\/\\/.+\\/80\\/m3u8?_plus\\/(?<password>.+)$",
+          "pl_template": "https://list.ipstr.im/80/m3u8_plus/{PASSWORD}?filter=only_live"
         }
       ],
       "provider_url": "https://www.ipstream.one/",
