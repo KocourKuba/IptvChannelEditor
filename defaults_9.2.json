@@ -993,9 +993,9 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)(\\/.+|\\.ts)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/live\\/(?<token>.+)\\/(?<id>.+)(?:\/.+\\.m3u8|\\.ts)$",
           "pl_parse_regex": "^https?:\\/\\/.+\\/80\\/m3u8?_plus\\/(?<password>.+)$",
-          "pl_template": "https://list.ipstr.im/80/m3u8_plus/{PASSWORD}?filter=only_live"
+          "pl_template": "http://list.ipstr.im/80/m3u8_plus/{PASSWORD}?filter=only_live"
         }
       ],
       "provider_url": "https://www.ipstream.one/",
@@ -1108,6 +1108,40 @@
         }
       ],
       "title": "IPTV Best"
+    },
+    "iptvcinema": {
+      "access_type": "login",
+      "epg_params": [
+        {},
+        {}
+      ],
+      "name": "iptvcinema",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/index\\.m3u8\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<login>.+)\\/(?<password>.+)\\/playlist\\.m3u8?$",
+          "pl_template": "https://iptvcinema.ru/{LOGIN}/{PASSWORD}/playlist.m3u8"
+        }
+      ],
+      "provider_url": "https://iptvcinema.ru/",
+      "streams_config": [
+        {
+          "cu_type": "shift",
+          "dune_params": "hls_forced_type:event,psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
+        },
+        {
+          "cu_type": "shift",
+          "dune_params": "hls_forced_type:event,psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+        }
+      ],
+      "title": "IPTVCinema"
     },
     "iptvonline": {
       "access_type": "login",
