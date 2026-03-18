@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop scan="337" scanned="20260111175315" built="20251026165508" lang="ru" pane="TLogPane" col="2" row="1250.Text">
+<desktop scan="337" scanned="20260111175315" built="20251026165508" lang="ru" pane="TLogPane" col="4" row="23.IDS_STRING_ERR_NO_CHANNELS_SEL">
   <language id="ru" autoime="0" autokeyboard="0"/>
   <triggers>
     <item class="TRemoveUnusedItemsTrigger" position="2"/>
@@ -14,6 +14,8 @@
       <item class="TTranslationColumn" lang="ru" width="582"/>
     </columns>
     <params>
+      <findtext>в настройка</findtext>
+      <findtext>в настрока</findtext>
       <findtext>IDS_STRING_ERR_COPY</findtext>
       <findtext>Splash</findtext>
       <findtext>2009</findtext>
@@ -26,8 +28,7 @@
   <path>
     <item>All</item>
     <item>x64\Release Unicode\IPTVChannelEditor.exe</item>
-    <item>Dialogs</item>
-    <item>131</item>
+    <item>Strings</item>
   </path>
   <export format="efXliff">
     <filter duplicates="dfDuplicatesEqual">

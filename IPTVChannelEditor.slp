@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<document created="20211012165442" version="4.0.374" date="20260111175443" scan="337" scanned="20260111175315">
+<document created="20211012165442" version="4.0.374" date="20260306231538" scan="337" scanned="20260111175315">
   <lang id="ru"/>
   <source class="TWindowsResourceBinarySource" name="x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" outputitems="[oiResource]" date="20260111145310" usesmfc="1">
     <headerfiles>
@@ -5256,7 +5256,7 @@
         </row>
         <row id="IDS_STRING_ERR_NO_CHANNELS_SEL" created="20230121164542" changed="20230211201113">
           <native>No Channels List selected! Please select channels list in the account settings.</native>
-          <lang id="ru" date="20230211201144">Нет выбранных списков каналов! Пожалуйста выберите список каналов в настройка аккаунта.</lang>
+          <lang id="ru" date="20260306231531">Нет выбранных списков каналов! Пожалуйста выберите список каналов в настройках аккаунта.</lang>
         </row>
         <row id="IDS_STRING_VOD_ACTORS" created="20221110221253">
           <native>\b Actors: \b0 {:s}\par </native>
