@@ -431,9 +431,8 @@ BOOL CIPTVChannelEditorDlg::OnInitDialog()
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu != nullptr)
 	{
-		BOOL bNameValid;
 		CString strAboutMenu;
-		bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
+		BOOL bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
 		ASSERT(bNameValid);
 		if (!strAboutMenu.IsEmpty())
 		{
@@ -1088,7 +1087,7 @@ void CIPTVChannelEditorDlg::CollectCredentials()
 {
 	m_all_credentials = GetConfig().LoadCredentials();
 
-	CMenu* pMenu = new CMenu;
+	auto* pMenu = new CMenu;
 	pMenu->CreatePopupMenu();
 	pMenu->AppendMenu(MF_STRING, ID_MAKE_ALL, load_string_resource(ID_MAKE_ALL).c_str());
 	pMenu->AppendMenu(MF_STRING, ID_MAKE_ALL_ACCOUNTS, load_string_resource(ID_MAKE_ALL_ACCOUNTS).c_str());
@@ -1287,7 +1286,7 @@ void CIPTVChannelEditorDlg::OnTimer(UINT_PTR nIDEvent)
 	__super::OnTimer(nIDEvent);
 }
 
-LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM  /*lParam*/ /*= 0*/)
 {
 	BOOL bConvertDupes = GetConfig().get_int(true, REG_CONVERT_DUPES);
 	m_evtStop.ResetEvent();
@@ -1436,14 +1435,14 @@ void CIPTVChannelEditorDlg::FillXmlSources()
 	m_wndXmltvEpgSource.EnableWindow(TRUE);
 }
 
-LRESULT CIPTVChannelEditorDlg::OnSwitchPlugin(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+LRESULT CIPTVChannelEditorDlg::OnSwitchPlugin(WPARAM  /*wParam*/ /*= 0*/, LPARAM  /*lParam*/ /*= 0*/)
 {
 	SwitchPlugin();
 
 	return 0;
 }
 
-LRESULT CIPTVChannelEditorDlg::OnExit(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+LRESULT CIPTVChannelEditorDlg::OnExit(WPARAM  /*wParam*/ /*= 0*/, LPARAM  /*lParam*/ /*= 0*/)
 {
 	if (WaitForSingleObject(m_evtThreadExit, 0) == WAIT_OBJECT_0)
 	{
@@ -1457,7 +1456,7 @@ LRESULT CIPTVChannelEditorDlg::OnExit(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0
 	return 0;
 }
 
-LRESULT CIPTVChannelEditorDlg::OnLoadChannelImage(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+LRESULT CIPTVChannelEditorDlg::OnLoadChannelImage(WPARAM wParam /*= 0*/, LPARAM  /*lParam*/ /*= 0*/)
 {
 	auto channel = (ChannelInfo*)wParam;
 	if (!channel)
@@ -1470,7 +1469,7 @@ LRESULT CIPTVChannelEditorDlg::OnLoadChannelImage(WPARAM wParam /*= 0*/, LPARAM 
 	return 0;
 }
 
-LRESULT CIPTVChannelEditorDlg::OnLoadPlaylistImage(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+LRESULT CIPTVChannelEditorDlg::OnLoadPlaylistImage(WPARAM wParam /*= 0*/, LPARAM  /*lParam*/ /*= 0*/)
 {
 	auto entry = (PlaylistEntry*)wParam;
 	if (!entry)
@@ -1481,7 +1480,7 @@ LRESULT CIPTVChannelEditorDlg::OnLoadPlaylistImage(WPARAM wParam /*= 0*/, LPARAM
 	return 0;
 }
 
-LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM  /*wParam*/ /*= 0*/, LPARAM  /*lParam*/ /*= 0*/)
 {
 	m_evtStop.ResetEvent();
 
@@ -1989,7 +1988,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	bool custom = !channel->get_is_template();
 	bool show = m_wndShowUrl.GetCheck() ? true : false;
 
-	size_t stream_idx = (size_t)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
+	auto stream_idx = (size_t)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 	m_wndBtnCustomUrl.SetCheck(custom);
 	m_wndBtnCustomUrl.SetWindowText(load_string_resource(IDS_STRING_CUSTOM_URL).c_str());
 	m_wndChannelIcon.SetBitmap(nullptr);
@@ -2014,7 +2013,7 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	bool custom_archive = channel->get_is_custom_archive();
 	if (custom_archive && channel->get_custom_archive_url().empty())
 	{
-		size_t idx = (size_t)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
+		auto idx = (size_t)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 		channel->set_custom_archive_url(m_plugin->get_archive_template(idx, channel.get()));
 	}
 
@@ -2548,7 +2547,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 			}
 
 			++ch_cnt;
-			ch_node = ch_node->next_sibling();
+			ch_node = ch_node->next_sibling("channel");
 		}
 
 		int prg_cnt = 0;
@@ -2561,7 +2560,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 			}
 
 			++prg_cnt;
-			prog_node = prog_node->next_sibling();
+			prog_node = prog_node->next_sibling("programme");
 		}
 		node_doc = nullptr;
 
@@ -2593,10 +2592,10 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 				{
 					m_epg_aliases.emplace(channel_name, channel_id);
 				}
-				display_name_node = display_name_node->next_sibling();
+				display_name_node = display_name_node->next_sibling("display-name");
 			}
 
-			ch_node = ch_node->next_sibling();
+			ch_node = ch_node->next_sibling("channel");
 
 			if (stop.stop_requested())
 			{
@@ -2604,7 +2603,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 			}
 		}
 
-		LOG_PROTOCOL(std::format("Parse channels time {:.3f} s", utils::GetTimeDiff(dwStart).count() / 1000.));
+		LOG_PROTOCOL(std::format("Parse channels time {:.3f} s", (double)utils::GetTimeDiff(dwStart).count() / 1000.));
 
 		//////////////////////////////////////////////////////////////////////////
 		// begin parsing programme nodes
@@ -2636,7 +2635,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 			epg_info->desc = utils::make_text_rtf_safe(rapidxml::get_value_string(prog_node->first_node("desc")));
 
 			epg_map[channel_id].emplace(epg_info->time_start, epg_info);
-			prog_node = prog_node->next_sibling();
+			prog_node = prog_node->next_sibling("programme");
 			added = true;
 
 			if (stop.stop_requested())
@@ -2867,7 +2866,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			it->second.category->set_icon_uri(category->get_icon_uri());
 		}
 
-		cat_node = cat_node->next_sibling();
+		cat_node = cat_node->next_sibling(utils::TV_CATEGORY);
 	}
 
 	const auto& fav_info = m_categoriesMap[ID_FAVORITE];
@@ -2915,7 +2914,7 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			cat_pair->second.category->add_channel(channel);
 		}
 
-		ch_node = ch_node->next_sibling();
+		ch_node = ch_node->next_sibling(utils::TV_CHANNEL);
 	}
 
 	m_wndSearch.EnableWindow(!m_channelsMap.empty());
@@ -3331,7 +3330,7 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 	}
 
 	// Меняем местами нужные ItemData для сортировки
-	int idx = (int)m_wndChannelsTree.GetItemData(hLeft);
+	auto idx = (int)m_wndChannelsTree.GetItemData(hLeft);
 	m_wndChannelsTree.SetItemData(hLeft, m_wndChannelsTree.GetItemData(hRight));
 	m_wndChannelsTree.SetItemData(hRight, idx);
 
@@ -3342,7 +3341,7 @@ void CIPTVChannelEditorDlg::SwapCategories(const HTREEITEM hLeft, const HTREEITE
 
 	for (HTREEITEM hItem = m_wndChannelsTree.GetChildItem(nullptr); hItem != nullptr; hItem = m_wndChannelsTree.GetNextSiblingItem(hItem))
 	{
-		int key = (int)m_wndChannelsTree.GetItemData(hItem);
+		auto key = (int)m_wndChannelsTree.GetItemData(hItem);
 		if (key == -ID_FAVORITE)
 			key = ID_FAVORITE;
 
@@ -3548,7 +3547,7 @@ void CIPTVChannelEditorDlg::OnTvnEndlabeleditTreeChannels(NMHDR* pNMHDR, LRESULT
 	}
 }
 
-void CIPTVChannelEditorDlg::OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResult)
+void CIPTVChannelEditorDlg::OnNMDblclkTreeChannels(NMHDR*  /*pNMHDR*/, LRESULT* pResult)
 {
 	CPoint pt(GetMessagePos());
 	m_wndChannelsTree.ScreenToClient(&pt);
@@ -3562,7 +3561,7 @@ void CIPTVChannelEditorDlg::OnNMDblclkTreeChannels(NMHDR* pNMHDR, LRESULT* pResu
 	}
 }
 
-void CIPTVChannelEditorDlg::OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResult)
+void CIPTVChannelEditorDlg::OnNMRclickTreeChannel(NMHDR*  /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -3629,7 +3628,7 @@ void CIPTVChannelEditorDlg::OnNMRclickTreeChannel(NMHDR* pNMHDR, LRESULT* pResul
 	theApp.GetContextMenuManager()->ShowPopupMenu(pMenu->GetSafeHmenu(), ptScreen.x, ptScreen.y, this, TRUE, TRUE, FALSE);
 }
 
-void CIPTVChannelEditorDlg::OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResult)
+void CIPTVChannelEditorDlg::OnNMDblclkTreePaylist(NMHDR*  /*pNMHDR*/, LRESULT* pResult)
 {
 	CPoint pt(GetMessagePos());
 	m_wndPlaylistTree.ScreenToClient(&pt);
@@ -3643,7 +3642,7 @@ void CIPTVChannelEditorDlg::OnNMDblclkTreePaylist(NMHDR* pNMHDR, LRESULT* pResul
 	}
 }
 
-void CIPTVChannelEditorDlg::OnNMRclickTreePlaylist(NMHDR* pNMHDR, LRESULT* pResult)
+void CIPTVChannelEditorDlg::OnNMRclickTreePlaylist(NMHDR*  /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -4051,7 +4050,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
 
 void CIPTVChannelEditorDlg::OnBnDropDownSplitButtonUpdateChanged(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LPNMBCDROPDOWN pDropDown = reinterpret_cast<LPNMBCDROPDOWN>(pNMHDR);
+	auto pDropDown = reinterpret_cast<LPNMBCDROPDOWN>(pNMHDR);
 
 	CMenu menu;
 	VERIFY(menu.LoadMenu(IDR_MENU_CHANGED));
@@ -5551,7 +5550,7 @@ void CIPTVChannelEditorDlg::OnUpdateClearStreamInfo(CCmdUI* pCmdUI)
 LRESULT CIPTVChannelEditorDlg::OnTrayIconNotify(WPARAM /*wParam*/, LPARAM lParam)
 {
 	//UINT uID       = (UINT)wParam; // resource ID of the tray icon.
-	UINT uMouseMsg = (UINT)lParam; // mouse message that was sent.
+	auto uMouseMsg = (UINT)lParam; // mouse message that was sent.
 
 	// We can let the tray icon control handle our context menu and
 	// mouse double click events, but we want handle our balloon tip
@@ -5864,7 +5863,7 @@ HTREEITEM CIPTVChannelEditorDlg::SelectTreeItem(CTreeCtrlEx* pTreeCtl, const Sea
 	HTREEITEM hFirst = pTreeCtl->GetSelectedItem();
 	auto pos = std::find(all_items.begin(), all_items.end(), hFirst);
 	auto start = (pos != all_items.end()) ? pos : all_items.begin();
-	std::vector<HTREEITEM>::iterator cur = start;
+	auto cur = start;
 
 	if (searchParams.next && ++cur == all_items.end())
 		cur = all_items.begin();

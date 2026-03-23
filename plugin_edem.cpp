@@ -228,13 +228,13 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
-void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie_def& movie)
+void plugin_edem::fetch_movie_info(const TemplateParams& params, vod_movie_def& movie)
 {
 	do
 	{
 		boost::wregex re_url(LR"(^portal::\[key:(.+)\](.+)$)");
 		boost::wsmatch m;
-		const auto& vportal = creds.get_portal();
+		const auto& vportal = params.creds->get_portal();
 		if (!boost::regex_match(vportal, m, re_url)) break;
 
 		const auto& key = m[1].str();
@@ -335,7 +335,7 @@ void plugin_edem::fetch_movie_info(const Credentials& creds, vod_movie_def& movi
 	} while (false);
 }
 
-std::wstring plugin_edem::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie)
+std::wstring plugin_edem::get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie)
 {
 	std::wstring url = movie.url;
 

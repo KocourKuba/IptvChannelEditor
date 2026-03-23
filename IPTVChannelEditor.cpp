@@ -598,7 +598,7 @@ int CIPTVChannelEditorApp::CheckPluginConsistency(bool isDev)
 	}
 
 	// Iterate <tv_category> nodes
-	for (auto file_node = pkg_node->first_node("file"); file_node != nullptr; file_node = file_node->next_sibling())
+	for (auto file_node = pkg_node->first_node("file"); file_node != nullptr; file_node = file_node->next_sibling("file"))
 	{
 		const auto& name = rapidxml::get_value_wstring(file_node->first_attribute("name"));
 		if (name != utils::PLUGIN_PACKAGE && name != utils::PICONS_PACKAGE) continue;
@@ -1229,37 +1229,37 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 
 			if (!plugin->get_devices_list().empty())
 			{
-				int size = (int)plugin->get_devices_list().size();
+				auto size = (int)plugin->get_devices_list().size();
 				size_t device_id = creds->device_id >= size ? size - 1 : creds->device_id;
 				node["device_id"] = plugin->get_devices_list().at(device_id).id;
 			}
 			if (!plugin->get_servers_list().empty())
 			{
-				int size = (int)plugin->get_servers_list().size();
+				auto size = (int)plugin->get_servers_list().size();
 				size_t server_id = creds->server_id >= size ? size - 1 : creds->server_id;
 				node["server_id"] = plugin->get_servers_list().at(server_id).id;
 			}
 			if (!plugin->get_qualities_list().empty())
 			{
-				int size = (int)plugin->get_qualities_list().size();
+				auto size = (int)plugin->get_qualities_list().size();
 				size_t quality_id = creds->quality_id >= size ? size - 1 : creds->quality_id;
 				node["quality_id"] = plugin->get_qualities_list().at(quality_id).id;
 			}
 			if (!plugin->get_profiles_list().empty())
 			{
-				int size = (int)plugin->get_profiles_list().size();
+				auto size = (int)plugin->get_profiles_list().size();
 				size_t profile_id = creds->profile_id >= size ? size - 1 : creds->profile_id;
 				node["profile_id"] = plugin->get_profiles_list().at(creds->profile_id).id;
 			}
 			if (!plugin->get_domains_list().empty())
 			{
-				int size = (int)plugin->get_domains_list().size();
+				auto size = (int)plugin->get_domains_list().size();
 				size_t domain_id = creds->domain_id >= size ? size - 1 : creds->domain_id;
 				node["domain_id"] = plugin->get_domains_list().at(domain_id).id;
 			}
 			if (!plugin->get_api_domains_list().empty())
 			{
-				int size = (int)plugin->get_api_domains_list().size();
+				auto size = (int)plugin->get_api_domains_list().size();
 				size_t api_domain_id = creds->api_domain_id >= size ? size - 1 : creds->api_domain_id;
 				node["api_domain_id"] = plugin->get_api_domains_list().at(api_domain_id).id;
 			}
@@ -1782,8 +1782,8 @@ void SetImageControl(const CImage& image, CStatic& wnd)
 		int srcWidth = image.GetWidth();
 		int srcHeight = image.GetHeight();
 
-		float Factor_X = (float)((float)rcDst.Width() / (float)srcWidth);
-		float Factor_Y = (float)((float)rcDst.Height() / (float)srcHeight);
+		auto Factor_X = (float)((float)rcDst.Width() / (float)srcWidth);
+		auto Factor_Y = (float)((float)rcDst.Height() / (float)srcHeight);
 
 		int x = 0;
 		int y = 0;
@@ -1798,8 +1798,8 @@ void SetImageControl(const CImage& image, CStatic& wnd)
 			Factor_Y = Factor_X;
 		}
 
-		int Width = (int)(Factor_X * srcWidth);
-		int Height = (int)(Factor_Y * srcHeight);
+		auto Width = (int)(Factor_X * srcWidth);
+		auto Height = (int)(Factor_Y * srcHeight);
 
 		CImage resized;
 		resized.Create(rcDst.Width(), rcDst.Height(), 32, CImage::createAlphaChannel);

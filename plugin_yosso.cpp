@@ -46,7 +46,7 @@ constexpr auto JF_APP_VERSION = "1.0.0";
 // Function to generate UUID v3 (MD5-based, deterministic)
 std::string genUserUUID(const std::string& name) {
 	static std::string editorUID = "52F7B990-1EB3-47F3-A8D5-FA640E7B2142";
-	constexpr char hexval[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	constexpr std::array hexval = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 	DWORD volumeSerialNumber = 0;
 	GetVolumeInformationA( "C:\\", nullptr, 0, &volumeSerialNumber, nullptr, nullptr, nullptr, 0);
@@ -234,12 +234,8 @@ void plugin_yosso::parse_vod(const ThreadConfig& config)
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
-void plugin_yosso::fetch_movie_info(const Credentials& creds, vod_movie_def& movie)
+void plugin_yosso::fetch_movie_info(const TemplateParams& params, vod_movie_def& movie)
 {
-	TemplateParams params;
-	params.creds = std::make_shared<Credentials>(creds);
-	update_provider_params(params);
-
 	const auto& api_url = get_vod_url(params);
 	const auto& items_request_url = std::format(VOD_API_REQUEST, api_url, L"Items");
 	const auto& movie_request_url = std::format(VOD_API_REQUEST_ID, api_url, L"Items", movie.id);
@@ -283,7 +279,7 @@ void plugin_yosso::fetch_movie_info(const Credentials& creds, vod_movie_def& mov
 					const auto& episode_request_url = std::format(VOD_API_REQUEST_ID, api_url, L"Items", episode_id);
 					const auto& episode_json = jellyfin_request(params, episode_request_url);
 
-					collect_qualities(episode, items_request_url, creds, episode_json["MediaSources"]);
+					collect_qualities(episode, items_request_url, params.creds, episode_json["MediaSources"]);
 					season.episodes.set_back(episode_id, episode);
 				}
 
@@ -292,7 +288,7 @@ void plugin_yosso::fetch_movie_info(const Credentials& creds, vod_movie_def& mov
 		}
 		else
 		{
-			collect_qualities(movie, items_request_url, creds, movie_json["MediaSources"]);
+			collect_qualities(movie, items_request_url, params.creds, movie_json["MediaSources"]);
 		}
 
 		std::map<std::string, std::wstring> people;
@@ -327,7 +323,7 @@ void plugin_yosso::fetch_movie_info(const Credentials& creds, vod_movie_def& mov
 	JSON_ALL_CATCH
 }
 
-void plugin_yosso::collect_qualities(vod_episode_def& movie, const std::wstring& items_request_url, const Credentials& creds, const nlohmann::json& item) const
+void plugin_yosso::collect_qualities(vod_episode_def& movie, const std::wstring& items_request_url, const std::shared_ptr<Credentials>& creds, const nlohmann::json& item) const
 {
 	for (auto& it : item.items())
 	{
@@ -342,7 +338,7 @@ void plugin_yosso::collect_qualities(vod_episode_def& movie, const std::wstring&
 
 			vod_variant_def quality;
 			quality.title = utils::get_json_wstring("DisplayTitle", streams_it.value());
-			quality.url = std::format(L"{:s}/{:s}/Download?apiKey={:s}", items_request_url, stream_id, creds.get_s_token());
+			quality.url = std::format(L"{:s}/{:s}/Download?apiKey={:s}", items_request_url, stream_id, creds->get_s_token());
 
 			movie.qualities.set_back(quality.title, quality);
 		}
@@ -350,7 +346,7 @@ void plugin_yosso::collect_qualities(vod_episode_def& movie, const std::wstring&
 	}
 }
 
-std::wstring plugin_yosso::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie)
+std::wstring plugin_yosso::get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie)
 {
 	std::wstring url = movie.url;
 

@@ -219,7 +219,7 @@ static int download_update(UpdateInfo& info)
 		}
 
 		// Iterate <tv_category> nodes
-		for (auto file_node = pkg_node->first_node("file"); file_node != nullptr; file_node = file_node->next_sibling())
+		for (auto file_node = pkg_node->first_node("file"); file_node != nullptr; file_node = file_node->next_sibling("file"))
 		{
 			update_node node;
 			node.name = rapidxml::get_value_wstring(file_node->first_attribute("name"));

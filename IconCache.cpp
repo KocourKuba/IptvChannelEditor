@@ -39,7 +39,7 @@ DEALINGS IN THE SOFTWARE.
 
 const CImage& CIconCache::get_icon(const std::wstring& path, bool force /*= false*/)
 {
-	int hash = xxh::xxhash<32>(path);
+	uint32_t hash = xxh::xxhash<32>(path);
 
 	if(!force)
 	{

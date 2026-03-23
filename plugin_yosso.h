@@ -33,12 +33,12 @@ class plugin_yosso: public base_plugin
 public:
 	bool get_vod_api_token(TemplateParams& params, std::string& api_token) override;
 	void parse_vod(const ThreadConfig& config) override;
-	void fetch_movie_info(const Credentials& creds, vod_movie_def& movie) override;
-	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie) override;
+	void fetch_movie_info(const TemplateParams& params, vod_movie_def& movie) override;
+	std::wstring get_movie_url(const std::shared_ptr<Credentials>& creds, const movie_request& request, const vod_movie_def& movie) override;
 
 private:
 	std::wstring jellyfin_parse_category(const nlohmann::json& val, std::shared_ptr<vod_category>& category, std::unique_ptr<vod_category_storage>& categories);
 	nlohmann::json jellyfin_request(const TemplateParams& params, const std::wstring& url, const std::map<std::string, std::string>& query_params = {}, bool authorized = true);
-	void collect_qualities(vod_episode_def& movie, const std::wstring& items_request_url, const Credentials& creds, const nlohmann::json& item) const;
+	void collect_qualities(vod_episode_def& movie, const std::wstring& items_request_url, const std::shared_ptr<Credentials>& creds, const nlohmann::json& item) const;
 	std::string build_auth_header(const Credentials& creds, bool auth = true);
 };

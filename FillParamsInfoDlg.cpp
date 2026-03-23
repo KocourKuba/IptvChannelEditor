@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include "IPTVChannelEditor.h"
 #include "FillParamsInfoDlg.h"
 #include "Constants.h"
-#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 // CFillParamsInfo dialog
 
@@ -168,7 +168,7 @@ void CFillParamsInfoDlg::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI)
 	__super::OnGetMinMaxInfo(lpMMI);
 }
 
-void CFillParamsInfoDlg::OnNMDblclkListInfo(NMHDR* pNMHDR, LRESULT* pResult)
+void CFillParamsInfoDlg::OnNMDblclkListInfo(NMHDR*, LRESULT* pResult)
 {
 	//LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 
@@ -193,10 +193,10 @@ void CFillParamsInfoDlg::OnNMDblclkListInfo(NMHDR* pNMHDR, LRESULT* pResult)
 	m_wndListParams.OnLButtonDown(MK_LBUTTON, pt);
 }
 
-LRESULT CFillParamsInfoDlg::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
+LRESULT CFillParamsInfoDlg::OnNotifyEndEdit(WPARAM, LPARAM lParam)
 {
 	// Get the changed field text via the callback
-	NMLVDISPINFO* dispinfo = reinterpret_cast<NMLVDISPINFO*>(lParam);
+	auto* dispinfo = reinterpret_cast<NMLVDISPINFO*>(lParam);
 	if (m_readonly)
 		return 1;
 
@@ -257,8 +257,8 @@ void CFillParamsInfoDlg::OnBnClickedButtonCopy()
 	POSITION pos = m_wndListParams.GetFirstSelectedItemPosition();
 	if (pos != nullptr)
 	{
-		int cnt = (int)m_wndListParams.GetItemCount();
-		int selected = m_wndListParams.GetNextSelectedItem(pos);
+		auto cnt = (int)m_wndListParams.GetItemCount();
+		auto selected = m_wndListParams.GetNextSelectedItem(pos);
 		auto item = m_paramsList[selected];
 		m_paramsList.emplace_back(item);
 
@@ -288,7 +288,7 @@ void CFillParamsInfoDlg::OnBnClickedButtonFromPlaylist()
 
 void CFillParamsInfoDlg::OnLvnItemchangedListInfo(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	auto pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	if ((pNMLV->uChanged & LVIF_STATE))
 	{
 		BOOL enable = (!m_readonly && pNMLV->uNewState & LVIS_SELECTED);

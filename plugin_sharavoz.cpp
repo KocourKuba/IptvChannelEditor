@@ -185,13 +185,10 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
-void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie_def& movie)
+void plugin_sharavoz::fetch_movie_info(const TemplateParams& params, vod_movie_def& movie)
 {
-	TemplateParams params;
-	update_provider_params(params);
-
 	const auto& api_url = get_vod_url(params);
-	const auto& token = creds.get_password();
+	const auto& token = params.creds->get_password();
 	auto url = std::format(L"{:s}/player_api.php?username={:s}&password={:s}", api_url, token, token);
 	if (movie.is_series)
 	{
@@ -272,7 +269,7 @@ void plugin_sharavoz::fetch_movie_info(const Credentials& creds, vod_movie_def& 
 	JSON_ALL_CATCH
 }
 
-std::wstring plugin_sharavoz::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie)
+std::wstring plugin_sharavoz::get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie)
 {
 	if (!movie.seasons.empty() && request.season_idx != CB_ERR)
 	{
@@ -321,7 +318,7 @@ std::wstring plugin_sharavoz::xtream_parse_category(const nlohmann::json& val,
 	return category_id;
 }
 
-nlohmann::json plugin_sharavoz::xtream_request(const ThreadConfig& config, const std::wstring& url)
+nlohmann::json plugin_sharavoz::xtream_request(const ThreadConfig&, const std::wstring& url)
 {
 	nlohmann::json category_json;
 

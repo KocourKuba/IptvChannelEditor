@@ -291,15 +291,8 @@ void plugin_iptvonline::parse_vod(const ThreadConfig& config)
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
-void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie_def& movie)
+void plugin_iptvonline::fetch_movie_info(const TemplateParams& params, vod_movie_def& movie)
 {
-	auto creds_copy = std::make_shared<Credentials>(creds);
-	TemplateParams params
-	{
-		.creds = creds_copy
-	};
-	update_provider_params(params);
-
 	utils::http_request req{ std::format(L"{:s}/movies/{:s}", get_vod_url(params),  movie.id) };
 	nlohmann::json movies_json = server_request(req, true);
 	if (movies_json.empty() || !movies_json.contains("data"))
@@ -401,7 +394,7 @@ void plugin_iptvonline::fetch_movie_info(const Credentials& creds, vod_movie_def
 	JSON_ALL_CATCH
 }
 
-std::wstring plugin_iptvonline::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie)
+std::wstring plugin_iptvonline::get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie)
 {
 	std::wstring url = movie.url;
 

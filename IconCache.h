@@ -32,7 +32,7 @@ class CIconCache
 public:
 	static CIconCache* Instance()
 	{
-		static CIconCache* _instance = new CIconCache();
+		static auto* _instance = new CIconCache();
 		return _instance;
 	}
 
@@ -51,7 +51,7 @@ protected:
 
 private:
 	CIconCache(const CIconCache& source) = delete;
-	std::map<int, std::unique_ptr<ImageContainer>> m_imageMap;
+	std::map<uint32_t, std::unique_ptr<ImageContainer>> m_imageMap{};
 };
 
 class CIconSourceData

@@ -57,7 +57,11 @@ class base_plugin : public plugin_config
 public:
 	base_plugin() = default;
 	explicit base_plugin(const base_plugin& src) = delete;
+	explicit base_plugin(base_plugin&& src) = delete;
 	virtual ~base_plugin() = default;
+
+	base_plugin& operator=(const base_plugin& src) = delete;
+	base_plugin& operator=(base_plugin&& src) = delete;
 
 public:
 	struct movie_request
@@ -184,7 +188,8 @@ public:
 	/// returns s_token from account if exist
 	/// </summary>
 	/// <param name="params">parameters used to download url</param>
-	virtual bool get_api_token(TemplateParams& params, std::string& api_token) { return true; };
+	/// <param name="token">api token returned after successeful call</param>
+	virtual bool get_api_token(TemplateParams&, std::string&) { return true; };
 
 	/// <summary>
 	/// returns s_token from account if exist
@@ -200,12 +205,12 @@ public:
 	/// <summary>
 	/// parse movie
 	/// </summary>
-	virtual void fetch_movie_info(const Credentials& creds, vod_movie_def& movie) {}
+	virtual void fetch_movie_info(const TemplateParams& params, vod_movie_def& movie) {}
 
 	/// <summary>
 	/// get movie url
 	/// </summary>
-	virtual std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie) { return movie.url; }
+	virtual std::wstring get_movie_url(const std::shared_ptr<Credentials>&, const movie_request&, const vod_movie_def& movie) { return movie.url; }
 
 protected:
 

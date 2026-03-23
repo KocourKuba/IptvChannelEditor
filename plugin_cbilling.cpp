@@ -237,11 +237,8 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
 }
 
-void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie_def& movie)
+void plugin_cbilling::fetch_movie_info(const TemplateParams& params, vod_movie_def& movie)
 {
-	TemplateParams params;
-	update_provider_params(params);
-
 	const auto& url = std::format(L"{:s}/video/{:s}", get_vod_url(params), movie.id);
 	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 	utils::http_request req{ url, cache_ttl };
@@ -305,7 +302,7 @@ void plugin_cbilling::fetch_movie_info(const Credentials& creds, vod_movie_def& 
 	JSON_ALL_CATCH
 }
 
-std::wstring plugin_cbilling::get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie)
+std::wstring plugin_cbilling::get_movie_url(const std::shared_ptr<Credentials>& creds, const movie_request& request, const vod_movie_def& movie)
 {
 	std::wstring url;
 	if (movie.url.empty() && request.season_idx != CB_ERR && request.episode_idx != CB_ERR)
@@ -319,5 +316,5 @@ std::wstring plugin_cbilling::get_movie_url(const Credentials& creds, const movi
 	}
 
 	std::wstring scheme = std::get<bool>(account_info[L"ssl"]) ? L"https" : L"http";
-	return std::format(L"{:s}://{:s}{:s}?token={:s}", scheme, creds.get_subdomain(), url, creds.get_s_token());
+	return std::format(L"{:s}://{:s}{:s}?token={:s}", scheme, creds->get_subdomain(), url, creds->get_s_token());
 }

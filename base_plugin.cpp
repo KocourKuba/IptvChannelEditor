@@ -82,7 +82,7 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 		{ CU_DURATION, REPL_DURATION },
 	};
 
-	size_t subtype = (size_t)params.streamSubtype;
+	auto subtype = (size_t)params.streamSubtype;
 
 	const auto& live_url = get_live_template(subtype, info);
 	std::wstring url = params.shift_back ? get_archive_template(subtype, info) : live_url;
@@ -99,7 +99,7 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stre
 			}
 		}
 
-		size_t subtype = (size_t)params.streamSubtype;
+		auto subtype = (size_t)params.streamSubtype;
 		utils::string_replace_inplace<wchar_t>(url, REPL_START, std::to_wstring(params.shift_back));
 		utils::string_replace_inplace<wchar_t>(url, REPL_NOW, std::to_wstring(_time32(nullptr)));
 		utils::string_replace_inplace<wchar_t>(url, REPL_DURATION, std::to_wstring(streams_config[subtype].cu_duration));

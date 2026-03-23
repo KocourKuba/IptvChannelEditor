@@ -38,8 +38,8 @@ public:
 	void fill_servers_list(TemplateParams& params) override;
 	bool set_server(TemplateParams& params) override;
 	void parse_vod(const ThreadConfig& config) override;
-	void fetch_movie_info(const Credentials& creds, vod_movie_def& movie) override;
-	std::wstring get_movie_url(const Credentials& creds, const movie_request& request, const vod_movie_def& movie) override;
+	void fetch_movie_info(const TemplateParams& params, vod_movie_def& movie) override;
+	std::wstring get_movie_url(const std::shared_ptr<Credentials>& creds, const movie_request& request, const vod_movie_def& movie) override;
 
 private:
 	void collect_movies(const std::wstring& id,

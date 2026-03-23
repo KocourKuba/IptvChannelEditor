@@ -581,7 +581,7 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 	}
 }
 
-void CAccessInfoPage::OnNMDblClickList(NMHDR* pNMHDR, LRESULT* pResult)
+void CAccessInfoPage::OnNMDblClickList(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	DWORD pos = GetMessagePos();
 	CPoint pt(LOWORD(pos), HIWORD(pos));
@@ -599,7 +599,7 @@ void CAccessInfoPage::OnNMDblClickList(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
+LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM /*wParam*/, LPARAM lParam)
 {
 	// Get the changed Description field text via the callback
 	NMLVDISPINFO* dispinfo = reinterpret_cast<NMLVDISPINFO*>(lParam);
@@ -697,7 +697,7 @@ LRESULT CAccessInfoPage::OnNotifyEndEdit(WPARAM wParam, LPARAM lParam)
 
 void CAccessInfoPage::OnLvnItemchangedListAccounts(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	auto pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	*pResult = 0;
 
 	if ((pNMLV->uChanged & LVIF_STATE) == 0)
@@ -965,7 +965,7 @@ void CAccessInfoPage::UpdateOptionalControls(BOOL enable)
 
 void CAccessInfoPage::OnLvnItemchangedListChannels(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	auto pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 
 	if ((pNMLV->uChanged & LVIF_STATE))
 	{

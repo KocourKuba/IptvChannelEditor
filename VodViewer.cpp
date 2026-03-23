@@ -144,7 +144,7 @@ BOOL CVodViewer::OnInitDialog()
 		int idx = m_wndPlaylist.AddString(vod.get_name().c_str());
 	}
 
-	int idx = (int)m_plugin->get_vod_info_idx();
+	auto idx = (int)m_plugin->get_vod_info_idx();
 	m_wndPlaylist.SetCurSel(idx);
 	m_wndPlaylist.EnableWindow(m_wndPlaylist.GetCount() > 1);
 	m_current_vod = m_vod_storages[m_plugin->get_vod_info(idx).get_pl_template()];
@@ -228,7 +228,7 @@ void CVodViewer::LoadPlaylist(bool use_cache /*= true*/)
 	}
 }
 
-void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
+void CVodViewer::LoadJsonPlaylist(bool /*= true*/)
 {
 	m_total = 0;
 
@@ -262,7 +262,7 @@ void CVodViewer::LoadJsonPlaylist(bool use_cache /*= true*/)
 	}
 }
 
-LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM /*= 0*/)
 {
 	m_evtStop.ResetEvent();
 	m_evtFinished.SetEvent();
@@ -296,7 +296,7 @@ LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM lParam /
 	return 0;
 }
 
-void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
+void CVodViewer::LoadM3U8Playlist(bool /*= true*/)
 {
 	m_total = 0;
 	m_evtStop.ResetEvent();
@@ -341,7 +341,7 @@ void CVodViewer::LoadM3U8Playlist(bool use_cache /*= true*/)
 	std::jthread(&PlaylistParseM3U8Thread, cfg, m_plugin, std::move(GetAppPath(utils::PLUGIN_ROOT))).detach();
 }
 
-LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM /*= 0*/)
 {
 	static vod_movie_def default_vod;
 
@@ -583,7 +583,7 @@ void CVodViewer::OnCbnSelchangeComboAudio()
 
 void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	auto pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	*pResult = 0;
 
 	UpdateData(TRUE);
@@ -917,7 +917,13 @@ std::shared_ptr<vod_movie_def> CVodViewer::GetFilteredMovie(int idx)
 	std::shared_ptr<vod_movie_def> movie = m_filtered_movies[idx];
 	if (movie->url.empty() && movie->seasons.empty())
 	{
-		m_plugin->fetch_movie_info(*m_account, *movie);
+		TemplateParams params
+		{
+			.creds = m_account
+		};
+
+		m_plugin->update_provider_params(params);
+		m_plugin->fetch_movie_info(params, *movie);
 	}
 
 	return movie;
@@ -1240,7 +1246,7 @@ void CVodViewer::GetUrl(int idx)
 		.audio_idx = m_audio_idx
 	};
 
-	m_streamUrl = m_plugin->get_movie_url(*m_account, request, *movie).c_str();
+	m_streamUrl = m_plugin->get_movie_url(m_account, request, *movie).c_str();
 	m_iconUrl = movie->poster_url.get_uri().c_str();
 
 	UpdateData(FALSE);
