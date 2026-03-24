@@ -439,7 +439,7 @@ void AccountSettings::SaveSectionRegistry(const std::string& plugin_type)
 
 	const auto& reg_key = std::format(LR"({:s}\{:s})", REGISTRY_APP_SETTINGS, GetPluginTypeNameW(plugin_type));
 	HKEY hKey = nullptr;
-	DWORD dwDesp;
+	DWORD dwDesp = 0;
 
 	if (::RegCreateKeyExW(hkHive, reg_key.c_str(), 0, REG_NONE, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDesp) == ERROR_SUCCESS)
 	{

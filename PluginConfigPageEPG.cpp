@@ -427,7 +427,7 @@ void CPluginConfigPageEPG::OnEnChangeEditUtc()
 	UpdateDateTimestamp(false);
 }
 
-void CPluginConfigPageEPG::OnDtnDatetimechangeDatetimepickerDate(NMHDR* pNMHDR, LRESULT* pResult)
+void CPluginConfigPageEPG::OnDtnDatetimechangeDatetimepickerDate(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	UpdateDateTimestamp(true);
 	*pResult = 0;

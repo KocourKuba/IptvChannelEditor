@@ -95,7 +95,7 @@ void CHistoryCombo::LoadHistory(CArchive& ar)
 	ResetContent();
 	ASSERT(ar.IsLoading());
 
-	WORD wItems;
+	WORD wItems = 0;
 	ar >> wItems;
 	for (WORD i = 0; i < wItems; i++)
 	{
@@ -218,7 +218,7 @@ BOOL CHistoryCombo::PreTranslateMessage(MSG* pMsg)
 		{
 			m_bDoAutoComplete = TRUE;
 
-			int nVirtKey = (int)pMsg->wParam;
+			auto nVirtKey = (int)pMsg->wParam;
 			if (nVirtKey == VK_DELETE || nVirtKey == VK_BACK)
 			{
 				m_bDoAutoComplete = FALSE;

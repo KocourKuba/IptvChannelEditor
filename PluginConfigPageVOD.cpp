@@ -179,7 +179,7 @@ void CPluginConfigPageVOD::FillControls()
 	m_wndChkFilterSupport.SetCheck(plugin->get_vod_filter() != false);
 	m_wndVodEngine.SetCurSel((int)plugin->get_vod_engine());
 
-	int vod_idx = (int)plugin->get_vod_info_idx();
+	auto vod_idx = (int)plugin->get_vod_info_idx();
 	m_wndVodTemplates.ResetContent();
 	for (const auto& entry : plugin->get_vod_infos())
 	{

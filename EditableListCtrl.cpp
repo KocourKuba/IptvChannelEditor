@@ -55,7 +55,7 @@ int CEditableListCtrl::GetRowFromPoint(CPoint& point, int* col) const
 	}
 
 	// Get the number of columns
-	CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+	auto* pHeader = (CHeaderCtrl*)GetDlgItem(0);
 	int nColumnCount = pHeader->GetItemCount();
 
 	// Loop through the visible rows
@@ -95,7 +95,7 @@ void CEditableListCtrl::EditCell(int nItem, int nCol)
 		return;
 
 	// Make sure that column number is valid
-	CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
+	auto* pHeader = (CHeaderCtrl*)GetDlgItem(0);
 	int nColumnCount = pHeader->GetItemCount();
 	if (nCol >= nColumnCount || GetColumnWidth(nCol) < 5)
 		return;
@@ -127,7 +127,7 @@ void CEditableListCtrl::EditCell(int nItem, int nCol)
 	LV_COLUMN lvcol{};
 	lvcol.mask = LVCF_FMT;
 	GetColumn(nCol, &lvcol);
-	DWORD dwStyle;
+	DWORD dwStyle = 0;
 
 	if ((lvcol.fmt & LVCFMT_JUSTIFYMASK) == LVCFMT_LEFT)
 	{

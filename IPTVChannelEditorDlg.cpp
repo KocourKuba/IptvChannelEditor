@@ -1087,7 +1087,7 @@ void CIPTVChannelEditorDlg::CollectCredentials()
 {
 	m_all_credentials = GetConfig().LoadCredentials();
 
-	auto* pMenu = new CMenu;
+	std::unique_ptr<CMenu> pMenu = std::make_unique<CMenu>();
 	pMenu->CreatePopupMenu();
 	pMenu->AppendMenu(MF_STRING, ID_MAKE_ALL, load_string_resource(ID_MAKE_ALL).c_str());
 	pMenu->AppendMenu(MF_STRING, ID_MAKE_ALL_ACCOUNTS, load_string_resource(ID_MAKE_ALL_ACCOUNTS).c_str());
@@ -1115,7 +1115,7 @@ void CIPTVChannelEditorDlg::CollectCredentials()
 		}
 	}
 
-	m_wndPack.SetDropDownMenu(pMenu);
+	m_wndPack.SetDropDownMenu(pMenu.release());
 }
 
 void CIPTVChannelEditorDlg::TriggerEpg()

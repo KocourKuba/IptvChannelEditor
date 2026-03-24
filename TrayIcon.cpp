@@ -529,7 +529,7 @@ LRESULT CTrayIcon::OnTrayNotification(WPARAM wParam, LPARAM lParam)
 			// double click received, the default action is to execute default menu item
 			::SetForegroundWindow(m_hwndNotify);
 
-			UINT uItem;
+			UINT uItem = 0;
 			if (!m_isDefMenuItemByPos)
 			{
 				uItem = m_defMenuItemID;
@@ -600,24 +600,24 @@ void CTrayIcon::InstallIconPending()
 
 BOOL CALLBACK CTrayIcon::FindTrayWnd(HWND hWnd, LPARAM lParam)
 {
-	TCHAR szClassName[256] = { 0 };
-	if (::GetClassName(hWnd, szClassName, _countof(szClassName)) == 0)
+	std::array<TCHAR, 256> szClassName = { 0 };
+	if (::GetClassName(hWnd, szClassName.data(), (int)szClassName.size()) == 0)
 	{
 		return FALSE;
 	}
 
 	// Is it the main system tray?
-	if (_tcsicmp(szClassName, _T("TrayNotifyWnd")) == 0)
+	if (_tcsicmp(szClassName.data(), _T("TrayNotifyWnd")) == 0)
 	{
-		CRect* pRect = (CRect*)lParam;
+		auto* pRect = (CRect*)lParam;
 		::GetWindowRect(hWnd, pRect);
 		return TRUE;
 	}
 
 	// May be System Clock?
-	if (_tcsicmp(szClassName, _T("TrayClockWClass")) == 0)
+	if (_tcsicmp(szClassName.data(), _T("TrayClockWClass")) == 0)
 	{
-		CRect* pRect = (CRect*)lParam;
+		auto* pRect = (CRect*)lParam;
 		CRect rectClock;
 		::GetWindowRect(hWnd, rectClock);
 

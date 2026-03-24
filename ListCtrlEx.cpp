@@ -128,7 +128,7 @@ void CListCtrlEx::LoadColumnWidths()
 	// load the stored width for each column.
 	for (int nCol = 0; nCol < pHeaderCtrl->GetItemCount(); ++nCol)
 	{
-		int nOrderCol = Header_OrderToIndex(pHeaderCtrl->m_hWnd, nCol);
+		auto nOrderCol = Header_OrderToIndex(pHeaderCtrl->m_hWnd, nCol);
 		SetStoredWidth(nOrderCol);
 	}
 }

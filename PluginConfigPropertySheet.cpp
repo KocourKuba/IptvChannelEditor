@@ -92,7 +92,7 @@ BOOL CPluginConfigPropertySheet::OnInitDialog()
 				   SWP_NOZORDER | SWP_NOACTIVATE);
 
 	// ... move tab control down here ...
-	HWND hWnd = (HWND)GetTabControl()->m_hWnd;
+	auto hWnd = (HWND)GetTabControl()->m_hWnd;
 	ASSERT(hWnd != nullptr);
 
 	CRect rectOld;
@@ -112,8 +112,7 @@ BOOL CPluginConfigPropertySheet::OnInitDialog()
 				   rectOld.left, rectOld.top + m_gapHeight, rectOld.Width(), rectOld.Height(),
 				   SWP_NOZORDER | SWP_NOACTIVATE);
 
-	int _PropSheetButtons[] = { IDOK, IDCANCEL };
-	for (int PropSheetButton : _PropSheetButtons)
+	for (int PropSheetButton : { IDOK, IDCANCEL })
 	{
 		hWnd = ::GetDlgItem(m_hWnd, PropSheetButton);
 		if (hWnd != nullptr)
@@ -214,7 +213,7 @@ void CPluginConfigPropertySheet::OnSize(UINT nType, int cx, int cy)
 	Invalidate(TRUE);
 }
 
-int CPluginConfigPropertySheet::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CPluginConfigPropertySheet::OnCreate(LPCREATESTRUCT  /*lpCreateStruct*/)
 {
 	CRect rcCombo(0, 0, 115, 30);
 	m_wndPluginConfigs.Create(WS_CHILD | WS_VISIBLE | WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL,
@@ -269,7 +268,7 @@ void CPluginConfigPropertySheet::FillConfigs()
 
 std::wstring CPluginConfigPropertySheet::GetSelectedConfig()
 {
-	size_t idx = (size_t)m_wndPluginConfigs.GetCurSel();
+	auto idx = (size_t)m_wndPluginConfigs.GetCurSel();
 	if (idx < 1 || idx >= m_configs.size()) return L"";
 
 	return m_configs[idx];

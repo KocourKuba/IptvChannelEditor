@@ -44,7 +44,7 @@ BEGIN_MESSAGE_MAP(CMenuEdit, CEdit)
 	ON_COMMAND_RANGE(WM_TEMPLATE_ITEM_ID, WM_TEMPLATE_ITEM_ID + WM_MENU_ITEM_MAX, &CMenuEdit::OnProcessMenuItemCommand)
 END_MESSAGE_MAP()
 
-void CMenuEdit::OnContextMenu(CWnd* pWnd, CPoint point)
+void CMenuEdit::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	SetFocus();
 	CMenu menu;

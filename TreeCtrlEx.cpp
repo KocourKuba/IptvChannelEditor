@@ -397,7 +397,7 @@ void CTreeCtrlEx::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		// Find which item is currently selected
 		HTREEITEM hSelectedItem = GetSelectedItem();
 
-		HTREEITEM hNextItem;
+		HTREEITEM hNextItem = nullptr;
 		if (nChar == VK_UP)
 			hNextItem = GetPrevVisibleItem(hSelectedItem);
 		else
@@ -546,7 +546,7 @@ HTREEITEM CTreeCtrlEx::GetNextItem(HTREEITEM hItem, UINT nCode) const
 HTREEITEM CTreeCtrlEx::GetLastItem(HTREEITEM hItem) const
 {
 	// Temporary used variable
-	HTREEITEM htiNext;
+	HTREEITEM htiNext = nullptr;
 
 	// Get the last item at the top level
 	if (hItem == nullptr)
@@ -710,7 +710,7 @@ BOOL CTreeCtrlEx::SelectItems(HTREEITEM hFromItem, HTREEITEM hToItem)
 }
 
 // Clear selected state on all visible items
-void CTreeCtrlEx::ClearSelection(BOOL bMultiOnly /*=FALSE*/)
+void CTreeCtrlEx::ClearSelection(BOOL  /*bMultiOnly*/ /*=FALSE*/)
 {
 	HTREEITEM hFirst = GetSelectedItem();
 	for (HTREEITEM hItem = GetRootItem(); hItem != nullptr; hItem = GetNextVisibleItem(hItem))
@@ -773,7 +773,7 @@ BOOL CTreeCtrlEx::OnItemexpanding(NMHDR* pNMHDR, LRESULT* pResult)
 
 // Intercept TVN_SELCHANGED and pass it only to the parent window of the
 // selection process is finished
-BOOL CTreeCtrlEx::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult)
+BOOL CTreeCtrlEx::OnSelchanged(NMHDR*  /*pNMHDR*/, LRESULT*  /*pResult*/)
 {
 	// Return TRUE if selection is not complete. This will prevent the
 	// notification from being sent to parent.
@@ -781,7 +781,7 @@ BOOL CTreeCtrlEx::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 // Ensure the multiple selected items are drawn correctly when loosing/getting the focus
-BOOL CTreeCtrlEx::OnSetfocus(NMHDR* pNMHDR, LRESULT* pResult)
+BOOL CTreeCtrlEx::OnSetfocus(NMHDR*  /*pNMHDR*/, LRESULT* pResult)
 {
 	//'emulated' selected items will remain greyed
 	// if application gets covered
@@ -799,7 +799,7 @@ BOOL CTreeCtrlEx::OnSetfocus(NMHDR* pNMHDR, LRESULT* pResult)
 	return FALSE;
 }
 
-BOOL CTreeCtrlEx::OnKillfocus(NMHDR* pNMHDR, LRESULT* pResult)
+BOOL CTreeCtrlEx::OnKillfocus(NMHDR*  /*pNMHDR*/, LRESULT* pResult)
 {
 	Default();
 	//'emulated' selected items may not get
@@ -861,12 +861,12 @@ BOOL CTreeCtrlEx::CreateDragImageEx(CPoint ptDragPoint)
 	CRect rectSingle;
 	CRect rectComplete(0, 0, 0, 0);
 
-	HTREEITEM hItem;
+	HTREEITEM hItem = nullptr;
 
 	// Putting together the bounding rectangle
 	for (hItem = GetFirstSelectedItem(); hItem; hItem = GetNextSelectedItem(hItem))
 	{
-		CImageList* pSingleImageList = CreateDragImage(hItem);
+		std::unique_ptr<CImageList> pSingleImageList(CreateDragImage(hItem));
 
 		// The image bounding rectangle is zero based - but has the correct size
 		// GetItemRect correct in offset, but does not contain icon size
@@ -876,8 +876,6 @@ BOOL CTreeCtrlEx::CreateDragImageEx(CPoint ptDragPoint)
 		rectSingle.left = rectSingle.right - ImageInfo.rcImage.right;
 
 		pSingleImageList->DeleteImageList();
-		delete pSingleImageList;
-
 		rectComplete.UnionRect(rectComplete, rectSingle);
 	}
 
@@ -899,26 +897,23 @@ BOOL CTreeCtrlEx::CreateDragImageEx(CPoint ptDragPoint)
 	// Paint each DragImage in the DC
 	for (hItem = GetFirstSelectedItem(); hItem; hItem = GetNextSelectedItem(hItem))
 	{
-		CImageList* pSingleImageList = CreateDragImage(hItem);
+		std::unique_ptr<CImageList> pSingleImageList(CreateDragImage(hItem));
 
-		if (pSingleImageList)
-		{
+		if (!pSingleImageList) continue;
 
-			// The image bounding rectangle is zero based - but has the correct size
-			// GetItemRect correct in offset, but does not contain icon size
-			IMAGEINFO ImageInfo;
-			pSingleImageList->GetImageInfo(0, &ImageInfo);
-			GetItemRect(hItem, rectSingle, TRUE);
-			rectSingle.left = rectSingle.right - ImageInfo.rcImage.right;
+		// The image bounding rectangle is zero based - but has the correct size
+		// GetItemRect correct in offset, but does not contain icon size
+		IMAGEINFO ImageInfo;
+		pSingleImageList->GetImageInfo(0, &ImageInfo);
+		GetItemRect(hItem, rectSingle, TRUE);
+		rectSingle.left = rectSingle.right - ImageInfo.rcImage.right;
 
-			pSingleImageList->Draw(&dcMem,
-								   0,
-								   CPoint(rectSingle.left - rectComplete.left, rectSingle.top - rectComplete.top),
-								   ILD_TRANSPARENT);
+		pSingleImageList->Draw(&dcMem,
+								0,
+								CPoint(rectSingle.left - rectComplete.left, rectSingle.top - rectComplete.top),
+								ILD_TRANSPARENT);
 
-			pSingleImageList->DeleteImageList();
-			delete pSingleImageList;
-		}
+		pSingleImageList->DeleteImageList();
 	}
 
 	dcMem.SelectObject(pOldMemDCBitmap);
