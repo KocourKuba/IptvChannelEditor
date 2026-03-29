@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER["DOCUMENT_ROOT"] . "/shared_scripts/Utils.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/shared_scripts/iptv_utils.php");
 
 $url_params = parse_url(getenv("REQUEST_URI"));
 if (isset($url_params['query'])) {
@@ -23,7 +23,7 @@ if (isset($params['ver'])) {
     }
 }
 
-if (!emtpy($name)) {
+if (!empty($name)) {
     header("HTTP/1.1 200 OK");
     header("Content-Type: application/json; charset=utf-8");
     header("Content-Length: " . filesize($name));
