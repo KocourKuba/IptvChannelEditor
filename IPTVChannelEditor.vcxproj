@@ -141,7 +141,7 @@
     <PostBuildEvent>
       <Command>@echo OFF
 setlocal
-call $(SolutionDir)_ProjectScripts\localize.cmd $(ProjectDir) $(ProjectName)
+call $(SolutionDir)_ProjectScripts\localize_.cmd $(ProjectDir)$(ProjectName)
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

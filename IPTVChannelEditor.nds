@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<desktop lang="ru" column="TContextColumn" row="InternalName">
+  <project scantime="20260330T172356Z">
+    <ignoredwords>
+      <language id="ru">
+        <item>кэш</item>
+      </language>
+    </ignoredwords>
+  </project>
+  <node>x64\Release Unicode\IPTVChannelEditor.exe</node>
+  <node>Version</node>
+  <column class="TInfoColumn" width="103"/>
+  <column class="TContextColumn" width="515"/>
+  <column class="TOriginalColumn" width="515"/>
+  <column class="TTranslationColumn" width="515" id="ru"/>
+  <column class="TTranslationStateColumn" width="122"/>
+  <view item="TWindowsDialogNode" view="TWindowsDialogView"/>
+  <view item="TWindowsDialogNode" view="TWindowsDialogView" index="1"/>
+  <report/>
+</desktop>
