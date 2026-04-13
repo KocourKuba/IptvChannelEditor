@@ -36,7 +36,7 @@ DEALINGS IN THE SOFTWARE.
 #define new DEBUG_NEW
 #endif
 
-constexpr auto VOD_API_REQUEST = L"{:s}/player_api.php?username={{LOGIN}}&password={{PASSWORD}}";
+constexpr auto VOD_API_REQUEST = L"{:s}/player_api.php?username={{PASSWORD}}&password={{PASSWORD}}";
 constexpr auto VOD_API_ACTION = L"{:s}&action={:s}";
 constexpr auto PARAM_FMT = L"&{:s}={:s}";
 
