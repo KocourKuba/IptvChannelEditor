@@ -234,13 +234,7 @@ void plugin_sharavoz::fetch_movie_info(const TemplateParams& params, vod_movie_d
 						episode.id = utils::get_json_wstring("id", episode_item);
 						episode.title = utils::get_json_wstring("title", episode_item);
 						episode.number = utils::get_json_wstring("episode_num", episode_item);
-						auto ext = utils::get_json_wstring("container_extension", episode_item);
-						if (!ext.empty())
-						{
-							ext = L"." + ext;
-						}
-
-						episode.url = std::format(L"{:s}/movie/{:s}/{:s}/{:s}", api_url, token, token, episode.id + ext);
+						episode.url = std::format(L"{:s}/movie/{:s}/{:s}/{:s}", api_url, token, token, episode.id);
 
 						season.episodes.set_back(episode.id, episode);
 						movie.seasons.set_back(season.id, season);
@@ -255,12 +249,7 @@ void plugin_sharavoz::fetch_movie_info(const TemplateParams& params, vod_movie_d
 			movie.age = utils::get_json_wstring("age", value);
 			movie.movie_time = utils::get_json_int("duration", value);
 			movie.year = utils::get_json_wstring("releasedate", value);
-			auto ext = utils::get_json_wstring("container_extension", value);
-			if (!ext.empty())
-			{
-				ext = L"." + ext;
-			}
-			movie.url = std::format(L"{:s}/movie/{:s}/{:s}/{:s}", api_url, token, token, movie.id + ext);
+			movie.url = std::format(L"{:s}/movie/{:s}/{:s}/{:s}", api_url, token, token, movie.id);
 		}
 
 		movie.description = utils::get_json_wstring("plot", value);

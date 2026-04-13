@@ -145,34 +145,38 @@ class sharavoz_config extends default_config
         //    },
         //
 
-        $age = self::get_data_variant($item->info, "age");
+        $info = $item->info;
+        $age = self::get_data_variant($info, "age");
         $age_limit = empty($age) ? array() : array(TR::t('vod_screen_age_limit') => $age);
 
         $movie = new Movie($movie_id, $this->plugin);
         $movie->set_data(
-            self::get_data_variant($item->info, "name"), // name,
-            self::get_data_variant($item->info, "o_name"), // name_original,
-            self::get_data_variant($item->info, array("plot", "description")),  // description,
-            self::get_data_variant($item->info, array("movie_image", "cover")),  // poster_url,
-            self::get_data_variant($item->info, array("duration", "episode_run_time")), // length_min,
-            self::get_data_variant($item->info, array("releasedate", "releaseDate", "release_date")), // year,
-            self::get_data_variant($item->info, "director"), // director_str,
+            self::get_data_variant($info, "name"), // name,
+            self::get_data_variant($info, "o_name"), // name_original,
+            self::get_data_variant($info, array("plot", "description")),  // description,
+            self::get_data_variant($info, array("movie_image", "cover")),  // poster_url,
+            self::get_data_variant($info, array("duration", "episode_run_time")), // length_min,
+            self::get_data_variant($info, array("releasedate", "releaseDate", "release_date")), // year,
+            self::get_data_variant($info, "director"), // director_str,
             '', // scenario_str,
-            self::get_data_variant($item->info, array("actors", "cast")), // actors_str,
-            self::get_data_variant($item->info, "genre"), // genres_str,
-            self::get_data_variant($item->info, "rating"), // rate_imdb,
-            self::get_data_variant($item->info, "rating_count_kinopoisk"), // rate_kinopoisk,
+            self::get_data_variant($info, array("actors", "cast")), // actors_str,
+            self::get_data_variant($info, "genre"), // genres_str,
+            self::get_data_variant($info, "rating"), // rate_imdb,
+            self::get_data_variant($info, "rating_count_kinopoisk"), // rate_kinopoisk,
             '', // rate_mpaa,
-            self::get_data_variant($item->info, "country"), // country,
+            self::get_data_variant($info, "country"), // country,
             '',
             array(),
             $age_limit // rate details
         );
 
         if ($stream_type === xtream_codes_api::VOD) {
+            if (!empty($info->container_extension)) {
+                $stream_id .= ".m3u8";
+            }
             $url = $this->xtream->get_stream_url($stream_id);
             hd_debug_print("movie playback_url: $url", true);
-            $movie->add_series_data(new Movie_Series($movie_id, $item->info->name, $url));
+            $movie->add_series_data(new Movie_Series($movie_id, $info->name, $url));
         } else if ($stream_type === xtream_codes_api::SERIES) {
             foreach ($item->episodes as $season_id => $season) {
                 $movie_season = new Movie_Season($season_id);
@@ -184,7 +188,9 @@ class sharavoz_config extends default_config
                 foreach ($season as $episode) {
                     $id = $episode->id;
                     if (!empty($episode->container_extension)) {
-                        $id .= ".$episode->container_extension";
+                        // sharavoz incorrect fills container_extension with mp4
+                        // force to using m3u8 extension
+                        $id .= ".m3u8";
                     }
                     $url = $this->xtream->get_stream_url($id);
                     hd_debug_print("episode playback_url: $url", true);
