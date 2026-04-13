@@ -169,10 +169,8 @@ class edem_config extends default_config
      */
     public function getSearchList($keyword)
     {
-        hd_debug_print("getSearchList $keyword");
-        $searchRes = $this->make_json_request(array('cmd' => "search", 'query' => $keyword));
-
-        return $searchRes === false ? array() : $this->CollectSearchResult($keyword, $searchRes);
+        $post_params = array('cmd' => "search", 'query' => $keyword);
+        return $this->CollectSearchResult($keyword, $post_params);
     }
 
     /**
@@ -206,15 +204,9 @@ class edem_config extends default_config
             return array();
         }
 
-        $page_idx = $this->get_next_page($query_id);
-        if ($page_idx < 0)
-            return array();
-
         $post_params['filter'] = 'on';
-        $post_params['offset'] = $page_idx;
-        $json = $this->make_json_request($post_params);
 
-        return $json === false ? array() : $this->CollectSearchResult($query_id, $json);
+        return $this->CollectSearchResult($query_id, $post_params);
     }
 
     /**
@@ -222,29 +214,29 @@ class edem_config extends default_config
      */
     public function getMovieList($query_id)
     {
-        $page_idx = $this->get_current_page($query_id);
-        if ($page_idx < 0) {
-            return array();
-        }
-
-        $post_params = array('cmd' => "flicks", 'fid' => (int)$query_id, 'offset' => $page_idx, 'limit' => 50);
-        $json = $this->make_json_request($post_params);
-
-        return $json === false ? array() : $this->CollectSearchResult($query_id, $json);
+        $post_params = array('cmd' => "flicks", 'fid' => (int)$query_id);
+        return $this->CollectSearchResult($query_id, $post_params);
     }
 
     /**
      * @param string $query_id
-     * @param $json
+     * @param array $post_params
      * @return array
      */
-    protected function CollectSearchResult($query_id, $json)
+    protected function CollectSearchResult($query_id, $post_params)
     {
         hd_debug_print("query_id: $query_id");
         $movies = array();
 
         $current_offset = $this->get_current_page($query_id);
         if ($current_offset < 0) {
+            return $movies;
+        }
+
+        $post_params['offset'] = $current_offset;
+        $post_params['limit'] = 50;
+        $json = $this->make_json_request($post_params);
+        if ($json === false) {
             return $movies;
         }
 
