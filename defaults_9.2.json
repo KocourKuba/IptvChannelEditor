@@ -3313,22 +3313,32 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/balancer\\/(?<id>.+)\\/(?<token>.+)\\/(?<var1>.+)\\.m3u8$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/ottplayer\\/(?<id>.+)\\/(?<token>.+)\\/(?<var1>.+)\\.m3u8$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/p12\\/(?<login>.+)\\/(?<password>.+)\\/.+\\/.*$",
-          "pl_template": "https://streaming-elbrus.su/p12/{LOGIN}/{PASSWORD}/BL/playlist.m3u8"
+          "pl_template": "https://{SERVER_ID}/p12/{LOGIN}/{PASSWORD}/BLOF/playlist.m3u8"
         }
       ],
       "provider_api_url": "http://jeleyka.balelbrus.com",
       "provider_url": "https://streaming-elbrus.su/",
       "streams_config": [
         {
-          "cu_type": "flussonic",
+          "cu_type": "shift",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/balancer/{ID}/{TOKEN}/{VAR1}-{START}-{DURATION}.m3u8",
-          "uri_template": "{SCHEME}://{DOMAIN}/balancer/{ID}/{TOKEN}/index.m3u8"
+          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
+          "uri_template": "{SCHEME}://{DOMAIN}/ottplayer/{ID}/{TOKEN}/index.m3u8"
         },
         {}
+      ],
+      "servers_list": [
+        {
+          "id": "streaming-elbrus.su",
+          "name": "streaming-elbrus.su"
+        },
+        {
+          "id": "p.rapidnas.org",
+          "name": "p.rapidnas.org"
+        }
       ],
       "title": "Yosso TV",
       "vod_engine": "Json",
