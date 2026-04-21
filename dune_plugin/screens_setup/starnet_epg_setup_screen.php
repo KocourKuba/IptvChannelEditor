@@ -133,7 +133,7 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
             Control_Factory::add_image_button($defs, $this, self::ACTION_CLEAR_EPG_CACHE,
                 TR::t('entry_epg_cache_clear'), TR::t('clear'), $remove_icon);
         } else {
-            foreach (array(1, 2, 3, 6, 12) as $hour) {
+            foreach (array(1, 2, 3, 6, 12, 24, 48, 72, 96, 120, 144, 168) as $hour) {
                 $caching_range[$hour] = TR::t('setup_cache_time_h__1', $hour);
             }
             $cache_time = $this->plugin->get_setting(PARAM_EPG_CACHE_TIME, 1);
