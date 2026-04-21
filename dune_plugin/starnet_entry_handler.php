@@ -20,6 +20,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
     const ACTION_DO_POWER_OFF = 'power_off';
     const ACTION_DO_SEND_LOG = 'do_send_log';
     const ACTION_DO_CLEAR_EPG = 'do_clear_epg';
+    const ACTION_FORCE_OPEN = 'force_open';
 
     private $plugin;
 
@@ -84,6 +85,26 @@ class Starnet_Entry_Handler implements User_Input_Handler
                 $this->plugin->tv->unload_channels();
                 $post_action = Action_Factory::show_title_dialog(TR::t('entry_epg_cache_cleared'));
                 return HD::rows_api_support() ? Action_Factory::clear_rows_info_cache($post_action) : $post_action;
+
+            case self::ACTION_FORCE_OPEN:
+                hd_debug_print_separator();
+                hd_debug_print("FORCE LANUCH PLUGIN");
+                hd_debug_print_separator();
+
+                $value = $this->plugin->get_bool_setting(PARAM_USE_UPDATER_PROXY, false);
+                if (toggle_updater_proxy($value)) {
+                    $this->plugin->set_bool_setting(PARAM_USE_UPDATER_PROXY, true);
+                    return Action_Factory::show_title_dialog(TR::t('entry_reboot_need'),
+                        TR::t('entry_updater_proxy_enabled'), Action_Factory::restart());
+                }
+
+                $this->plugin->tv->reload_channels();
+
+                return Action_Factory::refresh_entry_points(
+                    Action_Factory::invalidate_all_folders($plugin_cookies,
+                        Action_Factory::open_folder(Starnet_Tv_Groups_Screen::ID)
+                    )
+                );
 
             case self::ACTION_PLUGIN_ENTRY:
                 if (!isset($user_input->action_id)) break;

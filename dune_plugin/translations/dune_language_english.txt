@@ -203,6 +203,7 @@ entry_reboot = Reboot Dune
 entry_reboot_need = Reboot required
 entry_shutdown = Shutdown Dune
 entry_setup = Plugin setting
+entry_force_open = Show categories
 entry_updater_proxy_enabled = Plugin set up to get web update via updater proxy
 
 folder_screen_open_folder = Open folder

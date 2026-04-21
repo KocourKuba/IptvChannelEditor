@@ -204,6 +204,7 @@ entry_reboot = Перезагрузить плейер
 entry_reboot_need = Требуется перезагрузка
 entry_shutdown = Выключить Dune
 entry_setup = Настройки плагина
+entry_force_open = Открыть окно категорий
 entry_updater_proxy_enabled = Плагин настроен на обновление через прокси
 
 folder_screen_open_folder = Открыть папку

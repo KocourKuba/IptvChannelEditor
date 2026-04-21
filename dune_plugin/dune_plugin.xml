@@ -69,6 +69,17 @@
             <popup_menu>
                 <menu_items>
                     <menu_item>
+                        <caption>%tr%entry_force_open</caption>
+                        <icon_url>gui_skin://small_icons/tv.aai</icon_url>
+                        <action>
+                            <type>plugin_handle_user_input</type>
+                            <params>
+                                <handler_id>entry_handler</handler_id>
+                                <control_id>force_open</control_id>
+                            </params>
+                        </action>
+                    </menu_item>
+                    <menu_item>
                         <caption>%tr%entry_setup</caption>
                         <icon_url>gui_skin://small_icons/setup.aai</icon_url>
                         <action>
