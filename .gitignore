@@ -9,6 +9,8 @@
 *.log
 *.m3u8
 *.ncb
+*.ntr
+*.~ntp
 *.opendb
 *.opensdf
 *.resorg
@@ -31,4 +33,3 @@
 /dune_plugin/hash.md
 stream_info.bin
 SrcSrvOut.txt
-/*.~ntp
