@@ -642,7 +642,9 @@
 #define IDC_EDIT_PLUGIN_UPDATE_VERSION  1171
 #define IDC_BUTTON_FHD                  1171
 #define IDC_CHECK_AUTOINCREMENT_VERSION 1172
+#define IDC_BUTTON_UHD                  1172
 #define IDC_EDIT_PLUGIN_UPDATE_NAME     1173
+#define IDC_BUTTON_NO_INFO              1173
 #define IDC_CHECK_CUSTOM_PLUGIN_NAME    1174
 #define IDC_CHECK_CUSTOM_UPDATE_NAME    1175
 #define IDC_CHECK_MAKE_WEB_UPDATE       1176
@@ -779,7 +781,7 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        283

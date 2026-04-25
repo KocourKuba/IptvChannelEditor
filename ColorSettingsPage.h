@@ -34,6 +34,8 @@ const auto DEFAULT_COLOR_CHANGED = RGB(226, 135, 67);
 const auto DEFAULT_COLOR_HEVC = RGB(158, 255, 250);
 const auto DEFAULT_COLOR_HD = RGB(255, 255, 157);
 const auto DEFAULT_COLOR_FHD = RGB(243, 193, 254);
+const auto DEFAULT_COLOR_UHD = RGB(161, 160, 255);
+const auto DEFAULT_COLOR_NO_INFO = RGB(255, 233, 233);
 
 // CColorSettingsPage dialog
 
@@ -64,8 +66,10 @@ protected:
 	CMFCColorButton m_wndNotAdded;
 	CMFCColorButton m_wndUnknown;
 	CMFCColorButton m_wndChanged;
-	CMFCColorButton m_wndHEVC;
+	CMFCColorButton m_wndNoInfo;
 	CMFCColorButton m_wndHD;
 	CMFCColorButton m_wndFHD;
+	CMFCColorButton m_wndUHD;
+	CMFCColorButton m_wndHEVC;
 	CMFCColorButton m_wndDuplicated;
 };

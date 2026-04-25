@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project id="32B8BF7E-F9DA-487C-B6FF-DABDDB1AB822" created="20211012T165442Z" lastmodified="20260330T172351Z" version="1.0.1086" reviewcount="0" stringid="632">
+<project id="32B8BF7E-F9DA-487C-B6FF-DABDDB1AB822" created="20211012T165442Z" lastmodified="20260425T100332Z" version="1.0.1086" reviewcount="0" stringid="634">
   <lang id="ru"/>
-  <node class="TVisualCppSource" name="x64\Release Unicode\IPTVChannelEditor.exe" fullpath="D:\Works\Development\IPTVChannelEditor\x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" lastmodified="20260330T172351Z" encoding="windows-1252" platforms="[ptWin64]" hassignatureread="1">
+  <node class="TVisualCppSource" name="x64\Release Unicode\IPTVChannelEditor.exe" fullpath="D:\Works\Development\IPTVChannelEditor\x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" lastmodified="20260425T100332Z" encoding="windows-1252" platforms="[ptWin64]" hassignatureread="1">
     <node class="TWindowsBinaryFolder" name="&quot;AFX_DIALOG_LAYOUT&quot;" resname="AFX_DIALOG_LAYOUT" excluded="1"/>
     <node class="TWindowsBinaryFolder" name="&quot;PNG&quot;" resname="PNG" excluded="1"/>
     <node class="TWindowsAcceleratorFolder" name="Accelerator" created="20260330T163817Z">
@@ -3788,13 +3788,13 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru">HEVC поток (H.265)</lang>
           </row>
           <row id="X">77</row>
-          <row id="Y">61</row>
+          <row id="Y">111</row>
           <row id="CX">80</row>
           <row id="CY">8</row>
         </item>
         <item name="1166" type="CONTROL" id="1166">
           <row id="X">77</row>
-          <row id="Y">70</row>
+          <row id="Y">121</row>
           <row id="CX">50</row>
           <row id="CY">14</row>
         </item>
@@ -3815,18 +3815,19 @@ Pavel Abakanov (sharky72)</prev>
           <row id="CY">14</row>
         </item>
         <item name="STATIC_6" type="LTEXT" id="-1">
-          <row id="Text" si="303">
-            <value>HD stream (720)</value>
-            <lang id="ru">HD поток (720)</lang>
+          <row id="Text" changed="20260425T094650Z" si="303">
+            <value>HD stream 720p</value>
+            <prev>HD stream (720)</prev>
+            <lang id="ru" time="20260425T094717Z">HD поток 720p</lang>
           </row>
           <row id="X">77</row>
-          <row id="Y">7</row>
+          <row id="Y">33</row>
           <row id="CX">80</row>
           <row id="CY">8</row>
         </item>
         <item name="1170" type="CONTROL" id="1170">
           <row id="X">77</row>
-          <row id="Y">16</row>
+          <row id="Y">43</row>
           <row id="CX">50</row>
           <row id="CY">14</row>
         </item>
@@ -3841,37 +3842,73 @@ Pavel Abakanov (sharky72)</prev>
           <row id="CY">14</row>
         </item>
         <item name="STATIC_7" type="LTEXT" id="-1">
-          <row id="Text" si="305">
-            <value>FHD stream (1080)</value>
-            <lang id="ru">FHD поток (1080)</lang>
+          <row id="Text" changed="20260425T094650Z" si="305">
+            <value>FHD stream 1080p</value>
+            <prev>FHD stream (1080)</prev>
+            <lang id="ru" time="20260425T094722Z">FHD поток 1080p</lang>
           </row>
           <row id="X">77</row>
-          <row id="Y">33</row>
+          <row id="Y">59</row>
           <row id="CX">80</row>
           <row id="CY">8</row>
         </item>
         <item name="1171" type="CONTROL" id="1171">
           <row id="X">77</row>
-          <row id="Y">42</row>
+          <row id="Y">69</row>
           <row id="CX">50</row>
           <row id="CY">14</row>
         </item>
+        <item name="STATIC_8" type="LTEXT" created="20260425T094650Z" st="0" id="-1">
+          <row id="Text" si="633" st="0">
+            <value>UHD stream 2160p (H.264)</value>
+            <lang id="ru" time="20260425T094733Z">UHD поток 2160p</lang>
+          </row>
+          <row id="X" st="0">77</row>
+          <row id="Y" st="0">85</row>
+          <row id="CX" st="0">98</row>
+          <row id="CY" st="0">8</row>
+        </item>
+        <item name="1172" type="CONTROL" created="20260425T094650Z" st="0" id="1172">
+          <row id="X" st="0">77</row>
+          <row id="Y" st="0">95</row>
+          <row id="CX" st="0">50</row>
+          <row id="CY" st="0">14</row>
+        </item>
+        <item name="STATIC_9" type="LTEXT" created="20260425T100259Z" st="0" id="-1">
+          <row id="Text" si="634" st="0">
+            <value>No stream info</value>
+            <lang id="ru" time="20260425T100317Z">Нет информации</lang>
+          </row>
+          <row id="X" st="0">77</row>
+          <row id="Y" st="0">7</row>
+          <row id="CX" st="0">80</row>
+          <row id="CY" st="0">8</row>
+        </item>
+        <item name="1173" type="CONTROL" created="20260425T100259Z" st="0" id="1173">
+          <row id="X" st="0">77</row>
+          <row id="Y" st="0">17</row>
+          <row id="CX" st="0">50</row>
+          <row id="CY" st="0">14</row>
+        </item>
         <data>
-          AQD//wAAAAAAAAAAyADIgBEAAAAAAFgByAAAAAAAQwBvAGwAbwByACAAcwBlAHQAdABpAG4AZwBzAAAACACQAQABTQBTACAAUwBo
+          AQD//wAAAAAAAAAAyADIgBUAAAAAAFgByAAAAAAAQwBvAGwAbwByACAAcwBlAHQAdABpAG4AZwBzAAAACACQAQABTQBTACAAUwBo
           AGUAbABsACAARABsAGcAAAAAAAAAAAAAAAAAAlAHAAcAPQAIAP///////4IAQQBkAGQAZQBkAAAAAAAAAAAAAAAAAAAAAAABUAcA
           EQAyAA4AiwQAAE0AZgBjAEMAbwBsAG8AcgBCAHUAdAB0AG8AbgAAAAAAAAAAAAAAAAAAAAAAAAACUAcAIQA9AAgA////////ggBO
           AG8AdAAgAEEAZABkAGUAZAAAAAAAAAAAAAAAAAAAAAAAAVAHACsAMgAOAIwEAABNAGYAYwBDAG8AbABvAHIAQgB1AHQAdABvAG4A
           AAAAAAAAAAAAAAAAAAAAAAAAAlAHADsAPQAIAP///////4IAQwBoAGEAbgBnAGUAZAAAAAAAAAAAAAAAAAAAAAAAAVAHAEUAMgAO
           AI0EAABNAGYAYwBDAG8AbABvAHIAQgB1AHQAdABvAG4AAAAAAAAAAAAAAAAAAAAAAAAAAlAHAFUAPQAIAP///////4IAVQBuAGsA
           bgBvAHcAbgAAAAAAAAAAAAAAAAAAAAAAAVAHAF8AMgAOAJAEAABNAGYAYwBDAG8AbABvAHIAQgB1AHQAdABvAG4AAAAAAAAAAAAA
-          AAAAAAAAAAAAAlBNAD0AUAAIAP///////4IASABFAFYAQwAgAHMAdAByAGUAYQBtACAAKABIAC4AMgA2ADUAKQAAAAAAAAAAAAAA
-          AAAAAAAAAVBNAEYAMgAOAI4EAABNAGYAYwBDAG8AbABvAHIAQgB1AHQAdABvAG4AAAAAAAAAAAAAAAAAAAAAAAAAAlAHAG8APQAI
+          AAAAAAAAAAAAAlBNAG8AUAAIAP///////4IASABFAFYAQwAgAHMAdAByAGUAYQBtACAAKABIAC4AMgA2ADUAKQAAAAAAAAAAAAAA
+          AAAAAAAAAVBNAHkAMgAOAI4EAABNAGYAYwBDAG8AbABvAHIAQgB1AHQAdABvAG4AAAAAAAAAAAAAAAAAAAAAAAAAAlAHAG8APQAI
           AP///////4IARAB1AHAAbABpAGMAYQB0AGUAZAAAAAAAAAAAAAAAAAAAAAFQBwB5ADIADgCRBAAATQBmAGMAQwBvAGwAbwByAEIA
-          dQB0AHQAbwBuAAAAAAAAAAAAAAAAAAAAAAAAAAJQTQAHAFAACAD///////+CAEgARAAgAHMAdAByAGUAYQBtACAAKAA3ADIAMAAp
-          AAAAAAAAAAAAAAAAAAAAAAABUE0AEAAyAA4AkgQAAE0AZgBjAEMAbwBsAG8AcgBCAHUAdAB0AG8AbgAAAAAAAAAAAAAAAAAAAAAA
-          AAABULoAEAAvAA4AjwQAAP//gABSAGUAcwBlAHQAAAAAAAAAAAAAAAAAAAAAAAJQTQAhAFAACAD///////+CAEYASABEACAAcwB0
-          AHIAZQBhAG0AIAAoADEAMAA4ADAAKQAAAAAAAAAAAAAAAAAAAAAAAVBNACoAMgAOAJMEAABNAGYAYwBDAG8AbABvAHIAQgB1AHQA
-          dABvAG4AAAAAAAAA
+          dQB0AHQAbwBuAAAAAAAAAAAAAAAAAAAAAAAAAAJQTQAhAFAACAD///////+CAEgARAAgAHMAdAByAGUAYQBtACAANwAyADAAcAAA
+          AAAAAAAAAAAAAAAAAAFQTQArADIADgCSBAAATQBmAGMAQwBvAGwAbwByAEIAdQB0AHQAbwBuAAAAAAAAAAAAAAAAAAAAAAAAAAFQ
+          ugAQAC8ADgCPBAAA//+AAFIAZQBzAGUAdAAAAAAAAAAAAAAAAAAAAAAAAlBNADsAUAAIAP///////4IARgBIAEQAIABzAHQAcgBl
+          AGEAbQAgADEAMAA4ADAAcAAAAAAAAAAAAAAAAAAAAAFQTQBFADIADgCTBAAATQBmAGMAQwBvAGwAbwByAEIAdQB0AHQAbwBuAAAA
+          AAAAAAAAAAAAAAAAAAAAAAJQTQBVAGIACAD///////+CAFUASABEACAAcwB0AHIAZQBhAG0AIAAyADEANgAwAHAAIAAoAEgALgAy
+          ADYANAApAAAAAAAAAAAAAAAAAAAAAVBNAF8AMgAOAJQEAABNAGYAYwBDAG8AbABvAHIAQgB1AHQAdABvAG4AAAAAAAAAAAAAAAAA
+          AAAAAAAAAlBNAAcAUAAIAP///////4IATgBvACAAcwB0AHIAZQBhAG0AIABpAG4AZgBvAAAAAAAAAAAAAAAAAAAAAVBNABEAMgAO
+          AJUEAABNAGYAYwBDAG8AbABvAHIAQgB1AHQAdABvAG4AAAAAAAAA
         </data>
       </node>
     </node>
@@ -4005,7 +4042,13 @@ Pavel Abakanov (sharky72)</prev>
           PjxNRkNDb2xvckJ1dHRvbl9Db2x1bW5zQ291bnQ+NTwvTUZDQ29sb3JCdXR0b25fQ29sdW1uc0NvdW50PpMEfAPXAAAAPE1GQ0Nv
           bG9yQnV0dG9uX0VuYWJsZU90aGVyQnV0dG9uPlRSVUU8L01GQ0NvbG9yQnV0dG9uX0VuYWJsZU90aGVyQnV0dG9uPjxNRkNDb2xv
           ckJ1dHRvbl9FbmFibGVBdXRvbWF0aWNCdXR0b24+RkFMU0U8L01GQ0NvbG9yQnV0dG9uX0VuYWJsZUF1dG9tYXRpY0J1dHRvbj48
-          TUZDQ29sb3JCdXR0b25fQ29sdW1uc0NvdW50PjU8L01GQ0NvbG9yQnV0dG9uX0NvbHVtbnNDb3VudD4AAA==
+          TUZDQ29sb3JCdXR0b25fQ29sdW1uc0NvdW50PjU8L01GQ0NvbG9yQnV0dG9uX0NvbHVtbnNDb3VudD6UBHwD1wAAADxNRkNDb2xv
+          ckJ1dHRvbl9FbmFibGVPdGhlckJ1dHRvbj5UUlVFPC9NRkNDb2xvckJ1dHRvbl9FbmFibGVPdGhlckJ1dHRvbj48TUZDQ29sb3JC
+          dXR0b25fRW5hYmxlQXV0b21hdGljQnV0dG9uPkZBTFNFPC9NRkNDb2xvckJ1dHRvbl9FbmFibGVBdXRvbWF0aWNCdXR0b24+PE1G
+          Q0NvbG9yQnV0dG9uX0NvbHVtbnNDb3VudD41PC9NRkNDb2xvckJ1dHRvbl9Db2x1bW5zQ291bnQ+lQR8A9cAAAA8TUZDQ29sb3JC
+          dXR0b25fRW5hYmxlT3RoZXJCdXR0b24+VFJVRTwvTUZDQ29sb3JCdXR0b25fRW5hYmxlT3RoZXJCdXR0b24+PE1GQ0NvbG9yQnV0
+          dG9uX0VuYWJsZUF1dG9tYXRpY0J1dHRvbj5GQUxTRTwvTUZDQ29sb3JCdXR0b25fRW5hYmxlQXV0b21hdGljQnV0dG9uPjxNRkND
+          b2xvckJ1dHRvbl9Db2x1bW5zQ291bnQ+NTwvTUZDQ29sb3JCdXR0b25fQ29sdW1uc0NvdW50PgAA
         </data>
       </node>
     </node>
@@ -5560,25 +5603,25 @@ Known EPG time range:
     <node class="TWindowsVersionFolder" name="Version" created="20260330T163817Z">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" si="603" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" changed="20260330T165039Z" si="604" locked="1">
-          <value>9.2.2482, 30 Mar 2026</value>
-          <prev>9.2.2479, 27 Mar 2026</prev>
+        <row id="FileVersion" changed="20260425T094650Z" si="604" locked="1" st="2">
+          <value>9.2.2491, 25 Apr 2026</value>
+          <prev>9.2.2482, 30 Mar 2026</prev>
         </row>
         <row id="InternalName" si="605" locked="1">IPTVChannelEditor.exe</row>
         <row id="LegalCopyright" si="606" locked="1">All rights reserved.</row>
         <row id="OriginalFilename" si="607" locked="1">IPTVChannelEditor.exe</row>
         <row id="ProductName" si="608" locked="1">Dune HD IPTV Channel Editor</row>
         <data>
-          MAM0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4AAAEAAgAJAAAAsgkCAAkAAACyCT8AAAAAAAAABAAE
+          MAM0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4AAAEAAgAJAAAAuwkCAAkAAAC7CT8AAAAAAAAABAAE
           AAEAAAAAAAAAAAAAAAAAAACOAgAAAQBTAHQAcgBpAG4AZwBGAGkAbABlAEkAbgBmAG8AAABqAgAAAQAwADQAMAA5ADAANABCADAA
           AACGAC8AAQBGAGkAbABlAEQAZQBzAGMAcgBpAHAAdABpAG8AbgAAAAAASQBQAFQAVgAgAEMAaABhAG4AbgBlAGwAIABFAGQAaQB0
           AG8AcgAgAGYAbwByACAARAB1AG4AZQAgAEgARAAgAEUAZABlAG0AIABUAFYAIABwAGwAdQBnAGkAbgAAAAAATAAWAAEARgBpAGwA
-          ZQBWAGUAcgBzAGkAbwBuAAAAAAA5AC4AMgAuADIANAA4ADIALAAgADMAMAAgAE0AYQByACAAMgAwADIANgAAAEwAFgABAEkAbgB0
+          ZQBWAGUAcgBzAGkAbwBuAAAAAAA5AC4AMgAuADIANAA5ADEALAAgADIANQAgAEEAcAByACAAMgAwADIANgAAAEwAFgABAEkAbgB0
           AGUAcgBuAGEAbABOAGEAbQBlAAAASQBQAFQAVgBDAGgAYQBuAG4AZQBsAEUAZABpAHQAbwByAC4AZQB4AGUAAABOABUAAQBMAGUA
           ZwBhAGwAQwBvAHAAeQByAGkAZwBoAHQAAABBAGwAbAAgAHIAaQBnAGgAdABzACAAcgBlAHMAZQByAHYAZQBkAC4AAAAAAFQAFgAB
           AE8AcgBpAGcAaQBuAGEAbABGAGkAbABlAG4AYQBtAGUAAABJAFAAVABWAEMAaABhAG4AbgBlAGwARQBkAGkAdABvAHIALgBlAHgA
           ZQAAAFgAHAABAFAAcgBvAGQAdQBjAHQATgBhAG0AZQAAAAAARAB1AG4AZQAgAEgARAAgAEkAUABUAFYAIABDAGgAYQBuAG4AZQBs
-          ACAARQBkAGkAdABvAHIAAAA2AAkAAQBQAHIAbwBkAHUAYwB0AFYAZQByAHMAaQBvAG4AAAA5AC4AMgAuADIANAA4ADIAAAAAAEQA
+          ACAARQBkAGkAdABvAHIAAAA2AAkAAQBQAHIAbwBkAHUAYwB0AFYAZQByAHMAaQBvAG4AAAA5AC4AMgAuADIANAA5ADEAAAAAAEQA
           AAABAFYAYQByAEYAaQBsAGUASQBuAGYAbwAAAAAAJAAEAAAAVAByAGEAbgBzAGwAYQB0AGkAbwBuAAAAAAAJBLAE
         </data>
       </node>

@@ -53,10 +53,12 @@ void CColorSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_NOT_ADDED, m_wndNotAdded);
 	DDX_Control(pDX, IDC_BUTTON_CHANGED, m_wndChanged);
 	DDX_Control(pDX, IDC_BUTTON_UNKNOWN, m_wndUnknown);
-	DDX_Control(pDX, IDC_BUTTON_HEVC, m_wndHEVC);
+	DDX_Control(pDX, IDC_BUTTON_DUPLICATED, m_wndDuplicated);
+	DDX_Control(pDX, IDC_BUTTON_NO_INFO, m_wndNoInfo);
 	DDX_Control(pDX, IDC_BUTTON_HD, m_wndHD);
 	DDX_Control(pDX, IDC_BUTTON_FHD, m_wndFHD);
-	DDX_Control(pDX, IDC_BUTTON_DUPLICATED, m_wndDuplicated);
+	DDX_Control(pDX, IDC_BUTTON_UHD, m_wndUHD);
+	DDX_Control(pDX, IDC_BUTTON_HEVC, m_wndHEVC);
 }
 
 BOOL CColorSettingsPage::OnInitDialog()
@@ -68,9 +70,11 @@ BOOL CColorSettingsPage::OnInitDialog()
 	AddTooltip(IDC_BUTTON_NOT_ADDED, IDS_STRING_BUTTON_COLORS);
 	AddTooltip(IDC_BUTTON_UNKNOWN, IDS_STRING_BUTTON_COLORS);
 	AddTooltip(IDC_BUTTON_DUPLICATED, IDS_STRING_BUTTON_DUPLICATED);
-	AddTooltip(IDC_BUTTON_HEVC, IDS_STRING_BUTTON_COLORS);
+	AddTooltip(IDC_BUTTON_NO_INFO, IDS_STRING_BUTTON_COLORS);
 	AddTooltip(IDC_BUTTON_HD, IDS_STRING_BUTTON_COLORS);
 	AddTooltip(IDC_BUTTON_FHD, IDS_STRING_BUTTON_COLORS);
+	AddTooltip(IDC_BUTTON_UHD, IDS_STRING_BUTTON_COLORS);
+	AddTooltip(IDC_BUTTON_HEVC, IDS_STRING_BUTTON_COLORS);
 	AddTooltip(IDC_BUTTON_RESET, IDS_STRING_BUTTON_RESET);
 
 	m_wndAdded.SetColor(GetConfig().get_int(true, REG_COLOR_ADDED, DEFAULT_COLOR_ADDED));
@@ -82,6 +86,8 @@ BOOL CColorSettingsPage::OnInitDialog()
 	m_wndHEVC.SetColor(GetConfig().get_int(true, REG_COLOR_HEVC, DEFAULT_COLOR_HEVC));
 	m_wndHD.SetColor(GetConfig().get_int(true, REG_COLOR_HD, DEFAULT_COLOR_HD));
 	m_wndFHD.SetColor(GetConfig().get_int(true, REG_COLOR_FHD, DEFAULT_COLOR_FHD));
+	m_wndUHD.SetColor(GetConfig().get_int(true, REG_COLOR_4K, DEFAULT_COLOR_UHD));
+	m_wndNoInfo.SetColor(GetConfig().get_int(true, REG_COLOR_NO_INFO, DEFAULT_COLOR_NO_INFO));
 
 	UpdateData(FALSE);
 
@@ -97,9 +103,11 @@ BOOL CColorSettingsPage::OnApply()
 	GetConfig().set_int(true, REG_COLOR_NOT_ADDED, m_wndNotAdded.GetColor());
 	GetConfig().set_int(true, REG_COLOR_CHANGED, m_wndChanged.GetColor());
 	GetConfig().set_int(true, REG_COLOR_UNKNOWN, m_wndUnknown.GetColor());
-	GetConfig().set_int(true, REG_COLOR_HEVC, m_wndHEVC.GetColor());
+	GetConfig().set_int(true, REG_COLOR_NO_INFO, m_wndNoInfo.GetColor());
 	GetConfig().set_int(true, REG_COLOR_HD, m_wndHD.GetColor());
 	GetConfig().set_int(true, REG_COLOR_FHD, m_wndFHD.GetColor());
+	GetConfig().set_int(true, REG_COLOR_4K, m_wndUHD.GetColor());
+	GetConfig().set_int(true, REG_COLOR_HEVC, m_wndHEVC.GetColor());
 	GetConfig().set_int(true, REG_COLOR_DUPLICATED, m_wndDuplicated.GetColor());
 
 	return __super::OnApply();
@@ -112,8 +120,10 @@ void CColorSettingsPage::OnBnClickedButtonReset()
 	m_wndChanged.SetColor(DEFAULT_COLOR_CHANGED);
 	m_wndUnknown.SetColor(::GetSysColor(COLOR_WINDOWTEXT));
 
-	m_wndHEVC.SetColor(DEFAULT_COLOR_HEVC);
+	m_wndNoInfo.SetColor(DEFAULT_COLOR_NO_INFO);
 	m_wndHD.SetColor(DEFAULT_COLOR_HD);
 	m_wndFHD.SetColor(DEFAULT_COLOR_FHD);
+	m_wndUHD.SetColor(DEFAULT_COLOR_UHD);
+	m_wndHEVC.SetColor(DEFAULT_COLOR_HEVC);
 	m_wndDuplicated.SetColor(::GetSysColor(COLOR_GRAYTEXT));
 }

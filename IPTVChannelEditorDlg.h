@@ -451,9 +451,11 @@ private:
 	COLORREF m_colorNotAdded; // playlist entry not present in the current channels list
 	COLORREF m_colorNotChanged; // playlist entry the same in the current channels list
 	COLORREF m_colorAdded; // channel present in the playlist and have not differences
-	COLORREF m_colorHEVC; // channel HEVC
+	COLORREF m_colorNoInfo; // No channel info
 	COLORREF m_colorHD; // Channel HD
 	COLORREF m_colorFHD; // Channel FHD
+	COLORREF m_colorUHD; // Channel UHD
+	COLORREF m_colorHEVC; // channel HEVC
 	COLORREF m_colorChanged; // channel has difference with same entry in the playlist
 	COLORREF m_colorUnknown; // channel not present in the current playlist
 	COLORREF m_colorDuplicated; // channel not present in the current playlist

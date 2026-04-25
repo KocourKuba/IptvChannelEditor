@@ -78,6 +78,8 @@ constexpr auto REG_COLOR_DUPLICATED    = _T("ColorDuplicated");
 constexpr auto REG_COLOR_HEVC          = _T("ColorHEVC");
 constexpr auto REG_COLOR_HD            = _T("ColorHD");
 constexpr auto REG_COLOR_FHD           = _T("ColorFHD");
+constexpr auto REG_COLOR_4K            = _T("Color4K");
+constexpr auto REG_COLOR_NO_INFO       = _T("ColorNoInfo");
 
 // main dialog
 constexpr auto REG_PLUGIN              = _T("PluginType");
