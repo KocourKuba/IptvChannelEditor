@@ -364,7 +364,7 @@ void CAccessInfoPage::FillConfigs()
 		if (entry == m_selected_cred->get_config())
 			m_initial_config = idx;
 	}
-	m_wndConfigs.SetCurSel(0);
+	m_wndConfigs.SetCurSel(m_initial_config);
 }
 
 void CAccessInfoPage::FillChannelsList()
@@ -1369,6 +1369,7 @@ void CAccessInfoPage::OnBnClickedButtonEditConfig()
 	{
 		m_plugin->copy_config(*pSheet->m_plugin);
 		CreateAccountsList();
+		FillConfigs();
 		m_wndAccounts.SetCheck(GetConfig().get_int(false, REG_ACTIVE_ACCOUNT), TRUE);
 	}
 }
