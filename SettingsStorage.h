@@ -32,21 +32,25 @@ DEALINGS IN THE SOFTWARE.
 
 class Credentials;
 
-class AccountSettings
+class SettingsStorage
 {
 public:
-	static AccountSettings& Instance()
+	static SettingsStorage& Instance()
 	{
-		static AccountSettings _instance;
+		static SettingsStorage _instance;
 		return _instance;
 	}
 	using map_variant = std::map<std::wstring, std::variant<int, __int64, std::wstring, std::vector<unsigned char>>>;
 
 private:
-	AccountSettings() = default;
-	~AccountSettings() = default;
+	SettingsStorage() = default;
+	~SettingsStorage() = default;
 
-	AccountSettings(const AccountSettings& source) = delete;
+	SettingsStorage(const SettingsStorage& source) = delete;
+	SettingsStorage(SettingsStorage&& source) = delete;
+
+	SettingsStorage operator=(const SettingsStorage&) = delete;
+	SettingsStorage operator=(SettingsStorage&&) = delete;
 
 public:
 	void SaveSettings();
@@ -112,4 +116,4 @@ private:
 	nlohmann::json m_config{};
 };
 
-inline AccountSettings& GetConfig() { return AccountSettings::Instance(); }
+inline SettingsStorage& GetConfig() { return SettingsStorage::Instance(); }

@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "Constants.h"
 #include "IPTVChannelEditor.h"
 #include "Credentials.h"
@@ -122,7 +122,7 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_HIGHLIGHT_STREAM
 };
 
-void AccountSettings::SaveSettings()
+void SettingsStorage::SaveSettings()
 {
 	if (m_bPortable)
 		SaveSettingsToJson();
@@ -130,7 +130,7 @@ void AccountSettings::SaveSettings()
 		SaveSettingsToRegistry();
 }
 
-void AccountSettings::LoadSettings()
+void SettingsStorage::LoadSettings()
 {
 	m_settings.clear();
 
@@ -174,7 +174,7 @@ void AccountSettings::LoadSettings()
 	}
 }
 
-void AccountSettings::SaveSettingsToJson()
+void SettingsStorage::SaveSettingsToJson()
 {
 	UpdateSettingsJson(common_settings);
 
@@ -187,7 +187,7 @@ void AccountSettings::SaveSettingsToJson()
 	out_file << m_config << std::endl;
 }
 
-void AccountSettings::SaveSettingsToRegistry()
+void SettingsStorage::SaveSettingsToRegistry()
 {
 	SaveSectionRegistry(common_settings);
 
@@ -197,7 +197,7 @@ void AccountSettings::SaveSettingsToRegistry()
 	}
 }
 
-void AccountSettings::UpdatePluginSettings()
+void SettingsStorage::UpdatePluginSettings()
 {
 	if (m_bPortable)
 		UpdateSettingsJson(m_pluginType);
@@ -205,34 +205,34 @@ void AccountSettings::UpdatePluginSettings()
 		SaveSectionRegistry(m_pluginType);
 }
 
-void AccountSettings::RemovePortableSettings()
+void SettingsStorage::RemovePortableSettings()
 {
 	std::error_code ec;
 	std::filesystem::remove(GetAppPath() + CONFIG_FILE, ec);
 }
 
-std::string AccountSettings::get_selected_plugin() const
+std::string SettingsStorage::get_selected_plugin() const
 {
 	return utils::utf16_to_utf8(get_string(true, REG_SEL_PLUGIN));
 }
 
-void AccountSettings::set_selected_plugin(const std::string& val)
+void SettingsStorage::set_selected_plugin(const std::string& val)
 {
 	set_string(true, REG_SEL_PLUGIN, utils::utf8_to_utf16(val));
 	set_plugin_type(val);
 }
 
-const std::string& AccountSettings::get_plugin_type() const
+const std::string& SettingsStorage::get_plugin_type() const
 {
 	return m_pluginType;
 }
 
-void AccountSettings::set_plugin_type(const std::string& val)
+void SettingsStorage::set_plugin_type(const std::string& val)
 {
 	m_pluginType = val;
 }
 
-std::vector<std::shared_ptr<Credentials>> AccountSettings::LoadCredentials() const
+std::vector<std::shared_ptr<Credentials>> SettingsStorage::LoadCredentials() const
 {
 	std::vector<std::shared_ptr<Credentials>> credentials;
 	nlohmann::json creds;
@@ -267,7 +267,7 @@ std::vector<std::shared_ptr<Credentials>> AccountSettings::LoadCredentials() con
 	return credentials;
 }
 
-std::wstring AccountSettings::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const
+std::wstring SettingsStorage::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const
 {
 	const auto& section = isApp ? common_settings : m_pluginType;
 
@@ -284,14 +284,14 @@ std::wstring AccountSettings::get_string(bool isApp, const std::wstring& key, co
 	return def;
 }
 
-void AccountSettings::set_string(bool isApp, const std::wstring& key, const std::wstring& value)
+void SettingsStorage::set_string(bool isApp, const std::wstring& key, const std::wstring& value)
 {
 	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
-int AccountSettings::get_int(bool isApp, const std::wstring& key, const int def /*= 0*/) const
+int SettingsStorage::get_int(bool isApp, const std::wstring& key, const int def /*= 0*/) const
 {
 	const auto& section = isApp ? common_settings : m_pluginType;
 	if (m_settings.find(section) == m_settings.end())
@@ -307,14 +307,14 @@ int AccountSettings::get_int(bool isApp, const std::wstring& key, const int def 
 	return def;
 }
 
-void AccountSettings::set_int(bool isApp, const std::wstring& key, const int value)
+void SettingsStorage::set_int(bool isApp, const std::wstring& key, const int value)
 {
 	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
-__int64 AccountSettings::get_int64(bool isApp, const std::wstring& key, const __int64 def /*= 0*/) const
+__int64 SettingsStorage::get_int64(bool isApp, const std::wstring& key, const __int64 def /*= 0*/) const
 {
 	const auto& section = isApp ? common_settings : m_pluginType;
 	if (m_settings.find(section) == m_settings.end())
@@ -330,14 +330,14 @@ __int64 AccountSettings::get_int64(bool isApp, const std::wstring& key, const __
 	return def;
 }
 
-void AccountSettings::set_int64(bool isApp, const std::wstring& key, const __int64 value)
+void SettingsStorage::set_int64(bool isApp, const std::wstring& key, const __int64 value)
 {
 	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 
 	settings[key] = value;
 }
 
-std::vector<unsigned char> AccountSettings::get_binary(bool isApp, const std::wstring& key) const
+std::vector<unsigned char> SettingsStorage::get_binary(bool isApp, const std::wstring& key) const
 {
 	const auto& section = isApp ? common_settings : m_pluginType;
 	if (m_settings.find(section) != m_settings.end())
@@ -353,20 +353,20 @@ std::vector<unsigned char> AccountSettings::get_binary(bool isApp, const std::ws
 	return {};
 }
 
-void AccountSettings::set_binary(bool isApp, const std::wstring& key, const std::span<unsigned char>& value)
+void SettingsStorage::set_binary(bool isApp, const std::wstring& key, const std::span<unsigned char>& value)
 {
 	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 
 	settings[key] = std::move(std::vector<unsigned char>(value.begin(), value.end()));
 }
 
-void AccountSettings::delete_setting(bool isApp, const std::wstring& key)
+void SettingsStorage::delete_setting(bool isApp, const std::wstring& key)
 {
 	auto& settings = isApp ? m_settings[common_settings] : m_settings[m_pluginType];
 	settings.erase(key);
 }
 
-void AccountSettings::ReadSettingsRegistry(const std::string& plugin_type)
+void SettingsStorage::ReadSettingsRegistry(const std::string& plugin_type)
 {
 	HKEY hkHive = nullptr;
 	if (::RegOpenCurrentUser(KEY_READ, &hkHive) != ERROR_SUCCESS)
@@ -431,7 +431,7 @@ void AccountSettings::ReadSettingsRegistry(const std::string& plugin_type)
 	::RegCloseKey(hkHive);
 }
 
-void AccountSettings::SaveSectionRegistry(const std::string& plugin_type)
+void SettingsStorage::SaveSectionRegistry(const std::string& plugin_type)
 {
 	HKEY hkHive = nullptr;
 	if (::RegOpenCurrentUser(KEY_WRITE, &hkHive) != ERROR_SUCCESS)
@@ -487,7 +487,7 @@ void AccountSettings::SaveSectionRegistry(const std::string& plugin_type)
 	::RegCloseKey(hkHive);
 }
 
-bool AccountSettings::ReadSettingsJson(const std::string& plugin_type)
+bool SettingsStorage::ReadSettingsJson(const std::string& plugin_type)
 {
 	std::string j_section;
 	if (plugin_type == common_settings)
@@ -537,7 +537,7 @@ bool AccountSettings::ReadSettingsJson(const std::string& plugin_type)
 	return true;
 }
 
-void AccountSettings::UpdateSettingsJson(const std::string& plugin_type)
+void SettingsStorage::UpdateSettingsJson(const std::string& plugin_type)
 {
 	nlohmann::json node;
 	for (const auto& [key, value] : m_settings[plugin_type])

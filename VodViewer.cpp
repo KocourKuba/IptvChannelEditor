@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 #include "PlaylistParseM3U8Thread.h"
 #include "PlaylistParseJsonThread.h"
 #include "IconCache.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "Constants.h"
 
 #include "UtilsLib\inet_utils.h"

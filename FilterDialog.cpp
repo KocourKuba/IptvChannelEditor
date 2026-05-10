@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include <afxdialogex.h>
 #include "resource.h"		// main symbols
 #include "FilterDialog.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "Constants.h"
 
 #ifdef _DEBUG

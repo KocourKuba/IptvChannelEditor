@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "IconCache.h"
 #include "IPTVChannelEditor.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "Constants.h"
 
 #include "UtilsLib\xxhash.hpp"

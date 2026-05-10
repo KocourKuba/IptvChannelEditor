@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "plugin_cbilling.h"
 #include "vod_movie.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "Constants.h"
 #include "UtilsLib\inet_utils.h"
 

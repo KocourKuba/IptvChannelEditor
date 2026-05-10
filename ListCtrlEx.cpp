@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "ListCtrlEx.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "IPTVChannelEditor.h"
 
 IMPLEMENT_DYNAMIC(CListCtrlEx, CListCtrl)

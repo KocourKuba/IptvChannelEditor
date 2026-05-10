@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_edem.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "Constants.h"
 
 #include "UtilsLib\utils.h"

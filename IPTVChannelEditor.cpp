@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 #include "IPTVChannelEditor.h"
 #include "IPTVChannelEditorDlg.h"
 #include "PluginFactory.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "Constants.h"
 
 #include "UtilsLib\FileVersionInfo.h"

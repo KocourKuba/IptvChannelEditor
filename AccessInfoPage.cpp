@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "AccessInfoPage.h"
 #include "IPTVChannelEditor.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "PlayListEntry.h"
 #include "UrlDlg.h"
 #include "Constants.h"

@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include <iosfwd>
 #include "PluginConfigPageEPG.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "Constants.h"
 #include "PluginFactory.h"
 

@@ -204,7 +204,7 @@
     <ClInclude Include="Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AccountSettings.h">
+    <ClInclude Include="SettingsStorage.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="PluginConfigPageEPG.h">
@@ -443,7 +443,7 @@
     <ClCompile Include="Credentials.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="AccountSettings.cpp">
+    <ClCompile Include="SettingsStorage.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
     <ClCompile Include="uri_stream.cpp">

@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include <afxdialogex.h>
 #include "EpgListDlg.h"
 #include "IPTVChannelEditor.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "Constants.h"
 
 #ifdef _DEBUG

@@ -52,7 +52,7 @@ DEALINGS IN THE SOFTWARE.
 #include "EpgListDlg.h"
 #include "VodViewer.h"
 #include "PluginFactory.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 #include "Constants.h"
 #include "FillParamsInfoDlg.h"
 

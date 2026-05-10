@@ -148,7 +148,7 @@ call $(SolutionDir)_ProjectScripts\localize_.cmd $(ProjectDir)$(ProjectName)
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
     <ClInclude Include="AccessInfoPage.h" />
-    <ClInclude Include="AccountSettings.h" />
+    <ClInclude Include="SettingsStorage.h" />
     <ClInclude Include="ColorSettingsPage.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Credentials.h" />
@@ -238,7 +238,7 @@ call $(SolutionDir)_ProjectScripts\localize_.cmd $(ProjectDir)$(ProjectName)
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
     <ClCompile Include="AccessInfoPage.cpp" />
-    <ClCompile Include="AccountSettings.cpp" />
+    <ClCompile Include="SettingsStorage.cpp" />
     <ClCompile Include="ChannelInfo.cpp" />
     <ClCompile Include="ChannelCategory.cpp" />
     <ClCompile Include="ColorEdit.cpp" />

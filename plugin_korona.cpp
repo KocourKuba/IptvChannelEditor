@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "plugin_korona.h"
 #include "Constants.h"
-#include "AccountSettings.h"
+#include "SettingsStorage.h"
 
 #include "UtilsLib\utils.h"
 #include "UtilsLib\md5.h"
