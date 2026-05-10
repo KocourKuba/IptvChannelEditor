@@ -170,7 +170,7 @@ bool DownloadFile(http_request& request)
 		}
 		defer[&]{ WinHttpCloseHandle(hSession); };
 
-		WinHttpSetTimeouts(hSession, 0, 10000, 10000, 60000);
+		WinHttpSetTimeouts(hSession, 0, request.timeouts.connect_timeout * 1000, 10000, request.timeouts.download_timeout * 1000);
 
 		// Specify an HTTP server.
 		auto hConnect = WinHttpConnect(hSession, cracked.host.c_str(), cracked.port, 0);

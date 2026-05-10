@@ -66,6 +66,12 @@ struct progress_info
 	void* extraData = nullptr;
 };
 
+struct timeouts
+{
+	int connect_timeout = 10;
+	int download_timeout = 60;
+};
+
 struct http_request
 {
 	std::wstring url;
@@ -74,6 +80,7 @@ struct http_request
 	std::vector<std::string> request_headers;
 	std::vector<std::string> response_headers;
 	std::wstring user_agent{pc_user_agent};
+	timeouts timeouts;
 	std::string post_data;
 	std::wstring error_message;
 	bool verb_post = false;
