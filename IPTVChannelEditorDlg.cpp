@@ -2341,7 +2341,7 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 			if (!token.empty())
 			{
 				std::wstring header = utils::string_replace<wchar_t>(epg_param.get_epg_auth(), REPL_TOKEN, token);
-				req.headers.emplace_back(utils::utf16_to_utf8(header));
+				req.request_headers.emplace_back(utils::utf16_to_utf8(header));
 			}
 		}
 

@@ -51,9 +51,17 @@ void PlaylistParseM3U8Thread(const std::shared_ptr<ThreadConfig> config, const s
 			int channels = 0;
 			int step = 0;
 
+			bool isM3U = false;
 			std::string line;
 			while (std::getline(stream, line))
 			{
+				if (empty(line)) continue;
+				if (!isM3U && strstr(line.c_str(), "#EXTM3U") != nullptr) {
+					isM3U = true;
+				}
+
+				if (!isM3U) continue;
+
 				utils::string_rtrim(line, "\r");
 				step++;
 

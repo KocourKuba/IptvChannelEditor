@@ -67,7 +67,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 		{
 			.url = url,
 			.cache_ttl = cache_ttl,
-			.headers{ "Content-Type: application/json" },
+			.request_headers{ CONTENT_TYPE_JSON },
 			.post_data = json_request.dump(),
 			.verb_post = true,
 		};
@@ -135,7 +135,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 				{
 					.url = url,
 					.cache_ttl = cache_ttl,
-					.headers = req.headers,
+					.request_headers = req.request_headers,
 					.post_data = json_request.dump(),
 					.verb_post = true
 				};
@@ -203,7 +203,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 					{
 						.url = url,
 						.cache_ttl = cache_ttl,
-						.headers = req.headers,
+						.request_headers = req.request_headers,
 						.post_data = json_request.dump(),
 						.verb_post = true,
 					};
@@ -252,7 +252,7 @@ void plugin_edem::fetch_movie_info(const TemplateParams& params, vod_movie_def& 
 		utils::http_request req
 		{
 			.url = url,
-			.headers{ "Content-Type: application/json" },
+			.request_headers{ CONTENT_TYPE_JSON },
 			.post_data = json_request.dump(),
 			.verb_post = true
 		};
@@ -290,7 +290,7 @@ void plugin_edem::fetch_movie_info(const TemplateParams& params, vod_movie_def& 
 					utils::http_request var_req
 					{
 						.url = url,
-						.headers = req.headers,
+						.request_headers = req.request_headers,
 						.post_data = json_request.dump(),
 						.verb_post = true
 					};

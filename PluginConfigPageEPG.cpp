@@ -336,7 +336,7 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 		{
 			std::wstring header = m_EpgAuth.GetString();
 			utils::string_replace_inplace<wchar_t>(header, REPL_TOKEN, utils::utf8_to_utf16(api_token));
-			req.headers.emplace_back(utils::utf16_to_utf8(header));
+			req.request_headers.emplace_back(utils::utf16_to_utf8(header));
 		}
 	}
 

@@ -71,7 +71,8 @@ struct http_request
 	std::wstring url;
 	std::chrono::seconds cache_ttl = std::chrono::seconds::zero();
 	int max_redirect = 5;
-	std::vector<std::string> headers;
+	std::vector<std::string> request_headers;
+	std::vector<std::string> response_headers;
 	std::wstring user_agent{pc_user_agent};
 	std::string post_data;
 	std::wstring error_message;

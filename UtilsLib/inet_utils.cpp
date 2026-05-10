@@ -157,7 +157,7 @@ bool DownloadFile(http_request& request)
 		}
 
 		// Use WinHttpOpen to obtain a session handle.
-		LOG_PROTOCOL(std::format(L"UserAgent: {:s}", request.user_agent));
+		LOG_PROTOCOL(std::format(L"UserAgent: {}", request.user_agent));
 		auto hSession = WinHttpOpen(request.user_agent.c_str(),
 									WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
 									WINHTTP_NO_PROXY_NAME,
@@ -206,14 +206,16 @@ bool DownloadFile(http_request& request)
 		defer[&]{ WinHttpCloseHandle(hRequest); };
 
 		std::wstring all_headers;
-		if (!request.headers.empty())
+		if (!request.request_headers.empty())
 		{
-			for (const auto& str : request.headers)
+			LOG_PROTOCOL(L"Request headers:");
+			for (const auto& hdr : request.request_headers)
 			{
-				all_headers += utils::utf8_to_utf16(str) + L"\n";
+				LOG_PROTOCOL(hdr);
+				request.response_headers.emplace_back(hdr);
+				all_headers += utils::utf8_to_utf16(hdr) + L"\n";
 			}
-
-			LOG_PROTOCOL(std::format(L"header added: {:s}", all_headers));
+			LOG_PROTOCOL(L"------");
 		}
 
 		DWORD options = SECURITY_FLAG_IGNORE_ALL_CERT_ERRORS;
@@ -235,7 +237,7 @@ bool DownloadFile(http_request& request)
 
 			DWORD post_size = request.post_data.empty() ? 0 : static_cast<DWORD>(request.post_data.length());
 			if (!WinHttpSendRequest(hRequest,
-									empty(all_headers) ? WINHTTP_NO_ADDITIONAL_HEADERS : all_headers.c_str(),
+									all_headers.empty() ? WINHTTP_NO_ADDITIONAL_HEADERS : all_headers.c_str(),
 									static_cast<DWORD>(all_headers.size()),
 									request.post_data.empty() ? WINHTTP_NO_REQUEST_DATA : reinterpret_cast<void*>(request.post_data.data()),
 									post_size,
@@ -256,11 +258,12 @@ bool DownloadFile(http_request& request)
 				break;
 			}
 
+
 			DWORD dwStatusCode = 0;
 			DWORD dwSize = sizeof(dwStatusCode);
 
 			if (!WinHttpQueryHeaders(hRequest,
-										WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+									 WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
 									 WINHTTP_HEADER_NAME_BY_INDEX,
 									 &dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
 			{
@@ -269,15 +272,49 @@ bool DownloadFile(http_request& request)
 				break;
 			}
 
-			WCHAR szContentLength[32] = { 0 };
+			dwSize = 0;
+			BOOL bRes = WinHttpQueryHeaders(hRequest,
+											WINHTTP_QUERY_RAW_HEADERS_CRLF,
+											WINHTTP_HEADER_NAME_BY_INDEX,
+											nullptr, &dwSize, WINHTTP_NO_HEADER_INDEX);
 
-			// Query the Content-Length header
-			dwSize = sizeof(szContentLength);
-			if (WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_CONTENT_LENGTH,
-									WINHTTP_HEADER_NAME_BY_INDEX,
-									szContentLength, &dwSize, WINHTTP_NO_HEADER_INDEX)) {
-				LOG_PROTOCOL(std::format(L"Content-Length: {:s} for {:s}", szContentLength, request.url));
-				dwToDownload = std::stol(szContentLength);
+			if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+			{
+				std::wstring buffer;
+				buffer.resize(dwSize / sizeof(wchar_t));
+				// Allocate buffer for headers
+				// Retrieve the headers
+				if (WinHttpQueryHeaders(hRequest,
+										WINHTTP_QUERY_RAW_HEADERS_CRLF,
+										WINHTTP_HEADER_NAME_BY_INDEX,
+										buffer.data(), &dwSize,
+										WINHTTP_NO_HEADER_INDEX))
+				{
+					auto headers = utils::string_split(buffer, L'\n');
+					if (!headers.empty())
+					{
+						LOG_PROTOCOL(L"Response headers:");
+						for (auto& line : headers)
+						{
+							const auto& clean_line = utils::string_trim(line, L" \r");
+							if (clean_line.empty() || clean_line[0] == '\0') continue;
+							LOG_PROTOCOL(clean_line);
+
+							if (_wcsnicmp(clean_line.c_str(), L"Content-Length:", 15) == 0)
+							{
+								auto hdrVal = clean_line.substr(15);
+								dwToDownload = std::stol(utils::string_trim(hdrVal));
+							}
+						}
+						LOG_PROTOCOL(L"------");
+					}
+				}
+			}
+			else if (!bRes)
+			{
+				request.error_message = std::format(L"Error: Failed to query headers: error code {:d}", GetLastError());
+				LOG_PROTOCOL(request.error_message);
+				break;
 			}
 
 			switch (dwStatusCode)
@@ -331,7 +368,6 @@ bool DownloadFile(http_request& request)
 					request.max_redirect = 5;
 					bResults = true;
 					bRepeat = false;
-					LOG_PROTOCOL("Response: 200");
 					break;
 				}
 

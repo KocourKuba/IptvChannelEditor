@@ -1096,7 +1096,7 @@ void CVodViewer::FilterList()
 			{
 				.url = url,
 				.cache_ttl = cache_ttl,
-				.headers{ "Content-Type: application/json" },
+				.request_headers{ CONTENT_TYPE_JSON },
 				.user_agent = m_plugin->get_user_agent(),
 				.post_data = json_request.dump(),
 				.verb_post = true

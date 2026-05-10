@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop lang="ru" column="TTranslationColumn" row="STATIC_9.Text">
+<desktop lang="ru" column="TContextColumn" row="115">
   <project scantime="20260425T100334Z">
     <ignoredwords>
       <language id="ru">
@@ -8,7 +8,6 @@
     </ignoredwords>
   </project>
   <node>x64\Release Unicode\IPTVChannelEditor.exe</node>
-  <node>Dialog</node>
   <column class="TInfoColumn" width="103"/>
   <column class="TContextColumn" width="515"/>
   <column class="TOriginalColumn" width="515"/>

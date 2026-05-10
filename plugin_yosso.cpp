@@ -415,7 +415,7 @@ nlohmann::json plugin_yosso::jellyfin_request(const TemplateParams& params, cons
 	{
 		.url = url,
 		.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
-		.headers{"Content-Type: application/json; charset=utf-8", "Accept: application/json", build_auth_header(*params.creds, authorized)},
+		.request_headers{CONTENT_TYPE_JSON, ACCEPT_TYPE_JSON, build_auth_header(*params.creds, authorized)},
 	};
 
 	if (!authorized)

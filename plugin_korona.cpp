@@ -70,7 +70,7 @@ bool plugin_korona::get_api_token(TemplateParams& params, std::string& api_token
 	utils::http_request req
 	{
 		.url = replace_params_vars(params, API_COMMAND_AUTH),
-		.headers { "Content-Type: application/x-www-form-urlencoded" },
+		.request_headers { CONTENT_TYPE_WWW_FORM },
 		.verb_post = true
 	};
 
@@ -378,7 +378,7 @@ nlohmann::json plugin_korona::server_request(const std::wstring& url, const bool
 		{
 			.url = url,
 			.cache_ttl = use_cache_ttl ? GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) : std::chrono::seconds::zero(),
-			.headers { "Content-Type: application/x-www-form-urlencoded", std::format("Authorization: Bearer {:s}", session_token) },
+			.request_headers { CONTENT_TYPE_WWW_FORM, std::format("Authorization: Bearer {:s}", session_token) },
 		};
 
 		if (utils::DownloadFile(req))

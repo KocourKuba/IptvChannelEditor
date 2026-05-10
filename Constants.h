@@ -207,3 +207,7 @@ constexpr auto CU_END_MIN		       = L"${end-min}";
 constexpr auto CU_SEC			       = L"{S}";
 constexpr auto CU_START_SEC		       = L"${start-sec}";
 constexpr auto CU_END_SEC		       = L"${end-sec}";
+
+constexpr auto CONTENT_TYPE_JSON       = "Content-Type: application/json; charset=utf-8";
+constexpr auto CONTENT_TYPE_WWW_FORM   = "Content-Type: application/x-www-form-urlencoded";
+constexpr auto ACCEPT_TYPE_JSON        = "Accept: application/json";

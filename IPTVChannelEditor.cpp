@@ -80,7 +80,7 @@ static void SetupExceptionHandler()
 
 	BT_SetAppName(std::format(L"IPTVChannelEditor_v{:d}_{:d}_{:d}", MAJOR, MINOR, BUILD).c_str());
 	BT_SetFlags(BTF_DETAILEDMODE | BTF_LISTPROCESSES | BTF_ATTACHREPORT | BTF_SHOWADVANCEDUI | BTF_INTERCEPTSUEF);
-	BT_SetActivityType(BTA_SHOWUI);
+	BT_SetActivityType(BTA_SAVEREPORT);
 	BT_SetDumpType(dwDumpType);
 	BT_SetReportFilePath(GetAppPath().c_str());
 	const auto& export_path = std::filesystem::temp_directory_path().wstring() + L"\\export.reg";
@@ -89,7 +89,6 @@ static void SetupExceptionHandler()
 	BT_AddLogFile(GetAppPath(L"settings.cfg").c_str());
 	BT_AddLogFile(GetAppPath(L"IPTVChannelEditor.log").c_str());
 	BT_AddLogFile(GetAppPath(L"Updater.log").c_str());
-	// required for VS 2005 & 2008
 	BT_InstallSehFilter();
 }
 

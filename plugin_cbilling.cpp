@@ -64,7 +64,7 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 		utils::http_request req
 		{
 			.url = replace_params_vars(params, API_COMMAND_AUTH),
-			.headers { std::format(ACCOUNT_HEADER_TEMPLATE, params.creds->password) }
+			.request_headers { std::format(ACCOUNT_HEADER_TEMPLATE, params.creds->password) }
 		};
 		if (utils::DownloadFile(req))
 		{

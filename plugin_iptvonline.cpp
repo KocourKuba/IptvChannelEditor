@@ -81,7 +81,7 @@ bool plugin_iptvonline::get_api_token(TemplateParams& params, std::string& api_t
 	utils::http_request req
 	{
 		.url = replace_params_vars(params, url),
-		.headers{"Content-Type: application/json; charset=utf-8"},
+		.request_headers{ CONTENT_TYPE_JSON },
 		.post_data = json_request.dump(),
 		.verb_post = true
 	};
@@ -539,8 +539,8 @@ nlohmann::json plugin_iptvonline::server_request(utils::http_request& request, c
 		{
 			request.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
 		}
-		request.headers.emplace_back("Content-Type: application/json; charset=utf-8");
-		request.headers.emplace_back(std::format("Authorization: Bearer {:s}", session_token));
+		request.request_headers.emplace_back(CONTENT_TYPE_JSON);
+		request.request_headers.emplace_back(std::format("Authorization: Bearer {:s}", session_token));
 
 		if (utils::DownloadFile(request))
 		{
