@@ -748,6 +748,10 @@
 #define IDC_BUTTON_EDIT_API_DOMAINS     1252
 #define IDC_CHECK_STATIC_API_DOMAINS    1253
 #define IDC_STATIC_FFPROBE              1254
+#define IDC_EDIT_CONNECT_TIMEOUT        1255
+#define IDC_SPIN_CONNECT_TIMEOUT        1256
+#define IDC_EDIT_DOWNLOAD_TIMEOUT       1257
+#define IDC_SPIN_DOWNLOAD_TIMEOUT       1258
 #define ID_ADD_CATEGORY                 32771
 #define ID_NEW_CHANNEL                  32772
 #define ID_BTN_GET                      32773
@@ -781,7 +785,7 @@
 #define ID_HISTORY                      32808
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        283

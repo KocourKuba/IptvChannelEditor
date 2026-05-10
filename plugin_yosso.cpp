@@ -416,6 +416,7 @@ nlohmann::json plugin_yosso::jellyfin_request(const TemplateParams& params, cons
 		.url = url,
 		.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
 		.request_headers{CONTENT_TYPE_JSON, ACCEPT_TYPE_JSON, build_auth_header(*params.creds, authorized)},
+		.timeouts = GetConfig().GetTimeouts(),
 	};
 
 	if (!authorized)

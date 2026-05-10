@@ -53,6 +53,10 @@ protected:
 	afx_msg void OnDeltaposSpinStreamThreads(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditCacheTTL();
 	afx_msg void OnDeltaposSpinCacheTTL(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnChangeEditConnectTimeout();
+	afx_msg void OnDeltaposSpinConnectTimeout(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnChangeEditDownloadTimeout();
+	afx_msg void OnDeltaposSpinDownloadTimeout(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCbnSelchangeComboLang();
 	afx_msg void OnBnClickedButtonClearCache();
 
@@ -77,5 +81,7 @@ private:
 	BOOL m_bCmpEpg2 = TRUE;
 	int m_MaxThreads = 1;
 	int m_MaxCacheTTL = 24;
+	int m_ConnectTimeout = 10;
+	int m_DownloadTimeout = 60;
 	WORD m_nLang = 0;
 };

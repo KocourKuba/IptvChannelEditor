@@ -57,7 +57,10 @@ void plugin_sharaclub::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
-		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"subscr_info")) };
+		utils::http_request req{
+			.url = replace_params_vars(params, std::format(API_COMMAND_URL, L"subscr_info")),
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 
 		if (utils::DownloadFile(req))
 		{
@@ -99,7 +102,10 @@ void plugin_sharaclub::fill_servers_list(TemplateParams& params)
 
 	std::vector<DynamicParamsInfo> servers;
 
-	utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"ch_cdn")) };
+	utils::http_request req{
+		.url = replace_params_vars(params, std::format(API_COMMAND_URL, L"ch_cdn")),
+		.timeouts = GetConfig().GetTimeouts(),
+	};
 
 	if (utils::DownloadFile(req))
 	{
@@ -133,7 +139,10 @@ bool plugin_sharaclub::set_server(TemplateParams& params)
 
 	if (!servers_list.empty())
 	{
-		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"ch_cdn") + std::format(PARAM_FMT, L"num", REPL_SERVER_ID)) };
+		utils::http_request req{
+			.url = replace_params_vars(params, std::format(API_COMMAND_URL, L"ch_cdn") + std::format(PARAM_FMT, L"num", REPL_SERVER_ID)),
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
@@ -153,7 +162,10 @@ void plugin_sharaclub::fill_profiles_list(TemplateParams& params)
 	if (!get_profiles_list().empty() || params.creds->login.empty() || params.creds->password.empty())
 		return;
 
-	utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"list_profiles")) };
+	utils::http_request req{
+		.url = replace_params_vars(params, std::format(API_COMMAND_URL, L"list_profiles")),
+		.timeouts = GetConfig().GetTimeouts(),
+	};
 
 	if (!utils::DownloadFile(req))
 	{
@@ -193,7 +205,10 @@ bool plugin_sharaclub::set_profile(TemplateParams& params)
 {
 	if (!profiles_list.empty())
 	{
-		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"list_profiles") + std::format(PARAM_FMT, L"num", REPL_PROFILE_ID)) };
+		utils::http_request req{
+			.url = replace_params_vars(params, std::format(API_COMMAND_URL, L"list_profiles") + std::format(PARAM_FMT, L"num", REPL_PROFILE_ID)),
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
@@ -222,7 +237,8 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 		utils::http_request req
 		{
 			.url = config.m_url,
-			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL)
+			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
+			.timeouts = GetConfig().GetTimeouts(),
 		};
 		if (!DownloadFile(req)) break;
 

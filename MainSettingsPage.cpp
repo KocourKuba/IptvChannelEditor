@@ -44,6 +44,10 @@ BEGIN_MESSAGE_MAP(CMainSettingsPage, CTooltipPropertyPage)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_STREAM_THREADS, &CMainSettingsPage::OnDeltaposSpinStreamThreads)
 	ON_EN_CHANGE(IDC_EDIT_CACHE_TTL, &CMainSettingsPage::OnEnChangeEditCacheTTL)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_CACHE_TTL, &CMainSettingsPage::OnDeltaposSpinCacheTTL)
+	ON_EN_CHANGE(IDC_EDIT_CONNECT_TIMEOUT, &CMainSettingsPage::OnEnChangeEditConnectTimeout)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_CONNECT_TIMEOUT, &CMainSettingsPage::OnDeltaposSpinConnectTimeout)
+	ON_EN_CHANGE(IDC_EDIT_DOWNLOAD_TIMEOUT, &CMainSettingsPage::OnEnChangeEditDownloadTimeout)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_DOWNLOAD_TIMEOUT, &CMainSettingsPage::OnDeltaposSpinDownloadTimeout)
 	ON_CBN_SELCHANGE(IDC_COMBO_LANG, &CMainSettingsPage::OnCbnSelchangeComboLang)
 	ON_BN_CLICKED(IDC_BUTTON_CLEAR_CACHE, &CMainSettingsPage::OnBnClickedButtonClearCache)
 END_MESSAGE_MAP()
@@ -59,6 +63,8 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_LANG, m_wndLanguage);
 	DDX_Text(pDX, IDC_EDIT_STREAM_THREADS, m_MaxThreads);
 	DDX_Text(pDX, IDC_EDIT_CACHE_TTL, m_MaxCacheTTL);
+	DDX_Text(pDX, IDC_EDIT_CONNECT_TIMEOUT, m_ConnectTimeout);
+	DDX_Text(pDX, IDC_EDIT_DOWNLOAD_TIMEOUT, m_DownloadTimeout);
 	DDX_Check(pDX, IDC_CHECK_AUTO_SYNC_CHANNELS, m_bAutoSync);
 	DDX_Check(pDX, IDC_CHECK_AUTO_HIDE, m_bAutoHide);
 	DDX_Check(pDX, IDC_CHECK_PORTABLE, m_bPortable);
@@ -96,6 +102,8 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_bConvertDupes = GetConfig().get_int(true, REG_CONVERT_DUPES);
 	m_MaxThreads = GetConfig().get_int(true, REG_MAX_THREADS, 3);
 	m_MaxCacheTTL = GetConfig().get_int(true, REG_MAX_CACHE_TTL, 24);
+	m_ConnectTimeout= GetConfig().get_int(true, REG_CONNECT_TIMEOUT, 10);
+	m_DownloadTimeout = GetConfig().get_int(true, REG_DOWNLOAD_TIMEOUT, 60);
 	m_nLang = GetConfig().get_int(true, REG_LANGUAGE);
 
 	int flags = GetConfig().get_int(true, REG_CMP_FLAGS, CMP_FLAG_ALL);
@@ -195,6 +203,44 @@ void CMainSettingsPage::OnDeltaposSpinCacheTTL(NMHDR* pNMHDR, LRESULT* pResult)
 	m_MaxCacheTTL -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
 	UpdateData(FALSE);
 	OnEnChangeEditCacheTTL();
+	*pResult = 0;
+}
+
+void CMainSettingsPage::OnEnChangeEditConnectTimeout()
+{
+	UpdateData(TRUE);
+
+	if (m_ConnectTimeout < 1)
+		m_ConnectTimeout = 1;
+
+	UpdateData(FALSE);
+}
+
+void CMainSettingsPage::OnDeltaposSpinConnectTimeout(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	UpdateData(TRUE);
+	m_MaxThreads -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
+	UpdateData(FALSE);
+	OnEnChangeEditStreamThreads();
+	*pResult = 0;
+}
+
+void CMainSettingsPage::OnEnChangeEditDownloadTimeout()
+{
+	UpdateData(TRUE);
+
+	if (m_DownloadTimeout < 1)
+		m_DownloadTimeout = 1;
+
+	UpdateData(FALSE);
+}
+
+void CMainSettingsPage::OnDeltaposSpinDownloadTimeout(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	UpdateData(TRUE);
+	m_MaxThreads -= reinterpret_cast<LPNMUPDOWN>(pNMHDR)->iDelta;
+	UpdateData(FALSE);
+	OnEnChangeEditStreamThreads();
 	*pResult = 0;
 }
 

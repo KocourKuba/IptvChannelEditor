@@ -1211,7 +1211,8 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 		{
 			.url = m_playlist_url,
 			.cache_ttl = force ? std::chrono::hours::zero() : GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
-			.user_agent = m_plugin->get_user_agent()
+			.user_agent = m_plugin->get_user_agent(),
+			.timeouts = GetConfig().GetTimeouts(),
 		};
 
 		if (!utils::AsyncDownloadFile(req).get())
@@ -2325,7 +2326,9 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 		{
 			.url = m_plugin->compile_epg_url(epg_idx, epg_id, time(nullptr), uri_stream, params),
 			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
-			.user_agent = m_plugin->get_user_agent()
+			.user_agent = m_plugin->get_user_agent(),
+			.timeouts = GetConfig().GetTimeouts(),
+
 		};
 
 		const auto epg_param = m_plugin->get_epg_parameter(epg_idx);
@@ -2462,7 +2465,8 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 		.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
 		.user_agent = m_plugin->get_user_agent(),
 		.stop_token = stop,
-		.progress_callback = std::bind(&CIPTVChannelEditorDlg::ProgressCallbackDownload, this, std::placeholders::_1)
+		.progress_callback = std::bind(&CIPTVChannelEditorDlg::ProgressCallbackDownload, this, std::placeholders::_1),
+		.timeouts = GetConfig().GetTimeouts(),
 	};
 
 	try
@@ -4575,7 +4579,8 @@ void CIPTVChannelEditorDlg::OnStnClickedStaticIcon()
 					utils::http_request req
 					{
 						.url = image_lib.get_url(),
-						.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL, 24h)
+						.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL, 24h),
+						.timeouts = GetConfig().GetTimeouts(),
 					};
 					if (!utils::AsyncDownloadFile(req).get())
 					{
@@ -5254,7 +5259,8 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonCacheIcon()
 		utils::http_request req
 		{
 			.url = channel->get_icon_uri().get_uri(),
-			.user_agent = m_plugin->get_user_agent()
+			.user_agent = m_plugin->get_user_agent(),
+			.timeouts = GetConfig().GetTimeouts(),
 		};
 
 		if (!utils::AsyncDownloadFile(req).get())

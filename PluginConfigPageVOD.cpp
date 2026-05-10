@@ -32,6 +32,7 @@ DEALINGS IN THE SOFTWARE.
 #include "FillParamsInfoDlg.h"
 #include "PluginEnums.h"
 #include "Constants.h"
+#include "SettingsStorage.h"
 
 #include "UtilsLib\inet_utils.h"
 
@@ -253,7 +254,8 @@ void CPluginConfigPageVOD::OnBnClickedButtonVodTemplate()
 	utils::http_request req
 	{
 		.url = plugin->get_vod_url(params),
-		.user_agent = plugin->get_user_agent()
+		.user_agent = plugin->get_user_agent(),
+		.timeouts = GetConfig().GetTimeouts(),
 	};
 	if (utils::AsyncDownloadFile(req).get())
 	{

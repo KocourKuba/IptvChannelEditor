@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_tvclub.h"
 #include "Constants.h"
 
+#include "SettingsStorage.h"
 #include "UtilsLib\md5.h"
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
@@ -109,7 +110,10 @@ void plugin_tvclub::fill_servers_list(TemplateParams& params)
 		return;
 	}
 
-	utils::http_request req{replace_params_vars(params, std::format(API_COMMAND_URL, L"settings"))};
+	utils::http_request req{
+		.url = replace_params_vars(params, std::format(API_COMMAND_URL, L"settings")),
+		.timeouts = GetConfig().GetTimeouts(),
+	};
 	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY
@@ -152,7 +156,10 @@ bool plugin_tvclub::set_server(TemplateParams& params)
 			return false;
 		}
 
-		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"set") + std::format(PARAM_FMT, L"server", REPL_SERVER_ID)) };
+		utils::http_request req{
+			.url = replace_params_vars(params, std::format(API_COMMAND_URL, L"set") + std::format(PARAM_FMT, L"server", REPL_SERVER_ID)),
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY

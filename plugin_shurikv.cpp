@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "plugin_shuriktv.h"
+#include "SettingsStorage.h"
 
 #include "UtilsLib\inet_utils.h"
 
@@ -39,7 +40,10 @@ void plugin_shuriktv::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
-		utils::http_request req{ replace_params_vars(params, API_COMMAND_AUTH) };
+		utils::http_request req{
+			.url = replace_params_vars(params, API_COMMAND_AUTH),
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY

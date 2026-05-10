@@ -71,7 +71,8 @@ bool plugin_korona::get_api_token(TemplateParams& params, std::string& api_token
 	{
 		.url = replace_params_vars(params, API_COMMAND_AUTH),
 		.request_headers { CONTENT_TYPE_WWW_FORM },
-		.verb_post = true
+		.verb_post = true,
+		.timeouts = GetConfig().GetTimeouts(),
 	};
 
 	for (const auto& [key, value] : post_request)
@@ -379,6 +380,7 @@ nlohmann::json plugin_korona::server_request(const std::wstring& url, const bool
 			.url = url,
 			.cache_ttl = use_cache_ttl ? GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) : std::chrono::seconds::zero(),
 			.request_headers { CONTENT_TYPE_WWW_FORM, std::format("Authorization: Bearer {:s}", session_token) },
+			.timeouts = GetConfig().GetTimeouts(),
 		};
 
 		if (utils::DownloadFile(req))

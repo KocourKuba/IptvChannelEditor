@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 #include "IconsSourceParseThread.h"
 #include "PlayListEntry.h"
 #include "Constants.h"
-
+#include "SettingsStorage.h"
 #include "UtilsLib\inet_utils.h"
 
 #ifdef _DEBUG
@@ -115,7 +115,11 @@ BOOL CIconsListDlg::OnInitDialog()
 	}
 	else
 	{
-		utils::http_request req{ m_iconSource, 1h };
+		utils::http_request req{
+			.url = m_iconSource,
+			.cache_ttl = 1h,
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		if (utils::AsyncDownloadFile(req).get())
 		{
 			const auto& str = req.body.str();

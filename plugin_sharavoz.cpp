@@ -199,7 +199,11 @@ void plugin_sharavoz::fetch_movie_info(const TemplateParams& params, vod_movie_d
 		url += std::format(L"&action=get_vod_info&vod_id={:s}", movie.id);
 	}
 
-	utils::http_request req{ url, GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) };
+	utils::http_request req{
+		.url = url,
+		.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
+		.timeouts = GetConfig().GetTimeouts(),
+	};
 	if (!utils::DownloadFile(req))
 	{
 		return;
@@ -311,7 +315,11 @@ nlohmann::json plugin_sharavoz::xtream_request(const ThreadConfig&, const std::w
 {
 	nlohmann::json category_json;
 
-	utils::http_request req{ url, GetConfig().get_chrono(true, REG_MAX_CACHE_TTL) };
+	utils::http_request req{
+		.url =url,
+		.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
+		.timeouts = GetConfig().GetTimeouts(),
+	};
 	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY

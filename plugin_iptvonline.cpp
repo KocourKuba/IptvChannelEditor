@@ -83,7 +83,8 @@ bool plugin_iptvonline::get_api_token(TemplateParams& params, std::string& api_t
 		.url = replace_params_vars(params, url),
 		.request_headers{ CONTENT_TYPE_JSON },
 		.post_data = json_request.dump(),
-		.verb_post = true
+		.verb_post = true,
+		.timeouts = GetConfig().GetTimeouts(),
 	};
 	if (utils::DownloadFile(req))
 	{
@@ -121,7 +122,10 @@ std::wstring plugin_iptvonline::get_playlist_url(const TemplateParams& params, s
 {
 	JSON_ALL_TRY
 	{
-		utils::http_request req{ replace_params_vars(params, API_COMMAND_PLAYLIST) };
+		utils::http_request req{
+			.url = replace_params_vars(params, API_COMMAND_PLAYLIST),
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		const auto& parsed_json = server_request(req);
 
 		if (utils::get_json_bool("success", parsed_json) == true && parsed_json.contains("data"))
@@ -141,7 +145,10 @@ void plugin_iptvonline::parse_account_info(TemplateParams& params)
 
 		JSON_ALL_TRY
 		{
-			utils::http_request req{ replace_params_vars(params, API_COMMAND_INFO) };
+			utils::http_request req{
+				.url = replace_params_vars(params, API_COMMAND_INFO),
+				.timeouts = GetConfig().GetTimeouts(),
+			};
 			const auto& parsed_json = server_request(req);
 			if (utils::get_json_int("status", parsed_json) == 200 && parsed_json.contains("data"))
 			{
@@ -186,7 +193,10 @@ void plugin_iptvonline::fill_servers_list(TemplateParams& params)
 
 	JSON_ALL_TRY
 	{
-		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_DEVICE, L"info")) };
+		utils::http_request req{
+			.url = replace_params_vars(params, std::format(API_COMMAND_DEVICE, L"info")),
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		const auto& parsed_json = server_request(req);
 		if (utils::get_json_int("status", parsed_json) == 200)
 		{
@@ -239,7 +249,8 @@ bool plugin_iptvonline::set_server(TemplateParams& params)
 		{
 			.url = replace_params_vars(params, std::format(API_COMMAND_DEVICE, L"settings")),
 			.post_data = json_request.dump(),
-			.verb_post = true
+			.verb_post = true,
+			.timeouts = GetConfig().GetTimeouts(),
 		};
 		const auto& parsed_json = server_request(req);
 
@@ -293,7 +304,10 @@ void plugin_iptvonline::parse_vod(const ThreadConfig& config)
 
 void plugin_iptvonline::fetch_movie_info(const TemplateParams& params, vod_movie_def& movie)
 {
-	utils::http_request req{ std::format(L"{:s}/movies/{:s}", get_vod_url(params),  movie.id) };
+	utils::http_request req{
+		.url = std::format(L"{:s}/movies/{:s}", get_vod_url(params),  movie.id),
+		.timeouts = GetConfig().GetTimeouts(),
+	};
 	nlohmann::json movies_json = server_request(req, true);
 	if (movies_json.empty() || !movies_json.contains("data"))
 	{
@@ -432,7 +446,10 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 	movie_category->name = category_name;
 
 	const auto& cat_url = std::format(L"{:s}/movies/?limit=100&page=1&category={:s}", get_vod_url(config.m_params), id);
-	utils::http_request req{ cat_url };
+	utils::http_request req{
+		.url = cat_url,
+		.timeouts = GetConfig().GetTimeouts(),
+	};
 	const auto& meta_info_json = server_request(req, true);
 
 	if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) return;
@@ -460,7 +477,10 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 		if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 
 		const auto page_url = std::format(L"{:s}/movies/?limit={:d}&page={:d}&category={:s}", config.m_url, limit, page, id);
-		utils::http_request page_req{ page_url };
+		utils::http_request page_req{
+			.url = page_url,
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		nlohmann::json movies_json = server_request(req, true);
 		if (movies_json.empty() || !movies_json.contains("data") || !movies_json["data"].contains("items"))
 		{

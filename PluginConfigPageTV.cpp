@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE.
 #include "PluginConfigPageTV.h"
 #include "FillParamsInfoDlg.h"
 #include "Constants.h"
+#include "SettingsStorage.h"
 
 #include "UtilsLib\inet_utils.h"
 
@@ -386,7 +387,8 @@ void CPluginConfigPageTV::OnBnClickedButtonPlaylistShow()
 	utils::http_request req
 	{
 		.url = GetPropertySheet()->m_plugin->get_playlist_url(params),
-		.user_agent = GetPropertySheet()->m_plugin->get_user_agent()
+		.user_agent = GetPropertySheet()->m_plugin->get_user_agent(),
+		.timeouts = GetConfig().GetTimeouts(),
 	};
 
 	if (utils::AsyncDownloadFile(req).get())

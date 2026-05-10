@@ -64,7 +64,8 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 		utils::http_request req
 		{
 			.url = replace_params_vars(params, API_COMMAND_AUTH),
-			.request_headers { std::format(ACCOUNT_HEADER_TEMPLATE, params.creds->password) }
+			.request_headers { std::format(ACCOUNT_HEADER_TEMPLATE, params.creds->password) },
+			.timeouts = GetConfig().GetTimeouts(),
 		};
 		if (utils::DownloadFile(req))
 		{
@@ -106,7 +107,11 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 		categories->set_back(all_name, all_category);
 
 		auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-		utils::http_request req{ config.m_url, cache_ttl };
+		utils::http_request req{
+			.url = config.m_url,
+			.cache_ttl = cache_ttl,
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		if (!utils::DownloadFile(req)) break;
 
 		int total = 0;
@@ -147,7 +152,8 @@ void plugin_cbilling::parse_vod(const ThreadConfig& config)
 				utils::http_request jreq
 				{
 					.url = std::format(L"{:s}/cat/{:s}?page={:d}&per_page={:d}", config.m_url, category->id, page, limit),
-					.cache_ttl = cache_ttl
+					.cache_ttl = cache_ttl,
+					.timeouts = GetConfig().GetTimeouts(),
 				};
 				if (!utils::DownloadFile(jreq))
 				{
@@ -241,7 +247,11 @@ void plugin_cbilling::fetch_movie_info(const TemplateParams& params, vod_movie_d
 {
 	const auto& url = std::format(L"{:s}/video/{:s}", get_vod_url(params), movie.id);
 	auto cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-	utils::http_request req{ url, cache_ttl };
+	utils::http_request req{
+		.url = url,
+		.cache_ttl = cache_ttl,
+		.timeouts = GetConfig().GetTimeouts(),
+	};
 
 	if (!utils::DownloadFile(req))
 	{

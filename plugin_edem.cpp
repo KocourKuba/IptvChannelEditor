@@ -70,6 +70,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 			.request_headers{ CONTENT_TYPE_JSON },
 			.post_data = json_request.dump(),
 			.verb_post = true,
+			.timeouts = GetConfig().GetTimeouts(),
 		};
 
 		if (!utils::DownloadFile(req)) break;
@@ -137,7 +138,8 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 					.cache_ttl = cache_ttl,
 					.request_headers = req.request_headers,
 					.post_data = json_request.dump(),
-					.verb_post = true
+					.verb_post = true,
+					.timeouts = GetConfig().GetTimeouts(),
 				};
 
 				if (!utils::DownloadFile(cat_req)) break;
@@ -206,6 +208,7 @@ void plugin_edem::parse_vod(const ThreadConfig& config)
 						.request_headers = req.request_headers,
 						.post_data = json_request.dump(),
 						.verb_post = true,
+						.timeouts = GetConfig().GetTimeouts(),
 					};
 					if (!utils::DownloadFile(mov_req)) break;
 
@@ -254,7 +257,8 @@ void plugin_edem::fetch_movie_info(const TemplateParams& params, vod_movie_def& 
 			.url = url,
 			.request_headers{ CONTENT_TYPE_JSON },
 			.post_data = json_request.dump(),
-			.verb_post = true
+			.verb_post = true,
+			.timeouts = GetConfig().GetTimeouts(),
 		};
 		ATLTRACE("%s\n", req.post_data.c_str());
 
@@ -292,7 +296,8 @@ void plugin_edem::fetch_movie_info(const TemplateParams& params, vod_movie_def& 
 						.url = url,
 						.request_headers = req.request_headers,
 						.post_data = json_request.dump(),
-						.verb_post = true
+						.verb_post = true,
+						.timeouts = GetConfig().GetTimeouts(),
 					};
 					ATLTRACE("%s\n", var_req.post_data.c_str());
 

@@ -1749,7 +1749,11 @@ BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 	HRESULT hr = E_FAIL;
 	if (utils::CrackUrl(fullPath))
 	{
-		utils::http_request req{ fullPath, 1h };
+		utils::http_request req{
+			.url = fullPath,
+			.cache_ttl = 1h,
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		if (utils::AsyncDownloadFile(req).get())
 		{
 			// Still not clear if this is making a copy internally

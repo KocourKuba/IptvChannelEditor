@@ -50,7 +50,8 @@ void plugin_glanz::parse_vod(const ThreadConfig& config)
 		utils::http_request req
 		{
 			.url = config.m_url,
-			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL)
+			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
+			.timeouts = GetConfig().GetTimeouts(),
 		};
 		if (!utils::DownloadFile(req)) break;
 

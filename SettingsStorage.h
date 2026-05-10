@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 #include <variant>
 
 #include "nlohmann\json.hpp"
+#include "UtilsLib\inet_utils.h"
 
 class Credentials;
 
@@ -73,6 +74,8 @@ public:
 	void SetPortable(BOOL val) { m_bPortable = val; }
 
 	std::vector<std::shared_ptr<Credentials>> LoadCredentials() const;
+
+	utils::timeouts GetTimeouts() const;
 
 public:
 	std::wstring get_string(bool isApp, const std::wstring& key, const wchar_t* def = L"") const;

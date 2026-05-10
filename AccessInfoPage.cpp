@@ -500,9 +500,10 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 			using enum AccountAccessType;
 			case enOtt:
 			{
-				utils::http_request req {
+				utils::http_request req{
 					.url = url,
-					.user_agent = m_plugin->get_user_agent()
+					.user_agent = m_plugin->get_user_agent(),
+					.timeouts = GetConfig().GetTimeouts(),
 				};
 				if (utils::AsyncDownloadFile(req).get())
 				{
@@ -1060,7 +1061,8 @@ void CAccessInfoPage::GetAccountInfo()
 		{
 			.url = pl_url,
 			.cache_ttl = min_cache_ttl,
-			.user_agent = m_plugin->get_user_agent()
+			.user_agent = m_plugin->get_user_agent(),
+			.timeouts = GetConfig().GetTimeouts(),
 		};
 		if (utils::AsyncDownloadFile(req).get())
 		{

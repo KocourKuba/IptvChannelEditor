@@ -80,13 +80,13 @@ struct http_request
 	std::vector<std::string> request_headers;
 	std::vector<std::string> response_headers;
 	std::wstring user_agent{pc_user_agent};
-	timeouts timeouts;
 	std::string post_data;
 	std::wstring error_message;
 	bool verb_post = false;
 	std::stringstream body;
 	std::stop_token stop_token;
 	std::function<void(const progress_info&)> progress_callback = nullptr;
+	timeouts timeouts;
 };
 
 std::future<bool> AsyncDownloadFile(http_request& request);

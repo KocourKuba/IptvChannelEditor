@@ -323,7 +323,8 @@ void CVodViewer::LoadM3U8Playlist(bool /*= true*/)
 
 	utils::http_request req {
 		.url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), params),
-		.user_agent = m_plugin->get_user_agent()
+		.user_agent = m_plugin->get_user_agent(),
+		.timeouts = GetConfig().GetTimeouts(),
 	};
 
 	if (!utils::AsyncDownloadFile(req).get())
@@ -1099,7 +1100,8 @@ void CVodViewer::FilterList()
 				.request_headers{ CONTENT_TYPE_JSON },
 				.user_agent = m_plugin->get_user_agent(),
 				.post_data = json_request.dump(),
-				.verb_post = true
+				.verb_post = true,
+				.timeouts = GetConfig().GetTimeouts(),
 			};
 			ATLTRACE("%s\n", req.post_data.c_str());
 

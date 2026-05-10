@@ -321,7 +321,8 @@ void CPluginConfigPageEPG::OnBnClickedButtonEpgTest()
 	utils::http_request req
 	{
 		.url = CompileEpgUrl(),
-		.user_agent = GetPropertySheet()->m_plugin->get_user_agent()
+		.user_agent = GetPropertySheet()->m_plugin->get_user_agent(),
+		.timeouts = GetConfig().GetTimeouts(),
 	};
 
 	if (!m_EpgAuth.IsEmpty())

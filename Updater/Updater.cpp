@@ -34,6 +34,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "CommandLine.hpp"
 
+#include "SettingsStorage.h"
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 #include "UtilsLib\Crc32.h"
@@ -135,7 +136,9 @@ static void SetupExceptionHandler()
 
 static bool download_file(const std::wstring& name, const std::wstring& save_file, UpdateInfo& info)
 {
-	utils::http_request req{ std::format(L"{:s}/{:s}/{:s}", info.server, info.version, name) };
+	utils::http_request req{
+		.url = std::format(L"{:s}/{:s}/{:s}", info.server, info.version, name),
+	};
 	const auto dwStart = utils::ChronoGetTickCount();
 	LOG_PROTOCOL(req.url);
 	if (!utils::AsyncDownloadFile(req).get())
@@ -166,7 +169,9 @@ static int download_update(UpdateInfo& info)
 	do
 	{
 		LOG_PROTOCOL("Try to download update info...");
-		utils::http_request req{ std::format(L"{:s}/{:s}", info.server, info.info_file) };
+		utils::http_request req{
+			.url = std::format(L"{:s}/{:s}", info.server, info.info_file),
+		};
 		if (!utils::DownloadFile(req))
 		{
 			LOG_PROTOCOL(req.error_message);

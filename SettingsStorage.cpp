@@ -65,6 +65,8 @@ static std::set<std::wstring> all_settings_keys = {
 	REG_CONVERT_DUPES,
 	REG_MAX_THREADS,
 	REG_MAX_CACHE_TTL,
+	REG_CONNECT_TIMEOUT,
+	REG_DOWNLOAD_TIMEOUT,
 	REG_LANGUAGE,
 	REG_CMP_FLAGS,
 	REG_UPDATE_FREQ,
@@ -265,6 +267,14 @@ std::vector<std::shared_ptr<Credentials>> SettingsStorage::LoadCredentials() con
 	}
 
 	return credentials;
+}
+
+utils::timeouts SettingsStorage::GetTimeouts() const
+{
+	utils::timeouts timeouts{};
+	timeouts.connect_timeout = get_int(false, REG_CONNECT_TIMEOUT, 10);
+	timeouts.download_timeout = get_int(false, REG_DOWNLOAD_TIMEOUT, 60);
+	return timeouts;
 }
 
 std::wstring SettingsStorage::get_string(bool isApp, const std::wstring& key, const wchar_t* def /*= L""*/) const

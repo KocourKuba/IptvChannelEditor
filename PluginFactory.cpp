@@ -45,6 +45,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_tvteam.h"
 #include "plugin_yosso.h"
 #include "plugin_vidok.h"
+#include "SettingsStorage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -214,7 +215,10 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 	if (!dev)
 	{
 		const auto& url = std::format(L"{:s}/editor/configs?ver={:d}.{:d}.{:d}", utils::utf8_to_utf16(g_szServerPath), MAJOR, MINOR, BUILD);
-		utils::http_request req{ url };
+		utils::http_request req{
+			.url = url,
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		req.user_agent = std::format(L"IPTV Channel Editor/{:d}.{:d}.{:d}", MAJOR, MINOR, BUILD);
 		if (utils::AsyncDownloadFile(req).get())
 		{

@@ -27,8 +27,8 @@ DEALINGS IN THE SOFTWARE.
 #include "pch.h"
 #include "plugin_vidok.h"
 #include "Constants.h"
-
 #include "UtilsLib\md5.h"
+#include "SettingsStorage.h"
 #include "UtilsLib\utils.h"
 #include "UtilsLib\inet_utils.h"
 
@@ -52,7 +52,10 @@ void plugin_vidok::parse_account_info(TemplateParams& params)
 {
 	if (account_info.empty())
 	{
-		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"account")) };
+		utils::http_request req{
+			.url = replace_params_vars(params, std::format(API_COMMAND_URL, L"account")),
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY
@@ -98,7 +101,10 @@ void plugin_vidok::fill_servers_list(TemplateParams& params)
 		return;
 	}
 
-	utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"settings")) };
+	utils::http_request req{
+		.url = replace_params_vars(params, std::format(API_COMMAND_URL, L"settings")),
+		.timeouts = GetConfig().GetTimeouts(),
+	};
 	if (utils::DownloadFile(req))
 	{
 		JSON_ALL_TRY
@@ -146,7 +152,10 @@ bool plugin_vidok::set_server(TemplateParams& params)
 			return false;
 		}
 
-		utils::http_request req{ replace_params_vars(params, std::format(API_COMMAND_URL, L"settings_set") + std::format(PARAM_FMT, L"server", REPL_SERVER_ID)) };
+		utils::http_request req{
+			.url = replace_params_vars(params, std::format(API_COMMAND_URL, L"settings_set") + std::format(PARAM_FMT, L"server", REPL_SERVER_ID)),
+			.timeouts = GetConfig().GetTimeouts(),
+		};
 		if (utils::DownloadFile(req))
 		{
 			JSON_ALL_TRY

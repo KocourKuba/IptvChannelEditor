@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project id="32B8BF7E-F9DA-487C-B6FF-DABDDB1AB822" created="20211012T165442Z" lastmodified="20260425T100332Z" version="1.0.1086" reviewcount="0" stringid="634">
+<project id="32B8BF7E-F9DA-487C-B6FF-DABDDB1AB822" created="20211012T165442Z" lastmodified="20260510T154808Z" version="1.0.1086" reviewcount="0" stringid="637">
   <lang id="ru"/>
-  <node class="TVisualCppSource" name="x64\Release Unicode\IPTVChannelEditor.exe" fullpath="D:\Works\Development\IPTVChannelEditor\x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" lastmodified="20260425T100332Z" encoding="windows-1252" platforms="[ptWin64]" hassignatureread="1">
+  <node class="TVisualCppSource" name="x64\Release Unicode\IPTVChannelEditor.exe" fullpath="D:\Works\Development\IPTVChannelEditor\x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" lastmodified="20260510T154808Z" encoding="windows-1252" platforms="[ptWin64]" hassignatureread="1">
     <node class="TWindowsBinaryFolder" name="&quot;AFX_DIALOG_LAYOUT&quot;" resname="AFX_DIALOG_LAYOUT" excluded="1"/>
     <node class="TWindowsBinaryFolder" name="&quot;PNG&quot;" resname="PNG" excluded="1"/>
     <node class="TWindowsAcceleratorFolder" name="Accelerator" created="20260330T163817Z">
@@ -592,19 +592,25 @@ Pavel Abakanov (sharky72)</prev>
         <row id="Y">0</row>
         <row id="CX">344</row>
         <row id="CY">200</row>
+        <item name="BUTTON_2" type="GROUPBOX" st="4" id="-1">
+          <row id="Text" si="83" st="4">
+            <value>Update changes</value>
+            <lang id="ru" time="20211129T231337Z">Обновление измененных</lang>
+          </row>
+        </item>
         <item name="STATIC_0" type="LTEXT" id="-1">
           <row id="Text" si="76">
             <value>Language</value>
             <lang id="ru" time="20211012T175608Z">Язык</lang>
           </row>
           <row id="X">7</row>
-          <row id="Y">7</row>
+          <row id="Y">63</row>
           <row id="CX">73</row>
           <row id="CY">8</row>
         </item>
         <item name="1105" type="COMBOBOX" id="1105">
           <row id="X">7</row>
-          <row id="Y">19</row>
+          <row id="Y">74</row>
           <row id="CX">81</row>
           <row id="CY">30</row>
         </item>
@@ -613,19 +619,19 @@ Pavel Abakanov (sharky72)</prev>
             <value>Max stream threads</value>
             <lang id="ru" time="20211012T170852Z">Количество потоков для проверки канала</lang>
           </row>
-          <row id="X">95</row>
+          <row id="X">7</row>
           <row id="Y">7</row>
           <row id="CX">130</row>
           <row id="CY">8</row>
         </item>
         <item name="1087" type="EDITTEXT" id="1087">
-          <row id="X">95</row>
+          <row id="X">7</row>
           <row id="Y">19</row>
           <row id="CX">19</row>
           <row id="CY">12</row>
         </item>
         <item name="1088" type="CONTROL" id="1088">
-          <row id="X">113</row>
+          <row id="X">25</row>
           <row id="Y">18</row>
           <row id="CX">11</row>
           <row id="CY">14</row>
@@ -636,9 +642,54 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru">Очистить кэш</lang>
           </row>
           <row id="X">265</row>
-          <row id="Y">18</row>
+          <row id="Y">7</row>
           <row id="CX">72</row>
           <row id="CY">14</row>
+        </item>
+        <item name="STATIC_2" type="LTEXT" created="20260510T154438Z" st="0" id="-1">
+          <row id="Text" si="635" st="0">
+            <value>Connect timeout</value>
+            <lang id="ru" time="20260510T154504Z">Таймаут соединения</lang>
+          </row>
+          <row id="X" st="0">7</row>
+          <row id="Y" st="0">35</row>
+          <row id="CX" st="0">84</row>
+          <row id="CY" st="0">8</row>
+        </item>
+        <item name="1255" type="EDITTEXT" created="20260510T154438Z" st="0" id="1255">
+          <row id="X" st="0">7</row>
+          <row id="Y" st="0">47</row>
+          <row id="CX" st="0">19</row>
+          <row id="CY" st="0">12</row>
+        </item>
+        <item name="1256" type="CONTROL" created="20260510T154438Z" st="0" id="1256">
+          <row id="X" st="0">25</row>
+          <row id="Y" st="0">46</row>
+          <row id="CX" st="0">11</row>
+          <row id="CY" st="0">14</row>
+        </item>
+        <item name="STATIC_3" type="LTEXT" id="-1">
+          <row id="Text" changed="20260510T154438Z" si="89">
+            <value>Download timeout</value>
+            <prev>Max cache time in hours</prev>
+            <lang id="ru" time="20260510T154528Z">Таймаут скачивания</lang>
+          </row>
+          <row id="X">138</row>
+          <row id="Y">35</row>
+          <row id="CX">106</row>
+          <row id="CY">8</row>
+        </item>
+        <item name="1257" type="EDITTEXT" created="20260510T154438Z" st="0" id="1257">
+          <row id="X" st="0">138</row>
+          <row id="Y" st="0">47</row>
+          <row id="CX" st="0">19</row>
+          <row id="CY" st="0">12</row>
+        </item>
+        <item name="1258" type="CONTROL" created="20260510T154438Z" st="0" id="1258">
+          <row id="X" st="0">156</row>
+          <row id="Y" st="0">46</row>
+          <row id="CX" st="0">12</row>
+          <row id="CY" st="0">14</row>
         </item>
         <item name="1091" type="AUTOCHECKBOX" id="1091">
           <row id="Text" si="79">
@@ -646,7 +697,7 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru" time="20220630T144048Z">Синхронизировать канал с каналом в плейлисте</lang>
           </row>
           <row id="X">7</row>
-          <row id="Y">37</row>
+          <row id="Y">90</row>
           <row id="CX">176</row>
           <row id="CY">10</row>
         </item>
@@ -656,7 +707,7 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru">Сворачивать в системный трей</lang>
           </row>
           <row id="X">7</row>
-          <row id="Y">49</row>
+          <row id="Y">102</row>
           <row id="CX">172</row>
           <row id="CY">10</row>
         </item>
@@ -666,7 +717,7 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru" time="20220320T143719Z">Переключить в переносимый режим</lang>
           </row>
           <row id="X">7</row>
-          <row id="Y">61</row>
+          <row id="Y">114</row>
           <row id="CX">172</row>
           <row id="CY">10</row>
         </item>
@@ -676,19 +727,19 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru" time="20230519T222503Z">Конверсия дублирующихся каналов</lang>
           </row>
           <row id="X">192</row>
-          <row id="Y">37</row>
+          <row id="Y">90</row>
           <row id="CX">142</row>
           <row id="CY">10</row>
         </item>
-        <item name="BUTTON_2" type="GROUPBOX" id="-1">
+        <item name="BUTTON_4" type="GROUPBOX" created="20260510T154438Z" st="0" id="-1">
           <row id="Text" si="83">
             <value>Update changes</value>
             <lang id="ru" time="20211129T231337Z">Обновление измененных</lang>
           </row>
-          <row id="X">7</row>
-          <row id="Y">76</row>
-          <row id="CX">330</row>
-          <row id="CY">43</row>
+          <row id="X" st="0">7</row>
+          <row id="Y" st="0">129</row>
+          <row id="CX" st="0">330</row>
+          <row id="CY" st="0">43</row>
         </item>
         <item name="1110" type="AUTOCHECKBOX" id="1110">
           <row id="Text" si="84">
@@ -696,7 +747,7 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru">Название</lang>
           </row>
           <row id="X">16</row>
-          <row id="Y">90</row>
+          <row id="Y">143</row>
           <row id="CX">71</row>
           <row id="CY">10</row>
         </item>
@@ -706,7 +757,7 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru">Иконка</lang>
           </row>
           <row id="X">16</row>
-          <row id="Y">104</row>
+          <row id="Y">157</row>
           <row id="CX">71</row>
           <row id="CY">10</row>
         </item>
@@ -716,7 +767,7 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru">Первичный EPG</lang>
           </row>
           <row id="X">99</row>
-          <row id="Y">90</row>
+          <row id="Y">143</row>
           <row id="CX">71</row>
           <row id="CY">10</row>
         </item>
@@ -726,7 +777,7 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru">Вторичный EPG</lang>
           </row>
           <row id="X">99</row>
-          <row id="Y">104</row>
+          <row id="Y">157</row>
           <row id="CX">71</row>
           <row id="CY">10</row>
         </item>
@@ -736,49 +787,53 @@ Pavel Abakanov (sharky72)</prev>
             <lang id="ru">Архив</lang>
           </row>
           <row id="X">202</row>
-          <row id="Y">90</row>
+          <row id="Y">143</row>
           <row id="CX">70</row>
           <row id="CY">10</row>
         </item>
         <item name="1106" type="EDITTEXT" id="1106">
-          <row id="X">231</row>
+          <row id="X">138</row>
           <row id="Y">19</row>
           <row id="CX">19</row>
           <row id="CY">12</row>
         </item>
         <item name="1107" type="CONTROL" id="1107">
-          <row id="X">249</row>
+          <row id="X">156</row>
           <row id="Y">18</row>
           <row id="CX">11</row>
           <row id="CY">14</row>
         </item>
-        <item name="STATIC_3" type="LTEXT" id="-1">
+        <item name="STATIC_5" type="LTEXT" created="20260510T154438Z" st="0" id="-1">
           <row id="Text" si="89">
             <value>Max cache time in hours</value>
             <lang id="ru" time="20221205T190531Z">Время жизни кэша в часах</lang>
           </row>
-          <row id="X">231</row>
-          <row id="Y">7</row>
-          <row id="CX">106</row>
-          <row id="CY">8</row>
+          <row id="X" st="0">138</row>
+          <row id="Y" st="0">7</row>
+          <row id="CX" st="0">102</row>
+          <row id="CY" st="0">8</row>
         </item>
         <data>
-          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
+          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
         </data>
       </node>
       <node class="TWindowsDialogNode" name="110" type="DIALOGEX" resid="110" langid="1033" extended="1">
@@ -4735,7 +4790,7 @@ Install it now?</value>
         </row>
         <row id="223" si="399">
           <value>Unknown. Or not valid</value>
-          <lang id="ru" time="20220101T161610Z">Неизвестен или недоступен.</lang>
+          <lang id="ru" time="20260510T154612Z">Неизвестен или недоступен</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="15" resid="15" langid="1033">
@@ -4753,7 +4808,7 @@ Install it now?</value>
         </row>
         <row id="227" si="403">
           <value>Failed to create tray icon. Verify Notification Area Icon settings</value>
-          <lang id="ru" time="20220207T002753Z">Ошибка создания иконки области Уведомлений панели задач. Проверьте настройки области Уведомлений панели задач.</lang>
+          <lang id="ru" time="20260510T154614Z">Ошибка создания иконки области Уведомлений панели задач. Проверьте настройки области Уведомлений панели задач</lang>
         </row>
         <row id="228" si="404">
           <value>Device</value>
@@ -5058,7 +5113,7 @@ Upload files to the Web Server</value>
         </row>
         <row id="302" si="476">
           <value>Plugin title. Shows on the Dune Main Screen.</value>
-          <lang id="ru" time="20221018T231216Z">Название плагина. Показывается на главном экране Dune</lang>
+          <lang id="ru" time="20260510T154657Z">Название плагина. Показывается на главном экране Dune.</lang>
         </row>
         <row id="303" si="477" locked="1">Short plugin name. Used internally in Editor. Can be changed only for Custom plugin.</row>
       </node>
@@ -5133,11 +5188,11 @@ OTTKey - iEdem/iLook, Login/Password или только Token.</lang>
         </row>
         <row id="321" si="494">
           <value>Type of archive url. shift or flussonic.</value>
-          <lang id="ru" time="20221018T224902Z">Тип архивной ссылки. shift или flussonic</lang>
+          <lang id="ru" time="20260510T154705Z">Тип архивной ссылки. shift или flussonic.</lang>
         </row>
         <row id="322" si="495">
           <value>Type of the EPG source. Primary or Secondary.</value>
-          <lang id="ru" time="20221018T225252Z">Тип используемого источника EPG. Первичный или Вторичный</lang>
+          <lang id="ru" time="20260510T154705Z">Тип используемого источника EPG. Первичный или Вторичный.</lang>
         </row>
         <row id="323" si="496">
           <value>Load EPG from EPG url template with filled macroses. For test purposes.</value>
@@ -5161,7 +5216,7 @@ OTTKey - iEdem/iLook, Login/Password или только Token.</lang>
         </row>
         <row id="328" si="501">
           <value>Parameter for plugin. Check if channels picons are square.</value>
-          <lang id="ru" time="20221018T230544Z">Параметр для плагина. Установите если используемы пиконы квадрантные</lang>
+          <lang id="ru" time="20260510T154707Z">Параметр для плагина. Установите если используемы пиконы квадрантные.</lang>
         </row>
         <row id="329" si="502">
           <value>Try to download provider playlist using Playlist url template with filled macroses.</value>
@@ -5169,7 +5224,7 @@ OTTKey - iEdem/iLook, Login/Password или только Token.</lang>
         </row>
         <row id="330" si="503">
           <value>Open site to test Regular expression.</value>
-          <lang id="ru" time="20221018T230416Z">Открыть сайт для тестирования Регулярного выражения</lang>
+          <lang id="ru" time="20260510T154708Z">Открыть сайт для тестирования Регулярного выражения.</lang>
         </row>
         <row id="331" si="504">
           <value>Servers list are static, not requested from provider and can be set manually.</value>
@@ -5219,7 +5274,7 @@ OTTKey - iEdem/iLook, Login/Password или только Token.</lang>
         </row>
         <row id="342" si="515">
           <value>Load custom playlist.</value>
-          <lang id="ru" time="20221018T224656Z">Загрузить свой плейлист</lang>
+          <lang id="ru" time="20260510T154720Z">Загрузить свой плейлист.</lang>
         </row>
         <row id="343" si="516">
           <value>Choose the plugin config for selected account</value>
@@ -5269,7 +5324,7 @@ OTTKey - iEdem/iLook, Login/Password или только Token.</lang>
         </row>
         <row id="355" si="527">
           <value>Edit current VOD template or url.</value>
-          <lang id="ru" time="20221104T151059Z">Редактировать текущий шаблон или ссылку на медиатеку (VOD)</lang>
+          <lang id="ru" time="20260510T154722Z">Редактировать текущий шаблон или ссылку на медиатеку (VOD).</lang>
         </row>
         <row id="356" si="528">
           <value>Test VOD parse regular expression.</value>
@@ -5389,7 +5444,7 @@ OTTKey - iEdem/iLook, Login/Password или только Token.</lang>
       <node class="TWindowsStringNode" name="25" resid="25" langid="1033">
         <row id="384" si="556">
           <value>PHP class name used to override default_config class methods. In case when need to write our own implementation of base methods for the plugin. PHP script must be placed in the 'dune_plugin\configs' folder. By default used 'default_config' class name.</value>
-          <lang id="ru" time="20260330T163954Z">Имя класса PHP используемое для замены методов класса 'default_config'. Для случаев когда надо написать свою реализацию методов плагина. Скрипт PHP должен находиться в папке 'dune_plugin\configs'. По умолчанию используется базовый класс 'dune_config'</lang>
+          <lang id="ru" time="20260510T154727Z">Имя класса PHP используемое для замены методов класса 'default_config'. Для случаев когда надо написать свою реализацию методов плагина. Скрипт PHP должен находиться в папке 'dune_plugin\configs'. По умолчанию используется базовый класс 'dune_config'.</lang>
         </row>
         <row id="385" si="557">
           <value>Entry</value>
@@ -5431,11 +5486,11 @@ Copy: {:s} to {:s}</value>
         </row>
         <row id="393" si="565">
           <value>Max threads for collecting channel information. Be careful to increase the threads count. Some providers ban too many simultaneous requests</value>
-          <lang id="ru" time="20230501T183043Z">Максимальное количество потоков для сбора информации о потоках. Будьте осторожны при увеличении количества потоков. Некоторые провайдеры могу забанить за большое количество одновременных запросов.</lang>
+          <lang id="ru" time="20260510T154728Z">Максимальное количество потоков для сбора информации о потоках. Будьте осторожны при увеличении количества потоков. Некоторые провайдеры могу забанить за большое количество одновременных запросов</lang>
         </row>
         <row id="394" si="566">
           <value>Maximum time to live for the cache in hours. If time is expired data will be downloaded again.</value>
-          <lang id="ru" time="20230501T182929Z">Максимальное время жизни кэша в часах. Когда дата последнего скачивания превысит указанное время - данные будут скачаны заново</lang>
+          <lang id="ru" time="20260510T154729Z">Максимальное время жизни кэша в часах. Когда дата последнего скачивания превысит указанное время - данные будут скачаны заново.</lang>
         </row>
         <row id="395" si="567">
           <value>Clear cache</value>
@@ -5603,25 +5658,25 @@ Known EPG time range:
     <node class="TWindowsVersionFolder" name="Version" created="20260330T163817Z">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" si="603" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" changed="20260425T094650Z" si="604" locked="1" st="2">
-          <value>9.2.2491, 25 Apr 2026</value>
-          <prev>9.2.2482, 30 Mar 2026</prev>
+        <row id="FileVersion" changed="20260510T154438Z" si="604" locked="1" st="2">
+          <value>9.2.2498, 10 May 2026</value>
+          <prev>9.2.2491, 25 Apr 2026</prev>
         </row>
         <row id="InternalName" si="605" locked="1">IPTVChannelEditor.exe</row>
         <row id="LegalCopyright" si="606" locked="1">All rights reserved.</row>
         <row id="OriginalFilename" si="607" locked="1">IPTVChannelEditor.exe</row>
         <row id="ProductName" si="608" locked="1">Dune HD IPTV Channel Editor</row>
         <data>
-          MAM0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4AAAEAAgAJAAAAuwkCAAkAAAC7CT8AAAAAAAAABAAE
+          MAM0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4AAAEAAgAJAAAAwgkCAAkAAADCCT8AAAAAAAAABAAE
           AAEAAAAAAAAAAAAAAAAAAACOAgAAAQBTAHQAcgBpAG4AZwBGAGkAbABlAEkAbgBmAG8AAABqAgAAAQAwADQAMAA5ADAANABCADAA
           AACGAC8AAQBGAGkAbABlAEQAZQBzAGMAcgBpAHAAdABpAG8AbgAAAAAASQBQAFQAVgAgAEMAaABhAG4AbgBlAGwAIABFAGQAaQB0
           AG8AcgAgAGYAbwByACAARAB1AG4AZQAgAEgARAAgAEUAZABlAG0AIABUAFYAIABwAGwAdQBnAGkAbgAAAAAATAAWAAEARgBpAGwA
-          ZQBWAGUAcgBzAGkAbwBuAAAAAAA5AC4AMgAuADIANAA5ADEALAAgADIANQAgAEEAcAByACAAMgAwADIANgAAAEwAFgABAEkAbgB0
+          ZQBWAGUAcgBzAGkAbwBuAAAAAAA5AC4AMgAuADIANAA5ADgALAAgADEAMAAgAE0AYQB5ACAAMgAwADIANgAAAEwAFgABAEkAbgB0
           AGUAcgBuAGEAbABOAGEAbQBlAAAASQBQAFQAVgBDAGgAYQBuAG4AZQBsAEUAZABpAHQAbwByAC4AZQB4AGUAAABOABUAAQBMAGUA
           ZwBhAGwAQwBvAHAAeQByAGkAZwBoAHQAAABBAGwAbAAgAHIAaQBnAGgAdABzACAAcgBlAHMAZQByAHYAZQBkAC4AAAAAAFQAFgAB
           AE8AcgBpAGcAaQBuAGEAbABGAGkAbABlAG4AYQBtAGUAAABJAFAAVABWAEMAaABhAG4AbgBlAGwARQBkAGkAdABvAHIALgBlAHgA
           ZQAAAFgAHAABAFAAcgBvAGQAdQBjAHQATgBhAG0AZQAAAAAARAB1AG4AZQAgAEgARAAgAEkAUABUAFYAIABDAGgAYQBuAG4AZQBs
-          ACAARQBkAGkAdABvAHIAAAA2AAkAAQBQAHIAbwBkAHUAYwB0AFYAZQByAHMAaQBvAG4AAAA5AC4AMgAuADIANAA5ADEAAAAAAEQA
+          ACAARQBkAGkAdABvAHIAAAA2AAkAAQBQAHIAbwBkAHUAYwB0AFYAZQByAHMAaQBvAG4AAAA5AC4AMgAuADIANAA5ADgAAAAAAEQA
           AAABAFYAYQByAEYAaQBsAGUASQBuAGYAbwAAAAAAJAAEAAAAVAByAGEAbgBzAGwAYQB0AGkAbwBuAAAAAAAJBLAE
         </data>
       </node>
