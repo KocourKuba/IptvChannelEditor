@@ -69,7 +69,6 @@ class Starnet_Folder_Screen extends Abstract_Regular_Screen
     const PARAM_ADD_PARAMS = 'add_params';
     const PARAM_SELECTED_DATA = 'selected_data';
     const PARAM_ALLOW_NETWORK = 'allow_network';
-    const PARAM_ALLOW_RESET = 'allow_reset';
     const PARAM_ALLOW_IMAGE_LIB = 'allow_image_lib';
     const PARAM_READ_ONLY = 'read_only';
     const PARAM_NEW_USER = 'new_user';

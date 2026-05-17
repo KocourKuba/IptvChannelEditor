@@ -218,7 +218,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
                         PARAM_SOURCE_WINDOW_ID => static::ID,
                         Starnet_Folder_Screen::PARAM_CHOOSE_FOLDER => true,
                         Starnet_Folder_Screen::PARAM_ALLOW_NETWORK => !is_limited_apk(),
-                        Starnet_Folder_Screen::PARAM_ALLOW_RESET => true,
                         Starnet_Folder_Screen::PARAM_RESET_ACTION => ACTION_RESET_DEFAULT,
                         PARAM_END_ACTION => ACTION_RELOAD,
                         PARAM_WINDOW_COUNTER => 1,
