@@ -2199,6 +2199,11 @@
           "name": "Standard",
           "parse_regex_title": "(?<title>[^\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
           "pl_template": "http://pl.ru-tv.site/{LOGIN}/{PASSWORD}/vod.m3u"
+        },
+        {
+          "name": "Standard with Adult",
+          "parse_regex_title": "(?<title>[^\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
+          "pl_template": "http://pl.ru-tv.site/{LOGIN}/{PASSWORD}/vodall.m3u"
         }
       ]
     },
@@ -2941,7 +2946,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://{DOMAIN_ID}/{EPG_ID}.json",
+          "epg_url": "http://{API_DOMAIN_ID}/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2983,6 +2988,14 @@
         {
           "id": "rus.tvtm.one",
           "name": "rus.tvtm.one"
+        },
+        {
+          "id": "hls.gd",
+          "name": "hls.gd"
+        },
+        {
+          "id": "rus.hls.gd",
+          "name": "rus.hls.gd"
         }
       ],
       "static_api_domains": true,
