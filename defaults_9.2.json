@@ -1254,7 +1254,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/.+\\/(index|video)\\.m3u8\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/.+\\/(?<var1>index|video)\\.m3u8\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/p\\/(?<password>.+)\\/.+$",
           "pl_template": "https://itv.ooo/p/{PASSWORD}/hls.m3u8",
           "tag_id_match": "tvg-id"
@@ -1267,8 +1267,8 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/video-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/video.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/{VAR1}.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
