@@ -2426,87 +2426,63 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?:[^.]+).(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/iptv\\/p\\/(?<password>.+)\\/.*$",
           "pl_template": "http://{DOMAIN_ID}/iptv/p/{PASSWORD}/Sharavoz.Tv.navigator-ott.m3u"
         }
       ],
       "provider_api_url": "http://app.media24.cc/json/c",
-      "provider_url": "https://sh365.org/",
+      "provider_url": "https://sharavoz.tv/",
       "domains_list": [
         {
           "id": "0",
-          "name": "shrv.gb.net"
+          "name": "linkspile.cc"
         },
         {
           "id": "1",
-          "name": "www.sharavoz.tv"
+          "name": "linkspile.su"
         },
         {
           "id": "2",
-          "name": "sharavoz.space"
+          "name": "link-pile.ch"
         },
         {
           "id": "3",
-          "name": "sh365.org"
+          "name": "link-pile.vg"
         },
         {
           "id": "4",
-          "name": "sh24.one"
-        },
-        {
-          "id": "5",
-          "name": "sh385.cc"
-        },
-        {
-          "id": "6",
-          "name": "tv1.shrv30.online"
-        },
-        {
-          "id": "7",
           "name": "www.spr24.net"
         }
       ],
       "servers_list": [
         {
-          "id": "ru01.spr24.net",
+          "id": "ru01",
           "name": "Russia (RU01)"
         },
         {
-          "id": "ru02.spr24.net",
+          "id": "ru02",
           "name": "Moscow (RU02)"
         },
         {
-          "id": "ru03.spr24.net",
-          "name": "Moscow (RU03)"
-        },
-        {
-          "id": "nl01.spr24.net",
+          "id": "nl01",
           "name": "Amsterdam (NL01)"
         },
         {
-          "id": "am01.spr24.net",
+          "id": "am01",
           "name": "Amsterdam (AM01)"
         },
         {
-          "id": "am02.spr24.net",
+          "id": "am02",
           "name": "Amsterdam (AM02)"
         },
         {
-          "id": "fr01.spr24.net",
-          "name": "France (FR01)"
-        },
-        {
-          "id": "ch01.spr24.net",
+          "id": "ch01",
           "name": "Zurich (CH01)"
         },
         {
-          "id": "eu01.spr24.net",
-          "name": "Europe (EU01)"
-        },
-        {
-          "id": "pl01.spr24.net",
-          "name": "Poland (PL01)"
+          "id": "ro01",
+          "name": "Romania (RO01)"
         }
       ],
       "static_domains": true,
@@ -2516,15 +2492,15 @@
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "hls",
-          "uri_arc_template": "{SCHEME}://{SERVER_ID}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
-          "uri_template": "{SCHEME}://{SERVER_ID}/{ID}/index.m3u8?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}.{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{SERVER_ID}.{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
         },
         {
           "cu_type": "flussonic",
           "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
           "stream_type": "mpeg",
-          "uri_arc_template": "{SCHEME}://{SERVER_ID}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
-          "uri_template": "{SCHEME}://{SERVER_ID}/{ID}/mpegts?token={TOKEN}"
+          "uri_arc_template": "{SCHEME}://{SERVER_ID}.{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{SERVER_ID}.{DOMAIN}/{ID}/mpegts?token={TOKEN}"
         }
       ],
       "title": "Sharavoz TV",
