@@ -2453,9 +2453,21 @@
         {
           "id": "4",
           "name": "www.spr24.net"
+        },
+        {
+          "id": "5",
+          "name": "sharavoz.tv"
+        },
+        {
+          "id": "6",
+          "name": "sharavoz.space"
         }
       ],
       "servers_list": [
+        {
+          "id": "as01",
+          "name": "CDN"
+        },
         {
           "id": "ru01",
           "name": "Russia (RU01)"
@@ -3041,7 +3053,7 @@
       "domains_list": [
         {
           "id": "EU",
-          "name": "m3u.biluspeh.com/hls"
+          "name": "m3u.uspeh.my/hls"
         },
         {
           "id": "Russia",
