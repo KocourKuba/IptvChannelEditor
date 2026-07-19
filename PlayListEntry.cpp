@@ -99,6 +99,7 @@ bool PlaylistEntry::Parse(const std::string& str)
 				set_title(utils::utf8_to_utf16(m3uEntry.get_dir_title()));
 			}
 
+			search_description(tags);
 			search_group(tags);
 			search_epg(tags);
 			int value = search_archive(tags);
@@ -159,7 +160,9 @@ void PlaylistEntry::search_id(const std::wstring& search_tag)
 		if (const auto& tag_pair = tags.find(pair->second); tag_pair != tags.end())
 		{
 			if (!tag_pair->second.empty())
+			{
 				set_id(utils::utf8_to_utf16(tag_pair->second));
+			}
 		}
 	}
 }
@@ -172,6 +175,17 @@ void PlaylistEntry::search_group(const m3u_tags& tags)
 		if (!category.empty())
 		{
 			check_adult(tags, category);
+		}
+	}
+}
+
+void PlaylistEntry::search_description(const m3u_tags& tags)
+{
+	if (const auto& pair = tags.find(m3u_entry::info_tags::tag_tvg_description); pair != tags.end())
+	{
+		if (!pair->second.empty())
+		{
+			set_description(utils::utf8_to_utf16(pair->second));
 		}
 	}
 }

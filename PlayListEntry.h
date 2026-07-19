@@ -72,6 +72,7 @@ public:
 
 protected:
 	void search_group(const m3u_tags& tags);
+	void search_description(const m3u_tags& tags);
 	int search_archive(const m3u_tags& tags);
 	void search_epg(const m3u_tags& tags);
 	std::string search_logo(const m3u_tags& tags);

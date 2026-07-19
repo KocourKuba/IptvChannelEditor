@@ -416,6 +416,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM /*= 0*/)
 			movie->title = entry->get_title();
 			movie->poster_url = entry->get_icon_uri();
 			movie->url = entry->get_uri();
+			movie->description = entry->get_description();
 
 			if (parseTitle)
 			{

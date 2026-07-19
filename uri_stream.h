@@ -135,6 +135,9 @@ public:
 	const std::wstring& get_title() const { return title; }
 	void set_title(const std::wstring& val) { title = val; }
 
+	const std::wstring& get_description() const { return description; }
+	void set_description(const std::wstring& val) { description = val; }
+
 	std::wstring get_epg_id(int idx = 0) const { return epg_id[idx]; }
 	void set_epg_id(int idx, const std::wstring& val) { epg_id[idx] = val; }
 
@@ -237,6 +240,7 @@ protected:
 	std::wstring title;
 	CatchupType catchup = CatchupType::cu_not_set;
 	std::string catchup_source;
+	std::wstring description;
 	std::array<std::wstring, 2> epg_id; // epg id
 	int time_shift_hours = 0;
 	int time_shift_mins = 0;

@@ -68,6 +68,7 @@ static std::map<std::string_view, m3u_entry::info_tags> str_tags = {
 	{ "http-user-agent",  tag_http_user_agent  },
 	{ "parent-code",      tag_parent_code      },
 	{ "censored",         tag_censored         },
+	{ "tvg-description",  tag_tvg_description  },
 };
 
 static std::map<m3u_entry::info_tags, std::string> tags_str = {
@@ -94,6 +95,7 @@ static std::map<m3u_entry::info_tags, std::string> tags_str = {
 	{ tag_http_user_agent,  "http-user-agent"   },
 	{ tag_parent_code,      "parent-code"       },
 	{ tag_censored,         "censored"          },
+	{ tag_tvg_description,  "tvg-description"   },
 };
 
 std::string_view match_view(const boost::cmatch::value_type& sm)

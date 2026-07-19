@@ -66,6 +66,7 @@ public:
 		tag_http_user_agent,
 		tag_parent_code,
 		tag_censored,
+		tag_tvg_description,
 	};
 
 public:
