@@ -3274,7 +3274,6 @@
     },
     "yosso": {
       "access_type": "login",
-      "class_name": "yosso_config",
       "epg_params": [
         {
           "epg_param": "first",
@@ -3323,7 +3322,7 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "^(?<title>[^\\(]+)\\s\\((?<year>\\d+)\\)(?:\\s*(?<title_orig>.*)?)$",
+          "parse_regex_title": "^(?<title>[^\\(]+\\s\\((?<year>\\d+)\\).*?)$",
           "pl_template": "https://{SERVER_ID}/vod/{LOGIN}/{PASSWORD}/a/p.m3u8"
         }
       ]
