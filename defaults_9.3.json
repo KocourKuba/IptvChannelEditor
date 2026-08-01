@@ -455,7 +455,16 @@
           "epg_start": "time",
           "epg_icon": "icon"
         },
-        {}
+        {
+          "epg_param": "second",
+          "epg_url": "http://epg.esalecrm.com/bcumedia/epg/{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon"
+        }
       ],
       "name": "bcumedia",
       "playlist_templates": [
@@ -628,7 +637,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/edem%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/edem/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -636,7 +645,16 @@
           "epg_start": "time",
           "epg_icon": "icon"
         },
-        {}
+        {
+          "epg_param": "second",
+          "epg_url": "http://epg.drm-play.com/edem%2Fepg%2F{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon"
+        }
       ],
       "name": "iedem.tv",
       "playlist_templates": [
@@ -892,7 +910,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/ottg%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/glanz/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2410,7 +2428,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/sharavoz%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/sharavoz/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2420,6 +2438,15 @@
           "epg_id_source": 1
         },
         {
+          "epg_param": "second",
+          "epg_url": "http://epg.drm-play.com/sharavoz%2Fepg%2F{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon",
+          "epg_id_source": 1
         }
       ],
       "name": "sharavoz.tv",
@@ -3277,7 +3304,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/yosso%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/yosso/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -3285,7 +3312,16 @@
           "epg_start": "time",
           "epg_icon": "icon"
         },
-        {}
+        {
+          "epg_param": "second",
+          "epg_url": "http://epg.drm-play.com/yosso%2Fepg%2F{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon"
+        }
       ],
       "name": "yossotv",
       "playlist_templates": [
