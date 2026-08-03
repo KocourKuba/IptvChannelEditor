@@ -127,11 +127,6 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
                 Control_Factory::add_image_button($defs, $this, self::ACTION_RELOAD_EPG, TR::t('setup_reload_xmltv_epg'),
                     $locked ? TR::t('epg_indexing') : TR::t('refresh'), get_image_path('refresh.png'));
             }
-
-            //////////////////////////////////////
-            // clear epg cache
-            Control_Factory::add_image_button($defs, $this, self::ACTION_CLEAR_EPG_CACHE,
-                TR::t('entry_epg_cache_clear'), TR::t('clear'), $remove_icon);
         } else {
             foreach (array(1, 2, 3, 6, 12, 24, 48, 72, 96, 120, 144, 168) as $hour) {
                 $caching_range[$hour] = TR::t('setup_cache_time_h__1', $hour);
@@ -140,6 +135,11 @@ class Starnet_Epg_Setup_Screen extends Abstract_Controls_Screen
             Control_Factory::add_combobox($defs, $this, PARAM_EPG_CACHE_TIME,
                 TR::t('setup_cache_time'), $cache_time, $caching_range);
         }
+
+        //////////////////////////////////////
+        // clear epg cache
+        Control_Factory::add_image_button($defs, $this, self::ACTION_CLEAR_EPG_CACHE,
+            TR::t('entry_epg_cache_clear'), TR::t('clear'), $remove_icon);
 
         //////////////////////////////////////
         // epg time shift

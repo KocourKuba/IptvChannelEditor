@@ -245,13 +245,13 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
         hd_debug_print("json start: " . $parser_params[Epg_Params::EPG_START], true);
         hd_debug_print("json title: " . $parser_params[Epg_Params::EPG_NAME], true);
         hd_debug_print("json desc: " . $parser_params[Epg_Params::EPG_DESC], true);
-        if (isset($parser_params[Epg_Params::EPG_ICON])) {
+        if (!empty($parser_params[Epg_Params::EPG_ICON])) {
             hd_debug_print('json icon: ' . $parser_params[Epg_Params::EPG_ICON], true);
         }
-        if (isset($parser_params[Epg_Params::EPG_TIME_FORMAT])) {
+        if (!empty($parser_params[Epg_Params::EPG_TIME_FORMAT])) {
             hd_debug_print('json time format: ' . $parser_params[Epg_Params::EPG_TIME_FORMAT], true);
         }
-        if (isset($parser_params[Epg_Params::EPG_TIMEZONE])) {
+        if (!empty($parser_params[Epg_Params::EPG_TIMEZONE])) {
             hd_debug_print('json timezone: ' . $parser_params[Epg_Params::EPG_TIMEZONE], true);
         }
 
@@ -262,7 +262,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
 
             $program_start = $entry[$parser_params[Epg_Params::EPG_START]];
 
-            if (isset($parser_params[Epg_Params::EPG_TIME_FORMAT])) {
+            if (!empty($parser_params[Epg_Params::EPG_TIME_FORMAT])) {
                 $time_format = str_replace(
                     array(Plugin_Macros::YEAR, Plugin_Macros::MONTH, Plugin_Macros::DAY, Plugin_Macros::HOUR, Plugin_Macros::MIN),
                     array('Y', 'm', 'd', 'H', 'i'),
@@ -272,7 +272,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
                 $program_start = gmmktime($start['hour'], $start['minute'], $start['second'], $start['month'], $start['day'], $start['year']);
             }
 
-            if (isset($parser_params[Epg_Params::EPG_TIMEZONE])) {
+            if (!empty($parser_params[Epg_Params::EPG_TIMEZONE])) {
                 $program_start -= $parser_params[Epg_Params::EPG_TIMEZONE] * 3600;
             }
 
