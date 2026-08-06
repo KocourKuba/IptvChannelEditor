@@ -7,15 +7,6 @@
       "epg_start": "time",
       "epg_end": "time_to"
     },
-    "drm": {
-      "epg_url": "http://epg.drm-play.com/{PROVIDER}%2Fepg%2F{EPG_ID}.json",
-      "epg_root": "epg_data",
-      "epg_name": "name",
-      "epg_desc": "descr",
-      "epg_start": "time",
-      "epg_end": "time_to",
-      "epg_icon": "icon"
-    },
     "iptvx.one": {
       "epg_url": "http://epg.iptvx.one/api/id/{EPG_ID}.json",
       "epg_root": "ch_programme",
@@ -202,7 +193,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/101film%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/smile/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -276,7 +267,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/iptv.online%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -285,14 +276,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "2tv",
@@ -357,7 +340,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/edem%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/edem/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -366,14 +349,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.esalecrm.com/edem/epg/{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "allwaytv",
@@ -457,7 +432,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/bcu%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/bcumedia/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -466,14 +441,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.esalecrm.com/bcumedia/epg/{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "bcumedia",
@@ -648,14 +615,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.drm-play.com/edem%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "iedem.tv",
@@ -850,7 +809,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/fox-tv%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/fox/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -859,14 +818,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.esalecrm.com/fox/epg/{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "fox-fun.tv",
@@ -1053,7 +1004,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/iptv.online%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1062,14 +1013,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "iptvbest",
@@ -1246,14 +1189,6 @@
           "epg_timezone": 3
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.drm-play.com/only4%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "iptvplay",
@@ -1330,7 +1265,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/kineskop%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/kineskop/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1382,6 +1317,19 @@
     },
     "klimedia": {
       "access_type": "pin",
+      "epg_params": [
+        {
+          "epg_param": "first",
+          "epg_url": "http://epg.esalecrm.com/klimedia/epg/{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon"
+        },
+        {}
+      ],
       "name": "klimedia",
       "playlist_templates": [
         {
@@ -1430,14 +1378,6 @@
           "epg_id_source": 1
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.drm-play.com/korona%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "playlist_templates": [
@@ -1488,7 +1428,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/lightiptv%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/lightiptv/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1532,7 +1472,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/magic%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/mymagic/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1666,14 +1606,6 @@
           "epg_timezone": 3
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.drm-play.com/only4%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "onecent.tv",
@@ -1712,14 +1644,6 @@
           "epg_start": "start"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.drm-play.com/1ott%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "oneott.tv",
@@ -1763,14 +1687,6 @@
           "epg_start": "time"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.drm-play.com/tvteam%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "oneusd.tv",
@@ -1891,7 +1807,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/iptv.online%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1900,14 +1816,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "ottpub",
@@ -1982,7 +1890,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/peaktv%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/yosso/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2035,14 +1943,6 @@
           "epg_id_source": 1
         },
         {
-          "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/korona%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "playlist_templates": [
@@ -2093,7 +1993,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/fox-tv%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/fox/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2102,14 +2002,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.esalecrm.com/fox/epg/{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "ping.tv",
@@ -2247,7 +2139,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/rutv%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/rutv/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2428,7 +2320,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/shara-tv%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/sharatv/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2442,7 +2334,7 @@
       "playlist_templates": [
         {
           "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?<token>.+)$",
+          "parse_regex": "^(?<scheme>https?):\/\/(?<domain>.+)\/(?<id>.+)\/(?<token>.+)\/.*$",
           "pl_parse_regex": "^https?:\\/\\/.*\\/(?<login>.+):(?<password>.+)\\/.+\\/.*$",
           "pl_template": "http://tvfor.pro/g/{LOGIN}:{PASSWORD}/1/playlist.m3u"
         }
@@ -2482,15 +2374,6 @@
           "epg_id_source": 1
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.drm-play.com/sharavoz%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon",
-          "epg_id_source": 1
         }
       ],
       "name": "sharavoz.tv",
@@ -2691,14 +2574,6 @@
           "epg_id_source": 1
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.drm-play.com/tvteam%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "playlist_templates": [
@@ -2738,7 +2613,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/smile%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/smile/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2838,7 +2713,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/edem%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/gabbarit/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2847,14 +2722,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.esalecrm.com/gabbarit/epg/{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "playlist_templates": [
@@ -2948,7 +2815,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/iptv.online%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2957,14 +2824,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "tvizi",
@@ -3021,14 +2880,6 @@
           "epg_start": "time"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.drm-play.com/tvteam%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "tv.team",
@@ -3102,6 +2953,20 @@
     "uspeh": {
       "access_type": "pin",
       "balance_support": false,
+      "epg_params": [
+        {
+          "epg_param": "first",
+          "epg_url": "http://epg.esalecrm.com/uspeh/epg/{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon"
+        },
+        {
+        }
+      ],
       "name": "uspeh.tv",
       "playlist_templates": [
         {
@@ -3140,8 +3005,18 @@
     "velestore": {
       "access_type": "login",
       "epg_params": [
-        {},
-        {}
+        {
+          "epg_param": "first",
+          "epg_url": "http://epg.esalecrm.com/yosso/epg/{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon"
+        },
+        {
+        }
       ],
       "name": "velestore",
       "playlist_templates": [
@@ -3215,7 +3090,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.drm-play.com/viplime%2Fepg%2F{EPG_ID}.json",
+          "epg_url": "http://epg.esalecrm.com/viplime/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -3358,14 +3233,6 @@
           "epg_icon": "icon"
         },
         {
-          "epg_param": "second",
-          "epg_url": "http://epg.drm-play.com/yosso%2Fepg%2F{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
         }
       ],
       "name": "yossotv",
