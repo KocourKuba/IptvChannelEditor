@@ -58,7 +58,7 @@ class dynamic_config
         }
 
         foreach ($this->get_parameter(Plugin_Constants::EPG_PARAMS, array()) as $epg) {
-            $param_idx = $epg[Epg_Params::EPG_PARAM];
+            $param_idx = $epg[Epg_Manager_Json::EPG_PARAM];
             $this->epg_parser_parameters[$param_idx] = $epg;
         }
 

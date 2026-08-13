@@ -603,14 +603,15 @@ class Curl_Wrapper
         }
 
         $fp = null;
+        $tmp_file = '';
         if (isset($opts[CURLOPT_INFILE]) || isset($opts[CURLOPT_INFILESIZE])) {
             $opts[CURLOPT_PUT] = 1;
         } else if ($save_file === false) {
             $opts[CURLOPT_NOBODY] = 1;
         } else if ($save_file !== null){
             hd_debug_print("Save to file: '$save_file'", true);
-            $fp = fopen($save_file, "w+");
-            $opts[CURLOPT_FILE] = $fp;
+            $tmp_file = tempnam(pathinfo($save_file, PATHINFO_DIRNAME), 'curl');
+            $fp = fopen($tmp_file, "w+");
         }
 
         if (!empty($this->post_data)) {
@@ -686,7 +687,7 @@ class Curl_Wrapper
 
         if ($use_cache) {
             $new_etag = self::get_etag_header();
-            if ($etag !== $new_etag) {
+            if (!empty($new_etag) && $etag !== $new_etag) {
                 hd_debug_print("Save new ETag ($new_etag) for: $url", true);
                 self::set_cached_etag($url, $new_etag);
             }
@@ -696,8 +697,9 @@ class Curl_Wrapper
             hd_debug_print(sprintf("Return content: HTTP OK (%d, %d) in %.3fs", self::$http_code, strlen($content), $execution_tm), true);
         } else if ($save_file === false) {
             hd_debug_print(sprintf("Head response: HTTP OK (%d) in %.3fs", self::$http_code, $execution_tm), true);
-        } else if (file_exists($save_file)) {
-            hd_debug_print(sprintf("Save file: HTTP OK (%d, %d bytes) in %.3fs", self::$http_code, filesize($save_file), $execution_tm), true);
+        } else if (!empty($tmp_file) && file_exists($tmp_file)) {
+            hd_debug_print(sprintf("Save file: HTTP OK (%d, %d bytes) in %.3fs", self::$http_code, filesize($tmp_file), $execution_tm), true);
+            rename($tmp_file, $save_file);
         } else {
             hd_debug_print(sprintf("HTTP code (%d) in %.3fs", self::$http_code, $execution_tm), true);
             hd_debug_print("Saved file '$save_file' is not exist!");

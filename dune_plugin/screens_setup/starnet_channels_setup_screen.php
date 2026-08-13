@@ -72,6 +72,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
 
         //////////////////////////////////////
         // channels lists
+        $channels_list = '';
         $all_channels = $this->plugin->config->get_channel_list($channels_list);
         if (empty($all_channels)) {
             Control_Factory::add_button($defs, $this, "dummy", TR::t('setup_channels_src_used_label'),
@@ -118,6 +119,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
     {
         $defs = array();
 
+        $channels_list = '';
         $this->plugin->config->get_channel_list($channels_list);
         $source = $this->plugin->get_setting(PARAM_CHANNELS_SOURCE, 1);
         $url_path = '';
@@ -232,6 +234,7 @@ class Starnet_Channels_Setup_Screen extends Abstract_Controls_Screen
                         $this->plugin->set_setting(PARAM_CHANNELS_URL, $url_path);
                         break;
                     case 3:
+                        $channels_list = '';
                         $this->plugin->config->get_channel_list($channels_list);
                         if (isset($this->plugin->config->plugin_info['app_direct_links'][$channels_list])) {
                             $url_path = $this->plugin->config->plugin_info['app_direct_links'][$channels_list];

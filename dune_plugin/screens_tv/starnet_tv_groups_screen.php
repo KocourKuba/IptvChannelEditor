@@ -97,7 +97,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
 
             case self::ACTION_CONFIRM_DLG_APPLY:
                 Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                return Starnet_Epfs_Handler::epfs_invalidate_folders(null, Action_Factory::close_and_run());
+                return Starnet_Epfs_Handler::epfs_invalidate_folders($plugin_cookies, null, Action_Factory::close_and_run());
 
             case ACTION_NEED_CONFIGURE:
                 if ($this->IsSetupNeeds()) {

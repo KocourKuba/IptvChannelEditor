@@ -47,6 +47,15 @@ class Epg_Indexer_Sql extends Epg_Indexer
      * @inheritDoc
      * @override
      */
+    public function get_epg_id($hash, $channel)
+    {
+        return $channel->get_id();
+    }
+
+    /**
+     * @inheritDoc
+     * @override
+     */
     public function load_program_index($hash, $channel)
     {
         $channel_position = array();
@@ -114,7 +123,6 @@ class Epg_Indexer_Sql extends Epg_Indexer
             print_backtrace_exception($ex);
         }
 
-        hd_debug_print("Channel positions: " . json_format_unescaped($channel_position), true);
         return $channel_position;
     }
 

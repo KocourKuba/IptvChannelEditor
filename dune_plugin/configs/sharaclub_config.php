@@ -163,7 +163,7 @@ class sharaclub_config extends default_config
 
                 $this->set_domains(array(0 => $this->account_data->data->listdomain));
                 $this->set_domain_id(0);
-                $this->set_epg_parameter(Plugin_Constants::EPG_FIRST,Epg_Params::EPG_DOMAIN, $this->account_data->data->jsonEpgDomain);
+                $this->set_epg_parameter(Plugin_Constants::EPG_FIRST,Epg_Manager_Json::EPG_DOMAIN, $this->account_data->data->jsonEpgDomain);
             }
         } catch (Exception $ex) {
             print_backtrace_exception($ex);

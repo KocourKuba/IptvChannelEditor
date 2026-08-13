@@ -119,11 +119,12 @@ class Starnet_Epfs_Handler
     }
 
     /**
+     * @param $plugin_cookies
      * @param array|null $media_urls
      * @param array|null $post_action
      * @return array
      */
-    public static function epfs_invalidate_folders($media_urls = null, $post_action = null)
+    public static function epfs_invalidate_folders($plugin_cookies, $media_urls = null, $post_action = null)
     {
         self::update_all_epfs($plugin_cookies);
 

@@ -553,6 +553,13 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
     abstract public function get_indexes_info($hash);
 
     /**
+     * @param string $hash
+     * @param Channel $channel
+     * @return array
+     */
+    abstract public function get_epg_id($hash, $channel);
+
+    /**
      * Clear memory index
      *
      * @param string $id
@@ -565,7 +572,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
      * @param Channel $channel
      * @return array
      */
-    abstract protected function load_program_index($hash, $channel);
+    abstract public function load_program_index($hash, $channel);
 
     /**
      * Check is all indexes is valid

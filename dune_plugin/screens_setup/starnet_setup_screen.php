@@ -100,6 +100,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen
             $img_pp = get_temp_path('qr_pp.png');
             file_put_contents($img_pp, Curl_Wrapper::getInstance()->download_file(Default_Dune_Plugin::RESOURCE_URL . "/QR_PP.png", $img_pp));
 
+            $defs = array();
             Control_Factory::add_vgap($defs, 50);
             Control_Factory::add_smart_label($defs, "", "<text>YooMoney</text><gap width=400/><text>PayPal</text>");
             Control_Factory::add_smart_label($defs, "", "<icon>$img_ym</icon><gap width=140/><icon>$img_pp</icon>");
@@ -136,6 +137,7 @@ class Starnet_Setup_Screen extends Abstract_Controls_Screen
                 return Action_Factory::close_and_run();
 
             case ACTION_PLUGIN_INFO:
+                $defs = array();
                 Control_Factory::add_multiline_label($defs, null, $history_txt, 12);
                 Control_Factory::add_vgap($defs, 20);
 

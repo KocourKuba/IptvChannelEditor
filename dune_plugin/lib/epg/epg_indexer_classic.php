@@ -48,11 +48,55 @@ class Epg_Indexer_Classic extends Epg_Indexer
      * @inheritDoc
      * @override
      */
+    public function get_epg_id($hash, $channel)
+    {
+        if (empty($this->xmltv_indexes[$hash][self::INDEX_CHANNELS])) {
+            $this->perf->reset('start');
+            $index_file = $this->get_index_name(self::INDEX_CHANNELS, $hash);
+            hd_debug_print("load channels index $$index_file");
+            $data = parse_json_file($index_file);
+            if ($data === false) {
+                hd_debug_print("load channels index failed '$index_file'");
+                return '';
+            }
+
+            $this->perf->setLabel('end_load');
+            $report = $this->perf->getFullReport();
+            hd_debug_print("Load time: {$report[Perf_Collector::TIME]} secs");
+            hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
+
+            $this->xmltv_indexes[$hash][self::INDEX_CHANNELS] = $data;
+        }
+
+        // try found channel_id by epg_id
+        $epg_ids = $channel->get_epg_ids();
+        $channels = $this->xmltv_indexes[$hash][self::INDEX_CHANNELS];
+        foreach ($epg_ids as $epg_id) {
+            $epg_id_lower = mb_convert_case($epg_id, MB_CASE_LOWER, "UTF-8");
+            if (array_key_exists($epg_id_lower, $channels)) {
+                return $channels[$epg_id_lower];
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     * @override
+     */
     public function load_program_index($hash, $channel)
     {
         try {
             $this->perf->reset('start');
 
+            $channel_id = $this->get_epg_id($hash, $channel);
+
+            if (empty($channel_id)) {
+                throw new Exception("index positions for epg '{$channel->get_title()}' is not exist");
+            }
+
+            $this->perf->setLabel('fetch');
             if (empty($this->xmltv_indexes[$hash][self::INDEX_ENTRIES])) {
                 $index_file = $this->get_index_name(self::INDEX_ENTRIES, $hash);
                 hd_debug_print("load positions index $index_file");
@@ -66,38 +110,6 @@ class Epg_Indexer_Classic extends Epg_Indexer
                 $report = $this->perf->getFullReport();
                 hd_debug_print("Load time: {$report[Perf_Collector::TIME]} secs");
                 hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
-            }
-
-            if (empty($this->xmltv_indexes[$hash][self::INDEX_CHANNELS])) {
-                $index_file = $this->get_index_name(self::INDEX_CHANNELS, $hash);
-                hd_debug_print("load channels index $$index_file");
-                $data = parse_json_file($index_file);
-                if ($data === false) {
-                    throw new Exception("load channels index failed '$index_file'");
-                }
-
-                $this->xmltv_indexes[$hash][self::INDEX_CHANNELS] = $data;
-                $this->perf->setLabel('end_load');
-
-                $report = $this->perf->getFullReport();
-                hd_debug_print("Load time: {$report[Perf_Collector::TIME]} secs");
-                hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
-            }
-
-            $this->perf->setLabel('fetch');
-            // try found channel_id by epg_id
-            $epg_ids = $channel->get_epg_ids();
-            $channels = $this->xmltv_indexes[$hash][self::INDEX_CHANNELS];
-            foreach ($epg_ids as $epg_id) {
-                $epg_id_lower = mb_convert_case($epg_id, MB_CASE_LOWER, "UTF-8");
-                if (array_key_exists($epg_id_lower, $channels)) {
-                    $channel_id = $channels[$epg_id_lower];
-                    break;
-                }
-            }
-
-            if (empty($channel_id)) {
-                throw new Exception("index positions for epg '{$channel->get_title()}' is not exist");
             }
 
             $positions = $this->xmltv_indexes[$hash][self::INDEX_ENTRIES];

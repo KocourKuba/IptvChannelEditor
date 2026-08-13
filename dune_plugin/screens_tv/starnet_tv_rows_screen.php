@@ -71,7 +71,7 @@ class Starnet_Tv_Rows_Screen extends Abstract_Rows_Screen
 
                 if (isset($user_input->action_origin)) {
                     Starnet_Epfs_Handler::update_all_epfs($plugin_cookies);
-                    return Action_Factory::close_and_run(Starnet_Epfs_Handler::epfs_invalidate_folders(null, $tv_play_action));
+                    return Action_Factory::close_and_run(Starnet_Epfs_Handler::epfs_invalidate_folders($plugin_cookies, null, $tv_play_action));
                 }
 
                 $new_actions = array_merge($this->get_action_map($media_url, $plugin_cookies),

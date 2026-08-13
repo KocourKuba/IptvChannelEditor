@@ -191,6 +191,7 @@ class Starnet_Tv implements User_Input_Handler
         $this->plugin->unload_favorites();
         $channels_list_path = '';
         try {
+            $channels_list = '';
             $this->plugin->config->get_channel_list($channels_list);
             $source = $this->plugin->get_setting(PARAM_CHANNELS_SOURCE, 1);
             hd_debug_print("Load channels list using source: $source");
