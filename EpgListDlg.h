@@ -38,6 +38,11 @@ public:
 	CEpgListDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEpgListDlg() = default;
 
+	CEpgListDlg(const CEpgListDlg&) = delete;
+	CEpgListDlg(CEpgListDlg&&) = delete;
+	CEpgListDlg& operator=(const CEpgListDlg&) = delete;
+	CEpgListDlg& operator=(CEpgListDlg&&) = delete;
+
 	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_EPG_LIST };
@@ -60,12 +65,9 @@ protected:
 	afx_msg void OnNMDblclkListEpg(NMHDR* pNMHDR, LRESULT* pResult);
 
 public:
-	int m_epg_idx = 0;
 	TemplateParams m_params;
-	uri_stream* m_info = nullptr;
-	std::shared_ptr<base_plugin> m_plugin;
-	std::array<EpgStorage, 3>* m_epg_cache = nullptr;
-	EpgAliases* m_epg_aliases = nullptr;
+	const uri_stream* m_info = nullptr;
+	const EpgAliases* m_epg_aliases = nullptr;
 
 	std::wstring m_xmltv_source;
 
@@ -77,6 +79,6 @@ protected:
 	CString m_csEpgUrl;
 	CString m_csArchiveUrl;
 
-	std::map<time_t, std::shared_ptr<EpgInfo>>* m_pEpgChannelMap = nullptr;
+	const std::map<time_t, std::shared_ptr<EpgInfo>>* m_pEpgChannelMap = nullptr;
 	std::map<int, std::pair<time_t, time_t>> m_idx_map;
 };

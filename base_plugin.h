@@ -114,7 +114,7 @@ public:
 	/// </summary>
 	/// <param name="params">parameters for generating url</param>
 	/// <returns>string url</returns>
-	std::wstring get_play_stream(const TemplateParams& params, uri_stream* info) const;
+	std::wstring get_play_stream(const TemplateParams& params, const uri_stream* info) const;
 
 	/// <summary>
 	/// get template live url

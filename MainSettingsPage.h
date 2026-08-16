@@ -29,12 +29,19 @@ DEALINGS IN THE SOFTWARE.
 
 // CMainSettingsPage dialog
 
+class CIPTVChannelEditorDlg;
+
 class CMainSettingsPage : public CTooltipPropertyPage
 {
 	DECLARE_DYNAMIC(CMainSettingsPage)
 
 public:
-	CMainSettingsPage();   // standard constructor
+	explicit CMainSettingsPage(CWnd* parent);   // standard constructor
+	CMainSettingsPage(const CMainSettingsPage&) = delete;
+	CMainSettingsPage(CMainSettingsPage&&) = delete;
+	CMainSettingsPage& operator=(const CMainSettingsPage&) = delete;
+	CMainSettingsPage& operator=(CMainSettingsPage&&) = delete;
+
 	virtual ~CMainSettingsPage() = default;
 
 	// Dialog Data
@@ -61,8 +68,7 @@ protected:
 	afx_msg void OnBnClickedButtonClearCache();
 
 public:
-	std::array<EpgStorage, 3>* m_epg_cache = nullptr;
-	EpgAliases* m_epg_aliases = nullptr;
+	CWnd* m_parent = nullptr;
 
 protected:
 	CComboBox m_wndLanguage;

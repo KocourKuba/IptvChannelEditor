@@ -852,12 +852,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_changedChannels.clear();
 	m_wndChannels.ResetContent();
 	m_all_channels_lists.clear();
-	m_xmltv_sources.clear();
-	m_epg_aliases.clear();
-	for (auto& item : m_epg_cache)
-	{
-		item.clear();
-	}
+	ClearCache();
 
 	std::error_code err;
 	std::filesystem::directory_iterator ch_dir_iter(channelsPath, err);
@@ -2178,7 +2173,7 @@ void CIPTVChannelEditorDlg::FillEPG()
 		std::vector<std::wstring> ids;
 		if (epg_idx != XMLTV_EPG)
 		{
-			const auto& epg_id = uri_stream->get_epg_id(epg_idx);
+			const auto& epg_id = GetEpgId(uri_stream, epg_idx);
 			ids.emplace_back(epg_id);
 			if (m_epg_cache[epg_idx].find(epg_id) == m_epg_cache[epg_idx].end())
 			{
@@ -2208,10 +2203,12 @@ void CIPTVChannelEditorDlg::FillEPG()
 		{
 			if (epg_id.empty()) continue;
 
+			const auto& aliases = epg_idx == XMLTV_EPG ? m_xml_epg_aliases : m_json_epg_aliases;
+
 			std::wstring alias(epg_id);
-			if (!m_epg_aliases.empty())
+			if (!aliases.empty())
 			{
-				if (const auto& pair = m_epg_aliases.find(alias); pair != m_epg_aliases.end())
+				if (const auto& pair = aliases.find(alias); pair != aliases.end())
 				{
 					alias = pair->second;
 				}
@@ -2293,12 +2290,6 @@ void CIPTVChannelEditorDlg::FillEPG()
 
 void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 {
-	if (epg_idx == XMLTV_EPG)
-	{
-		// it's not a json, but xmltv
-		return;
-	}
-
 	JSON_ALL_TRY
 	{
 		const auto info = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
@@ -2310,12 +2301,12 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 
 		UpdateExtToken(uri_stream);
 
-		const std::wstring& epg_id = uri_stream->get_epg_id(epg_idx);
+		const auto& epg_id = GetEpgId(uri_stream, epg_idx);
+
 		if (epg_id.empty())
 		{
 			throw std::exception("EPG ID not set");
 		}
-
 
 		TemplateParams params
 		{
@@ -2328,10 +2319,9 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 			.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
 			.user_agent = m_plugin->get_user_agent(),
 			.timeouts = GetConfig().GetTimeouts(),
-
 		};
 
-		const auto epg_param = m_plugin->get_epg_parameter(epg_idx);
+		const auto& epg_param = m_plugin->get_epg_parameter(epg_idx);
 		if (!epg_param.epg_auth.empty())
 		{
 			std::string api_token;
@@ -2452,6 +2442,85 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 		LOG_PROTOCOL(ex.what());
 	}
 	JSON_FINAL_CATCH
+}
+
+std::wstring CIPTVChannelEditorDlg::GetEpgId(const uri_stream* uri, const int epg_idx)
+{
+	std::wstring epg_id = uri->get_epg_id(epg_idx);
+	if (epg_id.empty())
+	{
+		return epg_id;
+	}
+
+	const auto& epg_param = m_plugin->get_epg_parameter(epg_idx);
+	const auto& epg_url = epg_param.get_epg_url();
+	std::wstring channel_info_url;
+	utils::CrackedUrl cracked;
+	CrackUrl(epg_url, &cracked);
+	if (cracked.host == L"epg.esalecrm.com" || cracked.host == L"epg.esalecrm.net")
+	{
+		if (m_known_epg_ids.empty())
+		{
+			std::filesystem::path file_path(cracked.path);
+			utils::http_request req
+			{
+				.url = std::format(L"{}://{}{}/channels_info.json", cracked.scheme, cracked.host, file_path.parent_path().wstring()),
+				.cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL),
+				.user_agent = m_plugin->get_user_agent(),
+				.timeouts = GetConfig().GetTimeouts(),
+			};
+
+			if (!utils::AsyncDownloadFile(req).get())
+			{
+				LOG_PROTOCOL("Failed to get channels info");
+			}
+			else
+			{
+				const auto& parsed_json = nlohmann::json::parse(req.body.str());
+
+				if (parsed_json.contains("epg_id"))
+				{
+					for (const auto& item : parsed_json["epg_id"].items())
+					{
+						m_known_epg_ids.emplace(utils::get_json_wstring("", item.value()));
+					}
+				}
+
+				if (parsed_json.contains("epg_aliases"))
+				{
+					for (const auto& item : parsed_json["epg_aliases"].items())
+					{
+						m_json_epg_aliases.emplace(utils::utf8_to_utf16(item.key()), utils::get_json_wstring("", item.value()));
+					}
+				}
+			}
+		}
+	}
+
+	if (!m_known_epg_ids.empty() && m_known_epg_ids.find(epg_id) == m_known_epg_ids.end())
+	{
+		const auto& lower_case = utils::wstring_tolower_l_copy(uri->get_title());
+		const auto& mapped = m_json_epg_aliases.find(lower_case);
+		if (mapped != m_json_epg_aliases.end() && !mapped->second.empty())
+		{
+			epg_id = mapped->second;
+		}
+	}
+
+	return epg_id;
+}
+
+void CIPTVChannelEditorDlg::ClearCache()
+{
+	m_xmltv_sources.clear();
+	m_xml_epg_aliases.clear();
+	m_json_epg_aliases.clear();
+	m_known_epg_ids.clear();
+	for (auto& item : m_epg_cache)
+	{
+		item.clear();
+	}
+
 }
 
 void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
@@ -2615,7 +2684,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 		while (ch_node)
 		{
 			const auto channel_id = rapidxml::get_value_wstring(ch_node->first_attribute("id"));
-			m_epg_aliases.emplace(utils::wstring_tolower_l_copy(channel_id), channel_id);
+			m_xml_epg_aliases.emplace(utils::wstring_tolower_l_copy(channel_id), channel_id);
 			auto display_name_node = ch_node->first_node("display-name");
 			while (display_name_node)
 			{
@@ -2623,7 +2692,7 @@ void CIPTVChannelEditorDlg::DownloadAndParseXmltvEpg(std::wstring url)
 				std::wstring channel_name = utils::wstring_tolower_l(name);
 				if (!channel_name.empty())
 				{
-					m_epg_aliases.emplace(channel_name, channel_id);
+					m_xml_epg_aliases.emplace(channel_name, channel_id);
 				}
 				display_name_node = display_name_node->next_sibling("display-name");
 			}
@@ -4031,11 +4100,9 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 	{
 		int epg_idx = GetEpgIdx();
 
-		CEpgListDlg dlg;
-		dlg.m_plugin = m_plugin;
-		dlg.m_epg_idx = epg_idx;
-		dlg.m_epg_cache = &m_epg_cache;
-		dlg.m_epg_aliases = (epg_idx == XMLTV_EPG) ? &m_epg_aliases : nullptr;
+		CEpgListDlg dlg(this);
+
+		dlg.m_epg_aliases = (epg_idx == XMLTV_EPG) ? &m_xml_epg_aliases : &m_json_epg_aliases;
 		dlg.m_params.creds = GetCurrentAccount();
 		dlg.m_params.streamSubtype = (StreamType)m_wndStreamType.GetItemData(m_wndStreamType.GetCurSel());
 
@@ -4043,8 +4110,6 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonViewEpg()
 		{
 			dlg.m_xmltv_source = m_xmltv_sources[m_xmltvEpgSource];
 		}
-
-		auto uri_stream = GetUriStream(info);
 
 		UpdateExtToken(uri_stream);
 		UpdateVars(uri_stream);
@@ -5180,9 +5245,7 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 {
 	CPropertySheet sheet(IDS_STRING_PROGRAM_SETTINGS);
 
-	auto pDlgMain = std::make_unique<CMainSettingsPage>();
-	pDlgMain->m_epg_cache = &m_epg_cache;
-	pDlgMain->m_epg_aliases = &m_epg_aliases;
+	auto pDlgMain = std::make_unique<CMainSettingsPage>(this);
 
 	auto pDlgColor = std::make_unique<CColorSettingsPage>();
 	auto pDlgPaths = std::make_unique<CPathsSettingsPage>();
@@ -6674,7 +6737,7 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboCustomXmltvEpg()
 {
 	UpdateData(TRUE);
 	m_epg_cache[XMLTV_EPG].clear();
-	m_epg_aliases.clear();
+	m_xml_epg_aliases.clear();
 
 	GetConfig().set_int(false, REG_EPG_SOURCE_IDX, m_xmltvEpgSource);
 

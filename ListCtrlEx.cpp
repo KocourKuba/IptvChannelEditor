@@ -35,11 +35,11 @@ BEGIN_MESSAGE_MAP(CListCtrlEx, CListCtrl)
 	ON_WM_DESTROY()                                                                            \
 END_MESSAGE_MAP()
 
-bool CListCtrlEx::BuildColumns(int nCols, int* nWidth, int* nColString)
+bool CListCtrlEx::BuildColumns(size_t nCols, int* nWidth, int* nColString)
 {
-	for (int i = 0; i < nCols; ++i)
+	for (int i = 0; i < (int)nCols; ++i)
 	{
-		if (InsertColumn(i, load_string_resource(nColString[i]).c_str(), LVCFMT_LEFT, nWidth[i], i) == -1)
+		if (InsertColumn((int)i, load_string_resource(nColString[i]).c_str(), LVCFMT_LEFT, nWidth[i], i) == -1)
 		{
 			return false;
 		}
@@ -48,9 +48,9 @@ bool CListCtrlEx::BuildColumns(int nCols, int* nWidth, int* nColString)
 	return true;
 }
 
-bool CListCtrlEx::BuildColumns(int nCols, int* nWidth, std::wstring* strColString)
+bool CListCtrlEx::BuildColumns(size_t nCols, int* nWidth, std::wstring* strColString)
 {
-	for (int i = 0; i < nCols; ++i)
+	for (int i = 0; i < (int)nCols; ++i)
 	{
 		if (InsertColumn(i, strColString[i].c_str(), LVCFMT_LEFT, nWidth[i], i) == -1)
 		{

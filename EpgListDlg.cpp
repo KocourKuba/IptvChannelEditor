@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include <afxdialogex.h>
 #include "EpgListDlg.h"
 #include "IPTVChannelEditor.h"
+#include "IPTVChannelEditorDlg.h"
 #include "SettingsStorage.h"
 #include "Constants.h"
 
@@ -71,12 +72,12 @@ BOOL CEpgListDlg::OnInitDialog()
 
 	m_wndEpgList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_UNDERLINECOLD | LVS_EX_UNDERLINEHOT);
 
-	int nColumns[] = { IDS_STRING_COL_ARCHIVE, IDS_STRING_COL_START, IDS_STRING_COL_END, IDS_STRING_COL_TITLE };
-	int nWidths[] = { 20, 140, 140, 500 };
+	std::array nColumns = { IDS_STRING_COL_ARCHIVE, IDS_STRING_COL_START, IDS_STRING_COL_END, IDS_STRING_COL_TITLE };
+	std::array nWidths = { 20, 140, 140, 500 };
 
 	// Set up list control
 	// Nothing special here.  Just some columns for the report view.
-	m_wndEpgList.BuildColumns(_countof(nWidths), nWidths, nColumns);
+	m_wndEpgList.BuildColumns(nWidths.size(), nWidths.data(), nColumns.data());
 	m_wndEpgList.AutoSaveColumns(REG_EPG_COLUMNS_WIDTH);
 
 	m_day.SetTime(COleDateTime::GetCurrentTime());
@@ -91,8 +92,11 @@ BOOL CEpgListDlg::OnInitDialog()
 
 void CEpgListDlg::FillList(const COleDateTime& sel_time)
 {
-	if (!m_epg_cache || !m_info)
+	auto parentDlg = DYNAMIC_DOWNCAST(CIPTVChannelEditorDlg, GetParent());
+	if (!parentDlg || !m_info)
+	{
 		return;
+	}
 
 	m_wndEpgList.DeleteAllItems();
 	m_idx_map.clear();
@@ -110,20 +114,24 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 	int i = 0;
 	int current_idx = -1;
-	if (m_epg_idx == XMLTV_EPG)
+	std::wstring channel_info_url;
+	const auto epg_idx = parentDlg->GetEpgIdx();
+	if (epg_idx == XMLTV_EPG)
 	{
 		m_csEpgUrl = m_xmltv_source.c_str();
 	}
 	else
 	{
-		m_csEpgUrl = m_plugin->compile_epg_url(m_epg_idx, m_info->get_epg_id(m_epg_idx), start_time, m_info, m_params).c_str();
+		auto epg_id = parentDlg->GetEpgId(m_info, epg_idx);
+		m_csEpgUrl = parentDlg->GetPlugin()->compile_epg_url(epg_idx, epg_id, start_time, m_info, m_params).c_str();
 	}
 
 	bool found = false;
 	std::vector<std::wstring> ids;
-	if (m_epg_idx != XMLTV_EPG)
+	if (epg_idx != XMLTV_EPG)
 	{
-		ids.emplace_back(m_info->get_epg_id(m_epg_idx));
+		ids.emplace_back(m_info->get_epg_id(epg_idx));
+		ids.emplace_back(utils::wstring_tolower_l_copy(m_info->get_title()));
 	}
 	else
 	{
@@ -139,7 +147,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		ids.emplace_back(utils::wstring_tolower_l_copy(m_info->get_id()));
 	}
 
-
+	const auto& epg_cache = parentDlg->GetEpgCache();
 	std::wstring found_id;
 	for (const auto& epg_id : ids)
 	{
@@ -154,9 +162,9 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 			}
 		}
 
-		if (const auto& it = m_epg_cache->at(m_epg_idx).find(alias); it != m_epg_cache->at(m_epg_idx).end())
+		if (const auto& it = epg_cache.at(epg_idx).find(alias); it != epg_cache.at(epg_idx).end())
 		{
-			m_pEpgChannelMap = &(m_epg_cache->at(m_epg_idx)[alias]);
+			m_pEpgChannelMap = &(epg_cache.at(epg_idx).at(alias));
 			for (auto& epg_pair : it->second)
 			{
 				if (epg_pair.second->time_start <= now && now <= epg_pair.second->time_end)
@@ -168,9 +176,9 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		}
 	}
 
-	if (!found_id.empty())
+	if (!found_id.empty() && epg_cache.at(epg_idx).contains(found_id))
 	{
-		for (const auto& [key, value] : m_epg_cache->at(m_epg_idx)[found_id])
+		for (const auto& [key, value] : epg_cache.at(epg_idx).at(found_id))
 		{
 			time_t shifted_start = key - time_shift;
 			time_t shifted_end = value->time_end - time_shift;
@@ -226,6 +234,9 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		if (!m_pEpgChannelMap) break;
 
+		auto parentDlg = DYNAMIC_DOWNCAST(CIPTVChannelEditorDlg, GetParent());
+		if (!parentDlg) break;
+
 		NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 		if (!(pNMListView->uChanged & LVIF_STATE) || !(pNMListView->uNewState & LVIS_SELECTED)) break;
 
@@ -245,7 +256,7 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());
 
 		m_params.shift_back = (int)start_pair->second.first;
-		m_csArchiveUrl = m_plugin->get_play_stream(m_params, m_info).c_str();
+		m_csArchiveUrl = parentDlg->GetPlugin()->get_play_stream(m_params, m_info).c_str();
 		UpdateData(FALSE);
 	} while (false);
 
@@ -283,9 +294,10 @@ void CEpgListDlg::OnNMDblclkListEpg(NMHDR* pNMHDR, LRESULT* pResult)
 
 		m_params.shift_back = (int)shifted_start;
 		bool isArchive = (_time32(nullptr) - shifted_end) > 0 && shifted_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
-		if (isArchive)
+		auto parentDlg = DYNAMIC_DOWNCAST(CIPTVChannelEditorDlg, GetParent());
+		if (isArchive && parentDlg)
 		{
-			const auto& url = m_plugin->get_play_stream(m_params, m_info);
+			const auto& url = parentDlg->GetPlugin()->get_play_stream(m_params, m_info);
 
 			TRACE(L"\nTest URL: %s\n", url.c_str());
 

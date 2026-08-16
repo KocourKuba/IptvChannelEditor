@@ -31,8 +31,8 @@ class CListCtrlEx : public CListCtrl
 	DECLARE_DYNAMIC(CListCtrlEx)
 
 public:
-	virtual bool BuildColumns(int nCols, int* nWidth, int* nColString);
-	virtual bool BuildColumns(int nCols, int* nWidth, std::wstring* strColString);
+	virtual bool BuildColumns(size_t nCols, int* nWidth, int* nColString);
+	virtual bool BuildColumns(size_t nCols, int* nWidth, std::wstring* strColString);
 	virtual void AutoSaveColumns(LPCTSTR lpszSection, LPCTSTR lpszDefault = nullptr);
 	virtual void SaveColumnWidths();
 	virtual void LoadColumnWidths();

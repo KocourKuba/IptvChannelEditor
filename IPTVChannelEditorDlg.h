@@ -80,6 +80,14 @@ public:
 
 	HTREEITEM SelectTreeItem(CTreeCtrlEx* ctl, const SearchParams& searchParams);
 	void ReloadConfigs();
+	void ClearCache();
+
+	std::shared_ptr<Credentials> GetCurrentAccount();
+	std::shared_ptr<base_plugin> GetPlugin() { return m_plugin; }
+
+	const std::array<EpgStorage, 3>& GetEpgCache() { return m_epg_cache; }
+	std::wstring GetEpgId(const uri_stream* uri, const int epg_idx);
+	int GetEpgIdx();
 
 	// Implementation
 protected:
@@ -228,8 +236,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	std::shared_ptr<Credentials> GetCurrentAccount();
-
 	bool is_allow_save() const { return m_allow_save; }
 	void set_allow_save(bool val = true);
 
@@ -290,7 +296,6 @@ private:
 	void FillEPG();
 	void ParseJsonEpg(const int epg_idx);
 	void DownloadAndParseXmltvEpg(std::wstring url);
-	int GetEpgIdx();
 
 	void UpdateExtToken(uri_stream* uri) const;
 	void UpdateVars(uri_stream* uri) const;
@@ -471,7 +476,12 @@ private:
 	std::array<EpgStorage, 3> m_epg_cache;
 
 	// map channel names to channel id
-	EpgAliases m_epg_aliases;
+	EpgAliases m_xml_epg_aliases;
+
+	// map channel names to channel id
+	EpgAliases m_json_epg_aliases;
+
+	std::set<std::wstring> m_known_epg_ids;
 
 	// Accounts
 	std::vector<std::shared_ptr<Credentials>> m_all_credentials;

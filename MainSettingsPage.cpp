@@ -26,6 +26,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "pch.h"
 #include "IPTVChannelEditor.h"
+#include "IPTVChannelEditorDlg.h"
 #include "MainSettingsPage.h"
 #include "SettingsStorage.h"
 #include "Constants.h"
@@ -52,7 +53,7 @@ BEGIN_MESSAGE_MAP(CMainSettingsPage, CTooltipPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_CLEAR_CACHE, &CMainSettingsPage::OnBnClickedButtonClearCache)
 END_MESSAGE_MAP()
 
-CMainSettingsPage::CMainSettingsPage() : CTooltipPropertyPage(IDD_MAIN_SETTINGS_PAGE)
+CMainSettingsPage::CMainSettingsPage(CWnd* parent) : CTooltipPropertyPage(IDD_MAIN_SETTINGS_PAGE), m_parent(parent)
 {
 }
 
@@ -253,17 +254,10 @@ void CMainSettingsPage::OnCbnSelchangeComboLang()
 void CMainSettingsPage::OnBnClickedButtonClearCache()
 {
 	utils::ClearCache();
-	if (m_epg_cache)
+	auto dlg = DYNAMIC_DOWNCAST(CIPTVChannelEditorDlg, m_parent);
+	if (dlg)
 	{
-		for(auto& item : *m_epg_cache)
-		{
-			item.clear();
-		}
-	}
-
-	if (m_epg_aliases)
-	{
-		m_epg_aliases->clear();
+		dlg->ClearCache();
 	}
 
 	m_wndClearCache.EnableWindow(FALSE);

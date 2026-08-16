@@ -69,7 +69,7 @@ std::wstring base_plugin::get_playlist_url(const TemplateParams& params, std::ws
 	return replace_params_vars(params, url);
 }
 
-std::wstring base_plugin::get_play_stream(const TemplateParams& params, uri_stream* info) const
+std::wstring base_plugin::get_play_stream(const TemplateParams& params, const uri_stream* info) const
 {
 	static const std::map<std::wstring, std::wstring> template_mapper = {
 		{ CU_START, REPL_START },
