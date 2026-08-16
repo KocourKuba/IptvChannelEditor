@@ -51,6 +51,7 @@ struct EpgParameters
 	std::string epg_date_format;
 	std::string epg_time_format;
 	std::string epg_auth;
+	std::string epg_icon;
 	int epg_id_source = (int)epg_id_sources::enEpgId;
 	size_t epg_timezone = 0;
 	bool epg_use_duration = false;
@@ -118,6 +119,7 @@ struct EpgParameters
 		SERIALIZE_STRUCT(j, c, epg_desc);
 		SERIALIZE_STRUCT(j, c, epg_start);
 		SERIALIZE_STRUCT(j, c, epg_end);
+		SERIALIZE_STRUCT(j, c, epg_icon);
 		SERIALIZE_STRUCT(j, c, epg_date_format);
 		SERIALIZE_STRUCT(j, c, epg_time_format);
 		SERIALIZE_STRUCT(j, c, epg_auth);
@@ -141,6 +143,7 @@ struct EpgParameters
 		DESERIALIZE_STRUCT(j, c, epg_desc);
 		DESERIALIZE_STRUCT(j, c, epg_start);
 		DESERIALIZE_STRUCT(j, c, epg_end);
+		DESERIALIZE_STRUCT(j, c, epg_icon);
 		DESERIALIZE_STRUCT(j, c, epg_date_format);
 		DESERIALIZE_STRUCT(j, c, epg_time_format);
 		DESERIALIZE_STRUCT(j, c, epg_auth);
