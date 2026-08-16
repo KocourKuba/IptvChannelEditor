@@ -184,7 +184,7 @@ bool DownloadFile(http_request& request)
 
 		const auto& verb = request.verb_post ? L"POST" : L"GET";
 		LOG_PROTOCOL(std::format(L"Verb: {}", verb));
-		DWORD dwFlags = WINHTTP_FLAG_BYPASS_PROXY_CACHE;
+		DWORD dwFlags = WINHTTP_FLAG_BYPASS_PROXY_CACHE | WINHTTP_FLAG_ESCAPE_PERCENT;
 		if (cracked.nScheme == 2) /*INTERNET_SCHEME_HTTPS*/
 			dwFlags |= 0x00800000; // INTERNET_FLAG_SECURE
 		// Create an HTTP request handle.
