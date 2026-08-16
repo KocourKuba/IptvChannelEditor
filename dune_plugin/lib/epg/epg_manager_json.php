@@ -253,6 +253,14 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
 
         hd_debug_print("parser params: " . json_encode($parser_params), true);
 
+        $param_epg_root = safe_get_value($parser_params, self::EPG_ROOT);
+        $param_epg_start = safe_get_value($parser_params, self::EPG_START);
+        $param_epg_name = safe_get_value($parser_params, self::EPG_NAME);
+        $param_epg_desc = safe_get_value($parser_params, self::EPG_DESC);
+        $param_epg_icon = safe_get_value($parser_params, self::EPG_ICON);
+        $param_epg_time_format = safe_get_value($parser_params, self::EPG_TIME_FORMAT);
+        $param_epg_timezone = safe_get_value($parser_params, self::EPG_TIMEZONE);
+
         try {
             $doc = Curl_Wrapper::getInstance()->download_content($url);
             $ch_data = json_decode($doc, true);
@@ -265,50 +273,39 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
             return $channel_epg;
         }
 
-        if (!empty($parser_params[self::EPG_ROOT])) {
-            foreach (explode('|', $parser_params[self::EPG_ROOT]) as $level) {
+        if (!empty($param_epg_root)) {
+            foreach (explode('|', $param_epg_root) as $level) {
                 $epg_root = trim($level, "[]");
                 $ch_data = $ch_data[$epg_root];
             }
         }
 
-        // Possible need to add this to setup
-        // disabling end can help problem with overlapping end/start EPG
-        $parser_params[self::EPG_END] = '';
-
-        hd_debug_print("json epg root: " . $parser_params[self::EPG_ROOT], true);
-        hd_debug_print("json start: " . $parser_params[self::EPG_START], true);
-        hd_debug_print("json title: " . $parser_params[self::EPG_NAME], true);
-        hd_debug_print("json desc: " . $parser_params[self::EPG_DESC], true);
-        if (!empty($parser_params[self::EPG_ICON])) {
-            hd_debug_print('json icon: ' . $parser_params[self::EPG_ICON], true);
-        }
-        if (!empty($parser_params[self::EPG_TIME_FORMAT])) {
-            hd_debug_print('json time format: ' . $parser_params[self::EPG_TIME_FORMAT], true);
-        }
-        if (!empty($parser_params[self::EPG_TIMEZONE])) {
-            hd_debug_print('json timezone: ' . $parser_params[self::EPG_TIMEZONE], true);
-        }
+        hd_debug_print("json epg root:    $param_epg_root", true);
+        hd_debug_print("json start:       $param_epg_start", true);
+        hd_debug_print("json title:       $param_epg_name", true);
+        hd_debug_print("json desc:        $param_epg_desc", true);
+        hd_debug_print("json icon:        $param_epg_icon", true);
+        hd_debug_print("json time format: $param_epg_time_format", true);
+        hd_debug_print("json timezone:    $param_epg_timezone", true);
 
         // collect all program that starts after day start and before day end
         $prev_start = 0;
         foreach ($ch_data as $entry) {
-            if (!isset($entry[$parser_params[self::EPG_START]])) continue;
+            $program_start = safe_get_value($entry, $param_epg_start);
+            if (empty($program_start)) continue;
 
-            $program_start = $entry[$parser_params[self::EPG_START]];
-
-            if (!empty($parser_params[self::EPG_TIME_FORMAT])) {
+            if (!empty($param_epg_time_format)) {
                 $time_format = str_replace(
                     array(Plugin_Macros::YEAR, Plugin_Macros::MONTH, Plugin_Macros::DAY, Plugin_Macros::HOUR, Plugin_Macros::MIN),
                     array('Y', 'm', 'd', 'H', 'i'),
-                    $parser_params[self::EPG_TIME_FORMAT]);
+                    $param_epg_time_format);
 
                 $start = date_parse_from_format($time_format, $program_start);
                 $program_start = gmmktime($start['hour'], $start['minute'], $start['second'], $start['month'], $start['day'], $start['year']);
             }
 
-            if (!empty($parser_params[self::EPG_TIMEZONE])) {
-                $program_start -= $parser_params[self::EPG_TIMEZONE] * 3600;
+            if ($param_epg_timezone != 0) {
+                $program_start -= $param_epg_timezone * 3600;
             }
 
             if ($prev_start !== 0) {
@@ -316,14 +313,9 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
             }
             $prev_start = $program_start;
 
-            if (isset($entry[$parser_params[self::EPG_NAME]])) {
-                $channel_epg[$program_start][PluginTvEpgProgram::name] = HD::unescape_entity_string(safe_get_value($entry, $parser_params[self::EPG_NAME], ''));
-            } else {
-                $channel_epg[$program_start][PluginTvEpgProgram::name] = '';
-            }
-
-            $desc = HD::unescape_entity_string(safe_get_value($entry, $parser_params[self::EPG_DESC], ''));
-            $icon = safe_get_value($entry, safe_get_value($parser_params, self::EPG_ICON), '');
+            $channel_epg[$program_start][PluginTvEpgProgram::name] = unescape_entity_string(safe_get_value($entry, $param_epg_name, ''));
+            $desc = unescape_entity_string(safe_get_value($entry, $param_epg_desc, ''));
+            $icon = safe_get_value($entry, $param_epg_icon, '');
 
             if (empty($desc)) {
                 $channel_epg[$program_start][PluginTvEpgProgram::description] = '';

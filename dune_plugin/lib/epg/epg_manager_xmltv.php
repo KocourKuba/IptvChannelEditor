@@ -26,10 +26,10 @@
 require_once 'lib/hd.php';
 require_once 'lib/hashed_array.php';
 require_once 'lib/tr.php';
+require_once 'lib/epg/ext_epg_program.php';
 
 require_once 'epg_indexer_classic.php';
 require_once 'epg_indexer_sql.php';
-require_once 'lib/epg/ext_epg_program.php';
 
 class Epg_Manager_Xmltv
 {
@@ -232,7 +232,7 @@ class Epg_Manager_Xmltv
                                 if ($program_start < $day_start_ts && $program_end < $day_start_ts) continue;
                                 if ($program_start >= $day_end_ts) break;
 
-                                $desc = HD::unescape_entity_string(self::get_node_value($tag, 'desc'));
+                                $desc = unescape_entity_string(self::get_node_value($tag, 'desc'));
                                 $icon = self::get_node_attribute($tag, 'icon', 'src');
                                 $day_epg[$program_start][PluginTvEpgProgram::end_tm_sec] = $program_end;
                                 $day_epg[$program_start][PluginTvEpgProgram::name] = self::get_node_value($tag, 'title');

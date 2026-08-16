@@ -584,14 +584,13 @@ class Default_Dune_Plugin implements DunePlugin
                 if (!$show_ext_epg || in_array($channel_id, $this->epg_manager->get_delayed_epg())) continue;
 
                 $params = array();
-                $ext_epg[$start][PluginTvExtEpgProgram::start_tm] = $tm_start;
-                $ext_epg[$start][PluginTvExtEpgProgram::title] = $value[PluginTvEpgProgram::name];
-                $ext_epg[$start][PluginTvExtEpgProgram::desc] = $value[PluginTvEpgProgram::description];
+                $params[PluginTvExtEpgProgram::title] = $value[PluginTvEpgProgram::name];
+                $params[PluginTvExtEpgProgram::desc] = $value[PluginTvEpgProgram::description];
 
                 if (empty($value[PluginTvEpgProgram::icon_url])) {
-                    $ext_epg[$start][PluginTvExtEpgProgram::main_icon] = $channel->get_icon_url();
+                    $params[PluginTvExtEpgProgram::main_icon] = $channel->get_icon_url();
                 } else {
-                    $ext_epg[$start][PluginTvExtEpgProgram::main_icon] = $value[PluginTvEpgProgram::icon_url];
+                    $params[PluginTvExtEpgProgram::main_icon] = $value[PluginTvEpgProgram::icon_url];
                 }
 
                 $update_ext_epg(PluginTvExtEpgProgram::main_category, $value);
