@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project id="32B8BF7E-F9DA-487C-B6FF-DABDDB1AB822" created="20211012T165442Z" lastmodified="20260510T154808Z" version="1.0.1086" reviewcount="0" stringid="637">
+<project id="32B8BF7E-F9DA-487C-B6FF-DABDDB1AB822" created="20211012T165442Z" lastmodified="20260817T152404Z" version="1.0.1086" reviewcount="0" stringid="637">
   <lang id="ru"/>
-  <node class="TVisualCppSource" name="x64\Release Unicode\IPTVChannelEditor.exe" fullpath="D:\Works\Development\IPTVChannelEditor\x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" lastmodified="20260510T154808Z" encoding="windows-1252" platforms="[ptWin64]" hassignatureread="1">
+  <node class="TVisualCppSource" name="x64\Release Unicode\IPTVChannelEditor.exe" fullpath="D:\Works\Development\IPTVChannelEditor\x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" lastmodified="20260817T152404Z" encoding="windows-1252" platforms="[ptWin64]" hassignatureread="1">
     <node class="TWindowsBinaryFolder" name="&quot;AFX_DIALOG_LAYOUT&quot;" resname="AFX_DIALOG_LAYOUT" excluded="1"/>
     <node class="TWindowsBinaryFolder" name="&quot;PNG&quot;" resname="PNG" excluded="1"/>
     <node class="TWindowsAcceleratorFolder" name="Accelerator" created="20260330T163817Z">
@@ -590,14 +590,8 @@ Pavel Abakanov (sharky72)</prev>
         </row>
         <row id="X">0</row>
         <row id="Y">0</row>
-        <row id="CX">344</row>
-        <row id="CY">200</row>
-        <item name="BUTTON_2" type="GROUPBOX" st="4" id="-1">
-          <row id="Text" si="83" st="4">
-            <value>Update changes</value>
-            <lang id="ru" time="20211129T231337Z">Обновление измененных</lang>
-          </row>
-        </item>
+        <row id="CX">0</row>
+        <row id="CY">0</row>
         <item name="STATIC_0" type="LTEXT" id="-1">
           <row id="Text" si="76">
             <value>Language</value>
@@ -646,27 +640,27 @@ Pavel Abakanov (sharky72)</prev>
           <row id="CX">72</row>
           <row id="CY">14</row>
         </item>
-        <item name="STATIC_2" type="LTEXT" created="20260510T154438Z" st="0" id="-1">
-          <row id="Text" si="635" st="0">
+        <item name="STATIC_2" type="LTEXT" created="20260510T154438Z" id="-1">
+          <row id="Text" si="635">
             <value>Connect timeout</value>
             <lang id="ru" time="20260510T154504Z">Таймаут соединения</lang>
           </row>
-          <row id="X" st="0">7</row>
-          <row id="Y" st="0">35</row>
-          <row id="CX" st="0">84</row>
-          <row id="CY" st="0">8</row>
+          <row id="X">7</row>
+          <row id="Y">35</row>
+          <row id="CX">84</row>
+          <row id="CY">8</row>
         </item>
-        <item name="1255" type="EDITTEXT" created="20260510T154438Z" st="0" id="1255">
-          <row id="X" st="0">7</row>
-          <row id="Y" st="0">47</row>
-          <row id="CX" st="0">19</row>
-          <row id="CY" st="0">12</row>
+        <item name="1255" type="EDITTEXT" created="20260510T154438Z" id="1255">
+          <row id="X">7</row>
+          <row id="Y">47</row>
+          <row id="CX">19</row>
+          <row id="CY">12</row>
         </item>
-        <item name="1256" type="CONTROL" created="20260510T154438Z" st="0" id="1256">
-          <row id="X" st="0">25</row>
-          <row id="Y" st="0">46</row>
-          <row id="CX" st="0">11</row>
-          <row id="CY" st="0">14</row>
+        <item name="1256" type="CONTROL" created="20260510T154438Z" id="1256">
+          <row id="X">25</row>
+          <row id="Y">46</row>
+          <row id="CX">11</row>
+          <row id="CY">14</row>
         </item>
         <item name="STATIC_3" type="LTEXT" id="-1">
           <row id="Text" changed="20260510T154438Z" si="89">
@@ -679,17 +673,17 @@ Pavel Abakanov (sharky72)</prev>
           <row id="CX">106</row>
           <row id="CY">8</row>
         </item>
-        <item name="1257" type="EDITTEXT" created="20260510T154438Z" st="0" id="1257">
-          <row id="X" st="0">138</row>
-          <row id="Y" st="0">47</row>
-          <row id="CX" st="0">19</row>
-          <row id="CY" st="0">12</row>
+        <item name="1257" type="EDITTEXT" created="20260510T154438Z" id="1257">
+          <row id="X">138</row>
+          <row id="Y">47</row>
+          <row id="CX">19</row>
+          <row id="CY">12</row>
         </item>
-        <item name="1258" type="CONTROL" created="20260510T154438Z" st="0" id="1258">
-          <row id="X" st="0">156</row>
-          <row id="Y" st="0">46</row>
-          <row id="CX" st="0">12</row>
-          <row id="CY" st="0">14</row>
+        <item name="1258" type="CONTROL" created="20260510T154438Z" id="1258">
+          <row id="X">156</row>
+          <row id="Y">46</row>
+          <row id="CX">12</row>
+          <row id="CY">14</row>
         </item>
         <item name="1091" type="AUTOCHECKBOX" id="1091">
           <row id="Text" si="79">
@@ -731,15 +725,15 @@ Pavel Abakanov (sharky72)</prev>
           <row id="CX">142</row>
           <row id="CY">10</row>
         </item>
-        <item name="BUTTON_4" type="GROUPBOX" created="20260510T154438Z" st="0" id="-1">
+        <item name="BUTTON_4" type="GROUPBOX" created="20260510T154438Z" id="-1">
           <row id="Text" si="83">
             <value>Update changes</value>
             <lang id="ru" time="20211129T231337Z">Обновление измененных</lang>
           </row>
-          <row id="X" st="0">7</row>
-          <row id="Y" st="0">129</row>
-          <row id="CX" st="0">330</row>
-          <row id="CY" st="0">43</row>
+          <row id="X">7</row>
+          <row id="Y">129</row>
+          <row id="CX">330</row>
+          <row id="CY">43</row>
         </item>
         <item name="1110" type="AUTOCHECKBOX" id="1110">
           <row id="Text" si="84">
@@ -803,18 +797,18 @@ Pavel Abakanov (sharky72)</prev>
           <row id="CX">11</row>
           <row id="CY">14</row>
         </item>
-        <item name="STATIC_5" type="LTEXT" created="20260510T154438Z" st="0" id="-1">
+        <item name="STATIC_5" type="LTEXT" created="20260510T154438Z" id="-1">
           <row id="Text" si="89">
             <value>Max cache time in hours</value>
             <lang id="ru" time="20221205T190531Z">Время жизни кэша в часах</lang>
           </row>
-          <row id="X" st="0">138</row>
-          <row id="Y" st="0">7</row>
-          <row id="CX" st="0">102</row>
-          <row id="CY" st="0">8</row>
+          <row id="X">138</row>
+          <row id="Y">7</row>
+          <row id="CX">102</row>
+          <row id="CY">8</row>
         </item>
         <data>
-          AQD//wAAAAAAAAAAyADIgBkAAAAAAFgByAAAAAAATQBhAGkAbgAAAAgAkAEAAU0AUwAgAFMAaABlAGwAbAAgAEQAbABnAAAAAAAA
+          AQD//wAAAAAAAAAAyADIgBkAAAAAAAAAAAAAAAAATQBhAGkAbgAAAAgAkAEAAU0AUwAgAFMAaABlAGwAbAAgAEQAbABnAAAAAAAA
           AAAAAAAAAAJQBwA/AEkACAD///////+CAEwAYQBuAGcAdQBhAGcAZQAAAAAAAAAAAAAAAAADACFQBwBKAFEAHgBRBAAA//+FAAAA
           AAAAAAAAAAAAAAAAAlAHAAcAggAIAP///////4IATQBhAHgAIABzAHQAcgBlAGEAbQAgAHQAaAByAGUAYQBkAHMAAAAAAAAAAAAA
           AAAAgACBUAcAEwATAAwAPwQAAP//gQAAAAAAAAAAAAAAAAAiAABQGQASAAsADgBABAAAbQBzAGMAdABsAHMAXwB1AHAAZABvAHcA
@@ -1653,30 +1647,30 @@ Pavel Abakanov (sharky72)</prev>
         </row>
         <row id="X">0</row>
         <row id="Y">0</row>
-        <row id="CX">329</row>
-        <row id="CY">258</row>
+        <row id="CX">365</row>
+        <row id="CY">281</row>
         <item name="1090" type="CONTROL" id="1090">
           <row id="X">7</row>
           <row id="Y">21</row>
-          <row id="CX">315</row>
+          <row id="CX">351</row>
           <row id="CY">135</row>
         </item>
         <item name="1100" type="CONTROL" id="1100">
           <row id="X">7</row>
           <row id="Y">172</row>
-          <row id="CX">315</row>
-          <row id="CY">59</row>
+          <row id="CX">204</row>
+          <row id="CY">85</row>
         </item>
         <item name="1131" type="CONTROL" id="1131">
           <row id="X">7</row>
-          <row id="Y">236</row>
+          <row id="Y">259</row>
           <row id="CX">59</row>
           <row id="CY">15</row>
         </item>
         <item name="1130" type="EDITTEXT" id="1130">
           <row id="X">7</row>
           <row id="Y">7</row>
-          <row id="CX">315</row>
+          <row id="CX">351</row>
           <row id="CY">12</row>
         </item>
         <item name="1" type="DEFPUSHBUTTON" id="1">
@@ -1684,23 +1678,30 @@ Pavel Abakanov (sharky72)</prev>
             <value>OK</value>
             <lang id="ru" time="20230601T182135Z">OK</lang>
           </row>
-          <row id="X">139</row>
-          <row id="Y">237</row>
+          <row id="X">151</row>
+          <row id="Y">260</row>
           <row id="CX">50</row>
           <row id="CY">14</row>
         </item>
         <item name="1062" type="EDITTEXT" id="1062">
           <row id="X">7</row>
           <row id="Y">158</row>
-          <row id="CX">315</row>
+          <row id="CX">351</row>
           <row id="CY">12</row>
         </item>
+        <item name="1067" type="CONTROL" created="20260817T152027Z" id="1067">
+          <row id="X">214</row>
+          <row id="Y">172</row>
+          <row id="CX">144</row>
+          <row id="CY">85</row>
+        </item>
         <data>
-          AQD//wAAAACAAAAASADMgAYAAAAAAEkBAgEAAAAARQBQAEcAIABMAGkAcwB0AAAACACQAQABTQBTACAAUwBoAGUAbABsACAARABs
-          AGcAAAAAAAAAAAAAAA2IgVAHABUAOwGHAEIEAABTAHkAcwBMAGkAcwB0AFYAaQBlAHcAMwAyAAAAAAAAAAAAAAAAAAIARAghUAcA
-          rAA7ATsATAQAAFIAaQBjAGgARQBkAGkAdAAyADAAVwAAAAAAAAAAAAAAAAAAACEAAVAHAOwAOwAPAGsEAABTAHkAcwBEAGEAdABl
-          AFQAaQBtAGUAUABpAGMAawAzADIAAAAAAAAAAAAAAAAAAACACIFQBwAHADsBDABqBAAA//+BAAAAAAAAAAAAAAAAAAEAAVCLAO0A
-          MgAOAAEAAAD//4AATwBLAAAAAAAAAAAAAAAAAIAIgVAHAJ4AOwEMACYEAAD//4EAAAAAAA==
+          AQD//wAAAACAAAAASADMgAcAAAAAAG0BGQEAAAAARQBQAEcAIABMAGkAcwB0AAAACACQAQABTQBTACAAUwBoAGUAbABsACAARABs
+          AGcAAAAAAAAAAAAAAA2IgVAHABUAXwGHAEIEAABTAHkAcwBMAGkAcwB0AFYAaQBlAHcAMwAyAAAAAAAAAAAAAAAAAAIARAghUAcA
+          rADMAFUATAQAAFIAaQBjAGgARQBkAGkAdAAyADAAVwAAAAAAAAAAAAAAAAAAACEAAVAHAAMBOwAPAGsEAABTAHkAcwBEAGEAdABl
+          AFQAaQBtAGUAUABpAGMAawAzADIAAAAAAAAAAAAAAAAAAACACIFQBwAHAF8BDABqBAAA//+BAAAAAAAAAAAAAAAAAAEAAVCXAAQB
+          MgAOAAEAAAD//4AATwBLAAAAAAAAAAAAAAAAAIAIgVAHAJ4AXwEMACYEAAD//4EAAAAAAAAAAAAAAAAADhMAUNYArACQAFUAKwQA
+          AP//ggAAAAAA
         </data>
       </node>
       <node class="TWindowsDialogNode" name="113" type="DIALOGEX" resid="113" langid="1033" extended="1">
@@ -3913,37 +3914,37 @@ Pavel Abakanov (sharky72)</prev>
           <row id="CX">50</row>
           <row id="CY">14</row>
         </item>
-        <item name="STATIC_8" type="LTEXT" created="20260425T094650Z" st="0" id="-1">
-          <row id="Text" si="633" st="0">
+        <item name="STATIC_8" type="LTEXT" created="20260425T094650Z" id="-1">
+          <row id="Text" si="633">
             <value>UHD stream 2160p (H.264)</value>
             <lang id="ru" time="20260425T094733Z">UHD поток 2160p</lang>
           </row>
-          <row id="X" st="0">77</row>
-          <row id="Y" st="0">85</row>
-          <row id="CX" st="0">98</row>
-          <row id="CY" st="0">8</row>
+          <row id="X">77</row>
+          <row id="Y">85</row>
+          <row id="CX">98</row>
+          <row id="CY">8</row>
         </item>
-        <item name="1172" type="CONTROL" created="20260425T094650Z" st="0" id="1172">
-          <row id="X" st="0">77</row>
-          <row id="Y" st="0">95</row>
-          <row id="CX" st="0">50</row>
-          <row id="CY" st="0">14</row>
+        <item name="1172" type="CONTROL" created="20260425T094650Z" id="1172">
+          <row id="X">77</row>
+          <row id="Y">95</row>
+          <row id="CX">50</row>
+          <row id="CY">14</row>
         </item>
-        <item name="STATIC_9" type="LTEXT" created="20260425T100259Z" st="0" id="-1">
-          <row id="Text" si="634" st="0">
+        <item name="STATIC_9" type="LTEXT" created="20260425T100259Z" id="-1">
+          <row id="Text" si="634">
             <value>No stream info</value>
             <lang id="ru" time="20260425T100317Z">Нет информации</lang>
           </row>
-          <row id="X" st="0">77</row>
-          <row id="Y" st="0">7</row>
-          <row id="CX" st="0">80</row>
-          <row id="CY" st="0">8</row>
+          <row id="X">77</row>
+          <row id="Y">7</row>
+          <row id="CX">80</row>
+          <row id="CY">8</row>
         </item>
-        <item name="1173" type="CONTROL" created="20260425T100259Z" st="0" id="1173">
-          <row id="X" st="0">77</row>
-          <row id="Y" st="0">17</row>
-          <row id="CX" st="0">50</row>
-          <row id="CY" st="0">14</row>
+        <item name="1173" type="CONTROL" created="20260425T100259Z" id="1173">
+          <row id="X">77</row>
+          <row id="Y">17</row>
+          <row id="CX">50</row>
+          <row id="CY">14</row>
         </item>
         <data>
           AQD//wAAAAAAAAAAyADIgBUAAAAAAFgByAAAAAAAQwBvAGwAbwByACAAcwBlAHQAdABpAG4AZwBzAAAACACQAQABTQBTACAAUwBo
@@ -5658,25 +5659,25 @@ Known EPG time range:
     <node class="TWindowsVersionFolder" name="Version" created="20260330T163817Z">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" si="603" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" changed="20260510T154438Z" si="604" locked="1" st="2">
-          <value>9.2.2498, 10 May 2026</value>
-          <prev>9.2.2491, 25 Apr 2026</prev>
+        <row id="FileVersion" changed="20260817T152027Z" si="604" locked="1">
+          <value>9.3.2527, 17 Aug 2026</value>
+          <prev>9.2.2498, 10 May 2026</prev>
         </row>
         <row id="InternalName" si="605" locked="1">IPTVChannelEditor.exe</row>
         <row id="LegalCopyright" si="606" locked="1">All rights reserved.</row>
         <row id="OriginalFilename" si="607" locked="1">IPTVChannelEditor.exe</row>
         <row id="ProductName" si="608" locked="1">Dune HD IPTV Channel Editor</row>
         <data>
-          MAM0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4AAAEAAgAJAAAAwgkCAAkAAADCCT8AAAAAAAAABAAE
+          MAM0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4AAAEAAwAJAAAA3wkDAAkAAADfCT8AAAAAAAAABAAE
           AAEAAAAAAAAAAAAAAAAAAACOAgAAAQBTAHQAcgBpAG4AZwBGAGkAbABlAEkAbgBmAG8AAABqAgAAAQAwADQAMAA5ADAANABCADAA
           AACGAC8AAQBGAGkAbABlAEQAZQBzAGMAcgBpAHAAdABpAG8AbgAAAAAASQBQAFQAVgAgAEMAaABhAG4AbgBlAGwAIABFAGQAaQB0
           AG8AcgAgAGYAbwByACAARAB1AG4AZQAgAEgARAAgAEUAZABlAG0AIABUAFYAIABwAGwAdQBnAGkAbgAAAAAATAAWAAEARgBpAGwA
-          ZQBWAGUAcgBzAGkAbwBuAAAAAAA5AC4AMgAuADIANAA5ADgALAAgADEAMAAgAE0AYQB5ACAAMgAwADIANgAAAEwAFgABAEkAbgB0
+          ZQBWAGUAcgBzAGkAbwBuAAAAAAA5AC4AMwAuADIANQAyADcALAAgADEANwAgAEEAdQBnACAAMgAwADIANgAAAEwAFgABAEkAbgB0
           AGUAcgBuAGEAbABOAGEAbQBlAAAASQBQAFQAVgBDAGgAYQBuAG4AZQBsAEUAZABpAHQAbwByAC4AZQB4AGUAAABOABUAAQBMAGUA
           ZwBhAGwAQwBvAHAAeQByAGkAZwBoAHQAAABBAGwAbAAgAHIAaQBnAGgAdABzACAAcgBlAHMAZQByAHYAZQBkAC4AAAAAAFQAFgAB
           AE8AcgBpAGcAaQBuAGEAbABGAGkAbABlAG4AYQBtAGUAAABJAFAAVABWAEMAaABhAG4AbgBlAGwARQBkAGkAdABvAHIALgBlAHgA
           ZQAAAFgAHAABAFAAcgBvAGQAdQBjAHQATgBhAG0AZQAAAAAARAB1AG4AZQAgAEgARAAgAEkAUABUAFYAIABDAGgAYQBuAG4AZQBs
-          ACAARQBkAGkAdABvAHIAAAA2AAkAAQBQAHIAbwBkAHUAYwB0AFYAZQByAHMAaQBvAG4AAAA5AC4AMgAuADIANAA5ADgAAAAAAEQA
+          ACAARQBkAGkAdABvAHIAAAA2AAkAAQBQAHIAbwBkAHUAYwB0AFYAZQByAHMAaQBvAG4AAAA5AC4AMwAuADIANQAyADcAAAAAAEQA
           AAABAFYAYQByAEYAaQBsAGUASQBuAGYAbwAAAAAAJAAEAAAAVAByAGEAbgBzAGwAYQB0AGkAbwBuAAAAAAAJBLAE
         </data>
       </node>

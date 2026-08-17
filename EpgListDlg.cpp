@@ -62,6 +62,7 @@ void CEpgListDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_EPG, m_wndEpgList);
 	DDX_Control(pDX, IDC_RICHEDIT_EPG, m_wndEpg);
 	DDX_Control(pDX, IDC_DATETIMEPICKER, m_day);
+	DDX_Control(pDX, IDC_STATIC_ICON, m_wndEpgImage);
 }
 
 BOOL CEpgListDlg::OnInitDialog()
@@ -79,6 +80,7 @@ BOOL CEpgListDlg::OnInitDialog()
 	// Nothing special here.  Just some columns for the report view.
 	m_wndEpgList.BuildColumns(nWidths.size(), nWidths.data(), nColumns.data());
 	m_wndEpgList.AutoSaveColumns(REG_EPG_COLUMNS_WIDTH);
+	m_wndEpgImage.SetBitmap(nullptr);
 
 	m_day.SetTime(COleDateTime::GetCurrentTime());
 
@@ -254,6 +256,14 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 
 		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
 		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());
+		if (epg_pair->second->img.empty())
+		{
+			m_wndEpgImage.SetBitmap(nullptr);
+		}
+		else
+		{
+			SetImageControl(GetIconCache().get_icon(utils::utf8_to_utf16(epg_pair->second->img)), m_wndEpgImage);
+		}
 
 		m_params.shift_back = (int)start_pair->second.first;
 		m_csArchiveUrl = parentDlg->GetPlugin()->get_play_stream(m_params, m_info).c_str();

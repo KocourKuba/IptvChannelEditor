@@ -1807,6 +1807,8 @@ void SetImageControl(const CImage& image, CStatic& wnd)
 		CImage resized;
 		resized.Create(rcDst.Width(), rcDst.Height(), 32, CImage::createAlphaChannel);
 		HDC dcImage = resized.GetDC();
+		FillRect(dcImage, &rcDst, CreateSolidBrush(GetSysColor(COLOR_BTNFACE)));
+
 		SetStretchBltMode(dcImage, COLORONCOLOR);
 		image.StretchBlt(dcImage, x, y, Width, Height, 0, 0, srcWidth, srcHeight);
 		image.StretchBlt(wnd.GetDC()->m_hDC, x, y, Width, Height, 0, 0, srcWidth, srcHeight);

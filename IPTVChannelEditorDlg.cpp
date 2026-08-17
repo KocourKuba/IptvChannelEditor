@@ -2419,6 +2419,7 @@ void CIPTVChannelEditorDlg::ParseJsonEpg(const int epg_idx)
 
 			epg_info->name = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(utils::get_json_string(epg_param.epg_name, val))));
 			epg_info->desc = std::move(utils::make_text_rtf_safe(utils::entityDecrypt(utils::get_json_string(epg_param.epg_desc, val))));
+			epg_info->img = utils::get_json_string(epg_param.epg_icon, val);
 
 			epg_map.emplace(epg_info->time_start, epg_info);
 			added = true;

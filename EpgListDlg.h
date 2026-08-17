@@ -75,6 +75,7 @@ protected:
 	CListCtrlEx m_wndEpgList;
 	CRichEditCtrl m_wndEpg;
 	CDateTimeCtrl m_day;
+	CStatic m_wndEpgImage;
 
 	CString m_csEpgUrl;
 	CString m_csArchiveUrl;

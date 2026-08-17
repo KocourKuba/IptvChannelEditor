@@ -39,6 +39,7 @@ struct EpgInfo
 	time_t time_end = 0;
 	std::string name;
 	std::string desc;
+	std::string img;
 #ifdef _DEBUG
 	std::wstring start;
 	std::wstring end;
