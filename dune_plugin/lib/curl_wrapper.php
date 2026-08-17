@@ -610,8 +610,10 @@ class Curl_Wrapper
             $opts[CURLOPT_NOBODY] = 1;
         } else if ($save_file !== null){
             hd_debug_print("Save to file: '$save_file'", true);
-            $tmp_file = tempnam(pathinfo($save_file, PATHINFO_DIRNAME), 'curl');
+            $tmp_file = tempnam(pathinfo($save_file, PATHINFO_DIRNAME), 'curl_');
+            hd_debug_print("Save to temp file: '$tmp_file'", true);
             $fp = fopen($tmp_file, "w+");
+            $opts[CURLOPT_FILE] = $fp;
         }
 
         if (!empty($this->post_data)) {
@@ -664,7 +666,16 @@ class Curl_Wrapper
 
         if (!is_null($fp)) {
             fclose($fp);
+
+            if (file_exists($tmp_file)) {
+                if (filesize($tmp_file) !== 0) {
+                    rename($tmp_file, $save_file);
+                }
+            } else {
+                unlink($tmp_file);
+            }
         }
+
 
         if (!empty(self::$http_response_headers) && LogSeverity::$is_debug) {
             hd_debug_print("---------  Response headers start ---------");
@@ -697,9 +708,8 @@ class Curl_Wrapper
             hd_debug_print(sprintf("Return content: HTTP OK (%d, %d) in %.3fs", self::$http_code, strlen($content), $execution_tm), true);
         } else if ($save_file === false) {
             hd_debug_print(sprintf("Head response: HTTP OK (%d) in %.3fs", self::$http_code, $execution_tm), true);
-        } else if (!empty($tmp_file) && file_exists($tmp_file)) {
-            hd_debug_print(sprintf("Save file: HTTP OK (%d, %d bytes) in %.3fs", self::$http_code, filesize($tmp_file), $execution_tm), true);
-            rename($tmp_file, $save_file);
+        } else if (!empty($save_file) && file_exists($save_file)) {
+            hd_debug_print(sprintf("Save file: HTTP OK (%d, %d bytes) in %.3fs", self::$http_code, filesize($save_file), $execution_tm), true);
         } else {
             hd_debug_print(sprintf("HTTP code (%d) in %.3fs", self::$http_code, $execution_tm), true);
             hd_debug_print("Saved file '$save_file' is not exist!");

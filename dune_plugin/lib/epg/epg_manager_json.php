@@ -139,7 +139,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
 
             if ($from_cache === false) {
                 hd_debug_print("Fetching EPG ID: '$epg_id' from server: $epg_url");
-                $all_epg = self::get_epg_json($epg_url, $this->plugin->config->get_epg_parameters($epg_source));
+                $all_epg = self::get_epg_json($epg_url, $this->plugin->config->get_epg_parameters($epg_source), $this->plugin->is_ext_epg_enabled());
                 if (!empty($all_epg)) {
                     hd_debug_print("Save EPG ID: '$epg_id' to file cache $epg_cache_file");
                     store_to_json_file($epg_cache_file, $all_epg);
@@ -241,9 +241,10 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
      * request server for epg and parse json response
      * @param string $url
      * @param array $parser_params
+     * @param bool $ext_epg
      * @return array
      */
-    protected static function get_epg_json($url, $parser_params)
+    protected static function get_epg_json($url, $parser_params, $ext_epg)
     {
         $channel_epg = array();
 
@@ -320,7 +321,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
             if (empty($desc)) {
                 $channel_epg[$program_start][PluginTvEpgProgram::description] = '';
             } else {
-                $reformatted = self::reformat_description($desc, $icon);
+                $reformatted = self::reformat_description($desc, $icon, $ext_epg);
                 foreach ($reformatted as $key => $value) {
                     $channel_epg[$program_start][$key] = $value;
                 }

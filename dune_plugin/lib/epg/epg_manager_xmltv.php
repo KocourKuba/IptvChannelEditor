@@ -49,11 +49,6 @@ class Epg_Manager_Xmltv
     protected $flags = 0;
 
     /**
-     * @var bool
-     */
-    protected static $ext_epg_enabled;
-
-    /**
      * @var Epg_Indexer
      */
     protected $indexer;
@@ -64,7 +59,6 @@ class Epg_Manager_Xmltv
     public function __construct($plugin = null)
     {
         $this->plugin = $plugin;
-        self::$ext_epg_enabled = $this->plugin->is_ext_epg_enabled();
     }
 
     /**
@@ -211,6 +205,7 @@ class Epg_Manager_Xmltv
                         }
                     };
 
+                    $ext_epg = $this->plugin->is_ext_epg_enabled();
                     $handle = fopen($cached_file, 'rb');
                     if ($handle) {
                         foreach ($positions as $pos) {
@@ -240,13 +235,13 @@ class Epg_Manager_Xmltv
                                 if (empty($desc)) {
                                     $day_epg[$program_start][PluginTvEpgProgram::description] = '';
                                 } else {
-                                    $reformatted = self::reformat_description($desc, $icon);
+                                    $reformatted = self::reformat_description($desc, $icon, $this->plugin->is_ext_epg_enabled());
                                     foreach ($reformatted as $key => $value) {
                                         $day_epg[$program_start][$key] = $value;
                                     }
                                 }
 
-                                if (!self::$ext_epg_enabled) continue;
+                                if (!$ext_epg) continue;
 
                                 $update_ext_epg(PluginTvExtEpgProgram::sub_title, 'sub-title', $tag, $day_epg[$program_start]);
                                 $update_ext_epg(PluginTvExtEpgProgram::main_category, 'category', $tag, $day_epg[$program_start]);
@@ -308,7 +303,7 @@ class Epg_Manager_Xmltv
         return '';
     }
 
-    public static function reformat_description($raw_descr, $icon)
+    public static function reformat_description($raw_descr, $icon, $ext_epg)
     {
         $total = array();
 
@@ -388,7 +383,7 @@ class Epg_Manager_Xmltv
         //$raw_descr = mb_substr($raw_descr, 0, 1670);
 
         $result = array();
-        if (self::$ext_epg_enabled) {
+        if ($ext_epg) {
             if (isset($total['genre']))
                 $result[PluginTvExtEpgProgram::main_category] = $total['genre'];
             if (isset($total['year']))

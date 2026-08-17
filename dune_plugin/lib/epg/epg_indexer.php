@@ -321,10 +321,11 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             $file_time = filemtime($tmp_filename);
             $dl_time = $this->perf->getReportItemCurrent(Perf_Collector::TIME);
             $file_size = filesize($tmp_filename);
-            $bps = $file_size / $dl_time;
+            $bps = $file_size / max($dl_time, 0);
             $si_prefix = array('B/s', 'KB/s', 'MB/s');
             $base = 1024;
             $class = min((int)log($bps, $base), count($si_prefix) - 1);
+            $class = max($class, 0);
             $speed = sprintf('%1.2f', $bps / pow($base, $class)) . ' ' . $si_prefix[$class];
 
             hd_debug_print("Last changed time of local file: " . date("Y-m-d H:i", $file_time));
