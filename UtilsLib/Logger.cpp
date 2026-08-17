@@ -44,6 +44,13 @@ void Logger::setLogName(const std::wstring& name)
 	openLog();
 }
 
+void Logger::clearLog()
+{
+	closeLog();
+	std::filesystem::remove(m_logFilename);
+	openLog();
+}
+
 void Logger::stop()
 {
 	m_isRunning = false;

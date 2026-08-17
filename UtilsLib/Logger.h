@@ -30,6 +30,8 @@ public:
 	// set log file name
 	void setLogName(const std::wstring& name);
 
+	void clearLog();
+
 	// Stop the logger and flush remaining messages
 	void stop();
 

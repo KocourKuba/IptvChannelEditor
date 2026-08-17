@@ -394,15 +394,27 @@ BOOL CIPTVChannelEditorApp::InitInstance()
 	// cleanup old files
 	std::error_code err;
 	std::filesystem::directory_iterator dir_iter(GetAppPath(), err);
+	bool cleaned = false;
 	for (auto const& dir_entry : dir_iter)
 	{
 		const auto& path = dir_entry.path();
 		if (path.extension() != _T(".bak")) continue;
 
 		if (std::filesystem::is_regular_file(path, err))
+		{
+			cleaned = true;
 			std::filesystem::remove(path, err);
+		}
 		else if (std::filesystem::is_directory(path, err))
+		{
+			cleaned = true;
 			std::filesystem::remove_all(path, err);
+		}
+	}
+
+	if (cleaned)
+	{
+		utils::Logger::getInstance().clearLog();
 	}
 
 	int freq = GetConfig().get_int(true, REG_UPDATE_FREQ, 3);
