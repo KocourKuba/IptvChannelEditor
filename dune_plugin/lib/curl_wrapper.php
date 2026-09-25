@@ -375,6 +375,19 @@ class Curl_Wrapper
         file_put_contents(get_data_path(self::CACHE_TAG_FILE), json_encode($cache_db));
     }
 
+    /**
+     * Quote value for curl config file.
+     * Inside quotes curl config parser treats backslash as escape character,
+     * so backslashes and quotes must be escaped (json, headers with quoted parameters)
+     *
+     * @param string $value
+     * @return string
+     */
+    protected static function quote_config_value($value)
+    {
+        return '"' . str_replace(array('\\', '"'), array('\\\\', '\\"'), $value) . '"';
+    }
+
     /** @noinspection PhpUnusedParameterInspection */
     public static function http_header_function($curl, $header)
     {
@@ -445,12 +458,12 @@ class Curl_Wrapper
         $config_data[] = "--location";
         $config_data[] = "--max-redirs 5";
         $config_data[] = "--compressed";
-        $config_data[] = "--write-out \"RESPONSE_CODE: %{response_code}\"";
-        $config_data[] = "--user-agent \"" . HD::get_dune_user_agent() . "\"";
-        $config_data[] = "--url \"$url\"";
+        $config_data[] = "--write-out " . self::quote_config_value("RESPONSE_CODE: %{response_code}");
+        $config_data[] = "--user-agent " . self::quote_config_value(HD::get_dune_user_agent());
+        $config_data[] = "--url " . self::quote_config_value($url);
 
         foreach ($this->send_headers as $header) {
-            $config_data[] = "--header \"$header\"";
+            $config_data[] = "--header " . self::quote_config_value($header);
         }
 
         if (isset($this->options[CURLOPT_INFILE]) || isset($this->options[CURLOPT_INFILESIZE])) {
@@ -460,10 +473,10 @@ class Curl_Wrapper
             $config_data[] = "--output /dev/null";
         } else if ($save_file !== null){
             hd_debug_print("Save to file: '$save_file'", true);
-            $config_data[] = "--output \"$save_file\"";
+            $config_data[] = "--output " . self::quote_config_value($save_file);
         } else {
             hd_debug_print("Save to temp file: '$temp_file'", true);
-            $config_data[] = "--output \"$temp_file\"";
+            $config_data[] = "--output " . self::quote_config_value($temp_file);
         }
 
         if ($this->is_post) {
@@ -473,15 +486,14 @@ class Curl_Wrapper
         if ($use_cache) {
             $etag = self::get_cached_etag($url);
             if (!empty($etag)) {
-                $header = "If-None-Match: " . str_replace('"', '\"', $etag);
-                $config_data[] = "--header \"$header\"";
+                $config_data[] = "--header " . self::quote_config_value("If-None-Match: $etag");
             }
         }
 
         if (!empty($this->post_data)) {
             $data = '';
             if (isset($this->send_headers) && in_array(CONTENT_TYPE_JSON, $this->send_headers)) {
-                $data = escaped_raw_json_encode($this->post_data);
+                $data = json_format_unescaped($this->post_data);
             } else {
                 foreach($this->post_data as $key => $value) {
                     if (!empty($data)) {
@@ -491,7 +503,10 @@ class Curl_Wrapper
                 }
             }
 
-            $config_data[] = "--data \"$data\"";
+            $config_data[] = "--data " . self::quote_config_value($data);
+        } else if ($this->is_post) {
+            // POST without body
+            $config_data[] = '--data ""';
         }
 
         if (LogSeverity::$is_debug) {
@@ -627,6 +642,10 @@ class Curl_Wrapper
 
         if ($this->is_post) {
             $opts[CURLOPT_POST] = $this->is_post;
+            if (!isset($opts[CURLOPT_POSTFIELDS])) {
+                // POST without body, otherwise libcurl tries to read body by read callback
+                $opts[CURLOPT_POSTFIELDS] = '';
+            }
         } else if (empty($opts[CURLOPT_NOBODY]) && empty($opts[CURLOPT_PUT])) {
             $opts[CURLOPT_CUSTOMREQUEST] = "GET";
         }
