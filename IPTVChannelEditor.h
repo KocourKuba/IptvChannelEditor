@@ -92,6 +92,10 @@ public:
 BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image);
 void SetImageControl(const CImage& image, CStatic& wnd);
 
+// wait until done() returns true, while dispatching messages sent (SendMessage) from other threads
+void WaitPumpingSentMessages(const std::function<bool()>& done);
+void JoinPumpingSentMessages(std::jthread& thread);
+
 std::wstring GetAppPath(LPCWSTR szSubFolder = nullptr, bool no_end_slash = false);
 std::wstring GetDevAppPath(LPCWSTR szSubFolder = nullptr, bool no_end_slash = false);
 

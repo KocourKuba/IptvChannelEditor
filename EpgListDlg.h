@@ -85,7 +85,8 @@ protected:
 	CString m_csEpgUrl;
 	CString m_csArchiveUrl;
 
-	const std::map<time_t, std::shared_ptr<EpgInfo>>* m_pEpgChannelMap = nullptr;
+	// copy of the channel EPG. Parent cache can be replaced by worker threads at any time
+	EpgStorageItem m_epgChannelMap;
 	std::map<int, std::pair<time_t, time_t>> m_idx_map;
 
 	// loaded program images, nullptr if image can't be loaded

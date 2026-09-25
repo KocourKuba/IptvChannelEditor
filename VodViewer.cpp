@@ -184,10 +184,12 @@ BOOL CVodViewer::PreTranslateMessage(MSG* pMsg)
 
 void CVodViewer::OnCancel()
 {
-	if (!m_evtFinished.Lock(0))
+	if (m_threadRunning)
 	{
 		m_evtStop.SetEvent();
-		Sleep(1000);
+		// thread uses this dialog until it notifies us, wait for it before closing
+		CWaitCursor cur;
+		WaitPumpingSentMessages([this]() { return !m_threadRunning; });
 	}
 
 	EndDialog(IDCANCEL);
@@ -258,12 +260,14 @@ void CVodViewer::LoadJsonPlaylist(bool /*= true*/)
 		m_plugin->update_provider_params(cfg->m_params);
 		cfg->m_url = m_plugin->get_vod_url(m_wndPlaylist.GetCurSel(), cfg->m_params);
 
+		m_threadRunning = true;
 		std::jthread(&PlaylistParseJsonThread, cfg, m_plugin).detach();
 	}
 }
 
 LRESULT CVodViewer::OnEndLoadJsonPlaylist(WPARAM wParam /*= 0*/, LPARAM /*= 0*/)
 {
+	m_threadRunning = false;
 	m_evtStop.ResetEvent();
 	m_evtFinished.SetEvent();
 
@@ -339,6 +343,7 @@ void CVodViewer::LoadM3U8Playlist(bool /*= true*/)
 	cfg->m_data = std::make_shared<std::stringstream>(std::move(req.body));
 	cfg->m_hStop = m_evtStop;
 
+	m_threadRunning = true;
 	std::jthread(&PlaylistParseM3U8Thread, cfg, m_plugin, std::move(GetAppPath(utils::PLUGIN_ROOT))).detach();
 }
 
@@ -346,6 +351,7 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM /*= 0*/)
 {
 	static vod_movie_def default_vod;
 
+	m_threadRunning = false;
 	m_evtStop.ResetEvent();
 	m_evtFinished.SetEvent();
 

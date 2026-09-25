@@ -315,7 +315,9 @@ void plugin_cbilling::fetch_movie_info(const TemplateParams& params, vod_movie_d
 std::wstring plugin_cbilling::get_movie_url(const std::shared_ptr<Credentials>& creds, const movie_request& request, const vod_movie_def& movie)
 {
 	std::wstring url;
-	if (movie.url.empty() && request.season_idx != CB_ERR && request.episode_idx != CB_ERR)
+	if (movie.url.empty()
+		&& request.season_idx >= 0 && request.season_idx < (int)movie.seasons.size()
+		&& request.episode_idx >= 0 && request.episode_idx < (int)movie.seasons[request.season_idx].episodes.size())
 	{
 		const auto& season = movie.seasons[request.season_idx];
 		url = season.episodes[request.episode_idx].url;
@@ -325,6 +327,16 @@ std::wstring plugin_cbilling::get_movie_url(const std::shared_ptr<Credentials>& 
 		url = movie.url;
 	}
 
-	std::wstring scheme = std::get<bool>(account_info[L"ssl"]) ? L"https" : L"http";
+	// account info may be not loaded or "ssl" may be not a boolean
+	bool ssl = false;
+	if (const auto& pair = account_info.find(L"ssl"); pair != account_info.end())
+	{
+		if (const auto val = std::get_if<bool>(&pair->second); val)
+		{
+			ssl = *val;
+		}
+	}
+
+	std::wstring scheme = ssl ? L"https" : L"http";
 	return std::format(L"{:s}://{:s}{:s}?token={:s}", scheme, creds->get_subdomain(), url, creds->get_s_token());
 }

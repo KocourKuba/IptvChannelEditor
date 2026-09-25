@@ -150,6 +150,9 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 		ids.emplace_back(utils::wstring_tolower_l_copy(m_info->get_id()));
 	}
 
+	m_epgChannelMap.clear();
+
+	std::shared_lock<std::shared_mutex> lk(parentDlg->GetEpgCacheMutex());
 	const auto& epg_cache = parentDlg->GetEpgCache();
 	std::wstring found_id;
 	for (const auto& epg_id : ids)
@@ -167,7 +170,6 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 		if (const auto& it = epg_cache.at(epg_idx).find(alias); it != epg_cache.at(epg_idx).end())
 		{
-			m_pEpgChannelMap = &(epg_cache.at(epg_idx).at(alias));
 			for (auto& epg_pair : it->second)
 			{
 				if (epg_pair.second->time_start <= now && now <= epg_pair.second->time_end)
@@ -181,7 +183,13 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 	if (!found_id.empty() && epg_cache.at(epg_idx).contains(found_id))
 	{
-		for (const auto& [key, value] : epg_cache.at(epg_idx).at(found_id))
+		m_epgChannelMap = epg_cache.at(epg_idx).at(found_id);
+	}
+	lk.unlock();
+
+	if (!m_epgChannelMap.empty())
+	{
+		for (const auto& [key, value] : m_epgChannelMap)
 		{
 			time_t shifted_start = key - time_shift;
 			time_t shifted_end = value->time_end - time_shift;
@@ -235,7 +243,7 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	do
 	{
-		if (!m_pEpgChannelMap) break;
+		if (m_epgChannelMap.empty()) break;
 
 		auto parentDlg = DYNAMIC_DOWNCAST(CIPTVChannelEditorDlg, GetParent());
 		if (!parentDlg) break;
@@ -250,8 +258,8 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 		const auto& start_pair = m_idx_map.find(pNMItemActivate->iItem);
 		if (start_pair == m_idx_map.end()) break;
 
-		const auto& epg_pair = m_pEpgChannelMap->find(start_pair->second.first);
-		if (epg_pair == m_pEpgChannelMap->end()) break;
+		const auto& epg_pair = m_epgChannelMap.find(start_pair->second.first);
+		if (epg_pair == m_epgChannelMap.end()) break;
 
 		const auto& text = std::format(R"({{\rtf1 {:s}}})", epg_pair->second->desc);
 

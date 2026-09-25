@@ -86,6 +86,7 @@ public:
 	std::shared_ptr<base_plugin> GetPlugin() { return m_plugin; }
 
 	const std::array<EpgStorage, 3>& GetEpgCache() { return m_epg_cache; }
+	std::shared_mutex& GetEpgCacheMutex() { return m_mxEpgCache; }
 	std::wstring GetEpgId(const uri_stream* uri, const int epg_idx);
 	int GetEpgIdx();
 
@@ -226,6 +227,7 @@ protected:
 	afx_msg LRESULT OnSwitchPlugin(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndLoadPlaylist(WPARAM wParam = 0, LPARAM lParam = 0);
 	afx_msg LRESULT OnEndGetStreamInfo(WPARAM wParam = 0, LPARAM lParam = 0);
+	afx_msg LRESULT OnUpdateProgressStream(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnTrayIconNotify(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnExit(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnLoadChannelImage(WPARAM wParam, LPARAM lParam);
@@ -293,9 +295,9 @@ private:
 	void CollectCredentials();
 
 	void TriggerEpg();
-	void FillEPG();
+	void FillEPG(std::stop_token stop);
 	void ParseJsonEpg(const int epg_idx);
-	void DownloadAndParseXmltvEpg(std::wstring url);
+	void DownloadAndParseXmltvEpg(std::stop_token stop, std::wstring url);
 
 	void UpdateExtToken(uri_stream* uri) const;
 	void UpdateVars(uri_stream* uri) const;

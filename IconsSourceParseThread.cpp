@@ -67,7 +67,7 @@ void IconsSourceParseThread(const std::shared_ptr<ThreadConfig> config)
 				num++;
 				if (::WaitForSingleObject(config->m_hStop, 0) == WAIT_OBJECT_0)
 				{
-					entries.release();
+					entries.reset();
 					break;
 				}
 			}

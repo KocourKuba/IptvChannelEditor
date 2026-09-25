@@ -66,6 +66,7 @@ protected:
 
 private:
 	void UpdateListCtrl();
+	void StopParseThread();
 
 public:
 	int m_selected = 0;
@@ -86,4 +87,6 @@ protected:
 
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
+	// parse thread holds pointer to this dialog until it sends WM_END_LOAD_PLAYLIST
+	bool m_threadRunning = false;
 };

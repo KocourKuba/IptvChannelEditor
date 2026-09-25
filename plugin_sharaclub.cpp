@@ -44,9 +44,9 @@ constexpr auto PARAM_FMT = L"&{:s}={:s}";
 std::wstring plugin_sharaclub::get_playlist_url(const TemplateParams& params, std::wstring url /* = L"" */)
 {
 	url = get_playlist_info(params.playlist_idx).get_pl_template(); //-V763
-	if (params.creds->profile_id != 0)
+	const auto& profiles = get_profiles_list();
+	if (params.creds->profile_id > 0 && params.creds->profile_id < (int)profiles.size())
 	{
-		const auto& profiles = get_profiles_list();
 		url += L"/" + profiles[params.creds->profile_id].get_id();
 	}
 

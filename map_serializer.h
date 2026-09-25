@@ -49,25 +49,38 @@ private:
 		write(ss, pair.second);
 	}
 
-	void read(std::vector<char>& buffer, int& key)
+	bool can_read(const std::vector<char>& buffer, size_t size) const
 	{
-		key = *((int*)(buffer.data() + offset));
-		offset += sizeof(int);
+		return offset <= buffer.size() && size <= buffer.size() - offset;
 	}
 
-	void read(std::vector<char>& buffer, std::string& str)
+	bool read(std::vector<char>& buffer, int& key)
 	{
-		uint32_t size = *((uint32_t*)(buffer.data() + offset));
+		if (!can_read(buffer, sizeof(int))) return false;
+
+		memcpy(&key, buffer.data() + offset, sizeof(int));
+		offset += sizeof(int);
+		return true;
+	}
+
+	bool read(std::vector<char>& buffer, std::string& str)
+	{
+		uint32_t size = 0;
+		if (!can_read(buffer, sizeof(uint32_t))) return false;
+
+		memcpy(&size, buffer.data() + offset, sizeof(uint32_t));
 		offset += sizeof(uint32_t);
+		if (!can_read(buffer, size)) return false;
+
 		std::string data(buffer.data() + offset, buffer.data() + offset + size);
 		str.swap(data);
 		offset += size;
+		return true;
 	}
 
-	void read(std::vector<char>& buffer, std::pair<std::string, std::string>& pair)
+	bool read(std::vector<char>& buffer, std::pair<std::string, std::string>& pair)
 	{
-		read(buffer, pair.first);
-		read(buffer, pair.second);
+		return read(buffer, pair.first) && read(buffer, pair.second);
 	}
 
 public:
@@ -92,9 +105,10 @@ public:
 		while (offset < buffer.size())
 		{
 			int key = 0;
-			read(buffer, key);
 			std::pair<std::string, std::string> value;
-			read(buffer, value);
+			// truncated or corrupted file, ignore the rest
+			if (!read(buffer, key) || !read(buffer, value)) break;
+
 			(*this)[key] = value;
 		}
 	}

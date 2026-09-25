@@ -374,6 +374,7 @@ static int update_app(UpdateInfo& info, bool force)
 		}
 
 		std::error_code err;
+		bool backed_up = false;
 		if (std::filesystem::exists(target_file))
 		{
 			// we can check hash only for file
@@ -404,6 +405,7 @@ static int update_app(UpdateInfo& info, bool force)
 					LOG_PROTOCOL(err.message());
 					continue;
 				}
+				backed_up = true;
 			}
 		}
 
@@ -413,6 +415,23 @@ static int update_app(UpdateInfo& info, bool force)
 		{
 			// try to remove backup file (it can't be removed in some case)
 			std::filesystem::remove_all(bak_file, err);
+		}
+		else
+		{
+			LOG_PROTOCOL(std::format(L"Unable to copy {:s} Error code: {:d}", target_file, err.value()));
+			LOG_PROTOCOL(err.message());
+
+			// restore original file, otherwise application is left without it
+			std::error_code restore_err;
+			if (backed_up)
+			{
+				std::filesystem::remove_all(target_file, restore_err);
+				std::filesystem::rename(bak_file, target_file, restore_err);
+				if (restore_err.value() != 0)
+				{
+					LOG_PROTOCOL(std::format(L"Unable to restore {:s} Error code: {:d}", target_file, restore_err.value()));
+				}
+			}
 		}
 	}
 

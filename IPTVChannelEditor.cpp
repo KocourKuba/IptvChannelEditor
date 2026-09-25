@@ -1786,6 +1786,25 @@ BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 	return SUCCEEDED(hr);
 }
 
+void WaitPumpingSentMessages(const std::function<bool()>& done)
+{
+	while (!done())
+	{
+		::MsgWaitForMultipleObjects(0, nullptr, FALSE, 50, QS_SENDMESSAGE);
+		MSG msg;
+		::PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE | PM_QS_SENDMESSAGE);
+	}
+}
+
+void JoinPumpingSentMessages(std::jthread& thread)
+{
+	if (!thread.joinable()) return;
+
+	HANDLE hThread = thread.native_handle();
+	WaitPumpingSentMessages([hThread]() { return ::WaitForSingleObject(hThread, 0) == WAIT_OBJECT_0; });
+	thread.join();
+}
+
 void SetImageControl(const CImage& image, CStatic& wnd)
 {
 	HBITMAP hImg = nullptr;

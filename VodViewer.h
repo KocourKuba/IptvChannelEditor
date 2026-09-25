@@ -121,6 +121,8 @@ private:
 	// Event to signal for load playlist thread
 	CEvent m_evtStop;
 	CEvent m_evtFinished;
+	// load thread holds pointer to this dialog until it sends end notification
+	bool m_threadRunning = false;
 	int m_category_idx = -1;
 	int m_genre_idx = -1;
 	int m_year_idx = -1;

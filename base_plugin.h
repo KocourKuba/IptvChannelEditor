@@ -201,7 +201,7 @@ public:
 	/// <summary>
 	/// parse vod
 	/// </summary>
-	virtual void parse_vod(const ThreadConfig& config) {}
+	virtual void parse_vod(const ThreadConfig& config) { SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST); }
 
 	/// <summary>
 	/// parse movie

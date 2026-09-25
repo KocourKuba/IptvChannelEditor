@@ -135,6 +135,7 @@ BOOL CIconsListDlg::OnInitDialog()
 			cfg->m_data = std::make_shared<std::stringstream>(std::move(req.body));
 			cfg->m_hStop = m_evtStop;
 
+			m_threadRunning = true;
 			if (m_isHtmlParser)
 			{
 				cfg->nparam = R"(^<tr><td><img src='(?<link>[^']+)'.+><\/td><td>(?<name>[^<].+)<\/td><td>(?<id>[^<].+)<\/td><td>.*$)";
@@ -197,9 +198,16 @@ void CIconsListDlg::OnOK()
 	}
 }
 
-void CIconsListDlg::OnCancel()
+void CIconsListDlg::StopParseThread()
 {
 	m_evtStop.SetEvent();
+	// thread uses this dialog until it notifies us, wait for it before closing
+	WaitPumpingSentMessages([this]() { return !m_threadRunning; });
+}
+
+void CIconsListDlg::OnCancel()
+{
+	StopParseThread();
 
 	EndDialog(IDCANCEL);
 }
@@ -276,6 +284,8 @@ void CIconsListDlg::OnGetdispinfoListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 
 LRESULT CIconsListDlg::OnEndLoadPlaylist(WPARAM wParam, LPARAM lParam /*= 0*/)
 {
+	m_threadRunning = false;
+
 	GetDlgItem(IDOK)->EnableWindow(TRUE);
 	GetDlgItem(IDC_EDIT_SEARCH)->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_BUTTON_SEARCH_NEXT)->ShowWindow(SW_SHOW);
@@ -325,9 +335,13 @@ void CIconsListDlg::OnNMDblclkListIcons(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 
+	*pResult = 0;
+	if (pNMItemActivate->iItem < 0 || !m_Icons || pNMItemActivate->iItem >= (int)m_Icons->size())
+		return;
+
 	m_selected = pNMItemActivate->iItem;
 
-	m_evtStop.SetEvent();
+	StopParseThread();
 
 	EndDialog(IDOK);
 
@@ -359,7 +373,7 @@ void CIconsListDlg::OnBnClickedOk()
 		return;
 
 	m_selected = m_wndIconsList.GetNextSelectedItem(pos);
-	m_evtStop.SetEvent();
+	StopParseThread();
 
 	__super::OnOK();
 }

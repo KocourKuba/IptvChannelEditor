@@ -225,6 +225,7 @@ bool DownloadFile(http_request& request)
 		bool bResults = false;
 		bool bRepeat = false;
 		bool bSaveBadCache = false;
+		bool bAuthSent = false;
 		DWORD dwToDownload = 0;
 		for (;;)
 		{
@@ -321,6 +322,16 @@ bool DownloadFile(http_request& request)
 			{
 				case 401:
 				{
+					if (bAuthSent)
+					{
+						// credentials already sent and rejected, do not retry endlessly
+						request.error_message = std::format(L"Response: {:d}", dwStatusCode);
+						LOG_PROTOCOL(request.error_message);
+						bResults = false;
+						bRepeat = false;
+						break;
+					}
+
 					DWORD dwSupportedSchemes = 0;
 					DWORD dwFirstScheme = 0;
 					DWORD dwAuthTarget = 0;
@@ -358,6 +369,7 @@ bool DownloadFile(http_request& request)
 						break;
 					}
 
+					bAuthSent = true;
 					bResults = true;
 					bRepeat = true;
 					break;

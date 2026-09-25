@@ -25,6 +25,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include "pch.h"
+#include <windows.h>
 #include <chrono>
 
 #include <boost/regex.hpp>
@@ -218,7 +219,7 @@ inline size_t count_utf16_to_utf8(const std::wstring_view s)
 	size_t destSize(s.size());
 	try
 	{
-		for (size_t index : std::views::iota(0ul, s.size()))
+		for (size_t index = 0; index < s.size(); ++index)
 		{
 			const std::wstring::value_type ch(s[index]);
 			if (ch <= 0x7FF)
@@ -253,8 +254,8 @@ inline size_t count_utf16_to_utf8(const std::wstring_view s)
 	}
 	catch (std::range_error& ex)
 	{
+		// do not log the source string: logging wstring converts it to utf8 again and will recurse endlessly
 		LOG_PROTOCOL(ex.what());
-		LOG_PROTOCOL({s.data(), s.size()});
 		destSize = 0;
 	}
 
@@ -263,7 +264,16 @@ inline size_t count_utf16_to_utf8(const std::wstring_view s)
 
 std::string utf16_to_utf8(std::wstring_view s)
 {
-	std::string dest(count_utf16_to_utf8(s), '\0');
+	const auto dest_size = count_utf16_to_utf8(s);
+	if (dest_size == 0 && !s.empty())
+	{
+		// invalid UTF-16 sequence, let system convert it with replacement characters
+		std::string dest(WideCharToMultiByte(CP_UTF8, 0, s.data(), (int)s.size(), nullptr, 0, nullptr, nullptr), '\0');
+		WideCharToMultiByte(CP_UTF8, 0, s.data(), (int)s.size(), dest.data(), (int)dest.size(), nullptr, nullptr);
+		return dest;
+	}
+
+	std::string dest(dest_size, '\0');
 	std::span<char> destData(dest);
 	size_t destIndex(0);
 
@@ -319,7 +329,16 @@ std::wstring utf8_to_utf16(std::string_view s)
 {
 	// Save repeated heap allocations, use the length of resulting sequence.
 	const auto sz = s.size();
-	std::wstring dest(count_utf8_to_utf16(s), L'\0');
+	const auto dest_size = count_utf8_to_utf16(s);
+	if (dest_size == 0 && sz != 0)
+	{
+		// invalid UTF-8 sequence, let system convert it with replacement characters
+		std::wstring dest(MultiByteToWideChar(CP_UTF8, 0, s.data(), (int)sz, nullptr, 0), L'\0');
+		MultiByteToWideChar(CP_UTF8, 0, s.data(), (int)sz, dest.data(), (int)dest.size());
+		return dest;
+	}
+
+	std::wstring dest(dest_size, L'\0');
 	std::span<wchar_t>destData(dest);
 	size_t destIndex = 0;
 

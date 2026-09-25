@@ -69,7 +69,7 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 
 			std::shared_ptr<vod_category> category;
 			const auto& category_id = xtream_parse_category(val, category, categories);
-			if (category_id.empty()) continue;
+			if (category_id.empty() || !category) continue;
 
 
 			request_url = std::format(VOD_API_ACTION, api_url, L"get_vod_streams");
@@ -108,6 +108,8 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 				}
 				JSON_ALL_CATCH
 
+				if (!movie || !category) continue;
+
 				movie->genres.set_back(category_id, category->genres.get(category_id));
 
 				if (++cnt % limit == 0)
@@ -132,7 +134,7 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 
 			std::shared_ptr<vod_category> category;
 			const auto& category_id = xtream_parse_category(val, category, categories);
-			if (category_id.empty()) continue;
+			if (category_id.empty() || !category) continue;
 
 			request_url = std::format(VOD_API_ACTION, api_url, L"get_series");
 			request_url += std::format(PARAM_FMT, L"category_id", category_id);
@@ -160,6 +162,8 @@ void plugin_sharavoz::parse_vod(const ThreadConfig& config)
 					}
 				}
 				JSON_ALL_CATCH
+
+				if (!movie || !category) continue;
 
 				movie->genres.set_back(category_id, category->genres.get(category_id));
 
@@ -291,9 +295,15 @@ std::wstring plugin_sharavoz::xtream_parse_category(const nlohmann::json& val,
 			throw std::exception("empty category_id");
 		}
 
+		// expected format "category | genre", genre part may be missing
 		auto pair = utils::string_split(title, L'|');
+		pair.resize(2);
 		utils::string_trim(pair[0]);
 		utils::string_trim(pair[1]);
+		if (pair[1].empty())
+		{
+			pair[1] = pair[0];
+		}
 		vod_genre_def genre({ category_id, pair[1] });
 
 		if (!categories->tryGet(pair[0], category))
