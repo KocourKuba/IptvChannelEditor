@@ -5373,20 +5373,24 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonSettings()
 			UpdateChannelsTreeColors();
 		}
 
-		if (old_update != GetConfig().get_int(true, REG_NEXT_UPDATE))
+		// update frequency changed, recalculate next update check
+		if (old_update != GetConfig().get_int(true, REG_UPDATE_FREQ))
 		{
 			GetConfig().set_int64(true, REG_NEXT_UPDATE, 0);
 		}
 
-		m_colorAdded = GetConfig().get_int(true, REG_COLOR_ADDED);
-		m_colorNotAdded = GetConfig().get_int(true, REG_COLOR_NOT_ADDED);
-		m_colorChanged = GetConfig().get_int(true, REG_COLOR_CHANGED);
+		// same defaults as in OnInitDialog
+		m_colorAdded = GetConfig().get_int(true, REG_COLOR_ADDED, DEFAULT_COLOR_ADDED);
+		m_colorNotAdded = GetConfig().get_int(true, REG_COLOR_NOT_ADDED, DEFAULT_COLOR_NOT_ADDED);
+		m_colorChanged = GetConfig().get_int(true, REG_COLOR_CHANGED, DEFAULT_COLOR_CHANGED);
 		m_colorNotChanged = m_colorAdded;
-		m_colorUnknown = GetConfig().get_int(true, REG_COLOR_UNKNOWN);
-		m_colorNoInfo = GetConfig().get_int(true, REG_COLOR_NO_INFO);
-		m_colorHD = GetConfig().get_int(true, REG_COLOR_HD);
-		m_colorFHD = GetConfig().get_int(true, REG_COLOR_FHD);
-		m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC);
+		m_colorUnknown = GetConfig().get_int(true, REG_COLOR_UNKNOWN, ::GetSysColor(COLOR_WINDOWTEXT));
+		m_colorDuplicated = GetConfig().get_int(true, REG_COLOR_DUPLICATED, ::GetSysColor(COLOR_GRAYTEXT));
+		m_colorNoInfo = GetConfig().get_int(true, REG_COLOR_NO_INFO, DEFAULT_COLOR_NO_INFO);
+		m_colorHD = GetConfig().get_int(true, REG_COLOR_HD, DEFAULT_COLOR_HD);
+		m_colorFHD = GetConfig().get_int(true, REG_COLOR_FHD, DEFAULT_COLOR_FHD);
+		m_colorUHD = GetConfig().get_int(true, REG_COLOR_4K, DEFAULT_COLOR_UHD);
+		m_colorHEVC = GetConfig().get_int(true, REG_COLOR_HEVC, DEFAULT_COLOR_HEVC);
 		SwitchPlugin();
 	}
 }
