@@ -39,7 +39,7 @@ class uri_stream : public uri_base
 {
 public:
 	uri_stream() = default;
-	uri_stream(const uri_stream& src)
+	uri_stream(const uri_stream& src) : base_type(src.base_type)
 	{
 		copy_data(src);
 	}

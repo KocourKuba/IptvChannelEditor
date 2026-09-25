@@ -177,7 +177,8 @@ protected:
 	afx_msg void OnEnChangeEditStreamUrl();
 	afx_msg void OnEnChangeEditStreamArchiveUrl();
 	afx_msg void OnEnChangeEditArchiveDays();
-	afx_msg void OnEnChangeEditUrlID();
+	afx_msg void OnEnKillfocusEditUrlID();
+	afx_msg LRESULT OnFillChannelsTree(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnDeltaposSpinTimeShiftHours(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditTimeShiftHours();
 	afx_msg void OnDeltaposSpinTimeShiftMins(NMHDR* pNMHDR, LRESULT* pResult);
@@ -445,6 +446,8 @@ private:
 	std::set<std::wstring> m_unknownChannels;
 
 	std::shared_mutex m_mxEpgCache;
+	// channel to select after posted WM_FILL_CHANNELS_TREE
+	std::wstring m_selectAfterFill;
 	std::mutex m_mxUpdateEpg;
 	std::condition_variable m_cvUpdateEpg;
 	bool m_allowUpdateEpg = false;

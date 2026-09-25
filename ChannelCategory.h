@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 
 // <tv_category>
 //   <id>1</id>
-//   <caption>Общие</caption>
+//   <caption>пїЅпїЅпїЅпїЅпїЅ</caption>
 //   <icon_url>plugin_file://icons/1.png</icon_url>
 // </tv_category>
 
@@ -68,6 +68,8 @@ public:
 	bool add_channel(const std::shared_ptr<ChannelInfo>& channel);
 
 	bool remove_channel(const std::wstring& ch_id);
+	// change key of the channel, keeps channel position
+	bool rename_channel(const std::wstring& old_id, const std::wstring& new_id);
 
 	void sort_channels();
 

@@ -92,27 +92,36 @@ uri_stream& uri_stream::operator=(const uri_stream& src)
 {
 	if (this != &src)
 	{
-		base_type = src.base_type;
+		// base_type is not copied: channel created from playlist entry must stay a channel
+		uri_base::operator=(src);
 
 		is_template = src.is_template;
+		is_custom_archive = src.is_custom_archive;
+		custom_url_type = src.custom_url_type;
+		custom_arc_url_type = src.custom_arc_url_type;
 		id = src.id;
 		domain = src.domain;
 		port = src.port;
 		login = src.login;
 		password = src.password;
 		subdomain = src.subdomain;
+		ott_key = src.ott_key;
 		token = src.token;
 		int_id = src.int_id;
 		quality = src.quality;
 		host = src.host;
 		var1 = src.var1;
 		var2 = src.var2;
+		var3 = src.var3;
 
 		title = src.title;
 		catchup = src.catchup;
+		catchup_source = src.catchup_source;
+		description = src.description;
 		custom_archive_url = src.custom_archive_url;
 		epg_id = src.epg_id;
 		time_shift_hours = src.time_shift_hours;
+		time_shift_mins = src.time_shift_mins;
 		adult = src.adult;
 		archive_days = src.archive_days;
 		hash = src.hash;
