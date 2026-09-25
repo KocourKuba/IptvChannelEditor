@@ -773,10 +773,13 @@ class HD
      */
     public static function make_ts($url, $force = false)
     {
-        if (!preg_match("|^https?://ts://|", $url)) {
+        // the guard has to cover mp4:// too, otherwise a second call wraps an already wrapped url
+        if (!preg_match('#^https?://(ts|mp4)://#', $url)) {
             if (preg_match("/\.mp4(?=\?|$)/i", $url)) {
                 $url = preg_replace(TS_REPL_PATTERN, "$1" . "mp4://$2", $url);
-            } else if ($force || preg_match("/\.ts|\.mpeg|mpegts(?=\?|$)/i", $url)) {
+            // the lookahead has to apply to every alternative - ungrouped it bound to 'mpegts' alone
+            // and any url merely containing '.ts' was wrapped
+            } else if ($force || preg_match('/(\.ts|\.mpeg|mpegts)(?=\?|$)/i', $url)) {
                 $url = preg_replace(TS_REPL_PATTERN, "$1ts://$2", $url);
             }
         }

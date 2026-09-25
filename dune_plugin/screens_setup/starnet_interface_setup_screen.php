@@ -27,7 +27,7 @@ class Starnet_Interface_Setup_Screen extends Abstract_Controls_Screen
         //////////////////////////////////////
         // Show in main screen
         if (!is_limited_apk()) {
-            $show_tv = get_cookie_bool_param($plugin_cookies, self::CONTROL_SHOW_TV);
+            $show_tv = SwitchOnOff::to_def(get_cookie_bool_param($plugin_cookies, self::CONTROL_SHOW_TV));
             Control_Factory::add_image_button($defs, $this, self::CONTROL_SHOW_TV,
                 TR::t('setup_show_in_main'), SwitchOnOff::translate($show_tv), SwitchOnOff::to_image($show_tv));
         }

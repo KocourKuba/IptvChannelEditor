@@ -590,36 +590,44 @@ function hd_debug_print($val = null, $is_debug = false)
         return;
 
     $bt = debug_backtrace();
-    $caller = array_shift($bt);
-    $caller_name = array_shift($bt);
-    $prefix = "(" . str_pad($caller['line'], 4) . ") ";
+    $caller = (array)array_shift($bt);
+    $caller_name = (array)array_shift($bt);
+    $prefix = "(" . str_pad(isset($caller['line']) ? $caller['line'] : '?', 4) . ") ";
     if (isset($caller_name['class'])) {
         $prefix .= "{$caller_name['class']}::";
     }
 
-    $prefix .= "{$caller_name['function']}(): ";
+    $prefix .= (isset($caller_name['function']) ? $caller_name['function'] : '') . "(): ";
 
     if ($val === null) {
         $val = '';
-        $parent_caller = array_shift($bt);
-        if (!isset($caller_name['line'])) {
-            $prefix .= "unknown line: $caller ";
-            print_backtrace();
+        $parent_caller = (array)array_shift($bt);
+        if (isset($caller_name['line'])) {
+            $line = $caller_name['line'];
+        } else if (isset($parent_caller['line'])) {
+            // Reached through an internal dispatcher (call_user_func,
+            // call_user_func_array, array_map, ...): the called function's own
+            // frame has no file or line, but the dispatcher's frame does, and
+            // the dispatcher is what gets named below. A normal, expected way
+            // to be called - not worth a backtrace.
+            $line = $parent_caller['line'];
         } else {
-            $prefix .= "called from: (" . str_pad($caller_name['line'], 4) . ") ";
+            $line = '?';
         }
+        $prefix .= "called from: (" . str_pad($line, 4) . ") ";
+
         if (isset($parent_caller['class'])) {
             $prefix .= "{$parent_caller['class']}:";
         }
 
-        $prefix .= "{$parent_caller['function']}(): ";
+        $prefix .= (isset($parent_caller['function']) ? $parent_caller['function'] : '') . "(): ";
     } else if ($val instanceof Json_Serializer) {
         $val = $val->__toString();
     } else if (is_array($val)) {
         if (empty($val)) {
             $val = '{}';
         } else {
-            $val = str_replace(array('"{', '}"', '\"'), array('{', '}', '"'), (string)json_format($val));
+            $val = str_replace(array('"{', '}"', '\"'), array('{', '}', '"'), (string)json_format_unescaped($val));
         }
     } else if (is_bool($val)) {
         $val = var_export($val, true);
@@ -686,7 +694,7 @@ function get_platform_info()
                 $platform['type'] = 'apk';
             }
         } else {
-            $ini_arr = @parse_ini_file('/tmp/run/versions.txt');
+            $ini_arr = @parse_ini_file(getenv('FS_PREFIX') . '/tmp/run/versions.txt');
             if ($ini_arr !== false && isset($ini_arr['platform_kind'])) {
                 if ($ini_arr['platform_kind'] === 'android') {
                     $platform['platform'] = $ini_arr['platform_kind'];
@@ -1439,7 +1447,7 @@ function get_audio_tracks_description()
     #          'type' => [value]),...)
 
     /** @var array $m */
-    preg_match_all('/audio_track\.(\d)\.(.*)\s=\s(.*$)/mx', file_get_contents('/tmp/run/ext_command.state'), $m);
+    preg_match_all('/audio_track\.(\d+)\.(.*)\s=\s(.*$)/m', file_get_contents('/tmp/run/ext_command.state'), $m);
 
     $result = array();
 
@@ -2234,6 +2242,7 @@ function get_dune_model()
         'tv175x' => 'RealBox 4K',
         'tv175y' => 'Real Vision 4K Plus',
         'tv182a' => 'AV1 4K',
+        'tv182b' => 'AV1 4K Plus',
         'tv184a' => 'Pro Vision 4K',
         'tv188b' => 'Pro 8K Plus',
         'tv274a' => 'Sky 4K Plus',
@@ -2243,11 +2252,13 @@ function get_dune_model()
         'tv388a' => 'Solo 8K',
         'tv393a' => 'Pro 4K Plus',
         'tv494b' => 'Real Vision 4K Duo',
+        'tv689a' => 'Duo Cinema 8K',
         'tv788a' => 'Max 8K',
         'tv793a' => 'Max 4K',
         'tv794a' => 'Max 4K Vision',
         'tv993a' => 'Ultra 4K',
         'tv994a' => 'Ultra 4K Vision',
+        'tv989a' => 'Ultra 8K',
 
         // sigma chipsets r11
         // SMP8672
@@ -2578,7 +2589,8 @@ function get_cookie_bool_param($plugin_cookies, $param, $default = true)
         $plugin_cookies->{$param} = SwitchOnOff::to_def($default);
     }
 
-    return $plugin_cookies->{$param};
+    // cookie holds 'yes'/'no' string, both are 'true' in boolean context
+    return SwitchOnOff::to_bool($plugin_cookies->{$param});
 }
 
 /**
@@ -2791,17 +2803,47 @@ function json_format($content, $options = 0)
  */
 function wrap_string_to_lines($long_string, $max_chars, $separator = PHP_EOL)
 {
-    $lines = array_slice(
-        explode(PHP_EOL,
-            iconv('Windows-1251', 'UTF-8',
-                wordwrap(iconv('UTF-8', 'Windows-1251',
-                    trim(preg_replace('/([!?])\.+\s*$/Uu', '$1', $long_string))),
-                    $max_chars, $separator, true))
-        ),
-        0, 15
-    );
+    return implode($separator, wrap_string_to_array($long_string, $max_chars));
+}
 
-    return implode(PHP_EOL, $lines);
+/**
+ * Split string to the lines not longer than $max_chars.
+ * Multibyte safe, not limited by characters of single byte code page.
+ *
+ * @param string $long_string
+ * @param int $max_chars
+ * @return array
+ */
+function wrap_string_to_array($long_string, $max_chars)
+{
+    $string = trim($long_string);
+    if (($len = mb_strlen($string, 'UTF-8')) <= $max_chars) {
+        return array($string);
+    }
+
+    $wrapped = array();
+    $last_space = 0;
+    $i = 0;
+
+    do {
+        if (mb_substr($string, $i, 1, 'UTF-8') === ' ') {
+            $last_space = $i;
+        }
+
+        if ($i > $max_chars) {
+            $last_space = ($last_space == 0) ? $max_chars : $last_space;
+            $wrapped[] = trim(mb_substr($string, 0, $last_space, 'UTF-8'));
+            $string = mb_substr($string, $last_space, $len, 'UTF-8');
+            $len = mb_strlen($string, 'UTF-8');
+            $i = 0;
+        }
+
+        $i++;
+    } while ($i < $len);
+
+    $wrapped[] = trim($string);
+
+    return $wrapped;
 }
 
 function is_assoc_array($array)
@@ -2886,7 +2928,8 @@ function dune_params_to_array($str)
     $params_array = array();
     $dune_params = explode(',', $str);
     foreach ($dune_params as $param) {
-        $param_pair = explode(':', $param);
+        // value itself can contain ':' (url, http header)
+        $param_pair = explode(':', $param, 2);
         if (empty($param_pair) || count($param_pair) < 2) continue;
 
         $param_pair[0] = trim($param_pair[0]);
@@ -3122,13 +3165,13 @@ function unescape_entity_string($raw_string)
         '&apos;' => "'",
         '&quot;' => '"',
         '&amp;' => '&',
-        '&#196;' => 'Г„',
-        '&#228;' => 'Г¤',
-        '&#214;' => 'Г–',
-        '&#220;' => 'Гњ',
-        '&#223;' => 'Гџ',
-        '&#246;' => 'Г¶',
-        '&#252;' => 'Гј',
+        '&#196;' => 'Ä',
+        '&#228;' => 'ä',
+        '&#214;' => 'Ö',
+        '&#220;' => 'Ü',
+        '&#223;' => 'ß',
+        '&#246;' => 'ö',
+        '&#252;' => 'ü',
         '&#257;' => 'ā',
         '&#258;' => 'Ă',
         '&#268;' => 'Č',
