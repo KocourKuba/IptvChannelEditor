@@ -29,6 +29,8 @@ DEALINGS IN THE SOFTWARE.
 #include "ListCtrlEx.h"
 #include "base_plugin.h"
 
+#define WM_EPG_IMAGE_LOADED (WM_USER + 302)
+
 // Data object handling class
 class CEpgListDlg : public CDialogEx
 {
@@ -52,6 +54,8 @@ protected:
 	BOOL OnInitDialog() override;
 
 	void FillList(const COleDateTime& now);
+	void LoadEpgImage(const std::wstring& url);
+	void ShowEpgImage(const std::shared_ptr<CImage>& image);
 
 	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	BOOL DestroyWindow() override;
@@ -63,6 +67,7 @@ protected:
 	afx_msg void OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDtnDatetimechangeDatetimepicker(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkListEpg(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg LRESULT OnEpgImageLoaded(WPARAM wParam, LPARAM lParam);
 
 public:
 	TemplateParams m_params;
@@ -82,4 +87,8 @@ protected:
 
 	const std::map<time_t, std::shared_ptr<EpgInfo>>* m_pEpgChannelMap = nullptr;
 	std::map<int, std::pair<time_t, time_t>> m_idx_map;
+
+	// loaded program images, nullptr if image can't be loaded
+	std::map<std::wstring, std::shared_ptr<CImage>> m_imageCache;
+	std::wstring m_pendingImage;
 };

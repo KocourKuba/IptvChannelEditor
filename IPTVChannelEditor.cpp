@@ -1819,11 +1819,10 @@ void SetImageControl(const CImage& image, CStatic& wnd)
 		CImage resized;
 		resized.Create(rcDst.Width(), rcDst.Height(), 32, CImage::createAlphaChannel);
 		HDC dcImage = resized.GetDC();
-		FillRect(dcImage, &rcDst, CreateSolidBrush(GetSysColor(COLOR_BTNFACE)));
+		FillRect(dcImage, &rcDst, GetSysColorBrush(COLOR_BTNFACE));
 
 		SetStretchBltMode(dcImage, COLORONCOLOR);
 		image.StretchBlt(dcImage, x, y, Width, Height, 0, 0, srcWidth, srcHeight);
-		image.StretchBlt(wnd.GetDC()->m_hDC, x, y, Width, Height, 0, 0, srcWidth, srcHeight);
 		resized.ReleaseDC();
 		hImg = (HBITMAP)resized.Detach();
 	}
@@ -1871,7 +1870,7 @@ int RequestToUpdateServer(const std::wstring& command, bool isThread /*= true*/)
 
 		PROCESS_INFORMATION pi = { nullptr };
 
-		std::wstring cmd = std::format(L"\"{:s}\" {:s}", app, newCmd);	// argv[0] имя исполняемого файла
+		std::wstring cmd = std::format(L"\"{:s}\" {:s}", app, newCmd);	// argv[0] РёРјСЏ РёСЃРїРѕР»РЅСЏРµРјРѕРіРѕ С„Р°Р№Р»Р°
 		BOOL bRunProcess = CreateProcessW(app.c_str(),		// 	__in_opt     LPCTSTR lpApplicationName
 										  cmd.data(),	    // 	__inout_opt  LPTSTR lpCommandLine
 										  nullptr,			// 	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes

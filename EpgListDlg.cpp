@@ -47,6 +47,7 @@ BEGIN_MESSAGE_MAP(CEpgListDlg, CDialogEx)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_EPG, &CEpgListDlg::OnItemchangedList)
 	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER, &CEpgListDlg::OnDtnDatetimechangeDatetimepicker)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_EPG, &CEpgListDlg::OnNMDblclkListEpg)
+	ON_MESSAGE(WM_EPG_IMAGE_LOADED, &CEpgListDlg::OnEpgImageLoaded)
 END_MESSAGE_MAP()
 
 CEpgListDlg::CEpgListDlg(CWnd* pParent /*=nullptr*/) : CDialogEx(IDD_DIALOG_EPG_LIST, pParent)
@@ -256,14 +257,7 @@ void CEpgListDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
 
 		SETTEXTEX set_text_ex = { ST_SELECTION, CP_UTF8 };
 		m_wndEpg.SendMessage(EM_SETTEXTEX, (WPARAM)&set_text_ex, (LPARAM)text.c_str());
-		if (epg_pair->second->img.empty())
-		{
-			m_wndEpgImage.SetBitmap(nullptr);
-		}
-		else
-		{
-			SetImageControl(GetIconCache().get_icon(utils::utf8_to_utf16(epg_pair->second->img)), m_wndEpgImage);
-		}
+		LoadEpgImage(utils::utf8_to_utf16(epg_pair->second->img));
 
 		m_params.shift_back = (int)start_pair->second.first;
 		m_csArchiveUrl = parentDlg->GetPlugin()->get_play_stream(m_params, m_info).c_str();
@@ -277,7 +271,70 @@ BOOL CEpgListDlg::DestroyWindow()
 {
 	SaveWindowPos(GetSafeHwnd(), REG_EPG_WINDOW_POS);
 
+	// static control does not delete the bitmap on destroy
+	m_pendingImage.clear();
+	ShowEpgImage(nullptr);
+
 	return __super::DestroyWindow();
+}
+
+void CEpgListDlg::LoadEpgImage(const std::wstring& url)
+{
+	m_pendingImage = url;
+	if (url.empty())
+	{
+		ShowEpgImage(nullptr);
+		return;
+	}
+
+	if (const auto& pair = m_imageCache.find(url); pair != m_imageCache.end())
+	{
+		ShowEpgImage(pair->second);
+		return;
+	}
+
+	ShowEpgImage(nullptr);
+
+	// download image in background thread, result is posted back to the dialog
+	std::thread([hWnd = GetSafeHwnd(), url]()
+				{
+					auto result = std::make_unique<std::pair<std::wstring, std::shared_ptr<CImage>>>(url, std::make_shared<CImage>());
+					if (!LoadImageFromUrl(url, *result->second) || result->second->IsNull())
+					{
+						result->second.reset();
+					}
+
+					if (::PostMessage(hWnd, WM_EPG_IMAGE_LOADED, 0, (LPARAM)result.get()))
+					{
+						result.release();
+					}
+				}).detach();
+}
+
+LRESULT CEpgListDlg::OnEpgImageLoaded(WPARAM wParam, LPARAM lParam)
+{
+	std::unique_ptr<std::pair<std::wstring, std::shared_ptr<CImage>>> result((std::pair<std::wstring, std::shared_ptr<CImage>>*)lParam);
+	if (!result) return 0;
+
+	m_imageCache[result->first] = result->second;
+	if (result->first == m_pendingImage)
+	{
+		ShowEpgImage(result->second);
+	}
+
+	return 0;
+}
+
+void CEpgListDlg::ShowEpgImage(const std::shared_ptr<CImage>& image)
+{
+	if (image)
+	{
+		SetImageControl(*image, m_wndEpgImage);
+	}
+	else
+	{
+		SetImageControl(CImage(), m_wndEpgImage);
+	}
 }
 
 void CEpgListDlg::OnDtnDatetimechangeDatetimepicker(NMHDR* pNMHDR, LRESULT* pResult)

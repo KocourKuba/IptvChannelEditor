@@ -39,6 +39,7 @@ void Logger::log(const std::wstring& message)
 
 void Logger::setLogName(const std::wstring& name)
 {
+	std::lock_guard<std::mutex> lock(m_queueMutex);
 	closeLog();
 	m_logFilename = name;
 	openLog();
@@ -46,8 +47,10 @@ void Logger::setLogName(const std::wstring& name)
 
 void Logger::clearLog()
 {
+	std::lock_guard<std::mutex> lock(m_queueMutex);
 	closeLog();
-	std::filesystem::remove(m_logFilename);
+	std::error_code err;
+	std::filesystem::remove(m_logFilename, err);
 	openLog();
 }
 
