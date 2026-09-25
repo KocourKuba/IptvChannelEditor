@@ -196,7 +196,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
             if (strpos($resume_state['plugin_name'], get_plugin_name()) !== false) {
                 $media_url = MediaURL::decode();
                 $media_url->is_favorite = $resume_state['plugin_tv_is_favorite'];
-                $media_url->group_id = $resume_state['plugin_tv_is_favorite'] ? Starnet_Tv_Favorites_Screen::ID : $resume_state['plugin_tv_group'];
+                $media_url->group_id = $resume_state['plugin_tv_is_favorite'] ? FAVORITES_GROUP_ID : $resume_state['plugin_tv_group'];
                 $media_url->channel_id = $resume_state['plugin_tv_channel'];
                 $media_url->archive_tm = ((time() - $resume_state['plugin_tv_archive_tm']) < 259200) ? $resume_state['plugin_tv_archive_tm'] : -1;
             }

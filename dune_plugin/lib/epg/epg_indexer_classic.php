@@ -183,20 +183,20 @@ class Epg_Indexer_Classic extends Epg_Indexer
             $picons = array();
             $file = $this->open_xmltv_file($hash);
             while (!feof($file)) {
-                $line = stream_get_line($file, self::STREAM_CHUNK, "<channel ");
-                if (empty($line)) continue;
-
-                fseek($file, -9, SEEK_CUR);
-                $str = fread($file, 9);
-                if ($str !== "<channel ") continue;
-
+                // read chunk up to closing tag and search opening tag inside it
+                // works also for minified xmltv where channels are not separated
                 $line = stream_get_line($file, self::STREAM_CHUNK, "</channel>");
-                if (empty($line)) continue;
+                if ($line === false) break;
 
-                $line = "<channel $line</channel>";
+                $pos = strpos($line, "<channel ");
+                if ($pos === false) continue;
 
+                $line = substr($line, $pos) . "</channel>";
+
+                $channel_id = '';
                 $xml_node = new DOMDocument();
-                $xml_node->loadXML($line);
+                if (!@$xml_node->loadXML($line)) continue;
+
                 foreach ($xml_node->getElementsByTagName('channel') as $tag) {
                     $channel_id = $tag->getAttribute('id');
                 }

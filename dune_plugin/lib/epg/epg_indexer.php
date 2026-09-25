@@ -302,7 +302,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 throw new Exception("Unsupported EPG format (JTV)");
             }
 
-            $expired = $this->curl_wrapper->check_is_expired($source->url) || !file_exists($tmp_filename);
+            $expired = $this->curl_wrapper->check_is_expired($source->url) || !file_exists($cached_file);
             if (!$expired) {
                 hd_debug_print("File not changed, using cached file: $cached_file");
                 $this->set_index_locked($hash, false);
@@ -321,7 +321,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             $file_time = filemtime($tmp_filename);
             $dl_time = $this->perf->getReportItemCurrent(Perf_Collector::TIME);
             $file_size = filesize($tmp_filename);
-            $bps = $file_size / max($dl_time, 0);
+            $bps = $file_size / max($dl_time, 0.001);
             $si_prefix = array('B/s', 'KB/s', 'MB/s');
             $base = 1024;
             $class = min((int)log($bps, $base), count($si_prefix) - 1);
@@ -347,7 +347,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
                 }
                 $tmp_filename = $gz_filename;
                 hd_debug_print("ungzip $tmp_filename to $cached_file");
-                $cmd = "gzip -d $tmp_filename 2>&1";
+                $cmd = "gzip -d " . escapeshellarg($tmp_filename) . " 2>&1";
                 $out = system($cmd, $ret);
                 if ($ret > 1) {
                     throw new Exception("Failed to unpack $tmp_filename (error code: $ret)\n$out");
@@ -368,25 +368,45 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             } else if (0 === mb_strpos($hdr, "\x50\x4b\x03\x04")) {
                 hd_debug_print("ZIP signature: " . bin2hex(substr($hdr, 0, 4)), true);
                 hd_debug_print("unzip $tmp_filename to $cached_file");
-                $filename = trim(shell_exec("unzip -lq '$tmp_filename'|grep -E '[\d:]+'"));
-                if (empty($filename)) {
-                    throw new Exception(TR::t('err_empty_zip__1', $tmp_filename));
+                // unpack to separate folder to find out the name of unpacked file
+                $unzip_dir = $cached_file . '_unzip';
+                self::remove_dir($unzip_dir);
+                if (!create_path($unzip_dir)) {
+                    throw new Exception("Failed to create folder $unzip_dir");
                 }
 
-                if (explode('\n', $filename) > 1) {
-                    throw new Exception("Too many files in zip archive, wrong format??!\n$filename");
-                }
-
-                hd_debug_print("zip list: $filename");
-                $cmd = "unzip -oq $tmp_filename -d $this->cache_dir";
+                $cmd = "unzip -oq " . escapeshellarg($tmp_filename) . " -d " . escapeshellarg($unzip_dir) . " 2>&1";
                 $out = system($cmd, $ret);
                 safe_unlink($tmp_filename);
-                if ($ret !== 0) {
-                    throw new Exception("Failed to unpack $tmp_filename (error code: $ret)\n$out");
-                }
                 clearstatcache();
 
-                rename($filename, $cached_file);
+                $unpacked = array();
+                $files = glob($unzip_dir . '/*');
+                if (!empty($files)) {
+                    foreach ($files as $file) {
+                        if (is_file($file)) {
+                            $unpacked[] = $file;
+                        }
+                    }
+                }
+
+                if ($ret !== 0 || count($unpacked) !== 1) {
+                    self::remove_dir($unzip_dir);
+                    if ($ret !== 0) {
+                        throw new Exception("Failed to unpack $tmp_filename (error code: $ret)\n$out");
+                    }
+                    if (empty($unpacked)) {
+                        throw new Exception(TR::t('err_empty_zip__1', $tmp_filename));
+                    }
+                    throw new Exception("Too many files in zip archive, wrong format??!\n" . implode(PHP_EOL, $unpacked));
+                }
+
+                hd_debug_print("unpacked file: $unpacked[0]");
+                $moved = rename($unpacked[0], $cached_file);
+                self::remove_dir($unzip_dir);
+                if (!$moved) {
+                    throw new Exception("Failed to rename $unpacked[0] to $cached_file");
+                }
                 $size = filesize($cached_file);
                 touch($cached_file, $file_time);
                 hd_debug_print("$size bytes unzipped to $cached_file in " . $this->perf->getReportItemCurrent(Perf_Collector::TIME, 'unpack') . " secs");
@@ -463,8 +483,7 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
             }
         } else if (is_dir($lock_dir)) {
             hd_debug_print("Unlock $lock_dir");
-            shell_exec("rm -rf $lock_dir");
-            clearstatcache();
+            self::remove_dir($lock_dir);
         }
     }
 
@@ -497,17 +516,33 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
                 if ($pid !== 0 && send_process_signal($pid, 0)) {
                     hd_debug_print("Kill process $pid");
-                    send_process_signal($pid, -9);
-                    sleep(50);
+                    send_process_signal($pid, 9);
+                    // give a time to terminate process
+                    sleep(1);
                 }
                 hd_debug_print("Remove lock: $lock");
-                shell_exec("rm -rf $lock");
+                self::remove_dir($lock);
             }
         }
 
-        $files = $this->cache_dir . DIRECTORY_SEPARATOR . "*";
-        hd_debug_print("clear epg files: $files");
-        shell_exec('rm -rf ' . $files);
+        // cache dir can be selected by user, remove only files created by plugin
+        hd_debug_print("clear epg files in: $this->cache_dir");
+        $masks = array('*.xmltv', '*.xmltv.tmp', '*.xmltv.gz', '*.index', '*.db', '*.db-journal', '*_indexing.log', '*.cache', 'curl_*');
+        foreach ($masks as $mask) {
+            $files = glob($this->cache_dir . $mask);
+            if (empty($files)) continue;
+
+            foreach ($files as $file) {
+                safe_unlink($file);
+            }
+        }
+
+        $dirs = glob($this->cache_dir . '*.xmltv_unzip', GLOB_ONLYDIR);
+        if (!empty($dirs)) {
+            foreach ($dirs as $dir) {
+                self::remove_dir($dir);
+            }
+        }
         clearstatcache();
         hd_debug_print("Storage space in cache dir: " . HD::get_storage_size($this->cache_dir));
     }
@@ -522,7 +557,8 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
                 if ($pid !== 0 && !send_process_signal($pid, 0)) {
                     hd_debug_print("Remove stalled lock: $lock");
-                    shell_exec("rmdir $this->cache_dir$lock");                }
+                    self::remove_dir($this->cache_dir . $lock);
+                }
             }
         }
     }
@@ -586,6 +622,20 @@ abstract class Epg_Indexer implements Epg_Indexer_Interface
 
     ///////////////////////////////////////////////////////////////////////////////
     /// protected methods
+
+    /**
+     * Remove directory with content
+     *
+     * @param string $dir
+     * @return void
+     */
+    protected static function remove_dir($dir)
+    {
+        if (!empty($dir) && is_dir($dir)) {
+            shell_exec('rm -rf ' . escapeshellarg($dir));
+            clearstatcache();
+        }
+    }
 
     /**
      * @param string $hash

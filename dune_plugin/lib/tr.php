@@ -74,7 +74,7 @@ class TR
         $lang = 'english';
         if (file_exists('/config/settings.properties')) {
             $sys_settings = parse_ini_file('/config/settings.properties', false, INI_SCANNER_RAW);
-            if ($sys_settings !== false) {
+            if ($sys_settings !== false && !empty($sys_settings['interface_language'])) {
                 $lang = $sys_settings['interface_language'];
             }
         }
@@ -85,7 +85,7 @@ class TR
         }
 
         /** @var array $m */
-        if (($lang_txt = file_get_contents($lang_file)) && preg_match("/^$string_key\\s*=(.*)$/m", $lang_txt, $m)) {
+        if (($lang_txt = file_get_contents($lang_file)) && preg_match("/^" . preg_quote($string_key, '/') . "\\s*=(.*)$/m", $lang_txt, $m)) {
             return trim($m[1]);
         }
 

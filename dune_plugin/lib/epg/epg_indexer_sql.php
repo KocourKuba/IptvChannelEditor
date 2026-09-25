@@ -79,7 +79,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
             $stm = $db->prepare("SELECT DISTINCT channel_id FROM $table_ch WHERE alias IN ($placeHolders);");
             if ($stm !== false) {
                 foreach ($epg_ids as $index => $val) {
-                    $stm->bindValue($index + 1, mb_convert_case(SQLite3::escapeString($val), MB_CASE_LOWER, "UTF-8"));
+                    $stm->bindValue($index + 1, mb_convert_case($val, MB_CASE_LOWER, "UTF-8"));
                 }
 
                 $res = $stm->execute();
@@ -101,7 +101,7 @@ class Epg_Indexer_Sql extends Epg_Indexer
                 $stmt = $db->prepare("SELECT start, end FROM $table_pos WHERE channel_id IN ($placeHolders);");
                 if ($stmt !== false) {
                     foreach ($epg_ids as $index => $val) {
-                        $stmt->bindValue($index + 1, SQLite3::escapeString($val));
+                        $stmt->bindValue($index + 1, $val);
                     }
 
                     $res = $stmt->execute();
@@ -173,18 +173,18 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
             $file = $this->open_xmltv_file($hash);
             while (!feof($file)) {
-                $line = stream_get_line($file, 0, "</channel>");
-                if (empty($line)) continue;
+                $line = stream_get_line($file, self::STREAM_CHUNK, "</channel>");
+                if ($line === false) break;
+
                 $pos = strpos($line, "<channel ");
                 if ($pos === false) continue;
-                if ($pos !== 0) {
-                    $line = substr($line, $pos);
-                }
 
-                $line = $line . "</channel>";
+                $line = substr($line, $pos) . "</channel>";
 
+                $channel_id = '';
                 $xml_node = new DOMDocument();
-                $xml_node->loadXML($line);
+                if (!@$xml_node->loadXML($line)) continue;
+
                 foreach ($xml_node->getElementsByTagName('channel') as $tag) {
                     $channel_id = $tag->getAttribute('id');
                 }

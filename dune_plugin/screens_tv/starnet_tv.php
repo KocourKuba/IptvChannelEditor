@@ -226,16 +226,19 @@ class Starnet_Tv implements User_Input_Handler
             if (!empty($url_path)) {
                 try {
                     $channels_list_path = get_data_path(hash('crc32', $url_path));
-                    if (is_file($channels_list_path)) {
-                        safe_unlink($channels_list_path);
+                    $content = $this->plugin->config->setup_curl()->download_content($url_path);
+                    if (empty($content)) {
+                        // keep previously downloaded list as fallback
+                        throw new Exception("Empty channels list downloaded from $url_path");
                     }
-                    file_put_contents($channels_list_path, $this->plugin->config->setup_curl()->download_content($url_path));
+                    file_put_contents($channels_list_path, $content);
                 } catch (Exception $ex) {
                     if (!file_exists($channels_list_path)) {
                         hd_debug_print("Can't fetch channel_list from $url_path");
                         print_backtrace_exception($ex);
                         return -1;
                     }
+                    hd_debug_print("Can't fetch channel_list from $url_path, using cached copy: $channels_list_path");
                 }
             }
 
@@ -265,7 +268,7 @@ class Starnet_Tv implements User_Input_Handler
         $all_channels = new Default_Group(
             $this->plugin,
             ALL_CHANNEL_GROUP_ID,
-            TR::load(TR::load('plugin_all_channels')),
+            TR::load('plugin_all_channels'),
             Default_Group::ALL_CHANNEL_GROUP_ICON);
 
         // Favorites group

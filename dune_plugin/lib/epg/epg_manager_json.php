@@ -62,7 +62,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
         $epg_ids = $channel->get_epg_ids();
         if (empty($epg_ids)) {
             hd_debug_print("EPG ID not defined");
-            return false;
+            return $this->getFakeEpg($channel, $day_start_ts);
         }
 
         if (!$this->plugin->is_json_capable()) {
@@ -140,7 +140,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
             if ($from_cache === false) {
                 hd_debug_print("Fetching EPG ID: '$epg_id' from server: $epg_url");
                 $all_epg = self::get_epg_json($epg_url, $this->plugin->config->get_epg_parameters($epg_source), $this->plugin->is_ext_epg_enabled());
-                if (!empty($all_epg)) {
+                if (!empty($all_epg) && create_path(dirname($epg_cache_file))) {
                     hd_debug_print("Save EPG ID: '$epg_id' to file cache $epg_cache_file");
                     store_to_json_file($epg_cache_file, $all_epg);
                 }
@@ -229,9 +229,14 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
     public function clear_epg_cache()
     {
         $this->ch_info_cache = array();
-        $files = get_temp_path('*.cache');
-        hd_debug_print("clear cache files: $files");
-        shell_exec('rm -f ' . $files);
+        $mask = get_data_path(EPG_CACHE_SUBDIR . '/*.cache');
+        hd_debug_print("clear cache files: $mask");
+        $files = glob($mask);
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                safe_unlink($file);
+            }
+        }
         clearstatcache();
     }
     ///////////////////////////////////////////////////////////////////////////////
@@ -359,7 +364,7 @@ class Epg_Manager_Json extends Epg_Manager_Xmltv
 
             hd_debug_print("Fetching channels info from server: $channels_info_url");
             $ch_data = Curl_Wrapper::getInstance()->download_content($channels_info_url);
-            if ($ch_data !== false) {
+            if ($ch_data !== false && create_path(dirname($ch_info_cache_file))) {
                 file_put_contents($ch_info_cache_file, $ch_data);
             }
 

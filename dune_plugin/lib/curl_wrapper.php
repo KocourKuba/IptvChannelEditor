@@ -430,7 +430,8 @@ class Curl_Wrapper
         $logfile = get_temp_path("{$url_hash}_response.log");
         safe_unlink($logfile);
         $headers_path = get_temp_path("{$url_hash}_headers.log");
-        $temp_file = tempnam(get_temp_path(), 'dl_');
+        // temp file needed only to return content
+        $temp_file = ($save_file === null) ? tempnam(get_temp_path(), 'dl_') : '';
 
         self::$http_response_headers = null;
 
@@ -444,7 +445,6 @@ class Curl_Wrapper
         $config_data[] = "--location";
         $config_data[] = "--max-redirs 5";
         $config_data[] = "--compressed";
-        $config_data[] = "--parallel";
         $config_data[] = "--write-out \"RESPONSE_CODE: %{response_code}\"";
         $config_data[] = "--user-agent \"" . HD::get_dune_user_agent() . "\"";
         $config_data[] = "--url \"$url\"";
@@ -631,15 +631,17 @@ class Curl_Wrapper
             $opts[CURLOPT_CUSTOMREQUEST] = "GET";
         }
 
+        // use local copy to avoid accumulate If-None-Match header in the instance on subsequent calls
+        $send_headers = $this->send_headers;
         if ($use_cache) {
             $etag = self::get_cached_etag($url);
             if (!empty($etag)) {
-                $this->send_headers[] = "If-None-Match: $etag";
+                $send_headers[] = "If-None-Match: $etag";
             }
         }
 
-        if (!empty($this->send_headers)) {
-            $opts[CURLOPT_HTTPHEADER] = $this->send_headers;
+        if (!empty($send_headers)) {
+            $opts[CURLOPT_HTTPHEADER] = $send_headers;
         }
 
         $ch = curl_init();
@@ -666,13 +668,14 @@ class Curl_Wrapper
 
         if (!is_null($fp)) {
             fclose($fp);
+            clearstatcache();
 
-            if (file_exists($tmp_file)) {
-                if (filesize($tmp_file) !== 0) {
-                    rename($tmp_file, $save_file);
-                }
+            // replace target file only by successfully downloaded non empty content
+            $success = self::$error_no === 0 && self::$http_code >= 200 && self::$http_code < 300;
+            if ($success && file_exists($tmp_file) && filesize($tmp_file) !== 0) {
+                rename($tmp_file, $save_file);
             } else {
-                unlink($tmp_file);
+                safe_unlink($tmp_file);
             }
         }
 

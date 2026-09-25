@@ -78,7 +78,7 @@ class Epg_Manager_Xmltv
 
         $config = json_decode(file_get_contents($config_file));
         safe_unlink($config_file);
-        if ($config === false) {
+        if (!is_object($config)) {
             HD::set_last_error("xmltv_last_error", "Invalid config file for indexing");
             return false;
         }
@@ -167,13 +167,13 @@ class Epg_Manager_Xmltv
 
         $channel_id = $channel->get_id();
         foreach($active_sources as $hash => $source) {
-            if ($this->indexer->is_index_locked($hash)) {
-                hd_debug_print("EPG $source->url still indexing, append to delayed queue channel id: " . $channel_id);
-                $this->delayed_epg[] = $channel_id;
+            if ($source === null || (int)$source->ttl === -2) {
                 continue;
             }
 
-            if ($source === null || (int)$source->ttl === -2) {
+            if ($this->indexer->is_index_locked($hash)) {
+                hd_debug_print("EPG $source->url still indexing, append to delayed queue channel id: " . $channel_id);
+                $this->delayed_epg[] = $channel_id;
                 continue;
             }
 
@@ -403,8 +403,8 @@ class Epg_Manager_Xmltv
             if (isset($total['rating'])) {
                 if (isset($total['kp_rating']))
                     $result[PluginTvExtEpgProgram::imdb_rating] = $total['kp_rating'];
-                else if (isset($total['km_rating']))
-                    $result[PluginTvExtEpgProgram::imdb_rating] = $total['km_rating'];
+                else if (isset($total['kinomail_rating']))
+                    $result[PluginTvExtEpgProgram::imdb_rating] = $total['kinomail_rating'];
             }
             if (isset($total["writer"]))
                 $result[PluginTvExtEpgProgram::writer] = $total['writer'];

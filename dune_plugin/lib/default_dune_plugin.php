@@ -548,7 +548,7 @@ class Default_Dune_Plugin implements DunePlugin
             $day_start_tm_sec -= get_local_time_zone_offset();
 
             // get personal time shift for channel
-            $time_shift = 3600 * ($channel->get_timeshift_hours() + $this->get_setting(PARAM_EPG_SHIFT, 0)) + $channel->get_timeshift_hours() * 60;
+            $time_shift = 3600 * ($channel->get_timeshift_hours() + $this->get_setting(PARAM_EPG_SHIFT, 0)) + $channel->get_timeshift_mins() * 60;
             hd_debug_print("EPG time shift $time_shift", true);
             $day_start_tm_sec += $time_shift;
 
@@ -1338,7 +1338,7 @@ class Default_Dune_Plugin implements DunePlugin
         if (!empty($epg_ids)) {
             if ($this->get_setting(PARAM_EPG_CACHE_ENGINE, ENGINE_JSON) === ENGINE_JSON) {
                 $time_shift = 3600 * ($channel->get_timeshift_hours() + $this->get_setting(PARAM_EPG_SHIFT, 0));
-                $time_shift += 60 * $channel->get_timeshift_hours();
+                $time_shift += 60 * $channel->get_timeshift_mins();
                 $day_start_ts = strtotime(date("Y-m-d", time())) + $time_shift;
 
                 self::format_smart_label($defs, TR::load('setup_epg_engine'), TR::load('setup_epg_engine_json'));
@@ -1360,8 +1360,8 @@ class Default_Dune_Plugin implements DunePlugin
         $live_url = '';
         try {
             $live_url = $this->config->GenerateStreamUrl($channel, -1, true);
-            $live_url = wrap_string_to_lines(htmlspecialchars($live_url), 120, "<br/>");
-            self::format_smart_label($defs, TR::load('live_url'), $live_url);
+            $live_url_text = wrap_string_to_lines(htmlspecialchars($live_url), 120, "<br/>");
+            self::format_smart_label($defs, TR::load('live_url'), $live_url_text);
         } catch (Exception $ex) {
             print_backtrace_exception($ex);
         }
@@ -1391,7 +1391,7 @@ class Default_Dune_Plugin implements DunePlugin
             hd_debug_print("Get media info for: $live_url");
             /** @var array $pipes */
             $process = proc_open(
-                get_install_path("bin/media_check.sh $live_url"),
+                get_install_path("bin/media_check.sh") . " " . escapeshellarg($live_url),
                 $descriptors,
                 $pipes);
 
@@ -1459,7 +1459,8 @@ class Default_Dune_Plugin implements DunePlugin
 
             // Progress bar placed after elapsed time on the same line
             Control_Factory::add_vgap($defs, -64);
-            $pos_percent = round(100 * $diff / ($prog_info[PluginTvEpgProgram::end_tm_sec] - $prog_info[PluginTvEpgProgram::start_tm_sec]));
+            $duration = $prog_info[PluginTvEpgProgram::end_tm_sec] - $prog_info[PluginTvEpgProgram::start_tm_sec];
+            $pos_percent = $duration > 0 ? round(100 * $diff / $duration) : 0;
             Control_Factory_Ext::add_progressbar($defs,
                 self::EPG_DIALOG_WIDTH - self::EPG_PROGRESS_WIDTH - 150,
                 self::EPG_PROGRESS_WIDTH, $pos_percent);
@@ -1509,24 +1510,24 @@ class Default_Dune_Plugin implements DunePlugin
         $program_ts_str = format_datetime("Y-m-d H:i", $day_start_ts);
         hd_debug_print("channel ID: $channel_id at time $program_ts_str ($day_start_ts)", true);
         $day_epg = $this->get_day_epg($channel_id, $day_start_ts, $plugin_cookies);
+        $result = array();
         if (empty($day_epg)) {
             hd_debug_print("No entries found for channel $channel_id");
         } else {
-            $not_found = true;
             foreach ($day_epg as $item) {
                 if ($program_ts >= $item[PluginTvEpgProgram::start_tm_sec] && $program_ts < $item[PluginTvEpgProgram::end_tm_sec]) {
-                    $not_found = false;
+                    $result = $item;
                     break;
                 }
             }
 
-            if ($not_found) {
+            if (empty($result)) {
                 hd_debug_print("No entries in range for selected time in " . count($day_epg) . " entries");
             }
         }
 
-        $item[PluginTvEpgProgram::ext_id] = $channel_id;
-        return $item;
+        $result[PluginTvEpgProgram::ext_id] = $channel_id;
+        return $result;
     }
 
     protected static function format_smart_label(&$defs, $name, $text)
