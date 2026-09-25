@@ -91,9 +91,9 @@ bool plugin_iptvonline::get_api_token(TemplateParams& params, std::string& api_t
 		JSON_ALL_TRY
 		{
 			const auto& parsed_json = nlohmann::json::parse(req.body.str());
-			set_file_cookie(session_token_file,
-							utils::get_json_string("access_token", parsed_json),
-							utils::get_json_int("expires_time", parsed_json));
+			// caller expects the new token, not only the saved cookie
+			api_token = utils::get_json_string("access_token", parsed_json);
+			set_file_cookie(session_token_file, api_token, utils::get_json_int("expires_time", parsed_json));
 			params.creds->token = utils::get_json_string("refresh_token", parsed_json);
 
 		}
