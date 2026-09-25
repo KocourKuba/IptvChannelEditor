@@ -166,39 +166,26 @@ class Epg_Indexer_Sql extends Epg_Indexer
             $db->exec('BEGIN;');
 
             $stm_channels = $db->prepare("INSERT OR REPLACE INTO $table_ch (alias, channel_id) VALUES(:alias, :channel_id);");
-            /** @var string $alias */
-            /** @var string $channel_id */
-            $stm_channels->bindParam(":alias", $alias);
-            $stm_channels->bindParam(":channel_id", $channel_id);
+            if ($stm_channels === false) {
+                throw new Exception("Failed to prepare insert statement for $table_ch");
+            }
+
+            $store = function ($batch) use ($stm_channels) {
+                foreach ($batch as $channel) {
+                    $stm_channels->bindValue(":channel_id", $channel['id']);
+                    // aliases are searched in lower case
+                    $stm_channels->bindValue(":alias", mb_convert_case($channel['id'], MB_CASE_LOWER, "UTF-8"));
+                    $stm_channels->execute();
+
+                    foreach ($channel['aliases'] as $alias) {
+                        $stm_channels->bindValue(":alias", mb_convert_case($alias, MB_CASE_LOWER, "UTF-8"));
+                        $stm_channels->execute();
+                    }
+                }
+            };
 
             $file = $this->open_xmltv_file($hash);
-            while (!feof($file)) {
-                $line = stream_get_line($file, self::STREAM_CHUNK, "</channel>");
-                if ($line === false) break;
-
-                $pos = strpos($line, "<channel ");
-                if ($pos === false) continue;
-
-                $line = substr($line, $pos) . "</channel>";
-
-                $channel_id = '';
-                $xml_node = new DOMDocument();
-                if (!@$xml_node->loadXML($line)) continue;
-
-                foreach ($xml_node->getElementsByTagName('channel') as $tag) {
-                    $channel_id = $tag->getAttribute('id');
-                }
-
-                if (empty($channel_id)) continue;
-
-                $alias = $channel_id;
-                $stm_channels->execute();
-
-                foreach ($xml_node->getElementsByTagName('display-name') as $tag) {
-                    $alias = mb_convert_case($tag->nodeValue, MB_CASE_LOWER, "UTF-8");
-                    $stm_channels->execute();
-                }
-            }
+            self::scan_xmltv_channels($file, $store);
             fclose($file);
             $db->exec('COMMIT;');
 
@@ -216,6 +203,10 @@ class Epg_Indexer_Sql extends Epg_Indexer
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG channels failed");
             print_backtrace_exception($ex);
+            if (!empty($db)) {
+                // no active transaction if exception thrown before BEGIN
+                @$db->exec('ROLLBACK;');
+            }
         }
 
         $this->set_index_locked($hash, false);
@@ -265,72 +256,29 @@ class Epg_Indexer_Sql extends Epg_Indexer
             hd_debug_print("Begin transactions...");
 
             $stm = $db->prepare("INSERT INTO $table_pos (channel_id, start, end) VALUES(:channel_id, :start, :end);");
-            /** @var string $prev_channel */
-            /** @var int $start_program_block */
-            /** @var int $tag_end_pos */
-            $stm->bindParam(":channel_id", $prev_channel);
-            $stm->bindParam(":start", $start_program_block);
-            $stm->bindParam(":end", $tag_end_pos);
-
-            $cached_file = $this->get_cache_filename($hash);
-            if (!file_exists($cached_file)) {
-                throw new Exception("cache file $cached_file not exist");
+            if ($stm === false) {
+                throw new Exception("Failed to prepare insert statement for $table_pos");
             }
 
             $file = $this->open_xmltv_file($hash);
 
-            $start_program_block = 0;
-            $prev_channel = null;
-            while (!feof($file)) {
-                $tag_start_pos = ftell($file);
-                $line = stream_get_line($file, 0, "</programme>");
-                if ($line === false) break;
-
-                $offset = strpos($line, '<programme');
-                if ($offset === false) {
-                    // check if end
-                    $end_tv = strpos($line, "</tv>");
-                    if ($end_tv !== false) {
-                        $tag_end_pos = $end_tv + $tag_start_pos;
-                        $stm->execute();
-                        break;
-                    }
-
-                    // if open tag not found - skip chunk
-                    continue;
+            $store = function ($channel_id, $start, $end) use ($stm) {
+                $stm->bindValue(":channel_id", $channel_id);
+                $stm->bindValue(":start", $start, SQLITE3_INTEGER);
+                $stm->bindValue(":end", $end, SQLITE3_INTEGER);
+                if ($stm->execute() === false) {
+                    hd_debug_print("Error inserting position start: $start end: $end for channel: $channel_id");
                 }
+            };
+            self::scan_xmltv_positions($file, $store);
+            fclose($file);
 
-                // end position include closing tag!
-                $tag_end_pos = ftell($file);
-                // append position of open tag to file position of chunk
-                $tag_start_pos += $offset;
-                // calculate channel id
-                $ch_start = strpos($line, 'channel="', $offset);
-                if ($ch_start === false) {
-                    continue;
-                }
-
-                $ch_start += 9;
-                $ch_end = strpos($line, '"', $ch_start);
-                if ($ch_end === false) {
-                    continue;
-                }
-
-                $channel_id = substr($line, $ch_start, $ch_end - $ch_start);
-                if (empty($channel_id)) continue;
-
-                if ($prev_channel === null) {
-                    $prev_channel = $channel_id;
-                    $start_program_block = $tag_start_pos;
-                } else if ($prev_channel !== $channel_id) {
-                    $tag_end_pos = $tag_start_pos;
-                    $res = $stm->execute();
-                    if ($res === false) {
-                        hd_debug_print("Error inserting position start: $start_program_block end: $tag_end_pos for channel: $prev_channel");
-                    }
-                    $prev_channel = $channel_id;
-                    $start_program_block = $tag_start_pos;
-                }
+            // Build the lookup index in one pass now that the table is complete, instead of
+            // letting sqlite maintain it row by row while the rows are inserted.
+            // 'end' is part of the index so that the query that loads positions
+            // (start/end by channel_id) is answered from the index alone.
+            if ($db->exec("CREATE INDEX IF NOT EXISTS {$table_pos}_idx ON $table_pos (channel_id, start, end);") === false) {
+                hd_debug_print("Error creating index for $table_pos");
             }
 
             hd_debug_print("End transactions...");
@@ -352,6 +300,10 @@ class Epg_Indexer_Sql extends Epg_Indexer
         } catch (Exception $ex) {
             hd_debug_print("Reindexing EPG positions failed");
             print_backtrace_exception($ex);
+            if (!empty($db)) {
+                // no active transaction if exception thrown before BEGIN
+                @$db->exec('ROLLBACK;');
+            }
         }
 
         $this->set_index_locked($hash, false);
@@ -417,9 +369,16 @@ class Epg_Indexer_Sql extends Epg_Indexer
 
         foreach ($result as $key => $name) {
             $res = $db->querySingle("SELECT name FROM sqlite_master WHERE type='table' AND name='$key';");
-            if (!empty($res)) {
-                $result[$key] = $db->querySingle("SELECT count(DISTINCT channel_id) FROM $key;");
+            if (empty($res)) continue;
+
+            if ($key === self::INDEX_ENTRIES
+                && !$db->querySingle("SELECT name FROM sqlite_master WHERE type='index' AND name='{$key}_idx';")) {
+                // positions indexed by old version without lookup index, force reindex
+                hd_debug_print("Lookup index for $key not exist");
+                continue;
             }
+
+            $result[$key] = $db->querySingle("SELECT count(DISTINCT channel_id) FROM $key;");
         }
         return $result;
     }

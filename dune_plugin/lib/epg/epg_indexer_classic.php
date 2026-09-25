@@ -180,47 +180,22 @@ class Epg_Indexer_Classic extends Epg_Indexer
             hd_debug_print("Start reindex: $channels_file");
 
             $channels = array();
-            $picons = array();
+            $picons = 0;
+            $store = function ($batch) use (&$channels, &$picons) {
+                foreach ($batch as $channel) {
+                    $channel_id = $channel['id'];
+                    $channels[mb_convert_case($channel_id, MB_CASE_LOWER, "UTF-8")] = $channel_id;
+                    foreach ($channel['aliases'] as $alias) {
+                        $channels[mb_convert_case($alias, MB_CASE_LOWER, "UTF-8")] = $channel_id;
+                    }
+                    if (!empty($channel['picon'])) {
+                        $picons++;
+                    }
+                }
+            };
+
             $file = $this->open_xmltv_file($hash);
-            while (!feof($file)) {
-                // read chunk up to closing tag and search opening tag inside it
-                // works also for minified xmltv where channels are not separated
-                $line = stream_get_line($file, self::STREAM_CHUNK, "</channel>");
-                if ($line === false) break;
-
-                $pos = strpos($line, "<channel ");
-                if ($pos === false) continue;
-
-                $line = substr($line, $pos) . "</channel>";
-
-                $channel_id = '';
-                $xml_node = new DOMDocument();
-                if (!@$xml_node->loadXML($line)) continue;
-
-                foreach ($xml_node->getElementsByTagName('channel') as $tag) {
-                    $channel_id = $tag->getAttribute('id');
-                }
-
-                if (empty($channel_id)) continue;
-
-                $picon = '';
-                foreach ($xml_node->getElementsByTagName('icon') as $tag) {
-                    if (preg_match(HTTP_PATTERN, $tag->getAttribute('src'))) {
-                        $picon = $tag->getAttribute('src');
-                        break;
-                    }
-                }
-
-                $ls_channel = mb_convert_case($channel_id, MB_CASE_LOWER, "UTF-8");
-                $channels[$ls_channel] = $channel_id;
-                foreach ($xml_node->getElementsByTagName('display-name') as $tag) {
-                    $alias = mb_convert_case($tag->nodeValue, MB_CASE_LOWER, "UTF-8");
-                    $channels[$alias] = $channel_id;
-                    if (!empty($picon)) {
-                        $picons[$alias] = $picon;
-                    }
-                }
-            }
+            self::scan_xmltv_channels($file, $store);
             fclose($file);
 
             store_to_json_file($channels_file, $channels);
@@ -230,7 +205,7 @@ class Epg_Indexer_Classic extends Epg_Indexer
             $this->perf->setLabel('end');
             $report = $this->perf->getFullReport();
             hd_debug_print("Total entries id's: " . count($channels));
-            hd_debug_print("Total known picons: " . count($picons));
+            hd_debug_print("Total known picons: $picons");
             hd_debug_print("Reindexing EPG channels done: {$report[Perf_Collector::TIME]} secs");
             hd_debug_print("Storage space in cache dir after reindexing: " . HD::get_storage_size($this->cache_dir));
             hd_debug_print("Memory usage: {$report[Perf_Collector::MEMORY_USAGE_KB]} kb");
@@ -290,56 +265,12 @@ class Epg_Indexer_Classic extends Epg_Indexer
             $this->set_index_locked($hash, true);
             $file = $this->open_xmltv_file($hash);
 
-            $start_program_block = 0;
-            $prev_channel = null;
             $xmltv_index = array();
-            while (!feof($file)) {
-                $tag_start_pos = ftell($file);
-                $line = stream_get_line($file, self::STREAM_CHUNK, "</programme>");
-                if ($line === false) break;
-
-                $offset = strpos($line, '<programme');
-                if ($offset === false) {
-                    // check if end
-                    $end_tv = strpos($line, "</tv>");
-                    if ($end_tv !== false) {
-                        $tag_end_pos = $end_tv + $tag_start_pos;
-                        $xmltv_index[$prev_channel][] = array('start' => $start_program_block, 'end' => $tag_end_pos);
-                        break;
-                    }
-
-                    // if open tag not found - skip chunk
-                    continue;
-                }
-
-                // append position of open tag to file position of chunk
-                $tag_start_pos += $offset;
-                // calculate channel id
-                $ch_start = strpos($line, 'channel="', $offset);
-                if ($ch_start === false) {
-                    continue;
-                }
-
-                $ch_start += 9;
-                $ch_end = strpos($line, '"', $ch_start);
-                if ($ch_end === false) {
-                    continue;
-                }
-
-                $channel_id = substr($line, $ch_start, $ch_end - $ch_start);
-                if (empty($channel_id)) continue;
-
-                if ($prev_channel === null) {
-                    // first entrance. Need to remember channel id
-                    $prev_channel = $channel_id;
-                    $start_program_block = $tag_start_pos;
-                } else if ($prev_channel !== $channel_id) {
-                    // next channel. need to remember start programs block for channel
-                    $xmltv_index[$prev_channel][] = array('start' => $start_program_block, 'end' => $tag_start_pos);
-                    $prev_channel = $channel_id;
-                    $start_program_block = $tag_start_pos;
-                }
-            }
+            $store = function ($channel_id, $start, $end) use (&$xmltv_index) {
+                $xmltv_index[$channel_id][] = array('start' => $start, 'end' => $end);
+            };
+            self::scan_xmltv_positions($file, $store);
+            fclose($file);
 
             if (!empty($xmltv_index)) {
                 hd_debug_print("Save index: $positions_file", true);
