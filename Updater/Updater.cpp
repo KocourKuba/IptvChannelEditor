@@ -494,6 +494,7 @@ int main(int argc, char* argv[])
 	info.update_path = GetAppPath(utils::UPDATES_FOLDER);
 	info.info_file = utils::UPDATE_NAME;
 	info.server = utils::UPDATE_SERVER1;
+	info.install_option_files = playlists;
 
 	LOG_PROTOCOL(std::format(L"Updates folder: {:s}", info.update_path));
 

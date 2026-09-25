@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 
 // <tv_category>
 //   <id>1</id>
-//   <caption>�����</caption>
+//   <caption>Общие</caption>
 //   <icon_url>plugin_file://icons/1.png</icon_url>
 // </tv_category>
 

@@ -220,21 +220,38 @@ bool PluginFactory::load_configs(bool dev /*= false*/)
 		}
 	}
 
-	if (data.rdbuf()->_Get_buffer_view()._Size == 0)
+	nlohmann::json config;
+	// downloaded config can be broken (proxy error page etc.). Parse it here to be able to fallback to the local copy
+	if (data.rdbuf()->_Get_buffer_view()._Size != 0)
+	{
+		config = nlohmann::json::parse(data.str(), nullptr, false);
+		if (config.is_discarded() || !config.is_object() || !config.contains("plugins"))
+		{
+			LOG_PROTOCOL("Downloaded config is not valid, use local copy");
+			config = nlohmann::json();
+		}
+	}
+
+	if (config.empty())
 	{
 		std::wstring path;
 		path = std::format(L"{:s}defaults_{:d}.{:d}.json", GetDevAppPath(), MAJOR, MINOR);
 		std::ifstream in_file(path);
 		if (in_file.good())
 		{
-			data << in_file.rdbuf();
+			std::stringstream local_data;
+			local_data << in_file.rdbuf();
 			in_file.close();
+			config = nlohmann::json::parse(local_data.str(), nullptr, false);
+			if (config.is_discarded())
+			{
+				config = nlohmann::json();
+			}
 		}
 	}
 
 	JSON_ALL_TRY
 	{
-		nlohmann::json config = nlohmann::json::parse(data.str());
 
 		for (const auto& item : config["epg_presets"].items())
 		{

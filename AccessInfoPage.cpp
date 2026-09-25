@@ -505,10 +505,16 @@ void CAccessInfoPage::OnBnClickedButtonNewFromUrl()
 					.user_agent = m_plugin->get_user_agent(),
 					.timeouts = GetConfig().GetTimeouts(),
 				};
-				if (utils::AsyncDownloadFile(req).get())
+				if (!utils::AsyncDownloadFile(req).get())
 				{
+					// not an url or download failed, try it as a local file
 					std::ifstream instream(url);
-					req.body << instream.rdbuf();
+					if (instream.good())
+					{
+						req.body.str("");
+						req.body.clear();
+						req.body << instream.rdbuf();
+					}
 				}
 
 				std::istringstream stream(req.body.str());

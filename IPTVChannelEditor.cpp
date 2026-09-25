@@ -1238,42 +1238,21 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 					break;
 			}
 
-			if (!plugin->get_devices_list().empty())
+			// stored index may be out of range (or -1) if lists were changed
+			const auto add_item_id = [&node](const char* name, const auto& list, int idx)
 			{
-				auto size = (int)plugin->get_devices_list().size();
-				size_t device_id = creds->device_id >= size ? size - 1 : creds->device_id;
-				node["device_id"] = plugin->get_devices_list().at(device_id).id;
-			}
-			if (!plugin->get_servers_list().empty())
-			{
-				auto size = (int)plugin->get_servers_list().size();
-				size_t server_id = creds->server_id >= size ? size - 1 : creds->server_id;
-				node["server_id"] = plugin->get_servers_list().at(server_id).id;
-			}
-			if (!plugin->get_qualities_list().empty())
-			{
-				auto size = (int)plugin->get_qualities_list().size();
-				size_t quality_id = creds->quality_id >= size ? size - 1 : creds->quality_id;
-				node["quality_id"] = plugin->get_qualities_list().at(quality_id).id;
-			}
-			if (!plugin->get_profiles_list().empty())
-			{
-				auto size = (int)plugin->get_profiles_list().size();
-				size_t profile_id = creds->profile_id >= size ? size - 1 : creds->profile_id;
-				node["profile_id"] = plugin->get_profiles_list().at(creds->profile_id).id;
-			}
-			if (!plugin->get_domains_list().empty())
-			{
-				auto size = (int)plugin->get_domains_list().size();
-				size_t domain_id = creds->domain_id >= size ? size - 1 : creds->domain_id;
-				node["domain_id"] = plugin->get_domains_list().at(domain_id).id;
-			}
-			if (!plugin->get_api_domains_list().empty())
-			{
-				auto size = (int)plugin->get_api_domains_list().size();
-				size_t api_domain_id = creds->api_domain_id >= size ? size - 1 : creds->api_domain_id;
-				node["api_domain_id"] = plugin->get_api_domains_list().at(api_domain_id).id;
-			}
+				if (list.empty()) return;
+
+				size_t safe_idx = (idx < 0) ? 0 : std::min((size_t)idx, list.size() - 1);
+				node[name] = list.at(safe_idx).id;
+			};
+
+			add_item_id("device_id", plugin->get_devices_list(), creds->device_id);
+			add_item_id("server_id", plugin->get_servers_list(), creds->server_id);
+			add_item_id("quality_id", plugin->get_qualities_list(), creds->quality_id);
+			add_item_id("profile_id", plugin->get_profiles_list(), creds->profile_id);
+			add_item_id("domain_id", plugin->get_domains_list(), creds->domain_id);
+			add_item_id("api_domain_id", plugin->get_api_domains_list(), creds->api_domain_id);
 
 			if (!node.empty())
 			{
@@ -1674,7 +1653,8 @@ void ConvertAccounts()
 void RestoreWindowPos(HWND hWnd, LPCTSTR name)
 {
 	const auto& bin = GetConfig().get_binary(true, name);
-	if (bin.empty())
+	// saved data may be corrupted or from another structure version
+	if (bin.size() < sizeof(WINDOWPLACEMENT))
 		return;
 
 	// Success
@@ -1719,6 +1699,7 @@ void SaveWindowPos(HWND hWnd, LPCTSTR name)
 bool LoadPngImage(UINT id, CImage& img)
 {
 	HGLOBAL hgblResourceData = nullptr;
+	bool streamOwnsData = false;
 	bool res = false;
 	do
 	{
@@ -1744,13 +1725,16 @@ bool LoadPngImage(UINT id, CImage& img)
 		IStream* pStream = nullptr;
 		if (FAILED(CreateStreamOnHGlobal(hgblResourceData, TRUE, &pStream)) || !pStream) break;
 
+		// memory will be released together with stream
+		streamOwnsData = true;
+
 		img.Load(pStream);
 		img.SetHasAlphaChannel(true);
 		pStream->Release();
 		res = true;
 	} while (false);
 
-	if (hgblResourceData == nullptr)
+	if (hgblResourceData != nullptr && !streamOwnsData)
 		::GlobalFree(hgblResourceData);
 
 	return res;

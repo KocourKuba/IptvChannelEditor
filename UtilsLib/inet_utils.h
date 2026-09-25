@@ -113,7 +113,15 @@ public:
 	bool Decode(const char* szMessage);
 
 	// Reinterpret internal buffer to type
-	std::string GetResultAsString() const { return { m_buf.begin(), m_buf.end() }; };
+	// buffer is bigger than result (reserved size + terminating zero), use only real result size
+	std::string GetResultAsString() const
+	{
+		size_t size = m_nSize > 0 ? (size_t)m_nSize : 0;
+		if (size > m_buf.size())
+			size = m_buf.size();
+
+		return { m_buf.begin(), m_buf.begin() + size };
+	};
 	const unsigned char* GetResultBytes() const { return m_buf.data(); };
 
 	// size of encoded/decoded buffer

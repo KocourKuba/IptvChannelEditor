@@ -449,7 +449,7 @@ static time_t parse_xmltv_timezone(const char* tzstr, unsigned int len)
 	}
 	else if ((len == 5) && (tzstr[0] == '-')) {
 
-		result = -(3600 * atoi_2(tzstr + 1)) + (60 * atoi_2(tzstr + 3));
+		result = -((3600 * atoi_2(tzstr + 1)) + (60 * atoi_2(tzstr + 3)));
 
 	}
 
@@ -517,7 +517,7 @@ time_t parse_xmltv_date(const char* sz_date, size_t full_len)
 			}
 			else if (tz_str[0] == '-')
 			{
-				tz = 60 * atoi_2(tz_str + 3) - atoi_2(tz_str + 1) * 3600;
+				tz = -(atoi_2(tz_str + 1) * 3600 + 60 * atoi_2(tz_str + 3));
 			}
 		}
 	}

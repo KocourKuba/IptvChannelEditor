@@ -196,7 +196,7 @@ void CEpgListDlg::FillList(const COleDateTime& sel_time)
 
 			if (shifted_start < start_time || shifted_start > end_time) continue;
 
-			bool isArchive = (_time32(nullptr) - shifted_end) > 0 && shifted_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
+			bool isArchive = (_time32(nullptr) - shifted_end) > 0 && shifted_start > (_time32(nullptr) - m_info->get_archive_days() * 86400);
 			COleDateTime start(shifted_start);
 			COleDateTime end(shifted_end);
 			int idx = m_wndEpgList.InsertItem(i++, isArchive ? L"R" : L"");
@@ -368,7 +368,7 @@ void CEpgListDlg::OnNMDblclkListEpg(NMHDR* pNMHDR, LRESULT* pResult)
 		const time_t shifted_end = start_pair->second.second - time_shift;
 
 		m_params.shift_back = (int)shifted_start;
-		bool isArchive = (_time32(nullptr) - shifted_end) > 0 && shifted_start > (_time32(nullptr) - m_info->get_archive_days() * 84600);
+		bool isArchive = (_time32(nullptr) - shifted_end) > 0 && shifted_start > (_time32(nullptr) - m_info->get_archive_days() * 86400);
 		auto parentDlg = DYNAMIC_DOWNCAST(CIPTVChannelEditorDlg, GetParent());
 		if (isArchive && parentDlg)
 		{

@@ -45,7 +45,7 @@ void ChannelCategory::ParseNode(rapidxml::xml_node<>* node)
 
 	// <id>1</id>
 	set_key(rapidxml::get_value_int(node->first_node(utils::ID)));
-	// <caption>�����</caption>
+	// <caption>Общие</caption>
 	set_title(rapidxml::get_value_wstring(node->first_node(utils::CAPTION)));
 	// <icon_url>plugin_file://icons/1.png</icon_url>
 	set_icon_uri(rapidxml::get_value_wstring(node->first_node(utils::ICON_URL)));
@@ -62,7 +62,7 @@ rapidxml::xml_node<>* ChannelCategory::GetNode(rapidxml::memory_pool<>& alloc) c
 	// <id>1</id>
 	category_node->append_node(rapidxml::alloc_node(alloc, utils::ID, std::to_string(get_key()).c_str()));
 
-	// <caption>�����</caption>
+	// <caption>Общие</caption>
 	category_node->append_node(rapidxml::alloc_node(alloc, utils::CAPTION, utils::utf16_to_utf8(get_title()).c_str()));
 
 	// <icon_url>plugin_file://icons/1.png</icon_url>
