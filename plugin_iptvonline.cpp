@@ -350,7 +350,7 @@ void plugin_iptvonline::fetch_movie_info(const TemplateParams& params, vod_movie
 					vod_variant_def def_audio;
 					def_audio.title = L"auto";
 					def_audio.url = episode.url;
-					movie.audios.set_back(def_audio.title, def_audio);
+					episode.audios.set_back(def_audio.title, def_audio);
 
 					if (episode_item.contains("audios"))
 					{
@@ -366,7 +366,7 @@ void plugin_iptvonline::fetch_movie_info(const TemplateParams& params, vod_movie
 								vod_variant_def audio;
 								audio.title = vod_title;
 								audio.url = q_url;
-								movie.audios.set_back(vod_title, audio);
+								episode.audios.set_back(vod_title, audio);
 							}
 						}
 					}
@@ -410,30 +410,7 @@ void plugin_iptvonline::fetch_movie_info(const TemplateParams& params, vod_movie
 
 std::wstring plugin_iptvonline::get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie)
 {
-	std::wstring url = movie.url;
-
-	if (!movie.audios.empty() && request.audio_idx != CB_ERR)
-	{
-		url = movie.audios[request.audio_idx].url;
-	}
-	else if (!movie.seasons.empty())
-	{
-		const auto& episodes = movie.seasons.front().episodes;
-		if (!episodes.empty() && request.episode_idx != CB_ERR)
-		{
-			const auto& audio = episodes[request.episode_idx].audios;
-			if (audio.empty())
-			{
-				url = episodes[request.episode_idx].url;
-			}
-			else
-			{
-				url = episodes[request.episode_idx].audios[request.audio_idx].url;
-			}
-		}
-	}
-
-	return url;
+	return get_variant_url(request, movie);
 }
 
 void plugin_iptvonline::collect_movies(const std::wstring& id,
@@ -445,7 +422,8 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 	auto movie_category = std::make_shared<vod_category>(id);
 	movie_category->name = category_name;
 
-	const auto& cat_url = std::format(L"{:s}/movies/?limit=100&page=1&category={:s}", get_vod_url(config.m_params), id);
+	const auto& vod_url = get_vod_url(config.m_params);
+	const auto& cat_url = std::format(L"{:s}/movies/?limit=100&page=1&category={:s}", vod_url, id);
 	utils::http_request req{
 		.url = cat_url,
 		.timeouts = GetConfig().GetTimeouts(),
@@ -476,12 +454,12 @@ void plugin_iptvonline::collect_movies(const std::wstring& id,
 	{
 		if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
 
-		const auto page_url = std::format(L"{:s}/movies/?limit={:d}&page={:d}&category={:s}", config.m_url, limit, page, id);
+		const auto page_url = std::format(L"{:s}/movies/?limit={:d}&page={:d}&category={:s}", vod_url, limit, page, id);
 		utils::http_request page_req{
 			.url = page_url,
 			.timeouts = GetConfig().GetTimeouts(),
 		};
-		nlohmann::json movies_json = server_request(req, true);
+		nlohmann::json movies_json = server_request(page_req, true);
 		if (movies_json.empty() || !movies_json.contains("data") || !movies_json["data"].contains("items"))
 		{
 			break;

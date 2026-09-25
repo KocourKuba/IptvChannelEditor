@@ -173,7 +173,7 @@ void CVodViewer::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI)
 
 BOOL CVodViewer::PreTranslateMessage(MSG* pMsg)
 {
-	if (pMsg->wParam == VK_RETURN)
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
 	{
 		m_wndSearch.SendMessage(BM_CLICK, 0, 0);
 		return TRUE;
@@ -558,6 +558,11 @@ void CVodViewer::OnCbnSelchangeComboEpisode()
 		idx = m_wndMoviesList.GetNextSelectedItem(pos);
 	}
 
+	if (const auto& movie = GetFilteredMovie(idx); movie != nullptr)
+	{
+		FillVariants(movie);
+	}
+
 	return GetUrl(idx);
 }
 
@@ -599,46 +604,16 @@ void CVodViewer::OnNMDblclkListMovies(NMHDR* pNMHDR, LRESULT* pResult)
 
 	const auto& movie = m_filtered_movies[pNMItemActivate->iItem];
 
-	std::wstring url = movie->url;
-	if (m_plugin->get_vod_season())
+	// same url as shown in the stream url field
+	base_plugin::movie_request request
 	{
-		if (movie->url.empty() && m_season_idx != CB_ERR && m_episode_idx != CB_ERR)
-		{
-			const auto& season = movie->seasons[m_season_idx];
-			url = season.episodes[m_episode_idx].url;
-		}
-		url = std::format(L"http://{:s}{:s}?token={:s}", m_account->get_subdomain(), url, m_account->get_s_token());
-	}
-	else
-	{
-		if (!movie->qualities.empty() && m_quality_idx != CB_ERR)
-		{
-			url = movie->qualities[m_quality_idx].url;
-		}
-		else if (!movie->audios.empty() && m_audio_idx != CB_ERR)
-		{
-			url = movie->audios[m_audio_idx].url;
-		}
-		else if (!movie->seasons.empty())
-		{
-			const auto& episodes = movie->seasons.front().episodes;
-			if (!episodes.empty())
-			{
-				if (!episodes[m_episode_idx].qualities.empty() && m_quality_idx != CB_ERR)
-				{
-					url = episodes[m_episode_idx].qualities[m_quality_idx].url;
-				}
-				else if (!episodes[m_episode_idx].audios.empty() && m_audio_idx != CB_ERR)
-				{
-					url = episodes[m_episode_idx].audios[m_audio_idx].url;
-				}
-				else
-				{
-					url = episodes[m_episode_idx].url;
-				}
-			}
-		}
-	}
+		.season_idx = m_season_idx,
+		.episode_idx = m_episode_idx,
+		.quality_idx = m_quality_idx,
+		.audio_idx = m_audio_idx
+	};
+
+	const auto& url = m_plugin->get_movie_url(m_account, request, *movie);
 
 	if (!url.empty())
 	{
@@ -855,8 +830,11 @@ void CVodViewer::FillEpisodes(const std::shared_ptr<vod_movie_def>& movie)
 	m_wndEpisode.ResetContent();
 	m_wndEpisode.EnableWindow(FALSE);
 
+	if (!movie) return;
+
 	if (movie->seasons.empty() || m_season_idx < 0 || m_season_idx >= (int)movie->seasons.size())
 	{
+		FillVariants(movie);
 		return;
 	}
 
@@ -876,12 +854,35 @@ void CVodViewer::FillEpisodes(const std::shared_ptr<vod_movie_def>& movie)
 			m_wndEpisode.AddString(episode.title.c_str());
 		}
 
-		FillQuality(episode.qualities);
-		FillAudio(episode.audios);
 	}
 
 	m_episode_idx = episodes.empty() ? -1 : 0;
 	m_wndEpisode.EnableWindow(!episodes.empty());
+
+	FillVariants(movie);
+}
+
+void CVodViewer::FillVariants(const std::shared_ptr<vod_movie_def>& movie)
+{
+	if (!movie) return;
+
+	// qualities and audios of selected episode, or of the movie itself
+	const vod_episode_def* source = movie.get();
+	if (m_season_idx >= 0 && m_season_idx < (int)movie->seasons.size())
+	{
+		const auto& episodes = movie->seasons[m_season_idx].episodes;
+		if (m_episode_idx >= 0 && m_episode_idx < (int)episodes.size())
+		{
+			const auto& episode = episodes[m_episode_idx];
+			if (!episode.qualities.empty() || !episode.audios.empty())
+			{
+				source = &episode;
+			}
+		}
+	}
+
+	FillQuality(source->qualities);
+	FillAudio(source->audios);
 }
 
 void CVodViewer::FillQuality(const vod_variants_storage& qualities)
@@ -959,8 +960,7 @@ void CVodViewer::LoadMovieInfo(int idx)
 		return;
 	}
 
-	FillQuality(movie->qualities);
-	FillAudio(movie->audios);
+	// also fills episodes, qualities and audios
 	FillSeasons(movie);
 
 
@@ -1090,9 +1090,10 @@ void CVodViewer::FilterList()
 				ATLTRACE("genre id: %d\n", id);
 			}
 
-			if (m_year_idx > 0)
+			if (m_year_idx > 0 && !selectedYear.IsEmpty())
 			{
-				const auto& years = utils::utf16_to_utf8(m_years[static_cast<size_t>(m_year_idx) - 1]);
+				// years combobox is sorted, so index does not match m_years order
+				const auto& years = utils::utf16_to_utf8(selectedYear.GetString());
 				json_request["years"] = years;
 				ATLTRACE("years: %s\n", years.c_str());
 			}

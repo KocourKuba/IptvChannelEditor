@@ -382,17 +382,6 @@ void plugin_sharaclub::parse_vod(const ThreadConfig& config)
 
 std::wstring plugin_sharaclub::get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie)
 {
-	std::wstring url = movie.url;
-
-	if (!movie.seasons.empty())
-	{
-		const auto& episodes = movie.seasons.front().episodes;
-		if (!episodes.empty() && request.episode_idx != CB_ERR)
-		{
-			url = episodes[request.episode_idx].url;
-		}
-	}
-
-	return url;
+	return get_variant_url(request, movie);
 }
 

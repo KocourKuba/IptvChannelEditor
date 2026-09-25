@@ -346,22 +346,7 @@ void plugin_korona::fetch_movie_info(const TemplateParams& params, vod_movie_def
 
 std::wstring plugin_korona::get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie)
 {
-	std::wstring url;
-
-	if (movie.seasons.empty())
-	{
-		url = movie.url;
-	}
-	else
-	{
-		const auto& episodes = movie.seasons.front().episodes;
-		if (!episodes.empty() && request.episode_idx != CB_ERR)
-		{
-			url = episodes[request.episode_idx].url;
-		}
-	}
-
-	return url;
+	return get_variant_url(request, movie);
 }
 
 void plugin_korona::clear_account_info()

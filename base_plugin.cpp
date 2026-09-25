@@ -112,6 +112,31 @@ std::wstring base_plugin::get_play_stream(const TemplateParams& params, const ur
 	return replace_params_vars(params, replace_uri_stream_vars(info, url));
 }
 
+std::wstring base_plugin::get_variant_url(const movie_request& request, const vod_movie_def& movie)
+{
+	const vod_episode_def* source = &movie;
+	if (request.season_idx >= 0 && request.season_idx < (int)movie.seasons.size())
+	{
+		const auto& episodes = movie.seasons[request.season_idx].episodes;
+		if (request.episode_idx >= 0 && request.episode_idx < (int)episodes.size())
+		{
+			source = &episodes[request.episode_idx];
+		}
+	}
+
+	if (request.quality_idx >= 0 && request.quality_idx < (int)source->qualities.size())
+	{
+		return source->qualities[request.quality_idx].url;
+	}
+
+	if (request.audio_idx >= 0 && request.audio_idx < (int)source->audios.size())
+	{
+		return source->audios[request.audio_idx].url;
+	}
+
+	return source->url.empty() ? movie.url : source->url;
+}
+
 std::wstring base_plugin::replace_params_vars(const TemplateParams& params, const std::wstring& url) const
 {
 	std::wstring replaced(url);

@@ -211,7 +211,12 @@ public:
 	/// <summary>
 	/// get movie url
 	/// </summary>
-	virtual std::wstring get_movie_url(const std::shared_ptr<Credentials>&, const movie_request&, const vod_movie_def& movie) { return movie.url; }
+	virtual std::wstring get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie) { return get_variant_url(request, movie); }
+
+	/// <summary>
+	/// url of the selected movie or episode, taking in account selected quality or audio
+	/// </summary>
+	static std::wstring get_variant_url(const movie_request& request, const vod_movie_def& movie);
 
 protected:
 

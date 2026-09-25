@@ -86,6 +86,7 @@ private:
 	void FillEpisodes(const std::shared_ptr<vod_movie_def>& movie);
 	void FillQuality(const vod_variants_storage& qualities);
 	void FillAudio(const vod_variants_storage& audios);
+	void FillVariants(const std::shared_ptr<vod_movie_def>& movie);
 	void FillGenres();
 	void FillYears();
 	void LoadMovieInfo(int idx);

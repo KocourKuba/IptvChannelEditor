@@ -312,7 +312,7 @@ void plugin_edem::fetch_movie_info(const TemplateParams& params, vod_movie_def& 
 								quality.title = utils::utf8_to_utf16(variant_it.key());
 								quality.url = utils::get_json_wstring("", variant_it.value());
 
-								movie.qualities.set_back(quality.title, quality);
+								episode.qualities.set_back(quality.title, quality);
 							}
 						}
 					}
@@ -342,30 +342,7 @@ void plugin_edem::fetch_movie_info(const TemplateParams& params, vod_movie_def& 
 
 std::wstring plugin_edem::get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie)
 {
-	std::wstring url = movie.url;
-
-	if (!movie.qualities.empty() && request.quality_idx != CB_ERR)
-	{
-		url = movie.qualities[request.quality_idx].url;
-	}
-	else if (!movie.seasons.empty())
-	{
-		const auto& episodes = movie.seasons.front().episodes;
-		if (!episodes.empty() && request.episode_idx != CB_ERR)
-		{
-			const auto& quality = episodes[request.episode_idx].qualities;
-			if (quality.empty())
-			{
-				url = episodes[request.episode_idx].url;
-			}
-			else
-			{
-				url = episodes[request.episode_idx].qualities[request.quality_idx].url;
-			}
-		}
-	}
-
-	return url;
+	return get_variant_url(request, movie);
 }
 
 void plugin_edem::update_entry(PlaylistEntry& entry)

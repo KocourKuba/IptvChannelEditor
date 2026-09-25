@@ -268,16 +268,7 @@ void plugin_sharavoz::fetch_movie_info(const TemplateParams& params, vod_movie_d
 
 std::wstring plugin_sharavoz::get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie)
 {
-	if (!movie.seasons.empty() && request.season_idx != CB_ERR)
-	{
-		const auto& episodes = movie.seasons[request.season_idx].episodes;
-		if (!episodes.empty() && request.episode_idx != CB_ERR)
-		{
-			return episodes[request.episode_idx].url;
-		}
-	}
-
-	return movie.url;
+	return get_variant_url(request, movie);
 }
 
 std::wstring plugin_sharavoz::xtream_parse_category(const nlohmann::json& val,
