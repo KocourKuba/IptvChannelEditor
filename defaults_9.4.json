@@ -2167,10 +2167,25 @@
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?:video\\.m3u8|mpegts)\\?token=(?<token>.+)$",
           "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<login>.+)\\/(?<password>.+)\\/.*$",
-          "pl_template": "http://pl.ru-tv.site/{LOGIN}/{PASSWORD}/tv.m3u"
+          "pl_template": "http://pl.{SERVER_ID}/{LOGIN}/{PASSWORD}/tv.m3u"
         }
       ],
       "provider_url": "https://rutv.vip/",
+      "servers_list": [
+        {
+          "id": "myrutv.ru",
+          "name": "Russia"
+        },
+        {
+          "id": "ru-tv.site",
+          "name": "Europe"
+        },
+        {
+          "id": "ru-tv.vip",
+          "name": "USA"
+        }
+      ],
+      "static_servers": true,
       "streams_config": [
         {
           "cu_type": "shift",
@@ -2199,12 +2214,17 @@
         {
           "name": "Standard",
           "parse_regex_title": "(?<title>[^\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
-          "pl_template": "http://pl.ru-tv.site/{LOGIN}/{PASSWORD}/vod.m3u"
+          "pl_template": "http://pl.{SERVER_ID}/{LOGIN}/{PASSWORD}/vod.m3u"
         },
         {
           "name": "Standard with Adult",
           "parse_regex_title": "(?<title>[^\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
-          "pl_template": "http://pl.ru-tv.site/{LOGIN}/{PASSWORD}/vodall.m3u"
+          "pl_template": "http://pl.{SERVER_ID}/{LOGIN}/{PASSWORD}/vodall.m3u"
+        },
+        {
+          "name": "Serials",
+          "parse_regex_title": "(?<title>[^\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
+          "pl_template": "http://pl.{SERVER_ID}/{LOGIN}/{PASSWORD}/series.m3u"
         }
       ]
     },

@@ -563,7 +563,7 @@
     <None Include="scripts\editor.php">
       <Filter>Scripts</Filter>
     </None>
-    <None Include="defaults_9.3.json" />
+    <None Include="defaults_9.4.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\IPTVChannelEditor.ico">
