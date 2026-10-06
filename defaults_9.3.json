@@ -193,7 +193,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/smile/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/smile/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -267,7 +267,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/iptvonline/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -340,7 +340,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/edem/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/edem/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -432,7 +432,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/bcumedia/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/bcumedia/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -487,7 +487,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/yosso/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/yosso/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -606,7 +606,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/edem/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/edem/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -733,7 +733,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/gabbarit/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/gabbarit/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -809,7 +809,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/fox/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/fox/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -872,7 +872,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/glanz/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/glanz/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1004,7 +1004,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/iptvonline/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1115,7 +1115,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/iptvonline/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1265,7 +1265,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/kineskop/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/kineskop/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1320,7 +1320,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/klimedia/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/klimedia/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1428,7 +1428,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/lightiptv/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/lightiptv/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1472,7 +1472,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/mymagic/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/mymagic/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1807,7 +1807,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/iptvonline/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1890,7 +1890,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/yosso/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/yosso/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -1993,7 +1993,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/fox/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/fox/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2138,7 +2138,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/rutv/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/rutv/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2319,7 +2319,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/sharatv/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/sharatv/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2363,7 +2363,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/sharavoz/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/sharavoz/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2469,6 +2469,60 @@
         }
       ],
       "title": "Sharavoz TV",
+      "vod_engine": "XtreamCodes",
+      "vod_templates": [
+        {
+          "name": "Standard",
+          "pl_template": "{API_URL}"
+        }
+      ]
+    },
+    "sharavozpro": {
+      "access_type": "pin",
+      "class_name": "sharavoz_config",
+      "epg_params": [
+        {
+          "epg_param": "first",
+          "epg_url": "http://epg.proiptv.info/sharavoz/epg/{EPG_ID}.json",
+          "epg_desc": "descr",
+          "epg_end": "time_to",
+          "epg_name": "name",
+          "epg_root": "epg_data",
+          "epg_start": "time",
+          "epg_icon": "icon",
+          "epg_id_source": 1
+        },
+        {
+        }
+      ],
+      "name": "sharavoz.pro",
+      "playlist_templates": [
+        {
+          "name": "Standard",
+          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<id>.+)\\/(?:mpegts|index\\.m3u8)\\?token=(?<token>.+)$",
+          "pl_parse_regex": "^https?:\\/\\/[^\\/]+\\/(?<password>[^\\/]+)\\/navigator\\.m3u8$",
+          "pl_template": "https://links-s-pro.cc/{PASSWORD}/navigator.m3u8"
+        }
+      ],
+      "provider_api_url": "http://app.media24.cc/json/c",
+      "provider_url": "https://sharavoz.pro/",
+      "streams_config": [
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/index-{START}-{DURATION}.m3u8?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/index.m3u8?token={TOKEN}"
+        },
+        {
+          "cu_type": "flussonic",
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg",
+          "uri_arc_template": "{SCHEME}://{DOMAIN}/{ID}/archive-{START}-{DURATION}.ts?token={TOKEN}",
+          "uri_template": "{SCHEME}://{DOMAIN}/{ID}/mpegts?token={TOKEN}"
+        }
+      ],
+      "title": "Sharavoz.Pro",
       "vod_engine": "XtreamCodes",
       "vod_templates": [
         {
@@ -2626,7 +2680,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/smile/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/smile/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2726,7 +2780,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/gabbarit/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/gabbarit/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2828,7 +2882,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/iptvonline/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/iptvonline/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -2969,7 +3023,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/uspeh/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/uspeh/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -3020,7 +3074,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/yosso/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/yosso/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -3103,7 +3157,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/viplime/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/viplime/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -3179,7 +3233,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/vivamax/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/vivamax/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
@@ -3237,7 +3291,7 @@
       "epg_params": [
         {
           "epg_param": "first",
-          "epg_url": "http://epg.esalecrm.com/yosso/epg/{EPG_ID}.json",
+          "epg_url": "http://epg.proiptv.info/yosso/epg/{EPG_ID}.json",
           "epg_desc": "descr",
           "epg_end": "time_to",
           "epg_name": "name",
