@@ -1467,6 +1467,54 @@
       ],
       "title": "LightIPTV"
     },
+    "mirkino": {
+      "access_type": "login",
+      "class_name": "mirkino_config",
+      "name": "mirkino",
+      "provider_api_url": "https://{SERVER_ID}.mir-kino.pp.ru",
+      "provider_url": "https://mir-kino.pp.ru/",
+      "servers_list": [
+        {
+          "id": "ru",
+          "name": "Russia"
+        },
+        {
+          "id": "eu",
+          "name": "Europe"
+        },
+        {
+          "id": "cf-eu",
+          "name": "Europe (Cloudflare)"
+        }
+      ],
+      "static_servers": true,
+      "streams_config": [
+        {
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "hls"
+        },
+        {
+          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
+          "stream_type": "mpeg"
+        }
+      ],
+      "title": "Mir Kino",
+      "vod_engine": "Json",
+      "vod_filter": true,
+      "vod_filters": [
+        "source",
+        "genre",
+        "years"
+      ],
+      "vod_quality": true,
+      "vod_season": true,
+      "vod_templates": [
+        {
+          "name": "Standard",
+          "pl_template": "{API_URL}"
+        }
+      ]
+    },
     "mymagic": {
       "access_type": "login",
       "epg_params": [

@@ -786,6 +786,45 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 		}
 	}
 
+	// VOD only provider does not need channels, but plugin requires channels list to start
+	// fake list contains only special groups to show their icons in plugin
+	std::string fake_channels_list;
+	if (channels_list.empty() && plugin->is_vod_only())
+	{
+		const auto& category_root = utils::utf16_to_utf8(std::wstring(utils::PLUGIN_SCHEME) + utils::CATEGORIES_LOGO_URL);
+		const std::array<std::tuple<int, UINT, const char*, const char*>, 4> special_groups = { {
+			{ ID_FAVORITE, IDS_STRING_FAVORITES, utils::FAVORITES, "fav.png" },
+			{ ID_VOD, IDS_STRING_MEDIATEKA, utils::VOD_GROUP, "vod.png" },
+			{ ID_ALL_CHANNELS, IDS_STRING_ALL_CHANNELS, utils::ALL_GROUP, "all.png" },
+			{ ID_HISTORY, IDS_STRING_HISTORY, utils::HISTORY_GROUP, "history.png" },
+		} };
+
+		std::ostringstream os;
+		os << R"(<?xml version="1.0" encoding="UTF-8"?>)" << std::endl
+			<< "<tv_info>" << std::endl
+			<< "\t<version_info>" << std::endl
+			<< "\t\t<list_version>" << CHANNELS_LIST_VERSION << "</list_version>" << std::endl
+			<< "\t</version_info>" << std::endl
+			<< "\t<tv_categories>" << std::endl;
+
+		for (const auto& [id, caption, group, icon] : special_groups)
+		{
+			os << "\t\t<tv_category>" << std::endl
+				<< "\t\t\t<id>" << id << "</id>" << std::endl
+				<< "\t\t\t<caption>" << utils::utf16_to_utf8(load_string_resource(caption)) << "</caption>" << std::endl
+				<< "\t\t\t<icon_url>" << category_root << icon << "</icon_url>" << std::endl
+				<< "\t\t\t<special_group>" << group << "</special_group>" << std::endl
+				<< "\t\t</tv_category>" << std::endl;
+		}
+
+		os << "\t</tv_categories>" << std::endl
+			<< "\t<tv_channels/>" << std::endl
+			<< "</tv_info>" << std::endl;
+
+		fake_channels_list = os.str();
+		channels_list.emplace(std::format("{:s}_channel_list.xml", plugin->get_internal_name_a()), "");
+	}
+
 	if (channels_list.empty())
 	{
 		if (showMessage)
@@ -866,8 +905,17 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	const std::filesystem::path image_cache_path = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
 	for (const auto& ch_list : channels_list)
 	{
-		const auto& channel_path = channelsListPath / ch_list.first;
-		std::ifstream stream(channel_path.wstring());
+		std::unique_ptr<std::istream> list_stream;
+		if (fake_channels_list.empty())
+		{
+			list_stream = std::make_unique<std::ifstream>((channelsListPath / ch_list.first).wstring());
+		}
+		else
+		{
+			list_stream = std::make_unique<std::istringstream>(fake_channels_list);
+		}
+
+		auto& stream = *list_stream;
 		if (!stream.good()) continue;
 
 		std::string line;
@@ -1210,6 +1258,14 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	for (const auto& item : channels_list)
 	{
 		const auto& channels = utils::utf8_to_utf16(item.first);
+		if (!fake_channels_list.empty())
+		{
+			std::ofstream out_file(packFolder / channels, std::ofstream::binary);
+			out_file << fake_channels_list;
+			out_file.close();
+			continue;
+		}
+
 		std::filesystem::copy_file(channelsListPath / channels, packFolder / channels, std::filesystem::copy_options::overwrite_existing, err);
 	}
 

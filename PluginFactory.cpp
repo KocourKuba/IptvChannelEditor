@@ -34,6 +34,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_itv.h"
 #include "plugin_kineskop.h"
 #include "plugin_korona.h"
+#include "plugin_mirkino.h"
 #include "plugin_oneott.h"
 #include "plugin_ottclub.h"
 #include "plugin_piktv.h"
@@ -61,6 +62,7 @@ constexpr const char* const iptvonline = "iptvonline";
 constexpr const char* const itv = "itv";
 constexpr const char* const kineskop = "kineskop";
 constexpr const char* const korona = "korona";
+constexpr const char* const mirkino = "mirkino";
 constexpr const char* const oneott = "oneott";
 constexpr const char* const ottclub = "ottclub";
 constexpr const char* const piktv = "piktv";
@@ -116,6 +118,10 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(const std::string& typ
 	else if (type == korona)
 	{
 		plugin = std::make_shared<plugin_korona>();
+	}
+	else if (type == mirkino)
+	{
+		plugin = std::make_shared<plugin_mirkino>();
 	}
 	else if (type == oneott)
 	{

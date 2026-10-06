@@ -797,7 +797,7 @@ class Default_Dune_Plugin implements DunePlugin
             return '';
         }
 
-        return $media_url;
+        return $this->config->GetVodStreamUrl($media_url);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -1155,6 +1155,9 @@ class Default_Dune_Plugin implements DunePlugin
         $series = $vod_info[PluginVodInfo::series];
         $idx = $vod_info[PluginVodInfo::initial_series_ndx];
         $url = $series[$idx][PluginVodSeriesInfo::playback_url];
+        if (!safe_get_value($series[$idx], PluginVodSeriesInfo::playback_url_is_stream_url, true)) {
+            $url = $this->config->GetVodStreamUrl($url);
+        }
         $param_pos = strpos($url, '|||dune_params');
         $url = $param_pos !== false ? substr($url, 0, $param_pos) : $url;
         $cmd = 'am start -d "' . $url . '" -t "video/*" -a android.intent.action.VIEW 2>&1';

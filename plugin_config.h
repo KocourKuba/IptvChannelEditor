@@ -197,6 +197,12 @@ public:
 	void set_vod_engine(VodEngine val) { vod_engine = val; }
 
 	/// <summary>
+	/// VOD only provider, it does not have tv playlist
+	/// </summary>
+	/// <returns>bool</returns>
+	bool is_vod_only() const { return playlist_templates.empty() && vod_engine != VodEngine::enNone; }
+
+	/// <summary>
 	/// property plugin vod support season
 	/// </summary>
 	bool get_vod_season() const { return vod_season; }

@@ -318,6 +318,9 @@
     <ClInclude Include="plugin_sharavozpro.h">
       <Filter>Header Files\plugin</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_mirkino.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -537,6 +540,9 @@
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
     <ClCompile Include="plugin_sharavozpro.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_mirkino.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1271,6 +1271,17 @@ class default_config extends dynamic_config
     }
 
     /**
+     * Make stream url for movie playback url that is not a stream url (playback_url_is_stream_url is false)
+     *
+     * @param string $playback_url
+     * @return string
+     */
+    public function GetVodStreamUrl($playback_url)
+    {
+        return $playback_url;
+    }
+
+    /**
      * @param string $url
      * @param int $custom_type
      * @return string

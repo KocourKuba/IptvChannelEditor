@@ -479,8 +479,11 @@ class Movie implements User_Input_Handler
             }
 
             $initial_start_array[$counter] = $pos * 1000;
-            $playback_url = $this->plugin->config->UpdateVodUrlParams($playback_url);
-            $playback_url = $this->plugin->config->UpdateDuneParams($playback_url, Plugin_Constants::HLS);
+            if ($playback_url_is_stream_url) {
+                // otherwise stream url and its parameters are made by get_vod_stream_url
+                $playback_url = $this->plugin->config->UpdateVodUrlParams($playback_url);
+                $playback_url = $this->plugin->config->UpdateDuneParams($playback_url, Plugin_Constants::HLS);
+            }
             hd_debug_print("Playback movie: $media_url->movie_id, episode: $series->id ($variant)", true);
             hd_debug_print("Url: $playback_url from $initial_start_array[$counter]", true);
             $series_array[] = array(

@@ -879,7 +879,8 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 			m_all_channels_lists.emplace_back(path.filename());
 	}
 
-	if (m_all_channels_lists.empty())
+	// VOD only provider does not need channels list
+	if (m_all_channels_lists.empty() && !m_plugin->is_vod_only())
 	{
 		UnlockWindowUpdate();
 		CString str;
@@ -1183,7 +1184,11 @@ void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force
 
 	if (m_playlist_url.empty())
 	{
-		AfxMessageBox(IDS_STRING_ERR_SOURCE_NOT_SET, MB_OK | MB_ICONERROR);
+		// VOD only provider does not have tv playlist
+		if (!m_plugin->is_vod_only())
+		{
+			AfxMessageBox(IDS_STRING_ERR_SOURCE_NOT_SET, MB_OK | MB_ICONERROR);
+		}
 		OnEndLoadPlaylist(0);
 		return;
 	}
