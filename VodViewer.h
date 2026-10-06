@@ -77,6 +77,8 @@ protected:
 
 private:
 	std::shared_ptr<vod_movie_def> GetFilteredMovie(int idx);
+	std::wstring GetVodStorageKey() const;
+	void StoreCurrentVod(bool stopped);
 
 	void LoadPlaylist(bool use_cache = true);
 	void LoadM3U8Playlist(bool use_cache = true);
@@ -124,6 +126,8 @@ private:
 	CEvent m_evtFinished;
 	// load thread holds pointer to this dialog until it sends end notification
 	bool m_threadRunning = false;
+	// vod playlist index selected in plugin before dialog opened
+	size_t m_saved_vod_idx = 0;
 	int m_category_idx = -1;
 	int m_genre_idx = -1;
 	int m_year_idx = -1;
