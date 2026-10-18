@@ -1699,7 +1699,7 @@
         {
           "name": "Standard",
           "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/~(?<token>.+)\\/(?<id>.+)\\/hlsx?\\/.+\\.m3u8$",
-          "pl_template": "http://list.1ott.net/api/{S_TOKEN}/high/unix.m3u8"
+          "pl_template": "http://list.1ott.net/api/{S_TOKEN}/high/chanlist.m3u8"
         }
       ],
       "provider_api_url": "http://list.1ott.net",
