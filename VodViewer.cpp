@@ -1223,12 +1223,32 @@ void CVodViewer::FilterList()
 	}
 	else
 	{
-		for (const auto& [key, movie] : m_current_vod.getAt(m_category_idx)->movies.vec())
+		const auto& category = m_current_vod.getAt(m_category_idx);
+
+		// movies of the genre provided by plugin, if movies list does not contain genres
+		std::set<std::wstring> genre_movies;
+		bool by_genre_movies = false;
+		if (filterByGenre && m_genre_idx > 0 && m_genre_idx <= (int)m_genres.size())
+		{
+			TemplateParams params
+			{
+				.creds = m_account
+			};
+
+			m_plugin->update_provider_params(params);
+			by_genre_movies = m_plugin->get_genre_movies(params, category->id, m_genres[static_cast<size_t>(m_genre_idx) - 1].id, genre_movies);
+		}
+
+		for (const auto& [key, movie] : category->movies.vec())
 		{
 			bool genre = true;
 			bool year = true;
 
-			if (filterByGenre && m_genre_idx != 0)
+			if (by_genre_movies)
+			{
+				genre = genre_movies.contains(movie->id);
+			}
+			else if (filterByGenre && m_genre_idx != 0)
 			{
 				const auto& genres = movie->genres.vec();
 				genre = std::find_if(genres.begin(), genres.end(), [&selectedGenre](const auto& pair)

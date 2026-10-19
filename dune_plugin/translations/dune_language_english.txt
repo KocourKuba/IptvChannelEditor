@@ -278,6 +278,11 @@ vod_screen_movie_info__3 = %s|Year: %s|Rating: %s
 vod_screen_movie_info__4 = %s|Year: %s|Country: %s|Genre: %s
 vod_screen_movie_info__5 = %s|Year: %s|Country: %s|Genre: %s|Rating: %s
 vod_screen_air_date__2 = %s||Air date: %s
+vod_filter_type = Type
+vod_filter_type_all = All
+vod_filter_type_film = Films
+vod_filter_type_serial = TV Series
+vod_filter_type_animation = Animation
 
 warn_msg1 = Warning: Channels list version is newer \nthan the one supported by the current plugin.\nPossible playback errors.\nPlease update the plugin to a newer version.
 warn_msg2__1 = Missed or not full data for URL generation.\nPossible not entered account data or channel not present in the current subscription.\n %s

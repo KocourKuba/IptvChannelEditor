@@ -62,6 +62,7 @@ Plugins using PHP 5.3! This is a restriction by Dune HD API
 53. [VivaMax](https://t.me/vivamax_portal)
 54. [TV Boom](https://tvboom.vip/)
 55. [Mir Kino](https://mir-kino.pp.ru/) (VOD)
+56. [Torrent TV](https://ttvrun.one/)
 </details>
 
 ## Donate

@@ -209,6 +209,12 @@ public:
 	virtual void fetch_movie_info(const TemplateParams& params, vod_movie_def& movie) {}
 
 	/// <summary>
+	/// ids of the movies of the genre, used when movies list does not contain movie genres
+	/// </summary>
+	/// <returns>false if not supported, movies are filtered by own genres</returns>
+	virtual bool get_genre_movies(const TemplateParams& params, const std::wstring& category_id, const std::wstring& genre_id, std::set<std::wstring>& movie_ids) { return false; }
+
+	/// <summary>
 	/// get movie url
 	/// </summary>
 	virtual std::wstring get_movie_url(const std::shared_ptr<Credentials>&, const movie_request& request, const vod_movie_def& movie) { return get_variant_url(request, movie); }

@@ -321,6 +321,9 @@
     <ClInclude Include="plugin_mirkino.h">
       <Filter>Header Files\plugin</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_ttv.h">
+      <Filter>Header Files\plugin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -543,6 +546,9 @@
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
     <ClCompile Include="plugin_mirkino.cpp">
+      <Filter>Source Files\plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_ttv.cpp">
       <Filter>Source Files\plugin</Filter>
     </ClCompile>
   </ItemGroup>

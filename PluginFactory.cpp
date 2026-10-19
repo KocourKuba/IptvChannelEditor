@@ -42,6 +42,7 @@ DEALINGS IN THE SOFTWARE.
 #include "plugin_sharavoz.h"
 #include "plugin_sharavozpro.h"
 #include "plugin_shuriktv.h"
+#include "plugin_ttv.h"
 #include "plugin_tvclub.h"
 #include "plugin_tvizi.h"
 #include "plugin_tvteam.h"
@@ -70,6 +71,7 @@ constexpr const char* const sharaclub = "sharaclub";
 constexpr const char* const sharavoz = "sharavoz";
 constexpr const char* const sharavozpro = "sharavozpro";
 constexpr const char* const shuriktv = "shuriktv";
+constexpr const char* const ttv = "ttv";
 constexpr const char* const tvclub = "tvclub";
 constexpr const char* const tvizi = "tvizi";
 constexpr const char* const tvteam = "tvteam";
@@ -150,6 +152,10 @@ std::shared_ptr<base_plugin> PluginFactory::create_plugin(const std::string& typ
 	else if (type == shuriktv)
 	{
 		plugin = std::make_shared<plugin_shuriktv>();
+	}
+	else if (type == ttv)
+	{
+		plugin = std::make_shared<plugin_ttv>();
 	}
 	else if (type == tvclub)
 	{
