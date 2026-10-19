@@ -1260,61 +1260,6 @@
       ],
       "title": "ITV Live TV"
     },
-    "kineskop": {
-      "access_type": "login",
-      "epg_params": [
-        {
-          "epg_param": "first",
-          "epg_url": "http://epg.proiptv.info/kineskop/epg/{EPG_ID}.json",
-          "epg_desc": "descr",
-          "epg_end": "time_to",
-          "epg_name": "name",
-          "epg_root": "epg_data",
-          "epg_start": "time",
-          "epg_icon": "icon"
-        },
-        {}
-      ],
-      "name": "kineskop",
-      "playlist_templates": [
-        {
-          "name": "Standard",
-          "parse_regex": "^(?<scheme>https?):\\/\\/(?<domain>.+)\\/(?<host>.+)\\/(?<id>.+)\\/(?<token>.+)\\.m3u8$",
-          "pl_template": "http://knkp.in/{LOGIN}/{PASSWORD}/{SERVER}/1"
-        }
-      ],
-      "provider_url": "http://kineskop.club/",
-      "servers_list": [
-        {
-          "id": "0",
-          "name": "DE"
-        },
-        {
-          "id": "1",
-          "name": "PL"
-        },
-        {
-          "id": "2",
-          "name": "US"
-        },
-        {
-          "id": "3",
-          "name": "RU"
-        }
-      ],
-      "static_servers": true,
-      "streams_config": [
-        {
-          "cu_type": "shift",
-          "dune_params": "psi_opt:2,ss_for_http_ts:1,keep_pic:0",
-          "stream_type": "hls",
-          "uri_arc_template": "{LIVE_URL}?utc={START}&lutc={NOW}",
-          "uri_template": "{SCHEME}://{DOMAIN}/{HOST}/{ID}/{TOKEN}.m3u8"
-        },
-        {}
-      ],
-      "title": "Kineskop.Club"
-    },
     "klimedia": {
       "access_type": "pin",
       "domains_list": [
