@@ -41,18 +41,17 @@ public:
 	void parse_account_info(TemplateParams& params) override;
 	void parse_vod(const ThreadConfig& config) override;
 	void fetch_movie_info(const TemplateParams& params, vod_movie_def& movie) override;
-	bool get_genre_movies(const TemplateParams& params, const std::wstring& category_id, const std::wstring& genre_id, std::set<std::wstring>& movie_ids) override;
 
 private:
 	bool login(const TemplateParams& params, bool force = false);
 	nlohmann::json api_request(const TemplateParams& params, const std::wstring& command, const std::wstring& query = L"", bool use_cache = false);
 	nlohmann::json download_json(utils::http_request& req) const;
+	void load_type_movies(const ThreadConfig& config, const std::wstring& type, vod_category& category,
+						  const std::map<std::wstring, std::wstring>& genre_names, utils::progress_info& info, int& cnt);
 	static std::string make_guid(const std::string& login);
 
 private:
 	std::wstring session_file;
 	std::string session;
 	std::string playlist_token;
-	// movies ids of the genre: category|genre_id
-	std::map<std::wstring, std::set<std::wstring>> genre_movies_cache;
 };

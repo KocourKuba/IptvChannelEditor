@@ -39,8 +39,8 @@ DEALINGS IN THE SOFTWARE.
 
 // API documentation https://tapitv.com/v3/api_v3.html
 
-constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/auth.php?username={:s}&password={:s}&application=android&guid={:s}&typeresult=json";
-constexpr auto API_COMMAND_URL = L"{{API_URL}}/{:s}.php?session={:s}&typeresult=json";
+constexpr auto API_COMMAND_AUTH = L"{{API_URL}}/auth.php?username={:s}&password={:s}&application=android&guid={:s}";
+constexpr auto API_COMMAND_URL = L"{{API_URL}}/{:s}.php?session={:s}";
 constexpr auto SESSION_TOKEN_TEMPLATE = "session_token_{:s}";
 // error code of the expired or revoked session, new session must be requested
 constexpr auto ERROR_INCORRECT = "incorrect";
@@ -49,8 +49,9 @@ constexpr auto TYPE_ALL = L"all";
 constexpr auto TYPE_SERIAL = L"serial";
 // part of the directors role name in the film_alt_info persons
 constexpr auto ROLE_DIRECTOR = L"\u0435\u0436\u0438\u0441\u0441";
+// max limit of the film_alt_list request
 constexpr int PAGE_SIZE = 100;
-// parallel requests for the movies of the genre
+// parallel requests of the catalog pages
 constexpr int PARALLEL_REQUESTS = 8;
 // session does not expire while in use, refresh it once a week
 constexpr time_t SESSION_LIFETIME = 7 * 24 * 3600;
@@ -336,7 +337,6 @@ void plugin_ttv::parse_account_info(TemplateParams& params)
 void plugin_ttv::parse_vod(const ThreadConfig& config)
 {
 	auto categories = std::make_unique<vod_category_storage>();
-	genre_movies_cache.clear();
 
 	do
 	{
@@ -363,10 +363,11 @@ void plugin_ttv::parse_vod(const ThreadConfig& config)
 		config.progress_callback(info);
 		info.type = utils::ProgressType::Progress;
 
+		// genre names by id: genres of the movie are matched by name to the genres of the category
+		std::map<std::wstring, std::wstring> genre_names;
+		std::vector<std::shared_ptr<vod_category>> type_categories;
 		for (const auto& section : sections["data"])
 		{
-			if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
-
 			JSON_ALL_TRY
 			{
 				const auto& type = utils::get_json_wstring("type", section);
@@ -376,8 +377,8 @@ void plugin_ttv::parse_vod(const ThreadConfig& config)
 				auto category = std::make_shared<vod_category>(type);
 				category->name = name;
 				categories->set_back(type, category);
+				type_categories.emplace_back(category);
 
-				// movies list does not contain genres, movies of the genre are requested by get_genre_movies.
 				// Genre without id is 'All genres', -1 is user favorites
 				if (section.contains("genres"))
 				{
@@ -390,45 +391,18 @@ void plugin_ttv::parse_vod(const ThreadConfig& config)
 						vod_genre_def genre_def({ std::to_wstring(genre_id), genre_name });
 						category->genres.set_back(genre_def.id, genre_def);
 						all_category->genres.set_back(genre_def.id, genre_def);
+						genre_names.emplace(genre_def.id, genre_name);
 					}
-				}
-
-				for (int page = 1;; page++)
-				{
-					const auto& films = api_request(params, L"film_filter", std::format(L"&type={:s}&page={:d}&page_size={:d}", type, page, PAGE_SIZE), true);
-					if (!films.contains("data") || !films["data"].contains("result")) break;
-
-					const auto& data = films["data"];
-					for (const auto& item : data["result"])
-					{
-						const auto& movie_id = utils::get_json_wstring("id", item);
-						if (movie_id.empty() || category->movies.contains(movie_id)) continue;
-
-						auto movie = std::make_shared<vod_movie_def>();
-						movie->id = movie_id;
-						movie->title = utils::get_json_wstring("name", item);
-						movie->is_series = (type == TYPE_SERIAL);
-						movie->year = utils::get_json_wstring("year", item);
-						movie->rating = get_rating(item);
-						movie->country = utils::get_json_wstring("country", item);
-						// first 255 chars, full description is loaded with movie info
-						movie->description = utils::get_json_wstring("description", item);
-						movie->movie_time = utils::char_to_int(utils::get_json_wstring("length", item)); // '119 min. / 01:59'
-						movie->poster_url.set_uri(utils::get_json_wstring("poster", item));
-						movie->category = type;
-
-						category->movies.set_back(movie_id, movie);
-						++cnt;
-					}
-
-					info.curPos = info.value = cnt;
-					config.progress_callback(info);
-
-					if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
-					if (page >= utils::get_json_int("pages", data)) break;
 				}
 			}
 			JSON_ALL_CATCH
+		}
+
+		for (const auto& category : type_categories)
+		{
+			if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) break;
+
+			load_type_movies(config, category->id, *category, genre_names, info, cnt);
 		}
 	} while (false);
 
@@ -440,6 +414,137 @@ void plugin_ttv::parse_vod(const ThreadConfig& config)
 	utils::progress_info info{ .type = utils::ProgressType::Finalizing };
 	config.progress_callback(info);
 	SendNotifyParent(config.m_parent, WM_END_LOAD_JSON_PLAYLIST, (WPARAM)categories.release());
+}
+
+void plugin_ttv::load_type_movies(const ThreadConfig& config,
+								  const std::wstring& type,
+								  vod_category& category,
+								  const std::map<std::wstring, std::wstring>& genre_names,
+								  utils::progress_info& info,
+								  int& cnt)
+{
+	// film_alt_list is the only movies list with the genres of the movie.
+	// It is paginated by limit/skip, has no total count and requires the type
+	const auto& params = config.m_params;
+	const auto add_movies = [&](const nlohmann::json& films)
+	{
+		for (const auto& item : films["data"])
+		{
+			const auto& movie_id = utils::get_json_wstring("id", item);
+			if (movie_id.empty() || category.movies.contains(movie_id)) continue;
+
+			auto movie = std::make_shared<vod_movie_def>();
+			movie->id = movie_id;
+			movie->title = utils::get_json_wstring("name", item);
+			movie->is_series = (type == TYPE_SERIAL);
+			movie->year = utils::get_json_wstring("year", item);
+			movie->rating = get_rating(item);
+			movie->country = utils::get_json_wstring("country", item);
+			// first 255 chars, full description is loaded with movie info
+			movie->description = utils::get_json_wstring("description", item);
+			movie->movie_time = utils::char_to_int(utils::get_json_wstring("length", item)); // '119 min. / 01:59'
+			movie->poster_url.set_uri(utils::get_json_wstring("poster", item));
+			movie->category = type;
+
+			// genres: [ { "id": 404, "genre": "name" } ], the name is taken from the genres list to match the category genre
+			if (item.contains("genres") && item["genres"].is_array())
+			{
+				for (const auto& genre : item["genres"])
+				{
+					const auto& genre_id = utils::get_json_wstring("id", genre);
+					if (genre_id.empty()) continue;
+
+					const auto& it = genre_names.find(genre_id);
+					const auto& genre_name = (it != genre_names.end()) ? it->second : utils::get_json_wstring("genre", genre);
+					if (!genre_name.empty())
+					{
+						movie->genres.set_back(genre_id, vod_genre_def({ genre_id, genre_name }));
+					}
+				}
+			}
+
+			category.movies.set_back(movie_id, movie);
+			++cnt;
+		}
+
+		info.curPos = info.value = cnt;
+		config.progress_callback(info);
+	};
+
+	const auto page_query = [&type](int page)
+	{
+		return std::format(L"&type={:s}&limit={:d}&skip={:d}", type, PAGE_SIZE, page * PAGE_SIZE);
+	};
+
+	JSON_ALL_TRY
+	{
+		// first page checks the session
+		const auto& first = api_request(params, L"film_alt_list", page_query(0), true);
+		if (!first.contains("data") || !first["data"].is_array()) return;
+
+		add_movies(first);
+		if (first["data"].size() < PAGE_SIZE) return;
+
+		// pages count is taken from the film_filter count of the type
+		const auto& total = api_request(params, L"film_filter", std::format(L"&type={:s}&page=1&page_size=1", type), true);
+		const auto pages = total.contains("data") ? (utils::get_json_int("count", total["data"]) + PAGE_SIZE - 1) / PAGE_SIZE : 0;
+		if (pages <= 0)
+		{
+			// count is unknown, read page by page until the last one
+			for (int page = 1;; page++)
+			{
+				if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) return;
+
+				const auto& films = api_request(params, L"film_alt_list", page_query(page), true);
+				if (!films.contains("data") || !films["data"].is_array()) return;
+
+				add_movies(films);
+				if (films["data"].size() < PAGE_SIZE) return;
+			}
+		}
+
+		// big type has dozens of pages, they are downloaded in parallel
+		for (int batch = 1; batch < pages; batch += PARALLEL_REQUESTS)
+		{
+			if (::WaitForSingleObject(config.m_hStop, 0) == WAIT_OBJECT_0) return;
+
+			std::vector<utils::http_request> requests(std::min(PARALLEL_REQUESTS, pages - batch));
+			std::vector<std::future<bool>> results;
+			for (size_t i = 0; i < requests.size(); i++)
+			{
+				requests[i].url = replace_params_vars(params, std::format(API_COMMAND_URL, L"film_alt_list", utils::utf8_to_utf16(session)))
+					+ page_query(batch + static_cast<int>(i));
+				requests[i].cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
+				requests[i].timeouts = GetConfig().GetTimeouts();
+				results.emplace_back(utils::AsyncDownloadFile(requests[i]));
+			}
+
+			for (size_t i = 0; i < requests.size(); i++)
+			{
+				nlohmann::json films;
+				if (results[i].get())
+				{
+					JSON_ALL_TRY
+					{
+						films = nlohmann::json::parse(requests[i].body.str());
+					}
+					JSON_ALL_CATCH
+				}
+
+				if (utils::get_json_int("success", films) != 1 || !films.contains("data") || !films["data"].is_array())
+				{
+					// error response must not be taken from cache, the page is requested again with the session check
+					LOG_PROTOCOL(std::format(L"plugin_ttv: Bad response ({:s}) on request: {:s}", requests[i].error_message, requests[i].url));
+					utils::ClearCachedUrl(requests[i].url);
+					films = api_request(params, L"film_alt_list", page_query(batch + static_cast<int>(i)), true);
+					if (!films.contains("data") || !films["data"].is_array()) continue;
+				}
+
+				add_movies(films);
+			}
+		}
+	}
+	JSON_ALL_CATCH
 }
 
 void plugin_ttv::fetch_movie_info(const TemplateParams& params, vod_movie_def& movie)
@@ -462,7 +567,8 @@ void plugin_ttv::fetch_movie_info(const TemplateParams& params, vod_movie_def& m
 			movie.casting = join_json_array(data, "actors");
 			movie.director = get_persons(data, ROLE_DIRECTOR);
 
-			if (data.contains("genres") && data["genres"].is_array())
+			// genres are loaded with the movies list
+			if (movie.genres.empty() && data.contains("genres") && data["genres"].is_array())
 			{
 				for (const auto& genre_item : data["genres"])
 				{
@@ -547,90 +653,4 @@ void plugin_ttv::fetch_movie_info(const TemplateParams& params, vod_movie_def& m
 		}
 	}
 	JSON_ALL_CATCH
-}
-
-bool plugin_ttv::get_genre_movies(const TemplateParams& params, const std::wstring& category_id, const std::wstring& genre_id, std::set<std::wstring>& movie_ids)
-{
-	// category id is the type of the film_filter request, 'All' category contains all types
-	const auto& type = (category_id == load_string_resource(IDS_STRING_ALL)) ? std::wstring(TYPE_ALL) : category_id;
-	const auto& key = type + L"|" + genre_id;
-	if (const auto& it = genre_movies_cache.find(key); it != genre_movies_cache.end())
-	{
-		movie_ids = it->second;
-		return true;
-	}
-
-	const auto& query = std::format(L"&type={:s}&genres_include[]={:s}&page_size={:d}&page=", type, genre_id, PAGE_SIZE);
-	const auto add_movies = [&movie_ids](const nlohmann::json& films)
-	{
-		for (const auto& item : films["data"]["result"])
-		{
-			const auto& movie_id = utils::get_json_wstring("id", item);
-			if (!movie_id.empty())
-			{
-				movie_ids.emplace(movie_id);
-			}
-		}
-	};
-
-	bool loaded = false;
-	JSON_ALL_TRY
-	{
-		// first page checks the session and gives the pages count
-		const auto& first = api_request(params, L"film_filter", query + L"1", true);
-		if (first.contains("data") && first["data"].contains("result"))
-		{
-			loaded = true;
-			add_movies(first);
-
-			// big genre has dozens of pages, they are downloaded in parallel
-			const auto pages = utils::get_json_int("pages", first["data"]);
-			for (int batch = 2; batch <= pages; batch += PARALLEL_REQUESTS)
-			{
-				std::vector<utils::http_request> requests(std::min(PARALLEL_REQUESTS, pages - batch + 1));
-				std::vector<std::future<bool>> results;
-				for (size_t i = 0; i < requests.size(); i++)
-				{
-					requests[i].url = replace_params_vars(params, std::format(API_COMMAND_URL, L"film_filter", utils::utf8_to_utf16(session)))
-						+ query + std::to_wstring(batch + i);
-					requests[i].cache_ttl = GetConfig().get_chrono(true, REG_MAX_CACHE_TTL);
-					requests[i].timeouts = GetConfig().GetTimeouts();
-					results.emplace_back(utils::AsyncDownloadFile(requests[i]));
-				}
-
-				for (size_t i = 0; i < requests.size(); i++)
-				{
-					nlohmann::json films;
-					if (results[i].get())
-					{
-						JSON_ALL_TRY
-						{
-							films = nlohmann::json::parse(requests[i].body.str());
-						}
-						JSON_ALL_CATCH
-					}
-
-					if (utils::get_json_int("success", films) == 1 && films.contains("data") && films["data"].contains("result"))
-					{
-						add_movies(films);
-					}
-					else
-					{
-						LOG_PROTOCOL(std::format(L"plugin_ttv: Bad response ({:s}) on request: {:s}", requests[i].error_message, requests[i].url));
-						utils::ClearCachedUrl(requests[i].url);
-						loaded = false;
-					}
-				}
-			}
-		}
-	}
-	JSON_ALL_CATCH
-
-	// incomplete list is not cached, it will be requested again on next selection
-	if (loaded)
-	{
-		genre_movies_cache.emplace(key, movie_ids);
-	}
-
-	return true;
 }
