@@ -931,7 +931,7 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "pl_template": "http://api.{DOMAIN_ID}/playlist/vod?login={LOGIN}&password={PASSWORD}"
+          "pl_template": "http://api.ottg.tv/playlist/vod?login={LOGIN}&password={PASSWORD}"
         }
       ]
     },
