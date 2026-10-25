@@ -3039,6 +3039,13 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 			}
 		}
 
+		// VOD only provider uses only Mediateka from special categories
+		if (m_plugin->is_vod_only() && category->is_not_movable() && !category->is_vod())
+		{
+			cat_node = cat_node->next_sibling(utils::TV_CATEGORY);
+			continue;
+		}
+
 		CategoryInfo info = { nullptr, category };
 		const auto& [it, res] = m_categoriesMap.emplace(category->get_key(), info);
 		if (!res && category->is_not_movable())
@@ -3049,7 +3056,9 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		cat_node = cat_node->next_sibling(utils::TV_CATEGORY);
 	}
 
-	const auto& fav_info = m_categoriesMap[ID_FAVORITE];
+	// favorites category is absent for VOD only provider
+	const auto& fav_pair = m_categoriesMap.find(ID_FAVORITE);
+	const auto& fav_category = fav_pair != m_categoriesMap.end() ? fav_pair->second.category : nullptr;
 
 	auto chs_node = i_node->first_node(utils::TV_CHANNELS);
 	auto ch_node = chs_node ? chs_node->first_node(utils::TV_CHANNEL) : nullptr;
@@ -3080,9 +3089,9 @@ bool CIPTVChannelEditorDlg::LoadChannels()
 		{
 			ch_pair = m_channelsMap.emplace(id, channel).first;
 			// compatibility with channel list version < 5
-			if (channel->is_favorite())
+			if (channel->is_favorite() && fav_category)
 			{
-				fav_info.category->add_channel(channel);
+				fav_category->add_channel(channel);
 			}
 
 			ch_pair->second->get_category_ids().insert(channel->get_category_ids().begin(), channel->get_category_ids().end());
@@ -3114,6 +3123,21 @@ void CIPTVChannelEditorDlg::CreateSpecialCategories()
 	const auto& image_path = GetConfig().get_string(true, REG_SAVE_IMAGE_PATH);
 	std::wstring category_root = utils::PLUGIN_SCHEME;
 	category_root += utils::CATEGORIES_LOGO_URL;
+	// VOD only provider does not have channels, only Mediateka category is used
+	const bool vod_only = m_plugin->is_vod_only();
+	if (m_plugin->get_vod_engine() != VodEngine::enNone)
+	{
+		auto vod_category = std::make_shared<ChannelCategory>(image_path);
+		vod_category->set_icon_uri(category_root + L"vod.png");
+		vod_category->set_title(load_string_resource(IDS_STRING_MEDIATEKA));
+		vod_category->set_key(ID_VOD);
+		CategoryInfo vod_info = { nullptr, vod_category };
+		m_categoriesMap.emplace(ID_VOD, vod_info);
+	}
+
+	if (vod_only)
+		return;
+
 	auto all_category = std::make_shared<ChannelCategory>(image_path);
 	all_category->set_icon_uri(category_root + L"all.png");
 	all_category->set_title(load_string_resource(IDS_STRING_ALL_CHANNELS));
@@ -3127,16 +3151,6 @@ void CIPTVChannelEditorDlg::CreateSpecialCategories()
 	hist_category->set_key(ID_HISTORY);
 	CategoryInfo hist_info = { nullptr, hist_category };
 	m_categoriesMap.emplace(ID_HISTORY, hist_info);
-
-	if (m_plugin->get_vod_engine() != VodEngine::enNone)
-	{
-		auto vod_category = std::make_shared<ChannelCategory>(image_path);
-		vod_category->set_icon_uri(category_root + L"vod.png");
-		vod_category->set_title(load_string_resource(IDS_STRING_MEDIATEKA));
-		vod_category->set_key(ID_VOD);
-		CategoryInfo vod_info = { nullptr, vod_category };
-		m_categoriesMap.emplace(ID_VOD, vod_info);
-	}
 
 	auto fav_category = std::make_shared<ChannelCategory>(image_path);
 	fav_category->set_icon_uri(category_root + L"fav.png");
@@ -6124,6 +6138,12 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboChannels()
 			str.Format(IDS_STRING_ERR_LOAD_CHANNELS_LIST, m_all_channels_lists[idx].c_str());
 			AfxMessageBox(str, MB_ICONERROR | MB_OK);
 		}
+	}
+	else if (m_plugin->is_vod_only())
+	{
+		// VOD only provider may not have channels list yet
+		// but special categories (VOD) must be shown to allow change their icons
+		CreateSpecialCategories();
 	}
 
 	FillTreeChannels();

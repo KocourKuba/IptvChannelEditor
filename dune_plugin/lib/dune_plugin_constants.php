@@ -3,6 +3,7 @@
 # Common actions
 const ACTION_ADD_FAV = 'add_favorite';
 const ACTION_CHANGE_PLAYLIST = 'change_playlist';
+const ACTION_CHANGE_CATEGORY_MODE = 'change_category_mode';
 const ACTION_EXTERNAL_PLAYER = 'use_external_player';
 const ACTION_INTERNAL_PLAYER = 'use_internal_player';
 const ACTION_FOLDER_SELECTED = 'folder_selected';
@@ -61,6 +62,7 @@ const PARAM_ADULT_PASSWORD = 'adult_password';
 const PARAM_PLAYLIST = 'playlist';
 const PARAM_PLAYLIST_IDX = 'playlist_idx';
 const PARAM_VOD_IDX = 'vod_idx';
+const PARAM_VOD_CATEGORY_MODE = 'vod_category_mode';
 const PARAM_FAVORITES = 'favorites';
 const PARAM_ASK_EXIT = 'ask_exit';
 const PARAM_SHOW_ALL = 'show_all';

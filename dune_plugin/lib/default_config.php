@@ -464,6 +464,17 @@ class default_config extends dynamic_config
     }
 
     /**
+     * VOD only provider does not have tv playlist
+     *
+     * @return bool
+     */
+    public function is_vod_only()
+    {
+        $tv_lists_array = $this->get_feature(Plugin_Constants::PLAYLIST_TEMPLATES);
+        return empty($tv_lists_array) && $this->get_feature(Plugin_Constants::VOD_ENGINE) !== "None";
+    }
+
+    /**
      * @return array
      */
     public function get_tv_list_names()
@@ -627,6 +638,35 @@ class default_config extends dynamic_config
     public function set_filter_types($filters)
     {
         $this->filters = $filters;
+    }
+
+    /**
+     * Category list modes the user can switch between from the category list popup menu
+     * (mode id => caption). Empty if the VOD has a single category list.
+     *
+     * @return array
+     */
+    public function get_category_modes()
+    {
+        return array();
+    }
+
+    /**
+     * @return string
+     */
+    public function get_category_mode()
+    {
+        return '';
+    }
+
+    /**
+     * Select the category list mode, the categories are rebuilt on the next fetchVodCategories
+     *
+     * @param string $mode
+     * @return void
+     */
+    public function set_category_mode($mode)
+    {
     }
 
     /**

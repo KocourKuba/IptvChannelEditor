@@ -283,6 +283,7 @@ vod_filter_type_all = All
 vod_filter_type_film = Films
 vod_filter_type_serial = TV Series
 vod_filter_type_animation = Animation
+vod_categories_by__1 = Categories: %s
 
 warn_msg1 = Warning: Channels list version is newer \nthan the one supported by the current plugin.\nPossible playback errors.\nPlease update the plugin to a newer version.
 warn_msg2__1 = Missed or not full data for URL generation.\nPossible not entered account data or channel not present in the current subscription.\n %s

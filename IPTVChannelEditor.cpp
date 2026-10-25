@@ -787,16 +787,13 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	}
 
 	// VOD only provider does not need channels, but plugin requires channels list to start
-	// fake list contains only special groups to show their icons in plugin
+	// fake list contains only VOD special group to show its icon in plugin
 	std::string fake_channels_list;
 	if (channels_list.empty() && plugin->is_vod_only())
 	{
 		const auto& category_root = utils::utf16_to_utf8(std::wstring(utils::PLUGIN_SCHEME) + utils::CATEGORIES_LOGO_URL);
-		const std::array<std::tuple<int, UINT, const char*, const char*>, 4> special_groups = { {
-			{ ID_FAVORITE, IDS_STRING_FAVORITES, utils::FAVORITES, "fav.png" },
+		const std::array<std::tuple<int, UINT, const char*, const char*>, 1> special_groups = { {
 			{ ID_VOD, IDS_STRING_MEDIATEKA, utils::VOD_GROUP, "vod.png" },
-			{ ID_ALL_CHANNELS, IDS_STRING_ALL_CHANNELS, utils::ALL_GROUP, "all.png" },
-			{ ID_HISTORY, IDS_STRING_HISTORY, utils::HISTORY_GROUP, "history.png" },
 		} };
 
 		std::ostringstream os;

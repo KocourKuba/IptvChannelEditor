@@ -50,18 +50,18 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
             GUI_EVENT_KEY_C_YELLOW => User_Input_Handler_Registry::create_action($this, ACTION_RELOAD, TR::t('vod_screen_reload_playlist')),
         );
 
-        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) === "M3U") {
-            $current_idx = 0;
-            $all_vod_lists = $this->plugin->config->get_vod_list_names($current_idx);
-            if (count($all_vod_lists) > 1) {
-                $change_playlist = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU);
-                $change_playlist['caption'] = TR::t('vod_screen_change_playlist');
-                if (is_limited_apk()) {
-                    $actions[GUI_EVENT_KEY_POPUP_MENU] = $change_playlist;
-                } else {
-                    $actions[GUI_EVENT_KEY_B_GREEN] = $change_playlist;
-                }
+        $popup_menu = User_Input_Handler_Registry::create_action($this, GUI_EVENT_KEY_POPUP_MENU);
+        if (count($this->get_vod_lists()) > 1) {
+            $popup_menu['caption'] = TR::t('vod_screen_change_playlist');
+            if (is_limited_apk()) {
+                $actions[GUI_EVENT_KEY_POPUP_MENU] = $popup_menu;
+            } else {
+                $actions[GUI_EVENT_KEY_B_GREEN] = $popup_menu;
             }
+        }
+
+        if (count($this->plugin->config->get_category_modes()) > 1) {
+            $actions[GUI_EVENT_KEY_POPUP_MENU] = $popup_menu;
         }
 
         return $actions;
@@ -99,19 +99,54 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
                 }
                 break;
 
-            case GUI_EVENT_KEY_POPUP_MENU;
+            case ACTION_CHANGE_CATEGORY_MODE:
+                if (!isset($user_input->{PARAM_VOD_CATEGORY_MODE})
+                    || $user_input->{PARAM_VOD_CATEGORY_MODE} === $this->plugin->config->get_category_mode()) {
+                    break;
+                }
+
+                hd_debug_print("change VOD category mode to: " . $user_input->{PARAM_VOD_CATEGORY_MODE});
+                $this->plugin->config->set_category_mode($user_input->{PARAM_VOD_CATEGORY_MODE});
+                unset($this->category_list, $this->category_index);
+                $media_url = MediaURL::decode($user_input->parent_media_url);
+                $range = $this->get_folder_range($media_url, 0, $plugin_cookies);
+                return Action_Factory::update_regular_folder($range, true, -1);
+
+            case GUI_EVENT_KEY_POPUP_MENU:
                 $menu_items = array();
                 $current_idx = 0;
-                $all_vod_lists = $this->plugin->config->get_vod_list_names($current_idx);
-                foreach ($all_vod_lists as $idx => $list) {
-                    $add_param[PARAM_PLAYLIST] = $idx;
+                $all_vod_lists = $this->get_vod_lists($current_idx);
+                if (count($all_vod_lists) > 1) {
+                    foreach ($all_vod_lists as $idx => $list) {
+                        $add_param[PARAM_PLAYLIST] = $idx;
 
-                    $icon_url = null;
-                    if ($idx === $current_idx) {
-                        $icon_url = "check.png";
+                        $icon_url = null;
+                        if ($idx === $current_idx) {
+                            $icon_url = "check.png";
+                        }
+                        $menu_items[] = $this->plugin->create_menu_item($this, ACTION_CHANGE_PLAYLIST, $list, $icon_url, $add_param);
                     }
-                    $menu_items[] = User_Input_Handler_Registry::create_popup_item($this, ACTION_CHANGE_PLAYLIST, $list, $icon_url, $add_param);
                 }
+
+                // category list modes (genres, types, ...), the current one is checked
+                $category_modes = $this->plugin->config->get_category_modes();
+                if (count($category_modes) > 1) {
+                    if (!empty($menu_items)) {
+                        $menu_items[] = array(GuiMenuItemDef::is_separator => true);
+                    }
+
+                    $current_mode = $this->plugin->config->get_category_mode();
+                    foreach ($category_modes as $mode => $caption) {
+                        $menu_items[] = $this->plugin->create_menu_item($this,
+                            ACTION_CHANGE_CATEGORY_MODE,
+                            TR::t('vod_categories_by__1', $caption),
+                            (string)$mode === $current_mode ? "check.png" : null,
+                            array(PARAM_VOD_CATEGORY_MODE => (string)$mode)
+                        );
+                    }
+                }
+
+                if (empty($menu_items)) break;
 
                 return Action_Factory::show_popup_menu($menu_items);
         }
@@ -227,6 +262,21 @@ class Starnet_Vod_Category_List_Screen extends Abstract_Preloaded_Regular_Screen
         }
 
         return $items;
+    }
+
+    /**
+     * M3U VOD playlists to switch between
+     *
+     * @param int $current_idx
+     * @return array
+     */
+    protected function get_vod_lists(&$current_idx = 0)
+    {
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) !== "M3U") {
+            return array();
+        }
+
+        return $this->plugin->config->get_vod_list_names($current_idx);
     }
 
     /**

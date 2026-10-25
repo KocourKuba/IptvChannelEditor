@@ -171,6 +171,11 @@ class Default_Group extends Json_Serializer implements Group
      */
     public function is_disabled()
     {
+        // VOD only provider does not have channels, only Mediateka is shown
+        if ($this->_id !== VOD_GROUP_ID && $this->is_special_group() && $this->plugin->config->is_vod_only()) {
+            return true;
+        }
+
         if ($this->_id === ALL_CHANNEL_GROUP_ID) {
             return !$this->plugin->get_bool_setting(PARAM_SHOW_ALL);
         }
