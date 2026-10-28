@@ -77,7 +77,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen
                 return Action_Factory::invalidate_folders(array(Starnet_Vod_Search_Screen::get_media_url_str()),
                     Action_Factory::open_folder(
                         static::get_media_url_string(Vod_Category::FLAG_SEARCH, $search_string),
-                        TR::t('search') . ": $search_string"));
+                        TR::load('search') . ": $search_string"));
 
             case ACTION_ADD_FAV:
                 $is_favorite = $this->plugin->vod->is_favorite_movie_id($movie_id);

@@ -74,7 +74,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
             case self::ACTION_DO_SEND_LOG:
                 if (is_r11_or_higher()) {
                     $error_msg = '';
-                    $msg = HD::send_log_to_developer($error_msg) ? TR::t('entry_log_sent') : TR::t('entry_log_not_sent') . " $error_msg";
+                    $msg = HD::send_log_to_developer($error_msg) ? TR::t('entry_log_sent') : TR::load('entry_log_not_sent') . " $error_msg";
                     return Action_Factory::show_title_dialog($msg);
                 }
 
