@@ -960,6 +960,37 @@ class Default_Dune_Plugin implements DunePlugin
     }
 
     /**
+     * Account access data exist and are not empty (or the account is embedded)
+     *
+     * @return bool
+     */
+    public function is_account_set()
+    {
+        if ($this->config->get_embedded_account() !== null) {
+            return true;
+        }
+
+        switch ($this->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
+            case Plugin_Constants::ACCOUNT_OTT_KEY:
+                $ott_key = $this->get_credentials(Ext_Params::M_OTT_KEY);
+                return !empty($ott_key);
+
+            case Plugin_Constants::ACCOUNT_LOGIN:
+                $login = $this->get_credentials(Ext_Params::M_LOGIN);
+                $password = $this->get_credentials(Ext_Params::M_PASSWORD);
+                return !empty($login) && !empty($password);
+
+            case Plugin_Constants::ACCOUNT_PIN:
+                $password = $this->get_credentials(Ext_Params::M_PASSWORD);
+                return !empty($password);
+
+            default:
+                // no access data needed
+                return true;
+        }
+    }
+
+    /**
      * @param $plugin_cookies
      * @return void
      */

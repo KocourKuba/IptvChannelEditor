@@ -11,6 +11,46 @@ class edem_config extends default_config
         return isset($this->embedded_account->ott_key) ? $this->embedded_account->ott_key : $this->plugin->get_credentials(Ext_Params::M_OTT_KEY);
     }
 
+    /**
+     * VPortal key and url, VOD works only with them
+     *
+     * @return array|null array(key, url)
+     */
+    protected function get_vportal()
+    {
+        if (isset($this->embedded_account->vportal)) {
+            $vportal = $this->embedded_account->vportal;
+        } else {
+            $vportal = $this->plugin->get_credentials(Ext_Params::M_VPORTAL);
+        }
+
+        /** @var array $m */
+        if (empty($vportal)
+            || !preg_match('/^portal::\[key:([^]]+)\](.+)$/', $vportal, $m)) {
+            return null;
+        }
+
+        return array($m[1], $m[2]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function is_vod_enabled()
+    {
+        return parent::is_vod_enabled() && $this->get_vportal() !== null;
+    }
+
+    /**
+     * VOD uses only VPortal key, it does not depend on ott key
+     *
+     * @inheritDoc
+     */
+    public function is_vod_account_required()
+    {
+        return false;
+    }
+
 
     /**
      * @inheritDoc
@@ -273,20 +313,13 @@ class edem_config extends default_config
      */
     protected function make_json_request($params = null)
     {
-        if (isset($this->embedded_account->vportal)) {
-            $vportal = $this->embedded_account->vportal;
-        } else {
-            $vportal = $this->plugin->get_credentials(Ext_Params::M_VPORTAL);
-        }
-
-        /** @var array $m */
-        if (empty($vportal)
-            || !preg_match('/^portal::\[key:([^]]+)\](.+)$/', $vportal, $m)) {
+        $vportal = $this->get_vportal();
+        if ($vportal === null) {
             hd_debug_print("incorrect or empty VPortal key");
             return false;
         }
 
-        list(, $key, $url) = $m;
+        list($key, $url) = $vportal;
 
         $pairs = array();
         if ($params !== null) {

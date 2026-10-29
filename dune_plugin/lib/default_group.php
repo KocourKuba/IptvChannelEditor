@@ -189,7 +189,7 @@ class Default_Group extends Json_Serializer implements Group
         }
 
         if ($this->_id === VOD_GROUP_ID) {
-            return !$this->plugin->get_bool_setting(PARAM_SHOW_VOD) || $this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) === "None";
+            return !$this->plugin->get_bool_setting(PARAM_SHOW_VOD) || !$this->plugin->config->is_vod_enabled();
         }
 
         return $this->_disabled;

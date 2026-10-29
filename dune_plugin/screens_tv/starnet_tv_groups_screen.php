@@ -34,7 +34,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
             GUI_EVENT_TIMER => User_Input_Handler_Registry::create_action($this, GUI_EVENT_TIMER),
         );
 
-        if ($this->IsSetupNeeds() !== false) {
+        if (!$this->plugin->is_account_set()) {
             hd_debug_print("Create setup action");
             $configure = User_Input_Handler_Registry::create_action($this, ACTION_NEED_CONFIGURE);
             $actions[GUI_EVENT_KEY_PLAY] = $configure;
@@ -100,7 +100,7 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
                 return Starnet_Epfs_Handler::epfs_invalidate_folders($plugin_cookies, null, Action_Factory::close_and_run());
 
             case ACTION_NEED_CONFIGURE:
-                if ($this->IsSetupNeeds()) {
+                if (!$this->plugin->is_account_set()) {
                     hd_debug_print("Setup required!");
                     return Action_Factory::show_title_dialog(TR::t('err_no_account_data'), '',
                         Action_Factory::open_folder(Starnet_Setup_Screen::get_media_url_str(), TR::t('entry_setup')));
@@ -296,33 +296,5 @@ class Starnet_Tv_Groups_Screen extends Abstract_Preloaded_Regular_Screen
             $this->plugin->get_screen_view('list_2x11_small_info'),
             $this->plugin->get_screen_view('list_3x11_no_info'),
         );
-    }
-
-    /**
-     * @return bool
-     */
-    protected function IsSetupNeeds()
-    {
-        switch ($this->plugin->config->get_feature(Plugin_Constants::ACCESS_TYPE)) {
-            case Plugin_Constants::ACCOUNT_OTT_KEY:
-                $ott_key = $this->plugin->get_credentials(Ext_Params::M_OTT_KEY);
-                $subdomain = $this->plugin->get_credentials(Ext_Params::M_SUBDOMAIN);
-                $setup_needs = empty($ott_key) && empty($subdomain) && ($this->plugin->config->get_embedded_account() === null);
-                break;
-            case Plugin_Constants::ACCOUNT_LOGIN:
-                $login = $this->plugin->get_credentials(Ext_Params::M_LOGIN);
-                $password = $this->plugin->get_credentials(Ext_Params::M_PASSWORD);
-                $setup_needs = empty($login) && empty($password);
-                break;
-            case Plugin_Constants::ACCOUNT_PIN:
-                $password = $this->plugin->get_credentials(Ext_Params::M_PASSWORD);
-                $setup_needs = empty($password);
-                break;
-            default:
-                hd_debug_print("Access type not set");
-                return false;
-        }
-
-        return $setup_needs && ($this->plugin->config->get_embedded_account() === null);
     }
 }

@@ -21,6 +21,7 @@ class Starnet_Entry_Handler implements User_Input_Handler
     const ACTION_DO_SEND_LOG = 'do_send_log';
     const ACTION_DO_CLEAR_EPG = 'do_clear_epg';
     const ACTION_FORCE_OPEN = 'force_open';
+    const ACTION_EXTERNAL_SEARCH = 'external_search';
 
     private $plugin;
 
@@ -106,6 +107,9 @@ class Starnet_Entry_Handler implements User_Input_Handler
                     )
                 );
 
+            case self::ACTION_EXTERNAL_SEARCH:
+                return $this->do_external_search($user_input);
+
             case self::ACTION_PLUGIN_ENTRY:
                 if (!isset($user_input->action_id)) break;
 
@@ -185,6 +189,62 @@ class Starnet_Entry_Handler implements User_Input_Handler
         }
 
         return null;
+    }
+
+    /**
+     * Search in VOD called by other plugins (Play in apps) through public_actions/vod_search.
+     * Param: search - plain string or json encoded array with title, original_title (results of both are merged)
+     *
+     * @param object $user_input
+     * @return array
+     */
+    private function do_external_search($user_input)
+    {
+        hd_debug_print_separator();
+        hd_debug_print("EXTERNAL SEARCH");
+        hd_debug_print_separator();
+
+        if (!is_r11_or_higher()) {
+            hd_debug_print("Too old Dune HD firmware! " . get_raw_firmware_version());
+            return Action_Factory::show_title_dialog(TR::t('err_too_old_player'));
+        }
+
+        // checked before the account: data required only for VOD (edem vportal) are not account data
+        if (!$this->plugin->config->is_vod_enabled()) {
+            hd_debug_print("VOD not supported or disabled");
+            return Action_Factory::show_title_dialog(TR::t('err_vod_not_available'));
+        }
+
+        if ($this->plugin->config->is_vod_account_required() && !$this->plugin->is_account_set()) {
+            hd_debug_print("Account data not set");
+            return Action_Factory::show_title_dialog(TR::t('err_no_account_data'));
+        }
+
+        $search_string = isset($user_input->search) ? trim($user_input->search) : '';
+        $keywords = $search_string === '' ? array() : default_config::decode_search_keywords($search_string);
+        if (empty($keywords)) {
+            hd_debug_print("Nothing to search");
+            return Action_Factory::show_title_dialog(TR::t('err_search_empty'));
+        }
+
+        hd_debug_print("search: $search_string");
+
+        if ($this->plugin->config->is_vod_account_required()) {
+            // account info, provider token etc.
+            $this->plugin->tv->load_channels();
+        }
+
+        if ($this->plugin->config->get_feature(Plugin_Constants::VOD_ENGINE) === "M3U") {
+            // M3U search uses the indexes of the VOD playlist
+            $category_list = null;
+            $category_index = null;
+            if (!$this->plugin->config->fetchVodCategories($category_list, $category_index)) {
+                hd_debug_print("Error: Fetch categories");
+                return Action_Factory::show_title_dialog(TR::t('err_load_vod'));
+            }
+        }
+
+        return Starnet_Vod_List_Screen::make_search_action($this->plugin, $search_string);
     }
 
     private function get_resume_mediaurl()

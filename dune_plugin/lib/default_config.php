@@ -27,6 +27,11 @@ class default_config extends dynamic_config
     protected $prefetched_search;
 
     /**
+     * @var array movie id => true, movies already returned by getSearchResults()
+     */
+    protected $search_movie_ids = array();
+
+    /**
      * @var Object|null
      */
     protected $embedded_account;
@@ -469,6 +474,26 @@ class default_config extends dynamic_config
     }
 
     /**
+     * VOD is supported by the provider and can be used (data required for VOD are set)
+     *
+     * @return bool
+     */
+    public function is_vod_enabled()
+    {
+        return $this->get_feature(Plugin_Constants::VOD_ENGINE) !== "None";
+    }
+
+    /**
+     * VOD uses the account access data (otherwise VOD has its own access data checked by is_vod_enabled())
+     *
+     * @return bool
+     */
+    public function is_vod_account_required()
+    {
+        return true;
+    }
+
+    /**
      * VOD only provider does not have tv playlist
      *
      * @return bool
@@ -552,6 +577,7 @@ class default_config extends dynamic_config
         if ($this->is_entered) {
             $this->is_entered = false;
             $this->pages = array();
+            $this->search_movie_ids = array();
         }
     }
 
@@ -570,17 +596,73 @@ class default_config extends dynamic_config
      * one movie to show. The result is kept for the movie list so the search
      * is not executed twice.
      *
-     * @param string $keyword
+     * @param string $keyword plain string or json encoded array, see getSearchResults()
      * @return Short_Movie[]
      */
     public function prefetchSearchList($keyword)
     {
         $this->reset_movie_counter();
         $this->try_reset_pages();
-        $movies = $this->getSearchList($keyword);
+        $movies = $this->getSearchResults($keyword);
         $this->prefetched_search = array($keyword, $movies);
 
         return $movies;
+    }
+
+    /**
+     * Next page of the search. The keyword can be a json encoded array (external search):
+     * the results of the search by 'title' and by 'original_title' are merged.
+     * Movies already returned since the search start are skipped.
+     *
+     * @param string $keyword
+     * @return Short_Movie[]
+     */
+    public function getSearchResults($keyword)
+    {
+        $keywords = self::decode_search_keywords($keyword);
+        do {
+            $movies = array();
+            $fetched = false;
+            foreach ($keywords as $search) {
+                foreach ($this->getSearchList($search) as $movie) {
+                    $fetched = true;
+                    if (isset($this->search_movie_ids[$movie->id])) continue;
+
+                    $this->search_movie_ids[$movie->id] = true;
+                    $movies[] = $movie;
+                }
+            }
+            // a page of duplicates only, the next page can have new movies
+        } while (empty($movies) && $fetched);
+
+        return $movies;
+    }
+
+    /**
+     * Search strings to try: a plain string as is, or 'title' and 'original_title'
+     * of a json encoded array
+     *
+     * @param string $keyword
+     * @return string[]
+     */
+    public static function decode_search_keywords($keyword)
+    {
+        $data = json_decode($keyword, true);
+        if (!is_array($data)) {
+            return array($keyword);
+        }
+
+        $keywords = array();
+        foreach (array('title', 'original_title') as $key) {
+            if (isset($data[$key]) && is_scalar($data[$key])) {
+                $value = trim((string)$data[$key]);
+                if ($value !== '' && !in_array($value, $keywords, true)) {
+                    $keywords[] = $value;
+                }
+            }
+        }
+
+        return $keywords;
     }
 
     /**

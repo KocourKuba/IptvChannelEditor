@@ -20,15 +20,22 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen
     }
 
     /**
-     * Opens the search result, or the movie itself if only one movie is found
+     * Opens the search result, or the movie itself if only one movie is found,
+     * or shows a dialog if nothing is found
      *
      * @param Default_Dune_Plugin $plugin
-     * @param string $search_string
+     * @param string $search_string plain string or json encoded array with title and original_title
      * @return array
      */
     public static function make_search_action($plugin, $search_string)
     {
         $movies = $plugin->config->prefetchSearchList($search_string);
+        if (empty($movies)) {
+            $plugin->config->takePrefetchedSearchList($search_string);
+            hd_debug_print("Nothing found: $search_string");
+            return Action_Factory::show_title_dialog(TR::t('vod_search_not_found'));
+        }
+
         if (count($movies) === 1 && $plugin->vod->is_movie_page_supported()) {
             $plugin->config->takePrefetchedSearchList($search_string);
             $movie = $movies[0];
@@ -41,7 +48,7 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen
         }
 
         return Action_Factory::open_folder(static::get_media_url_string(Vod_Category::FLAG_SEARCH, $search_string),
-            TR::t('search__1', $search_string));
+            TR::t('search__1', implode(' / ', default_config::decode_search_keywords($search_string))));
     }
 
     /**
@@ -134,13 +141,11 @@ class Starnet_Vod_List_Screen extends Abstract_Regular_Screen
             $key = $media_url->category_id . "_" . $media_url->genre_id;
         }
 
-        $movies = array();
-
         if ($media_url->category_id === Vod_Category::FLAG_SEARCH) {
             // the first page was already fetched by make_search_action()
             $movies = $from_ndx === 0 ? $this->plugin->config->takePrefetchedSearchList($media_url->genre_id) : null;
             if (is_null($movies)) {
-                $movies = $this->plugin->config->getSearchList($media_url->genre_id);
+                $movies = $this->plugin->config->getSearchResults($media_url->genre_id);
             }
         } else if ($media_url->category_id === Vod_Category::FLAG_FILTER) {
             $movies = $this->plugin->config->getFilterList($media_url->genre_id);
