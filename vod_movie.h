@@ -88,6 +88,7 @@ struct vod_movie_def : public vod_episode_def
 		{L"title_orig"  , &title_orig},
 		{L"year"        , &year},
 		{L"rating"      , &rating},
+		{L"imdb"        , &rating}, // the plugin name of the rating group
 		{L"age"         , &age},
 		{L"country"     , &country},
 		{L"director"    , &director},

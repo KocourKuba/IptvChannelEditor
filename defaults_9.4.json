@@ -252,12 +252,12 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "(?<title>[^\\(]*)\\((?<country>[^\\d]+)\\s(?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?:(?<country>(?:[^()]|\\([^()]*\\))+) )?(?<year>\\d{4})\\)$",
           "pl_template": "http://pl.101film.org/{LOGIN}/{PASSWORD}/vodall.m3u?srv={SERVER_ID}"
         },
         {
           "name": "No Adults",
-          "parse_regex_title": "(?<title>[^\\(]*)\\((?<country>[^\\d]+)\\s(?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?:(?<country>(?:[^()]|\\([^()]*\\))+) )?(?<year>\\d{4})\\)$",
           "pl_template": "http://pl.101film.org/{LOGIN}/{PASSWORD}/vod.m3u?srv={SERVER_ID}"
         }
       ]
@@ -330,7 +330,7 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "^(?<title>[^|]+)\\s\\|(?<year>\\d+)\\|\\s?IMDB\\:(?<imdb>.+)$",
+          "parse_regex_title": "^(?<title>[^|]+)\\|(?<year>\\d+)\\|\\s?IMDB:(?<imdb>.+)$",
           "pl_template": "https://pptt.fun/mk/{PASSWORD}/playlist.m3u8"
         }
       ]
@@ -856,12 +856,12 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "(?<title>[^\\/]+)\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
+          "parse_regex_title": "^(?<title>.+?)(?:\\/ (?<title_orig>.+))? (?<year>\\d{4})$",
           "pl_template": "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vodall.m3u"
         },
         {
           "name": "No Adults",
-          "parse_regex_title": "(?<title>[^\\/]+)\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
+          "parse_regex_title": "^(?<title>.+?)(?:\\/ (?<title_orig>.+))? (?<year>\\d{4})$",
           "pl_template": "http://pl.fox-tv.fun/{LOGIN}/{PASSWORD}/vod.m3u"
         }
       ]
@@ -1600,7 +1600,7 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "(?<title>[^\\/]+)\\s+\\((?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?<year>\\d{4})\\)$",
           "pl_template": "http://nasharu.tv/iptv/mediateka/{PASSWORD}/m3u8/playlist.m3u8"
         }
       ]
@@ -1758,12 +1758,12 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "(?<title>[^\\/]+)\\s+\\((?<country>.+)\\s(?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?:(?<country>(?:[^()]|\\([^()]*\\))+) )?(?<year>\\d{4})\\)$",
           "pl_template": "http://pl.onlineott-tv.site/{LOGIN}/{PASSWORD}/vodall.m3u"
         },
         {
           "name": "No Adults",
-          "parse_regex_title": "(?<title>[^\\/]+)\\s+\\((?<country>.+)\\s(?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?:(?<country>(?:[^()]|\\([^()]*\\))+) )?(?<year>\\d{4})\\)$",
           "pl_template": "http://pl.onlineott-tv.site/{LOGIN}/{PASSWORD}/vod.m3u"
         }
       ]
@@ -2043,12 +2043,12 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "(?<title>[^\\/]+)\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
+          "parse_regex_title": "^(?<title>.+?)(?:\\/ (?<title_orig>.+))? (?<year>\\d{4})$",
           "pl_template": "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/vodall.m3u"
         },
         {
           "name": "No Adults",
-          "parse_regex_title": "(?<title>[^\\/]+)\\/(?<title_orig>.+)\\s(?<year>\\d+)$",
+          "parse_regex_title": "^(?<title>.+?)(?:\\/ (?<title_orig>.+))? (?<year>\\d{4})$",
           "pl_template": "http://pl.ping-tv.com/{LOGIN}/{PASSWORD}/vod.m3u"
         }
       ]
@@ -2178,17 +2178,17 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "(?<title>[^\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?:(?<country>(?:[^()]|\\([^()]*\\))+) )?(?<year>\\d{4})\\)$",
           "pl_template": "http://pl.{SERVER_ID}/{LOGIN}/{PASSWORD}/vod.m3u"
         },
         {
           "name": "Standard with Adult",
-          "parse_regex_title": "(?<title>[^\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?:(?<country>(?:[^()]|\\([^()]*\\))+) )?(?<year>\\d{4})\\)$",
           "pl_template": "http://pl.{SERVER_ID}/{LOGIN}/{PASSWORD}/vodall.m3u"
         },
         {
           "name": "Serials",
-          "parse_regex_title": "(?<title>[^\\/]+)\\s\\((?:(?<country>.+)\\s)?(?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?:(?<country>(?:[^()]|\\([^()]*\\))+) )?(?<year>\\d{4})\\)$",
           "pl_template": "http://pl.{SERVER_ID}/{LOGIN}/{PASSWORD}/series.m3u"
         }
       ]
@@ -2772,12 +2772,12 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "(?<title>[^\\(]*)\\((?<country>[^\\d]+)\\s(?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?:(?<country>(?:[^()]|\\([^()]*\\))+) )?(?<year>\\d{4})\\)$",
           "pl_template": "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vodall.m3u?srv={SERVER_ID}"
         },
         {
           "name": "No Adults",
-          "parse_regex_title": "(?<title>[^\\(]*)\\((?<country>[^\\d]+)\\s(?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?:(?<country>(?:[^()]|\\([^()]*\\))+) )?(?<year>\\d{4})\\)$",
           "pl_template": "http://pl.smile-tv.live/{LOGIN}/{PASSWORD}/vod.m3u?srv={SERVER_ID}"
         }
       ]
@@ -3316,7 +3316,7 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "(?<title>[^\\(]*)\\s\\((?<year>\\d+)\\)$",
+          "parse_regex_title": "^(?<title>.+) \\((?<year>\\d{4})\\)\\.*(?: (?<age>\\d+\\+))?$",
           "pl_template": "http://m.cdntv.online/f/{PASSWORD}/playlist.m3u8"
         }
       ]
@@ -3431,7 +3431,7 @@
       "vod_templates": [
         {
           "name": "Standard",
-          "parse_regex_title": "^(?<title>[^\\(]+\\s\\((?<year>\\d+)\\).*?)$",
+          "parse_regex_title": "^(?<title>.+?(?: \\((?<year>\\d{4})\\).*)?)$",
           "pl_template": "https://{SERVER_ID}/vod/{LOGIN}/{PASSWORD}/a/p.m3u8"
         }
       ]

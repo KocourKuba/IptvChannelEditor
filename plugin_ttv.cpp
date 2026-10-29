@@ -47,8 +47,9 @@ constexpr auto ERROR_INCORRECT = "incorrect";
 // types of the film_filter request
 constexpr auto TYPE_ALL = L"all";
 constexpr auto TYPE_SERIAL = L"serial";
-// part of the directors role name in the film_alt_info persons
-constexpr auto ROLE_DIRECTOR = L"\u0435\u0436\u0438\u0441\u0441";
+// part of the directors role name in the film_alt_info persons ("\u0435\u0436\u0438\u0441\u0441")
+// \x, not \u: without /utf-8 the compiler turns each \u escape into two wrong chars
+constexpr auto ROLE_DIRECTOR = L"\x0435\x0436\x0438\x0441\x0441";
 // max limit of the film_alt_list request
 constexpr int PAGE_SIZE = 100;
 // parallel requests of the catalog pages

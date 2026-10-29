@@ -444,11 +444,14 @@ LRESULT CVodViewer::OnEndLoadM3U8Playlist(WPARAM wParam /*= 0*/, LPARAM /*= 0*/)
 				boost::wsmatch m;
 				if (boost::regex_match(entry->get_title(), m, re))
 				{
-					// map groups to parser members
-					size_t pos = 1;
+					// map groups to parser members, by name: the pattern can have other groups
 					for (const auto& group : regex_named_groups)
 					{
-						*movie->parser_mapper[group] = std::move(m[(int)(pos++)].str());
+						auto& value = *movie->parser_mapper[group];
+						value = m[group.c_str()].str();
+						// playlists can have non-breaking spaces around the separators
+						// \x, not \u: without /utf-8 the compiler turns   into two chars, U+0412 (В) and U+00A0
+						utils::string_trim(value, L" \t\x00A0");
 					}
 				}
 			}

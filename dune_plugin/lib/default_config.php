@@ -1303,7 +1303,7 @@ class default_config extends dynamic_config
 
             /** @var array $m */
             if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $m)) {
-                $title = isset($m['title']) ? $m['title'] : $title;
+                $title = isset($m['title']) ? self::trim_title($m['title']) : $title;
             }
 
             $entry = $this->plugin->get_m3u_parser()->getEntryByIdx($index);
@@ -1363,7 +1363,7 @@ class default_config extends dynamic_config
             if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $m)) {
                 $title = isset($m['title']) ? $m['title'] : $title;
             }
-            $title = trim($title);
+            $title = self::trim_title($title);
 
             $movies[] = new Short_Movie($index, $title, $entry->getEntryAttribute('tvg-logo'));
         }
@@ -1400,11 +1400,18 @@ class default_config extends dynamic_config
 
             /** @var array $m */
             if (!empty($vod_pattern) && preg_match($vod_pattern, $title, $m)) {
-                $title = empty($title) && isset($m['title']) ? $m['title'] : $title;
-                $title_orig = isset($m['title_orig']) ? $m['title_orig'] : $title_orig;
-                $country = isset($m['country']) ? $m['country'] : $country;
+                $title = isset($m['title']) && $m['title'] !== '' ? self::trim_title($m['title']) : $title;
+                $title_orig = isset($m['title_orig']) ? self::trim_title($m['title_orig']) : $title_orig;
+                $country = isset($m['country']) ? self::trim_title($m['country']) : $country;
                 $year = empty($year) && isset($m['year']) ? $m['year'] : $year;
-                $imdb = empty($imdb) && isset($m['imdb']) ? $m['imdb'] : $imdb;
+                // the editor names this group 'rating'
+                if (empty($imdb)) {
+                    if (isset($m['imdb']) && $m['imdb'] !== '') {
+                        $imdb = self::trim_title($m['imdb']);
+                    } else if (isset($m['rating']) && $m['rating'] !== '') {
+                        $imdb = self::trim_title($m['rating']);
+                    }
+                }
                 hd_debug_print("title: $title, country: $country, year: $year");
             }
 
@@ -1857,6 +1864,17 @@ class default_config extends dynamic_config
         }
 
         return $vod_pattern;
+    }
+
+    /**
+     * Trims a title parsed by the vod pattern, playlists can have non-breaking spaces around the separators
+     *
+     * @param string $title
+     * @return string
+     */
+    protected static function trim_title($title)
+    {
+        return trim(str_replace("\xC2\xA0", ' ', $title));
     }
 
     /**
