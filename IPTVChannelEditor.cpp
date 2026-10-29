@@ -43,6 +43,8 @@ DEALINGS IN THE SOFTWARE.
 
 #include "BugTrap\Source\Client\BugTrap.h"
 
+#include <webp/decode.h>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -1793,6 +1795,48 @@ bool LoadPngImage(UINT id, CImage& img)
 	return res;
 }
 
+static bool IsWebPImage(const BYTE* data, size_t size)
+{
+	return size >= 12 && memcmp(data, "RIFF", 4) == 0 && memcmp(data + 8, "WEBP", 4) == 0;
+}
+
+// GDI+ (CImage::Load) does not support WebP, decode it with libwebp
+static HRESULT LoadWebPImage(const BYTE* data, size_t size, CImage& image)
+{
+	int width = 0;
+	int height = 0;
+	if (!WebPGetInfo(data, size, &width, &height))
+		return E_FAIL;
+
+	image.Destroy();
+	// negative height creates top-down DIB, the same row order as libwebp output
+	if (!image.Create(width, -height, 32, CImage::createAlphaChannel))
+		return E_OUTOFMEMORY;
+
+	const int stride = image.GetPitch();
+	if (!WebPDecodeBGRAInto(data, size, (uint8_t*)image.GetBits(), (size_t)stride * height, stride))
+	{
+		image.Destroy();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+static HRESULT LoadImageFromFile(const std::wstring& fullPath, CImage& image)
+{
+	std::ifstream file(fullPath, std::ios::binary);
+	char header[12]{};
+	if (file.read(header, sizeof(header)) && IsWebPImage((const BYTE*)header, sizeof(header)))
+	{
+		file.seekg(0);
+		std::vector<BYTE> data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+		return LoadWebPImage(data.data(), data.size(), image);
+	}
+
+	return image.Load(fullPath.c_str());
+}
+
 BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 {
 	HRESULT hr = E_FAIL;
@@ -1807,17 +1851,24 @@ BOOL LoadImageFromUrl(const std::wstring& fullPath, CImage& image)
 		{
 			// Still not clear if this is making a copy internally
 			auto view = req.body.rdbuf()->_Get_buffer_view();
-			CComPtr<IStream> stream(SHCreateMemStream((BYTE*)view._Ptr, (unsigned int)view._Size));
-			hr = image.Load(stream);
+			if (IsWebPImage((const BYTE*)view._Ptr, view._Size))
+			{
+				hr = LoadWebPImage((const BYTE*)view._Ptr, view._Size, image);
+			}
+			else
+			{
+				CComPtr<IStream> stream(SHCreateMemStream((BYTE*)view._Ptr, (unsigned int)view._Size));
+				hr = image.Load(stream);
+			}
 		}
 		else
 		{
-			hr = image.Load(fullPath.c_str());
+			hr = LoadImageFromFile(fullPath, image);
 		}
 	}
 	else
 	{
-		hr = image.Load(fullPath.c_str());
+		hr = LoadImageFromFile(fullPath, image);
 	}
 
 	return SUCCEEDED(hr);

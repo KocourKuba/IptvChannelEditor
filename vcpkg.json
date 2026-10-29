@@ -4,6 +4,13 @@
     "boost-algorithm",
     "nlohmann-json",
     "rapidxml",
-    "bshoshany-thread-pool"
+    "bshoshany-thread-pool",
+    {
+      "name": "libwebp",
+      "default-features": false,
+      "features": [
+        "simd"
+      ]
+    }
   ]
 }
