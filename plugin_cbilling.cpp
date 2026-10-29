@@ -57,7 +57,7 @@ void plugin_cbilling::parse_account_info(TemplateParams& params)
 
 	if (!account_info.empty())
 	{
-		LOG_PROTOCOL("plugin_cbilling: Failed to account info: account info is empty");
+		LOG_PROTOCOL("plugin_cbilling: account info already loaded, skip request");
 	}
 	else
 	{

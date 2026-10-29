@@ -50,7 +50,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen
 
                 $media_url = MediaURL::decode($user_input->selected_media_url);
                 if ($media_url->genre_id !== Vod_Category::FLAG_SEARCH && $user_input->{ACTION_SEARCH} === ACTION_OPEN_FOLDER) {
-                    return Action_Factory::open_folder($user_input->selected_media_url);
+                    return Starnet_Vod_List_Screen::make_search_action($this->plugin, $media_url->genre_id);
                 }
 
                 if ($user_input->{ACTION_SEARCH} === ACTION_ITEMS_EDIT) {
@@ -79,9 +79,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen
                 $search_items = new Ordered_Array(HD::get_data_items(self::VOD_SEARCH_LIST));
                 $search_items->insert_item($search_string, false);
                 HD::put_data_items(self::VOD_SEARCH_LIST, $search_items->get_order());
-                $action = Action_Factory::open_folder(
-                    Starnet_Vod_List_Screen::get_media_url_string(Vod_Category::FLAG_SEARCH, $search_string),
-                    TR::t('search__1', ": $search_string"));
+                $action = Starnet_Vod_List_Screen::make_search_action($this->plugin, $search_string);
 
                 return Action_Factory::invalidate_folders(array($user_input->parent_media_url), $action);
 
@@ -161,7 +159,7 @@ class Starnet_Vod_Search_Screen extends Abstract_Preloaded_Regular_Screen
         foreach ($search_items as $item) {
             if (!empty($item)) {
                 $items[] = array(
-                    PluginRegularFolderItem::caption => TR::t('search__1', ": $item"),
+                    PluginRegularFolderItem::caption => TR::t('search__1', $item),
                     PluginRegularFolderItem::view_item_params => array(
                         ViewItemParams::icon_path => self::SEARCH_ICON_PATH,
                         ViewItemParams::item_layout => HALIGN_LEFT,

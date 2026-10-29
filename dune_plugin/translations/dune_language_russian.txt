@@ -279,6 +279,7 @@ vod_screen_movie_info__3 = %s|Год: %s|Рейтинг: %s
 vod_screen_movie_info__4 = %s|Год: %s|Страна: %s|Жанр: %s
 vod_screen_movie_info__5 = %s|Год: %s|Страна: %s|Жанр: %s|Рейтинг: %s
 vod_screen_air_date__2 = %s||Дата выхода: %s
+vod_collections = Подборки
 vod_filter_type = Тип
 vod_filter_type_all = Все
 vod_filter_type_film = Фильмы

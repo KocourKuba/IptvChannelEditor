@@ -3,6 +3,9 @@ require_once 'lib/default_config.php';
 
 class cbilling_config extends default_config
 {
+    // movies per page of the VOD lists
+    const PAGE_SIZE = 50;
+
     /**
      * @inheritDoc
      */
@@ -110,9 +113,17 @@ class cbilling_config extends default_config
             $movieData->country// country,
         );
 
-        $domain = $this->account_data->server;
+        // server and token of the playback url are taken from the account info,
+        // it may be not loaded yet if VOD is opened without the TV channels
+        $account_data = $this->GetAccountInfo();
+        if ($account_data === false || empty($account_data->server)) {
+            hd_debug_print("Account info not loaded, can't make movie url");
+            return null;
+        }
+
+        $domain = $account_data->server;
         $token = $this->plugin->get_credentials(Ext_Params::M_TOKEN);
-        $vod_url = 'http://%s%s?token=%s';
+        $vod_url = (empty($account_data->ssl) ? 'http' : 'https') . '://%s%s?token=%s';
         if (isset($movieData->seasons)) {
             foreach ($movieData->seasons as $season) {
                 $movie_season = new Movie_Season($season->number);
@@ -202,13 +213,8 @@ class cbilling_config extends default_config
      */
     public function getSearchList($keyword)
     {
-        $page_idx = $this->get_next_page($keyword);
-        if ($page_idx < 0)
-            return array();
-
-        $params[CURLOPT_CUSTOMREQUEST] = "/filter/by_name?name=" . urlencode($keyword) . "&page=$page_idx";
-        $response = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
-        return $response === false ? array() : $this->CollectSearchResult($response);
+        hd_debug_print($keyword);
+        return $this->get_page_movies($keyword, "/filter/by_name?name=" . urlencode($keyword));
     }
 
     /**
@@ -217,25 +223,56 @@ class cbilling_config extends default_config
     public function getMovieList($query_id)
     {
         hd_debug_print($query_id);
-        $page_idx = $this->get_next_page($query_id);
+
+        if ($query_id === Vod_Category::FLAG_ALL_MOVIES) {
+            return $this->get_page_movies($query_id, "/filter/new");
+        }
+
+        // category_genre
+        $arr = explode("_", $query_id);
+        $genre_id = isset($arr[1]) ? $arr[1] : $query_id;
+        return $this->get_page_movies($query_id, "/genres/$genre_id");
+    }
+
+    /**
+     * Load next page of the movies list
+     *
+     * @param string $page_id
+     * @param string $request request path without page parameters
+     * @return array
+     */
+    protected function get_page_movies($page_id, $request)
+    {
+        // page index start from 1
+        $page_idx = $this->get_next_page($page_id);
         if ($page_idx < 0)
             return array();
 
-        if ($query_id === Vod_Category::FLAG_ALL_MOVIES) {
-            $params[CURLOPT_CUSTOMREQUEST] = "/filter/new?page=$page_idx";
-        } else {
-            $arr = explode("_", $query_id);
-            if ($arr === false) {
-                $genre_id = $query_id;
-            } else {
-                $genre_id = $arr[1];
-            }
-
-            $params[CURLOPT_CUSTOMREQUEST] = "/genres/$genre_id?page=$page_idx";
+        $params[CURLOPT_CUSTOMREQUEST] = $request . (strpos($request, '?') === false ? '?' : '&') . "page=$page_idx&per_page=" . self::PAGE_SIZE;
+        $response = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
+        if ($response === false || !isset($response->data)) {
+            $this->set_next_page($page_id, -1);
+            return array();
         }
 
-        $response = $this->execApiCommand($this->GetVodListUrl(), null, true, $params);
-        return $response === false ? array() : $this->CollectSearchResult($response);
+        $movies = $this->CollectSearchResult($response);
+        if (empty($movies) || $page_idx >= self::get_last_page($response)) {
+            // last page
+            $this->set_next_page($page_id, -1);
+        }
+
+        return $movies;
+    }
+
+    /**
+     * Last page number of the paginated response (meta.last_page)
+     *
+     * @param Object $json
+     * @return int
+     */
+    protected static function get_last_page($json)
+    {
+        return isset($json->meta->last_page) ? (int)$json->meta->last_page : 1;
     }
 
     /**
@@ -246,7 +283,7 @@ class cbilling_config extends default_config
     {
         $movies = array();
 
-        foreach ($json->data as $entry) {
+        foreach ((array)$json->data as $entry) {
             $genresArray = array();
             if (isset($entry->genres)) {
                 foreach ($entry->genres as $genre) {

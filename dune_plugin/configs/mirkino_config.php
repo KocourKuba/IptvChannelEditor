@@ -334,17 +334,7 @@ class mirkino_config extends default_config
         $query_params['IncludeItemTypes'] = jellyfin_api::MOVIES . ',' . jellyfin_api::SERIES;
         $query_params['Recursive'] = 'true';
 
-        // search list is requested only once, without pagination
-        $movies = array();
-        $jfc = $this->get_jfc();
-        if ($jfc !== null) {
-            $query_params['StartIndex'] = 0;
-            $query_params['Limit'] = self::PAGE_LIMIT * 4;
-            foreach (safe_get_value($jfc->getItems($query_params), 'Items', array()) as $item) {
-                $this->CreateShortMovie($item, $movies);
-            }
-        }
-
+        $movies = $this->get_page_movies("search_$keyword", $query_params);
         hd_debug_print("Movies found: " . count($movies));
         return $movies;
     }

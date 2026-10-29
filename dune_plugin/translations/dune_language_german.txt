@@ -278,6 +278,7 @@ vod_screen_movie_info__3 = %s|Jahr: %s|Bewertung: %s
 vod_screen_movie_info__4 = %s|Jahr: %s|Land: %s|Genre: %s
 vod_screen_movie_info__5 = %s|Jahr: %s|Land: %s|Genre: %s|Bewertung: %s
 vod_screen_air_date__2 = %s||Ausstrahlungsdatum: %s
+vod_collections = Sammlungen
 vod_filter_type = Typ
 vod_filter_type_all = Alle
 vod_filter_type_film = Filme

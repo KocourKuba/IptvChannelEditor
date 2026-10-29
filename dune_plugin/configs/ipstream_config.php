@@ -184,6 +184,11 @@ class ipstream_config extends default_config
      */
     public function getSearchList($keyword)
     {
+        // pagination is not used, only the first request runs the search
+        if ($this->is_search_done($keyword)) {
+            return array();
+        }
+
         hd_debug_print($keyword);
         if ($this->vod_items === false) {
             hd_debug_print("failed to load movies");

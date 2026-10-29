@@ -22,6 +22,11 @@ class default_config extends dynamic_config
     protected $filters = array();
 
     /**
+     * @var array|null array(keyword, Short_Movie[]) fetched by prefetchSearchList()
+     */
+    protected $prefetched_search;
+
+    /**
      * @var Object|null
      */
     protected $embedded_account;
@@ -550,10 +555,70 @@ class default_config extends dynamic_config
         }
     }
 
-    public function reset_movie_counter()
+    /**
+     * @param bool $keep_pages keep the page indexes, the first page was already fetched
+     * @return void
+     */
+    public function reset_movie_counter($keep_pages = false)
     {
-        $this->is_entered = true;
+        $this->is_entered = !$keep_pages;
         $this->movie_counter = array();
+    }
+
+    /**
+     * Runs the search before its folder is opened, to know whether there is only
+     * one movie to show. The result is kept for the movie list so the search
+     * is not executed twice.
+     *
+     * @param string $keyword
+     * @return Short_Movie[]
+     */
+    public function prefetchSearchList($keyword)
+    {
+        $this->reset_movie_counter();
+        $this->try_reset_pages();
+        $movies = $this->getSearchList($keyword);
+        $this->prefetched_search = array($keyword, $movies);
+
+        return $movies;
+    }
+
+    /**
+     * Returns the prefetched search result once
+     *
+     * @param string $keyword
+     * @return Short_Movie[]|null
+     */
+    public function takePrefetchedSearchList($keyword)
+    {
+        if (!$this->hasPrefetchedSearchList($keyword)) {
+            return null;
+        }
+
+        $movies = $this->prefetched_search[1];
+        $this->prefetched_search = null;
+        return $movies;
+    }
+
+    /**
+     * @param string $keyword
+     * @return bool
+     */
+    public function hasPrefetchedSearchList($keyword)
+    {
+        return !is_null($this->prefetched_search) && $this->prefetched_search[0] === $keyword;
+    }
+
+    /**
+     * Guard of the search without pagination. The movie list requests the next page
+     * until an empty list is returned, so only the first request runs the search.
+     *
+     * @param string $keyword
+     * @return bool true if the search was already done
+     */
+    protected function is_search_done($keyword)
+    {
+        return $this->get_next_page("search_$keyword") > 1;
     }
 
     /**
@@ -1134,6 +1199,11 @@ class default_config extends dynamic_config
      */
     public function getSearchList($keyword)
     {
+        // pagination is not used, only the first request runs the search
+        if ($this->is_search_done($keyword)) {
+            return array();
+        }
+
         hd_debug_print($keyword);
 
         $this->perf->reset('start');

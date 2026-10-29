@@ -217,14 +217,17 @@ class tvizi_config extends default_config
 
         $movies = array();
         $page_id = self::API_ACTION_MOVIE . "_" . self::API_ACTION_SEARCH;
+        // movies and serials are paged separately, serials are continued after the last page of movies
         $page_idx = $this->get_next_page($page_id);
-        if ($page_idx < 0)
-            return $movies;
-
-        $params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, self::API_ACTION_MOVIE);
-        $searchRes = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
-
-        $movies = ($searchRes === false) ? array() : $this->CollectSearchResult(self::API_ACTION_MOVIE, $searchRes, self::API_ACTION_SEARCH);
+        if ($page_idx >= 0) {
+            $params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, self::API_ACTION_MOVIE);
+            $searchRes = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
+            if ($searchRes === false) {
+                $this->set_next_page($page_id, -1);
+            } else {
+                $movies = $this->CollectSearchResult(self::API_ACTION_MOVIE, $searchRes, self::API_ACTION_SEARCH);
+            }
+        }
 
         $page_id = self::API_ACTION_SERIAL . "_" . self::API_ACTION_SEARCH;
         $page_idx = $this->get_next_page($page_id);
@@ -233,7 +236,12 @@ class tvizi_config extends default_config
 
         $params[CURLOPT_CUSTOMREQUEST] = sprintf(self::REQUEST_TEMPLATE, $page_idx, self::API_ACTION_SERIAL);
         $searchRes = $this->make_json_request(self::API_COMMAND_GET_VOD, $params);
-        $serials = ($searchRes === false) ? array() : $this->CollectSearchResult(self::API_ACTION_SERIAL, $searchRes, self::API_ACTION_SEARCH);
+        if ($searchRes === false) {
+            $this->set_next_page($page_id, -1);
+            return $movies;
+        }
+
+        $serials = $this->CollectSearchResult(self::API_ACTION_SERIAL, $searchRes, self::API_ACTION_SEARCH);
 
         return array_merge($movies, $serials);
     }
@@ -366,7 +374,8 @@ class tvizi_config extends default_config
             $movies[] = $movie;
         }
 
-        if ($data->pagination->pages === $current_idx) {
+        // no movies of the search (pages is 0) is the last page too
+        if (empty($data->items) || $current_idx >= (int)$data->pagination->pages) {
             hd_debug_print("Last page: {$data->pagination->pages}");
             $this->set_next_page($page_id, -1);
         }

@@ -236,6 +236,11 @@ class korona_config extends default_config
      */
     public function getSearchList($keyword)
     {
+        // pagination is not used, only the first request runs the search
+        if ($this->is_search_done($keyword)) {
+            return array();
+        }
+
         hd_debug_print("getSearchList $keyword");
         $keyword = urlencode($keyword);
         $searchRes = $this->make_json_request("/filter/by_name?name=$keyword&page=1&per_page=999999999");

@@ -23,8 +23,10 @@
 .gitattributes  export-ignore
 .gitignore      export-ignore
 
-*.php diff=php text eol=lf
+*.php diff=php
+*.php text eol=lf
 
 *.txt text eol=lf
 *.tpl html eol=lf
 *.xml html eol=lf
+*.json text eol=lf

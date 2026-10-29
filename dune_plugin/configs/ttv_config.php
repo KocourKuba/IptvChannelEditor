@@ -5,13 +5,14 @@ require_once 'lib/default_config.php';
  * TorrentTV. API v3 https://tapitv.com/v3/api_v3.html
  * Account is set by login/password pair: auth returns the API session,
  * the playlist token (S_TOKEN macro of the playlist url) is taken from the account info.
- * VOD lists are paginated by server, categories are the genres (merged genres of the films, serials and animation sections)
- * or the types (films, serials, animation) selected by the category mode from the category list popup menu.
- * Type category is served by film_filter, film_list ignores the type.
- * film_list serves the whole catalog, the genre category, the genre only filter and the search (genre/search params),
- * but ignores the type, country and years, so other filters are served by film_filter.
- * Search shows all found films: the search screen requests the list once, so all pages are loaded at once.
- * film_alt_search ignores pagination and cuts the result at 50 films, it is used only when film_list fails.
+ * VOD lists are paginated by server, categories are the genres (merged genres of the films, serials and animation sections),
+ * the types (films, serials, animation) or the collections (film_alt_list_types) selected by the category mode
+ * from the category list popup menu.
+ * Genre and type categories and the filters are served by film_filter. The deprecated film_list ignores the type
+ * and also lists films without playable files, so it is not used.
+ * Collection films are served by film_alt_list, it pages by skip/limit and has no total count.
+ * Search is served by film_alt_search (paginate=1), the app's own search: the best matches come first
+ * and multi-word queries are matched as a phrase. Without paginate=1 the result is limited to 50 films.
  * Movie files (film_alt_http) are HLS streams, files of the same movie are selectable qualities,
  * series files contain season and episode numbers.
  */
@@ -19,10 +20,10 @@ class ttv_config extends default_config
 {
     const API_COMMAND_AUTH = '{API_URL}/auth.php?username=%s&password=%s&application=android&guid=%s';
     const API_COMMAND_URL = '{API_URL}/%s.php?session=%s';
-    // film_list returns the poster path relative to the media root of the poster host
+    // the relative 'img' poster path is relative to the media root of the poster host
     const POSTER_URL_PREFIX = 'http://mdb.ttvrun.one/media/';
-    // search result limit: SEARCH_MAX_PAGES * PAGE_SIZE films
-    const SEARCH_MAX_PAGES = 10;
+    // poster host of the absolute poster urls built by film_alt_search and film_alt_list (mdb_domain param)
+    const POSTER_HOST = 'mdb.ttvrun.one';
 
     // credentials parameter of the saved session: hash|session
     const PARAM_SESSION = 'ttv_session';
@@ -39,6 +40,7 @@ class ttv_config extends default_config
 
     const CATEGORY_MODE_GENRE = 'genre';
     const CATEGORY_MODE_TYPE = 'type';
+    const CATEGORY_MODE_COLLECTION = 'collection';
 
     /**
      * film_filter types shown as categories in the type category mode
@@ -46,6 +48,14 @@ class ttv_config extends default_config
      * @var string[]
      */
     protected static $category_types = array(self::TYPE_FILM, self::TYPE_SERIAL, self::TYPE_ANIMATION);
+
+    /**
+     * Sort order of the collections shown as categories in the collection mode
+     * (film_alt_list type => order, null for the default one)
+     *
+     * @var array
+     */
+    protected $collection_orders = array();
 
     /**
      * @var string
@@ -107,6 +117,7 @@ class ttv_config extends default_config
         return array(
             self::CATEGORY_MODE_GENRE => TR::load('genre'),
             self::CATEGORY_MODE_TYPE => TR::load('vod_filter_type'),
+            self::CATEGORY_MODE_COLLECTION => TR::load('vod_collections'),
         );
     }
 
@@ -116,7 +127,11 @@ class ttv_config extends default_config
     public function get_category_mode()
     {
         $mode = $this->plugin->get_setting(PARAM_VOD_CATEGORY_MODE, self::CATEGORY_MODE_GENRE);
-        return $mode === self::CATEGORY_MODE_TYPE ? self::CATEGORY_MODE_TYPE : self::CATEGORY_MODE_GENRE;
+        if ($mode === self::CATEGORY_MODE_TYPE || $mode === self::CATEGORY_MODE_COLLECTION) {
+            return $mode;
+        }
+
+        return self::CATEGORY_MODE_GENRE;
     }
 
     /**
@@ -144,9 +159,16 @@ class ttv_config extends default_config
         }
 
         // in the type mode the categories are the film_filter types with their film count,
-        // the genres are still collected for the genre filter
-        $by_type = $this->get_category_mode() === self::CATEGORY_MODE_TYPE;
-        if ($by_type) {
+        // in the collection mode the film_alt_list collections (the genre categories are shown
+        // if they can't be loaded). The genres are still collected for the genre filter
+        $mode = $this->get_category_mode();
+        if ($mode === self::CATEGORY_MODE_COLLECTION) {
+            $by_genre = !$this->add_collection_categories($category_list, $category_index);
+        } else {
+            $by_genre = $mode !== self::CATEGORY_MODE_TYPE;
+        }
+
+        if ($mode === self::CATEGORY_MODE_TYPE) {
             foreach (self::$category_types as $type) {
                 $caption = TR::load("vod_filter_type_$type");
                 $count = $this->get_type_film_count($type);
@@ -170,7 +192,7 @@ class ttv_config extends default_config
                 $genre_name = safe_get_value($genre, 'name');
                 if ($genre_id <= 0 || empty($genre_name) || isset($genre_values[$genre_id])) continue;
 
-                if (!$by_type) {
+                if ($by_genre) {
                     $category = new Vod_Category((string)$genre_id, $genre_name);
                     $category_list[] = $category;
                     $category_index[$category->get_id()] = $category;
@@ -221,18 +243,23 @@ class ttv_config extends default_config
         hd_debug_print(null, true);
         hd_debug_print("getMovieList: $query_id");
 
-        // type category: films of the type, film_list ignores the type so it is served by film_filter
+        // type category: films of the type
         if (in_array($query_id, self::$category_types, true)) {
             return $this->get_page_movies($query_id, array('type' => $query_id));
         }
 
-        // genre category: films of all types of this genre, without genre the whole catalog
-        $params = array();
-        if ((int)$query_id > 0) {
-            $params['genre'] = (int)$query_id;
+        // collection category, the genre ids are numeric
+        if (!is_numeric($query_id)) {
+            return $this->get_collection_page($query_id);
         }
 
-        return $this->get_page_movies($query_id, $params, 'film_list');
+        // genre category: films of all types of this genre, without genre the whole catalog
+        $params = array('type' => self::TYPE_ALL);
+        if ((int)$query_id > 0) {
+            $params['genres_include[]'] = (int)$query_id;
+        }
+
+        return $this->get_page_movies($query_id, $params);
     }
 
     /**
@@ -243,33 +270,29 @@ class ttv_config extends default_config
         hd_debug_print(null, true);
         hd_debug_print("getSearchList: $keyword");
 
-        // search screen requests the list only once, so all pages are loaded here
+        // film_alt_search page is 1 based: data.movies and data.pages
         $movies = array();
-        for ($page = 1; $page <= self::SEARCH_MAX_PAGES; $page++) {
-            $response = $this->make_json_request('film_list', array('search' => $keyword, 'page' => $page, 'page_size' => self::PAGE_SIZE));
-            if ($response === false) {
-                break;
-            }
-
-            $data = safe_get_value($response, 'data', array());
-            $films = safe_get_value($data, 'films', array());
-            foreach ($films as $item) {
-                $this->CreateShortMovie($item, $movies);
-            }
-
-            if (empty($films) || $page >= (int)safe_get_value($data, 'total_pages', 0)) {
-                break;
-            }
+        $page = $this->get_next_page($keyword);
+        if ($page < 0) {
+            return $movies;
         }
 
-        if (empty($movies) && $page === 1) {
-            // film_list failed, film_alt_search returns up to 50 films without pagination
-            $response = $this->make_json_request('film_alt_search', array('q' => $keyword));
-            if ($response !== false) {
-                foreach (safe_get_value($response, 'data', array()) as $item) {
-                    $this->CreateShortMovie($item, $movies);
-                }
-            }
+        $params = array(
+            'q' => $keyword,
+            'paginate' => 1,
+            'movies_page' => $page,
+            'movies_page_size' => self::PAGE_SIZE,
+            'mdb_domain' => self::POSTER_HOST,
+        );
+        $response = $this->make_json_request('film_alt_search', $params);
+        $data = safe_get_value($response, 'data', array());
+        foreach (safe_get_value($data, 'movies', array()) as $item) {
+            $this->CreateShortMovie($item, $movies);
+        }
+
+        if (empty($movies) || $page >= (int)safe_get_value($data, 'pages', 0)) {
+            // last page
+            $this->set_next_page($keyword, -1);
         }
 
         hd_debug_print("Movies found: " . count($movies));
@@ -321,12 +344,9 @@ class ttv_config extends default_config
             return array();
         }
 
-        // genre only filter is served by film_list like the genre category: it returns all films of the genre.
-        // film_list ignores type, country and years, so any other filter is served by film_filter
-        $other = array_diff_key($params, array('genres_include[]' => true, 'type' => true));
-        $type = safe_get_value($params, 'type', self::TYPE_ALL);
-        if (isset($params['genres_include[]']) && $type === self::TYPE_ALL && empty($other)) {
-            return $this->get_page_movies($query_id, array('genre' => $params['genres_include[]']), 'film_list');
+        // a filter without type lists the films of all types
+        if (!isset($params['type'])) {
+            $params['type'] = self::TYPE_ALL;
         }
 
         return $this->get_page_movies($query_id, $params);
@@ -522,17 +542,17 @@ class ttv_config extends default_config
     }
 
     /**
-     * Load next page of the movies list
+     * Load next page of the film_filter movies list
      *
      * @param string $page_id
      * @param array $params
      * @return array
      */
-    protected function get_page_movies($page_id, $params, $command = 'film_filter')
+    protected function get_page_movies($page_id, $params)
     {
         $movies = array();
 
-        // film_filter and film_list page is 1 based
+        // film_filter page is 1 based
         $page = $this->get_next_page($page_id);
         if ($page < 0) {
             return $movies;
@@ -540,21 +560,106 @@ class ttv_config extends default_config
 
         $params['page'] = $page;
         $params['page_size'] = self::PAGE_SIZE;
-        $response = $this->make_json_request($command, $params);
+        $response = $this->make_json_request('film_filter', $params);
         $data = safe_get_value($response, 'data', array());
 
-        // film_filter: data.result and data.pages, film_list: data.films and data.total_pages
-        $is_list = ($command === 'film_list');
-        foreach (safe_get_value($data, $is_list ? 'films' : 'result', array()) as $item) {
+        foreach (safe_get_value($data, 'result', array()) as $item) {
             $this->CreateShortMovie($item, $movies);
         }
 
-        if (empty($movies) || $page >= (int)safe_get_value($data, $is_list ? 'total_pages' : 'pages', 0)) {
+        if (empty($movies) || $page >= (int)safe_get_value($data, 'pages', 0)) {
             // last page
             $this->set_next_page($page_id, -1);
         }
 
         hd_debug_print("Movies read for query: $page_id page: $page: " . count($movies));
+        return $movies;
+    }
+
+    /**
+     * Categories of the collection mode: the film_alt_list_types collections. The same title
+     * is used in several sections (best foreign films, serials and animation), so the caption
+     * starts with the section name.
+     *
+     * @param Vod_Category[] $category_list
+     * @param Vod_Category[] $category_index
+     * @return bool false if the collection list can't be loaded
+     */
+    protected function add_collection_categories(&$category_list, &$category_index)
+    {
+        $response = $this->make_json_request('film_alt_list_types');
+        $collections = safe_get_value($response, 'data', array());
+        if (!is_array($collections)) {
+            hd_debug_print("Failed to load VOD collections");
+            return false;
+        }
+
+        $this->collection_orders = array();
+        foreach ($collections as $collection) {
+            $type = (string)safe_get_value($collection, 'type', '');
+            $title = safe_get_value($collection, 'title');
+            // the type is the category id, a numeric one would be taken for a genre id
+            if (empty($type) || empty($title) || is_numeric($type) || in_array($type, self::$category_types, true)) continue;
+
+            $section = safe_get_value($collection, 'category');
+            if (in_array($section, self::$category_types, true)) {
+                $title = TR::load("vod_filter_type_$section") . ": $title";
+            }
+
+            $category = new Vod_Category($type, $title);
+            $category_list[] = $category;
+            $category_index[$category->get_id()] = $category;
+            $this->collection_orders[$type] = safe_get_value($collection, 'order');
+        }
+
+        return !empty($this->collection_orders);
+    }
+
+    /**
+     * Load next page of the collection films. film_alt_list pages by skip/limit and has no total count,
+     * so a full page means there may be a next one.
+     *
+     * @param string $type collection type
+     * @return array
+     */
+    protected function get_collection_page($type)
+    {
+        $movies = array();
+
+        $page = $this->get_next_page($type);
+        if ($page < 0) {
+            return $movies;
+        }
+
+        $params = array(
+            'type' => $type,
+            'skip' => ($page - 1) * self::PAGE_SIZE,
+            'limit' => self::PAGE_SIZE,
+            'mdb_domain' => self::POSTER_HOST,
+        );
+
+        // a random order is shuffled on every request, the pages would repeat films
+        $order = safe_get_value($this->collection_orders, $type);
+        if (!empty($order) && $order !== 'random') {
+            $params['order'] = $order;
+        }
+
+        $response = $this->make_json_request('film_alt_list', $params);
+        $films = safe_get_value($response, 'data', array());
+        if (!is_array($films)) {
+            $films = array();
+        }
+
+        foreach ($films as $item) {
+            $this->CreateShortMovie($item, $movies);
+        }
+
+        if (count($films) < self::PAGE_SIZE) {
+            // last page
+            $this->set_next_page($type, -1);
+        }
+
+        hd_debug_print("Movies read for collection: $type page: $page: " . count($movies));
         return $movies;
     }
 
