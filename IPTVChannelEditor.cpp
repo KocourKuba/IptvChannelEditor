@@ -1095,6 +1095,21 @@ bool CIPTVChannelEditorApp::PackPlugin(const std::string& plugin_type,
 	utils::string_replace_inplace(config_data, "{plugin_logo}", logo_subst.c_str());
 	utils::string_replace_inplace(config_data, "{plugin_bg}", bg_subst.c_str());
 
+	// public actions (vod_search for Play in Apps) are available only for plugins with VOD
+	static constexpr auto public_actions_vod =
+		"<public_actions>\n"
+		"        <action id=\"vod_search\">\n"
+		"            <type>plugin_handle_user_input</type>\n"
+		"            <params>\n"
+		"                <handler_id>entry_handler</handler_id>\n"
+		"                <control_id>external_search</control_id>\n"
+		"            </params>\n"
+		"        </action>\n"
+		"    </public_actions>";
+
+	utils::string_replace_inplace(config_data, "{public_actions}",
+								  plugin->get_vod_engine() != VodEngine::enNone ? public_actions_vod : "<public_actions/>");
+
 	// copy plugin config class if they exist
 	const auto& src_config_file = utils::utf8_to_utf16(plugin->get_class_name() + ".php");
 	const auto& src_path = std::format(LR"({:s}configs\{:s})", plugin_root.wstring(), src_config_file);
