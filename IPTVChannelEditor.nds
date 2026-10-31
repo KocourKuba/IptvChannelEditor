@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<desktop lang="ru" column="TTranslationColumn" row="Text">
-  <project scantime="20260817T152027Z">
+<desktop lang="ru" column="TTranslationColumn" row="32774.11.40">
+  <project scantime="20261031T212328Z">
     <ignoredwords>
       <language id="ru">
         <item>кэш</item>
@@ -8,7 +8,7 @@
     </ignoredwords>
   </project>
   <node>x64\Release Unicode\IPTVChannelEditor.exe</node>
-  <node>Dialog</node>
+  <node>Accelerator</node>
   <column class="TInfoColumn" width="103"/>
   <column class="TContextColumn" width="515"/>
   <column class="TOriginalColumn" width="515"/>

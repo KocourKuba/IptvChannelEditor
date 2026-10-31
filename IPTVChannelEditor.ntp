@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project id="32B8BF7E-F9DA-487C-B6FF-DABDDB1AB822" created="20211012T165442Z" lastmodified="20260817T152404Z" version="1.0.1086" reviewcount="0" stringid="637">
+<project id="32B8BF7E-F9DA-487C-B6FF-DABDDB1AB822" created="20211012T165442Z" lastmodified="20261031T212557Z" version="1.0.1086" reviewcount="0" stringid="637">
   <lang id="ru"/>
-  <node class="TVisualCppSource" name="x64\Release Unicode\IPTVChannelEditor.exe" fullpath="D:\Works\Development\IPTVChannelEditor\x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" lastmodified="20260817T152404Z" encoding="windows-1252" platforms="[ptWin64]" hassignatureread="1">
+  <node class="TVisualCppSource" name="x64\Release Unicode\IPTVChannelEditor.exe" fullpath="D:\Works\Development\IPTVChannelEditor\x64\Release Unicode\IPTVChannelEditor.exe" original="en-US" lastmodified="20261031T212557Z" encoding="windows-1252" platforms="[ptWin64]" hassignatureread="1">
     <node class="TWindowsBinaryFolder" name="&quot;AFX_DIALOG_LAYOUT&quot;" resname="AFX_DIALOG_LAYOUT" excluded="1"/>
     <node class="TWindowsBinaryFolder" name="&quot;PNG&quot;" resname="PNG" excluded="1"/>
     <node class="TWindowsAcceleratorFolder" name="Accelerator" created="20260330T163817Z">
@@ -14,8 +14,14 @@
         <row id="32790.3.46">3.46</row>
         <row id="32791.11.83">11.83</row>
         <row id="32796.11.32">11.32</row>
-        <row id="32793.131.116">131.116</row>
-        <data>CwAoAAaAAAALACYAB4AAAAMAcQAKgAAAAwBzAAuAAAADAC0ABIAAAAMALgAWgAAACwBTABeAAAALACAAHIAAAIMAdAAZgAAA</data>
+        <row id="32793.3.116" created="20261031T212328Z">3.116</row>
+        <row id="32809.11.85" created="20261031T212328Z">11.85</row>
+        <row id="32810.11.78" created="20261031T212328Z">11.78</row>
+        <row id="32811.139.80" created="20261031T212328Z">139.80</row>
+        <data>
+          CwAoAAaAAAALACYAB4AAAAMAcQAKgAAAAwBzAAuAAAADAC0ABIAAAAMALgAWgAAACwBTABeAAAALACAAHIAAAAMAdAAZgAAACwBV
+          ACmAAAALAE4AKoAAAIsAUAArgAAA
+        </data>
       </node>
     </node>
     <node class="TWindowsDialogFolder" name="Dialog" created="20260330T163817Z">
@@ -43,10 +49,10 @@
           <row id="CY">9</row>
         </item>
         <item name="STATIC_0" type="LTEXT" id="-1">
-          <row id="Text" changed="20260330T165039Z" si="39" locked="1">
+          <row id="Text" changed="20261031T212328Z" si="39" locked="1">
             <value>Copyright © 2020-2026
 Pavel Abakanov (sharky72)</value>
-            <prev>Copyright © 2020-2025
+            <prev>Copyright © 2020-2026
 Pavel Abakanov (sharky72)</prev>
           </row>
           <row id="X">53</row>
@@ -4386,13 +4392,22 @@ Pavel Abakanov (sharky72)</prev>
         </row>
       </node>
       <node class="TWindowsStringNode" name="9" resid="9" langid="1033">
-        <row id="128" si="310" locked="1">Dune IPTV Channel Editor
+        <row id="128" changed="20261031T212328Z" si="310" locked="1">
+          <value>Dune IPTV Channel Editor
 ChannelEditor
 ChannelEditor
 
 
 
-</row>
+</value>
+          <prev>Dune IPTV Channel Editor
+ChannelEditor
+ChannelEditor
+
+
+
+</prev>
+        </row>
         <row id="130" si="311">
           <value>History</value>
           <lang id="ru" time="20230614T012836Z">История</lang>
@@ -4421,10 +4436,12 @@ ChannelEditor
           <value>Playlist source not set!</value>
           <lang id="ru" time="20211012T210119Z">Источник плейлиста не задан!</lang>
         </row>
-        <row id="141" si="318" codep="1">
+        <row id="141" changed="20261031T212328Z" si="318" codep="1">
           <value>Unable to download playlist!
 %s</value>
-          <lang id="ru" time="20230323T182430Z">Не могу скачать плейлист!
+          <prev>Unable to download playlist!
+%s</prev>
+          <lang id="ru" invalidated="1" time="20230323T182430Z">Не могу скачать плейлист!
 %s</lang>
         </row>
         <row id="142" si="319">
@@ -4437,10 +4454,12 @@ ChannelEditor
         </row>
       </node>
       <node class="TWindowsStringNode" name="10" resid="10" langid="1033">
-        <row id="144" si="321">
+        <row id="144" changed="20261031T212328Z" si="321">
           <value>You have unsaved changes.
 Save changes?</value>
-          <lang id="ru" time="20211130T004517Z">Изменения не сохранены.
+          <prev>You have unsaved changes.
+Save changes?</prev>
+          <lang id="ru" invalidated="1" time="20211130T004517Z">Изменения не сохранены.
 Сохранить?</lang>
         </row>
         <row id="145" si="322">
@@ -4451,10 +4470,12 @@ Save changes?</value>
           <value>Channel already exist!</value>
           <lang id="ru" time="20211012T205826Z">Канал уже существует!</lang>
         </row>
-        <row id="147" si="324">
+        <row id="147" changed="20261031T212328Z" si="324">
           <value>Channel with this ID already exist!
 Are you sure to replace?</value>
-          <lang id="ru" time="20211012T205849Z">Канал с этим номером уже существует!
+          <prev>Channel with this ID already exist!
+Are you sure to replace?</prev>
+          <lang id="ru" invalidated="1" time="20211012T205849Z">Канал с этим номером уже существует!
 Заменить?</lang>
         </row>
         <row id="148" si="325">
@@ -4465,10 +4486,12 @@ Are you sure to replace?</value>
           <value>Non ASCII symbols in the channel list name is not allowed!</value>
           <lang id="ru" time="20211012T205937Z">Только латинские символы допустимы в имени списка каналов!</lang>
         </row>
-        <row id="150" si="327" codep="1">
+        <row id="150" changed="20261031T212328Z" si="327" codep="1">
           <value>Plugin created in:
 %s</value>
-          <lang id="ru" time="20230312T173607Z">Плагин создан в:
+          <prev>Plugin created in:
+%s</prev>
+          <lang id="ru" invalidated="1" time="20230312T173607Z">Плагин создан в:
 %s</lang>
         </row>
         <row id="151" si="328">
@@ -4499,40 +4522,55 @@ Are you sure to replace?</value>
           <value>Get Stream Info: %d from %d</value>
           <lang id="ru" time="20211012T215159Z">Информация о потоке: %d из %d</lang>
         </row>
-        <row id="158" si="335" codep="1">
+        <row id="158" changed="20261031T212328Z" si="335" codep="1">
           <value>Name:		%s
 ID:		%s
 EPG1 ID:	%s
 </value>
-          <lang id="ru" time="20211012T215225Z">Название:	%s
+          <prev>Name:		%s
+ID:		%s
+EPG1 ID:	%s
+</prev>
+          <lang id="ru" invalidated="1" time="20211012T215225Z">Название:	%s
 №:		%s
 EPG1 №:	%s
 </lang>
         </row>
-        <row id="159" si="336" codep="1">
+        <row id="159" changed="20261031T212328Z" si="336" codep="1">
           <value>EPG2 ID:	%s
 </value>
-          <lang id="ru" time="20211012T215502Z">EPG2 №:	%s
+          <prev>EPG2 ID:	%s
+</prev>
+          <lang id="ru" invalidated="1" time="20211012T215502Z">EPG2 №:	%s
 </lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="11" resid="11" langid="1033">
-        <row id="160" si="337" codep="1">
+        <row id="160" changed="20261031T212328Z" si="337" codep="1">
           <value>Archive:	%d day(s)
 Adult:		%s
 In categories:	%s</value>
-          <lang id="ru" time="20211012T225615Z">Архив:		%d дней
+          <prev>Archive:	%d day(s)
+Adult:		%s
+In categories:	%s</prev>
+          <lang id="ru" invalidated="1" time="20211012T225615Z">Архив:		%d дней
 Взрослый:	%s
 В категории:	%s</lang>
         </row>
-        <row id="161" si="338" codep="1">
+        <row id="161" changed="20261031T212328Z" si="338" codep="1">
           <value>Name:		%s
 ID:		%s
 EPG ID:		%s
 Archive:	%d day(s)
 Adult:		%s
 URL:		%s</value>
-          <lang id="ru" time="20230519T214334Z">Название:	%s
+          <prev>Name:		%s
+ID:		%s
+EPG ID:		%s
+Archive:	%d day(s)
+Adult:		%s
+URL:		%s</prev>
+          <lang id="ru" invalidated="1" time="20230519T214334Z">Название:	%s
 №:		%s
 EPG №:		%s
 Архив:		%d дней
@@ -4627,7 +4665,7 @@ EPG №:		%s
         </row>
         <row id="184" si="360">
           <value>Toggled show only changed channels.</value>
-          <lang id="ru" time="20211130T003008Z">Показывать только измененные каналы</lang>
+          <lang id="ru" time="20261031T212349Z">Показывать только измененные каналы.</lang>
         </row>
         <row id="185" si="361">
           <value>Account settings</value>
@@ -4765,11 +4803,14 @@ EPG №:		%s
           <value> (Standard)</value>
           <lang id="ru" time="20211213T131712Z"> (Основной)</lang>
         </row>
-        <row id="218" si="394" codep="1">
+        <row id="218" changed="20261031T212328Z" si="394" codep="1">
           <value>Update for follow files available.
 %s
 Install it now?</value>
-          <lang id="ru" time="20251019T225740Z">Следующие файлы доступны для обновления.
+          <prev>Update for follow files available.
+%s
+Install it now?</prev>
+          <lang id="ru" invalidated="1" time="20251019T225740Z">Следующие файлы доступны для обновления.
 %s
 Обновить?</lang>
         </row>
@@ -4974,33 +5015,43 @@ Install it now?</value>
           <value>Channels list</value>
           <lang id="ru" time="20220621T164547Z">Списки каналов</lang>
         </row>
-        <row id="270" si="446">
+        <row id="270" changed="20261031T212328Z" si="446">
           <value>The plugin file name for an account has the same name.
 The plugin will be overwritten. Continue?</value>
-          <lang id="ru" time="20230311T232613Z">Имя сгенерированного плагина для одного аккаунта имеет одинаковое имя с другим.
+          <prev>The plugin file name for an account has the same name.
+The plugin will be overwritten. Continue?</prev>
+          <lang id="ru" invalidated="1" time="20230311T232613Z">Имя сгенерированного плагина для одного аккаунта имеет одинаковое имя с другим.
 Плагин будет перезаписан. Продолжить?</lang>
         </row>
-        <row id="271" si="447">
+        <row id="271" changed="20261031T212328Z" si="447">
           <value>The name of the plugin is shown by Dune.
 If empty will use the default.</value>
-          <lang id="ru" time="20220630T163618Z">Имя плагина в Дюне.
+          <prev>The name of the plugin is shown by Dune.
+If empty will use the default.</prev>
+          <lang id="ru" invalidated="1" time="20220630T163618Z">Имя плагина в Дюне.
 Если пустое, используется по умолчанию.</lang>
         </row>
       </node>
       <node class="TWindowsStringNode" name="18" resid="18" langid="1033">
-        <row id="272" si="448">
+        <row id="272" changed="20261031T212328Z" si="448">
           <value>The logo of the plugin.
 Up to 250x250 px in png format.
 If empty will use the default.</value>
-          <lang id="ru" time="20220630T163716Z">Логотип плагина в Дюне.
+          <prev>The logo of the plugin.
+Up to 250x250 px in png format.
+If empty will use the default.</prev>
+          <lang id="ru" invalidated="1" time="20220630T163716Z">Логотип плагина в Дюне.
 До 250x250 px в формате png.
 Если пустое, используется по умолчанию.</lang>
         </row>
-        <row id="273" si="449">
+        <row id="273" changed="20261031T212328Z" si="449">
           <value>Background picture used by the plugin.
 1920x1080 px in jpg format.
 If empty will use the default.</value>
-          <lang id="ru" time="20220630T163720Z">Фон плагина в Дюне.
+          <prev>Background picture used by the plugin.
+1920x1080 px in jpg format.
+If empty will use the default.</prev>
+          <lang id="ru" invalidated="1" time="20220630T163720Z">Фон плагина в Дюне.
 1920x1080 px в формате jpg.
 Если пустое, используется по умолчанию.</lang>
         </row>
@@ -5024,10 +5075,12 @@ If empty will use the default.</value>
           <value>Settings missed!</value>
           <lang id="ru" time="20220730T092653Z">Настройки отсутствуют!</lang>
         </row>
-        <row id="279" si="455" codep="1">
+        <row id="279" changed="20261031T212328Z" si="455" codep="1">
           <value>Web Update created in '%s'
 Upload files to the Web Server</value>
-          <lang id="ru" time="20220730T093233Z">Интернет обновление создано в %s
+          <prev>Web Update created in '%s'
+Upload files to the Web Server</prev>
+          <lang id="ru" invalidated="1" time="20220730T093233Z">Интернет обновление создано в %s
 Загрузите его на веб сервер</lang>
         </row>
         <row id="280" si="456">
@@ -5181,10 +5234,12 @@ Upload files to the Web Server</value>
         </row>
       </node>
       <node class="TWindowsStringNode" name="21" resid="21" langid="1033">
-        <row id="320" si="493">
+        <row id="320" changed="20261031T212328Z" si="493">
           <value>Type of authorization used to download provider playlist or access to user account.
 OTTKey - iEdem/iLook, Login/Password or only Token.</value>
-          <lang id="ru" time="20221018T224845Z">Тип авторизации используемый для загрузки плейлиста провайдера или доступа к информации кабинета.
+          <prev>Type of authorization used to download provider playlist or access to user account.
+OTTKey - iEdem/iLook, Login/Password or only Token.</prev>
+          <lang id="ru" invalidated="1" time="20221018T224845Z">Тип авторизации используемый для загрузки плейлиста провайдера или доступа к информации кабинета.
 OTTKey - iEdem/iLook, Login/Password или только Token.</lang>
         </row>
         <row id="321" si="494">
@@ -5459,22 +5514,28 @@ OTTKey - iEdem/iLook, Login/Password или только Token.</lang>
           <value>Set Global Plugin Action manifest entries. See http://files.dune-hd.com/sdk/doc/html/plugins.html##global_plugin_actions</value>
           <lang id="ru" time="20230408T003005Z">Настройка Global Plugin Action для манифеста плагина. Подробнее здесь http://files.dune-hd.com/sdk/doc/html/plugins.html##global_plugin_actions</lang>
         </row>
-        <row id="388" si="560">
+        <row id="388" changed="20261031T212328Z" si="560">
           <value>The root of the Channels lists path changed. Copy contained files to the new location? 
 Existing files with the same name will be overwritten.</value>
-          <lang id="ru" time="20230425T212753Z">Корневая папка Списков каналов плагинов изменилась. Скопировать содержимое в новую папку?
+          <prev>The root of the Channels lists path changed. Copy contained files to the new location? 
+Existing files with the same name will be overwritten.</prev>
+          <lang id="ru" invalidated="1" time="20230425T212753Z">Корневая папка Списков каналов плагинов изменилась. Скопировать содержимое в новую папку?
 Файлы с одинаковыми именем будут перезаписаны.</lang>
         </row>
-        <row id="389" si="561">
+        <row id="389" changed="20261031T212328Z" si="561">
           <value>The root of the Plugins configuration path changed. Copy contained files to the new location? 
 Existing files with the same name will be overwritten.</value>
-          <lang id="ru" time="20230425T212810Z">Корневая папка Конфигураций плагинов изменилась. Скопировать содержимое в новую папку?
+          <prev>The root of the Plugins configuration path changed. Copy contained files to the new location? 
+Existing files with the same name will be overwritten.</prev>
+          <lang id="ru" invalidated="1" time="20230425T212810Z">Корневая папка Конфигураций плагинов изменилась. Скопировать содержимое в новую папку?
 Файлы с одинаковыми именем будут перезаписаны.</lang>
         </row>
-        <row id="390" si="562">
+        <row id="390" changed="20261031T212328Z" si="562">
           <value>Copy error ({:d})!
 Copy: {:s} to {:s}</value>
-          <lang id="ru" time="20240703T161118Z">Ошибка копирования! ({:d})!
+          <prev>Copy error ({:d})!
+Copy: {:s} to {:s}</prev>
+          <lang id="ru" invalidated="1" time="20240703T161118Z">Ошибка копирования! ({:d})!
 Копирование: {:s} в {:s}</lang>
         </row>
         <row id="391" si="563">
@@ -5600,20 +5661,26 @@ Copy: {:s} to {:s}</value>
           <value>Stream type for archive URL</value>
           <lang id="ru">Тип потока для архивной ссылки</lang>
         </row>
-        <row id="632" si="593">
+        <row id="632" changed="20261031T212328Z" si="593">
           <value>Failed to unpack package!
 
 unpack: {:s}
 to: {:s}</value>
-          <lang id="ru" time="20240512T115236Z">Ошибка распаковки пакета
+          <prev>Failed to unpack package!
+
+unpack: {:s}
+to: {:s}</prev>
+          <lang id="ru" invalidated="1" time="20240512T115236Z">Ошибка распаковки пакета
 
 архив: {:s}
 в: {:s}</lang>
         </row>
-        <row id="633" si="594">
+        <row id="633" changed="20261031T212328Z" si="594">
           <value>Failed to download package!
 {:s}</value>
-          <lang id="ru" time="20240512T115320Z">Ошибка загрузки пакета!
+          <prev>Failed to download package!
+{:s}</prev>
+          <lang id="ru" invalidated="1" time="20240512T115320Z">Ошибка загрузки пакета!
 {:s}</lang>
         </row>
         <row id="634" si="595">
@@ -5636,11 +5703,14 @@ to: {:s}</value>
           <value>EPG does not exist</value>
           <lang id="ru" time="20251017T201534Z">EPG не существует</lang>
         </row>
-        <row id="639" si="600" codep="1">
+        <row id="639" changed="20261031T212328Z" si="600" codep="1">
           <value>EPG not found.
 Known EPG time range:
 %s - %s</value>
-          <lang id="ru" time="20251017T201605Z">EPG не найдено.
+          <prev>EPG not found.
+Known EPG time range:
+%s - %s</prev>
+          <lang id="ru" invalidated="1" time="20251017T201605Z">EPG не найдено.
 Известный диапазон EPG:
 %s - %s</lang>
         </row>
@@ -5659,25 +5729,25 @@ Known EPG time range:
     <node class="TWindowsVersionFolder" name="Version" created="20260330T163817Z">
       <node class="TWindowsVersionNode" name="1" resid="1" langid="1033">
         <row id="FileDescription" si="603" locked="1">IPTV Channel Editor for Dune HD Edem TV plugin</row>
-        <row id="FileVersion" changed="20260817T152027Z" si="604" locked="1">
-          <value>9.3.2527, 17 Aug 2026</value>
-          <prev>9.2.2498, 10 May 2026</prev>
+        <row id="FileVersion" changed="20261031T212328Z" si="604" locked="1">
+          <value>9.4.2568, 31 Oct 2026</value>
+          <prev>9.3.2527, 17 Aug 2026</prev>
         </row>
         <row id="InternalName" si="605" locked="1">IPTVChannelEditor.exe</row>
         <row id="LegalCopyright" si="606" locked="1">All rights reserved.</row>
         <row id="OriginalFilename" si="607" locked="1">IPTVChannelEditor.exe</row>
         <row id="ProductName" si="608" locked="1">Dune HD IPTV Channel Editor</row>
         <data>
-          MAM0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4AAAEAAwAJAAAA3wkDAAkAAADfCT8AAAAAAAAABAAE
+          MAM0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4AAAEABAAJAAAACAoEAAkAAAAICj8AAAAAAAAABAAE
           AAEAAAAAAAAAAAAAAAAAAACOAgAAAQBTAHQAcgBpAG4AZwBGAGkAbABlAEkAbgBmAG8AAABqAgAAAQAwADQAMAA5ADAANABCADAA
           AACGAC8AAQBGAGkAbABlAEQAZQBzAGMAcgBpAHAAdABpAG8AbgAAAAAASQBQAFQAVgAgAEMAaABhAG4AbgBlAGwAIABFAGQAaQB0
           AG8AcgAgAGYAbwByACAARAB1AG4AZQAgAEgARAAgAEUAZABlAG0AIABUAFYAIABwAGwAdQBnAGkAbgAAAAAATAAWAAEARgBpAGwA
-          ZQBWAGUAcgBzAGkAbwBuAAAAAAA5AC4AMwAuADIANQAyADcALAAgADEANwAgAEEAdQBnACAAMgAwADIANgAAAEwAFgABAEkAbgB0
+          ZQBWAGUAcgBzAGkAbwBuAAAAAAA5AC4ANAAuADIANQA2ADgALAAgADMAMQAgAE8AYwB0ACAAMgAwADIANgAAAEwAFgABAEkAbgB0
           AGUAcgBuAGEAbABOAGEAbQBlAAAASQBQAFQAVgBDAGgAYQBuAG4AZQBsAEUAZABpAHQAbwByAC4AZQB4AGUAAABOABUAAQBMAGUA
           ZwBhAGwAQwBvAHAAeQByAGkAZwBoAHQAAABBAGwAbAAgAHIAaQBnAGgAdABzACAAcgBlAHMAZQByAHYAZQBkAC4AAAAAAFQAFgAB
           AE8AcgBpAGcAaQBuAGEAbABGAGkAbABlAG4AYQBtAGUAAABJAFAAVABWAEMAaABhAG4AbgBlAGwARQBkAGkAdABvAHIALgBlAHgA
           ZQAAAFgAHAABAFAAcgBvAGQAdQBjAHQATgBhAG0AZQAAAAAARAB1AG4AZQAgAEgARAAgAEkAUABUAFYAIABDAGgAYQBuAG4AZQBs
-          ACAARQBkAGkAdABvAHIAAAA2AAkAAQBQAHIAbwBkAHUAYwB0AFYAZQByAHMAaQBvAG4AAAA5AC4AMwAuADIANQAyADcAAAAAAEQA
+          ACAARQBkAGkAdABvAHIAAAA2AAkAAQBQAHIAbwBkAHUAYwB0AFYAZQByAHMAaQBvAG4AAAA5AC4ANAAuADIANQA2ADgAAAAAAEQA
           AAABAFYAYQByAEYAaQBsAGUASQBuAGYAbwAAAAAAJAAEAAAAVAByAGEAbgBzAGwAYQB0AGkAbwBuAAAAAAAJBLAE
         </data>
       </node>
