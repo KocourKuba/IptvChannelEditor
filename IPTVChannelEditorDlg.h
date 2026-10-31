@@ -254,6 +254,7 @@ private:
 	void FillXmlSources();
 
 	void LoadChannelInfo(std::shared_ptr<ChannelInfo> channel = nullptr);
+	void ClearEpgInfo();
 	void LoadPlayListInfo(HTREEITEM hItem = nullptr);
 
 	void PlayItem(HTREEITEM hItem, int archive_hour = 0, int archiveHour = 0);

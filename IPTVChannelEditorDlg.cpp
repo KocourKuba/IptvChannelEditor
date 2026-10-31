@@ -790,10 +790,16 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 
 	m_wndBtnVod.ShowWindow(m_plugin->get_vod_engine() != VodEngine::enNone ? SW_SHOW : SW_HIDE);
 
-	int cur_sel = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
+	// saved value is a stream type (item data), not a combobox index
+	int saved_type = GetConfig().get_int(false, REG_STREAM_TYPE, 0);
+	int cur_sel = 0;
+	// show only streams that have a template (VOD only provider has none, then keep them all)
+	bool has_template = std::any_of(streams.begin(), streams.end(), [](const auto& stream) { return !stream.uri_template.empty(); });
 	m_wndStreamType.ResetContent();
 	for (const auto& stream : streams)
 	{
+		if (has_template && stream.uri_template.empty()) continue;
+
 		std::wstring name;
 		switch (stream.stream_type)
 		{
@@ -810,17 +816,19 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		{
 			int idx = m_wndStreamType.AddString(name.c_str());
 			m_wndStreamType.SetItemData(idx, (DWORD_PTR)stream.stream_type);
+			if ((int)stream.stream_type == saved_type)
+			{
+				cur_sel = idx;
+			}
 		}
 	}
-
-	if (cur_sel >= m_wndStreamType.GetCount())
-		cur_sel = m_wndStreamType.GetCount() - 1;
 
 	if (m_wndStreamType.GetCount() == 0)
 		cur_sel = -1;
 
 	m_wndStreamType.SetCurSel(cur_sel);
-	m_wndStreamType.EnableWindow(m_wndStreamType.GetCount() > 1);
+	// enable only if there is a choice. VOD only provider does not play tv streams
+	m_wndStreamType.EnableWindow(m_wndStreamType.GetCount() > 1 && !m_plugin->is_vod_only());
 
 	// Set selected playlist
 	m_playlist_info = m_plugin->get_playlist_infos();
@@ -850,7 +858,7 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 		pl_idx = 0;
 
 	m_wndPlaylist.SetCurSel(pl_idx);
-	m_wndPlaylist.EnableWindow(TRUE);
+	m_wndPlaylist.EnableWindow(m_wndPlaylist.GetCount() > 0);
 
 	// Load channel lists
 	const auto& plugin_name = GetPluginTypeNameW(m_plugin_type);
@@ -863,6 +871,10 @@ void CIPTVChannelEditorDlg::SwitchPlugin()
 	m_wndChannels.ResetContent();
 	m_all_channels_lists.clear();
 	ClearCache();
+
+	// clear info of the previously selected channel
+	LoadChannelInfo();
+	ClearEpgInfo();
 
 	std::error_code err;
 	std::filesystem::directory_iterator ch_dir_iter(channelsPath, err);
@@ -1152,6 +1164,14 @@ void CIPTVChannelEditorDlg::TriggerEpg()
 void CIPTVChannelEditorDlg::LoadPlaylist(bool saveToFile /*= false*/, bool force /*= false*/)
 {
 	int idx = m_wndPlaylist.GetCurSel();
+	if (idx < 0 || idx >= (int)m_playlist_info.size())
+	{
+		// no playlist selected (VOD only provider), clear previous playlist
+		m_playlist_url.clear();
+		m_plFileName.clear();
+		OnEndLoadPlaylist(0);
+		return;
+	}
 
 	TemplateParams params
 	{
@@ -1408,7 +1428,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndLoadPlaylist(WPARAM wParam /*= 0*/, LPARAM  
 	m_wndBtnAccountSetting.EnableWindow(TRUE);
 	m_wndBtnReloadPlaylist.EnableWindow(TRUE);
 	m_wndBtnDownloadPlaylist.EnableWindow(TRUE);
-	m_wndPlaylist.EnableWindow(TRUE);
+	m_wndPlaylist.EnableWindow(m_wndPlaylist.GetCount() > 0);
 	m_wndBtnExportM3u.EnableWindow(!m_playlistMap.empty() && !m_channelsMap.empty());
 
 	AfxGetApp()->EndWaitCursor();
@@ -1516,7 +1536,7 @@ LRESULT CIPTVChannelEditorDlg::OnEndGetStreamInfo(WPARAM  /*wParam*/ /*= 0*/, LP
 	m_inStreamInfo = false;
 	m_wndPluginType.EnableWindow(TRUE);
 	m_wndChannels.EnableWindow(m_all_channels_lists.size() > 1);
-	m_wndPlaylist.EnableWindow(TRUE);
+	m_wndPlaylist.EnableWindow(m_wndPlaylist.GetCount() > 0);
 	m_wndBtnAccountSetting.EnableWindow(TRUE);
 	m_wndBtnReloadPlaylist.EnableWindow(TRUE);
 	m_wndBtnDownloadPlaylist.EnableWindow(TRUE);
@@ -2109,6 +2129,16 @@ void CIPTVChannelEditorDlg::LoadChannelInfo(std::shared_ptr<ChannelInfo> channel
 	UpdateData(FALSE);
 }
 
+void CIPTVChannelEditorDlg::ClearEpgInfo()
+{
+	m_wndEpg.SetWindowText(L"");
+	m_wndProgressTime.SetPos(0);
+	if (CWnd* staticText = GetDlgItem(IDC_STATIC_TIME_LEFT); staticText)
+	{
+		staticText->SetWindowText(L"");
+	}
+}
+
 void CIPTVChannelEditorDlg::LoadPlayListInfo(HTREEITEM hItem /*= nullptr*/)
 {
 	if (hItem == nullptr)
@@ -2165,7 +2195,7 @@ void CIPTVChannelEditorDlg::FillEPG(std::stop_token stop)
 
 		m_allowUpdateEpg = false;
 
-		m_wndEpg.SetWindowText(L"");
+		ClearEpgInfo();
 		const auto v = GetBaseInfo(m_lastTree, m_lastTree->GetSelectedItem());
 		if (std::holds_alternative<std::nullptr_t>(v))
 		{
@@ -3657,7 +3687,7 @@ void CIPTVChannelEditorDlg::UpdateControlsForItem(HTREEITEM hSelected /*= nullpt
 			m_streamID.Empty();
 			m_infoAudio.Empty();
 			m_infoVideo.Empty();
-			m_wndEpg.SetWindowText(L"");
+			ClearEpgInfo();
 
 			m_wndChannelIcon.EnableWindow(TRUE);
 			UpdateIconInfo(GetCategory(hSelected).get());
@@ -6101,12 +6131,14 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()
 {
 	int idx = m_wndPlaylist.GetCurSel();
-	if (idx == CB_ERR)
-		return;
+	if (idx != CB_ERR)
+	{
+		m_plugin->set_playlist_idx(idx);
+		GetConfig().set_int(false, REG_PLAYLIST_TYPE, idx);
+		GetConfig().SaveSettings();
+	}
 
-	m_plugin->set_playlist_idx(idx);
-	GetConfig().set_int(false, REG_PLAYLIST_TYPE, idx);
-	GetConfig().SaveSettings();
+	// VOD only provider has no playlists, LoadPlaylist clears the previous one
 	LoadPlaylist();
 }
 
