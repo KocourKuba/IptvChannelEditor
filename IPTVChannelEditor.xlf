@@ -993,8 +993,8 @@ Save changes?</source>
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
           <trans-unit id="Strings.11.IDS_STRING_COMBO_PLUGIN_TYPE" resname="Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_COMBO_PLUGIN_TYPE">
-            <source>Select Plugin for edit</source>
-            <target state="final">Выбор плагина для редактирования</target>
+            <source>Select Plugin for edit (Ctrl+N - next, Ctrl+P - previous)</source>
+            <target state="final">Выбор плагина для редактирования (Ctrl+N - следующий, Ctrl+P - предыдущий)</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.11.IDS_STRING_COMBO_PLUGIN_TYPE</context>
             </context-group>
@@ -1217,8 +1217,8 @@ EPG №:		%s
             <sl:rowstatus>rsInUse</sl:rowstatus>
           </trans-unit>
           <trans-unit id="Strings.13.IDS_STRING_BUTTON_UPDATE_CHANGED" resname="Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_BUTTON_UPDATE_CHANGED">
-            <source>Update channels changed in the playlist</source>
-            <target state="final">Обновить все каналы отличающиеся от данных в плейлисте</target>
+            <source>Update channels changed in the playlist (Ctrl+U)</source>
+            <target state="final">Обновить все каналы отличающиеся от данных в плейлисте (Ctrl+U)</target>
             <context-group>
               <context context-type="element">Release Unicode\IPTVChannelEditor.exe.Strings.13.IDS_STRING_BUTTON_UPDATE_CHANGED</context>
             </context-group>

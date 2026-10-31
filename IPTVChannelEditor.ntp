@@ -4556,8 +4556,8 @@ EPG №:		%s
           <lang id="ru" time="20211012T223802Z">Поддержите разработчика</lang>
         </row>
         <row id="166" si="343">
-          <value>Select Plugin for edit</value>
-          <lang id="ru" time="20211012T223816Z">Выбор плагина для редактирования</lang>
+          <value>Select Plugin for edit (Ctrl+N - next, Ctrl+P - previous)</value>
+          <lang id="ru" time="20211012T223816Z">Выбор плагина для редактирования (Ctrl+N - следующий, Ctrl+P - предыдущий)</lang>
         </row>
         <row id="167" si="344">
           <value>Choose channel list to edit</value>
@@ -4688,8 +4688,8 @@ EPG №:		%s
           <lang id="ru" time="20211012T224651Z">Остановить процесс</lang>
         </row>
         <row id="199" si="375">
-          <value>Update channels changed in the playlist</value>
-          <lang id="ru" time="20211012T224701Z">Обновить все каналы отличающиеся от данных в плейлисте</lang>
+          <value>Update channels changed in the playlist (Ctrl+U)</value>
+          <lang id="ru" time="20211012T224701Z">Обновить все каналы отличающиеся от данных в плейлисте (Ctrl+U)</lang>
         </row>
         <row id="200" si="376">
           <value>Used config: {:s}</value>

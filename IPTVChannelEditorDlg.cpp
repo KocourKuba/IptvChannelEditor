@@ -189,6 +189,12 @@ BEGIN_MESSAGE_MAP(CIPTVChannelEditorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_REMOVE, &CIPTVChannelEditorDlg::OnUpdateRemove)
 	ON_COMMAND(ID_UPDATE_CHANNEL, &CIPTVChannelEditorDlg::OnAddUpdateChannel)
 	ON_UPDATE_COMMAND_UI(ID_UPDATE_CHANNEL, &CIPTVChannelEditorDlg::OnUpdateAddUpdateChannel)
+	ON_COMMAND(ID_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged)
+	ON_UPDATE_COMMAND_UI(ID_UPDATE_CHANGED, &CIPTVChannelEditorDlg::OnUpdateUpdateChanged)
+	ON_COMMAND(ID_NEXT_PLUGIN, &CIPTVChannelEditorDlg::OnNextPlugin)
+	ON_UPDATE_COMMAND_UI(ID_NEXT_PLUGIN, &CIPTVChannelEditorDlg::OnUpdateSwitchPlugin)
+	ON_COMMAND(ID_PREV_PLUGIN, &CIPTVChannelEditorDlg::OnPrevPlugin)
+	ON_UPDATE_COMMAND_UI(ID_PREV_PLUGIN, &CIPTVChannelEditorDlg::OnUpdateSwitchPlugin)
 	ON_COMMAND(ID_CHANNEL_UP, &CIPTVChannelEditorDlg::OnChannelUp)
 	ON_UPDATE_COMMAND_UI(ID_CHANNEL_UP, &CIPTVChannelEditorDlg::OnUpdateChannelUp)
 	ON_COMMAND(ID_CHANNEL_DOWN, &CIPTVChannelEditorDlg::OnChannelDown)
@@ -4358,6 +4364,11 @@ void CIPTVChannelEditorDlg::OnBnClickedButtonUpdateChanged()
 	}
 }
 
+void CIPTVChannelEditorDlg::OnUpdateUpdateChanged(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_wndUpdateChanged.IsWindowEnabled());
+}
+
 void CIPTVChannelEditorDlg::OnBnDropDownSplitButtonUpdateChanged(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	auto pDropDown = reinterpret_cast<LPNMBCDROPDOWN>(pNMHDR);
@@ -6126,6 +6137,35 @@ void CIPTVChannelEditorDlg::OnCbnSelchangeComboPluginType()
 
 	set_allow_save(false);
 	PostMessage(WM_SWITCH_PLUGIN);
+}
+
+void CIPTVChannelEditorDlg::OnNextPlugin()
+{
+	SwitchPluginBy(1);
+}
+
+void CIPTVChannelEditorDlg::OnPrevPlugin()
+{
+	SwitchPluginBy(-1);
+}
+
+void CIPTVChannelEditorDlg::OnUpdateSwitchPlugin(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_wndPluginType.IsWindowEnabled() && m_wndPluginType.GetCount() > 1);
+}
+
+void CIPTVChannelEditorDlg::SwitchPluginBy(int step)
+{
+	int count = m_wndPluginType.GetCount();
+	if (count < 2 || !m_wndPluginType.IsWindowEnabled())
+		return;
+
+	int idx = m_wndPluginType.GetCurSel();
+	idx = (idx == CB_ERR) ? 0 : (idx + step + count) % count;
+
+	// SetCurSel does not send CBN_SELCHANGE, run the same handler as the user selection
+	m_wndPluginType.SetCurSel(idx);
+	OnCbnSelchangeComboPluginType();
 }
 
 void CIPTVChannelEditorDlg::OnCbnSelchangeComboPlaylist()

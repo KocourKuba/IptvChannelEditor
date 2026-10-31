@@ -158,6 +158,7 @@ protected:
 	afx_msg void OnBnClickedButtonViewEpg();
 	afx_msg void OnBnClickedButtonEpg();
 	afx_msg void OnBnClickedButtonUpdateChanged();
+	afx_msg void OnUpdateUpdateChanged(CCmdUI* pCmdUI);
 	afx_msg void OnBnClickedCheckShowChanged();
 	afx_msg void OnBnClickedCheckNotAdded();
 	afx_msg void OnBnClickedCheckShowUnknown();
@@ -201,6 +202,9 @@ protected:
 	afx_msg void OnBnClickedButtonDownloadPlaylist();
 	afx_msg void OnCbnSelchangeComboIconSource();
 	afx_msg void OnCbnSelchangeComboPluginType();
+	afx_msg void OnNextPlugin();
+	afx_msg void OnPrevPlugin();
+	afx_msg void OnUpdateSwitchPlugin(CCmdUI* pCmdUI);
 	afx_msg void OnCbnSelchangeComboPlaylist();
 	afx_msg void OnCbnSelchangeComboChannels();
 	afx_msg void OnCbnSelchangeComboStreamType();
@@ -244,6 +248,7 @@ private:
 
 	bool LoadChannels();
 	void LoadPlaylist(bool saveToFile = false, bool force = false);
+	void SwitchPluginBy(int step);
 
 	void CreateSpecialCategories();
 	bool AddChannel(const std::shared_ptr<PlaylistEntry>& entry, int categoryId = -1);

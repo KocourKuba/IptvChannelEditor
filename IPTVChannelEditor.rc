@@ -1689,6 +1689,9 @@ BEGIN
     "S",            ID_SAVE,                VIRTKEY, CONTROL, NOINVERT
     VK_SPACE,       ID_SYNC_TREE_ITEM,      VIRTKEY, CONTROL, NOINVERT
     VK_F5,          ID_UPDATE_CHANNEL,      VIRTKEY, NOINVERT
+    "U",            ID_UPDATE_CHANGED,      VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_NEXT_PLUGIN,         VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_PREV_PLUGIN,         VIRTKEY, CONTROL, NOINVERT
 END
 
 
@@ -1858,7 +1861,7 @@ BEGIN
     IDS_STRING_NO           "No"
     IDS_STRING_CUSTOM       "Custom"
     IDS_STRING_DONATE       "Please donate to support the developer"
-    IDS_STRING_COMBO_PLUGIN_TYPE "Select Plugin for edit"
+    IDS_STRING_COMBO_PLUGIN_TYPE "Select Plugin for edit (Ctrl+N - next, Ctrl+P - previous)"
     IDS_STRING_COMBO_CHANNELS "Choose channel list to edit"
     IDS_STRING_COMBO_PLAYLIST "Choose a playlist to import"
     IDS_STRING_BUTTON_ADD_NEW_CHANNELS_LIST "Create new Channels list"
@@ -1901,7 +1904,7 @@ BEGIN
     IDS_STRING_COMBO_ICON_SOURCE 
                             "Source type for loaded icon. Local file or internet link"
     IDS_STRING_BUTTON_STOP  "Stop process"
-    IDS_STRING_BUTTON_UPDATE_CHANGED "Update channels changed in the playlist"
+    IDS_STRING_BUTTON_UPDATE_CHANGED "Update channels changed in the playlist (Ctrl+U)"
     IDS_STRING_USED_CONFIG  "Used config: {:s}"
     IDS_STRING_WARN_DELETE_ITEMS "Delete selected items. Are your sure?"
     IDS_STRING_ERR_FAILED_PACK "Failed to pack plugin {:s}"

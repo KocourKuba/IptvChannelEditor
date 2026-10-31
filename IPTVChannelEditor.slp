@@ -4473,8 +4473,8 @@
           <lang id="ru" date="20211012223833">Выбор плейлиста для импорта</lang>
         </row>
         <row id="IDS_STRING_COMBO_PLUGIN_TYPE" created="20211012223617">
-          <native>Select Plugin for edit</native>
-          <lang id="ru" date="20211012223816">Выбор плагина для редактирования</lang>
+          <native>Select Plugin for edit (Ctrl+N - next, Ctrl+P - previous)</native>
+          <lang id="ru" date="20211012223816">Выбор плагина для редактирования (Ctrl+N - следующий, Ctrl+P - предыдущий)</lang>
         </row>
         <row id="IDS_STRING_CUSTOM">
           <native>Custom</native>
@@ -4585,8 +4585,8 @@
           <lang id="ru" date="20211012224651">Остановить процесс</lang>
         </row>
         <row id="IDS_STRING_BUTTON_UPDATE_CHANGED">
-          <native>Update channels changed in the playlist</native>
-          <lang id="ru" date="20211012224701">Обновить все каналы отличающиеся от данных в плейлисте</lang>
+          <native>Update channels changed in the playlist (Ctrl+U)</native>
+          <lang id="ru" date="20211012224701">Обновить все каналы отличающиеся от данных в плейлисте (Ctrl+U)</lang>
         </row>
         <row id="IDS_STRING_COMBO_ICON_SOURCE">
           <native>Source type for loaded icon. Local file or internet link</native>
