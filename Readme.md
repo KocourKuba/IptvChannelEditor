@@ -1,7 +1,7 @@
 # IptvChannelEditor
 IPTV Channels Editor and Dune plugin generator.
-For building using VS2022.
-Plugins using PHP 5.3! This is a restriction by Dune HD API
+For building using VS2026.
+Plugins using PHP 5.3.6! This is a restriction by Dune HD API
 
 
 <details>
