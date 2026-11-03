@@ -221,11 +221,13 @@ bool plugin_ttv::login(const TemplateParams& params, bool force /*= false*/)
 		return true;
 	}
 
+	// login and password are query parameters of the auth request: characters like + & = ? / must be
+	// percent-encoded, otherwise the server reads '+' as a space or cuts the value at '&'
 	utils::http_request req
 	{
 		.url = replace_params_vars(params, std::format(API_COMMAND_AUTH,
-													   utils::utf8_to_utf16(params.creds->login),
-													   utils::utf8_to_utf16(params.creds->password),
+													   utils::utf8_to_utf16(utils::encodeURIComponent(params.creds->login)),
+													   utils::utf8_to_utf16(utils::encodeURIComponent(params.creds->password)),
 													   utils::utf8_to_utf16(make_guid(params.creds->login)))),
 		.timeouts = GetConfig().GetTimeouts(),
 	};

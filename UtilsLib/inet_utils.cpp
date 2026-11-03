@@ -50,7 +50,8 @@ std::string encodeURIComponent(const std::string& value)
 
 	for (char c : value) {
 		// Keep alphanumeric and other accepted characters intact
-		if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+		// cast: negative char (utf-8 byte) is undefined behavior for isalnum
+		if (std::isalnum(static_cast<unsigned char>(c)) ||c == '-' || c == '_' || c == '.' || c == '~') {
 			escaped << c;
 			continue;
 		}
